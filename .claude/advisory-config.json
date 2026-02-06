@@ -1,0 +1,23 @@
+{
+  "advisors": {
+    "claude": {
+      "enabled": true,
+      "description": "Claude Opus subagent via Task tool"
+    },
+    "gpt": {
+      "enabled": true,
+      "model": "gpt-5.2",
+      "description": "OpenAI GPT via .claude/tools/second_opinion.py"
+    },
+    "gemini": {
+      "enabled": true,
+      "model": "gemini-3-flash-preview",
+      "description": "Google Gemini via .claude/tools/second_opinion.py"
+    }
+  },
+  "diversity": {
+    "enabled": true,
+    "answers_per_advisor": 3,
+    "description": "Each advisor produces N orthogonal perspectives per question set. Orthogonal = genuinely different angles, NOT forced contrarian. Set enabled: false to revert to single-answer mode."
+  }
+}

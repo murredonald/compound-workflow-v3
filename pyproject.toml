@@ -1,0 +1,98 @@
+[project]
+name = "compound-workflow"
+requires-python = ">=3.11"
+
+# =============================================================================
+# Ruff — linter + formatter (used by lint-format.sh and pre-commit-gate.sh)
+# =============================================================================
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+    "RUF",   # ruff-specific rules
+]
+ignore = [
+    "E501",  # line length handled by formatter
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# =============================================================================
+# mypy — type checking (used by type-check.sh)
+# =============================================================================
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+# Relax for tests
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+strict = false
+
+# =============================================================================
+# pytest (used by test-analyst.md and milestone-reviewer.md)
+# =============================================================================
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+]
+markers = [
+    "smoke: Quick sanity checks (run first)",
+    "integration: Cross-module integration tests",
+    "functional: Feature-level acceptance tests",
+    "regression: Bug fix verification tests",
+    "slow: Tests that take >5s",
+]
+# Marker enforcement — unknown markers fail immediately
+filterwarnings = ["error::pytest.PytestUnknownMarkWarning"]
+
+# =============================================================================
+# bandit — security linting (used by pre-commit-gate.sh)
+# =============================================================================
+[tool.bandit]
+exclude_dirs = ["tests", "scripts", ".claude"]
+skips = [
+    "B101",  # assert used in tests
+]
+
+# =============================================================================
+# coverage (optional, used by milestone-reviewer.md if enabled)
+# =============================================================================
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "scripts/*"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_empty = true

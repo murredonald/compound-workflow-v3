@@ -1,0 +1,18 @@
+{
+  "auto_proceed": {
+    "enabled": true,
+    "description": "Never pause between tasks or steps. Display plan and continue immediately. The user can interrupt if needed — the default is to keep building."
+  },
+  "milestone_pause": {
+    "enabled": false,
+    "description": "When true, pause after each milestone review for user acknowledgment. When false, continue straight to the next milestone after review passes (or after fixes if FIXABLE). BLOCKED milestones always pause regardless of this setting."
+  },
+  "deferred_auto_action": {
+    "action": "promote",
+    "description": "What to do with deferred findings at milestone boundaries when milestone_pause is false. Options: 'promote' (auto-add all as tasks), 'defer' (auto-defer all to post-v1), 'ask' (always ask user regardless of milestone_pause)."
+  },
+  "runtime_qa_pause": {
+    "enabled": false,
+    "description": "When true, pause after runtime QA results for user review before /retro. When false, write findings to observations.md and proceed to /retro automatically."
+  }
+}

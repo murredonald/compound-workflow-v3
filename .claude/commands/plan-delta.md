@@ -100,7 +100,13 @@ For Standard/Major: read thoroughly.
    - Data/ML work → `/specialists/data-ml`
 5. Formulate 2-4 targeted questions for the user
 
-### Advisory Perspectives (Standard and Major only)
+### Advisory Perspectives (Standard and Major only — mandatory)
+
+**After formulating questions in step 5, INVOKE the advisory protocol
+BEFORE presenting your response to the user.** Pass your questions AND
+your impact analysis as `specialist_analysis` and `questions` to the
+advisors. Present advisory perspectives in labeled boxes after your
+questions, so the user sees both before answering.
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = domain of the change (e.g., "backend", "frontend") for this command.

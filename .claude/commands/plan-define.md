@@ -162,17 +162,26 @@ For each question:
 - **Examples** — 2-3 neutral, non-leading options
 - **Common mistake** — What beginners get wrong
 
-### 5. Stage Gate
-What must be clarified before advancing.
+### 5. Advisory Perspectives (per stage — mandatory)
 
-### 6. Risk Checkpoint
-- Top 2 risks if we proceed now
-- One risk-mitigating question
-
-### Advisory Perspectives
+**After formulating the questions in step 4, INVOKE the advisory protocol
+BEFORE presenting your response to the user.** This is not optional — it
+runs for every stage unless the user said "skip advisory".
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = "planning" for this command.
+
+Pass your step-4 questions AND your analysis/options for the current stage
+as `specialist_analysis` and `questions` to the advisors. Present the
+advisory perspectives in labeled boxes after your questions, so the user
+sees both your questions and the advisors' takes before answering.
+
+### 6. Stage Gate
+What must be clarified before advancing.
+
+### 7. Risk Checkpoint
+- Top 2 risks if we proceed now
+- One risk-mitigating question
 
 ---
 

@@ -137,26 +137,25 @@ class TestGetSystemPrompt:
     def test_three_answers_returns_orthogonal_prompt(self) -> None:
         result = get_system_prompt(3)
         assert "3 genuinely different perspectives" in result
-        assert "600 words" in result  # 3 * 200
-        assert "Perspective 1" in result
-        assert "Perspective 2" in result
-        assert "Perspective 3" in result
+        assert "1050 words" in result  # 3 * 350
+        assert "Perspective A" in result
+        assert "Perspective B" in result
+        assert "Perspective C" in result
 
     def test_two_answers_returns_orthogonal_prompt(self) -> None:
         result = get_system_prompt(2)
         assert "2 genuinely different perspectives" in result
-        assert "400 words" in result  # 2 * 200
+        assert "700 words" in result  # 2 * 350
 
     def test_five_answers_returns_orthogonal_prompt(self) -> None:
         result = get_system_prompt(5)
         assert "5 genuinely different perspectives" in result
-        assert "1000 words" in result  # 5 * 200
+        assert "1750 words" in result  # 5 * 350
 
     def test_orthogonal_prompt_not_contrarian(self) -> None:
         result = get_system_prompt(3)
-        assert "NOT" in result
-        assert "devil's advocate" in result
-        assert "contrarian" in result
+        assert "independently useful and defensible" in result
+        assert "genuinely different" in result
 
     def test_orthogonal_prompt_has_perspective_labels(self) -> None:
         result = get_system_prompt(3)

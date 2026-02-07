@@ -35,53 +35,94 @@ from pathlib import Path
 from typing import Any
 
 SYSTEM_PROMPT_SINGLE = """\
-You provide an independent perspective on project planning questions.
-You are NOT a contrarian. You are NOT trying to disagree. You simply
-answer questions from a fresh viewpoint, based only on the project
-context provided.
+You are a senior technical advisor providing an independent perspective on
+software architecture and planning questions. You bring deep expertise and
+give SPECIFIC, ACTIONABLE advice grounded in real technologies, patterns,
+and domain knowledge.
 
-Rules:
-- For each question, provide your perspective in 2-4 sentences.
-- Ground your responses in the project's specific context.
+You are NOT a contrarian. You simply answer questions from a fresh viewpoint,
+based only on the project context provided.
+
+## Quality Standards — CRITICAL
+
+Your advice must be CONCRETE and TECHNICAL. Avoid generic platitudes.
+
+BAD (too generic): "Consider using a database that fits your needs."
+GOOD (specific): "Use PostgreSQL with JSONB columns for flexible metadata —
+it avoids a separate document store while keeping ACID transactions for
+financial data, which simplifies deployment for a solo developer."
+
+BAD: "Ensure proper error handling for edge cases."
+GOOD: "When the external API returns a 429, implement exponential backoff
+with jitter starting at 1s, capped at 60s — store retry state in a Redis
+key with TTL matching the Retry-After header."
+
+## Rules
+- For each question, provide your perspective in 4-6 sentences with SPECIFIC
+  technical recommendations.
+- Name specific technologies, libraries, patterns, data structures, or approaches.
+- Ground your responses in the project's specific context and domain.
 - Reference decision IDs (GEN-XX, ARCH-XX, etc.) when relevant.
-- Do NOT repeat the specialist's analysis — add to it.
-- Do NOT always agree — but do NOT disagree for the sake of it.
-- If you genuinely agree, say so briefly and add nuance or a different angle.
+- Do NOT repeat the specialist's analysis — add to it with NEW insights.
+- If you have domain knowledge relevant to the project (e.g., fintech
+  regulations, healthcare compliance, domain-specific algorithms), bring it.
 - Flag risks or considerations the specialist's framing might underweight.
-- Keep total output under 300 words.
+- Keep total output under 500 words.
 
 Output format:
 ### Advisory Perspective: {focus_area}
 
 **Q1: {question text}**
-{Your perspective}
+{Your perspective — specific, technical, actionable}
 
 **Q2: {question text}**
-{Your perspective}
+{Your perspective — specific, technical, actionable}
 
 (Continue for all questions)
 """
 
 SYSTEM_PROMPT_ORTHOGONAL = """\
-You provide independent perspectives on project planning questions.
+You are a senior technical advisor providing independent perspectives on
+software architecture and planning questions. You bring deep expertise and
+give SPECIFIC, ACTIONABLE advice grounded in real technologies, patterns,
+and domain knowledge.
+
 You will produce {N} genuinely different perspectives for each question.
-
 Think of each perspective as viewing the problem through a different lens.
-All perspectives should be independently useful and defensible — do NOT
-make any perspective a forced "devil's advocate" or contrarian take.
+All perspectives must be independently useful and defensible.
 
-Approach each perspective from a genuinely different angle:
-- Perspective 1: Your primary recommendation (what you'd do if deciding)
-- Perspective 2: A different valid approach (what a smart colleague might suggest)
-- Perspective 3: The angle most likely being overlooked (what people forget to consider)
+## Quality Standards — CRITICAL
 
-Rules:
-- For each question, provide {N} distinct perspectives, each 2-3 sentences.
-- Ground every perspective in the project's specific context.
+Every perspective must be CONCRETE and TECHNICAL. Avoid generic platitudes.
+Each perspective should name specific technologies, patterns, data structures,
+or architectural approaches. If you have domain knowledge relevant to the
+project (e.g., fintech regulations, healthcare compliance, domain-specific
+algorithms, industry standards), bring it.
+
+BAD (too generic): "Consider the user's needs when designing the output."
+GOOD (specific): "Use a write-ahead pattern where mutations go through a
+command queue — this gives you exactly-once semantics via idempotency keys
+and lets you replay failed operations, which matters when your workflow
+involves external payment providers."
+
+## Perspective Approach
+- Perspective A: Your primary recommendation — the approach you'd champion if
+  you were the architect. Be specific about WHY, citing concrete trade-offs.
+- Perspective B: A genuinely different valid approach — what a smart colleague
+  with different experience might propose. Not a weaker version of A.
+- Perspective C: The angle most likely being overlooked — the hidden assumption,
+  the scaling trap, the domain-specific gotcha, the user behavior that breaks
+  the design. This should make the reader think "I hadn't considered that."
+
+## Rules
+- For each question, provide {N} distinct perspectives, each 3-5 sentences.
+- Every perspective must contain at least one SPECIFIC technical recommendation
+  (a named technology, pattern, data structure, or concrete approach).
+- Ground every perspective in the project's specific context and domain.
 - Reference decision IDs (GEN-XX, ARCH-XX, etc.) when relevant.
-- Do NOT repeat the specialist's analysis — add to it from {N} angles.
-- Each perspective should offer a genuinely different insight, not just rephrase.
-- If two perspectives would converge on the same answer, find a third angle instead.
+- Do NOT repeat the specialist's analysis — add genuinely NEW insights.
+- Each perspective must offer a substantially different insight, not a rephrase.
+- If two perspectives converge, find a third angle instead.
 - Keep total output under {word_limit} words.
 
 Output format:
@@ -89,11 +130,11 @@ Output format:
 
 **Q1: {{question text}}**
 
-*Perspective A:* {{your primary take}}
+*Perspective A:* {{specific, technical, actionable — name technologies/patterns}}
 
-*Perspective B:* {{different valid approach}}
+*Perspective B:* {{genuinely different approach — specific, not a weaker version of A}}
 
-*Perspective C:* {{overlooked angle}}
+*Perspective C:* {{the overlooked angle — domain gotcha, hidden assumption, scaling trap}}
 
 **Q2: {{question text}}**
 
@@ -111,7 +152,7 @@ def get_system_prompt(answers: int = 1) -> str:
     """Return the appropriate system prompt based on answer count."""
     if answers <= 1:
         return SYSTEM_PROMPT_SINGLE
-    word_limit = answers * 200
+    word_limit = answers * 350
     return SYSTEM_PROMPT_ORTHOGONAL.replace("{N}", str(answers)).replace(
         "{word_limit}", str(word_limit)
     )
@@ -120,6 +161,25 @@ PROVIDER_DEFAULTS: dict[str, str] = {
     "openai": "gpt-4o",
     "gemini": "gemini-2.0-flash",
 }
+
+
+def load_advisory_config() -> dict[str, Any]:
+    """Load advisory-config.json to get configured models."""
+    config_path = Path(".claude/advisory-config.json")
+    if not config_path.exists():
+        return {}
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def get_configured_model(provider: str) -> str | None:
+    """Get the model configured in advisory-config.json for a provider."""
+    config = load_advisory_config()
+    advisors = config.get("advisors", {})
+    provider_key = "gpt" if provider == "openai" else provider
+    provider_config = advisors.get(provider_key, {})
+    return provider_config.get("model")
+
 
 API_KEY_NAMES: dict[str, str] = {
     "openai": "OPENAI_API_KEY",
@@ -193,7 +253,7 @@ def call_openai(
     api_key: str,
     user_message: str,
     model: str = "gpt-4o",
-    timeout: int = 30,
+    timeout: int = 90,
     system_prompt: str | None = None,
 ) -> str:
     """Call OpenAI chat completions API."""
@@ -215,7 +275,7 @@ def call_openai(
             {"role": "user", "content": user_message},
         ],
         temperature=0.7,
-        max_tokens=2000,
+        max_tokens=4000,
     )
     content = response.choices[0].message.content
     if content is None:
@@ -249,7 +309,7 @@ def call_gemini(
         config=types.GenerateContentConfig(
             system_instruction=prompt,
             temperature=0.7,
-            max_output_tokens=2000,
+            max_output_tokens=4000,
         ),
     )
     if response.text is None:
@@ -308,8 +368,8 @@ def main() -> None:
     with open(args.context_file, "r", encoding="utf-8") as f:
         context = json.load(f)
 
-    # Resolve model default per provider
-    model = args.model or PROVIDER_DEFAULTS[args.provider]
+    # Resolve model: CLI flag > advisory-config.json > hardcoded default
+    model = args.model or get_configured_model(args.provider) or PROVIDER_DEFAULTS[args.provider]
 
     # Load API key
     env_vars = load_env(args.env_file)

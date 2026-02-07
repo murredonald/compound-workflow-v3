@@ -88,6 +88,25 @@ Hypotheses:
   H3 (unlikely): Database driver encoding issue in connection config
 ```
 
+**External LLM Hypotheses (conditional — multi-LLM feed-forward):**
+
+Read `.claude/advisory-config.json`. If `multi_llm_review.enabled` is true
+AND `"debugging"` is in `multi_llm_review.contexts`, invoke external LLMs
+AFTER generating your initial hypotheses:
+
+1. Write context JSON: `{"bug_description": "{bug}", "reproduction_steps": "{steps}", "current_hypotheses": "{your H1, H2, H3}"}`
+2. Run GPT + Gemini in parallel:
+   ```bash
+   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode debugging
+   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode debugging
+   ```
+3. Collect outputs (failures are non-blocking)
+4. Merge results:
+   - **Corroborated** (2+ LLMs agree): move hypothesis UP in priority
+   - **Genuinely new**: add as H4, H5, etc.
+   - **Redundant restatements**: skip
+5. Present the merged, re-ranked hypothesis list before proceeding to INVESTIGATE
+
 ### 4. INVESTIGATE
 
 Test each hypothesis in order:

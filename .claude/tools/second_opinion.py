@@ -8,13 +8,25 @@ Supports orthogonal multi-answer mode: each model produces N genuinely
 different perspectives per question set (not forced contrarian).
 
 Usage:
+    # Planning mode (default)
     python .claude/tools/second_opinion.py --provider openai --context-file ctx.json
     python .claude/tools/second_opinion.py --provider gemini --context-file ctx.json
     python .claude/tools/second_opinion.py --provider openai --context-file ctx.json --answers 3
+
+    # Code review mode
+    python .claude/tools/second_opinion.py --provider openai --context-file ctx.json --mode code-review
+
+    # Test diagnosis mode
+    python .claude/tools/second_opinion.py --provider gemini --context-file ctx.json --mode diagnosis
+
+    # Debugging mode
+    python .claude/tools/second_opinion.py --provider openai --context-file ctx.json --mode debugging
+
+    # Custom model override
     python .claude/tools/second_opinion.py --provider openai --context-file ctx.json --model gpt-4o
     python .claude/tools/second_opinion.py --provider gemini --context-file ctx.json --model gemini-2.0-flash
 
-Context JSON format:
+Context JSON format (planning mode):
     {
         "project_spec": "...",
         "decisions": "...",
@@ -23,6 +35,30 @@ Context JSON format:
         "focus_area": "Infrastructure Decisions",
         "specialist_analysis": "...",
         "questions": ["Q1...", "Q2...", "Q3..."]
+    }
+
+Context JSON format (code-review mode):
+    {
+        "task_id": "T05",
+        "task_definition": "...",
+        "git_diff": "...",
+        "decisions": "...",
+        "constraints": "..."
+    }
+
+Context JSON format (diagnosis mode):
+    {
+        "test_output": "...",
+        "task_context": "...",
+        "recent_changes": "...",
+        "failure_categories": "..."
+    }
+
+Context JSON format (debugging mode):
+    {
+        "bug_description": "...",
+        "reproduction_steps": "...",
+        "current_hypotheses": "..."
     }
 """
 
@@ -148,6 +184,160 @@ Output format:
 """
 
 
+SYSTEM_PROMPT_CODE_REVIEW = """\
+You are a senior code reviewer providing an independent review of a code diff.
+You find real issues — bugs, security vulnerabilities, logic errors, performance
+problems, and style violations. You cite specific file:line locations for every
+finding.
+
+## Quality Standards — CRITICAL
+
+Every finding must be SPECIFIC and cite a file:line location. Avoid vague
+observations.
+
+BAD (too vague): "Error handling could be improved."
+GOOD (specific): "BUG at api/routes.py:42 — `user_id` is cast to int without
+try/except, so a non-numeric path parameter returns a 500 instead of 422."
+
+BAD: "Consider adding input validation."
+GOOD: "SECURITY at auth/login.py:28 — password field is logged at DEBUG level
+via `logger.debug(f'Login attempt: {request.body}')`, leaking credentials
+to log aggregation."
+
+## Rules
+- Classify each finding: BUG | SECURITY | PERFORMANCE | LOGIC | STYLE
+- Assign severity: CRITICAL | MAJOR | MINOR
+- Cite file:line for every finding — no exceptions
+- Focus on the diff provided — don't speculate about code you can't see
+- If the diff looks clean, say so — don't invent issues for completeness
+- Keep total output under 800 words
+
+Output format:
+### Code Review: {task_id}
+
+**Finding 1: [{severity}] [{category}] {brief title}**
+Location: {file}:{line}
+Issue: {what's wrong — specific, technical}
+Suggestion: {how to fix — specific}
+
+**Finding 2: ...**
+
+### Summary
+- Total findings: {N} (Critical: {N}, Major: {N}, Minor: {N})
+- Verdict: CLEAN | CONCERNS | ISSUES
+"""
+
+SYSTEM_PROMPT_DIAGNOSIS = """\
+You are a senior test diagnostician analyzing test failures. You categorize
+failures by root cause, identify patterns, and provide specific diagnosis
+with file:line citations.
+
+## Quality Standards — CRITICAL
+
+Every diagnosis must identify the specific root cause location and category.
+Avoid generic "something went wrong" analyses.
+
+BAD (too vague): "The test is failing because of a data issue."
+GOOD (specific): "CODE_BUG — `calculate_tax()` in tax/engine.py:87 returns
+float instead of Decimal, causing assertion mismatch in test_tax_calc:23
+where expected=Decimal('19.99') but got=19.990000000000002."
+
+BAD: "Test environment might need updating."
+GOOD: "ENV_ISSUE — test_integration:45 expects Redis on localhost:6379 but
+the CI fixture uses port 6380 (see conftest.py:12). The test passes locally
+because the developer's Redis runs on the default port."
+
+## Failure Categories
+- **CODE_BUG** — Implementation has a real bug
+- **TEST_BUG** — Test itself is wrong (bad assertion, wrong fixture, stale mock)
+- **MISSING_IMPL** — Test expects something not yet implemented
+- **ENV_ISSUE** — Missing dependency, config, or service
+- **FLAKY** — Non-deterministic failure (timing, ordering, randomness)
+
+## Rules
+- Categorize every failure with one of the categories above
+- Cite test name, test file:line, and likely source file:line
+- Identify patterns across failures (e.g., "3 failures all trace to same missing import")
+- If you see test output, analyze the actual error messages — don't guess
+- Keep total output under 800 words
+
+Output format:
+### Test Diagnosis: {task_context}
+
+**Failure 1: [{category}] {test_name}**
+Test: {test_file}:{line}
+Error: {one-line error summary}
+Root cause: {source_file}:{line} — {what's wrong}
+Suggested fix: {specific action}
+
+**Failure 2: ...**
+
+### Pattern Analysis
+{Any cross-cutting patterns across failures}
+
+### Priority Order
+1. {most impactful fix first — with reason}
+2. {next}
+"""
+
+SYSTEM_PROMPT_DEBUGGING = """\
+You are a senior debugging advisor generating alternative hypotheses for
+a bug. You think laterally — considering root causes that the primary
+debugger might overlook.
+
+## Quality Standards — CRITICAL
+
+Every hypothesis must include a specific location to check and a concrete
+test method. Avoid hand-wavy suggestions.
+
+BAD (too vague): "Maybe it's a race condition somewhere."
+GOOD (specific): "H2: The WebSocket handler in ws/handler.py:34 reads
+`session.user_id` without acquiring the session lock. If two messages arrive
+within the same event loop tick, the second overwrites the first's context.
+Test: Add `asyncio.sleep(0)` between two concurrent `send()` calls in the
+test and check if the response contains the wrong user's data."
+
+BAD: "Check the database queries."
+GOOD: "H3: The N+1 query in reports/generator.py:78 (`for item in items:
+    item.category.name`) triggers a lazy load per row. With 500+ items, the
+DB connection pool (max 10, see config.py:23) exhausts, causing the timeout
+observed in the bug report. Test: Run with `SQLALCHEMY_ECHO=1` and count
+queries — should be 2 (items + categories), not 502."
+
+## Rules
+- Generate 2-4 hypotheses, ranked by likelihood
+- Each hypothesis: specific location (file:line), mechanism, and test method
+- Think orthogonally — don't just rephrase the primary debugger's hypotheses
+- Consider: timing issues, state corruption, config drift, dependency version
+  skew, encoding issues, platform differences, caching staleness
+- If existing hypotheses are provided, propose DIFFERENT angles
+- Keep total output under 600 words
+
+Output format:
+### Debugging Hypotheses: {bug_description}
+
+**H1 (likely): {title}**
+Location: {file}:{line}
+Mechanism: {how the bug manifests}
+Test method: {specific way to confirm or eliminate}
+
+**H2 (possible): {title}**
+Location: {file}:{line}
+Mechanism: {how the bug manifests}
+Test method: {specific way to confirm or eliminate}
+
+**H3 (unlikely but check): {title}**
+...
+"""
+
+MODE_PROMPTS: dict[str, str] = {
+    "planning": "",  # sentinel — uses get_system_prompt() instead
+    "code-review": SYSTEM_PROMPT_CODE_REVIEW,
+    "diagnosis": SYSTEM_PROMPT_DIAGNOSIS,
+    "debugging": SYSTEM_PROMPT_DEBUGGING,
+}
+
+
 def get_system_prompt(answers: int = 1) -> str:
     """Return the appropriate system prompt based on answer count."""
     if answers <= 1:
@@ -227,6 +417,59 @@ def build_user_message(context: dict[str, Any]) -> str:
     parts.append(f"## Questions\n{q_text}")
 
     return "\n\n".join(parts)
+
+
+def build_code_review_message(context: dict[str, Any]) -> str:
+    """Build the user message for code-review mode."""
+    parts: list[str] = []
+
+    parts.append(f"## Task: {context.get('task_id', 'N/A')}")
+    parts.append(f"## Task Definition\n{context.get('task_definition', 'N/A')}")
+    parts.append(f"## Git Diff\n```\n{context.get('git_diff', 'N/A')}\n```")
+
+    if context.get("decisions"):
+        parts.append(f"## Relevant Decisions\n{context['decisions']}")
+    if context.get("constraints"):
+        parts.append(f"## Constraints\n{context['constraints']}")
+
+    return "\n\n".join(parts)
+
+
+def build_diagnosis_message(context: dict[str, Any]) -> str:
+    """Build the user message for diagnosis mode."""
+    parts: list[str] = []
+
+    parts.append(f"## Test Output\n```\n{context.get('test_output', 'N/A')}\n```")
+    parts.append(f"## Task Context\n{context.get('task_context', 'N/A')}")
+
+    if context.get("recent_changes"):
+        parts.append(f"## Recent Changes\n{context['recent_changes']}")
+    if context.get("failure_categories"):
+        parts.append(f"## Initial Categorization\n{context['failure_categories']}")
+
+    return "\n\n".join(parts)
+
+
+def build_debugging_message(context: dict[str, Any]) -> str:
+    """Build the user message for debugging mode."""
+    parts: list[str] = []
+
+    parts.append(f"## Bug Description\n{context.get('bug_description', 'N/A')}")
+
+    if context.get("reproduction_steps"):
+        parts.append(f"## Reproduction Steps\n{context['reproduction_steps']}")
+    if context.get("current_hypotheses"):
+        parts.append(f"## Current Hypotheses\n{context['current_hypotheses']}")
+
+    return "\n\n".join(parts)
+
+
+MESSAGE_BUILDERS: dict[str, Any] = {
+    "planning": build_user_message,
+    "code-review": build_code_review_message,
+    "diagnosis": build_diagnosis_message,
+    "debugging": build_debugging_message,
+}
 
 
 def resolve_api_key(
@@ -360,7 +603,17 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=1,
         help="Number of orthogonal perspectives per question (default: 1). "
-        "When >1, uses orthogonal thinking prompt for diverse answers.",
+        "When >1, uses orthogonal thinking prompt for diverse answers. "
+        "Only applies to planning mode.",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["planning", "code-review", "diagnosis", "debugging"],
+        default="planning",
+        help="Review mode (default: planning). "
+        "code-review: reviews git diff for issues. "
+        "diagnosis: diagnoses test failures. "
+        "debugging: generates alternative hypotheses.",
     )
     return parser
 
@@ -385,9 +638,16 @@ def main() -> None:
     env_vars = load_env(args.env_file)
     api_key = resolve_api_key(args.provider, env_vars)
 
-    # Build message and call API
-    user_message = build_user_message(context)
-    system_prompt = get_system_prompt(args.answers)
+    # Build message using mode-appropriate builder
+    builder = MESSAGE_BUILDERS[args.mode]
+    user_message = builder(context)
+
+    # Select system prompt: planning mode uses get_system_prompt (answers-aware),
+    # other modes use their fixed prompt from MODE_PROMPTS
+    if args.mode == "planning":
+        system_prompt = get_system_prompt(args.answers)
+    else:
+        system_prompt = MODE_PROMPTS[args.mode]
 
     try:
         if args.provider == "openai":

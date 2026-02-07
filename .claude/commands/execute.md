@@ -207,6 +207,21 @@ Also run:
 **If verification fails:** Fix and re-run. Do not proceed to review
 with failing tests.
 
+**External Test Diagnosis (conditional — multi-LLM feed-forward):**
+
+If tests fail AND `.claude/advisory-config.json` has `multi_llm_review.enabled`
+= true AND `"diagnosis"` is in `multi_llm_review.contexts`, run external
+diagnosis BEFORE invoking the Claude test-analyst:
+
+1. Write context JSON: `{"test_output": "{failure output}", "task_context": "{task description}", "recent_changes": "{changed files}"}`
+2. Run GPT + Gemini in parallel:
+   ```bash
+   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode diagnosis
+   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode diagnosis
+   ```
+3. Collect outputs (failures are non-blocking)
+4. When invoking the test-analyst subagent, pass `external_diagnoses` with the raw GPT + Gemini outputs. The test-analyst validates external categorizations against its own analysis.
+
 **Audit trail:** After verification completes (pass or fail), record a chain entry:
 1. Write the task definition block to a temp file (input)
 2. Write the verification command output to a temp file (output)
@@ -238,6 +253,45 @@ For every subagent call in this step:
 Do NOT paraphrase the persona. Do NOT write your own review prompt.
 The persona defines review criteria, output format, and bias rules.
 
+### External Code Review (conditional — multi-LLM feed-forward)
+
+Read `.claude/advisory-config.json`. If `multi_llm_review.enabled` is true
+AND `"code-review"` is in `multi_llm_review.contexts`, run external reviews
+BEFORE the Claude code-reviewer. Their findings will be fed INTO the
+code-reviewer as additional input.
+
+**Phase 1 — External reviews (run GPT + Gemini in parallel):**
+
+1. Generate git diff of changed files:
+   ```bash
+   git diff HEAD -- {changed_files} > {temp_diff_file}
+   ```
+2. Write context JSON to a temp file:
+   ```json
+   {
+     "task_id": "T{NN}",
+     "task_definition": "{acceptance criteria}",
+     "git_diff": "{diff content}",
+     "decisions": "{relevant decisions}",
+     "constraints": "{relevant constraints}"
+   }
+   ```
+3. Run both providers in parallel (if enabled in `advisors`):
+   ```bash
+   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
+   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode code-review
+   ```
+4. Collect outputs. If a provider fails (exit 1), note "{Provider} review unavailable" and continue.
+5. Record each external review in the audit chain:
+   ```bash
+   python .claude/tools/chain_manager.py record \
+     --task T{NN} --pipeline execute --stage external-review --agent {provider}-code-review \
+     --input-file {ctx} --output-file {temp_output} \
+     --description "{Provider} external code review of T{NN}"
+   ```
+
+**Phase 2 — Claude code-reviewer (runs after externals complete):**
+
 ### code-reviewer (always)
 Load persona: `.claude/agents/code-reviewer.md`
 
@@ -248,6 +302,7 @@ Provide:
 - `constraints`: relevant constraint entries
 - `changed_files`: list of files modified
 - `verification_output`: The console output from Step 4 (proof it runs)
+- `external_review_findings`: (if Phase 1 ran) The raw, unedited GPT and Gemini code review outputs from Phase 1. Format: `"GPT: {output}\n\nGemini: {output}"`. If Phase 1 didn't run or both failed, omit this field.
 
 ### security-auditor (always)
 Load persona: `.claude/agents/security-auditor.md`

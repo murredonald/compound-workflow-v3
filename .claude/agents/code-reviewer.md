@@ -48,6 +48,7 @@ The parent agent provides:
 | `constraints` | Yes | -- |
 | `changed_files` | Yes | -- |
 | `verification_output` | No | Note "no verification output provided" and skip log analysis |
+| `external_review_findings` | No | If absent, review code independently. If present, incorporate external LLM findings: validate them, add your own, produce unified verdict. |
 
 If a required input is missing, BLOCK with: "Cannot review -- missing {input}."
 
@@ -117,6 +118,20 @@ Actively look for unhandled scenarios:
 
 Only flag edge cases that the acceptance criteria imply should be handled.
 Don't invent requirements.
+
+### 6. External Finding Integration (if `external_review_findings` provided)
+
+If `external_review_findings` is present, review each finding from the
+external LLMs (GPT, Gemini):
+
+- **Validate** each finding against the actual code — is it a real issue?
+- **Confirm** valid findings: add them to your findings list with "[External]" prefix
+- **Dismiss** false positives with a brief reason: "[External dismissed] {finding} — {reason}"
+- **Note** any issues the external reviewers caught that you missed in steps 1-5
+
+This step produces a unified set of findings combining your independent
+review with validated external input. Your verdict in the Output Format
+reflects the consolidated assessment.
 
 ## Output Format
 

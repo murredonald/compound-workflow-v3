@@ -13,6 +13,9 @@ import pytest
 
 from second_opinion import (
     build_user_message,
+    build_code_review_message,
+    build_diagnosis_message,
+    build_debugging_message,
     get_system_prompt,
     load_env,
     resolve_api_key,
@@ -20,6 +23,11 @@ from second_opinion import (
     API_KEY_NAMES,
     SYSTEM_PROMPT_SINGLE,
     SYSTEM_PROMPT_ORTHOGONAL,
+    SYSTEM_PROMPT_CODE_REVIEW,
+    SYSTEM_PROMPT_DIAGNOSIS,
+    SYSTEM_PROMPT_DEBUGGING,
+    MODE_PROMPTS,
+    MESSAGE_BUILDERS,
 )
 
 
@@ -472,3 +480,179 @@ class TestCallGemini:
         call_args = mock_client.models.generate_content.call_args
         config = call_args.kwargs["config"]
         assert config.system_instruction == SYSTEM_PROMPT_SINGLE
+
+
+# ── Mode Prompts ─────────────────────────────────────────────────
+
+class TestModePrompts:
+    def test_mode_prompts_has_all_keys(self) -> None:
+        assert set(MODE_PROMPTS.keys()) == {"planning", "code-review", "diagnosis", "debugging"}
+
+    def test_planning_mode_is_sentinel(self) -> None:
+        assert MODE_PROMPTS["planning"] == ""
+
+    def test_code_review_prompt_has_keywords(self) -> None:
+        prompt = SYSTEM_PROMPT_CODE_REVIEW
+        assert "BUG" in prompt
+        assert "SECURITY" in prompt
+        assert "CRITICAL" in prompt
+        assert "MAJOR" in prompt
+        assert "MINOR" in prompt
+        assert "file:line" in prompt
+
+    def test_diagnosis_prompt_has_categories(self) -> None:
+        prompt = SYSTEM_PROMPT_DIAGNOSIS
+        assert "CODE_BUG" in prompt
+        assert "TEST_BUG" in prompt
+        assert "MISSING_IMPL" in prompt
+        assert "ENV_ISSUE" in prompt
+        assert "FLAKY" in prompt
+
+    def test_debugging_prompt_has_hypothesis_format(self) -> None:
+        prompt = SYSTEM_PROMPT_DEBUGGING
+        assert "H1" in prompt
+        assert "H2" in prompt
+        assert "Mechanism" in prompt
+        assert "Test method" in prompt
+
+
+# ── build_code_review_message ────────────────────────────────────
+
+class TestBuildCodeReviewMessage:
+    def test_includes_task_and_diff(self) -> None:
+        context = {
+            "task_id": "T05",
+            "task_definition": "Add login endpoint",
+            "git_diff": "diff --git a/api.py b/api.py\n+@app.route('/login')",
+            "decisions": "BACK-01: Use FastAPI",
+            "constraints": "Solo developer",
+        }
+        result = build_code_review_message(context)
+        assert "## Task: T05" in result
+        assert "Add login endpoint" in result
+        assert "diff --git" in result
+        assert "BACK-01" in result
+        assert "Solo developer" in result
+
+    def test_handles_missing_optional_fields(self) -> None:
+        context = {
+            "task_id": "T01",
+            "task_definition": "Fix bug",
+            "git_diff": "+ fixed line",
+        }
+        result = build_code_review_message(context)
+        assert "## Task: T01" in result
+        assert "Fix bug" in result
+        assert "Decisions" not in result
+        assert "Constraints" not in result
+
+    def test_handles_empty_context(self) -> None:
+        result = build_code_review_message({})
+        assert "N/A" in result
+
+
+# ── build_diagnosis_message ──────────────────────────────────────
+
+class TestBuildDiagnosisMessage:
+    def test_includes_test_output(self) -> None:
+        context = {
+            "test_output": "FAILED test_login - AssertionError",
+            "task_context": "Implementing auth",
+            "recent_changes": "auth.py, routes.py",
+        }
+        result = build_diagnosis_message(context)
+        assert "FAILED test_login" in result
+        assert "Implementing auth" in result
+        assert "auth.py" in result
+
+    def test_handles_missing_optional_fields(self) -> None:
+        context = {
+            "test_output": "3 failed",
+            "task_context": "Adding tests",
+        }
+        result = build_diagnosis_message(context)
+        assert "3 failed" in result
+        assert "Recent Changes" not in result
+
+    def test_handles_empty_context(self) -> None:
+        result = build_diagnosis_message({})
+        assert "N/A" in result
+
+
+# ── build_debugging_message ──────────────────────────────────────
+
+class TestBuildDebuggingMessage:
+    def test_includes_bug_and_hypotheses(self) -> None:
+        context = {
+            "bug_description": "Login returns 500 on special characters",
+            "reproduction_steps": "1. Enter 'user@test' 2. Click login",
+            "current_hypotheses": "H1: SQL injection in login query",
+        }
+        result = build_debugging_message(context)
+        assert "Login returns 500" in result
+        assert "Enter 'user@test'" in result
+        assert "H1: SQL injection" in result
+
+    def test_handles_missing_optional_fields(self) -> None:
+        context = {
+            "bug_description": "App crashes on startup",
+        }
+        result = build_debugging_message(context)
+        assert "App crashes" in result
+        assert "Reproduction" not in result
+
+    def test_handles_empty_context(self) -> None:
+        result = build_debugging_message({})
+        assert "N/A" in result
+
+
+# ── MESSAGE_BUILDERS dict ────────────────────────────────────────
+
+class TestMessageBuilders:
+    def test_has_all_modes(self) -> None:
+        assert set(MESSAGE_BUILDERS.keys()) == {"planning", "code-review", "diagnosis", "debugging"}
+
+    def test_planning_maps_to_original_builder(self) -> None:
+        assert MESSAGE_BUILDERS["planning"] is build_user_message
+
+    def test_code_review_maps_to_correct_builder(self) -> None:
+        assert MESSAGE_BUILDERS["code-review"] is build_code_review_message
+
+    def test_diagnosis_maps_to_correct_builder(self) -> None:
+        assert MESSAGE_BUILDERS["diagnosis"] is build_diagnosis_message
+
+    def test_debugging_maps_to_correct_builder(self) -> None:
+        assert MESSAGE_BUILDERS["debugging"] is build_debugging_message
+
+
+# ── CLI --mode flag ──────────────────────────────────────────────
+
+class TestCLIMode:
+    def test_help_shows_mode_flag(self) -> None:
+        result = subprocess.run(
+            [sys.executable, "tools/second_opinion.py", "--help"],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).parent.parent),
+        )
+        assert result.returncode == 0
+        assert "--mode" in result.stdout
+        assert "code-review" in result.stdout
+        assert "diagnosis" in result.stdout
+        assert "debugging" in result.stdout
+
+    def test_invalid_mode_exits_nonzero(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "tools/second_opinion.py",
+                "--mode",
+                "invalid",
+                "--context-file",
+                "dummy.json",
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).parent.parent),
+        )
+        assert result.returncode != 0

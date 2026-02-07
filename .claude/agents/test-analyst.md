@@ -42,6 +42,7 @@ The parent agent invokes you when:
 | `test_command` | Yes | -- |
 | `task_context` | Yes | -- |
 | `recent_changes` | No | Default: analyze all failures without change correlation |
+| `external_diagnoses` | No | If absent, diagnose independently. If present, validate external LLM categorizations against your own analysis and flag disagreements. |
 
 If a required input is missing, return: "Cannot analyze -- missing {input}."
 
@@ -105,7 +106,18 @@ Root cause: {analysis — which changed file likely caused this}
 - **ENV_ISSUE** — Missing dependency, DB not running, port conflict
 - **FLAKY** — Passes on re-run (timing, ordering, randomness)
 
-### 3. Cross-Reference Reflexion
+### 3. External Diagnosis Integration (if `external_diagnoses` provided)
+
+If `external_diagnoses` is present, review the external LLM diagnoses
+(GPT, Gemini) BEFORE proceeding to reflexion:
+
+- Compare each external categorization against your own from step 2
+- **Agree**: "Confirmed: {provider} also categorizes {test} as {category}"
+- **Disagree**: "Disagreement: {provider} says {category}, I say {other_category} — {reason}"
+- **New insight**: Note findings the external LLMs caught that you missed
+- Add validated external findings to your priority order
+
+### 4. Cross-Reference Reflexion
 
 Search `.workflow/reflexion/index.json` `.entries[]` for matching entries
 by filtering on `tags` — do not read the entire index into context.
@@ -121,7 +133,7 @@ What happened: {what_happened}
 Lesson: {lesson}
 ```
 
-### 4. Coverage Analysis (if requested)
+### 5. Coverage Analysis (if requested)
 
 ```bash
 pytest --cov={module} --cov-report=term-missing -q 2>&1

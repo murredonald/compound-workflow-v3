@@ -19,5 +19,10 @@
     "enabled": true,
     "answers_per_advisor": 3,
     "description": "Each advisor produces N orthogonal perspectives per question set. Orthogonal = genuinely different angles, NOT forced contrarian. Set enabled: false to revert to single-answer mode."
+  },
+  "multi_llm_review": {
+    "enabled": true,
+    "contexts": ["code-review", "diagnosis", "debugging"],
+    "description": "Extend multi-LLM advisory beyond planning into code review, test diagnosis, and debugging. External LLMs review first, findings fed into Claude primary reviewer for consolidation."
   }
 }

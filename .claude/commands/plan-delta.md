@@ -108,6 +108,11 @@ your impact analysis as `specialist_analysis` and `questions` to the
 advisors. Present advisory perspectives in labeled boxes after your
 questions, so the user sees both before answering.
 
+**CRITICAL: Show ALL advisory outputs VERBATIM.** Display every enabled
+advisor's complete, unedited response in its own labeled box. Do NOT
+summarize, synthesize, cherry-pick, or paraphrase. The user must see
+the raw advisor perspectives to make an informed decision.
+
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = domain of the change (e.g., "backend", "frontend") for this command.
 

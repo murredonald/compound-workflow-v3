@@ -39,21 +39,33 @@ Also read the `diversity` section — if `diversity.enabled` is true, set
 
 ## Present Results
 
-Display all enabled perspectives in labeled boxes:
+Display ALL enabled perspectives **VERBATIM and UNEDITED** in labeled boxes:
 
 ```
 +-- Claude Opus Perspective ------------------------------------+
-|  {claude advisor output}                                      |
+|  {claude advisor output — COMPLETE, UNEDITED}                 |
 +---------------------------------------------------------------+
 
 +-- GPT Perspective --------------------------------------------+
-|  {gpt output}                                                 |
+|  {gpt output — COMPLETE, UNEDITED}                            |
 +---------------------------------------------------------------+
 
 +-- Gemini Perspective -----------------------------------------+
-|  {gemini output}                                              |
+|  {gemini output — COMPLETE, UNEDITED}                         |
 +---------------------------------------------------------------+
 ```
+
+### Anti-Patterns — DO NOT DO THESE
+
+- **Do NOT summarize** — show every word the advisor returned
+- **Do NOT synthesize** — do not merge or combine multiple advisor outputs
+- **Do NOT cherry-pick** — do not select only the parts you agree with
+- **Do NOT paraphrase** — use the advisor's exact words, not your rephrasing
+- **Do NOT editorialize** — do not add commentary between or within advisor outputs
+- **Do NOT omit** — if an advisor returned output, the user must see ALL of it
+
+The user needs the raw, unfiltered perspectives to make an informed decision.
+Presenting only selected fragments defeats the purpose of multi-LLM diversity.
 
 **IMPORTANT: Do NOT adopt or agree with advisory suggestions. Present them
 neutrally and wait for the user's answer. You are the specialist/planner —

@@ -176,6 +176,11 @@ as `specialist_analysis` and `questions` to the advisors. Present the
 advisory perspectives in labeled boxes after your questions, so the user
 sees both your questions and the advisors' takes before answering.
 
+**CRITICAL: Show ALL advisory outputs VERBATIM.** Display every enabled
+advisor's complete, unedited response in its own labeled box. Do NOT
+summarize, synthesize, cherry-pick, or paraphrase. The user must see
+the raw advisor perspectives to make an informed decision.
+
 ### 6. Stage Gate
 What must be clarified before advancing.
 

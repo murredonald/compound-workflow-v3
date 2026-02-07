@@ -98,18 +98,27 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 2. Planner or specialist formulates questions for user
 3. Automatically invoke all enabled advisors in parallel: Claude Opus subagent + GPT + Gemini (via `.claude/tools/second_opinion.py --provider openai|gemini`)
 4. When `diversity.enabled` is true, each advisor produces N orthogonal perspectives per question (not forced contrarian — genuinely different angles). Pass `--answers N` to `second_opinion.py` and `diversity_mode`/`answers_count` to Claude subagent.
-5. Present all enabled advisory perspectives in labeled boxes
+5. Present ALL enabled advisory perspectives VERBATIM in labeled boxes — do NOT summarize, cherry-pick, or paraphrase
 6. Do NOT adopt or agree with advisory suggestions — present neutrally, wait for user's answer
 7. GPT requires `OPENAI_API_KEY` in `.claude/.env`, Gemini requires `GEMINI_API_KEY` — each fails gracefully if missing
 8. User can say "skip advisory" or "no advisory" to disable for the rest of the session
 
+**Multi-LLM review system (inside /execute, /debug-session, and test-analyst):**
+- Controlled by `multi_llm_review` section in `advisory-config.json` (`enabled`, `contexts[]`)
+- `second_opinion.py` supports 4 modes: `planning` (default), `code-review`, `diagnosis`, `debugging`
+- Feed-forward architecture: external LLMs review first → findings fed INTO Claude primary reviewer → unified verdict
+- Code review: GPT + Gemini review diff → findings passed as `external_review_findings` to `code-reviewer`
+- Test diagnosis: GPT + Gemini diagnose failures → findings passed as `external_diagnoses` to `test-analyst`
+- Debugging: Claude hypothesizes first → GPT + Gemini propose alternatives → Claude merges & re-ranks
+
 **Review gate (inside /execute):**
 1. Implement task
-2. Run `code-reviewer` (always) + `security-auditor` (always)
-3. Record each reviewer's input/output in the audit chain (`python .claude/tools/chain_manager.py record`)
-4. If PASS → commit. If FAIL with fixable issues → fix and re-review (max 3 cycles). If FAIL with unfixable → escalate to human.
-5. At milestone boundaries → run `milestone-reviewer` for integration test cascade.
-6. After ALL tasks complete (end-of-queue) → run `qa-browser-tester` (if web UI) + `style-guide-auditor` (if style-guide.md exists). Findings go to `observations.md` → `/intake` → `/plan-delta`.
+2. If `multi_llm_review.enabled` and `"code-review"` in contexts: run GPT + Gemini external code review on diff (Phase 1)
+3. Run `code-reviewer` (always, with `external_review_findings` if Phase 1 ran) + `security-auditor` (always)
+4. Record each reviewer's input/output in the audit chain (`python .claude/tools/chain_manager.py record`)
+5. If PASS → commit. If FAIL with fixable issues → fix and re-review (max 3 cycles). If FAIL with unfixable → escalate to human.
+6. At milestone boundaries → run `milestone-reviewer` for integration test cascade.
+7. After ALL tasks complete (end-of-queue) → run `qa-browser-tester` (if web UI) + `style-guide-auditor` (if style-guide.md exists). Findings go to `observations.md` → `/intake` → `/plan-delta`.
 
 ## State Files
 

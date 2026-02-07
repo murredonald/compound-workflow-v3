@@ -57,19 +57,19 @@ class TestLoadEnv:
     def test_openai_key_format(self, tmp_path: Path) -> None:
         env_file = tmp_path / ".env"
         env_file.write_text(
-            "OPENAI_API_KEY=sk-proj-abc123def456\n", encoding="utf-8"
+            "OPENAI_API_KEY=test-openai-key-placeholder\n", encoding="utf-8"
         )
         result = load_env(env_file)
-        assert result["OPENAI_API_KEY"] == "sk-proj-abc123def456"
+        assert result["OPENAI_API_KEY"] == "test-openai-key-placeholder"
 
     def test_gemini_key_format(self, tmp_path: Path) -> None:
         env_file = tmp_path / ".env"
         env_file.write_text(
-            "GEMINI_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
+            "GEMINI_API_KEY=test-gemini-key-placeholder\n",
             encoding="utf-8",
         )
         result = load_env(env_file)
-        assert result["GEMINI_API_KEY"] == "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        assert result["GEMINI_API_KEY"] == "test-gemini-key-placeholder"
 
 
 # ── build_user_message ───────────────────────────────────────────
@@ -168,24 +168,24 @@ class TestGetSystemPrompt:
 
 class TestResolveApiKey:
     def test_resolves_openai_from_env_vars(self) -> None:
-        env_vars = {"OPENAI_API_KEY": "sk-test-123"}
+        env_vars = {"OPENAI_API_KEY": "test-openai-key-123"}
         result = resolve_api_key("openai", env_vars)
-        assert result == "sk-test-123"
+        assert result == "test-openai-key-123"
 
     def test_resolves_gemini_from_env_vars(self) -> None:
-        env_vars = {"GEMINI_API_KEY": "AIza-test-456"}
+        env_vars = {"GEMINI_API_KEY": "test-gemini-key-456"}
         result = resolve_api_key("gemini", env_vars)
-        assert result == "AIza-test-456"
+        assert result == "test-gemini-key-456"
 
-    @patch.dict("os.environ", {"OPENAI_API_KEY": "sk-from-os"}, clear=False)
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "test-openai-from-os"}, clear=False)
     def test_falls_back_to_os_environ(self) -> None:
         result = resolve_api_key("openai", {})
-        assert result == "sk-from-os"
+        assert result == "test-openai-from-os"
 
-    @patch.dict("os.environ", {"GEMINI_API_KEY": "AIza-from-os"}, clear=False)
+    @patch.dict("os.environ", {"GEMINI_API_KEY": "test-gemini-from-os"}, clear=False)
     def test_falls_back_to_os_environ_gemini(self) -> None:
         result = resolve_api_key("gemini", {})
-        assert result == "AIza-from-os"
+        assert result == "test-gemini-from-os"
 
     @patch.dict("os.environ", {}, clear=True)
     def test_missing_key_exits(self) -> None:

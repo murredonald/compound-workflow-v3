@@ -268,6 +268,16 @@ def call_openai(
 
     prompt = system_prompt if system_prompt is not None else SYSTEM_PROMPT_SINGLE
     client = OpenAI(api_key=api_key, timeout=timeout)
+    # Newer models (gpt-4.1+, gpt-5+, o-series) use max_completion_tokens
+    # Older models (gpt-4o, gpt-4-turbo) use max_tokens
+    newer_model = any(
+        model.startswith(p) for p in ("gpt-4.1", "gpt-5", "o1", "o3", "o4")
+    )
+    token_param = (
+        {"max_completion_tokens": 4000}
+        if newer_model
+        else {"max_tokens": 4000}
+    )
     response = client.chat.completions.create(
         model=model,
         messages=[
@@ -275,7 +285,7 @@ def call_openai(
             {"role": "user", "content": user_message},
         ],
         temperature=0.7,
-        max_tokens=4000,
+        **token_param,
     )
     content = response.choices[0].message.content
     if content is None:

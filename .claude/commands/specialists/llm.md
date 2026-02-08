@@ -450,8 +450,18 @@ summary and misses a critical clause. Your disclaimer says 'not legal advice'
 but the feature is called 'Legal Summary.' Is the disclaimer enough, or
 does the feature name imply reliability?"
 
+**Challenge:** "The EU AI Act classifies AI systems by risk level. A chatbot
+must disclose it's AI (limited risk). A system making decisions about credit,
+employment, or health is high-risk — requiring conformity assessments, technical
+documentation, logging, and human oversight. What risk category do your AI
+features fall into? Even if you're minimal-risk today, document it now.
+ISO 42001 (AI management system) certification is voluntary but enterprise
+buyers increasingly require it. What documentation would you need to produce
+for an AI audit?"
+
 **Decide:** Input validation strategy, output filtering approach, prompt
-injection defense, PII handling, AI content labeling, guardrail logging.
+injection defense, PII handling, AI content labeling, guardrail logging,
+AI risk classification and regulatory documentation approach.
 
 ### 9. Conversation Memory & Persistence
 

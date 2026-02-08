@@ -313,9 +313,16 @@ answer has different compliance implications."
 deletion under GDPR. Is the data 'deleted' if it's still in a backup that
 could be restored? What's your crypto-shredding strategy?"
 
+**Challenge:** "A user wants to leave your platform and take their data.
+GDPR Article 20 requires data portability in a 'structured, commonly used,
+machine-readable format.' The EU Data Act extends this with a 30-day
+deadline. Do you have a bulk export endpoint that dumps a user's data as
+JSON/CSV? Or will every export request be a manual support ticket? Design
+the export API now — it gets harder after a year of schema evolution."
+
 **Decide:** Data classification scheme, retention periods per type, deletion
 method per type, right-to-deletion workflow, backup purge policy, third-party
-propagation list.
+propagation list, data export format and API.
 
 ## Anti-Patterns
 

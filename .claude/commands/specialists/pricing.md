@@ -343,8 +343,15 @@ Custom terms:
 Who handles enterprise inquiries? What's the response time commitment?
 A 'Contact us' that gets a reply in 5 days loses the deal."
 
+**Challenge:** "An enterprise customer asks: 'What happens when we leave?'
+Your pricing page is silent on off-boarding. Can they export all their data?
+In what format? Within what timeline? Are there exit fees or data
+destruction commitments? Procurement teams check for vendor lock-in before
+signing. A clear exit clause actually increases sign-up confidence. Define
+the off-boarding terms, data transition SLA, and any exit fees."
+
 **Decide:** Enterprise tier existence, minimum deal size, enterprise-only features,
-self-serve vs sales-assisted, volume discount structure.
+self-serve vs sales-assisted, volume discount structure, vendor exit terms.
 
 ### 7. Payment Infrastructure & Revenue Operations
 

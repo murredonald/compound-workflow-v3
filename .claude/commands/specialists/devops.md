@@ -262,6 +262,18 @@ SLO TARGETS:
 Your RTO is 1 hour but your DB restore takes 2 hours. The math doesn't
 work. Fix it or lower the SLO."
 
+**Challenge:** "You run daily backups. When was the last time you restored
+one? Untested backups are Schrödinger's backups — working and broken until
+you try. Define a restore testing cadence (monthly minimum) and verify
+restore time fits within your RTO. Also: where are backups stored? If
+they're in the same region as production, a regional outage takes out both."
+
+**Challenge:** "Your entire infrastructure runs in one region. AWS us-east-1
+has had multi-hour outages. If your region goes down, what happens? If your
+RPO and RTO matter, define a secondary region, a replication strategy (async
+vs sync), and a failover runbook. If single-region is a conscious choice,
+document the accepted risk and the manual recovery procedure."
+
 ### 6. Incident Response & Operational Readiness
 
 Define how the team responds when production breaks:

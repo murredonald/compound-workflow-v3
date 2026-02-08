@@ -165,8 +165,16 @@ legal basis for each. 'Consent' for marketing emails, 'legitimate interest'
 for security logs, 'contract' for account creation. Have you mapped every
 data point to a legal basis?"
 
+**Challenge:** "GDPR Article 20 gives users the right to receive their data
+in a 'structured, commonly used, machine-readable format' and transmit it
+to another controller. The EU Data Act adds a 30-day deadline. Do you have
+a data portability plan? What format (JSON, CSV, API)? Does the backend
+have an export endpoint, or is this a manual process? If manual, you'll
+miss the 30-day deadline at scale."
+
 **Decide:** Privacy policy scope, legal basis per data type, retention
-schedule, sub-processor management approach, cookie consent mechanism.
+schedule, sub-processor management approach, cookie consent mechanism,
+data portability format and process.
 
 **Cross-reference with Security:** If SEC-XX decisions include data retention periods
 or PII handling rules, check for conflicts. If a LEGAL-XX decision requires a DIFFERENT
@@ -211,8 +219,15 @@ re-consent. What's your notification mechanism?"
 **Challenge:** "A user deletes their account. What happens to their data?
 Your ToS says one thing, your privacy policy says another. They must align."
 
+**Challenge:** "A customer wants to leave. Your ToS is silent on off-boarding.
+What data do they get back? In what format? Within what timeline? Are there
+exit fees? What about data they created on-platform — is it locked in your
+proprietary format? Enterprise customers will ask for exit clauses before
+signing. Define the vendor exit terms now, not when a customer threatens to churn."
+
 **Decide:** Governing law jurisdiction, dispute resolution mechanism,
-liability cap approach, content ownership model, termination policy.
+liability cap approach, content ownership model, termination policy,
+vendor exit / off-boarding terms.
 
 ### 3. Regulatory Compliance Requirements
 
@@ -240,6 +255,8 @@ Identify all applicable regulations and map compliance requirements:
 - ADA/WCAG (accessibility as legal requirement)
 - CAN-SPAM / CASL (email marketing)
 - Electronic signatures (ESIGN, eIDAS)
+- EU AI Act (if AI/LLM features — risk classification, transparency, documentation)
+- ISO 42001 (AI management system — voluntary but increasingly expected)
 
 **Output — compliance matrix:**
 ```
@@ -252,8 +269,18 @@ Deadline/trigger: {when compliance must be achieved}
 Risk of non-compliance: {fines, lawsuits, reputational}
 ```
 
+**Challenge:** "Your product uses AI features. Under the EU AI Act, AI
+systems are classified by risk level (unacceptable, high, limited, minimal).
+High-risk systems require conformity assessments, technical documentation,
+human oversight, and registration in the EU database. Even limited-risk
+systems (chatbots) must disclose that users are interacting with AI.
+What risk category does your AI feature fall into? ISO 42001 (AI management
+system) isn't mandatory yet, but enterprise customers increasingly ask for it.
+Have you mapped your AI features to risk categories?"
+
 **Decide:** Which regulations apply, compliance implementation approach,
-DPO appointment, DPIA requirement, breach notification procedure.
+DPO appointment, DPIA requirement, breach notification procedure,
+AI risk classification and documentation requirements.
 
 **Deduplication:** If the Security specialist already identified applicable regulations
 in its Gate questions (GDPR, SOC2, HIPAA, PCI-DSS), do NOT re-ask the user. Read the

@@ -100,6 +100,132 @@ python .claude/tools/pipeline_tracker.py complete --phase synthesize --summary "
 
 ---
 
+# Phase 0: Decision Deconfliction
+
+With 16 specialists each producing 5-15 decisions, the total decision set can
+reach 100+ entries. Specialists work in isolation — they see existing decisions
+but cannot anticipate what later specialists will decide. Conflicts are normal
+and expected. **They must be resolved before task generation.**
+
+## When to Run
+
+**Always** for greenfield. For release mode, run only if new specialist decisions
+were added since the last synthesize (check decision IDs against existing tasks).
+
+## Procedure
+
+### Step 1: Load and Index All Decisions
+
+Read `.workflow/decisions.md` in full. Build a mental index by **concern area**:
+
+```
+CONCERN AREAS (cross-cut specialists):
+  Authentication:     SEC-01, BACK-03, ARCH-05, ...
+  Database/storage:   ARCH-02, BACK-03, DATA-01, OPS-04, ...
+  State management:   FRONT-02, FRONT-03, ARCH-04, ...
+  API design:         BACK-01, ARCH-01, FRONT-05, ...
+  Deployment:         OPS-01, OPS-02, ARCH-03, ...
+  Cost/budget:        LLM-05, PRICE-03, OPS-07, ...
+  Logging/observability: BACK-06, OPS-04, SEC-05, ...
+  Data handling/privacy: BACK-08, SEC-04, LEGAL-02, ...
+  Caching:            ARCH-06, BACK-06, FRONT-06, LLM-04, ...
+  Error handling:     ARCH-04, BACK-01, FRONT-03, ...
+```
+
+Any concern area with decisions from 2+ specialists is a **potential conflict zone**.
+
+### Step 2: Detect Conflicts
+
+For each concern area with multi-specialist decisions, check for:
+
+**A) Direct contradictions** — Two decisions specify incompatible approaches:
+```
+CONFLICT: DIRECT CONTRADICTION
+  SEC-03: "Encrypt all financial values at rest using AES-256"
+  BACK-04: "Store monetary values as plain Decimal in PostgreSQL"
+  Impact: Cannot satisfy both — encrypted values can't be queried as Decimals
+```
+
+**B) Implementation tension** — Decisions pull in different directions:
+```
+CONFLICT: IMPLEMENTATION TENSION
+  ARCH-01: "Monolith with modular boundaries"
+  BACK-05: "Payment processing as separate microservice"
+  Impact: Microservice contradicts monolith decision. Intentional carve-out or error?
+```
+
+**C) Resource/budget conflicts** — Decisions make incompatible resource assumptions:
+```
+CONFLICT: BUDGET CONFLICT
+  LLM-05: "$500/month LLM budget, rate limit free tier to 20 calls/day"
+  PRICE-03: "Unlimited AI features on all tiers"
+  Impact: Unlimited + budget cap = contradiction. One must yield.
+```
+
+**D) Overlapping ownership** — Two decisions define the same thing differently:
+```
+CONFLICT: OVERLAPPING OWNERSHIP
+  BACK-06: "Structured JSON logging via Python structlog"
+  OPS-04: "Structured JSON logging via Datadog agent, not application-level"
+  Impact: Two logging strategies. Which is source of truth?
+```
+
+**E) Implicit dependency gaps** — Decision A assumes something Decision B doesn't provide:
+```
+CONFLICT: IMPLICIT DEPENDENCY
+  FRONT-08: "i18n via next-intl with locale prefix routing /en/, /fr/"
+  BACK-01: "REST API with no locale awareness"
+  Impact: Frontend expects localized content, backend doesn't serve it.
+```
+
+### Step 3: Present Conflicts
+
+If conflicts are found, present them **before** generating the task queue:
+
+```
+═══════════════════════════════════════════════════════════════
+DECISION DECONFLICTION — {N} conflicts found across {N} decisions
+═══════════════════════════════════════════════════════════════
+
+CONFLICT 1: {type} — {one-line summary}
+  Decision A: {ID}: {text}
+  Decision B: {ID}: {text}
+  Impact: {what breaks if both are implemented as-is}
+  Options:
+    A) Amend {ID} to {proposed change}
+    B) Amend {ID} to {proposed change}
+    C) Both are intentional — add clarification note
+
+CONFLICT 2: ...
+═══════════════════════════════════════════════════════════════
+```
+
+**STOP and WAIT for user to resolve each conflict.**
+
+### Step 4: Apply Resolutions
+
+For each resolved conflict:
+1. Update the affected decision(s) in `.workflow/decisions.md`
+2. Add a resolution note: `[Deconflicted with {other ID}: {brief explanation}]`
+3. If a decision is amended, mark it: `{ID} (amended): {new text}`
+
+### Step 5: Record Deconfliction
+
+```bash
+python .claude/tools/chain_manager.py record \
+  --task SYNTH --pipeline synthesize --stage deconfliction --agent synthesizer \
+  --input-file {temp_all_decisions} --output-file {temp_resolutions} \
+  --description "Decision deconfliction: {N} conflicts found, {N} resolved" \
+  --metadata '{"conflicts_found": {N}, "conflicts_resolved": {N}, "decisions_amended": ["SEC-03", "BACK-04"]}'
+```
+
+If zero conflicts are found, skip step 3-5 and note:
+```
+Decision deconfliction: {N} decisions across {N} specialists — no conflicts detected.
+```
+
+---
+
 # Phase 1: Generate Task Queue
 
 ## Entry Validation
@@ -416,16 +542,23 @@ python .claude/tools/chain_manager.py record \
 ## Validation Loop
 
 ```
-Generate task queue
+Phase 0: Deconflict decisions
        │
-       ▼
-Run all 8 checks
+       ├─ Conflicts → Present, wait for resolution, amend decisions
        │
-       ├─ All pass → Present to user
-       │
-       ├─ Fixable issues → Fix, re-validate (max 3 cycles)
-       │
-       └─ Escalations → Present to user, wait, re-validate
+       └─ No conflicts (or all resolved)
+              │
+              ▼
+       Phase 1: Generate task queue
+              │
+              ▼
+       Phase 2: Run all 8 checks
+              │
+              ├─ All pass → Present to user
+              │
+              ├─ Fixable issues → Fix, re-validate (max 3 cycles)
+              │
+              └─ Escalations → Present to user, wait, re-validate
 ```
 
 ---

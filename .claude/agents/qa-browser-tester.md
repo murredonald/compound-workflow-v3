@@ -100,7 +100,7 @@ Replace with `[REDACTED]`. Never reproduce credentials or personal data in findi
 
 When invoked with `reverify_mode: true` and `targeted_routes: ["/route1", "/route2"]`:
 - Run ONLY Phases 1-4 (Discovery, Smoke, Interactive, User Journey) on the listed routes
-- Skip Phases 5-7 (full missing functionality audit, edge cases, requirements cross-check)
+- Skip Phases 5-8 (full missing functionality audit, edge cases, visual anti-pattern scan, requirements cross-check)
 - Focus on verifying that previously-reported findings are now resolved
 - Report any NEW issues found on these pages (new findings, not the originals)
 - Note "RE-VERIFICATION" in the report header
@@ -684,7 +684,7 @@ them into CRs and `/plan-delta` to plan fixes as patches or bug fixes.
 ## Rules
 
 - Do NOT review source code — only interact with the running application
-- Do NOT skip phases — run all 7 in order, even if early phases find many issues
+- Do NOT skip phases — run all 8 in order, even if early phases find many issues
 - Do NOT mark something as PASS without actually testing it
 - Do NOT assume features work because they exist — click everything, submit everything
 - Do NOT invent requirements not in the inputs — test against UIX-XX, TEST-XX, spec, and universal patterns

@@ -153,7 +153,7 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 **Review gate (inside /execute):**
 1. Implement task
 2. If `multi_llm_review.enabled` and `"code-review"` in contexts: run GPT + Gemini external code review on diff (Phase 1)
-3. Run `code-reviewer` (always, with `external_review_findings` if Phase 1 ran) + `security-auditor` (always)
+3. Run `code-reviewer` (always, with `external_review_findings` if Phase 1 ran) + `security-auditor` (conditional: tasks touching auth, data, APIs, secrets, financial logic)
 4. Record each reviewer's input/output in the audit chain (`python .claude/tools/chain_manager.py record`)
 5. If PASS → commit. If FAIL with fixable issues → fix and re-review (max 3 cycles). If FAIL with unfixable → escalate to human.
 6. At milestone boundaries → run `milestone-reviewer` for integration test cascade.

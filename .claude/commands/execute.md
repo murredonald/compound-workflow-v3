@@ -93,12 +93,21 @@ Read before starting:
 - `.claude/execution-config.json` — Execution behavior settings (read FIRST, validate — see Config Validation)
 - `.workflow/task-queue.md` — The validated task queue
 - `.workflow/decisions.md` — Decisions to comply with
+- `.workflow/decision-index.md` — Concern-area index (for cross-referencing during implementation)
 - `.workflow/constraints.md` — Boundaries and limits
+- `.workflow/project-spec.md` — Project specification (needed for milestone-reviewer and QA agent excerpts)
+- `.workflow/domain-knowledge.md` — Domain glossary and business rules (if exists — prevents implementation misunderstandings)
+- `.workflow/competition-analysis.md` — Competition feature matrix (if exists — for QA browser tester context)
+- `.workflow/backlog.md` — Change requests (if exists — for CR auto-resolution in release mode)
 - `.workflow/reflexion/index.json` — Past reflections (surface matching ones)
 - `.workflow/reflexion/process-learnings.md` — Process/workflow lessons (read once at session start)
 - `.workflow/deferred-findings.md` — Deferred audit findings (check for overlap with current task)
 - `.workflow/evals/task-evals.json` — Task metrics log
 - `.workflow/pipeline-status.json` — Pipeline progress (for session recovery and progress awareness)
+
+**Context discipline:** Do NOT load all inputs into context at once. Read
+`execution-config.json` + `task-queue.md` (current task block only) + `decisions.md`
+(referenced IDs only) at start. Load other files on demand as specific tasks need them.
 
 **Session start chain integrity check:** On the first task of each session, run:
 ```bash
@@ -174,6 +183,7 @@ TASK: T{NN} — {Title}
 MILESTONE: M{N}
 ═══════════════════════════════════════════════════════════════
 
+Goal: {from task's **Goal:** field — what's true when done}
 Approach: {1-2 sentences on how you'll implement this}
 
 Files to create:
@@ -217,6 +227,15 @@ Write the code. Follow these rules:
   scope-guard hook will warn automatically, but catching drift early saves time.
 - **Write tests alongside implementation**, not after. If the task has a
   verification command, make sure it passes.
+- **Available agents during implementation:**
+  - `context-loader` (haiku) — Use when you need to summarize a large file
+    before loading it. Keeps context lean.
+  - `research-scout` (sonnet) — Use when you encounter unfamiliar APIs,
+    libraries, or need external documentation. Don't guess — research.
+- **Lint auto-format awareness.** The `lint-format.sh` hook runs after every
+  file edit and may auto-modify files (ruff fix/format, prettier, eslint fix).
+  If `scope-guard.sh` warns about a file you didn't intend to touch, check
+  whether it was modified by lint auto-formatting — that's benign, not scope creep.
 
 ## Step 4: SELF-VERIFY
 
@@ -228,11 +247,19 @@ Run the verification command from the task definition:
 
 Also run:
 - Lint/format (hooks handle this, but verify no issues)
-- Type check on changed files
+- Type check (note: `type-check.sh` runs `mypy .` on the full project, not just changed files — pre-existing type errors in unrelated code are not your problem)
 - Existing test suite (make sure nothing broke)
 
-**If verification fails:** Fix and re-run. Do not proceed to review
-with failing tests.
+**If verification fails**, classify the failure before acting:
+
+| Failure class | Symptoms | Action |
+|---|---|---|
+| **Environment/tooling** | Import errors, missing deps, PATH issues, network timeouts | Fix environment (reinstall deps, clear cache). Do not modify product code. |
+| **Flaky test** | Passes on re-run without changes, non-deterministic | Re-run once. If passes, log in reflection as flaky test. If fails again, treat as real. |
+| **Deterministic code defect** | Consistent failure tied to your changes | Fix the code and re-verify. |
+| **Pre-existing failure** | Test was already failing before this task (check `git stash && pytest && git stash pop`) | Not your bug. Note it in reflection, proceed to review. |
+
+Do not proceed to review with failing tests (except pre-existing failures).
 
 **External Test Diagnosis (conditional — multi-LLM feed-forward):**
 
@@ -267,7 +294,8 @@ Use `--verdict FAIL` if verification failed. Omit `--verdict` if unclear.
 ## Step 5: REVIEW
 
 Delegate to subagent reviewers by loading their personas from `.claude/agents/`.
-Always run both `code-reviewer` and `security-auditor`.
+Always run `code-reviewer`. Run `security-auditor` when the task touches
+auth, data, APIs, secrets, or financial logic (see conditional rules below).
 
 ### Agent delegation procedure
 
@@ -334,10 +362,16 @@ Provide:
 - `verification_output`: The console output from Step 4 (proof it runs)
 - `external_review_findings`: (if Phase 1 ran) The raw, unedited GPT and Gemini code review outputs from Phase 1. Format: `"GPT: {output}\n\nGemini: {output}"`. If Phase 1 didn't run or both failed, omit this field.
 
-### security-auditor (always)
+### security-auditor (conditional — auth, data, APIs, secrets, financial)
 Load persona: `.claude/agents/security-auditor.md`
 
+**Run when** the task touches: authentication/authorization, user data or PII,
+API endpoints, secrets/config, file system operations, or financial logic.
+**Skip** for pure CSS/style tasks, documentation-only tasks, test data fixtures,
+and scaffolding with no business logic.
+
 Provide:
+- `task_id`: T{NN} (or DF-{NN} / QA-{NN})
 - `changed_files`: files to review
 - `task_context`: what the task does
 - `constraints`: security-relevant constraints
@@ -345,16 +379,18 @@ Provide:
 ### frontend-style-reviewer (conditional)
 
 If the current task touches CSS, style, or UI files (`.css`, `.scss`, `.tsx`/`.jsx`
-with style changes, Tailwind classes, design tokens), also run:
+with style changes, classes, design tokens), also run:
 
 Load persona: `.claude/agents/frontend-style-reviewer.md`
 
 Provide:
 - `changed_files`: CSS/style files modified
 - `task_context`: what the task does (UI-relevant parts)
-- `design_tokens`: reference to design system if any
+- `design_tokens`: content of `.workflow/style-guide.md` if it exists; if no
+  style guide exists, pass `"No style guide — use internal consistency checks"`
+  (the agent has a fallback mode for this case)
 
-Run **in parallel** with code-reviewer and security-auditor.
+Run **in parallel** with code-reviewer and security-auditor (when applicable).
 
 ### Audit trail for reviews
 
@@ -489,6 +525,20 @@ Then push to remote (soft failure — don't block the loop):
 git push 2>&1 || echo "⚠️ Push failed — will retry on next commit."
 ```
 
+### Rollback (when milestone review requires reverting a task)
+
+If a milestone review identifies that a previously committed task caused
+integration failures and the fix requires reverting that task's changes:
+
+1. `git revert {commit_sha}` — creates a new revert commit (preserves history)
+2. Mark the reverted task as `[ ] T{NN}` again in task-queue.md (re-pending)
+3. Log a reflection explaining why the task was reverted
+4. The task re-enters the queue and will be picked up again with the new context
+
+**Never use `git reset --hard` or force-push** to undo committed work. Revert
+commits preserve history and are safe for shared branches. Escalate to user
+before any destructive git operation.
+
 Show stderr so failures are diagnosable. On first push, use `git push -u origin {branch}` to set upstream tracking.
 
 The pre-commit-gate hook will run automatically:
@@ -560,6 +610,7 @@ IF current task is the last in a milestone:
 
 IF all tasks complete:
   → Run End-of-Queue Verification & Fix Pass (see below)
+  → For evolution releases: /release (tag, close CRs, release notes)
   → Then /retro
 ```
 
@@ -1042,12 +1093,19 @@ Options:
 
 ## Session Recovery
 
-If context compacts mid-task, the on-compact hook re-injects:
-- Current task ID and state
-- Recent reflections
+If context compacts mid-task, the `on-compact.sh` hook re-injects these signals:
+
+1. **Active task or QA fix** — `[~]` marker from task-queue.md or qa-fixes.md (with 8 lines of context)
+2. **Next pending task** — first `[ ]` in task-queue.md (if no active task)
+3. **Pipeline progress** — current phase, completed/total phases from pipeline-status.json
+4. **Last 3 reflections** — recent lessons from reflexion/index.json
+5. **Last chain entry** — sequence number, task, stage, agent, verdict
+6. **Multi-LLM review status** — whether external reviews are enabled and which contexts
+7. **Advisory skip state** — whether user disabled advisories (not relevant during execute, but injected)
+8. **Specialist session** — if specialist-session.json exists, specialist takes priority (not relevant during execute)
 
 After compaction or session restart:
-1. Read the injected state from on-compact
+1. Read the injected state from on-compact — it provides the immediate context
 2. Read `.workflow/pipeline-status.json` if it exists — check `current_phase` and
    the execute phase's nested progress (last completed milestone/task) to confirm
    where you left off. This is more reliable than scanning task-queue.md alone.
@@ -1055,15 +1113,17 @@ After compaction or session restart:
    mid-QA-fix-pass. Resume that QA-{NN} fix (not the main task queue).
 4. Find the `[~]` task in task-queue.md — read only that block
 5. If no `[~]` found in either file, find the first `[ ]` task (next pending)
-5. If unclear, check the last few entries in task-evals.json to find
+6. If unclear, check the last few entries in task-evals.json to find
    the last completed task and resume from the next one
-6. Cross-reference steps 2-5: pipeline-status, task-queue markers, and evals
+7. Cross-reference steps 2-6: pipeline-status, task-queue markers, and evals
    should agree. If they disagree, trust task-queue.md markers as source of truth.
-7. Do NOT re-read the full task queue, decisions, or reflexion files —
+8. Check multi-LLM review status (signal 6) — ensure external reviews continue
+   to run if they were enabled before compaction.
+9. Do NOT re-read the full task queue, decisions, or reflexion files —
    load only what's needed for the current task
-8. Run chain integrity check: `python .claude/tools/chain_manager.py verify`
-   If broken links detected, report them but continue — chain corruption
-   doesn't block execution
+10. Run chain integrity check: `python .claude/tools/chain_manager.py verify`
+    If broken links detected, report them but continue — chain corruption
+    doesn't block execution
 
 ---
 
@@ -1080,6 +1140,12 @@ After compaction or session restart:
 | Skipping milestone review | Integration bugs compound silently |
 | Pausing to ask "Should I continue?" | Config says auto_proceed. The user interrupts if needed. |
 | Ending a turn after showing the plan | Plan display + implementation must be in ONE turn. |
+| Loading full state files into context | Read only the current task block + referenced decisions. Context overflow kills quality. |
+| Retrying external LLMs more than once | One retry on failure, then degrade gracefully. Don't block execution for advisory. |
+| Running chain integrity check every task | Once per session is enough. Repeated checks waste context and time. |
+| Skipping config validation at start | Bad config → wrong pause behavior, wrong deferred action. Validate early. |
+| Amending the previous commit after hook failure | Creates a NEW commit instead. Amending after hook failure destroys the previous task's work. |
+| Retrying the same failing approach 3+ times | Classify the failure type first (env/flake/code/pre-existing). Different root causes need different fixes. |
 
 ---
 
@@ -1087,13 +1153,16 @@ After compaction or session restart:
 
 ```
 Loop:     Load → Plan → Implement → Verify → Review → Address → Reflect → Commit → Eval → Advance
-Review:   code-reviewer (always) + security-auditor (always) + external LLM review (if multi_llm_review enabled)
+Review:   code-reviewer (always) + security-auditor (conditional: auth/data/APIs/secrets) + external LLM review (if multi_llm_review enabled)
+Agents:   context-loader (large files) + research-scout (external docs) available during IMPLEMENT on demand
 Cycles:   Max 3 review cycles per task, max 2 milestone review cycles (with failure memory)
+Failures: Classify first (environment / flaky / deterministic / pre-existing) before fixing
 Reflect:  Only surprises. Tags for searchability.
 Commit:   Hooks enforce quality. Never bypass. If hook blocks 3x on same error → escalate.
+Rollback: git revert (never reset --hard). Re-pending task in queue. Escalate before destructive git ops.
 Push:     After each task commit (soft failure) + after milestone marker.
 Escalate: After max cycles, contradictions, or missing dependencies.
-Resume:   Check pipeline-status.json + task-queue.md markers + task-evals.json (cross-reference).
+Resume:   on-compact injects 8 signals. Cross-ref pipeline-status + task-queue markers + evals.
 Deferred: Missing v1 scope → DF-{NN} in deferred-findings.md → promoted at milestone boundary.
 Prefixes: T{NN} (planned tasks), DF-{NN} (deferred findings), QA-{NN} (QA fix pass) — all execute the same way.
 Verify:   End-of-queue: full test suite (always) + browser QA (FRONT-XX) + style audit (style-guide.md).
@@ -1101,5 +1170,6 @@ QA Fix:   CRITICAL=must-fix, MAJOR=config-driven (fix/defer/ask), MINOR/INFO=aut
 Config:   .claude/execution-config.json — auto_proceed, milestone_pause, deferred_auto_action, runtime_qa_pause, qa_fix_pass.
 Validate: Config validated at start. Bad values → warn user + use safe defaults.
 Chain:    Integrity check once per session (first task). Retry external LLMs once on failure.
+Cleanup:  Temp files from chain entries accumulate. Clean scratchpad between milestones if context is tight.
 No pause: NEVER ask "Should I continue?" — read config, follow it. User interrupts if needed.
 ```

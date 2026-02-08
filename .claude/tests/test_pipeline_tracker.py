@@ -216,10 +216,12 @@ class TestSkipPhase:
         with pytest.raises(SystemExit):
             skip_phase("plan", path=status_file)
 
-    def test_rejects_in_progress_phase(self, status_file: Path, greenfield: dict) -> None:
+    def test_allows_skipping_in_progress_phase(self, status_file: Path, greenfield: dict) -> None:
+        """Skipping an in_progress phase is allowed (e.g., qa-fix-pass started then no must-fix findings)."""
         start_phase("plan", path=status_file)
-        with pytest.raises(SystemExit):
-            skip_phase("plan", path=status_file)
+        result = skip_phase("plan", path=status_file)
+        phase = next(p for p in result["phases"] if p["id"] == "plan")
+        assert phase["status"] == "skipped"
 
 
 # ---------------------------------------------------------------------------

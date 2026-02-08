@@ -195,13 +195,15 @@ def skip_phase(
     if phase is None:
         print(f"Error: phase '{phase_id}' not found in pipeline", file=sys.stderr)
         sys.exit(1)
-    if phase["status"] in ("completed", "in_progress"):
+    if phase["status"] == "completed":
         print(
-            f"Error: phase '{phase_id}' is '{phase['status']}', cannot skip",
+            f"Error: phase '{phase_id}' is 'completed', cannot skip",
             file=sys.stderr,
         )
         sys.exit(1)
 
+    # Allow skipping in_progress phases (e.g., qa-fix-pass started then
+    # determined no must-fix findings exist). Treat as "started but skipped."
     phase["status"] = "skipped"
     if reason:
         phase["summary"] = f"Skipped: {reason}"

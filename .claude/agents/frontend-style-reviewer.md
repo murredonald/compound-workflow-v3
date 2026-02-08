@@ -49,7 +49,7 @@ The parent agent provides:
 |-------|----------|--------------------|
 | `changed_files` | Yes | -- |
 | `task_context` | No | Proceed without -- review style only |
-| `design_tokens` | Yes | If missing, BLOCK with "no style guide available" |
+| `design_tokens` | No | If missing, fall back to internal consistency checks only |
 
 If `changed_files` is missing, BLOCK with: "Cannot review -- no files provided."
 

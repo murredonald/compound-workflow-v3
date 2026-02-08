@@ -20,6 +20,6 @@
     "enabled": true,
     "major_action": "fix",
     "max_cycles": 3,
-    "description": "Controls the end-of-queue verification fix pass. Runs after all tasks complete: full test suite (always) + browser QA (if web UI) + style audit (if style-guide.md). CRITICAL findings always fixed. major_action controls MAJOR findings: 'fix' (fix them), 'defer' (auto-defer to post-v1), 'ask' (ask user per finding). max_cycles = max fix+re-verify cycles (default 3)."
+    "description": "Controls the end-of-queue verification fix pass. Runs after all tasks complete: full test suite (always) + browser QA (if web UI) + style audit (if style-guide.md). CRITICAL findings always fixed. major_action controls MAJOR findings: 'fix' (fix them), 'defer' (auto-defer to post-v1), 'ask' (ask user per finding). max_cycles = max fix-and-reverify cycles (default 3). Cycle counting: cycle 1 = first fix attempt + re-verification; cycle 2 = second fix attempt if new issues found; max_cycles=3 means up to 3 fix attempts total. The initial verification that discovers findings is NOT counted as a cycle."
   }
 }

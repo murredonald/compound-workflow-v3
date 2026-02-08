@@ -94,12 +94,16 @@ For Standard/Major: read thoroughly.
 1. Read source files relevant to the CR(s)
 2. Impact analysis: what existing code does this touch? Which modules?
 3. Decision compatibility: does this conflict with any existing decisions?
-4. Invoke 1-2 relevant existing specialists:
-   - Backend change → `/specialists/backend`
-   - Frontend change → `/specialists/frontend`
-   - Architecture impact → `/specialists/architecture`
-   - Security concern → `/specialists/security`
-   - Data/ML work → `/specialists/data-ml`
+4. Invoke 1-2 relevant existing specialists **in lightweight consultation mode**
+   (2-3 focused questions per specialist, NOT a full deep dive — target ~10 min
+   per specialist to stay within the Standard tier's ~20 min budget):
+   - Backend change → `/specialists/backend` (quick mode)
+   - Frontend change → `/specialists/frontend` (quick mode)
+   - Architecture impact → `/specialists/architecture` (quick mode)
+   - Security concern → `/specialists/security` (quick mode)
+   - Data/ML work → `/specialists/data-ml` (quick mode)
+   Tell the specialist: "This is a plan-delta consultation, not a full deep dive.
+   Focus only on the areas affected by CR-{NNN}. Skip the full focus area sweep."
 5. Formulate 2-4 targeted questions for the user
 
 ### Advisory Perspectives (Standard and Major only — mandatory)

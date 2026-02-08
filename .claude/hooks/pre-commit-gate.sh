@@ -38,6 +38,28 @@ if command -v bandit &>/dev/null && [ -d "src" ]; then
   fi
 fi
 
+# ── Secret scanning ──────────────────────────────────────────
+if command -v gitleaks &>/dev/null; then
+  if ! gitleaks protect --staged --no-banner -q 2>/dev/null; then
+    ERRORS+="• gitleaks: Secrets detected in staged files.\n"
+  fi
+else
+  SKIPPED+="⚠️ gitleaks not installed — secret scanning skipped\n"
+fi
+
+# ── Dependency vulnerability scanning ────────────────────────
+if command -v pip-audit &>/dev/null && [ -f "requirements.txt" -o -f "pyproject.toml" ]; then
+  if ! pip-audit --strict --progress-spinner off -q 2>/dev/null; then
+    ERRORS+="• pip-audit: Known vulnerabilities in Python dependencies.\n"
+  fi
+fi
+if command -v npm &>/dev/null && [ -f "package-lock.json" ]; then
+  AUDIT_OUTPUT=$(npm audit --audit-level=high 2>/dev/null || true)
+  if echo "$AUDIT_OUTPUT" | grep -qE "high|critical"; then
+    ERRORS+="• npm audit: High/critical vulnerabilities in Node dependencies.\n"
+  fi
+fi
+
 # ── Python: tests ─────────────────────────────────────────────
 if [ -d "tests" ] && ! command -v pytest &>/dev/null; then
   SKIPPED+="⚠️ pytest not installed — test gate skipped\n"
@@ -77,6 +99,8 @@ if [ -n "$ERRORS" ]; then
   echo "  • Type errors → fix type annotations, then re-run commit" >&2
   echo "  • Test failures → run: pytest tests/ -v --tb=short" >&2
   echo "  • Security issues → run: bandit -r src/ -ll for details" >&2
+  echo "  • Secrets detected → remove secrets, use .env files (gitignored)" >&2
+  echo "  • Dependency vulns → run: pip-audit --fix or npm audit fix" >&2
   exit 2
 fi
 

@@ -67,6 +67,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 
 # Fix Windows console encoding (cp1252 can't handle Unicode from LLM responses)
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
@@ -655,24 +656,40 @@ def main() -> None:
     else:
         system_prompt = MODE_PROMPTS[args.mode]
 
-    try:
-        if args.provider == "openai":
-            result = call_openai(
-                api_key=api_key,
-                user_message=user_message,
-                model=model,
-                system_prompt=system_prompt,
-            )
-        else:
-            result = call_gemini(
-                api_key=api_key,
-                user_message=user_message,
-                model=model,
-                system_prompt=system_prompt,
-            )
-    except Exception as e:
-        print(f"Error calling {args.provider} API: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Retry once after 5s on transient failures (as documented in CLAUDE.md)
+    max_attempts = 2
+    result = ""
+    for attempt in range(1, max_attempts + 1):
+        try:
+            if args.provider == "openai":
+                result = call_openai(
+                    api_key=api_key,
+                    user_message=user_message,
+                    model=model,
+                    system_prompt=system_prompt,
+                )
+            else:
+                result = call_gemini(
+                    api_key=api_key,
+                    user_message=user_message,
+                    model=model,
+                    system_prompt=system_prompt,
+                )
+            break  # Success — exit retry loop
+        except Exception as e:
+            if attempt < max_attempts:
+                print(
+                    f"Warning: {args.provider} API call failed (attempt {attempt}/{max_attempts}): {e}",
+                    file=sys.stderr,
+                )
+                print("Retrying in 5 seconds...", file=sys.stderr)
+                time.sleep(5)
+            else:
+                print(
+                    f"Error: {args.provider} API failed after {max_attempts} attempts: {e}",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
 
     print(result)
 

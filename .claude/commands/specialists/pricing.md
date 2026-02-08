@@ -39,6 +39,12 @@ Append to `.workflow/decisions.md`.
 
 ---
 
+## Outputs
+
+- `.workflow/decisions.md` — Append PRICE-XX decisions
+
+---
+
 ## When to Run
 
 This specialist is **conditional**. Run when the project:
@@ -480,16 +486,22 @@ Each response:
 
 ### Advisory Perspectives (mandatory at Gates 1 and 2)
 
-**INVOKE the advisory protocol at every gate where you present analysis
-or questions.** This is not optional — it runs at Gates 1 (Orientation)
-and 2 (Validate findings) unless the user said "skip advisory".
+**YOU MUST invoke the advisory protocol at Gates 1 and 2.** This is
+NOT optional. If your gate response does not include advisory perspective
+boxes, you have SKIPPED a mandatory step — go back and invoke first.
 
-Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
-Use `specialist_domain` = "pricing" for this specialist.
+**Concrete steps (do this BEFORE presenting your gate response):**
+1. Check `.workflow/advisory-state.json` — if `skip_advisories: true`, skip to step 6
+2. Read `.claude/advisory-config.json` for enabled advisors + diversity settings
+3. Write a temp JSON with: `specialist_analysis`, `questions`, `specialist_domain` = "pricing"
+4. For each enabled external advisor, run in parallel:
+   `python .claude/tools/second_opinion.py --provider {openai|gemini} --context-file {temp.json}`
+5. For Claude advisor: spawn Task with `.claude/agents/second-opinion-advisor.md` persona (model: opus)
+6. Present ALL responses VERBATIM in labeled boxes — do NOT summarize or cherry-pick
 
-Pass your analysis, draft decisions, and questions as `specialist_analysis`
-and `questions`. Present ALL advisory outputs VERBATIM in labeled boxes.
-Do NOT summarize, cherry-pick, or paraphrase.
+**Self-check:** Does your response include advisory boxes? If not, STOP.
+
+Full protocol details: `.claude/advisory-protocol.md`
 
 ## Decision Format Examples
 

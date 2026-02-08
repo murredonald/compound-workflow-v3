@@ -138,6 +138,7 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 6. Do NOT adopt or agree with advisory suggestions — present neutrally, wait for user's answer
 7. GPT requires `OPENAI_API_KEY` in `.claude/.env`, Gemini requires `GEMINI_API_KEY` — each fails gracefully if missing
 8. User can say "skip advisory" or "no advisory" to disable for the rest of the session
+9. Skip state persists in `.workflow/advisory-state.json` (`skip_advisories: true`). Created on user opt-out, checked at every advisory invocation point, deleted when pipeline completes (retro or release)
 
 **Multi-LLM review system (inside /execute, /debug-session, and test-analyst):**
 - Controlled by `multi_llm_review` section in `advisory-config.json` (`enabled`, `contexts[]`)
@@ -162,6 +163,12 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 ## State Files
 
 All runtime state lives in `.workflow/`. Never manually edit these — commands read and write them.
+
+**Write safety:** When appending to shared files (decisions.md, backlog.md, task-queue.md),
+read the file first to confirm its current state, then write the complete updated content.
+For large append-only files, use targeted edits (Edit tool) rather than rewriting the entire
+file. If a write fails mid-operation, the file may be truncated — always verify file
+integrity after writes to critical state files.
 
 ```
 .workflow/
@@ -211,8 +218,9 @@ In `/retro`:
 1. Analyze `process-learnings.md` alongside per-task reflections for cross-cutting patterns
 
 After any review failure or unexpected issue:
-1. Write a new entry with: what happened, why, what to do differently
+1. Write a new entry with: what happened, why, what to do differently, failure category
 2. Tag it with relevant identifiers (task ID, file paths, error type)
+3. Check for recurrence (3+ entries with same category + overlapping tags → flag systemic issue)
 
 ### Evals System
 
@@ -247,7 +255,7 @@ Hooks run automatically — you don't invoke them. Be aware of what they do:
 |---|---|---|
 | `lint-format.sh` | After every file edit | Auto-fixes style via ruff/prettier |
 | `type-check.sh` | Called by pre-commit-gate | Runs mypy/tsc (not a standalone hook) |
-| `pre-commit-gate.sh` | Before every commit | Blocks if lint, type, security, or test checks fail |
+| `pre-commit-gate.sh` | Before every commit | Blocks if lint, type, security, secret scan, dependency audit, or test checks fail |
 | `scope-guard.sh` | After every file edit | Warns if files outside current task scope were modified |
 | `on-compact.sh` | After context compaction | Re-injects current task state so you don't lose track |
 
@@ -290,6 +298,8 @@ Run `.claude/scripts/init.sh` before starting `/execute`. It bootstraps git, ven
 | `ruff` | lint-format.sh, pre-commit-gate.sh | Lint/format checks skipped |
 | `mypy` | type-check.sh via pre-commit-gate.sh | Type checking skipped |
 | `bandit` | pre-commit-gate.sh | Security scan skipped |
+| `gitleaks` | pre-commit-gate.sh | Secret scanning skipped |
+| `pip-audit` | pre-commit-gate.sh | Python dependency vulnerability scanning skipped |
 | `pytest` | pre-commit-gate.sh, self-verify | Test gate skipped |
 
 On Windows, bash is provided by Git Bash (bundled with Git for Windows). Claude Code uses bash internally, so hooks work out-of-the-box.

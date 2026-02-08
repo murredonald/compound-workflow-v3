@@ -113,8 +113,15 @@ Read before starting:
 ```bash
 python .claude/tools/chain_manager.py verify
 ```
-If broken links are detected, report them once and continue. Do NOT re-run on every
-task — once per session is sufficient. Chain corruption doesn't block execution.
+If broken links are detected, report the count and affected entries once. Then ask:
+```
+Chain integrity: {N} broken links detected.
+This means some pipeline steps may not have recorded properly.
+Options:
+  A) Continue — chain is informational, execution can proceed
+  B) Investigate — show broken entries for manual review
+```
+Do NOT re-run on every task — once per session is sufficient.
 
 ---
 
@@ -473,12 +480,37 @@ Append to the `"entries"` array in `.workflow/reflexion/index.json`:
   "timestamp": "{ISO 8601}",
   "task_id": "T{NN}",
   "tags": ["{module}", "{concept}", "{decision_id}", "{file_path}", "{error_type}"],
+  "category": "{see taxonomy below}",
   "severity": "low | medium | high",
   "what_happened": "{factual description of the issue}",
   "root_cause": "{why it happened — evidence-based}",
   "lesson": "{what to do differently — 1-2 sentences}",
-  "applies_to": ["{task types or file patterns where relevant}"]
+  "applies_to": ["{task types or file patterns where relevant}"],
+  "preventive_action": "{concrete artifact change: new test, new hook, new decision, or checklist item — or 'none' if lesson alone suffices}"
 }
+```
+
+**Failure taxonomy** (mandatory `category` field — pick one):
+- `type-mismatch` — wrong types, null where expected, int vs string
+- `edge-case-logic` — unhandled boundary, empty input, concurrent access
+- `env-config` — missing env var, wrong config, path issue
+- `api-contract` — external API changed, wrong response shape, auth failure
+- `state-management` — stale cache, race condition, incorrect lifecycle
+- `dependency` — version mismatch, missing package, breaking update
+- `decision-gap` — planning decision was ambiguous or missing
+- `scope-creep` — fix required touching unexpected files/modules
+- `performance` — unexpectedly slow, memory issue, N+1 query
+- `other` — doesn't fit above categories
+
+**Recurrence detection:** Before writing a new entry, search existing entries for
+matching `category` + overlapping `tags`. If the same category appears 3+ times with
+overlapping tags, flag it:
+```
+⚠️ RECURRING PATTERN: "{category}" has {N} entries for {tag/module}.
+This suggests a systemic issue. Consider a structural fix:
+  - New hook or pre-commit check
+  - New decision to prevent the pattern
+  - Refactoring the affected module
 ```
 
 **When to reflect:**
@@ -837,9 +869,28 @@ python .claude/tools/chain_manager.py record \
 
 2. Record chain entry with `--stage runtime_qa --agent style-guide-auditor`.
 
+### Combined Verification Summary
+
+After all verification layers complete, record a **combined summary** chain entry
+that `/release` can check to confirm end-of-queue verification passed:
+
+```bash
+python .claude/tools/chain_manager.py record \
+  --task EOQ-VERIFY --pipeline execute --stage end_of_queue_summary --agent self \
+  --input-file {temp_layer_results} --output-file {temp_combined_summary} \
+  --description "End-of-queue verification: {overall_verdict}" \
+  --verdict {PASS|CONCERN|BLOCK} \
+  --metadata '{"layers_run": ["test_suite", "browser_qa", "style_compliance"], "layers_passed": ["test_suite", "browser_qa"], "layers_failed": [], "layers_skipped": ["style_compliance"], "must_fix_count": {N}}'
+```
+
+The `--verdict` is:
+- **PASS** — all layers passed (or skipped due to non-applicability), zero must-fix findings
+- **CONCERN** — layers passed but MAJOR findings exist (routing depends on `qa_fix_pass` config)
+- **BLOCK** — any CRITICAL finding or a layer hard-failed
+
 ### Pipeline tracking for verification layers
 
-After all verification layers complete:
+After the combined summary:
 ```bash
 python .claude/tools/pipeline_tracker.py complete --phase runtime-qa --summary "{verdicts per layer}"
 ```

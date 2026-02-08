@@ -72,6 +72,8 @@ Triggered by the parent agent (`/execute`) at end-of-queue.
 | `project_spec_excerpt` | No | Rely on milestone_definition for scope |
 | `competition_analysis_excerpt` | No | Skip COMP-XX checks in Phase 7 |
 | `route_map` | No | Default: discover routes from navigation and sitemap |
+| `targeted_routes` | No | Default: full audit (all routes). When provided, only test these routes. |
+| `reverify_mode` | No | Default: false. When true, run Phases 1-4 only on targeted_routes. |
 
 If `app_url` is missing, BLOCK with: "Cannot test -- no application URL provided."
 
@@ -90,6 +92,21 @@ Replace with `[REDACTED]`. Never reproduce credentials or personal data in findi
 - Application must be running and accessible at `app_url`
 - Playwright installed (`npx playwright install` or equivalent)
 - Test data seeded (from `/generate-testdata` or manual seed)
+
+---
+
+## Re-verification Mode
+
+When invoked with `reverify_mode: true` and `targeted_routes: ["/route1", "/route2"]`:
+- Run ONLY Phases 1-4 (Discovery, Smoke, Interactive, User Journey) on the listed routes
+- Skip Phases 5-7 (full missing functionality audit, edge cases, requirements cross-check)
+- Focus on verifying that previously-reported findings are now resolved
+- Report any NEW issues found on these pages (new findings, not the originals)
+- Note "RE-VERIFICATION" in the report header
+- Use the same output format but with "RE-VERIFICATION" prefix in the header
+
+This mode is used by the QA Fix Pass in `/execute` after fixing CRITICAL/MAJOR
+findings — it confirms fixes work without re-running the full 7-phase audit.
 
 ---
 

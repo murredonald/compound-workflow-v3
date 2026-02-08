@@ -169,6 +169,7 @@ For calculations:
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present DATA-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't design schemas without understanding query patterns first
 - Don't add ML when rules-based logic would suffice
 - Don't skip data migration strategy for existing datasets

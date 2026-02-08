@@ -38,6 +38,22 @@ your execution behavior. The settings override any instinct to pause or ask.
 **The user can always interrupt you.** That is their safety valve. Your default
 is to keep building until the queue is empty or you hit a genuine blocker.
 
+### Config Validation
+
+After reading `.claude/execution-config.json`, validate it:
+- `auto_proceed.enabled` must be a boolean
+- `milestone_pause.enabled` must be a boolean
+- `deferred_auto_action.action` must be one of: `"promote"`, `"defer"`, `"ask"`, `"preview"`
+- `runtime_qa_pause.enabled` must be a boolean
+- `qa_fix_pass.enabled` must be a boolean
+- `qa_fix_pass.major_action` must be one of: `"fix"`, `"defer"`, `"ask"`
+- `qa_fix_pass.max_cycles` must be an integer between 1 and 5
+
+If any field is missing or has an invalid value, **warn the user** and use the
+safe default (auto_proceed: true, milestone_pause: false, deferred: "ask",
+runtime_qa_pause: false, qa_fix_pass: enabled=true, major_action="fix", max_cycles=3).
+Do NOT silently ignore bad config.
+
 ---
 
 ## Pipeline Tracking
@@ -74,7 +90,7 @@ python .claude/tools/pipeline_tracker.py complete --phase runtime-qa --summary "
 ## Inputs
 
 Read before starting:
-- `.claude/execution-config.json` — Execution behavior settings (read FIRST)
+- `.claude/execution-config.json` — Execution behavior settings (read FIRST, validate — see Config Validation)
 - `.workflow/task-queue.md` — The validated task queue
 - `.workflow/decisions.md` — Decisions to comply with
 - `.workflow/constraints.md` — Boundaries and limits
@@ -82,6 +98,14 @@ Read before starting:
 - `.workflow/reflexion/process-learnings.md` — Process/workflow lessons (read once at session start)
 - `.workflow/deferred-findings.md` — Deferred audit findings (check for overlap with current task)
 - `.workflow/evals/task-evals.json` — Task metrics log
+- `.workflow/pipeline-status.json` — Pipeline progress (for session recovery and progress awareness)
+
+**Session start chain integrity check:** On the first task of each session, run:
+```bash
+python .claude/tools/chain_manager.py verify
+```
+If broken links are detected, report them once and continue. Do NOT re-run on every
+task — once per session is sufficient. Chain corruption doesn't block execution.
 
 ---
 
@@ -188,6 +212,9 @@ Write the code. Follow these rules:
   use Decimal. The code-reviewer will check.
 - **No bonus work.** Don't add features from future tasks. Don't refactor
   things that aren't broken. Don't future-proof.
+- **Scope awareness.** If you find yourself touching files not in your plan,
+  run a mental `/scope-check` (compare changed files vs planned files). The
+  scope-guard hook will warn automatically, but catching drift early saves time.
 - **Write tests alongside implementation**, not after. If the task has a
   verification command, make sure it passes.
 
@@ -219,7 +246,8 @@ diagnosis BEFORE invoking the Claude test-analyst:
    python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode diagnosis
    python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode diagnosis
    ```
-3. Collect outputs (failures are non-blocking)
+3. Collect outputs. If a provider fails (exit 1), **retry once** after 5 seconds.
+   If the retry also fails, note as unavailable and continue — failures are non-blocking.
 4. When invoking the test-analyst subagent, pass `external_diagnoses` with the raw GPT + Gemini outputs. The test-analyst validates external categorizations against its own analysis.
 
 **Audit trail:** After verification completes (pass or fail), record a chain entry:
@@ -281,7 +309,9 @@ code-reviewer as additional input.
    python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
    python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode code-review
    ```
-4. Collect outputs. If a provider fails (exit 1), note "{Provider} review unavailable" and continue.
+4. Collect outputs. If a provider fails (exit 1), **retry once** after 5 seconds.
+   If the retry also fails, note "{Provider} review unavailable — 2 attempts failed" and continue.
+   Do NOT retry more than once — external LLM failures should not block execution.
 5. Record each external review in the audit chain:
    ```bash
    python .claude/tools/chain_manager.py record \
@@ -450,8 +480,14 @@ The pre-commit-gate hook will run automatically:
 - Security scan
 - Tests with coverage
 
-**If hook blocks:** Read the error, fix the issue, retry commit.
-This is normal — the hook catches things reviews might miss.
+**If hook blocks:** Read the error output carefully. Common causes and fixes:
+- **Lint failure** → run `ruff check --fix` on the failing file, then retry
+- **Type check failure** → fix the type error in the reported file:line, then retry
+- **Security scan failure** → check if it's a real issue or false positive; fix or add inline ignore
+- **Test failure** → diagnose the failing test (may need test-analyst), fix, then retry
+
+If the same hook blocks **3 times in a row** on the same error, escalate to user —
+the issue may require a structural change beyond the current task's scope.
 
 ## Step 9: EVAL
 
@@ -492,7 +528,7 @@ IF current task is the last in a milestone:
   → Run milestone review (see below)
 
 IF all tasks complete:
-  → Run End-of-Queue Runtime QA (if web UI project — see below)
+  → Run End-of-Queue Verification & Fix Pass (see below)
   → Then /retro
 ```
 
@@ -509,6 +545,7 @@ Provide:
 - `task_list`: tasks in this milestone
 - `prior_milestones`: previously completed milestones
 - `project_spec_excerpt`: relevant workflows
+- `external_review_findings`: (optional) if `multi_llm_review.enabled` and `"code-review"` in contexts, run GPT + Gemini with a milestone-level integration review before invoking the milestone-reviewer. Use `--mode code-review` with a context summarizing cross-module integration points. Pass their outputs as `external_review_findings`.
 
 ### Audit trail for milestone review
 
@@ -530,7 +567,7 @@ python .claude/tools/chain_manager.py record \
 | Verdict | Action |
 |---------|--------|
 | **MILESTONE_COMPLETE** | Commit milestone marker, then check `milestone_pause` setting |
-| **FIXABLE** | Fix issues, re-run code-reviewer on affected tasks, re-run milestone-reviewer. Max 2 cycles. |
+| **FIXABLE** | Fix issues, re-run code-reviewer on affected tasks, re-run milestone-reviewer. Max 2 cycles. Pass previous cycle's failure list as context so the reviewer can verify fixes and avoid regressions. |
 | **BLOCKED** | Escalate to user with findings and options (ALWAYS pauses, regardless of config) |
 
 After milestone passes:
@@ -581,6 +618,13 @@ entries with `**Status:** open`. If any exist:
 - Display: `Auto-deferred {N} findings to post-v1: DF-01, DF-02, ...`
 - Continue without pausing
 
+**If `milestone_pause.enabled` is `false` AND `deferred_auto_action.action` is `"preview"`:**
+- Display each finding with a one-line summary (same as "ask" display format)
+- But do NOT pause — auto-promote all after displaying
+- This gives the user visibility into what's being promoted without blocking execution
+- Display: `Preview: promoting {N} deferred findings: DF-01 ({title}), DF-02 ({title}), ...`
+- Continue without pausing
+
 2. **For each promoted finding** (whether user-chosen or auto-promoted), append a task to `task-queue.md`:
    ```markdown
    ### [ ] DF-{NN}: {Title}
@@ -616,29 +660,52 @@ entries with `**Status:** open`. If any exist:
 
 ---
 
-## End-of-Queue Runtime QA (Conditional)
+## End-of-Queue Verification & Fix Pass
 
-When ALL tasks are complete (no `[ ]` or `[~]` entries remain in task-queue.md)
-and the project has a web UI, run a comprehensive runtime QA pass before
-handing off to `/retro`.
+When ALL tasks are complete (no `[ ]` or `[~]` entries remain in task-queue.md),
+run a comprehensive final verification across three layers before `/retro`.
 
-**Conditions (ALL must be true):**
-- All tasks in task-queue.md are `[x]` (complete)
-- FRONT-XX decisions exist in decisions.md (project has web UI)
+**Trigger:** All tasks in task-queue.md are `[x]` (complete).
 
-**Skip if:** No FRONT-XX decisions exist (API-only, CLI, library projects).
+### Layer 0: Full Test Suite (always runs)
 
-**Procedure:**
+Before any browser/style QA, run the complete project test suite one final time.
+Individual task verifications pass in isolation, but the assembled whole can reveal
+cross-milestone integration gaps.
+
+```bash
+# Run the project's complete test command (from TEST-XX decisions or project-spec)
+{test_command}  # e.g., pytest --tb=short -q, npm test, etc.
+```
+
+Classify failures by severity:
+- **CRITICAL:** Tests for core user workflows or primary jobs-to-be-done fail
+- **MAJOR:** Tests for secondary features, edge cases, or non-critical integrations fail
+- **MINOR:** Flaky tests, warnings, deprecation notices (not actual failures)
+
+Record chain entry:
+```bash
+python .claude/tools/chain_manager.py record \
+  --task FINAL-VERIFY --pipeline execute --stage final_test_suite --agent self \
+  --input-file {temp_input} --output-file {temp_test_output} \
+  --description "End-of-queue full test suite: {N} tests, {N} failures" \
+  --verdict {PASS|CONCERN|BLOCK} \
+  --metadata '{"total": {N}, "passed": {N}, "failed": {N}, "skipped": {N}}'
+```
+
+### Layer 1: Browser QA (conditional — web UI projects)
+
+**Conditions:** FRONT-XX decisions exist in decisions.md.
+**Skip if:** No FRONT-XX decisions (API-only, CLI, library projects).
 
 1. **Start the application** (if not already running):
    ```bash
-   # Use the project's dev server command from TEST-XX or project-spec
    {dev_server_command} &
    APP_PID=$!
    # Wait for ready (poll health endpoint or sleep)
    ```
 
-2. **Run qa-browser-tester** (always, when conditions met):
+2. **Run qa-browser-tester:**
 
    Load persona: `.claude/agents/qa-browser-tester.md`
 
@@ -653,7 +720,14 @@ handing off to `/retro`.
    - `competition_analysis_excerpt`: table-stakes features (if `.workflow/competition-analysis.md` exists)
    - `route_map`: all known routes from FRONT-XX decisions or project spec
 
-3. **Run style-guide-auditor** (if `.workflow/style-guide.md` exists):
+3. Record chain entry with `--stage runtime_qa --agent qa-browser-tester`.
+
+### Layer 2: Style Compliance (conditional — when style-guide.md exists)
+
+**Conditions:** `.workflow/style-guide.md` exists.
+**Run in parallel with Layer 1** when both apply.
+
+1. **Run style-guide-auditor:**
 
    Load persona: `.claude/agents/style-guide-auditor.md`
 
@@ -665,61 +739,224 @@ handing off to `/retro`.
    - `front_decisions`: FRONT-XX entries
    - `route_map`: all pages
 
-   Run in **parallel** with qa-browser-tester if both apply.
+2. Record chain entry with `--stage runtime_qa --agent style-guide-auditor`.
 
-4. **Record audit chain entries** for each agent:
+### Pipeline tracking for verification layers
+
+After all verification layers complete:
+```bash
+python .claude/tools/pipeline_tracker.py complete --phase runtime-qa --summary "{verdicts per layer}"
+```
+
+---
+
+### QA Fix Pass
+
+**Read `qa_fix_pass` from `.claude/execution-config.json`.** If `qa_fix_pass.enabled`
+is `false`, skip this entire section — write ALL findings to `observations.md` and
+proceed to `/retro` (preserves pre-v3.5 behavior).
+
+If `qa_fix_pass.enabled` is `true`, proceed with triage and fix loop:
+
+```bash
+python .claude/tools/pipeline_tracker.py start --phase qa-fix-pass
+```
+
+#### Step A: TRIAGE
+
+Collect findings from ALL verification layers into a unified list. Each finding
+already has severity (from the test suite classification or QA agent output) and
+source.
+
+**Routing rules:**
+- **CRITICAL** → must-fix (always — these are v1 blockers)
+- **MAJOR** → read `qa_fix_pass.major_action`:
+  - `"fix"` → must-fix
+  - `"defer"` → auto-defer to post-v1 (write to observations.md)
+  - `"ask"` → present to user per finding for decision
+- **MINOR / INFO** → auto-defer (write directly to observations.md)
+
+Display the triage summary:
+```
+═══════════════════════════════════════════════════════════════
+END-OF-QUEUE VERIFICATION — TRIAGE
+═══════════════════════════════════════════════════════════════
+
+Layer              │ CRITICAL │ MAJOR │ MINOR │ INFO │ Verdict
+───────────────────┼──────────┼───────┼───────┼──────┼────────
+Full test suite    │ {N}      │ {N}   │ {N}   │ —    │ {verdict}
+Browser QA         │ {N}      │ {N}   │ {N}   │ {N}  │ {verdict}
+Style compliance   │ {N}      │ {N}   │ {N}   │ {N}  │ {verdict}
+───────────────────┼──────────┼───────┼───────┼──────┼────────
+Total              │ {N}      │ {N}   │ {N}   │ {N}  │
+
+Must-fix: {N}    Deferred: {N}
+═══════════════════════════════════════════════════════════════
+```
+
+If zero must-fix findings:
+```bash
+python .claude/tools/pipeline_tracker.py skip --phase qa-fix-pass --reason "No CRITICAL/MAJOR findings"
+```
+Write all findings to observations.md, stop the app, proceed to `/retro`.
+
+Record triage chain entry:
+```bash
+python .claude/tools/chain_manager.py record \
+  --task QA-FIX-PASS --pipeline execute --stage qa_fix_triage --agent qa-fix-triage \
+  --input-file {temp_qa_findings} --output-file {temp_triage_result} \
+  --description "QA Fix Pass triage: {N} must-fix, {N} deferred" \
+  --metadata '{"critical": {N}, "major_fix": {N}, "major_defer": {N}, "minor": {N}, "info": {N}}'
+```
+
+#### Step B: GENERATE QA-{NN} tasks
+
+For each must-fix finding, create an entry in `.workflow/qa-fixes.md`:
+
+```markdown
+### [ ] QA-{NN}: {Title}
+**Source:** test-suite | qa-browser-tester | style-guide-auditor
+**Severity:** CRITICAL | MAJOR
+**Page:** {route/URL or "N/A" for test failures}
+**Original finding:** {description / test failure message}
+**Expected:** {what should happen per spec/test}
+**Evidence:** {test output / console errors / computed values}
+**Ref:** {TEST-XX / UIX-XX / STYLE-XX / decision ID}
+
+**Fix approach:** {1-2 sentences — how to fix this}
+**Files:**
+- Modify: {file paths}
+
+**Verification:**
+```bash
+{specific test command or browser check}
+```
+
+**Review:** code-reviewer {+ security-auditor if relevant}
+```
+
+**Status markers:** `[ ]` = pending, `[~]` = in-progress, `[x]` = completed.
+
+#### Step C: QA FIX LOOP
+
+Execute each QA-{NN} task using the same Ralph loop mechanics:
+
+```
+FOR EACH QA-{NN} in qa-fixes.md (in order):
+
+  1. LOAD — Read QA-{NN} block, mark [~], surface matching reflexions
+  2. PLAN — Display fix plan, proceed immediately
+  3. IMPLEMENT — Fix the issue (same scope discipline rules)
+  4. SELF-VERIFY — Run the verification command from QA-{NN}
+  5. REVIEW — code-reviewer (always) + security-auditor (always)
+     Same review gate: PASS → commit, CONCERN → fix, BLOCK → fix + re-review
+     Max 3 review cycles per QA fix
+  6. REFLECT — Only if something unexpected happened
+  7. COMMIT — git commit -m "QA-{NN}: {title}", mark [x] in qa-fixes.md, git push
+  8. EVAL — Append to task-evals.json with task_id "QA-{NN}" and "qa_fix_pass": true
+```
+
+Record chain entries for each QA fix:
+- `--task QA-{NN} --stage qa_fix_verify` (after verification)
+- `--task QA-{NN} --stage qa_fix_review --agent code-reviewer` (after review)
+
+#### Step D: RE-VERIFICATION (full test suite + targeted QA)
+
+After all QA-{NN} fixes are committed, re-verify. Fixes can introduce regressions,
+so the full test suite MUST re-run — not just previously-failing tests.
+
+1. **Full test suite (always):** re-run the ENTIRE project test suite
    ```bash
-   python .claude/tools/chain_manager.py record \
-     --task FINAL-QA --pipeline execute --stage runtime_qa --agent qa-browser-tester \
-     --input-file {temp_input} --output-file {temp_output} \
-     --description "End-of-queue runtime QA" \
-     --verdict {QA_PASS|QA_CONCERN|QA_BLOCK} \
-     --metadata '{"phases_run": 7, "findings": {"critical": N, "major": N, "minor": N}}'
+   {test_command}  # same command as Layer 0 — full suite, not filtered
    ```
-   (Same for style-guide-auditor with `--agent style-guide-auditor` and `--verdict {STYLE_PASS|STYLE_CONCERN|STYLE_BLOCK}`)
+   This catches regressions introduced by QA fixes. Classify any NEW failures
+   by severity (same rules as Layer 0).
 
-5. **Write findings to observations.md:**
-
-   For each finding (CRITICAL, MAJOR, MINOR) from both agents, append to
-   `.workflow/observations.md`:
-
-   ```markdown
-   ## QA Finding: {title}
-   **Source:** qa-browser-tester | style-guide-auditor
-   **Severity:** {CRITICAL|MAJOR|MINOR}
-   **Page:** {route/URL}
-   **Description:** {what's wrong}
-   **Expected:** {what should happen per UIX-XX / STYLE-XX / spec}
-   **Evidence:** {console errors, computed values, screenshots}
+2. **Browser QA fixes (if Layer 1 ran):** re-run qa-browser-tester with targeted scope:
    ```
-
-6. **Present summary to user:**
+   reverify_mode: true
+   targeted_routes: ["/affected-page-1", "/affected-page-2"]
    ```
-   ═══════════════════════════════════════════════════════════════
-   RUNTIME QA COMPLETE
-   ═══════════════════════════════════════════════════════════════
+   (Runs Phases 1-4 only on affected routes)
 
-   QA Browser Tester: {QA_PASS|QA_CONCERN|QA_BLOCK}
-     {N} critical, {N} major, {N} minor findings
-
-   Style Guide Auditor: {STYLE_PASS|STYLE_CONCERN|STYLE_BLOCK} (or: skipped — no style-guide.md)
-     {N} critical, {N} major, {N} minor findings
-
-   All findings written to .workflow/observations.md
-
-   Next steps:
-     → /retro (retrospective on v1 execution)
-     → /intake (process QA findings into CRs)
-     → /plan-delta (plan patches/fixes)
-   ═══════════════════════════════════════════════════════════════
+3. **Style fixes (if Layer 2 ran):** re-run style-guide-auditor with targeted scope:
    ```
+   reverify_mode: true
+   targeted_routes: ["/affected-page-1", "/affected-page-2"]
+   ```
+   (Runs Phases 2-6 only on affected pages)
 
-7. **Stop the application:**
+Run the full test suite first (blocking). Then run browser QA and style
+re-verification in parallel if both apply.
+
+Record chain entries per layer:
+```bash
+python .claude/tools/chain_manager.py record \
+  --task QA-REVERIFY --pipeline execute --stage qa_reverify --agent {agent} \
+  --input-file {temp_input} --output-file {temp_output} \
+  --description "QA re-verification cycle {N}: {result}" \
+  --verdict {verdict} \
+  --metadata '{"cycle": {N}, "full_suite_passed": {true|false}, "targeted_routes": [...]}'
+```
+
+**If re-verification finds NEW issues:**
+- NEW CRITICAL → create new QA-{NN} entries, execute fix loop again (next cycle)
+- NEW MAJOR/MINOR/INFO → auto-defer to observations.md
+- **Max cycles:** controlled by `qa_fix_pass.max_cycles` (default 3)
+- If the final cycle STILL has test failures or new CRITICAL issues → **escalate to user**
+  (something is structurally wrong — fixes are introducing regressions)
+
+**The loop continues until the full test suite passes clean AND no new CRITICAL
+findings exist from browser QA / style layers, OR max_cycles is reached.**
+
+#### Step E: COMPLETE
+
+1. Write all deferred findings to `.workflow/observations.md` (MINOR, INFO, deferred MAJOR,
+   and any new findings from re-verification that were auto-deferred)
+
+2. Stop the application (if started for browser QA):
    ```bash
    kill $APP_PID 2>/dev/null
    ```
 
-8. **Config-driven behavior after Runtime QA:**
+3. Display completion summary:
+   ```
+   ═══════════════════════════════════════════════════════════════
+   END-OF-QUEUE VERIFICATION COMPLETE
+   ═══════════════════════════════════════════════════════════════
+
+   Verification layers:
+     Full test suite:  {verdict} ({N} tests, {N} failures)
+     Browser QA:       {verdict} ({N} findings) [or: skipped — no FRONT-XX]
+     Style compliance: {verdict} ({N} findings) [or: skipped — no style-guide.md]
+
+   QA Fix Pass:
+     Must-fix executed: {N}  (QA-01 through QA-{NN})
+     Deferred to post-v1: {N}
+     Re-verification cycles: {N}
+
+   {N} deferred findings written to observations.md
+
+   Next: /retro
+   ═══════════════════════════════════════════════════════════════
+   ```
+
+4. Record completion chain entry:
+   ```bash
+   python .claude/tools/chain_manager.py record \
+     --task QA-FIX-PASS --pipeline execute --stage qa_fix_complete --agent qa-fix-pass \
+     --input-file {temp_qa_fixes_md} --output-file {temp_summary} \
+     --description "QA Fix Pass complete: {N} fixed, {N} deferred, {N} cycles" \
+     --verdict PASS \
+     --metadata '{"fixed": {N}, "deferred": {N}, "reverify_cycles": {N}}'
+   ```
+
+5. Pipeline tracking:
+   ```bash
+   python .claude/tools/pipeline_tracker.py complete --phase qa-fix-pass --summary "{N} fixed, {N} deferred"
+   ```
+
+6. **Config-driven behavior after verification:**
 
    If `runtime_qa_pause.enabled` is `false` (default):
    - Display the summary and proceed directly to `/retro`
@@ -766,13 +1003,20 @@ If context compacts mid-task, the on-compact hook re-injects:
 
 After compaction or session restart:
 1. Read the injected state from on-compact
-2. Find the `[~]` task in task-queue.md — read only that block
-3. If no `[~]` found, find the first `[ ]` task (next pending)
-4. If unclear, check the last few entries in task-evals.json to find
+2. Read `.workflow/pipeline-status.json` if it exists — check `current_phase` and
+   the execute phase's nested progress (last completed milestone/task) to confirm
+   where you left off. This is more reliable than scanning task-queue.md alone.
+3. Check `.workflow/qa-fixes.md` for `[~]` markers — if found, you compacted
+   mid-QA-fix-pass. Resume that QA-{NN} fix (not the main task queue).
+4. Find the `[~]` task in task-queue.md — read only that block
+5. If no `[~]` found in either file, find the first `[ ]` task (next pending)
+5. If unclear, check the last few entries in task-evals.json to find
    the last completed task and resume from the next one
-5. Do NOT re-read the full task queue, decisions, or reflexion files —
+6. Cross-reference steps 2-5: pipeline-status, task-queue markers, and evals
+   should agree. If they disagree, trust task-queue.md markers as source of truth.
+7. Do NOT re-read the full task queue, decisions, or reflexion files —
    load only what's needed for the current task
-6. Run chain integrity check: `python .claude/tools/chain_manager.py verify`
+8. Run chain integrity check: `python .claude/tools/chain_manager.py verify`
    If broken links detected, report them but continue — chain corruption
    doesn't block execution
 
@@ -798,16 +1042,19 @@ After compaction or session restart:
 
 ```
 Loop:     Load → Plan → Implement → Verify → Review → Address → Reflect → Commit → Eval → Advance
-Review:   code-reviewer (always) + security-auditor (always)
-Cycles:   Max 3 review cycles per task, max 2 milestone review cycles
+Review:   code-reviewer (always) + security-auditor (always) + external LLM review (if multi_llm_review enabled)
+Cycles:   Max 3 review cycles per task, max 2 milestone review cycles (with failure memory)
 Reflect:  Only surprises. Tags for searchability.
-Commit:   Hooks enforce quality. Never bypass.
+Commit:   Hooks enforce quality. Never bypass. If hook blocks 3x on same error → escalate.
 Push:     After each task commit (soft failure) + after milestone marker.
 Escalate: After max cycles, contradictions, or missing dependencies.
-Resume:   Check evals/task-evals.json for last completed task.
+Resume:   Check pipeline-status.json + task-queue.md markers + task-evals.json (cross-reference).
 Deferred: Missing v1 scope → DF-{NN} in deferred-findings.md → promoted at milestone boundary.
-Prefixes: T{NN} (planned tasks), DF-{NN} (deferred findings) — both execute the same way.
-Runtime QA: qa-browser-tester + style-guide-auditor after all tasks complete → findings to observations.md → /intake → /plan-delta.
-Config:   .claude/execution-config.json — auto_proceed, milestone_pause, deferred_auto_action, runtime_qa_pause.
+Prefixes: T{NN} (planned tasks), DF-{NN} (deferred findings), QA-{NN} (QA fix pass) — all execute the same way.
+Verify:   End-of-queue: full test suite (always) + browser QA (FRONT-XX) + style audit (style-guide.md).
+QA Fix:   CRITICAL=must-fix, MAJOR=config-driven (fix/defer/ask), MINOR/INFO=auto-defer. QA-{NN} in qa-fixes.md. Max {max_cycles} cycles.
+Config:   .claude/execution-config.json — auto_proceed, milestone_pause, deferred_auto_action, runtime_qa_pause, qa_fix_pass.
+Validate: Config validated at start. Bad values → warn user + use safe defaults.
+Chain:    Integrity check once per session (first task). Retry external LLMs once on failure.
 No pause: NEVER ask "Should I continue?" — read config, follow it. User interrupts if needed.
 ```

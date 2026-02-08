@@ -19,6 +19,8 @@ Read before starting:
 - `.workflow/project-spec.md` — Existing project specification
 - `.workflow/decisions.md` — All existing decisions
 - `.workflow/constraints.md` — Boundaries and limits
+- `.workflow/reflexion/index.json` — Search for entries matching the CRs being planned (by module, file path, or error pattern). Surface relevant lessons to inform planning decisions and avoid repeating known issues.
+- `.workflow/reflexion/process-learnings.md` — Check for process insights that affect how changes should be planned (e.g., "milestone reviews catch integration bugs early — split cross-module CRs")
 
 ---
 

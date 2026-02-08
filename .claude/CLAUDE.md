@@ -20,7 +20,7 @@ Audit Chain  │ .workflow/state-chain/│ After agents    │ No   │ N/A
 ## Workflow Pipeline
 
 ```
-Greenfield (v1):  /plan → /specialists/competition → /plan-define → /specialists/* → /synthesize → /execute (loop) → runtime QA → /retro
+Greenfield (v1):  /plan → /specialists/competition → /plan-define → /specialists/* → /synthesize → /execute (loop) → end-of-queue verification → QA fix pass → /retro
 Evolution (v1.1+): /intake → /plan-delta → /specialists/* (as needed) → /synthesize (release mode) → /execute → /retro (release scope)
 Debug shortcut:   /debug-session → reproduce → isolate → patch → verify → commit
 ```
@@ -76,9 +76,35 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 
 If the human's intent is ambiguous, ask — don't guess which phase to enter.
 
+## Specialist Interactivity Rules
+
+**ALL specialists are interactive conversations with the user — NOT autonomous agents.**
+
+1. **Decisions are drafts until approved.** NEVER write XX-NN decisions to `decisions.md` without presenting them to the user first. Present proposed decisions, wait for approval, then write.
+2. **Every response must end with questions.** If you catch yourself writing a long output without asking the user anything, you are auto-piloting. Stop and formulate questions.
+3. **Present findings incrementally.** Work through 1-2 focus areas at a time. Present findings + draft decisions → get user feedback → continue. Do NOT batch all focus areas into one shot.
+4. **Research-heavy specialists (domain, competition) must interview first.** Ask foundational questions and WAIT for answers before starting research. The user's answers determine scope and direction.
+5. **Subjective specialists (design, uix) must validate choices.** Colors, typography, layouts, and UX flows are user preference — present options, don't pick.
+6. **Session tracking for compaction recovery.** At every 🛑 gate and at specialist start/completion, write `.workflow/specialist-session.json`. Delete the file on specialist completion. This lets `on-compact.sh` recover context if the session compacts mid-specialist.
+   ```json
+   {
+     "specialist": "domain",
+     "focus_area": "3. Domain Entities & Relationships",
+     "status": "waiting_for_user_input",
+     "last_gate": "present_validate_findings",
+     "draft_decisions": ["DOM-01: ...", "DOM-02: ..."],
+     "pending_questions": ["Q1: ...", "Q2: ..."],
+     "completed_areas": ["1. Glossary", "2. Business Rules"],
+     "research_notes": "Completed Rounds 1-3 for FA3. Found 5 entity types...",
+     "timestamp": "2026-02-07T14:30:00Z"
+   }
+   ```
+
 ## Subagent Delegation Rules
 
 Subagents run as **separate Claude instances** with isolated context. Delegate to them; do not inline their logic.
+
+**Agent parallelization:** To run multiple agents in parallel, put multiple Task tool calls in a **single message**. Do NOT use `run_in_background: true` — background agents produce empty output files and all results are lost. Foreground parallel calls (multiple Task calls in one message) return full results from every agent.
 
 | Agent | When to invoke | Model |
 |---|---|---|
@@ -110,6 +136,9 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 - Code review: GPT + Gemini review diff → findings passed as `external_review_findings` to `code-reviewer`
 - Test diagnosis: GPT + Gemini diagnose failures → findings passed as `external_diagnoses` to `test-analyst`
 - Debugging: Claude hypothesizes first → GPT + Gemini propose alternatives → Claude merges & re-ranks
+- Milestone review: external LLMs can review integration points → findings passed as `external_review_findings` to `milestone-reviewer`
+- Research: `research-scout` supports optional cross-validation (parent orchestrates GPT + Gemini in parallel)
+- External LLM calls retry once on failure (5s delay), then degrade gracefully ("unavailable")
 
 **Review gate (inside /execute):**
 1. Implement task
@@ -118,7 +147,7 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 4. Record each reviewer's input/output in the audit chain (`python .claude/tools/chain_manager.py record`)
 5. If PASS → commit. If FAIL with fixable issues → fix and re-review (max 3 cycles). If FAIL with unfixable → escalate to human.
 6. At milestone boundaries → run `milestone-reviewer` for integration test cascade.
-7. After ALL tasks complete (end-of-queue) → run `qa-browser-tester` (if web UI) + `style-guide-auditor` (if style-guide.md exists). Findings go to `observations.md` → `/intake` → `/plan-delta`.
+7. After ALL tasks complete (end-of-queue) → run 3-layer verification: full test suite (always) + `qa-browser-tester` (if web UI) + `style-guide-auditor` (if style-guide.md exists). CRITICAL/MAJOR findings enter QA Fix Pass (tracked in `qa-fixes.md` as `QA-{NN}`). MINOR/INFO findings go to `observations.md` → `/intake` → `/plan-delta`.
 
 ## State Files
 
@@ -137,8 +166,10 @@ All runtime state lives in `.workflow/`. Never manually edit these — commands 
 ├── domain-library/              # Deep domain knowledge files (created by /specialists/domain)
 │   └── {topic}.md              # Per-topic deep dives with sources and worked examples
 ├── style-guide.md               # Visual reference (created by /specialists/design, read by frontend-style-reviewer)
+├── specialist-session.json       # Active specialist session state (written by /specialists/*, read by on-compact, deleted on completion)
 ├── pipeline-status.json         # Pipeline progress (written by all commands, read by /status + on-compact)
 ├── deferred-findings.md         # v1 scope gaps discovered during execution (DF-{NN}, promoted to tasks at milestones)
+├── qa-fixes.md                  # End-of-queue verification findings (QA-{NN}, fixed before v1 ships)
 ├── reflexion/
 │   └── index.json               # Lessons learned (written by /execute, read before each task)
 ├── evals/
@@ -156,6 +187,13 @@ Before starting any task in `/execute`:
 1. Read `.workflow/reflexion/index.json`
 2. Search for entries matching the current task's tags, files, or error patterns
 3. Apply relevant lessons to avoid repeating mistakes
+
+In `/plan-delta` (evolution planning):
+1. Search reflexion entries matching CRs being planned (by module, file path, error pattern)
+2. Read `process-learnings.md` for workflow insights that affect planning decisions
+
+In `/retro`:
+1. Analyze `process-learnings.md` alongside per-task reflections for cross-cutting patterns
 
 After any review failure or unexpected issue:
 1. Write a new entry with: what happened, why, what to do differently
@@ -180,6 +218,9 @@ Each entry links to the previous via `prev_hash`, forming a tamper-evident chain
 
 **Tool:** `python .claude/tools/chain_manager.py record|verify|summary`
 
+**Automated integrity check:** `/execute` runs `chain_manager.py verify` once at session
+start (first task). Broken links are reported but don't block execution.
+
 **Purpose:** Instant debugging (trace where things went wrong), integrity verification
 (detect tampering), compliance (provable audit trail), and replay capability.
 
@@ -202,13 +243,13 @@ If a hook blocks (exit 2), fix the issue before retrying. Do not bypass hooks.
 - **Decision IDs**: Prefixed by source. `COMP-01` (competition/features), `DOM-01` (domain knowledge), `GEN-01` (plan), `ARCH-01` (architecture), `BACK-01` (backend), `FRONT-01` (frontend), `STYLE-01` (design/style), `UIX-01` (UI/UX QA), `SEC-01` (security), `DATA-01` (data-ml), `TEST-01` (testing). Post-v1 decisions use the same domain prefixes with continued numbering.
 - **CR IDs**: `CR-NNN` (Change Request). Global numbering across all releases. Created by `/intake`.
 - **Release sections**: In `task-queue.md`, post-v1 tasks appear under `## Release: v{X.Y}` headers.
-- **Task prefixes**: `T{NN}` (planned tasks from /synthesize), `DF-{NN}` (deferred findings promoted at milestone boundaries). Both execute identically.
-- **Commits**: One commit per completed task. Message format: `T{NN}: brief description` or `DF-{NN}: brief description`.
+- **Task prefixes**: `T{NN}` (planned tasks from /synthesize), `DF-{NN}` (deferred findings promoted at milestone boundaries), `QA-{NN}` (end-of-queue verification fix tasks). All execute identically via the Ralph loop.
+- **Commits**: One commit per completed task. Message format: `T{NN}: brief description`, `DF-{NN}: brief description`, or `QA-{NN}: brief description`.
 - **Scope discipline**: Only touch files listed in the current task. If you need to touch others, run `/scope-check` first.
 - **No bonus work**: Do not refactor, optimize, or "improve" code outside the current task's scope. If you see something worth doing, log it as a future task.
 - **Evidence over opinion**: Every review finding must cite specific code. Every retro insight must reference eval data.
 - **Audit chain**: After every agent call (reviewers, milestone-reviewer) and every pipeline phase completion, record a chain entry via `python .claude/tools/chain_manager.py record`. Do not skip chain recording.
-- **Execution config**: `.claude/execution-config.json` controls auto-proceed, milestone pausing, deferred finding handling, and runtime QA pausing. Read it at the start of `/execute`. Never pause between tasks/milestones unless the config says to or you hit a genuine BLOCKED escalation.
+- **Execution config**: `.claude/execution-config.json` controls auto-proceed, milestone pausing, deferred finding handling (`promote`/`defer`/`ask`/`preview`), and runtime QA pausing. Read and **validate** it at the start of `/execute`. Bad values → warn + use safe defaults. Never pause between tasks/milestones unless the config says to or you hit a genuine BLOCKED escalation.
 - **Pipeline tracking**: Every command calls `pipeline_tracker.py start` at entry and `pipeline_tracker.py complete` at exit. `/plan` calls `init --type greenfield`. `/intake` calls `init --type evolution` if no pipeline exists. `/plan-define` calls `add-phase` for each specialist in the routing table. `/execute` calls `task-update` at each task load and milestone.
 
 ## Prerequisites
@@ -248,5 +289,9 @@ On Windows, bash is provided by Git Bash (bundled with Git for Windows). Claude 
 
 The `on-compact.sh` hook will re-inject your current state. After compaction:
 1. Read the injected state summary
-2. Read `.workflow/task-queue.md` to confirm current task
-3. Continue where you left off — do not restart the task
+2. **If specialist session active** (`.workflow/specialist-session.json` exists):
+   read the session file, resume the specialist at the last gate point. Do NOT
+   restart the specialist from the beginning.
+3. **If in /execute** (task or QA fix active): read `.workflow/task-queue.md` or
+   `.workflow/qa-fixes.md` to confirm current task.
+4. Continue where you left off — do not restart the task or specialist

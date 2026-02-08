@@ -205,6 +205,7 @@ How does a client on v1 know that v2 exists and what changed?"
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present BACK-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't design APIs in isolation from the UI flows that consume them
 - Don't skip error response design — every endpoint needs defined failure modes
 - Don't conflate validation (400) with authorization (403) with not-found (404)

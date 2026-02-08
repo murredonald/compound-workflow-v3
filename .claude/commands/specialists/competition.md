@@ -94,11 +94,25 @@ Multi-round, same depth philosophy as domain specialist:
 - Enumerate features systematically using the FA 2 category framework
 - Note what's behind paywalls, what's free, what's beta
 
-**Round 3 — Verification & cross-reference:**
-- Cross-reference feature lists across 2+ sources (product page + review site)
+**Round 3 — Verification, edge cases, and practitioner insights:**
+- Cross-reference feature lists across 2+ sources (product page + review site
+  + comparison article). Features only on one source need extra verification.
 - Search for: "{competitor} review", "{competitor} vs {competitor}",
   "{product type} comparison {current year}"
 - Look for features mentioned in reviews but not on feature pages
+- **Practitioner pain points:** Search "{competitor} complaints",
+  "{competitor} missing features", "{competitor} limitations". What do users
+  struggle with? What workflows feel awkward? These inform positioning.
+- **Temporal evolution:** Has each competitor's feature set changed recently?
+  Check changelogs, blog posts, release notes. Any deprecations, pivots, or
+  sunsetting? This reveals strategic direction.
+- **Edge-case handling:** Do competitors handle error recovery, partial imports,
+  data cleanup, bulk operations, undo/rollback? The absence of these features
+  in competitors = opportunity for differentiation.
+- **Pricing boundaries:** At what usage tier does Competitor X's free plan end?
+  What features are paywalled? Where do competitors extract premium pricing?
+- **Integration ecosystem:** What does each competitor integrate with? What
+  import/export formats do they support? This constrains and enables decisions.
 
 **Round 4 — Synthesis:**
 - Build the feature matrix
@@ -323,6 +337,8 @@ competition-analysis.md § Scope Recommendations.
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — NEVER skip the interview (step 2) or gap analysis review (step 6). The user MUST confirm competitor list, validate feature classifications, and approve IN/OUT decisions. Running all 6 focus areas without user input is the #1 failure mode.
+- **Don't finalize COMP-XX without approval** — Present proposed decisions to the user before writing to decisions.md. Feature classifications and IN/OUT decisions are the USER's call.
 - Don't list competitors without analyzing WHY they made their feature choices
 - Don't mark features as "must-have" just because competitors have them
 - Don't ignore competitors' UX patterns — just their feature lists
@@ -343,14 +359,23 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 
 ## Procedure
 
+**This specialist is INTERACTIVE — see "Specialist Interactivity Rules" in CLAUDE.md.**
+
 1. **Read** project-spec.md, decisions.md, constraints.md
-2. **Interview** — Ask user about known competitors, positioning, priorities
-3. **Research** — Multi-round competitor discovery + feature enumeration
+2. 🛑 **GATE: Interview** — Ask user about known competitors, positioning, priorities.
+   **STOP and WAIT for answers before researching.** Their input determines which
+   competitors to focus on and what positioning matters.
+3. **Research** — Multi-round competitor discovery + feature enumeration.
+   Present competitor profiles to user after each research round for validation.
 4. **Feature decomposition** — Entity-by-entity from spec (FA 4)
-5. **Classify** — Table-stakes, common, differentiator, unique (FA 5)
-6. **Gap analysis** — Present missing features to user, get IN/OUT decisions (FA 6)
-7. **Output** — Append COMP-XX to decisions.md, generate competition-analysis.md
-8. **Generate** `.workflow/competition-analysis.md`
+5. 🛑 **GATE: Classify + review** — Present feature classification table
+   (table-stakes, common, differentiator, unique) to user for validation.
+   **STOP and WAIT** — the user may reclassify features.
+6. 🛑 **GATE: Gap analysis** — Present missing features to user, get explicit
+   IN/OUT decisions. **Do NOT decide IN/OUT yourself.**
+7. 🛑 **GATE: Decision approval** — Present all proposed COMP-XX decisions to user.
+   **STOP and WAIT for approval before writing to decisions.md.**
+8. **Output** — Write approved COMP-XX to decisions.md, generate competition-analysis.md
 
 ---
 
@@ -362,11 +387,15 @@ prioritized areas. Mark skipped areas in decisions.md: `COMP-XX: DEFERRED — sk
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** If you find yourself
+writing output without asking questions, you are auto-piloting — stop.
+
 Each response:
 1. State which focus area you're exploring
 2. Present research findings with sources
 3. Highlight gaps and surprises
-4. Formulate 5-8 targeted questions
+4. Formulate 3-5 targeted questions
+5. **WAIT for user answers before continuing to the next focus area**
 
 ### Advisory Perspectives
 

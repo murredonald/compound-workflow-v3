@@ -369,6 +369,8 @@ reduced-motion handling (prefers-reduced-motion).
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Design is subjective. NEVER pick colors, typography, or spacing without presenting options to the user and getting their preference. Generating a full style guide without user input is the #1 failure mode.
+- **Don't finalize STYLE-XX without approval** — Present proposed decisions per focus area, wait for user feedback, then write. The user's visual preferences override any design "best practice."
 - Don't define colors without checking WCAG contrast ratios
 - Don't specify pixel values without a responsive scaling strategy
 - Don't create a style guide that contradicts the chosen component library's defaults
@@ -389,14 +391,24 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/design --s
 
 ## Procedure
 
+**This specialist is INTERACTIVE — see "Specialist Interactivity Rules" in CLAUDE.md.**
+
 1. **Read** all planning + frontend artifacts. Pay special attention to
    FRONT-XX component library choice — build the style system to be
    compatible with it (e.g., shadcn/ui tokens, Tailwind theme, MUI theme)
-2. **Phase-by-phase deep dive** — work through each focus area in order
-3. **Lock specific values** — no "choose a nice blue." Specify `#2563EB`.
+2. 🛑 **GATE: Brand & preferences** — Before proposing ANY colors or typography,
+   ask the user about: existing brand guidelines, color preferences, mood/tone
+   (professional, playful, minimal, bold), inspiration sites, and must-haves.
+   **STOP and WAIT for answers** — their preferences override everything.
+3. **Phase-by-phase deep dive** — work through each focus area in order.
+   After each focus area (colors, typography, spacing, etc.), present
+   2-3 concrete options and **WAIT for user to pick**.
+4. **Lock specific values** — no "choose a nice blue." Specify `#2563EB`.
    No "use consistent spacing." Specify `16px card padding, 8px form gap`.
-4. **Challenge** — for each area, apply the visual consistency challenge
-5. **Output** — Append STYLE-XX decisions to decisions.md AND write
+5. **Challenge** — for each area, apply the visual consistency challenge
+6. 🛑 **GATE: Decision approval** — Present all proposed STYLE-XX decisions
+   to user. **STOP and WAIT for approval before writing to decisions.md.**
+7. **Output** — Write approved STYLE-XX decisions to decisions.md AND write
    `.workflow/style-guide.md`
 
 ## Quick Mode
@@ -407,11 +419,15 @@ prioritized areas. Mark skipped areas in decisions.md: `STYLE-XX: DEFERRED — s
 
 ## Response Structure
 
+**Every response MUST end with questions or options for the user.** Design
+is subjective — if you're picking values without asking, you are auto-piloting.
+
 Each response:
 1. State which focus area you're exploring
 2. Reference relevant decisions (FRONT-XX for component library, GEN-XX for brand)
-3. Present concrete values, not abstract principles
-4. Formulate 5-8 targeted questions
+3. Present 2-3 concrete options with specific values (not abstract principles)
+4. Formulate 3-5 targeted questions about preferences
+5. **WAIT for user choice before continuing to the next focus area**
 
 ### Advisory Perspectives
 

@@ -160,6 +160,7 @@ approach, selection persistence across pages.
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present FRONT-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't pick a component library without checking it supports all required patterns
 - Don't design state management before knowing the data flow from backend
 - Don't assume SSR/CSR without considering SEO and performance requirements

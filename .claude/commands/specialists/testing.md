@@ -394,6 +394,7 @@ or nightly), acceptable degradation under load.
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present TEST-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't mandate 100% coverage — identify critical paths and cover those first
 - Don't write a test plan that assumes a specific framework before it's decided
 - Don't skip test data strategy — tests without realistic data find fewer bugs

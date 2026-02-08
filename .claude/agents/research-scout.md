@@ -52,6 +52,19 @@ If `question` is missing, return: "No research question provided."
 4. Note version-specific caveats
 5. Flag if information seems outdated or conflicting across sources
 
+## Multi-LLM Cross-Validation (optional)
+
+If the parent agent passes `cross_validate: true`, the parent will also
+invoke GPT and Gemini with the same research question in parallel. After
+all three return, the parent compares answers:
+
+- **Consensus** (2+ agree): high-confidence answer
+- **Conflict** (disagreement on facts/versions): flag for human review
+- **Complementary** (different sources, compatible info): merge into richer answer
+
+You do NOT invoke other LLMs yourself. The parent orchestrates cross-validation
+and may pass external findings back for you to comment on.
+
 ## Output Format
 
 ```

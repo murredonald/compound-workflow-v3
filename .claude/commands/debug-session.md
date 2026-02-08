@@ -100,7 +100,8 @@ AFTER generating your initial hypotheses:
    python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode debugging
    python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode debugging
    ```
-3. Collect outputs (failures are non-blocking)
+3. Collect outputs. If a provider fails (exit 1), **retry once** after 5 seconds.
+   If the retry also fails, note as unavailable and continue — failures are non-blocking.
 4. Merge results:
    - **Corroborated** (2+ LLMs agree): move hypothesis UP in priority
    - **Genuinely new**: add as H4, H5, etc.

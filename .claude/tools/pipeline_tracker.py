@@ -39,6 +39,7 @@ GREENFIELD_PHASES: list[dict[str, str]] = [
     {"id": "synthesize", "label": "Plan Synthesis + Validation", "command": "/synthesize"},
     {"id": "execute", "label": "Execution (Ralph Loop)", "command": "/execute"},
     {"id": "runtime-qa", "label": "Runtime QA Testing", "command": "/execute"},
+    {"id": "qa-fix-pass", "label": "QA Fix Pass", "command": "/execute"},
     {"id": "retro", "label": "Evidence-Based Retrospective", "command": "/retro"},
 ]
 

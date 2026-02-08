@@ -163,6 +163,7 @@ status code."
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present SEC-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't treat security as a checklist — prioritize by actual threat likelihood
 - Don't copy-paste OWASP items without mapping them to this app's attack surface
 - Don't specify crypto primitives unless the project truly needs custom crypto

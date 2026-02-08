@@ -319,6 +319,10 @@ Cross-reference task queue against planning artifacts:
   - Every table-stakes feature (from competition analysis) → has a task?
   - Every COMP-XX "in scope" decision → covered by tasks?
   - Flag any table-stakes feature without task coverage
+- **If `.workflow/competition-analysis.md` does NOT exist:** skip the competition
+  sub-checks above. This file is optional (competition specialist may have been
+  skipped for internal tools with no public competitors). The remaining coverage
+  checks (endpoints, screens, workflows, must-have features) still apply.
 
 **Gap found:** Escalate to user. Do not add tasks yourself.
 
@@ -426,6 +430,7 @@ After writing `task-queue.md`, create these files if they don't already exist:
 .workflow/reflexion/process-learnings.md — Empty process learnings template
 .workflow/evals/task-evals.json          — Empty entries array with schema
 .workflow/deferred-findings.md           — Empty deferred findings log
+.workflow/qa-fixes.md                    — Empty QA fix pass log
 .workflow/state-chain/chain.json         — Empty state chain with schema
 ```
 
@@ -471,6 +476,20 @@ DF-{NN} tasks at milestone boundaries.
 ---
 ```
 
+**qa-fixes.md template:**
+```markdown
+# QA Fix Pass
+
+End-of-queue verification findings that must be fixed before v1 ships. Sources:
+full test suite (always), qa-browser-tester (web UI), style-guide-auditor (when
+style-guide.md exists). Fixed using the standard Ralph loop (implement -> verify
+-> review -> commit).
+
+**Statuses:** `must-fix` -> `[x] QA-{NN}` | `deferred-post-v1` | `dismissed — {reason}`
+
+---
+```
+
 **chain.json template:**
 ```json
 {
@@ -505,6 +524,7 @@ Execution state bootstrapped:
   ✅ .workflow/reflexion/process-learnings.md
   ✅ .workflow/evals/task-evals.json
   ✅ .workflow/deferred-findings.md
+  ✅ .workflow/qa-fixes.md
 
 To begin execution:
   /execute

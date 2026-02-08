@@ -58,6 +58,8 @@ Triggered by the parent agent (`/execute`) at end-of-queue.
 | `style_decisions` | Yes | -- |
 | `front_decisions` | No | Proceed without -- note gap in component library context |
 | `route_map` | No | Default: discover pages from navigation |
+| `targeted_routes` | No | Default: full audit (all pages). When provided, only audit these pages. |
+| `reverify_mode` | No | Default: false. When true, run Phases 2-6 only on targeted_routes. |
 
 If `app_url` or `style_guide` is missing, BLOCK immediately.
 
@@ -75,6 +77,22 @@ application, **redact them** in your report. Replace with `[REDACTED]`.
 - Application must be running and accessible at `app_url`
 - Playwright installed (`npx playwright install` or equivalent)
 - `.workflow/style-guide.md` must exist and contain auditable rules
+
+---
+
+## Re-verification Mode
+
+When invoked with `reverify_mode: true` and `targeted_routes: ["/route1", "/route2"]`:
+- Run ONLY Phases 2-6 (Visual Scan, Color, Typography, Spacing, Component) on listed pages
+- Skip Phase 1 (Style Guide Parsing — already done in initial audit) and Phase 7
+  (Cross-Page Consistency) unless fixes touched shared components/tokens
+- Focus on verifying that previously-reported style deviations are now resolved
+- Report any NEW deviations found on these pages (new findings, not originals)
+- Note "RE-VERIFICATION" in the report header
+- Use the same output format but with "RE-VERIFICATION" prefix in the header
+
+This mode is used by the QA Fix Pass in `/execute` after fixing CRITICAL/MAJOR
+style findings — it confirms fixes work without re-running the full 7-phase audit.
 
 ---
 

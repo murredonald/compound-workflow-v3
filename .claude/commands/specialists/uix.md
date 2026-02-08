@@ -326,6 +326,7 @@ Flag any gaps.
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present UIX-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't write abstract usability guidelines — every expectation must be testable
 - Don't skip mobile viewport testing expectations
 - Don't assume navigation works — explicitly trace every "how do I get to X?" path

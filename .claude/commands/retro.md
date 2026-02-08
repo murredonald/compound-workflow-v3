@@ -61,11 +61,13 @@ python .claude/tools/pipeline_tracker.py complete --phase retro --summary "{N} t
 
 ## Inputs
 
-- `.workflow/reflexion/index.json` — All reflections
+- `.workflow/reflexion/index.json` — All reflections (per-task technical surprises)
+- `.workflow/reflexion/process-learnings.md` — Process/workflow lessons (cross-cutting)
 - `.workflow/evals/task-evals.json` — Per-task metrics
 - `.workflow/decisions.md` — Decisions that were made
 - `.workflow/state-chain/chain.json` — Audit trail of all agent actions
 - `.workflow/backlog.md` — CRs and their statuses (release scope only)
+- `.workflow/qa-fixes.md` — QA Fix Pass results (if exists)
 - `git log --oneline` — Commit history
 
 ---
@@ -97,6 +99,14 @@ Top reflection tags:
 Recurring issues (entries with matching tags or applies_to):
   - {pattern across multiple reflections}
 ```
+
+### 2b. Process Learnings
+
+From `.workflow/reflexion/process-learnings.md`, review cross-cutting workflow lessons:
+- Which process patterns worked well? (e.g., "running tests before review saved cycles")
+- Which process patterns caused friction? (e.g., "milestone reviews were too strict early on")
+- Are any process learnings now outdated or superseded by newer entries?
+- Recommendations: what should change in the workflow itself (not just code)?
 
 ### 3. Review Effectiveness
 
@@ -154,6 +164,33 @@ Warnings logged in chain: {N} total
 
 This data supplements eval metrics — the chain shows the exact sequence
 of events, not just summaries.
+
+### 7. End-of-Queue Verification Analysis
+
+If `.workflow/qa-fixes.md` exists, analyze the end-of-queue verification pass:
+
+```
+Findings by verification layer:
+  Full test suite:  {N} findings ({N} critical, {N} major, {N} minor)
+  Browser QA:       {N} findings ({N} critical, {N} major, {N} minor)
+  Style compliance: {N} findings ({N} critical, {N} major, {N} minor)
+
+Must-fix executed: {N}
+Deferred to post-v1: {N}
+Re-verification cycles: {N}
+New issues found in re-verification: {N}
+```
+
+Per-layer analysis:
+- Test suite: which test categories failed most? (unit, integration, e2e)
+- Browser QA: which phases found the most issues? (missing functionality vs broken interactions vs edge cases)
+- Style: systematic violations vs isolated deviations?
+
+Root cause analysis:
+- Which spec areas produced the most findings across all layers?
+- Were QA fixes in files that tasks should have covered better?
+- Did milestone reviews miss integration issues that the full suite caught?
+- Is runtime QA catching real v1 gaps, or mostly polish items?
 
 ---
 

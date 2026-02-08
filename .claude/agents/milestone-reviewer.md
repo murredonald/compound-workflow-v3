@@ -35,6 +35,7 @@ in a milestone have passed code review and the pre-commit gate.
 - `task_list` — Tasks included in this milestone
 - `prior_milestones` — Previously completed milestones (for regression)
 - `project_spec_excerpt` — Relevant workflows/jobs-to-be-done
+- `external_review_findings` — (optional) GPT + Gemini integration review outputs
 
 ## Input Contract
 
@@ -45,6 +46,7 @@ in a milestone have passed code review and the pre-commit gate.
 | `task_list` | Yes | -- |
 | `prior_milestones` | No | Default: assume no prior context, skip regression suite |
 | `project_spec_excerpt` | No | Default: test based on milestone_definition only |
+| `external_review_findings` | No | If absent, review independently. If present, validate external findings against your test results and flag disagreements. |
 
 If a required input is missing, BLOCK with: "Cannot review milestone -- missing {input}."
 
@@ -204,6 +206,19 @@ architectural changes? If yes → blocking → escalate to user.
 2. {specific fix}
 ```
 
+### Suite 5: External Finding Integration (if `external_review_findings` provided)
+
+If `external_review_findings` is present, review each finding from the
+external LLMs (GPT, Gemini) AFTER running the test cascade:
+
+- **Validate** each finding against your test results — did your cascade confirm or contradict it?
+- **Confirm** valid findings: add them to your failures list with "[External]" prefix
+- **Dismiss** false positives with reason: "[External dismissed] {finding} — {reason}"
+- **Note** any integration issues the external reviewers caught that your cascade missed
+
+This step produces a unified set of findings combining your test results
+with validated external input. Your verdict reflects the consolidated assessment.
+
 ## Verdict Taxonomy
 
 **Verdict namespace:** `MILESTONE_{COMPLETE|FIXABLE|BLOCKED}`. Maps to:
@@ -214,6 +229,9 @@ BLOCKED to escalate to user.
 
 - **Max 2 review cycles per milestone.** If cycle 2 still has failures,
   escalate to user regardless of fixable/blocking classification.
+- **Failure memory:** When re-invoking after a fix cycle, include the
+  previous cycle's failure list as context. This prevents re-introducing
+  the same issues and helps focus the review on whether fixes actually worked.
 - After fixes, the parent agent should re-run code-reviewer on affected
   tasks before re-invoking milestone-reviewer.
 

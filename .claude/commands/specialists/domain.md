@@ -128,11 +128,64 @@ specialist **actively researches**. Use these tools:
 5. **Advisory system** — Get perspectives from Claude/GPT/Gemini on
    domain-specific questions
 
+### Parallelizing Research
+
+When launching multiple research agents (e.g., 6 topic-specific research-scout
+agents for different domain areas), put ALL Task tool calls in a **single
+message**. This runs them in parallel with full result capture.
+
+**NEVER use `run_in_background: true`** — background agents report "completed"
+but their output files are empty. All research results will be lost and you'll
+have to re-run everything from scratch.
+
+```
+CORRECT:  Single message → Task(agent1) + Task(agent2) + Task(agent3)  → all results returned
+WRONG:    Task(agent1, run_in_background=true) → output file empty → results lost
+```
+
 ### Research Methodology
 
-**Do NOT do single-shot research.** For each domain topic, follow this
-multi-round protocol — this is what separates surface-level research
-from deep domain understanding:
+**Do NOT do single-shot research.** Research operates at TWO levels that
+reinforce each other. Both are mandatory:
+
+#### Level A: Meta-Understanding (the "why" and "how" of the domain)
+
+Before diving into specifics, build a **structural understanding** of how
+the domain works as a system. This is the layer most research skips —
+and it's what separates "a list of facts" from "real domain expertise."
+
+**Meta questions to answer for EVERY domain:**
+- **Organizing principles:** What is the domain's internal logic? How is
+  knowledge in this domain structured? (e.g., tax law is organized by
+  hierarchy of norms + temporal layers + jurisdiction; medicine by
+  body system + pathology + treatment protocol)
+- **Methodology:** How do domain experts actually work? What's their
+  reasoning process? (e.g., a tax advisor starts with the legal text,
+  checks circulars for interpretation, then checks case law for edge
+  cases — that's a methodology the software should mirror)
+- **Information architecture:** How do concepts relate to each other?
+  What depends on what? Draw the dependency graph. (e.g., in tax:
+  income year → taxable base → rate brackets → tax due → deductions)
+- **Change dynamics:** How does this domain evolve? What changes
+  frequently vs rarely? What triggers changes? (e.g., annual budget
+  laws update rates, but the structure of the tax code changes rarely)
+- **Expert mental models:** What conceptual frameworks do practitioners
+  use? What shortcuts do they take? What do they "just know"?
+
+**This meta-understanding shapes everything downstream.** It determines:
+- How the domain-library should be organized (mirror the domain's own structure)
+- What edge cases to look for (they occur at the boundaries of the domain's categories)
+- What the software's information architecture should reflect
+- What will break when the domain changes
+
+Write the meta-understanding as the **first domain-library file**:
+`.workflow/domain-library/domain-methodology.md` — how this domain works
+as a system, its organizing principles, practitioner workflows, and
+the domain's own information hierarchy.
+
+#### Level B: Topic-Deep Research (the "what" — facts, rules, edge cases)
+
+For each specific domain topic, follow this multi-round protocol:
 
 **Round 1 — Broad discovery:**
 - Search 2-3 broad queries: "{domain} regulations", "{topic} rules",
@@ -148,18 +201,33 @@ from deep domain understanding:
   Read the actual regulation text, official documentation, or standard spec.
 - Follow citations: if a source references an authority, fetch that authority.
 
-**Round 3 — Verification and edge cases:**
+**Round 3 — Edge cases and boundaries:**
+This round deserves special attention. Edge cases are where software breaks.
+- **Boundary conditions:** What happens at the exact threshold? (e.g.,
+  income exactly at bracket boundary, transaction on midnight of deadline)
+- **Temporal transitions:** What happens when rules change mid-period?
+  Retroactivity? Grandfathering? Pro-rating?
+- **Jurisdiction overlaps:** When multiple rules could apply, which wins?
+  What's the conflict resolution mechanism?
+- **Exception paths:** What are the legal exceptions, exemptions, special
+  regimes? When do they apply? What triggers them?
+- **Failure modes:** What happens when data is incomplete, contradictory,
+  or ambiguous? How do domain experts handle it?
+- **Practitioner pitfalls:** Search for "{topic} common mistakes",
+  "{topic} audit findings", "{topic} court cases about errors"
 - Cross-reference key facts across 2+ independent sources
-- Search for: "{topic} edge cases", "{topic} common mistakes",
-  "{regulation} recent changes {current year}"
 - Look for contradictions between what you found and your innate knowledge.
   When they differ, the external source is likely correct.
 
 **Round 4 — Synthesis (write domain-library file):**
 - Create the domain-library/ file for this topic with all findings
-- Write worked examples using the researched rules
+- Write worked examples: minimum 3 per topic (normal case, edge case,
+  error/exception case)
+- Document edge cases as a dedicated section — not an afterthought
 - Tag each fact with confidence level (`[C]`/`[P]`/`[U]`/`[UV]`)
 - List remaining gaps as unresolved questions
+- Cross-reference back to the meta-understanding: where does this topic
+  fit in the domain's overall structure?
 
 **When to use research-scout:** Delegate specific sub-questions that don't
 need your domain context (e.g., "what Python library implements XBRL parsing?"
@@ -512,6 +580,12 @@ by topic for quick lookup during implementation.
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — NEVER skip the 🛑 gates. The user MUST answer interview questions before research begins, validate findings before decisions are drafted, and approve decisions before they're written. Running all 7 focus areas + writing 20 DOM-XX decisions without user input is the #1 failure mode.
+- **Don't batch all research into one shot** — Present findings incrementally (1-2 focus areas at a time). The user's feedback on early areas shapes later research.
+- **Don't finalize DOM-XX without approval** — Draft decisions are proposals. Only the user's explicit approval makes them final. Present them grouped by focus area for review.
+- **Don't skip the meta-understanding** — Before diving into specific rules, understand HOW the domain works as a system. A list of facts without organizing principles is useless. Write `domain-methodology.md` FIRST.
+- **Don't write shallow domain-library files** — Every file must pass the depth test: "Could a developer implement correctly from this file alone, including edge cases?" If not, it's too shallow. Minimum 3 worked examples, minimum 3-5 edge cases per file.
+- **Don't treat edge cases as an afterthought** — Edge cases are where software breaks. Dedicate explicit research rounds to boundaries, transitions, exceptions, and failure modes. "Edge Cases & Gotchas" is not a 3-bullet afterthought — it's a comprehensive section.
 - Don't trust LLM innate knowledge for exact rates, thresholds, or recently changed rules
 - Don't mark domain facts as [C]onfirmed without a Tier 1 source
 - Don't skip jurisdiction and temporal scoping
@@ -536,23 +610,51 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/domain --s
 sequence, not a rigid pipeline. When discovery in one area reveals gaps
 in earlier areas, loop back. Note it: "Looping back to FA {N} — discovered {X}."
 
+**This specialist is INTERACTIVE. You MUST stop and wait for user input at
+every gate marked 🛑. Do NOT auto-pilot through the procedure. The user is
+the subject matter expert — their input shapes every decision.**
+
 1. **Read** project-spec.md and identify the business domain(s)
-2. **Interview** — Ask the user 5-8 foundational domain questions. Always include:
+
+2. 🛑 **GATE: Interview** — Ask the user 5-8 foundational domain questions.
+   **STOP and WAIT for answers before proceeding.** Always include:
    - **Jurisdictions:** What countries/states/regions does this project operate in?
    - **Effective date:** What version of regulations applies? (current law? specific date?)
    - **User expertise:** Are you a domain expert, or building for a domain you're learning?
    Then ask domain-specific questions based on the project-spec.
 
+   **Do NOT proceed to step 3 until the user has answered.** Their answers
+   determine jurisdiction scope, research depth, and validation approach.
+
    **If the user is NOT a domain expert:** Increase research depth across all
    areas. Rely on advisory + research-scout instead of user validation. Flag
    critical-tier facts as `[NEEDS EXPERT REVIEW]`.
+
 3. **Research** — For each focus area, use web search, web fetch, and
-   research-scout to gather domain knowledge
-4. **Document** — Build the domain knowledge library incrementally,
-   presenting findings to the user for validation
+   research-scout to gather domain knowledge. Research 1-2 focus areas at a
+   time, then present findings before continuing.
+
+4. 🛑 **GATE: Present & validate findings** — After researching each focus area
+   (or batch of 1-2 areas), present findings to the user with:
+   - Key discoveries and surprises
+   - Items that conflict with expectations or innate knowledge
+   - Proposed DOM-XX decisions (as DRAFTS, not final)
+   - 3-5 follow-up questions for the next research round
+   **STOP and WAIT for user feedback before writing any DOM-XX decisions.**
+   Repeat steps 3-4 for each focus area batch.
+
 5. **Challenge** — Apply "what would an expert say is wrong?" to every finding
-6. **Validate** — Cross-reference all facts with the user (they are the SME)
-7. **Output** — Write DOM-XX decisions to decisions.md AND generate
+
+6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of proposed
+   DOM-XX decisions to the user for approval before writing to decisions.md.
+   Group them by focus area. The user may:
+   - Approve all → proceed to write
+   - Reject specific decisions → remove or revise
+   - Add missing decisions → incorporate
+   - Request more research on specific areas → loop back to step 3
+   **Do NOT write DOM-XX decisions to decisions.md until the user approves.**
+
+7. **Output** — Write approved DOM-XX decisions to decisions.md AND generate
    `.workflow/domain-knowledge.md`. Include specialist handoff notes —
    explicitly flag which findings matter for ARCH, BACK, SEC, and DATA.
 
@@ -585,11 +687,16 @@ prioritized areas. Mark skipped areas in decisions.md: `DOM-XX: DEFERRED — ski
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which focus area you're exploring
 2. Present research findings with sources
 3. Highlight surprises, conflicts, or things the user should validate
-4. Formulate 5-8 targeted questions (mix of research gaps + user validation)
+4. Formulate 3-5 targeted questions (mix of research gaps + user validation)
+5. **WAIT for user answers before continuing to the next focus area**
 
 ### Advisory Perspectives
 
@@ -615,6 +722,12 @@ Last updated: {date}
 
 ## Domain Summary
 {1-2 paragraph overview of the business domain and its complexity}
+
+## How This Domain Works
+{Brief summary of the domain's organizing principles, practitioner workflow,
+and reasoning patterns. This is the "meta" layer — see domain-methodology.md
+for the full version. A developer reading this section should understand HOW
+domain experts think, not just WHAT the rules are.}
 
 ## Glossary
 {Concise term definitions — full details in domain-library/ if needed}
@@ -658,6 +771,21 @@ Last updated: {date}
 One file per major topic. Create during research as topics emerge.
 Naming: `{topic-slug}.md` (e.g., `belgian-tob-tax.md`, `erc20-token-standard.md`)
 
+**The FIRST file must be `domain-methodology.md`** — the meta-understanding
+of how this domain works as a system (see Level A in Research Methodology).
+
+**Quality gates per file (minimum requirements):**
+- Worked examples: **minimum 3** (normal case, boundary/edge case, exception/error case)
+- Edge cases: **dedicated section, not an afterthought** — minimum 5 edge cases per topic
+  for Critical-tier topics, minimum 3 for Important-tier
+- Sources: every claim must cite a source. No unsourced paragraphs.
+- Cross-references: every file must link back to related files and DOM-XX decisions
+
+**Depth test:** After writing a domain-library file, ask: "Would a developer
+reading only this file be able to implement correctly, including the edge
+cases? Or would they need to search for more information?" If the answer
+is "they'd need to search more," the file isn't deep enough.
+
 Each file structure:
 ```markdown
 # {Topic Title}
@@ -667,24 +795,77 @@ Last researched: {date}
 Reliability: {Tier 1/2/3}
 Staleness risk: {low — stable regulation | medium — annual updates | high — volatile}
 Review by: {date or trigger — e.g., "2026-01-01" or "when tax year changes"}
+Position in domain: {where this topic sits in the domain's overall structure —
+  reference domain-methodology.md}
 
 ## Summary
-{2-3 paragraph overview}
+{2-3 paragraph overview — what this topic IS, why it matters, how it
+relates to other domain topics}
 
 ## Detailed Rules / Specifications
 {The deep content — rate tables, formulas, field specs, etc.}
+{Organize by the domain's own structure, not arbitrary grouping}
 
 ## Worked Examples
-{Multiple concrete examples with edge cases}
+{Minimum 3 examples:}
+{1. Normal/happy path — the common case}
+{2. Boundary/edge case — what happens at thresholds, transitions, overlaps}
+{3. Exception/error case — what happens when things go wrong, data is missing,
+   rules conflict}
+{Each example: concrete input values → step-by-step calculation → final result}
 
-## Edge Cases & Gotchas
-{What can go wrong, what developers miss}
+## Edge Cases & Boundary Conditions
+{Dedicated deep section. For each edge case:}
+{- Scenario: what triggers it}
+{- Correct handling: what the domain says should happen}
+{- Common mistake: what developers typically get wrong}
+{- Source: regulation/precedent/expert practice that confirms correct handling}
+
+## Practitioner Notes
+{How domain experts actually handle this topic in practice.}
+{Shortcuts, rules of thumb, common interpretive questions.}
+{What would an accountant/lawyer/doctor tell a junior colleague?}
 
 ## Sources
 {All URLs with descriptions and access dates}
 
 ## Cross-References
 {Links to related domain-library files and DOM-XX decisions}
+{Link back to domain-methodology.md — where does this fit?}
+```
+
+**domain-methodology.md structure:**
+```markdown
+# Domain Methodology — {Domain Name}
+
+## How This Domain Works
+{The domain's organizing principles — how knowledge is structured,
+what depends on what, how practitioners reason}
+
+## Practitioner Workflow
+{How domain experts actually work step-by-step. What do they check
+first? What's their decision tree? What tools/references do they use?}
+
+## Domain Hierarchy / Taxonomy
+{The domain's own classification system. For law: hierarchy of norms.
+For medicine: body systems. For finance: asset classes. etc.}
+
+## Information Dependencies
+{What concepts depend on what. A directed graph of domain knowledge.
+e.g., "To calculate tax due, you need: taxable base (which needs:
+income classification + deductions + exemptions)"}
+
+## Change Dynamics
+{What changes and how often. What triggers changes. What's stable
+vs volatile. How changes propagate through the domain.}
+
+## Domain-Specific Reasoning Patterns
+{How domain experts resolve ambiguity. Conflict resolution rules.
+Interpretation hierarchies. Default assumptions.}
+
+## Implications for Software
+{What the meta-understanding means for how the software should be
+structured, what abstractions to use, what to make configurable.}
 ```
 
 ## Decision Format Examples

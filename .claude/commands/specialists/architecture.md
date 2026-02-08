@@ -145,6 +145,7 @@ For external dependencies identified in planning:
 
 ## Anti-Patterns
 
+- **Don't auto-pilot** — Present ARCH-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
 - Don't pick a pattern just because it's popular — justify from project requirements
 - Don't define module boundaries without considering the team size and deploy cadence
 - Don't defer infrastructure decisions to "later" — they shape everything downstream

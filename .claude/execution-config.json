@@ -9,10 +9,16 @@
   },
   "deferred_auto_action": {
     "action": "promote",
-    "description": "What to do with deferred findings at milestone boundaries when milestone_pause is false. Options: 'promote' (auto-add all as tasks), 'defer' (auto-defer all to post-v1), 'ask' (always ask user regardless of milestone_pause)."
+    "description": "What to do with deferred findings at milestone boundaries when milestone_pause is false. Options: 'promote' (auto-add all as tasks), 'defer' (auto-defer all to post-v1), 'ask' (always ask user regardless of milestone_pause), 'preview' (display findings then auto-promote without pausing)."
   },
   "runtime_qa_pause": {
     "enabled": false,
     "description": "When true, pause after runtime QA results for user review before /retro. When false, write findings to observations.md and proceed to /retro automatically."
+  },
+  "qa_fix_pass": {
+    "enabled": true,
+    "major_action": "fix",
+    "max_cycles": 3,
+    "description": "Controls the end-of-queue verification fix pass. Runs after all tasks complete: full test suite (always) + browser QA (if web UI) + style audit (if style-guide.md). CRITICAL findings always fixed. major_action controls MAJOR findings: 'fix' (fix them), 'defer' (auto-defer to post-v1), 'ask' (ask user per finding). max_cycles = max fix+re-verify cycles (default 3)."
   }
 }

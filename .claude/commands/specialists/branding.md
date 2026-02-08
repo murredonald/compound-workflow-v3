@@ -280,6 +280,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/branding -
 
 ## Procedure
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 1. **Read** all planning + competition + domain artifacts
 
 2. **Research** — Execute the Brand Research Protocol (see Research Tools).
@@ -324,7 +326,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/branding -
    **Do NOT write to decisions.md until user approves.**
 
 8. **Output** — Append approved BRAND-XX decisions to decisions.md,
-   generate `.workflow/brand-guide.md`
+   generate `.workflow/brand-guide.md`. Delete `.workflow/specialist-session.json`.
 
 ## Brand Guide Generation
 

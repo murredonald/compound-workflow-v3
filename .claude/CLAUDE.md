@@ -178,12 +178,14 @@ All runtime state lives in `.workflow/`. Never manually edit these — commands 
 ├── style-guide.md               # Visual reference (created by /specialists/design, read by frontend-style-reviewer)
 ├── brand-guide.md               # Brand identity reference (created by /specialists/branding, read by /specialists/design)
 ├── specialist-session.json       # Active specialist session state (written by /specialists/*, read by on-compact, deleted on completion)
+├── advisory-state.json          # Advisory skip state (written when user says "skip advisory", read by all advisory commands, deleted at pipeline end)
 ├── pipeline-status.json         # Pipeline progress (written by all commands, read by /status + on-compact)
 ├── deferred-findings.md         # v1 scope gaps discovered during execution (DF-{NN}, promoted to tasks at milestones)
 ├── qa-fixes.md                  # End-of-queue verification findings (QA-{NN}, fixed before v1 ships)
 ├── releases.md                  # Release records (created by /release, one section per version)
 ├── reflexion/
-│   └── index.json               # Lessons learned (written by /execute, read before each task)
+│   ├── index.json               # Per-task technical lessons (written by /execute step 7, read before each task)
+│   └── process-learnings.md     # Workflow/process insights (written by /execute step 7, read by /retro + /plan-delta)
 ├── evals/
 │   └── task-evals.json          # Per-task metrics (written by /execute, read by /retro)
 └── state-chain/

@@ -108,6 +108,12 @@ From `.workflow/reflexion/process-learnings.md`, review cross-cutting workflow l
 - Are any process learnings now outdated or superseded by newer entries?
 - Recommendations: what should change in the workflow itself (not just code)?
 
+If the file is empty (only has the template header), ask the user:
+> "No process learnings were logged during execution. Are there any workflow/process
+> observations you'd like to record? (e.g., 'advisory added value during design',
+> 'milestone reviews caught integration issues early', 'task sizing was too large')"
+Append any user-provided insights to process-learnings.md before continuing analysis.
+
 ### 3. Review Effectiveness
 
 From eval data:

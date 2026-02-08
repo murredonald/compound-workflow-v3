@@ -107,4 +107,19 @@ If the user says "skip advisory" or "no advisory" at any point, skip the
 advisory protocol for all remaining focus areas/stages in this session.
 Acknowledge once: "Advisory disabled for this session."
 
+**Persist the skip state** by writing `.workflow/advisory-state.json`:
+```json
+{
+  "skip_advisories": true,
+  "disabled_since": "{ISO 8601 timestamp}",
+  "disabled_by": "user"
+}
+```
+
+**At the start of any command that invokes advisory** (plan, plan-define,
+plan-delta, specialists), check if `.workflow/advisory-state.json` exists
+and `skip_advisories` is `true`. If so, skip advisory without asking again.
+Delete the file when the pipeline completes (retro or release) to reset
+for the next session.
+
 After presenting advisories, **stop and wait for user input.**

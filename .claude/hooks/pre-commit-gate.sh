@@ -71,7 +71,12 @@ if [ -n "$ERRORS" ]; then
   echo "║     PRE-COMMIT GATE: BLOCKED         ║" >&2
   echo "╚══════════════════════════════════════╝" >&2
   echo -e "$ERRORS" >&2
-  echo "Fix these issues and try committing again." >&2
+  echo "" >&2
+  echo "Recovery hints:" >&2
+  echo "  • Lint issues → run: ruff check --fix . && ruff format ." >&2
+  echo "  • Type errors → fix type annotations, then re-run commit" >&2
+  echo "  • Test failures → run: pytest tests/ -v --tb=short" >&2
+  echo "  • Security issues → run: bandit -r src/ -ll for details" >&2
   exit 2
 fi
 

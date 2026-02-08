@@ -416,6 +416,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/pricing --
 
 ## Procedure
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 1. **Read** all planning + competition + domain artifacts
 
 2. **Research** — Execute the Pricing Research Protocol:
@@ -455,7 +457,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/pricing --
    proposed PRICE-NN decisions grouped by focus area. Wait for approval.
    **Do NOT write to decisions.md until user approves.**
 
-8. **Output** — Append approved PRICE-XX decisions to decisions.md, update constraints.md
+8. **Output** — Append approved PRICE-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 

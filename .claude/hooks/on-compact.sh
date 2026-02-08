@@ -109,4 +109,14 @@ if [ -f "$ADVISORY_CONFIG" ] && command -v jq &>/dev/null; then
   fi
 fi
 
+# Advisory skip state
+ADVISORY_STATE=".workflow/advisory-state.json"
+if [ -f "$ADVISORY_STATE" ] && command -v jq &>/dev/null; then
+  SKIP=$(jq -r '.skip_advisories // false' "$ADVISORY_STATE" 2>/dev/null)
+  if [ "$SKIP" = "true" ]; then
+    echo ""
+    echo "ADVISORY: DISABLED by user (skip state persisted)"
+  fi
+fi
+
 echo "======================================="

@@ -338,6 +338,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/frontend -
 
 ## Procedure
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 1. **Read** all planning + architecture + backend artifacts
 
 2. 🛑 **GATE: Orientation** — Present your understanding of the project's
@@ -371,7 +373,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/frontend -
    proposed FRONT-NN decisions grouped by focus area. Wait for approval.
    **Do NOT write to decisions.md until user approves.**
 
-7. **Output** — Append approved FRONT-XX decisions to decisions.md
+7. **Output** — Append approved FRONT-XX decisions to decisions.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 

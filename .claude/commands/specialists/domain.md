@@ -667,6 +667,8 @@ in earlier areas, loop back. Note it: "Looping back to FA {N} — discovered {X}
 every gate marked 🛑. Do NOT auto-pilot through the procedure. The user is
 the subject matter expert — their input shapes every decision.**
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 1. **Read** project-spec.md and identify the business domain(s)
 
 2. 🛑 **GATE: Interview** — Ask the user 5-8 foundational domain questions.
@@ -712,7 +714,7 @@ the subject matter expert — their input shapes every decision.**
 
 7. **Output** — Write approved DOM-XX decisions to decisions.md AND generate
    `.workflow/domain-knowledge.md`. Include specialist handoff notes —
-   explicitly flag which findings matter for ARCH, BACK, SEC, and DATA.
+   explicitly flag which findings matter for ARCH, BACK, SEC, and DATA. Delete `.workflow/specialist-session.json`.
 
 **Research philosophy:**
 - Start from innate knowledge — what do you already know about this domain?

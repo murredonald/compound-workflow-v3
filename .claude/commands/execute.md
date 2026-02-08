@@ -458,6 +458,22 @@ Append to the `"entries"` array in `.workflow/reflexion/index.json`:
 
 Append to `.workflow/reflexion/index.json`.
 
+**Process learnings (optional):** If a *workflow/process* surprise occurred (not a code
+bug but a process insight — e.g., "splitting large tasks into sub-tasks reduced review
+cycles", "running security auditor early caught auth issues sooner"), append to
+`.workflow/reflexion/process-learnings.md`:
+
+```markdown
+### {ISO date} — {one-line title}
+**Task:** T{NN}
+**Insight:** {what you learned about the workflow/process itself}
+**Recommendation:** {what to do differently in future projects}
+```
+
+This is separate from per-task reflections (index.json = technical surprises,
+process-learnings.md = workflow/meta insights). Most tasks won't have process learnings —
+only log when genuinely useful.
+
 ## Step 8: COMMIT
 
 ```bash

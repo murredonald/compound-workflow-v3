@@ -482,6 +482,19 @@ DF-{NN} tasks at milestone boundaries.
 
 **Statuses:** `open` → `promoted → DF-{NN}` | `deferred-post-v1` | `dismissed — {reason}`
 
+## Entry Format
+
+Each finding uses this structure:
+
+### DF-{NN}: {Title}
+**Discovered:** T{NN} — {task title where it was found}
+**Category:** missing-feature | missing-validation | missing-integration | missing-test
+**Affected area:** {module/entity/workflow}
+**Description:** {what's missing and why it matters}
+**Effort estimate:** small (< 1 task) | medium (1 task) | large (multi-task)
+**Promotion condition:** milestone-{N} | end-of-v1
+**Status:** open
+
 ---
 ```
 
@@ -534,6 +547,9 @@ Execution state bootstrapped:
   ✅ .workflow/evals/task-evals.json
   ✅ .workflow/deferred-findings.md
   ✅ .workflow/qa-fixes.md
+
+Optional (if project has data models or databases):
+  /generate-testdata — Create strategic test fixtures before execution
 
 To begin execution:
   /execute

@@ -409,6 +409,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/design --s
 
 **This specialist is INTERACTIVE — see "Specialist Interactivity Rules" in CLAUDE.md.**
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 1. **Read** all planning + frontend artifacts. Pay special attention to
    FRONT-XX component library choice — build the style system to be
    compatible with it (e.g., shadcn/ui tokens, Tailwind theme, MUI theme).
@@ -437,7 +439,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/design --s
 6. 🛑 **GATE: Decision approval** — Present all proposed STYLE-XX decisions
    to user. **STOP and WAIT for approval before writing to decisions.md.**
 7. **Output** — Write approved STYLE-XX decisions to decisions.md AND write
-   `.workflow/style-guide.md`
+   `.workflow/style-guide.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 

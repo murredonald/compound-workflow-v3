@@ -377,6 +377,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 
 ## Procedure
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 **This specialist is INTERACTIVE — see "Specialist Interactivity Rules" in CLAUDE.md.**
 
 1. **Read** project-spec.md, decisions.md, constraints.md
@@ -400,7 +402,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
    IN/OUT decisions. **Do NOT decide IN/OUT yourself.**
 7. 🛑 **GATE: Decision approval** — Present all proposed COMP-XX decisions to user.
    **STOP and WAIT for approval before writing to decisions.md.**
-8. **Output** — Write approved COMP-XX to decisions.md, generate competition-analysis.md
+8. **Output** — Write approved COMP-XX to decisions.md, generate competition-analysis.md. Delete `.workflow/specialist-session.json`.
 
 ---
 

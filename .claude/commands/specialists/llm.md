@@ -474,6 +474,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/llm --summ
 
 ## Procedure
 
+**Session tracking:** At specialist start and at every 🛑 gate, write `.workflow/specialist-session.json` with: `specialist`, `focus_area`, `status` (waiting_for_user_input | analyzing | presenting), `last_gate`, `draft_decisions[]`, `pending_questions[]`, `completed_areas[]`, `timestamp`. Delete this file in the Output step on completion.
+
 1. **Read** all planning + architecture + backend + security artifacts
 
 2. **Research** — Execute the LLM Research Protocol:
@@ -513,7 +515,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/llm --summ
    proposed LLM-NN decisions grouped by focus area. Wait for approval.
    **Do NOT write to decisions.md until user approves.**
 
-8. **Output** — Append approved LLM-XX decisions to decisions.md, update constraints.md
+8. **Output** — Append approved LLM-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 

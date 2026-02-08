@@ -18,7 +18,14 @@ EDITED=$(echo "$CLAUDE_TOOL_INPUT" | jq -r '.file_path // .path // empty' 2>/dev
 
 # Find the active task block (marked [~] in-progress)
 # Block ends at the next task heading (### [) or end of file
+# Handles all task prefixes: T{NN} (planned), DF-{NN} (deferred), QA-{NN} (QA fix)
 ACTIVE_BLOCK=$(awk '/\[~\]/{found=1} found && /^### \[/ && !/\[~\]/{exit} found{print}' "$TASK_QUEUE" 2>/dev/null)
+
+# Also check qa-fixes.md for active QA fixes (QA-{NN} tasks live there, not in task-queue)
+QA_FIXES=".workflow/qa-fixes.md"
+if [ -z "$ACTIVE_BLOCK" ] && [ -f "$QA_FIXES" ]; then
+  ACTIVE_BLOCK=$(awk '/\[~\]/{found=1} found && /^### \[/ && !/\[~\]/{exit} found{print}' "$QA_FIXES" 2>/dev/null)
+fi
 [ -z "$ACTIVE_BLOCK" ] && exit 0
 
 # Extract file paths from the multi-line Files block:

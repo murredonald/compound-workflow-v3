@@ -45,6 +45,9 @@ Which scope? A / B
 1. Read `.workflow/backlog.md` for CRs with status `planned` matching the chosen version lane
 2. Read the existing `.workflow/task-queue.md` to find the highest task number
 3. Generate new tasks starting from T{last+1}, using the same task structure
+   **with one addition for release mode**: each task must include a `**CRs:** CR-{NNN}` field
+   (after `**Depends on:**`) listing which CR(s) this task addresses. Every CR from step 1
+   must appear in at least one task's CRs field.
 4. **Prepend a release section header** before the new tasks:
    ```markdown
    ---
@@ -57,12 +60,18 @@ Which scope? A / B
    **Tasks:** T{NN} through T{NN}
    ```
 5. **Append** these tasks to the existing `task-queue.md` (do NOT overwrite)
-6. Run **lite validation** (3 checks instead of full Steve 8-check):
+6. Run **lite validation** (6 checks instead of full Steve 8-check):
    - **Scope check:** every task has files listed
    - **Dependency check:** no circular deps, deps on prior tasks are satisfiable
    - **Decision compliance:** tasks reference relevant decisions
+   - **CR coverage:** every CR from step 1 is referenced by at least one task's `**CRs:**` field
+   - **Acceptance criteria quality:** every criterion is mechanically verifiable (same rules as Check 1)
+   - **Task sizing:** no task has 5+ criteria or 5+ files (same rules as Check 3)
 7. Update CR statuses in `backlog.md`: `planned` → `in-progress`
-8. Skip the Bootstrap Execution State step (already exists from v1)
+8. **Verify** execution state files exist. If this is the first release
+   (no prior greenfield run), the reflexion, evals, and chain files may
+   not exist. Run the Bootstrap Execution State step (create missing files
+   only — don't overwrite existing ones). This is idempotent.
 
 After lite validation, jump to the Completion section (adapted for release mode).
 

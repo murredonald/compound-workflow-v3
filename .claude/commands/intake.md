@@ -53,6 +53,25 @@ Read `.workflow/observations.md` for any content between the `<!-- Paste observa
 marker and the `## Processed` section. Also consider the user's chat message
 as additional input.
 
+Also check `.workflow/deferred-findings.md` for entries with
+`**Status:** deferred-post-v1`. These are scope gaps identified during v1
+execution that were explicitly deferred for post-v1 resolution.
+
+If deferred findings exist, present them first:
+```
+Found {N} deferred findings from v1 execution:
+  DF-{NN}: {title} — {one-line description}
+  DF-{NN}: {title} — {one-line description}
+
+Include these as CRs? (Y = include all, N = skip, or list specific DF numbers)
+```
+
+For included deferred findings:
+- Type: infer from the finding's `**Category:**` field
+- Severity: default to `high` (they were flagged during v1 for a reason)
+- Source: `automated` (discovered by review/verification during execution)
+- Pre-populate description from the finding's `**Description:**` field
+
 If there's nothing new in either source:
 ```
 No new observations found. Write to .workflow/observations.md or tell me
@@ -131,6 +150,23 @@ Append each CR to `.workflow/backlog.md` using this format:
 ---
 ```
 
+### CR Lifecycle
+
+```
+new → triaged → planned → in-progress → resolved → closed
+                                       ↘ wontfix
+                                       ↘ duplicate (of CR-{NNN})
+                                       ↘ superseded (by CR-{NNN})
+```
+
+**Status transitions:**
+- `/intake` creates: `new` or `triaged`
+- `/plan-delta` updates: `triaged` → `planned` (or `new` → `planned`)
+- `/synthesize` (release mode) updates: `planned` → `in-progress`
+- `/execute` auto-updates: `in-progress` → `resolved` (when all linked tasks complete)
+- `/release` bulk-updates: `resolved` → `closed`
+- User can manually set: `wontfix`, `duplicate`, `superseded` at any time
+
 ### 7. Mark Processed
 
 Move the raw text from the active section of `observations.md` to the
@@ -138,6 +174,10 @@ Move the raw text from the active section of `observations.md` to the
 ```
 - [CR-001, CR-002, CR-003] {original raw text, summarized}
 ```
+
+For deferred findings that were included as CRs, update their status in
+`.workflow/deferred-findings.md`:
+  `deferred-post-v1` → `promoted → CR-{NNN}`
 
 ## Audit Trail
 

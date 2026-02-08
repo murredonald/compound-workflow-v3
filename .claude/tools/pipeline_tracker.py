@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -40,6 +41,7 @@ GREENFIELD_PHASES: list[dict[str, str]] = [
     {"id": "execute", "label": "Execution (Ralph Loop)", "command": "/execute"},
     {"id": "runtime-qa", "label": "Runtime QA Testing", "command": "/execute"},
     {"id": "qa-fix-pass", "label": "QA Fix Pass", "command": "/execute"},
+    {"id": "release", "label": "Release Closure", "command": "/release"},
     {"id": "retro", "label": "Evidence-Based Retrospective", "command": "/retro"},
 ]
 
@@ -49,6 +51,9 @@ EVOLUTION_PHASES: list[dict[str, str]] = [
     # Optional specialists added dynamically via add-phase
     {"id": "synthesize", "label": "Plan Synthesis + Validation", "command": "/synthesize"},
     {"id": "execute", "label": "Execution (Ralph Loop)", "command": "/execute"},
+    {"id": "runtime-qa", "label": "Runtime QA Testing", "command": "/execute"},
+    {"id": "qa-fix-pass", "label": "QA Fix Pass", "command": "/execute"},
+    {"id": "release", "label": "Release Closure", "command": "/release"},
     {"id": "retro", "label": "Evidence-Based Retrospective", "command": "/retro"},
 ]
 
@@ -372,6 +377,129 @@ def render_dashboard(path: Path | None = None) -> str:
     return "\n".join(lines)
 
 
+BACKLOG_FILE = Path(".workflow/backlog.md")
+
+OPEN_STATUSES = {"new", "triaged", "planned", "in-progress"}
+CLOSED_STATUSES = {"resolved", "closed", "wontfix", "duplicate", "superseded"}
+
+
+def render_backlog_summary(backlog_path: Path | None = None) -> str:
+    """Parse backlog.md and render a summary table."""
+    p = backlog_path or BACKLOG_FILE
+    if not p.exists():
+        return "No backlog found (.workflow/backlog.md does not exist)."
+
+    content = p.read_text(encoding="utf-8")
+
+    # Parse CRs — each starts with ## CR-NNN: Title
+    cr_blocks = re.split(r"(?=^## CR-\d{3}:)", content, flags=re.MULTILINE)
+
+    by_status: dict[str, int] = {}
+    by_lane: dict[str, dict[str, int]] = {}  # lane -> {open, closed}
+    aging: dict[str, int] = {"< 7 days": 0, "7-30 days": 0, "> 30 days": 0}
+
+    now = datetime.now(timezone.utc)
+
+    for block in cr_blocks:
+        if not block.strip().startswith("## CR-"):
+            continue
+
+        # Extract status
+        status_match = re.search(
+            r"\*\*Status:\*\*\s*(.+?)(?:\n|$)", block
+        )
+        status = status_match.group(1).strip().lower() if status_match else "unknown"
+        # Normalize statuses like "promoted → CR-005"
+        if status.startswith("promoted"):
+            status = "promoted"
+        by_status[status] = by_status.get(status, 0) + 1
+
+        # Extract version lane
+        lane_match = re.search(
+            r"\*\*Version Lane:\*\*\s*(.+?)(?:\n|$)", block
+        )
+        lane = lane_match.group(1).strip() if lane_match else "unassigned"
+        if lane not in by_lane:
+            by_lane[lane] = {"open": 0, "closed": 0}
+        if status in OPEN_STATUSES:
+            by_lane[lane]["open"] += 1
+        else:
+            by_lane[lane]["closed"] += 1
+
+        # Aging for open CRs
+        if status in OPEN_STATUSES:
+            created_match = re.search(
+                r"\*\*Created:\*\*\s*(\d{4}-\d{2}-\d{2})", block
+            )
+            if created_match:
+                try:
+                    created = datetime.strptime(
+                        created_match.group(1), "%Y-%m-%d"
+                    ).replace(tzinfo=timezone.utc)
+                    days = (now - created).days
+                    if days < 7:
+                        aging["< 7 days"] += 1
+                    elif days <= 30:
+                        aging["7-30 days"] += 1
+                    else:
+                        aging["> 30 days"] += 1
+                except ValueError:
+                    aging["< 7 days"] += 1  # Default if date parse fails
+            else:
+                aging["< 7 days"] += 1  # No date = assume recent
+
+    total = sum(by_status.values())
+    if total == 0:
+        return "Backlog is empty (no CRs found)."
+
+    lines: list[str] = []
+    sep = "=" * 63
+    thin_sep = "-" * 63
+
+    lines.append("")
+    lines.append(sep)
+    lines.append("BACKLOG SUMMARY")
+    lines.append(thin_sep)
+
+    # By status
+    lines.append("By status:")
+    status_order = [
+        "new", "triaged", "planned", "in-progress",
+        "resolved", "closed", "wontfix", "duplicate", "superseded",
+    ]
+    for s in status_order:
+        if s in by_status:
+            lines.append(f"  {s:<14}{by_status[s]}")
+    # Show any statuses not in the expected order
+    for s, count in sorted(by_status.items()):
+        if s not in status_order:
+            lines.append(f"  {s:<14}{count}")
+
+    # By version lane
+    lines.append("")
+    lines.append("By version lane:")
+    for lane in sorted(by_lane.keys()):
+        counts = by_lane[lane]
+        total_lane = counts["open"] + counts["closed"]
+        lines.append(
+            f"  {lane:<14}{total_lane} ({counts['open']} open, {counts['closed']} closed)"
+        )
+
+    # Aging
+    open_total = sum(aging.values())
+    if open_total > 0:
+        lines.append("")
+        lines.append("Aging (open CRs):")
+        lines.append(f"  {'< 7 days:':<14}{aging['< 7 days']}")
+        lines.append(f"  {'7-30 days:':<14}{aging['7-30 days']}")
+        warn = " !!!" if aging["> 30 days"] > 0 else ""
+        lines.append(f"  {'> 30 days:':<14}{aging['> 30 days']}{warn}")
+
+    lines.append(sep)
+
+    return "\n".join(lines)
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -442,6 +570,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_current = sub.add_parser("current", help="Print current phase ID")
     p_current.set_defaults(command="current")
 
+    # backlog-summary
+    p_backlog = sub.add_parser("backlog-summary", help="Print backlog summary")
+    p_backlog.set_defaults(command="backlog-summary")
+    p_backlog.add_argument(
+        "--backlog-file", type=Path, default=None,
+        help="Path to backlog.md (default: .workflow/backlog.md)",
+    )
+
     return parser
 
 
@@ -505,6 +641,10 @@ def main() -> None:
             print(current)
         else:
             print("none")
+
+    elif args.command == "backlog-summary":
+        backlog_path = getattr(args, "backlog_file", None)
+        print(render_backlog_summary(backlog_path))
 
 
 if __name__ == "__main__":

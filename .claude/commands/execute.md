@@ -489,6 +489,21 @@ The pre-commit-gate hook will run automatically:
 If the same hook blocks **3 times in a row** on the same error, escalate to user —
 the issue may require a structural change beyond the current task's scope.
 
+### CR Auto-Resolution (release tasks only)
+
+If the completed task has a `**CRs:**` field (release-mode tasks), check each referenced CR:
+
+1. Read the release section header to find all tasks in this release
+2. For each CR referenced by the just-completed task:
+   - Find ALL tasks in the release that reference this CR
+   - If ALL of them are `[x]` (complete):
+     - Update the CR's status in `.workflow/backlog.md`: `in-progress` → `resolved`
+     - Display: `CR-{NNN} resolved — all linked tasks complete`
+   - If some are still `[ ]` or `[~]`: do nothing (CR stays `in-progress`)
+
+This runs automatically — no user interaction needed. The CR→task link via
+the `**CRs:**` field makes this deterministic.
+
 ## Step 9: EVAL
 
 Append an entry to the `"entries"` array in `.workflow/evals/task-evals.json`:
@@ -662,10 +677,24 @@ entries with `**Status:** open`. If any exist:
 
 ## End-of-Queue Verification & Fix Pass
 
-When ALL tasks are complete (no `[ ]` or `[~]` entries remain in task-queue.md),
-run a comprehensive final verification across three layers before `/retro`.
+When the current scope's tasks are complete, run end-of-queue verification.
 
-**Trigger:** All tasks in task-queue.md are `[x]` (complete).
+**Trigger — greenfield:** All tasks in task-queue.md are `[x]` (complete).
+
+**Trigger — evolution (release mode):** All tasks under the current
+`## Release: v{X.Y}` section in task-queue.md are `[x]` (complete).
+Earlier release sections and original v1 tasks are not checked — they
+were verified when their own scope completed. Look for the release header
+that matches the current pipeline's release scope (from pipeline-status.json
+or the most recent `## Release:` header with incomplete tasks).
+
+**Verification scope:** Regardless of trigger mode:
+- **Layer 0 (Full test suite):** Always runs the COMPLETE project test suite.
+  Evolution changes can break v1 features — full suite is mandatory.
+- **Layer 1 (Browser QA):** Conditional. For evolution releases, only run if
+  the release's tasks touch FRONT-XX related files (`.tsx`, `.jsx`, `.css`,
+  `.scss`, UI components). If no frontend changes, skip with note.
+- **Layer 2 (Style compliance):** Same conditional as Layer 1.
 
 ### Layer 0: Full Test Suite (always runs)
 

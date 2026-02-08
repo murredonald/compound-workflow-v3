@@ -67,6 +67,12 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+
+# Fix Windows console encoding (cp1252 can't handle Unicode from LLM responses)
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
+if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
+    sys.stderr.reconfigure(encoding="utf-8")
 from pathlib import Path
 from typing import Any
 

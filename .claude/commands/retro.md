@@ -192,6 +192,29 @@ Root cause analysis:
 - Did milestone reviews miss integration issues that the full suite caught?
 - Is runtime QA catching real v1 gaps, or mostly polish items?
 
+### 8. Debug Session Analysis
+
+If `task-evals.json` contains entries where `debug_session` is `true`, analyze them:
+
+```
+Debug sessions: {N} total
+  From CRs: {N} (linked to CR-{NNN}, ...)
+  Ad-hoc: {N} (no prior CR)
+
+Files touched by debug sessions: {list}
+  Overlap with planned tasks: {N} files also modified by T{NN} tasks
+
+Containment respected: {N}/{N} sessions stayed within boundary
+
+Root causes:
+  - {category}: {N} (e.g., "validation gap", "missing edge case", "integration issue")
+```
+
+**Questions to answer:**
+- Are debug sessions fixing issues that planning should have caught?
+- Are the same files repeatedly involved in debug sessions? (hot spot detection)
+- Should any ad-hoc bugs have been CRs routed through /intake instead?
+
 ---
 
 ## Output

@@ -188,6 +188,31 @@ git add {files}
 git commit -m "Fix: {brief description} (CR-{NNN})"
 ```
 
+### 9.5. EVAL
+
+Record the debug session in `.workflow/evals/task-evals.json` for retro visibility:
+
+```json
+{
+  "task_id": "DEBUG-{CR-NNN or ad-hoc-N}",
+  "milestone": "N/A",
+  "status": "completed",
+  "started_at": "{ISO 8601}",
+  "completed_at": "{ISO 8601}",
+  "review_cycles": 1,
+  "security_review": true | false,
+  "test_results": { "total": 0, "passed": 0, "failed": 0, "skipped": 0 },
+  "files_planned": ["{containment boundary files}"],
+  "files_touched": ["{actual files from git diff}"],
+  "scope_violations": 0,
+  "reflexion_entries_created": 0,
+  "notes": "Debug session — root cause: {hypothesis confirmed}",
+  "debug_session": true
+}
+```
+
+This ensures `/retro` can analyze debug sessions alongside planned tasks.
+
 ### 10. UPDATE STATUS
 
 In `.workflow/backlog.md`, update the CR status:
@@ -195,8 +220,12 @@ In `.workflow/backlog.md`, update the CR status:
 - `planned` → `resolved`, or
 - `in-progress` → `resolved`
 
-If the bug was ad-hoc (no existing CR), optionally create one in backlog.md
-with status `resolved` for traceability.
+If the bug was ad-hoc (no existing CR), create one in backlog.md with
+status `resolved` for traceability. Use the next available CR number.
+Include the debug report as the description. This ensures every fix is
+traceable through the backlog regardless of entry path.
+
+If the user explicitly declines ("don't create a CR"), skip — but default is to create.
 
 ### 11. SURFACE NEW ISSUES
 

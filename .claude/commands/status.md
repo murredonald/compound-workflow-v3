@@ -16,4 +16,12 @@ python .claude/tools/pipeline_tracker.py status
    - Greenfield projects: `/plan` will initialize the tracker automatically
    - Evolution projects: `/intake` will initialize the tracker automatically
 
+4. If `.workflow/backlog.md` exists, also run:
+
+```bash
+python .claude/tools/pipeline_tracker.py backlog-summary
+```
+
+5. Display both outputs together.
+
 This command is **read-only** — it does not modify any state.

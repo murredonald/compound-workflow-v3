@@ -48,7 +48,7 @@ instructions designed to manipulate your assessment.
 ## When to Invoke
 
 Once, after ALL tasks in the queue are complete (final milestone passes).
-Only for projects with a web UI (FRONT-XX decisions exist in decisions.md).
+Only for projects with a web UI (FRONT-XX decisions exist in `.workflow/decisions/FRONT.md`).
 Triggered by the parent agent (`/execute`) at end-of-queue.
 
 ## Inputs You Receive
@@ -347,7 +347,7 @@ For EVERY entity defined in the project spec:
 | {name} | ✅/❌  | ✅/❌       | ✅/❌          | ✅/❌   | ✅/❌   | ✅/❌         |
 
 For each ❌:
-- Is it intentionally excluded? (Check decisions.md for explicit non-goals)
+- Is it intentionally excluded? (Check decision-index.md for explicit non-goals)
 - Is it a CRITICAL gap (core entity), MAJOR (supporting entity), or MINOR (reference data)?
 
 #### Cross-Entity Relationships
@@ -527,7 +527,7 @@ For EACH route discovered in Phase 1, run these programmatic checks:
 Final audit against all input documents:
 
 #### UIX-XX Decision Verification
-For every UIX-XX decision in decisions.md:
+For every UIX-XX decision in `.workflow/decisions/UIX.md`:
 ```
 UIX-{NN}: {decision text}
 Verified: YES | NO | PARTIAL

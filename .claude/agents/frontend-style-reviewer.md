@@ -107,7 +107,7 @@ If `.workflow/style-guide.md` exists, validate against it:
 If no style guide exists, check for design tokens or CSS variables and
 verify new styles reference them rather than using raw values.
 
-For each finding, cite the specific `STYLE-XX` decision ID from `.workflow/decisions.md`
+For each finding, cite the specific `STYLE-XX` decision ID from `.workflow/decisions/STYLE.md`
 that the code violates. Format: `Violates: STYLE-{NN} -- {brief description}`.
 If no matching STYLE-XX exists, flag as "No governing STYLE decision -- consider adding one."
 

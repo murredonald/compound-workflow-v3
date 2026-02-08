@@ -28,7 +28,7 @@ with the same style — questions, challenges, teaching, advisory perspectives.
 
 Read before starting:
 - `.workflow/project-spec.md` — Partial (Phase: discovery). Sections 1-5/6 populated.
-- `.workflow/decisions.md` — GEN-XX from discovery phase
+- `.workflow/decisions/GEN.md` — GEN-XX from discovery phase
 - `.workflow/constraints.md` — Hard + technical constraints
 - `.workflow/competition-analysis.md` — If exists (from /specialists/competition)
 
@@ -41,7 +41,7 @@ Before starting Stage 6:
 1. Read `.workflow/project-spec.md` header — verify `**Phase:** discovery`
 2. Read `**Depth:**` field (Light or Deep)
 3. Check if `.workflow/competition-analysis.md` exists
-4. Reconstruct confirmed decisions from `.workflow/decisions.md`
+4. Reconstruct confirmed decisions from `.workflow/decisions/GEN.md`
 5. Read assumptions from project-spec.md § Assumptions (Unconfirmed)
 
 **If `Phase: discovery` is NOT found:**
@@ -430,7 +430,7 @@ Note: /specialists/testing should run LAST (needs BACK-XX, FRONT-XX, UIX-XX, SEC
 
 If competition was skipped, mark it as `⏭️ SKIPPED` instead of `✅ DONE`.
 
-### 2. Update decisions.md
+### 2. Update decisions/GEN.md
 
 - **Source:** `/plan (Discovery Phase)` → `/plan + /plan-define (Strategic Planning)`
 - **Phase:** `discovery` → `complete`
@@ -475,7 +475,7 @@ STRATEGIC PLANNING COMPLETE
 
 Artifacts finalized:
   ✅ .workflow/project-spec.md (v1.0 — all sections complete)
-  ✅ .workflow/decisions.md (GEN-01 through GEN-{N})
+  ✅ .workflow/decisions/GEN.md (GEN-01 through GEN-{N})
   ✅ .workflow/constraints.md (complete)
 
 Competition analysis: {incorporated / not available (skipped)}
@@ -488,7 +488,7 @@ Next: Specialist deep dives
   {5+. conditional specialists}
 
 Each specialist reads your planning artifacts and goes deeper,
-appending to decisions.md with prefixed IDs (DOM-01, ARCH-01, BACK-01...).
+writing to decisions/{PREFIX}.md files with prefixed IDs (DOM-01 → decisions/DOM.md, ARCH-01 → decisions/ARCH.md, etc.).
 
 After all specialists: /synthesize → task queue → /execute
 ═══════════════════════════════════════════════════════════════

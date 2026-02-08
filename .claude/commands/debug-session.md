@@ -15,7 +15,8 @@ the bug's scope. Fix the bug, verify the fix, commit, move on.
 
 - A CR from `.workflow/backlog.md` (user specifies which), OR
 - An ad-hoc bug description from the user's chat message
-- `.workflow/decisions.md` — To ensure the fix complies with decisions
+- `.workflow/decision-index.md` — To ensure the fix complies with decisions
+- `.workflow/decisions/*.md` — Per-domain decision files (read relevant domains)
 - `.workflow/reflexion/index.json` — Check for past encounters with this area
 
 ---
@@ -135,7 +136,7 @@ Implement the fix within the containment boundary (or flagged expansion).
 Rules:
 - Minimal fix. Do not refactor surrounding code.
 - Add or update tests to cover the bug scenario.
-- Comply with existing decisions in `.workflow/decisions.md`.
+- Comply with existing decisions in `.workflow/decisions/*.md`.
 - Follow project coding standards.
 
 ### 6. VERIFY

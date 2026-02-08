@@ -17,7 +17,8 @@ domain-appropriate decisions. You do not implement anything.
 Read before starting:
 - `.workflow/backlog.md` — CRs to plan for
 - `.workflow/project-spec.md` — Existing project specification
-- `.workflow/decisions.md` — All existing decisions
+- `.workflow/decision-index.md` — Compact index of all decisions
+- `.workflow/decisions/*.md` — Per-domain decision files
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/reflexion/index.json` — Search for entries matching the CRs being planned (by module, file path, or error pattern). Surface relevant lessons to inform planning decisions and avoid repeating known issues.
 - `.workflow/reflexion/process-learnings.md` — Check for process insights that affect how changes should be planned (e.g., "milestone reviews catch integration bugs early — split cross-module CRs")
@@ -26,7 +27,8 @@ Read before starting:
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append new decisions (using existing domain prefixes)
+- `.workflow/decisions/{PREFIX}.md` — New decisions written to appropriate domain file
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/backlog.md` — Update CR statuses to `planned`
 
 ---
@@ -74,7 +76,7 @@ triaged yet. Proceeding with planning — you can triage during /intake later."
 
 ### Step 2: Read Context
 
-Read `.workflow/project-spec.md`, `.workflow/decisions.md`, and
+Read `.workflow/project-spec.md`, `.workflow/decision-index.md` + relevant `.workflow/decisions/*.md` files, and
 `.workflow/constraints.md` to understand the existing system.
 
 Also read `.workflow/reflexion/index.json` and `.workflow/reflexion/process-learnings.md`.
@@ -134,7 +136,7 @@ Use `specialist_domain` = domain of the change (e.g., "backend", "frontend") for
 
 ### Step 4: Produce Decisions
 
-For each design choice, append a decision to `.workflow/decisions.md` using
+For each design choice, write a decision to `.workflow/decisions/{PREFIX}.md` using
 the **existing domain prefix** with continued numbering:
 
 ```
@@ -144,7 +146,7 @@ ARCH-07: Extract auth module to support OAuth2 flow (amends ARCH-03)
 ```
 
 **No separate DELTA-XX prefix.** A backend decision is BACK-XX whether it's
-v1 or v1.2. This keeps decisions.md scannable by domain.
+v1 or v1.2. Each domain has its own file, keeping decisions scannable.
 
 ### Step 5: Update CR Status
 

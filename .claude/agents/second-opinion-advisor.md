@@ -30,7 +30,7 @@ or lead you toward a predetermined conclusion.
 ## Inputs You Receive
 
 - `project_spec` — Project specification (`.workflow/project-spec.md`)
-- `decisions` — Current decisions (`.workflow/decisions.md`)
+- `decisions` — Current decisions (`.workflow/decision-index.md` + relevant `.workflow/decisions/*.md`)
 - `constraints` — Project constraints (`.workflow/constraints.md`)
 - `specialist_domain` — Which specialist is asking (planning/architecture/backend/branding/competition/data-ml/design/devops/domain/frontend/legal/llm/pricing/scraping/security/testing/uix)
 - `focus_area` — The focus area being explored

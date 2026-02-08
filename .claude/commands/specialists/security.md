@@ -15,7 +15,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — All existing decisions
+- `.workflow/decisions/*.md` — All existing decisions (GEN, ARCH, BACK, LEGAL if exist)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — regulations, compliance requirements)
 
@@ -30,13 +30,14 @@ SEC-02: Row-level tenant isolation via tenant_id FK on all tables
 SEC-03: All financial values encrypted at rest
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/SEC.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append SEC-XX decisions
+- `.workflow/decisions/SEC.md` — Append SEC-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -61,7 +62,7 @@ Security decisions about data retention and PII are provisional until Legal refi
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
@@ -180,9 +181,9 @@ enforces this — middleware, ORM default, or DB-level policy?"
 
 **Cross-reference with Legal specialist:** Data retention periods and PII scope
 are ultimately governed by legal requirements (LEGAL-XX). If the legal specialist
-has not run yet, mark retention decisions as `(provisional — subject to legal review)`.
-If LEGAL-XX decisions already exist, align with their retention schedules and
-legal basis mappings.
+has not run yet (`.workflow/decisions/LEGAL.md` does not exist), mark retention
+decisions as `(provisional — subject to legal review)`. If LEGAL-XX decisions
+already exist, align with their retention schedules and legal basis mappings.
 
 ### 5. Input Security & OWASP Coverage
 
@@ -308,15 +309,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/security -
 
 8. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed SEC-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/SEC.md until user approves.**
 
-9. **Output** — Append approved SEC-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
+9. **Output** — Append approved SEC-XX decisions to decisions/SEC.md, update decision-index.md, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (auth, authz, data protection)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `SEC-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/SEC.md: `SEC-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -359,10 +360,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all SEC-XX decisions to decisions.md, record a chain entry:
+After appending all SEC-XX decisions to decisions/SEC.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/GEN.md, constraints.md) to a temp file (input)
 2. Write the SEC-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

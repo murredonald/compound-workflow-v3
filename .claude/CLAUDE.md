@@ -27,10 +27,10 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 
 ### Greenfield Pipeline (v1)
 
-1a. **`/plan`** — Discovery phase (Stages 0-5). Interactive planning produces partial `project-spec.md`, `decisions.md`, `constraints.md` in `.workflow/`.
+1a. **`/plan`** — Discovery phase (Stages 0-5). Interactive planning produces partial `project-spec.md`, `decisions/GEN.md`, `constraints.md` in `.workflow/`.
 1b. **`/specialists/competition`** — Competitive landscape + feature decomposition (optional, recommended). Produces `competition-analysis.md` and COMP-XX decisions.
 1c. **`/plan-define`** — Definition phase (Stages 6-8). Reads competition output, finalizes MVP scope, modules, milestones. Finalizes all planning artifacts.
-2. **`/specialists/*`** — Domain-specific deep dives (domain, branding, architecture, backend, frontend, design, uix, security, devops, legal, pricing, llm, scraping, data-ml, testing). Each appends to `decisions.md` with prefixed IDs. Domain also generates `.workflow/domain-knowledge.md`. Branding also generates `.workflow/brand-guide.md`. Design also generates `.workflow/style-guide.md`.
+2. **`/specialists/*`** — Domain-specific deep dives (domain, branding, architecture, backend, frontend, design, uix, security, devops, legal, pricing, llm, scraping, data-ml, testing). Each writes to its own `decisions/{PREFIX}.md` file and updates `decision-index.md`. Domain also generates `.workflow/domain-knowledge.md`. Branding also generates `.workflow/brand-guide.md`. Design also generates `.workflow/style-guide.md`.
 3. **`/synthesize`** — Merges all planning into `.workflow/task-queue.md`. Phase 2 validates the queue (Steve's 8 checks). Nothing reaches execution unvalidated.
 4. **`/execute`** — The Ralph loop. Picks a task, implements, triggers subagent reviews, commits on pass, fixes on fail. Repeat until milestone complete.
 5. **`/retro`** — Evidence-based retrospective from evals + reflections.
@@ -89,7 +89,7 @@ If the human's intent is ambiguous, ask — don't guess which phase to enter.
 
 **ALL specialists are interactive conversations with the user — NOT autonomous agents.**
 
-1. **Decisions are drafts until approved.** NEVER write XX-NN decisions to `decisions.md` without presenting them to the user first. Present proposed decisions, wait for approval, then write.
+1. **Decisions are drafts until approved.** NEVER write XX-NN decisions to `decisions/{PREFIX}.md` without presenting them to the user first. Present proposed decisions, wait for approval, then write.
 2. **Every response must end with questions.** If you catch yourself writing a long output without asking the user anything, you are auto-piloting. Stop and formulate questions.
 3. **Present findings incrementally.** Work through 1-2 focus areas at a time. Present findings + draft decisions → get user feedback → continue. Do NOT batch all focus areas into one shot.
 4. **Research-heavy specialists (domain, competition) must interview first.** Ask foundational questions and WAIT for answers before starting research. The user's answers determine scope and direction.
@@ -164,7 +164,7 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 
 All runtime state lives in `.workflow/`. Never manually edit these — commands read and write them.
 
-**Write safety:** When appending to shared files (decisions.md, backlog.md, task-queue.md),
+**Write safety:** When appending to shared files (backlog.md, task-queue.md, decision-index.md),
 read the file first to confirm its current state, then write the complete updated content.
 For large append-only files, use targeted edits (Edit tool) rather than rewriting the entire
 file. If a write fails mid-operation, the file may be truncated — always verify file
@@ -173,9 +173,26 @@ integrity after writes to critical state files.
 ```
 .workflow/
 ├── project-spec.md              # Created by /plan (discovery), finalized by /plan-define
-├── decisions.md                 # Created by /plan, continued by /plan-define, appended by /specialists and /plan-delta
+├── decisions/                   # Per-domain decision files (one per specialist prefix)
+│   ├── GEN.md                  # General planning (created by /plan, continued by /plan-define)
+│   ├── DOM.md                  # Domain knowledge (created by /specialists/domain)
+│   ├── COMP.md                 # Competition (created by /specialists/competition)
+│   ├── BRAND.md                # Branding (created by /specialists/branding)
+│   ├── ARCH.md                 # Architecture (created by /specialists/architecture)
+│   ├── BACK.md                 # Backend (created by /specialists/backend)
+│   ├── FRONT.md                # Frontend (created by /specialists/frontend)
+│   ├── STYLE.md                # Design/style (created by /specialists/design)
+│   ├── UIX.md                  # UI/UX QA (created by /specialists/uix)
+│   ├── SEC.md                  # Security (created by /specialists/security)
+│   ├── OPS.md                  # DevOps (created by /specialists/devops)
+│   ├── LEGAL.md                # Legal (created by /specialists/legal)
+│   ├── PRICE.md                # Pricing (created by /specialists/pricing)
+│   ├── LLM.md                  # LLM/AI (created by /specialists/llm)
+│   ├── INGEST.md               # Scraping (created by /specialists/scraping)
+│   ├── DATA.md                 # Data/ML (created by /specialists/data-ml)
+│   └── TEST.md                 # Testing (created by /specialists/testing)
 ├── constraints.md               # Created by /plan (discovery), finalized by /plan-define
-├── decision-index.md            # Concern-area index (created by /synthesize Phase 0, read by Phase 1 + Check 8)
+├── decision-index.md            # Compact one-line index of all decisions (updated by each specialist, regenerated by /synthesize Phase 0)
 ├── task-queue.md                # Created by /synthesize (release sections appended for post-v1)
 ├── observations.md              # Raw feeder file (user pastes anything, read by /intake)
 ├── backlog.md                   # Structured CRs (created by /intake from observations)
@@ -265,6 +282,7 @@ If a hook blocks (exit 2), fix the issue before retrying. Do not bypass hooks.
 ## Conventions
 
 - **Decision IDs**: Prefixed by source. `COMP-01` (competition/features), `DOM-01` (domain knowledge), `BRAND-01` (branding/identity), `GEN-01` (plan), `ARCH-01` (architecture), `BACK-01` (backend), `FRONT-01` (frontend), `STYLE-01` (design/style), `UIX-01` (UI/UX QA), `SEC-01` (security), `OPS-01` (DevOps/deployment), `LEGAL-01` (legal/compliance), `PRICE-01` (pricing/monetization), `LLM-01` (LLM/prompt engineering), `INGEST-01` (scraping/external data), `DATA-01` (data-ml), `TEST-01` (testing). Post-v1 decisions use the same domain prefixes with continued numbering.
+- **Decision files**: Each domain's decisions live in `.workflow/decisions/{PREFIX}.md` (e.g., `decisions/GEN.md`, `decisions/ARCH.md`). Never a single monolithic file. `.workflow/decision-index.md` is a compact one-line-per-decision index updated by each specialist and regenerated by `/synthesize Phase 0`. Commands that need all decisions scan the index first, then load specific domain files as needed.
 - **CR IDs**: `CR-NNN` (Change Request). Global numbering across all releases. Created by `/intake`.
 - **Release sections**: In `task-queue.md`, post-v1 tasks appear under `## Release: v{X.Y}` headers.
 - **CR lifecycle**: `new → triaged → planned → in-progress → resolved → closed` (plus `wontfix`, `duplicate`, `superseded`). Transitions driven by `/intake` → `/plan-delta` → `/synthesize` → `/execute` (auto-resolution) → `/release` (bulk close).

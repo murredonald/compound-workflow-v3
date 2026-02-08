@@ -38,7 +38,7 @@ disabled by user" and proceed directly to presenting your analysis.
 - Use `subagent_type: "general-purpose"` with `model: "opus"`
 - Provide:
   - `project_spec`: Content of `.workflow/project-spec.md` (or current state if not yet generated)
-  - `decisions`: Content of `.workflow/decisions.md` (or confirmed decisions so far)
+  - `decisions`: Content of `.workflow/decision-index.md` + relevant `.workflow/decisions/*.md` (or confirmed decisions so far)
   - `constraints`: Content of `.workflow/constraints.md` (or known constraints so far)
   - `specialist_domain`: As specified by the calling command
   - `focus_area`: The focus area or planning stage you just explored

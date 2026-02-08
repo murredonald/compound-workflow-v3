@@ -159,7 +159,7 @@ Root cause is clear and fix is within the current plan's scope:
 - Missing seed/test data
 - Import or wiring errors
 
-**Test:** Can the parent agent fix this without changing decisions.md
+**Test:** Can the parent agent fix this without changing decisions/*.md
 or the task queue? If yes → fixable.
 
 ### Blocking

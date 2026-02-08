@@ -25,7 +25,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (AI features, user workflows involving LLM)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, etc.)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN always, plus ARCH, BACK, FRONT, SEC if they exist)
 - `.workflow/constraints.md` — Boundaries and limits (budget, latency requirements)
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — domain terminology that affects prompts)
 
@@ -41,13 +42,14 @@ LLM-03: Prompt templates stored in DB, versioned — enables A/B testing without
 LLM-04: Semantic caching via embeddings — cache hits for similar (not identical) queries
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/LLM.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append LLM-XX decisions
+- `.workflow/decisions/LLM.md` — Write LLM-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries for each LLM-XX decision
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -72,7 +74,7 @@ don't need this specialist — this is for LLM-as-a-feature.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Domain terminology improves prompt design guidance
@@ -601,15 +603,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/llm --summ
 
 7. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed LLM-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/LLM.md until user approves.**
 
-8. **Output** — Append approved LLM-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
+8. **Output** — Write approved LLM-XX decisions to `.workflow/decisions/LLM.md`, update `decision-index.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (model selection, prompt design, output handling)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `LLM-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/LLM.md: `LLM-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -655,10 +657,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all LLM-XX decisions to decisions.md, record a chain entry:
+After writing all LLM-XX decisions to decisions/LLM.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/LLM.md, constraints.md) to a temp file (input)
 2. Write the LLM-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

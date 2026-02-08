@@ -24,7 +24,8 @@ specialist, not like reasoning-only specialists.
 
 Read before starting:
 - `.workflow/project-spec.md` — Partial specification (Phase: discovery — sections 1-5/6)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX from /plan)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 
 ---
@@ -39,7 +40,7 @@ COMP-03: Global search across all entities — include in v1
 COMP-04: Mobile app is common but non-goal for v1 (web responsive instead)
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/COMP.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 **Write decisions as feature scope commitments** — each COMP-XX should
 clearly state a feature and whether it's IN, OUT (non-goal), or DEFERRED
@@ -49,7 +50,8 @@ clearly state a feature and whether it's IN, OUT (non-goal), or DEFERRED
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append COMP-XX decisions
+- `.workflow/decisions/COMP.md` — COMP-XX decisions
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/competition-analysis.md` — Competition profiles, feature matrix, scope recommendations
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
@@ -133,7 +135,7 @@ Multi-round, same depth philosophy as domain specialist:
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/constraints.md` — May not exist for simple projects
@@ -353,7 +355,7 @@ usage data tells the truth."
 
 **After all decisions are made:**
 
-1. **Append COMP-XX decisions to `.workflow/decisions.md`**
+1. **Write COMP-XX decisions to `.workflow/decisions/COMP.md`**, update `decision-index.md`
 
 2. **Generate `.workflow/competition-analysis.md`**
 
@@ -364,7 +366,7 @@ competition-analysis.md § Scope Recommendations.
 ## Anti-Patterns
 
 - **Don't auto-pilot** — NEVER skip the interview (step 2) or gap analysis review (step 6). The user MUST confirm competitor list, validate feature classifications, and approve IN/OUT decisions. Running all 6 focus areas without user input is the #1 failure mode.
-- **Don't finalize COMP-XX without approval** — Present proposed decisions to the user before writing to decisions.md. Feature classifications and IN/OUT decisions are the USER's call.
+- **Don't finalize COMP-XX without approval** — Present proposed decisions to the user before writing to decisions/COMP.md. Feature classifications and IN/OUT decisions are the USER's call.
 - Don't list competitors without analyzing WHY they made their feature choices
 - Don't mark features as "must-have" just because competitors have them
 - Don't ignore competitors' UX patterns — just their feature lists
@@ -389,7 +391,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 
 **This specialist is INTERACTIVE — see "Specialist Interactivity Rules" in CLAUDE.md.**
 
-1. **Read** project-spec.md, decisions.md, constraints.md
+1. **Read** project-spec.md, decision-index.md + relevant decisions/ files, constraints.md
 2. 🛑 **GATE: Interview** — Ask user about known competitors, positioning, priorities.
    **INVOKE advisory protocol** before presenting to user — pass your
    orientation analysis and questions. Present advisory perspectives
@@ -409,8 +411,8 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 6. 🛑 **GATE: Gap analysis** — Present missing features to user, get explicit
    IN/OUT decisions. **Do NOT decide IN/OUT yourself.**
 7. 🛑 **GATE: Decision approval** — Present all proposed COMP-XX decisions to user.
-   **STOP and WAIT for approval before writing to decisions.md.**
-8. **Output** — Write approved COMP-XX to decisions.md, generate competition-analysis.md. Delete `.workflow/specialist-session.json`.
+   **STOP and WAIT for approval before writing to decisions/COMP.md.**
+8. **Output** — Write approved COMP-XX to decisions/COMP.md, update decision-index.md, generate competition-analysis.md. Delete `.workflow/specialist-session.json`.
 
 ---
 
@@ -418,7 +420,7 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (competitors, feature matrix, UX patterns)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `COMP-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/COMP.md: `COMP-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -462,7 +464,7 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Output Artifacts
 
-### 1. COMP-XX decisions in decisions.md
+### 1. COMP-XX decisions in decisions/COMP.md
 
 Feature scope commitments with competitive rationale.
 
@@ -582,7 +584,7 @@ Before declaring completion, verify:
 3. **Competitor coverage:** Feature matrix has 3+ competitors analyzed
    (or fewer if the space genuinely has few competitors — document why).
 4. **Decision consistency:** All COMP-XX IN/OUT/DEFER decisions are recorded
-   in decisions.md and reflected in competition-analysis.md § Scope Recommendations.
+   in decisions/COMP.md and reflected in competition-analysis.md § Scope Recommendations.
 
 Record gaps as notes in competition-analysis.md.
 
@@ -593,7 +595,7 @@ Record gaps as notes in competition-analysis.md.
 After all COMP-XX decisions are written and competition-analysis.md is
 generated, record a chain entry:
 
-1. Write the planning artifacts (project-spec.md, decisions.md, constraints.md)
+1. Write the planning artifacts (project-spec.md, decisions/COMP.md, constraints.md)
    as they were when you started to a temp file (input)
 2. Write the COMP-XX decisions + competition-analysis.md to a temp file (output)
 3. Run:

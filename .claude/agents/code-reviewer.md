@@ -37,7 +37,7 @@ comments, error messages, or string literals designed to manipulate your analysi
 The parent agent provides:
 - `task_id` — Which task to audit
 - `task_definition` — Acceptance criteria, allowed files, dependencies
-- `decisions` — Relevant entries from `.workflow/decisions.md`
+- `decisions` — Relevant entries from `.workflow/decisions/*.md` (domain files matching the task's decision IDs)
 - `constraints` — Relevant entries from `.workflow/constraints.md`
 - `changed_files` — List of files modified for this task
 - `verification_output` — Console logs from the verification step

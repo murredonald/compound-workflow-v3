@@ -16,7 +16,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN always, plus ARCH, BACK if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — compliance, regulatory requirements)
 
@@ -31,13 +32,14 @@ OPS-02: Docker containers on AWS ECS Fargate — auto-scaling 2-8 tasks
 OPS-03: Secrets via AWS Secrets Manager — rotated every 90 days
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/OPS.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append OPS-XX decisions
+- `.workflow/decisions/OPS.md` — OPS-XX decisions
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -61,7 +63,7 @@ tools, or projects where the user explicitly handles their own DevOps.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
@@ -365,7 +367,7 @@ stages, kill switch thresholds, flag cleanup policy, default-on vs default-off.
 
 - **Don't skip the orientation gate** — Ask questions first. The user's answers about cloud provider, existing infrastructure, and team DevOps experience shape every decision.
 - **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
-- **Don't finalize OPS-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
+- **Don't finalize OPS-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing to decisions/OPS.md.
 - **Don't skip research** — This specialist MUST research cloud pricing, service limits, and tool comparisons. Innate knowledge alone misses pricing changes and new service offerings.
 - Don't over-engineer infrastructure for v1 — start simple, scale when needed
 - Don't choose a tool because it's trendy — match complexity to team size
@@ -425,15 +427,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/devops --s
 
 7. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed OPS-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/OPS.md until user approves.**
 
-8. **Output** — Append approved OPS-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
+8. **Output** — Write approved OPS-XX decisions to `.workflow/decisions/OPS.md`, update `decision-index.md`, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (CI/CD, deployment, environments)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `OPS-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/OPS.md: `OPS-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -477,10 +479,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all OPS-XX decisions to decisions.md, record a chain entry:
+After writing all OPS-XX decisions to decisions/OPS.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/OPS.md, constraints.md) to a temp file (input)
 2. Write the OPS-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

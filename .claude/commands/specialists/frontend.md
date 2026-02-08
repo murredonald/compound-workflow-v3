@@ -15,7 +15,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — Existing decisions (GEN-XX, ARCH-XX, BACK-XX)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN always, plus ARCH, BACK if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 
 ---
@@ -29,13 +30,14 @@ FRONT-02: Global state via Zustand, form state via React Hook Form
 FRONT-03: Optimistic updates for all CRUD operations
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/FRONT.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append FRONT-XX decisions
+- `.workflow/decisions/FRONT.md` — FRONT-XX decisions
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -44,7 +46,7 @@ Append to `.workflow/decisions.md`.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
@@ -387,7 +389,7 @@ split, consent/privacy approach, RUM tool, key funnels, dashboard requirements.
 
 - **Don't skip the orientation gate** — Ask questions first. The user's answers about framework, component library, and rendering strategy shape every decision.
 - **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
-- **Don't finalize FRONT-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
+- **Don't finalize FRONT-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing to decisions/FRONT.md.
 - Don't pick a component library without checking it supports all required patterns
 - Don't design state management before knowing the data flow from backend
 - Don't assume SSR/CSR without considering SEO and performance requirements
@@ -441,15 +443,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/frontend -
 
 6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed FRONT-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/FRONT.md until user approves.**
 
-7. **Output** — Append approved FRONT-XX decisions to decisions.md. Delete `.workflow/specialist-session.json`.
+7. **Output** — Write approved FRONT-XX decisions to `.workflow/decisions/FRONT.md`, update `decision-index.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (framework, components, state)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `FRONT-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/FRONT.md: `FRONT-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -492,10 +494,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all FRONT-XX decisions to decisions.md, record a chain entry:
+After writing all FRONT-XX decisions to decisions/FRONT.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/FRONT.md, constraints.md) to a temp file (input)
 2. Write the FRONT-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

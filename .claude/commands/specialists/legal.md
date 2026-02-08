@@ -24,7 +24,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, SEC-XX)
+- `.workflow/decisions/*.md` — All existing decisions (GEN, ARCH, BACK, SEC if exist)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — industry regulations, compliance requirements)
 - `.workflow/competition-analysis.md` — Competitor legal patterns (if exists)
@@ -40,13 +40,14 @@ LEGAL-02: Terms of Service must include limitation of liability + dispute resolu
 LEGAL-03: Cookie consent banner required — opt-in for analytics, essential cookies exempt
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/LEGAL.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append LEGAL-XX decisions
+- `.workflow/decisions/LEGAL.md` — Append LEGAL-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -73,12 +74,12 @@ legal separately.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran (industry regulations)
 - `.workflow/constraints.md` — May not exist for simple projects
-- SEC-XX decisions — Data protection decisions inform privacy policy scope
+- `.workflow/decisions/SEC.md` — Data protection decisions inform privacy policy scope
 
 **Recommended prior specialists:** Security (SEC-XX) provides data protection
 and encryption decisions. Domain (DOM-XX) provides industry-specific regulations.
@@ -176,9 +177,9 @@ miss the 30-day deadline at scale."
 schedule, sub-processor management approach, cookie consent mechanism,
 data portability format and process.
 
-**Cross-reference with Security:** If SEC-XX decisions include data retention periods
-or PII handling rules, check for conflicts. If a LEGAL-XX decision requires a DIFFERENT
-retention period than SEC-XX specified, flag it explicitly:
+**Cross-reference with Security:** If SEC-XX decisions (in `.workflow/decisions/SEC.md`)
+include data retention periods or PII handling rules, check for conflicts. If a LEGAL-XX
+decision requires a DIFFERENT retention period than SEC-XX specified, flag it explicitly:
 `LEGAL-XX: Data retention override — {data type} retained {N} years (legal requirement),
 supersedes SEC-YY provisional retention of {M} days`
 
@@ -284,8 +285,8 @@ AI risk classification and documentation requirements.
 
 **Deduplication:** If the Security specialist already identified applicable regulations
 in its Gate questions (GDPR, SOC2, HIPAA, PCI-DSS), do NOT re-ask the user. Read the
-Security specialist's gate responses from the session context or decisions.md. Only ask
-about regulations NOT already covered by SEC-XX.
+Security specialist's gate responses from the session context or `.workflow/decisions/SEC.md`.
+Only ask about regulations NOT already covered by SEC-XX.
 
 ### 4. Disclaimers & Liability Protection
 
@@ -451,15 +452,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/legal --su
 
 7. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed LEGAL-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/LEGAL.md until user approves.**
 
-8. **Output** — Append approved LEGAL-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
+8. **Output** — Append approved LEGAL-XX decisions to decisions/LEGAL.md, update decision-index.md, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (privacy, ToS, regulations)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `LEGAL-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/LEGAL.md: `LEGAL-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -508,10 +509,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all LEGAL-XX decisions to decisions.md, record a chain entry:
+After appending all LEGAL-XX decisions to decisions/LEGAL.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/GEN.md, constraints.md) to a temp file (input)
 2. Write the LEGAL-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

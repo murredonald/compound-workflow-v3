@@ -37,7 +37,8 @@ Start from what you know. Then research to verify and fill gaps.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (what the product does, who it serves)
-- `.workflow/decisions.md` — Any existing decisions (GEN-XX from /plan)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN always)
 - `.workflow/constraints.md` — Boundaries and limits (regulatory, compliance, industry requirements)
 
 **Execution order:** This specialist should run FIRST or EARLY in the
@@ -57,7 +58,7 @@ DOM-03: HIPAA requires audit logging of all PHI access with retention ≥ 6 year
 DOM-04: Invoice numbers must follow {country} sequential numbering regulations
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/DOM.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 **Write decisions as domain constraints** — each DOM-XX captures a
 business rule, regulation, or domain truth that the code must respect.
@@ -89,7 +90,7 @@ of "the code works but does the wrong thing."
 
 This specialist produces **three layers** of output (plus optional cross-domain gaps):
 
-1. **DOM-XX decisions** in `.workflow/decisions.md` — domain constraints
+1. **DOM-XX decisions** in `.workflow/decisions/DOM.md` — domain constraints
    the code must respect. Concise, enforceable rules.
 
 2. **`.workflow/domain-knowledge.md`** — concise quick-reference document.
@@ -327,7 +328,7 @@ Tag conflicts in domain-library files: `[CONFLICT: {summary} — resolved by {me
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/constraints.md` — May not exist for simple projects
@@ -637,7 +638,7 @@ by topic for quick lookup during implementation.
 
 - **Don't auto-pilot** — NEVER skip the 🛑 gates. The user MUST answer interview questions before research begins, validate findings before decisions are drafted, and approve decisions before they're written. Running all 7 focus areas + writing 20 DOM-XX decisions without user input is the #1 failure mode.
 - **Don't batch all research into one shot** — Present findings incrementally (1-2 focus areas at a time). The user's feedback on early areas shapes later research.
-- **Don't finalize DOM-XX without approval** — Draft decisions are proposals. Only the user's explicit approval makes them final. Present them grouped by focus area for review.
+- **Don't finalize DOM-XX without approval** — Draft decisions are proposals. Only the user's explicit approval makes them final. Present them grouped by focus area for review before writing to decisions/DOM.md.
 - **Don't skip the meta-understanding** — Before diving into specific rules, understand HOW the domain works as a system. A list of facts without organizing principles is useless. Write `domain-methodology.md` FIRST.
 - **Don't write shallow domain-library files** — Every file must pass the depth test: "Could a developer implement correctly from this file alone, including edge cases?" If not, it's too shallow. Minimum 3 worked examples, minimum 3-5 edge cases per file.
 - **Don't treat edge cases as an afterthought** — Edge cases are where software breaks. Dedicate explicit research rounds to boundaries, transitions, exceptions, and failure modes. "Edge Cases & Gotchas" is not a 3-bullet afterthought — it's a comprehensive section.
@@ -706,15 +707,15 @@ the subject matter expert — their input shapes every decision.**
 5. **Challenge** — Apply "what would an expert say is wrong?" to every finding
 
 6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of proposed
-   DOM-XX decisions to the user for approval before writing to decisions.md.
+   DOM-XX decisions to the user for approval before writing to decisions/DOM.md.
    Group them by focus area. The user may:
    - Approve all → proceed to write
    - Reject specific decisions → remove or revise
    - Add missing decisions → incorporate
    - Request more research on specific areas → loop back to step 3
-   **Do NOT write DOM-XX decisions to decisions.md until the user approves.**
+   **Do NOT write DOM-XX decisions to decisions/DOM.md until the user approves.**
 
-7. **Output** — Write approved DOM-XX decisions to decisions.md AND generate
+7. **Output** — Write approved DOM-XX decisions to `.workflow/decisions/DOM.md`, update `decision-index.md`, AND generate
    `.workflow/domain-knowledge.md`. Include specialist handoff notes —
    explicitly flag which findings matter for ARCH, BACK, SEC, and DATA. Delete `.workflow/specialist-session.json`.
 
@@ -743,7 +744,7 @@ Spend research time proportionally: ~60% Critical, ~30% Important, ~10% Cosmetic
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (glossary, regulations, entities)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `DOM-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/DOM.md: `DOM-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -951,11 +952,11 @@ structured, what abstractions to use, what to make configurable.}
 
 ## Audit Trail
 
-After writing all DOM-XX decisions, domain-knowledge.md, and domain-library/
+After writing all DOM-XX decisions to decisions/DOM.md, domain-knowledge.md, and domain-library/
 files, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/DOM.md, constraints.md) to a temp file (input)
 2. Write the DOM-XX decision entries + domain-knowledge.md summary to a temp file (output)
 3. Run:
 ```bash

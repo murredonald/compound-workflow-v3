@@ -15,7 +15,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — Existing decisions (GEN-XX, DOM-XX, ARCH-XX)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN, DOM, ARCH if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — business rules, formulas, regulations)
 
@@ -30,13 +31,14 @@ BACK-02: All endpoints return consistent error envelope
 BACK-03: Pagination via cursor, not offset
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/BACK.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append BACK-XX decisions
+- `.workflow/decisions/BACK.md` — BACK-XX decisions
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -45,7 +47,7 @@ Append to `.workflow/decisions.md`.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
@@ -382,15 +384,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/backend --
 
 6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed BACK-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/BACK.md until user approves.**
 
-7. **Output** — Append approved BACK-XX decisions to decisions.md. Delete `.workflow/specialist-session.json`.
+7. **Output** — Write approved BACK-XX decisions to `.workflow/decisions/BACK.md`, update `decision-index.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (API, validation, database)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `BACK-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/BACK.md: `BACK-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -433,10 +435,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all BACK-XX decisions to decisions.md, record a chain entry:
+After writing all BACK-XX decisions to decisions/BACK.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/BACK.md, constraints.md) to a temp file (input)
 2. Write the BACK-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

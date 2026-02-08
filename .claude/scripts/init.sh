@@ -264,7 +264,7 @@ echo ""
 
 # ── 6. Workflow state ──────────────────────────────────────────
 echo "Workflow state:"
-for f in .workflow/project-spec.md .workflow/decisions.md .workflow/constraints.md; do
+for f in .workflow/project-spec.md .workflow/decisions/GEN.md .workflow/constraints.md; do
   if [ -f "$f" ]; then
     pass "$f exists"
   else

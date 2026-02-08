@@ -20,7 +20,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (vision, audience, value proposition)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, COMP-XX)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN, COMP if they exist)
 - `.workflow/constraints.md` — Boundaries and limits (existing brand assets, required names)
 - `.workflow/competition-analysis.md` — Competitor profiles, feature matrix, brand landscape (if exists)
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — industry terminology, audience norms)
@@ -36,13 +37,14 @@ BRAND-02: Brand positioning = mid-market fintech, personality: reliable, modern,
 BRAND-03: Primary brand color direction = deep blue (trust, stability) — avoids competitor green
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/BRAND.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append BRAND-XX decisions
+- `.workflow/decisions/BRAND.md` — BRAND-XX decisions
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/brand-guide.md` — Machine-readable brand reference (name, positioning, color direction, voice, touchpoints)
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
@@ -67,7 +69,7 @@ as a constraint.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/competition-analysis.md` — Competitor brand landscape (rich input if available)
@@ -331,9 +333,9 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/branding -
 
 7. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed BRAND-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/BRAND.md until user approves.**
 
-8. **Output** — Append approved BRAND-XX decisions to decisions.md,
+8. **Output** — Write approved BRAND-XX decisions to `.workflow/decisions/BRAND.md`, update `decision-index.md`,
    generate `.workflow/brand-guide.md`. Delete `.workflow/specialist-session.json`.
 
 ## Brand Guide Generation
@@ -394,7 +396,7 @@ from scratch.
 
 If the user requests a quick or focused run, prioritize focus areas 1-2
 (naming + positioning) and briefly cover color direction. Skip detailed
-touchpoint planning. Mark skipped areas in decisions.md:
+touchpoint planning. Mark skipped areas in decisions/BRAND.md:
 `BRAND-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
@@ -442,10 +444,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all BRAND-XX decisions to decisions.md, record a chain entry:
+After writing all BRAND-XX decisions to decisions/BRAND.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/BRAND.md, constraints.md) to a temp file (input)
 2. Write the BRAND-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

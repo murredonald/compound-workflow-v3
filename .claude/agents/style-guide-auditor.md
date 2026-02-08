@@ -48,7 +48,7 @@ Triggered by the parent agent (`/execute`) at end-of-queue.
 - `milestone_id` — "FINAL" (end-of-queue comprehensive audit)
 - `app_url` — Running application URL
 - `style_guide` — Full content of `.workflow/style-guide.md`
-- `style_decisions` — STYLE-XX decisions from decisions.md
+- `style_decisions` — STYLE-XX decisions from `.workflow/decisions/STYLE.md`
 - `front_decisions` — FRONT-XX decisions (component library, framework)
 - `route_map` — Pages to audit
 

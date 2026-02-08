@@ -21,7 +21,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (brand context, audience)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, FRONT-XX, BRAND-XX especially)
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN always, plus ARCH, FRONT, BRAND if they exist)
 - `.workflow/constraints.md` — Boundaries and limits (existing brand guidelines, required UI frameworks)
 - `.workflow/brand-guide.md` — Brand identity reference (if exists — color direction, personality, voice)
 
@@ -46,7 +47,7 @@ STYLE-03: Spacing = 4px base unit, scale: 4/8/12/16/24/32/48/64/96
 STYLE-04: All values via CSS custom properties, no hardcoded hex/px in components
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/STYLE.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 **Write decisions as enforceable rules** — each STYLE-XX should be
 verifiable by the `frontend-style-reviewer` agent during `/execute`.
@@ -69,7 +70,7 @@ with no customization.
 
 This specialist produces **two** outputs (plus optional cross-domain gaps):
 
-1. **STYLE-XX decisions** in `.workflow/decisions.md` — design choices with rationale
+1. **STYLE-XX decisions** in `.workflow/decisions/STYLE.md` — design choices with rationale
 2. **`.workflow/style-guide.md`** — structured visual reference used by the
    `frontend-style-reviewer` agent during `/execute`
 
@@ -84,7 +85,7 @@ The style guide is NOT a markdown design document for humans — it's a
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first (needs FRONT-XX component library choice)
+- `.workflow/decisions/GEN.md` — Run `/plan` first (needs FRONT-XX component library choice)
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
@@ -388,7 +389,7 @@ reduced-motion handling (prefers-reduced-motion).
 ## Anti-Patterns
 
 - **Don't auto-pilot** — Design is subjective. NEVER pick colors, typography, or spacing without presenting options to the user and getting their preference. Generating a full style guide without user input is the #1 failure mode.
-- **Don't finalize STYLE-XX without approval** — Present proposed decisions per focus area, wait for user feedback, then write. The user's visual preferences override any design "best practice."
+- **Don't finalize STYLE-XX without approval** — Present proposed decisions per focus area, wait for user feedback, then write to decisions/STYLE.md. The user's visual preferences override any design "best practice."
 - Don't define colors without checking WCAG contrast ratios
 - Don't specify pixel values without a responsive scaling strategy
 - Don't create a style guide that contradicts the chosen component library's defaults
@@ -439,15 +440,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/design --s
    No "use consistent spacing." Specify `16px card padding, 8px form gap`.
 5. **Challenge** — for each area, apply the visual consistency challenge
 6. 🛑 **GATE: Decision approval** — Present all proposed STYLE-XX decisions
-   to user. **STOP and WAIT for approval before writing to decisions.md.**
-7. **Output** — Write approved STYLE-XX decisions to decisions.md AND write
+   to user. **STOP and WAIT for approval before writing to decisions/STYLE.md.**
+7. **Output** — Write approved STYLE-XX decisions to `.workflow/decisions/STYLE.md`, update `decision-index.md`, AND write
    `.workflow/style-guide.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (colors, typography, spacing)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `STYLE-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/STYLE.md: `STYLE-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -556,10 +557,10 @@ Reference: .claude/visual-antipatterns.md
 
 ## Audit Trail
 
-After writing all STYLE-XX decisions and the style guide, record a chain entry:
+After writing all STYLE-XX decisions to decisions/STYLE.md and the style guide, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/STYLE.md, constraints.md) to a temp file (input)
 2. Write the STYLE-XX decision entries + style-guide.md to a temp file (output)
 3. Run:
 ```bash

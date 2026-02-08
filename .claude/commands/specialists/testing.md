@@ -22,7 +22,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (features, workflows, jobs-to-be-done)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, FRONT-XX, STYLE-XX, UIX-XX, SEC-XX, DATA-XX)
+- `.workflow/decisions/*.md` — All existing decisions (read: `decisions/GEN.md`, `decisions/ARCH.md`, `decisions/BACK.md`, `decisions/FRONT.md`, `decisions/SEC.md` if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 
 **Required prior specialists:** This specialist runs LAST (or near-last)
@@ -41,7 +41,7 @@ TEST-03: Every API endpoint has at least one happy-path and one error-path test
 TEST-04: E2E tests cover all primary user flows from UIX-XX decisions
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/TEST.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 **Write decisions as enforceable rules** — each TEST-XX should be
 verifiable by the `milestone-reviewer` agent during `/execute`.
@@ -50,7 +50,8 @@ verifiable by the `milestone-reviewer` agent during `/execute`.
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append TEST-XX decisions
+- `.workflow/decisions/TEST.md` — Append TEST-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -71,13 +72,17 @@ of type (web app, API, CLI, library). The focus areas adapt:
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
+- `.workflow/decisions/ARCH.md` — Architecture decisions
+- `.workflow/decisions/BACK.md` — Backend decisions (needed for endpoint/entity testing)
+- `.workflow/decisions/FRONT.md` — Frontend decisions (needed for E2E testing)
+- `.workflow/decisions/SEC.md` — Security decisions (needed for auth/authz testing)
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
 - `.workflow/constraints.md` — May not exist for simple projects
 
-**Warning**: If BACK-XX, FRONT-XX, or SEC-XX decisions don't exist in decisions.md, warn the user that running those specialists first would provide better context for test planning.
+**Warning**: If BACK-XX, FRONT-XX, or SEC-XX decisions don't exist in their respective `decisions/*.md` files, warn the user that running those specialists first would provide better context for test planning.
 
 ---
 
@@ -527,15 +532,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/testing --
 
 6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed TEST-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/TEST.md until user approves.**
 
-7. **Output** — Append approved TEST-XX decisions to decisions.md. Delete `.workflow/specialist-session.json`.
+7. **Output** — Append approved TEST-XX decisions to `decisions/TEST.md`, update `decision-index.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (architecture, test data, unit tests)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `TEST-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in `decisions/TEST.md`: `TEST-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -578,10 +583,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all TEST-XX decisions to decisions.md, record a chain entry:
+After appending all TEST-XX decisions to `decisions/TEST.md`, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   `decisions/GEN.md`, constraints.md) to a temp file (input)
 2. Write the TEST-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

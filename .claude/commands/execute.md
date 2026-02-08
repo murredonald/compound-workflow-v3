@@ -92,7 +92,8 @@ python .claude/tools/pipeline_tracker.py complete --phase runtime-qa --summary "
 Read before starting:
 - `.claude/execution-config.json` — Execution behavior settings (read FIRST, validate — see Config Validation)
 - `.workflow/task-queue.md` — The validated task queue
-- `.workflow/decisions.md` — Decisions to comply with
+- `.workflow/decision-index.md` — Compact index of all decisions
+- `.workflow/decisions/*.md` — Per-domain decision files (read only referenced IDs)
 - `.workflow/decision-index.md` — Concern-area index (for cross-referencing during implementation)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/project-spec.md` — Project specification (needed for milestone-reviewer and QA agent excerpts)
@@ -106,7 +107,7 @@ Read before starting:
 - `.workflow/pipeline-status.json` — Pipeline progress (for session recovery and progress awareness)
 
 **Context discipline:** Do NOT load all inputs into context at once. Read
-`execution-config.json` + `task-queue.md` (current task block only) + `decisions.md`
+`execution-config.json` + `task-queue.md` (current task block only) + `decision-index.md`
 (referenced IDs only) at start. Load other files on demand as specific tasks need them.
 
 **Session start chain integrity check:** On the first task of each session, run:
@@ -158,7 +159,7 @@ into context. Read only the sections relevant to the current task.
 Read ONLY the next task's block from task-queue.md (not the full file).
 Tasks use T{NN} (planned) or DF-{NN} (deferred finding) prefixes — both are executed the same way.
 Mark it in-progress: Use replace_string_in_file to change "[ ] T{NN}" (or "[ ] DF-{NN}") to "[~] ..." in task-queue.md.
-Read ONLY the referenced decisions (by ID) from decisions.md.
+Read ONLY the referenced decisions (by ID) from the relevant .workflow/decisions/{PREFIX}.md files.
 Read its dependencies — verify all are committed.
 
 Check if .workflow/reflexion/index.json exists. If it does, search .entries[] for matching tags:
@@ -833,7 +834,7 @@ python .claude/tools/chain_manager.py record \
 
 ### Layer 1: Browser QA (conditional — web UI projects)
 
-**Conditions:** FRONT-XX decisions exist in decisions.md.
+**Conditions:** FRONT-XX decisions exist in .workflow/decisions/FRONT.md.
 **Skip if:** No FRONT-XX decisions (API-only, CLI, library projects).
 
 1. **Start the application** (if not already running):
@@ -852,7 +853,7 @@ python .claude/tools/chain_manager.py record \
    - `milestone_definition`: full project deliverable summary
    - `completed_tasks`: all tasks
    - `app_url`: http://localhost:{port}
-   - `uix_decisions`: all UIX-XX entries from decisions.md
+   - `uix_decisions`: all UIX-XX entries from .workflow/decisions/UIX.md
    - `test_decisions`: relevant TEST-XX entries
    - `project_spec_excerpt`: all screens, workflows, jobs-to-be-done
    - `competition_analysis_excerpt`: table-stakes features (if `.workflow/competition-analysis.md` exists)
@@ -873,7 +874,7 @@ python .claude/tools/chain_manager.py record \
    - `milestone_id`: "FINAL"
    - `app_url`: http://localhost:{port}
    - `style_guide`: content of `.workflow/style-guide.md`
-   - `style_decisions`: all STYLE-XX entries from decisions.md
+   - `style_decisions`: all STYLE-XX entries from .workflow/decisions/STYLE.md
    - `front_decisions`: FRONT-XX entries
    - `route_map`: all pages
 

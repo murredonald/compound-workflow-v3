@@ -416,10 +416,10 @@ will finalize them after competition analysis.
 {Any unresolved assumptions from discovery — carried forward to /plan-define}
 ```
 
-### 2. decisions.md (Discovery Phase)
+### 2. decisions/GEN.md (Discovery Phase)
 
 Living decision log. Competition specialist and `/plan-define` will continue
-numbering. Other specialists will append with their own prefixes.
+numbering. Other specialists will write to their own `decisions/{PREFIX}.md` files.
 
 ```markdown
 # Decisions Log — {Project Name}
@@ -529,7 +529,7 @@ DISCOVERY PHASE COMPLETE
 
 Partial artifacts generated:
   ✅ .workflow/project-spec.md (sections 1-{5|6}, Phase: discovery)
-  ✅ .workflow/decisions.md (GEN-01 through GEN-{N})
+  ✅ .workflow/decisions/GEN.md (GEN-01 through GEN-{N})
   ✅ .workflow/constraints.md (hard + technical constraints)
 
 Next steps:

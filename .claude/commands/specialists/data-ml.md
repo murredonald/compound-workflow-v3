@@ -15,7 +15,8 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — All existing decisions
+- `.workflow/decision-index.md` — Compact index of all decisions (scan first for orientation)
+- `.workflow/decisions/*.md` — Per-domain decision files (read: GEN always, scan index to identify relevant domains)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — formulas, precision rules, domain calculations)
 
@@ -30,13 +31,14 @@ DATA-02: Embeddings via text-embedding-3-small (1536 dims)
 DATA-03: All tax calculations use Decimal with 4 decimal places
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/DATA.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append DATA-XX decisions
+- `.workflow/decisions/DATA.md` — DATA-XX decisions
+- `.workflow/decision-index.md` — Updated with new decision summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -57,7 +59,7 @@ This specialist is **conditional**. Run when the project involves:
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
@@ -192,7 +194,7 @@ For calculations:
 
 - **Don't skip the orientation gate** — Ask questions first. The user's answers about ML vs rules-based, data sources, and precision requirements shape every decision.
 - **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
-- **Don't finalize DATA-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
+- **Don't finalize DATA-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing to decisions/DATA.md.
 - Don't design schemas without understanding query patterns first
 - Don't add ML when rules-based logic would suffice
 - Don't skip data migration strategy for existing datasets
@@ -246,15 +248,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/data-ml --
 
 6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed DATA-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/DATA.md until user approves.**
 
-7. **Output** — Append approved DATA-XX decisions to decisions.md. Delete `.workflow/specialist-session.json`.
+7. **Output** — Write approved DATA-XX decisions to `.workflow/decisions/DATA.md`, update `decision-index.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-3 (storage, schema, pipelines)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `DATA-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/DATA.md: `DATA-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -297,10 +299,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all DATA-XX decisions to decisions.md, record a chain entry:
+After writing all DATA-XX decisions to decisions/DATA.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/DATA.md, constraints.md) to a temp file (input)
 2. Write the DATA-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

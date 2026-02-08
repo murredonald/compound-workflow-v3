@@ -27,7 +27,7 @@ explicitly. You **deepen and challenge** from the end-user perspective.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (screens, workflows, jobs-to-be-done)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, FRONT-XX, SEC-XX)
+- `.workflow/decisions/*.md` — All existing decisions (read: `decisions/GEN.md`, `decisions/FRONT.md`, `decisions/STYLE.md`, `decisions/ARCH.md` if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 
 **Required prior specialists:** This specialist runs AFTER frontend, backend,
@@ -47,7 +47,7 @@ UIX-03: Empty states must show a call-to-action, never a blank page
 UIX-04: All filters and pagination must be URL-persisted (shareable, survives refresh)
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/UIX.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 **Write decisions as testable expectations** — each UIX-XX should be
 verifiable by looking at the running app. Not "consider usability"
@@ -57,7 +57,8 @@ but "table rows on /holdings must navigate to /holdings/{id}".
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append UIX-XX decisions
+- `.workflow/decisions/UIX.md` — Append UIX-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -78,15 +79,17 @@ Skip for: CLI tools, pure APIs, background services, libraries.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first (needs FRONT-XX decisions)
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
+- `.workflow/decisions/FRONT.md` — Frontend decisions (needed for components/routes)
+- `.workflow/decisions/SEC.md` — Security decisions (needed for role/permission UX)
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
 - `.workflow/style-guide.md` — Visual system reference if `/specialists/design` ran (improves FA2 visual quality expectations)
 - `.workflow/constraints.md` — May not exist for simple projects
 
-**Warning**: If FRONT-XX decisions don't exist in decisions.md, warn the user that running `/specialists/frontend` first would provide better context.
-If SEC-XX decisions don't exist, warn that role/permission UX (FA7) will be limited.
+**Warning**: If FRONT-XX decisions don't exist in `decisions/FRONT.md`, warn the user that running `/specialists/frontend` first would provide better context.
+If SEC-XX decisions don't exist in `decisions/SEC.md`, warn that role/permission UX (FA7) will be limited.
 
 ---
 
@@ -471,15 +474,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/uix --summ
 
 6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed UIX-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/UIX.md until user approves.**
 
-7. **Output** — Append approved UIX-XX decisions to decisions.md. Delete `.workflow/specialist-session.json`.
+7. **Output** — Append approved UIX-XX decisions to `decisions/UIX.md`, update `decision-index.md`. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-4 (pages, interactive, flows, navigation)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `UIX-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in `decisions/UIX.md`: `UIX-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -522,10 +525,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all UIX-XX decisions to decisions.md, record a chain entry:
+After appending all UIX-XX decisions to `decisions/UIX.md`, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   `decisions/GEN.md`, constraints.md) to a temp file (input)
 2. Write the UIX-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

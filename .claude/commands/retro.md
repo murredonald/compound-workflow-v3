@@ -64,7 +64,7 @@ python .claude/tools/pipeline_tracker.py complete --phase retro --summary "{N} t
 - `.workflow/reflexion/index.json` — All reflections (per-task technical surprises)
 - `.workflow/reflexion/process-learnings.md` — Process/workflow lessons (cross-cutting)
 - `.workflow/evals/task-evals.json` — Per-task metrics
-- `.workflow/decisions.md` — Decisions that were made
+- `.workflow/decision-index.md` — Index of all decisions made
 - `.workflow/state-chain/chain.json` — Audit trail of all agent actions
 - `.workflow/backlog.md` — CRs and their statuses (release scope only)
 - `.workflow/qa-fixes.md` — QA Fix Pass results (if exists)

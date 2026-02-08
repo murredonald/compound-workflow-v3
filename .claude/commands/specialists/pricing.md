@@ -19,7 +19,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, COMP-XX, ARCH-XX, BACK-XX, FRONT-XX, BRAND-XX)
+- `.workflow/decisions/*.md` — All existing decisions (specifically: GEN.md, COMP.md, ARCH.md, BACK.md, FRONT.md, BRAND.md if they exist)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/competition-analysis.md` — Competitor feature matrix and pricing (if exists)
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — industry pricing norms)
@@ -35,13 +35,14 @@ PRICE-02: Three tiers — Free / Pro ($29/mo) / Enterprise (custom) — annual d
 PRICE-03: Feature gating — Free: 3 projects, Pro: unlimited, Enterprise: SSO + audit log
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/PRICE.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append PRICE-XX decisions
+- `.workflow/decisions/PRICE.md` — Append PRICE-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries after writing decisions
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -66,13 +67,14 @@ monetization, or projects where pricing is already fully defined externally.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/competition-analysis.md` — Critical for pricing positioning (from `/specialists/competition`)
 - `.workflow/domain-knowledge.md` — Industry pricing norms (from `/specialists/domain`)
 - `.workflow/constraints.md` — May not exist for simple projects
-- BACK-XX decisions — Payment processing and billing architecture inform implementation scope
+- `.workflow/decisions/BACK.md` — Payment processing and billing architecture inform implementation scope
+- `.workflow/decisions/ARCH.md`, `.workflow/decisions/COMP.md` — Additional context if available
 
 **Recommended prior specialists:** Competition (COMP-XX) provides competitor
 pricing data. Domain (DOM-XX) provides industry pricing norms. Backend (BACK-XX)
@@ -474,15 +476,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/pricing --
 
 7. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed PRICE-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/PRICE.md until user approves.**
 
-8. **Output** — Append approved PRICE-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
+8. **Output** — Append approved PRICE-XX decisions to decisions/PRICE.md, update decision-index.md, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1-4 (model, tiers, billing, competitors)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `PRICE-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/PRICE.md: `PRICE-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -527,10 +529,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all PRICE-XX decisions to decisions.md, record a chain entry:
+After appending all PRICE-XX decisions to decisions/PRICE.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/GEN.md, constraints.md) to a temp file (input)
 2. Write the PRICE-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

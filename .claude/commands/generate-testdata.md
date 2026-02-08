@@ -17,7 +17,7 @@ accordingly. This command works for any project, any tech stack.
 Read before starting:
 - `pyproject.toml` or `package.json` — Tech stack detection
 - `.workflow/project-spec.md` — Data model, entities, relationships
-- `.workflow/decisions.md` — Business rules, precision, state machines, auth
+- `.workflow/decisions/*.md` — Per-domain decision files (business rules, precision, state machines, auth)
 - `.workflow/constraints.md` — Data limits, performance targets
 - `.workflow/domain-knowledge.md` — Domain-specific ranges, edge cases (if exists)
 - `.workflow/domain-library/` — Rate tables, formulas, gotchas (if exists)
@@ -69,7 +69,7 @@ test infrastructure — extend it instead.
 
 ### Read workflow artifacts
 
-Read `.workflow/decisions.md` and extract:
+Read `.workflow/decisions/*.md` files and extract:
 - **BACK-XX:** State machines (valid transitions), validation rules,
   computed fields, entity specs
 - **DATA-XX:** Precision rules (Decimal places), aggregation rules,
@@ -236,7 +236,7 @@ from chain_manager import record_entry
 
 Generate entries for:
 1. PLAN artifact_gen (plan phase)
-2. One completion entry per specialist that has decisions in decisions.md
+2. One completion entry per specialist that has a decisions/{PREFIX}.md file
 3. SYNTH generation + validation (synthesize phase)
 4. Per completed task: verify (PASS) + code-review (PASS/CONCERN) +
    security-review (if SEC-relevant task)
@@ -352,7 +352,7 @@ python tests/seed.py --clean-workflow
 This removes: `.workflow/reflexion/index.json` entries,
 `.workflow/evals/task-evals.json` entries,
 `.workflow/state-chain/chain.json` entries.
-It preserves: project-spec.md, decisions.md, constraints.md, task-queue.md
+It preserves: project-spec.md, decisions/*.md, constraints.md, task-queue.md
 (planning artifacts stay — only execution-generated state is cleaned).
 
 ---

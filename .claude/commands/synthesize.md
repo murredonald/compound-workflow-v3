@@ -18,7 +18,8 @@ You never skip Phase 2. An unvalidated task queue is a broken task queue.
 
 Read before starting:
 - `.workflow/project-spec.md` — Project specification (Phase: complete — finalized by /plan-define)
-- `.workflow/decisions.md` — All decisions (GEN-XX, ARCH-XX, BACK-XX, etc.)
+- `.workflow/decisions/*.md` — Per-domain decision files (GEN.md, ARCH.md, BACK.md, etc.)
+- `.workflow/decision-index.md` — Compact decision index (if exists from prior synthesize run)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/competition-analysis.md` — Feature matrix and table-stakes (if exists)
 - `.workflow/cross-domain-gaps.md` — Cross-domain findings from specialists (if exists)
@@ -136,9 +137,9 @@ This ensures Phase 0's chain recording has a target file.
 
 ### Step 1: Load and Index All Decisions
 
-Read `.workflow/decisions.md` in full. Build a concern-area index and **persist it
-to `.workflow/decision-index.md`** — this artifact is consumed by Phase 1 (task
-generation) and Phase 2 (Check 8 validation).
+Read all `.workflow/decisions/*.md` files. Build a concern-area index and **persist it
+to `.workflow/decision-index.md`** (overwriting any prior version) — this artifact is
+consumed by Phase 1 (task generation) and Phase 2 (Check 8 validation).
 
 ```markdown
 # Decision Index — Concern Areas
@@ -249,7 +250,7 @@ CONFLICT 2: ...
 ### Step 4: Apply Resolutions
 
 For each resolved conflict:
-1. Update the affected decision(s) in `.workflow/decisions.md`
+1. Update the affected decision(s) in the relevant `.workflow/decisions/{PREFIX}.md` file
 2. Add a resolution note: `[Deconflicted with {other ID}: {brief explanation}]`
 3. If a decision is amended, mark it: `{ID} (amended): {new text}`
 4. After all amendments are applied, **regenerate `.workflow/decision-index.md`** to reflect the amended decisions. This ensures Phase 1 and Check 8 work with the current state.
@@ -398,7 +399,7 @@ Every task that implements a specific decision must reference it:
 ```
 
 This lets the code-reviewer subagent verify compliance without reading
-the entire decisions.md.
+all decisions/*.md files.
 
 ## Generation Strategy
 
@@ -459,7 +460,7 @@ Write `.workflow/task-queue.md`:
 ---
 
 **Audit trail — generation:** After writing task-queue.md, record a chain entry:
-1. Write the planning inputs (project-spec.md, decisions.md, constraints.md) to a temp file
+1. Write the planning inputs (project-spec.md, decisions/*.md, constraints.md) to a temp file
 2. Write the generated task-queue.md content to a temp file
 3. Run:
 ```bash
@@ -548,7 +549,7 @@ Cross-reference task queue against planning artifacts:
 
 ## Check 7: Technology Consistency
 
-- Task tech references match decisions.md
+- Task tech references match decisions/*.md
 - No tasks using technologies not in the decided stack
 - Environment variables documented for external services
 

@@ -25,7 +25,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (data sources, external dependencies)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, etc.)
+- `.workflow/decisions/*.md` — All existing decisions (specifically: GEN.md, ARCH.md, BACK.md, SEC.md if they exist)
 - `.workflow/constraints.md` — Boundaries and limits (budget, latency, legal restrictions)
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — industry data sources, standard feeds)
 - `.workflow/competition-analysis.md` — Competitor data sources and approaches (if exists)
@@ -42,13 +42,14 @@ INGEST-03: All scraped data validated against schema before storage — malforme
 INGEST-04: Adaptive polling for news feeds — baseline 30min, increase to 5min during market hours
 ```
 
-Append to `.workflow/decisions.md`.
+Write to `.workflow/decisions/INGEST.md`. After writing, append one-line summaries to `.workflow/decision-index.md`.
 
 ---
 
 ## Outputs
 
-- `.workflow/decisions.md` — Append INGEST-XX decisions
+- `.workflow/decisions/INGEST.md` — Append INGEST-XX decisions
+- `.workflow/decision-index.md` — Append one-line summaries after writing decisions
 - `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
@@ -73,14 +74,15 @@ with only user-entered data, internal tools using only internal databases.
 
 **Required** (stop and notify user if missing):
 - `.workflow/project-spec.md` — Run `/plan` first
-- `.workflow/decisions.md` — Run `/plan` first
+- `.workflow/decisions/GEN.md` — Run `/plan` first
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Domain-specific data sources and feeds (from `/specialists/domain`)
 - `.workflow/competition-analysis.md` — Competitor data strategies (from `/specialists/competition`)
 - `.workflow/constraints.md` — May not exist for simple projects
-- BACK-XX decisions — API architecture informs how ingested data is stored and served
-- SEC-XX decisions — Security decisions inform credential handling for external APIs
+- `.workflow/decisions/BACK.md` — API architecture informs how ingested data is stored and served
+- `.workflow/decisions/SEC.md` — Security decisions inform credential handling for external APIs
+- `.workflow/decisions/ARCH.md` — Additional architectural context if available
 
 **Recommended prior specialists:** Backend (BACK-XX) provides data model and
 API architecture context. Security (SEC-XX) provides credential management
@@ -547,15 +549,15 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/scraping -
 
 7. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
    proposed INGEST-NN decisions grouped by focus area. Wait for approval.
-   **Do NOT write to decisions.md until user approves.**
+   **Do NOT write to decisions/INGEST.md until user approves.**
 
-8. **Output** — Append approved INGEST-XX decisions to decisions.md, update constraints.md. Delete `.workflow/specialist-session.json`.
+8. **Output** — Append approved INGEST-XX decisions to decisions/INGEST.md, update decision-index.md, update constraints.md. Delete `.workflow/specialist-session.json`.
 
 ## Quick Mode
 
 If the user requests a quick or focused run, prioritize focus areas 1, 3, 6 (source assessment, API integration, change detection)
 and skip or briefly summarize the remaining areas. Always complete the advisory step for
-prioritized areas. Mark skipped areas in decisions.md: `INGEST-XX: DEFERRED — skipped in quick mode`.
+prioritized areas. Mark skipped areas in decisions/INGEST.md: `INGEST-XX: DEFERRED — skipped in quick mode`.
 
 ## Response Structure
 
@@ -600,10 +602,10 @@ Full protocol details: `.claude/advisory-protocol.md`
 
 ## Audit Trail
 
-After appending all INGEST-XX decisions to decisions.md, record a chain entry:
+After appending all INGEST-XX decisions to decisions/INGEST.md, record a chain entry:
 
 1. Write the planning artifacts as they were when you started (project-spec.md,
-   decisions.md, constraints.md) to a temp file (input)
+   decisions/GEN.md, constraints.md) to a temp file (input)
 2. Write the INGEST-XX decision entries you appended to a temp file (output)
 3. Run:
 ```bash

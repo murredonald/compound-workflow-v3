@@ -22,11 +22,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+
+class PipelineError(Exception):
+    """Raised when pipeline operations fail."""
 
 STATUS_FILE = Path(".workflow/pipeline-status.json")
 
@@ -80,20 +85,30 @@ def load_pipeline(path: Path | None = None) -> dict[str, Any]:
     """Load pipeline status from JSON file."""
     p = path or STATUS_FILE
     if not p.exists():
-        print(f"Error: pipeline not initialized — run `init` first ({p})", file=sys.stderr)
-        sys.exit(1)
-    with open(p, "r", encoding="utf-8") as f:
-        return json.load(f)
+        raise PipelineError(f"pipeline not initialized — run `init` first ({p})")
+    try:
+        with open(p, "r", encoding="utf-8") as f:
+            return json.load(f)  # type: ignore[no-any-return]
+    except (json.JSONDecodeError, ValueError) as e:
+        backup = p.with_suffix(".json.bak")
+        p.rename(backup)
+        raise PipelineError(
+            f"corrupted pipeline file renamed to {backup}: {e}"
+        ) from e
 
 
 def save_pipeline(data: dict[str, Any], path: Path | None = None) -> None:
-    """Save pipeline status to JSON file."""
+    """Save pipeline status to JSON file atomically."""
     p = path or STATUS_FILE
     p.parent.mkdir(parents=True, exist_ok=True)
     data["updated_at"] = _now()
-    with open(p, "w", encoding="utf-8") as f:
+    tmp = p.with_suffix(".json.tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
         f.write("\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(str(tmp), str(p))
 
 
 def _find_phase(data: dict[str, Any], phase_id: str) -> dict[str, Any] | None:
@@ -113,8 +128,7 @@ def init_pipeline(
     """Create a new pipeline status file."""
     p = path or STATUS_FILE
     if p.exists() and not force:
-        print(f"Error: pipeline already exists at {p} — use --force to overwrite", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"pipeline already exists at {p} — use --force to overwrite")
 
     templates = GREENFIELD_PHASES if pipeline_type == "greenfield" else EVOLUTION_PHASES
     data: dict[str, Any] = {
@@ -134,21 +148,17 @@ def start_phase(phase_id: str, path: Path | None = None) -> dict[str, Any]:
     data = load_pipeline(path)
     phase = _find_phase(data, phase_id)
     if phase is None:
-        print(f"Error: phase '{phase_id}' not found in pipeline", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"phase '{phase_id}' not found in pipeline")
     if phase["status"] in ("completed", "skipped"):
-        print(f"Error: phase '{phase_id}' is already {phase['status']}", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"phase '{phase_id}' is already {phase['status']}")
 
     # Check for another in_progress phase
     for p in data["phases"]:
         if p["id"] != phase_id and p["status"] == "in_progress":
-            print(
-                f"Error: phase '{p['id']}' is already in_progress — "
-                f"complete or skip it before starting '{phase_id}'",
-                file=sys.stderr,
+            raise PipelineError(
+                f"phase '{p['id']}' is already in_progress — "
+                f"complete or skip it before starting '{phase_id}'"
             )
-            sys.exit(1)
 
     phase["status"] = "in_progress"
     phase["started_at"] = _now()
@@ -166,14 +176,11 @@ def complete_phase(
     data = load_pipeline(path)
     phase = _find_phase(data, phase_id)
     if phase is None:
-        print(f"Error: phase '{phase_id}' not found in pipeline", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"phase '{phase_id}' not found in pipeline")
     if phase["status"] != "in_progress":
-        print(
-            f"Error: phase '{phase_id}' is '{phase['status']}', not in_progress",
-            file=sys.stderr,
+        raise PipelineError(
+            f"phase '{phase_id}' is '{phase['status']}', not in_progress"
         )
-        sys.exit(1)
 
     phase["status"] = "completed"
     phase["completed_at"] = _now()
@@ -193,14 +200,9 @@ def skip_phase(
     data = load_pipeline(path)
     phase = _find_phase(data, phase_id)
     if phase is None:
-        print(f"Error: phase '{phase_id}' not found in pipeline", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"phase '{phase_id}' not found in pipeline")
     if phase["status"] == "completed":
-        print(
-            f"Error: phase '{phase_id}' is 'completed', cannot skip",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+        raise PipelineError(f"phase '{phase_id}' is 'completed', cannot skip")
 
     # Allow skipping in_progress phases (e.g., qa-fix-pass started then
     # determined no must-fix findings exist). Treat as "started but skipped."
@@ -226,8 +228,7 @@ def task_update(
     data = load_pipeline(path)
     phase = _find_phase(data, "execute")
     if phase is None:
-        print("Error: 'execute' phase not found in pipeline", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError("'execute' phase not found in pipeline")
 
     phase["execute_progress"] = {
         "total_milestones": total_milestones,
@@ -257,8 +258,7 @@ def add_phase(
 
     # Check duplicate
     if _find_phase(data, phase_id) is not None:
-        print(f"Error: phase '{phase_id}' already exists", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"phase '{phase_id}' already exists")
 
     # Find insertion point
     insert_idx = None
@@ -267,8 +267,7 @@ def add_phase(
             insert_idx = i + 1
             break
     if insert_idx is None:
-        print(f"Error: after-phase '{after_phase_id}' not found", file=sys.stderr)
-        sys.exit(1)
+        raise PipelineError(f"after-phase '{after_phase_id}' not found")
 
     cmd = command or f"/{phase_id}"
     new_phase: dict[str, Any] = {
@@ -592,6 +591,15 @@ def main() -> None:
         parser.print_help()
         sys.exit(1)
 
+    try:
+        _dispatch(args)
+    except PipelineError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _dispatch(args: argparse.Namespace) -> None:
+    """Dispatch to the appropriate subcommand."""
     path = args.status_file
 
     if args.command == "init":

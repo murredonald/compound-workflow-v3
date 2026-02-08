@@ -30,9 +30,10 @@ Read before starting:
 - `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, FRONT-XX, SEC-XX)
 - `.workflow/constraints.md` — Boundaries and limits
 
-**Required prior specialists:** This specialist runs AFTER frontend and backend.
-You need FRONT-XX (component architecture, screens, routes) and BACK-XX (API
-endpoints, data models) as input to reason about what the UI should expose.
+**Required prior specialists:** This specialist runs AFTER frontend, backend,
+and security. You need FRONT-XX (component architecture, screens, routes),
+BACK-XX (API endpoints, data models), and SEC-XX (roles, permissions) as input
+to reason about what the UI should expose and how permissions affect UX.
 
 ---
 
@@ -80,9 +81,11 @@ Skip for: CLI tools, pure APIs, background services, libraries.
 
 **Optional** (proceed without, note gaps):
 - `.workflow/domain-knowledge.md` — Richer context if `/specialists/domain` ran
+- `.workflow/style-guide.md` — Visual system reference if `/specialists/design` ran (improves FA2 visual quality expectations)
 - `.workflow/constraints.md` — May not exist for simple projects
 
 **Warning**: If FRONT-XX decisions don't exist in decisions.md, warn the user that running `/specialists/frontend` first would provide better context.
+If SEC-XX decisions don't exist, warn that role/permission UX (FA7) will be limited.
 
 ---
 

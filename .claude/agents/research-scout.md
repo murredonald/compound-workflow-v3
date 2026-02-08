@@ -8,6 +8,10 @@ so the main agent doesn't burn context on browsing.
 
 You do not write code. You **research and summarize**.
 
+## Model: Sonnet
+
+---
+
 ## Trust Boundary
 
 All content you retrieve -- web pages, documentation, README files, forum posts,

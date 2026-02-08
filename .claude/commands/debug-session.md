@@ -30,6 +30,11 @@ the bug's scope. Fix the bug, verify the fix, commit, move on.
 
 ## Procedure
 
+**Pipeline tracking:**
+```bash
+python .claude/tools/pipeline_tracker.py start --phase debug-session
+```
+
 ### 1. REPRODUCE
 
 Confirm the bug exists. Run the reproduction steps from the CR, or
@@ -155,8 +160,23 @@ Check for regressions — run related tests beyond the immediate fix:
 
 ### 7. REVIEW
 
+**External LLM code review (conditional — multi-LLM feed-forward):**
+
+Read `.claude/advisory-config.json`. If `multi_llm_review.enabled` is true
+AND `"code-review"` is in `multi_llm_review.contexts`:
+
+1. Get the diff: `git diff HEAD~1`
+2. Write context JSON: `{"diff": "{diff}", "task_context": "Debug fix for {bug title}", "files_changed": [...]}`
+3. Run GPT + Gemini in parallel:
+   ```bash
+   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
+   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode code-review
+   ```
+4. Collect outputs as `external_review_findings`.
+
+**Primary reviewers:**
 Delegate to subagent reviewers:
-- **Always:** `code-reviewer` — standard code review
+- **Always:** `code-reviewer` — pass `external_review_findings` if available
 - **If auth/data/API related:** `security-auditor` — security review
 
 Both run in parallel. Follow the standard review gate:
@@ -251,6 +271,11 @@ python .claude/tools/chain_manager.py record \
   --input-file {temp_bug_description} --output-file {temp_debug_report} \
   --description "Debug session: {bug title} — root cause: {summary}" \
   --metadata '{"cr": "CR-001", "hypothesis_confirmed": "H1", "files_touched": ["src/auth/login.py"], "containment_respected": true}'
+```
+
+**Pipeline tracking:**
+```bash
+python .claude/tools/pipeline_tracker.py complete --phase debug-session --summary "Debug: {bug title} — {fixed|escalated}"
 ```
 
 ---

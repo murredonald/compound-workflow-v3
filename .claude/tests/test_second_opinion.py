@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from second_opinion import (
+    SecondOpinionError,
     build_user_message,
     build_code_review_message,
     build_diagnosis_message,
@@ -196,13 +197,13 @@ class TestResolveApiKey:
         assert result == "test-gemini-from-os"
 
     @patch.dict("os.environ", {}, clear=True)
-    def test_missing_key_exits(self) -> None:
-        with pytest.raises(SystemExit):
+    def test_missing_key_raises_error(self) -> None:
+        with pytest.raises(SecondOpinionError, match="OPENAI_API_KEY"):
             resolve_api_key("openai", {})
 
     @patch.dict("os.environ", {}, clear=True)
-    def test_missing_gemini_key_exits(self) -> None:
-        with pytest.raises(SystemExit):
+    def test_missing_gemini_key_raises_error(self) -> None:
+        with pytest.raises(SecondOpinionError, match="GEMINI_API_KEY"):
             resolve_api_key("gemini", {})
 
 
@@ -418,7 +419,9 @@ class TestCallGemini:
         result = call_gemini("fake-gemini-key", "test message")
         assert "Advisory Perspective" in result
         assert "Gemini answer" in result
-        mock_client_class.assert_called_once_with(api_key="fake-gemini-key")
+        mock_client_class.assert_called_once_with(
+            api_key="fake-gemini-key", http_options={"timeout": 90_000}
+        )
 
     @patch("google.genai.Client")
     def test_call_gemini_handles_none_text(self, mock_client_class: MagicMock) -> None:
@@ -656,3 +659,104 @@ class TestCLIMode:
             cwd=str(Path(__file__).parent.parent),
         )
         assert result.returncode != 0
+
+
+# ── v3.15: Corrupted context file ────────────────────────────────
+
+class TestCorruptedContextFile:
+    """Test handling of malformed context JSON files."""
+
+    def test_corrupted_context_file_exits_1(self, tmp_path: Path) -> None:
+        """CLI exits 1 with clear error for malformed JSON context file."""
+        ctx = tmp_path / "bad.json"
+        ctx.write_text("{not valid json!!!", encoding="utf-8")
+        result = subprocess.run(
+            [
+                sys.executable,
+                "tools/second_opinion.py",
+                "--context-file",
+                str(ctx),
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).parent.parent),
+        )
+        assert result.returncode == 1
+        assert "malformed" in result.stderr.lower() or "error" in result.stderr.lower()
+
+    def test_empty_context_file_exits_1(self, tmp_path: Path) -> None:
+        """CLI exits 1 for empty context file."""
+        ctx = tmp_path / "empty.json"
+        ctx.write_text("", encoding="utf-8")
+        result = subprocess.run(
+            [
+                sys.executable,
+                "tools/second_opinion.py",
+                "--context-file",
+                str(ctx),
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).parent.parent),
+        )
+        assert result.returncode == 1
+
+
+# ── v3.15: SecondOpinionError for library functions ───────────────
+
+class TestSecondOpinionErrorRaised:
+    """Test that SecondOpinionError is raised (not SystemExit) by library functions."""
+
+    @patch.dict("os.environ", {}, clear=True)
+    def test_resolve_openai_key_raises_error(self) -> None:
+        """resolve_api_key raises SecondOpinionError for missing OpenAI key."""
+        with pytest.raises(SecondOpinionError, match="OPENAI_API_KEY"):
+            resolve_api_key("openai", {})
+
+    @patch.dict("os.environ", {}, clear=True)
+    def test_resolve_gemini_key_raises_error(self) -> None:
+        """resolve_api_key raises SecondOpinionError for missing Gemini key."""
+        with pytest.raises(SecondOpinionError, match="GEMINI_API_KEY"):
+            resolve_api_key("gemini", {})
+
+    @patch("openai.OpenAI")
+    def test_call_openai_propagates_api_error(self, mock_openai_class: MagicMock) -> None:
+        """call_openai propagates API exceptions (caught by retry logic in main)."""
+        from second_opinion import call_openai
+
+        mock_client = MagicMock()
+        mock_openai_class.return_value = mock_client
+        mock_client.chat.completions.create.side_effect = Exception("Connection refused")
+        with pytest.raises(Exception, match="Connection refused"):
+            call_openai("fake-key", "test message")
+
+
+# ── v3.15: Retry logic ───────────────────────────────────────────
+
+class TestRetryLogic:
+    """Test the retry-once-on-failure pattern."""
+
+    @patch("openai.OpenAI")
+    def test_retry_succeeds_on_second_attempt(self, mock_openai_class: MagicMock) -> None:
+        """When first API call fails and second succeeds, second returns result."""
+        from second_opinion import call_openai
+
+        mock_client = MagicMock()
+        mock_openai_class.return_value = mock_client
+
+        # First call raises, second succeeds
+        mock_success = MagicMock()
+        mock_success.choices = [MagicMock()]
+        mock_success.choices[0].message.content = "Retry success"
+        mock_client.chat.completions.create.side_effect = [
+            Exception("Transient failure"),
+            mock_success,
+        ]
+
+        # First call should fail
+        with pytest.raises(Exception, match="Transient"):
+            call_openai("fake-key", "test message")
+
+        # Second call should succeed (side_effect consumed first exception)
+        result = call_openai("fake-key", "test message")
+        assert result == "Retry success"

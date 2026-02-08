@@ -67,6 +67,18 @@ Which scope? A / B
    - **CR coverage:** every CR from step 1 is referenced by at least one task's `**CRs:**` field
    - **Acceptance criteria quality:** every criterion is mechanically verifiable (same rules as Check 1)
    - **Task sizing:** no task has 5+ criteria or 5+ files (same rules as Check 3)
+       Present lite validation results in this format:
+       ```
+       LITE VALIDATION (Release Mode)
+       | Check | Status |
+       |-------|--------|
+       | Scope (files listed) | ✅ / ⚠️ |
+       | Dependencies | ✅ / ⚠️ |
+       | Decision compliance | ✅ / ⚠️ |
+       | CR coverage | ✅ / ⚠️ |
+       | Acceptance criteria | ✅ / ⚠️ |
+       | Task sizing | ✅ / ⚠️ |
+       ```
 7. Update CR statuses in `backlog.md`: `planned` → `in-progress`
 8. **Verify** execution state files exist. If this is the first release
    (no prior greenfield run), the reflexion, evals, and chain files may
@@ -113,6 +125,13 @@ and expected. **They must be resolved before task generation.**
 were added since the last synthesize (check decision IDs against existing tasks).
 
 ## Procedure
+
+**Pre-check:** If `.workflow/state-chain/chain.json` does not exist, create it now:
+```bash
+mkdir -p .workflow/state-chain
+echo '{"version": 1, "entries": []}' > .workflow/state-chain/chain.json
+```
+This ensures Phase 0's chain recording has a target file.
 
 ### Step 1: Load and Index All Decisions
 
@@ -232,6 +251,7 @@ For each resolved conflict:
 1. Update the affected decision(s) in `.workflow/decisions.md`
 2. Add a resolution note: `[Deconflicted with {other ID}: {brief explanation}]`
 3. If a decision is amended, mark it: `{ID} (amended): {new text}`
+4. After all amendments are applied, **regenerate `.workflow/decision-index.md`** to reflect the amended decisions. This ensures Phase 1 and Check 8 work with the current state.
 
 ### Step 5: Record Deconfliction
 

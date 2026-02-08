@@ -19,7 +19,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, BACK-XX, etc.)
+- `.workflow/decisions.md` — All existing decisions (GEN-XX, COMP-XX, ARCH-XX, BACK-XX, FRONT-XX, BRAND-XX)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/competition-analysis.md` — Competitor feature matrix and pricing (if exists)
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — industry pricing norms)

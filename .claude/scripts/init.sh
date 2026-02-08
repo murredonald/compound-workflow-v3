@@ -148,9 +148,24 @@ if [ -z "$PYTHON" ]; then
 fi
 
 if [ -n "${PYTHON:-}" ] && [ -f pyproject.toml ]; then
+  VENV_OK=false
   if [ -d .venv ]; then
-    pass "venv already exists at .venv/"
-  else
+    # Verify venv Python is functional (catches broken symlinks from removed interpreters)
+    VENV_PY=""
+    if [ -f .venv/Scripts/python.exe ]; then
+      VENV_PY=".venv/Scripts/python.exe"
+    elif [ -f .venv/bin/python ]; then
+      VENV_PY=".venv/bin/python"
+    fi
+    if [ -n "$VENV_PY" ] && "$VENV_PY" --version &>/dev/null; then
+      pass "venv OK at .venv/ ($("$VENV_PY" --version 2>&1))"
+      VENV_OK=true
+    else
+      warn "venv at .venv/ is broken (Python interpreter missing) — recreating"
+      rm -rf .venv
+    fi
+  fi
+  if [ "$VENV_OK" = "false" ]; then
     $PYTHON -m venv .venv
     pass "venv created at .venv/"
   fi

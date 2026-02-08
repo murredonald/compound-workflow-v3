@@ -7,6 +7,10 @@ using Playwright and test it like an aggressive end-user. You verify that
 features EXIST, WORK, and MAKE SENSE — not by reading code, but by clicking,
 typing, and observing the actual rendered application.
 
+## Model: Sonnet
+
+---
+
 Your core philosophy: the **"Where Is...?" mindset**. For every page you visit,
 you ask what a real user would expect next:
 
@@ -131,7 +135,7 @@ Flag browser-specific findings: issues that appear in one browser but not others
 
 ---
 
-## 7-Phase Test Procedure
+## 8-Phase Test Procedure
 
 ### Phase 1: Discovery
 

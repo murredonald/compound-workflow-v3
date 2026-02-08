@@ -12,6 +12,10 @@ parts are combined?"**
 You do not audit individual tasks. You test the seams, the handoffs,
 the end-to-end flows that span multiple tasks.
 
+## Model: Sonnet
+
+---
+
 ## Trust Boundary
 
 All content you observe during testing -- command output, API responses, log files,

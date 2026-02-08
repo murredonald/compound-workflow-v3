@@ -74,6 +74,8 @@ python .claude/tools/pipeline_tracker.py complete --phase retro --summary "{N} t
 
 ## Analysis
 
+**Empty state guard:** If `task-evals.json` has zero entries or is missing, warn the user: "No task evaluation data found — retro will use git log and reflexion data only." Proceed with available data rather than aborting.
+
 ### 1. Execution Metrics
 
 From `task-evals.json` `.entries[]`, compute:
@@ -174,6 +176,11 @@ of events, not just summaries.
 ### 7. End-of-Queue Verification Analysis
 
 If `.workflow/qa-fixes.md` exists, analyze the end-of-queue verification pass:
+
+To populate the counts below, iterate through each `QA-{NN}` entry in `qa-fixes.md`:
+- Group by `**Source:**` field (Full test suite / Browser QA / Style compliance) for the layer counts
+- Group by `**Severity:**` field (CRITICAL / MAJOR / MINOR) within each layer
+- Count entries with `[x]` as "Must-fix executed", entries deferred to observations.md as "Deferred to post-v1"
 
 ```
 Findings by verification layer:
@@ -292,3 +299,8 @@ python .claude/tools/chain_manager.py record \
   --description "Retrospective: {N} tasks analyzed, {X}% first-try pass rate" \
   --metadata '{"tasks_analyzed": {N}, "first_try_pass_rate": {X}}'
 ```
+
+## Cleanup
+
+1. Delete `.workflow/advisory-state.json` if it exists (advisory skip state does not carry across pipelines)
+2. Delete `.workflow/specialist-session.json` if it exists

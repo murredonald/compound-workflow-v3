@@ -48,7 +48,7 @@ else
 fi
 
 # ── Dependency vulnerability scanning ────────────────────────
-if command -v pip-audit &>/dev/null && [ -f "requirements.txt" -o -f "pyproject.toml" ]; then
+if command -v pip-audit &>/dev/null && { [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; }; then
   if ! pip-audit --strict --progress-spinner off -q 2>/dev/null; then
     ERRORS+="• pip-audit: Known vulnerabilities in Python dependencies.\n"
   fi

@@ -20,7 +20,7 @@ without flagging the conflict explicitly.
 
 Read before starting:
 - `.workflow/project-spec.md` — Full project specification (vision, audience, value proposition)
-- `.workflow/decisions.md` — All existing decisions (GEN-XX, ARCH-XX, COMP-XX)
+- `.workflow/decisions.md` — All existing decisions (GEN-XX, COMP-XX)
 - `.workflow/constraints.md` — Boundaries and limits (existing brand assets, required names)
 - `.workflow/competition-analysis.md` — Competitor profiles, feature matrix, brand landscape (if exists)
 - `.workflow/domain-knowledge.md` — Domain reference library (if exists — industry terminology, audience norms)

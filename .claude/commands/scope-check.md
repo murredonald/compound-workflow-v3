@@ -18,13 +18,13 @@ task's allowed file list. Run anytime you suspect scope drift.
 
 ### Clean
 ```
-SCOPE CHECK — T{NN}: {title}
+SCOPE CHECK — {T{NN}|QA-{NN}}: {title}
 All changes within scope. ✅
 ```
 
 ### Drift Detected
 ```
-SCOPE CHECK — T{NN}: {title}
+SCOPE CHECK — {T{NN}|QA-{NN}}: {title}
 
 In scope:
   ✅ {file} (expected)

@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -55,19 +56,31 @@ def hash_content(content: str) -> str:
 
 
 def _load_chain(chain_path: Path) -> dict[str, Any]:
-    """Load chain data from disk, creating an empty chain if missing."""
+    """Load chain data from disk, creating an empty chain if missing or corrupted."""
     if chain_path.exists():
-        with open(chain_path, "r", encoding="utf-8") as f:
-            return json.load(f)  # type: ignore[no-any-return]
+        try:
+            with open(chain_path, "r", encoding="utf-8") as f:
+                return json.load(f)  # type: ignore[no-any-return]
+        except (json.JSONDecodeError, ValueError) as e:
+            backup = chain_path.with_suffix(".json.bak")
+            chain_path.rename(backup)
+            print(
+                f"Warning: corrupted chain file renamed to {backup}: {e}",
+                file=sys.stderr,
+            )
     return json.loads(json.dumps(EMPTY_CHAIN))
 
 
 def _save_chain(chain_path: Path, data: dict[str, Any]) -> None:
-    """Write chain data to disk, creating parent directories if needed."""
+    """Write chain data to disk atomically, creating parent directories if needed."""
     chain_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(chain_path, "w", encoding="utf-8") as f:
+    tmp_path = chain_path.with_suffix(".json.tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(str(tmp_path), str(chain_path))
 
 
 def record_entry(

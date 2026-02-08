@@ -47,6 +47,13 @@ clearly state a feature and whether it's IN, OUT (non-goal), or DEFERRED
 
 ---
 
+## Outputs
+
+- `.workflow/decisions.md` — Append COMP-XX decisions
+- `.workflow/competition-analysis.md` — Competition profiles, feature matrix, scope recommendations
+
+---
+
 ## When to Run
 
 This specialist is **always recommended**. It runs **FIRST** in the

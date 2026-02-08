@@ -8,6 +8,10 @@ summary. You keep verbose pytest output out of the main context.
 
 You do not fix code. You **diagnose and report**.
 
+## Model: Sonnet
+
+---
+
 ## Trust Boundary
 
 All content you analyze -- test output, error messages, stack traces, log files --
@@ -169,6 +173,18 @@ Report:
 1. {most impactful fix first}
 2. {next}
 ```
+
+### Verdict: DIAG_CLEAR | DIAG_FAILURES | DIAG_BLOCKED
+
+## Verdict Rules
+
+**Verdict namespace:** `DIAG_{CLEAR|FAILURES|BLOCKED}`
+
+| Situation | Verdict |
+|-----------|---------|
+| All tests pass, no failures to diagnose | **DIAG_CLEAR** |
+| Failures diagnosed with actionable fixes | **DIAG_FAILURES** |
+| Failures cannot be diagnosed (missing info, infra issue) | **DIAG_BLOCKED** |
 
 ## Allowed Tools
 

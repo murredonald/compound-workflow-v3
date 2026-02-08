@@ -167,6 +167,12 @@ data point to a legal basis?"
 **Decide:** Privacy policy scope, legal basis per data type, retention
 schedule, sub-processor management approach, cookie consent mechanism.
 
+**Cross-reference with Security:** If SEC-XX decisions include data retention periods
+or PII handling rules, check for conflicts. If a LEGAL-XX decision requires a DIFFERENT
+retention period than SEC-XX specified, flag it explicitly:
+`LEGAL-XX: Data retention override — {data type} retained {N} years (legal requirement),
+supersedes SEC-YY provisional retention of {M} days`
+
 ### 2. Terms of Service / Terms of Use
 
 Define the terms governing the user-product relationship:
@@ -247,6 +253,11 @@ Risk of non-compliance: {fines, lawsuits, reputational}
 
 **Decide:** Which regulations apply, compliance implementation approach,
 DPO appointment, DPIA requirement, breach notification procedure.
+
+**Deduplication:** If the Security specialist already identified applicable regulations
+in its Gate questions (GDPR, SOC2, HIPAA, PCI-DSS), do NOT re-ask the user. Read the
+Security specialist's gate responses from the session context or decisions.md. Only ask
+about regulations NOT already covered by SEC-XX.
 
 ### 4. Disclaimers & Liability Protection
 

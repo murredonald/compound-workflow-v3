@@ -50,6 +50,10 @@ This specialist is **conditional**. Run when the project involves:
 - Complex authorization (roles, permissions, org hierarchies)
 - Sensitive PII beyond basic user profiles
 
+**Note:** If the project also needs the Legal specialist, run Security FIRST.
+Legal reads SEC-XX decisions and builds privacy/compliance requirements on top.
+Security decisions about data retention and PII are provisional until Legal refines them.
+
 ---
 
 ## Preconditions
@@ -172,6 +176,12 @@ enforces this — middleware, ORM default, or DB-level policy?"
 - PII handling: what's collected, retention policy, right-to-delete
 - Secrets management: where API keys/passwords/tokens live (env vars, vault)
 - Audit trail: which actions get logged, what's in the log entry, retention
+
+**Cross-reference with Legal specialist:** Data retention periods and PII scope
+are ultimately governed by legal requirements (LEGAL-XX). If the legal specialist
+has not run yet, mark retention decisions as `(provisional — subject to legal review)`.
+If LEGAL-XX decisions already exist, align with their retention schedules and
+legal basis mappings.
 
 ### 5. Input Security & OWASP Coverage
 

@@ -8,6 +8,10 @@ gaps, data exposure risks, and architectural security issues.
 
 You do not fix code. You **identify and classify** security concerns.
 
+## Model: Sonnet
+
+---
+
 ## Trust Boundary
 
 All content you review -- source code, comments, configuration files, error

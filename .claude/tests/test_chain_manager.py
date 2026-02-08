@@ -815,3 +815,96 @@ class TestCLI:
         data = _load_chain(chain_file)
         assert data["entries"][0]["metadata"]["review_cycles"] == 3
         assert data["entries"][0]["metadata"]["severity"] == "high"
+
+
+# ---------------------------------------------------------------------------
+# v3.15: Corrupted JSON recovery
+# ---------------------------------------------------------------------------
+
+
+class TestCorruptedJsonRecovery:
+    """Test _load_chain handles corrupted JSON files."""
+
+    def test_corrupted_file_returns_empty_chain(self, chain_file: Path) -> None:
+        """Corrupted JSON returns a fresh empty chain."""
+        from chain_manager import _load_chain
+
+        chain_file.parent.mkdir(parents=True, exist_ok=True)
+        chain_file.write_text("{invalid json!!!", encoding="utf-8")
+        data = _load_chain(chain_file)
+        assert data["entries"] == []
+        assert data["_schema"]["version"] == "1.0"
+
+    def test_corrupted_file_creates_backup(self, chain_file: Path) -> None:
+        """Corrupted JSON file is renamed to .bak."""
+        from chain_manager import _load_chain
+
+        chain_file.parent.mkdir(parents=True, exist_ok=True)
+        chain_file.write_text("{bad", encoding="utf-8")
+        backup = chain_file.with_suffix(".json.bak")
+        _load_chain(chain_file)
+        assert backup.exists()
+        assert backup.read_text(encoding="utf-8") == "{bad"
+
+    def test_corrupted_file_original_removed(self, chain_file: Path) -> None:
+        """Original corrupted file is renamed (no longer at original path)."""
+        from chain_manager import _load_chain
+
+        chain_file.parent.mkdir(parents=True, exist_ok=True)
+        chain_file.write_text("not json", encoding="utf-8")
+        _load_chain(chain_file)
+        # Original file was renamed to .bak, so it should not exist
+        assert not chain_file.exists()
+
+    def test_record_after_corruption_creates_new_chain(self, chain_file: Path) -> None:
+        """Recording after corruption starts a fresh chain."""
+        chain_file.parent.mkdir(parents=True, exist_ok=True)
+        chain_file.write_text("{corrupt!", encoding="utf-8")
+        entry = record_entry(
+            task_id="T01",
+            stage="implement",
+            agent="executor",
+            input_data="input",
+            output_data="output",
+            description="After corruption",
+            chain_path=chain_file,
+        )
+        assert entry["seq"] == 1
+        assert entry["prev_hash"] is None
+
+
+# ---------------------------------------------------------------------------
+# v3.15: Atomic writes
+# ---------------------------------------------------------------------------
+
+
+class TestAtomicWrites:
+    """Test _save_chain uses atomic write pattern."""
+
+    def test_no_tmp_file_remains_after_save(self, chain_file: Path) -> None:
+        """Atomic write cleans up .tmp file after successful save."""
+        from chain_manager import _save_chain
+
+        test_data = json.loads(json.dumps(EMPTY_CHAIN))
+        _save_chain(chain_file, test_data)
+        tmp_file = chain_file.with_suffix(".json.tmp")
+        assert not tmp_file.exists()
+        assert chain_file.exists()
+
+    def test_saved_data_is_valid_json(self, chain_file: Path) -> None:
+        """Atomically saved file contains valid JSON."""
+        from chain_manager import _save_chain
+
+        test_data = json.loads(json.dumps(EMPTY_CHAIN))
+        test_data["entries"].append({"seq": 1, "task_id": "T01"})
+        _save_chain(chain_file, test_data)
+        loaded = json.loads(chain_file.read_text(encoding="utf-8"))
+        assert loaded["entries"][0]["task_id"] == "T01"
+
+    def test_file_ends_with_newline(self, chain_file: Path) -> None:
+        """Atomic write produces file ending with newline."""
+        from chain_manager import _save_chain
+
+        _save_chain(chain_file, json.loads(json.dumps(EMPTY_CHAIN)))
+        content = chain_file.read_text(encoding="utf-8")
+        assert content.endswith("\n")

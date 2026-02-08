@@ -25,6 +25,11 @@ Read before starting:
 
 ---
 
+**Pipeline tracking:**
+```bash
+python .claude/tools/pipeline_tracker.py start --phase generate-testdata
+```
+
 ## Phase 1: Discover
 
 ### Tech stack detection
@@ -193,6 +198,10 @@ Add dev dependencies if missing: `factory-boy`, `faker`
 Only generate if `.workflow/task-queue.md` exists (project has been
 through `/synthesize`).
 
+**Guard:** Before generating synthetic workflow state, check if real execution data exists:
+- If `.workflow/evals/task-evals.json` has entries where `"qa_fix_pass"` is absent (i.e., real task evals, not QA), SKIP workflow state generation and warn: "Real execution data found — skipping synthetic state generation to avoid overwriting."
+- Only generate synthetic state for empty/missing files.
+
 **Generate `.workflow/reflexion/index.json`:**
 
 Read task-queue.md for actual task IDs and file paths. Generate 3-5
@@ -316,6 +325,15 @@ To use:
   python tests/seed.py --info                # Show what would be created
   pytest tests/                              # Run tests with fixtures
 ═══════════════════════════════════════════════════════════════
+```
+
+**Pipeline tracking and audit trail:**
+```bash
+python .claude/tools/chain_manager.py record \
+  --task TESTDATA --pipeline generate-testdata --stage generation --agent testdata-engineer \
+  --input-file {temp_input_summary} --output-file {temp_output_summary} \
+  --description "Test data generation: {N} factories, {N} scenarios, {N} edge cases"
+python .claude/tools/pipeline_tracker.py complete --phase generate-testdata --summary "Generated {N} factories, {N} scenarios"
 ```
 
 ---

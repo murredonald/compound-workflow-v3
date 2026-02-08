@@ -423,8 +423,8 @@ review actions for the task.
 
 | Verdict | Action |
 |---------|--------|
-| **PASS** | Proceed to step 7 |
-| **CONCERN** | Review findings. Fix if quick, note if cosmetic. Proceed. |
+| **PASS** | Skip step 6, proceed to step 7 |
+| **CONCERN** | Review findings. Fix if quick, note if cosmetic. Proceed to step 7. |
 | **BLOCK** | Must fix. Return to step 3. Re-verify. Re-review. Max 3 cycles. |
 
 After 3 review cycles with BLOCK: escalate to user.
@@ -566,6 +566,14 @@ integration failures and the fix requires reverting that task's changes:
 2. Mark the reverted task as `[ ] T{NN}` again in task-queue.md (re-pending)
 3. Log a reflection explaining why the task was reverted
 4. The task re-enters the queue and will be picked up again with the new context
+5. Record a chain entry for the rollback:
+   ```bash
+   python .claude/tools/chain_manager.py record \
+     --task T{NN} --pipeline execute --stage rollback --agent executor \
+     --input-file {temp_revert_reason} --output-file {temp_revert_commit} \
+     --description "Rollback: T{NN} reverted — {reason}" \
+     --verdict "ROLLBACK"
+   ```
 
 **Never use `git reset --hard` or force-push** to undo committed work. Revert
 commits preserve history and are safe for shared branches. Escalate to user
@@ -598,6 +606,8 @@ If the completed task has a `**CRs:**` field (release-mode tasks), check each re
      - Update the CR's status in `.workflow/backlog.md`: `in-progress` → `resolved`
      - Display: `CR-{NNN} resolved — all linked tasks complete`
    - If some are still `[ ]` or `[~]`: do nothing (CR stays `in-progress`)
+
+**Note:** DF-{NN} and QA-{NN} tasks do not carry `**CRs:**` fields. If a DF or QA fix addresses a CR's concern, manually update the CR status in `backlog.md` to `resolved` and note the task ID.
 
 This runs automatically — no user interaction needed. The CR→task link via
 the `**CRs:**` field makes this deterministic.
@@ -995,7 +1005,7 @@ FOR EACH QA-{NN} in qa-fixes.md (in order):
   2. PLAN — Display fix plan, proceed immediately
   3. IMPLEMENT — Fix the issue (same scope discipline rules)
   4. SELF-VERIFY — Run the verification command from QA-{NN}
-  5. REVIEW — code-reviewer (always) + security-auditor (always)
+  5. REVIEW — code-reviewer (always) + security-auditor (if auth/data/API/secrets related)
      Same review gate: PASS → commit, CONCERN → fix, BLOCK → fix + re-review
      Max 3 review cycles per QA fix
   6. REFLECT — Only if something unexpected happened
@@ -1172,7 +1182,9 @@ After compaction or session restart:
    to run if they were enabled before compaction.
 9. Do NOT re-read the full task queue, decisions, or reflexion files —
    load only what's needed for the current task
-10. Run chain integrity check: `python .claude/tools/chain_manager.py verify`
+10. Run chain integrity check ONLY IF this is the first compaction recovery in this session
+    (check if you already ran it earlier — if so, skip):
+    `python .claude/tools/chain_manager.py verify`
     If broken links detected, report them but continue — chain corruption
     doesn't block execution
 

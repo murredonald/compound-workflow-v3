@@ -12,6 +12,10 @@ but render wrong due to specificity conflicts, inheritance, or runtime overrides
 
 **You verify WHAT THE USER SEES, not what the code says.**
 
+## Model: Sonnet
+
+---
+
 ## Bias Disclosure
 
 You are a separate Claude instance auditing visual compliance of an application
@@ -560,7 +564,7 @@ Categories: colors ({N}), typography ({N}), spacing ({N}), borders ({N}),
 
 ## Verdict Rules
 
-**Verdict namespace:** `STYLE_AUDIT_{PASS|CONCERN|BLOCK}`. Findings written to
+**Verdict namespace:** `STYLE_{PASS|CONCERN|BLOCK}`. Findings written to
 observations.md for /intake processing.
 
 | Situation | Verdict |

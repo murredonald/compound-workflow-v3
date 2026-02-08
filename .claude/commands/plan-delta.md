@@ -77,6 +77,10 @@ triaged yet. Proceeding with planning — you can triage during /intake later."
 Read `.workflow/project-spec.md`, `.workflow/decisions.md`, and
 `.workflow/constraints.md` to understand the existing system.
 
+Also read `.workflow/reflexion/index.json` and `.workflow/reflexion/process-learnings.md`.
+Search for entries matching the CRs being planned (by module, file path, error pattern).
+Note relevant lessons to apply during impact analysis and task design.
+
 For Quick tier: skim the relevant sections only.
 For Standard/Major: read thoroughly.
 
@@ -109,7 +113,7 @@ For Standard/Major: read thoroughly.
 ### Advisory Perspectives (Standard and Major only — mandatory)
 
 **After formulating questions in step 5, INVOKE the advisory protocol
-BEFORE presenting your response to the user.** Pass your questions AND
+BEFORE presenting your response to the user (skip if `.workflow/advisory-state.json` has `skip_advisories: true`).** Pass your questions AND
 your impact analysis as `specialist_analysis` and `questions` to the
 advisors. Present advisory perspectives in labeled boxes after your
 questions, so the user sees both before answering.

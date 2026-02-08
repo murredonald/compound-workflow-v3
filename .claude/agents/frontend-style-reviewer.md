@@ -16,6 +16,10 @@ usage, hardcoded values) prevent runtime deviations. Issues the auditor catches
 (specificity conflicts, inheritance overrides) may not be visible in source alone.
 These are complementary layers, not redundant.
 
+## Model: Sonnet
+
+---
+
 ## Bias Disclosure
 
 You are a separate Claude instance reviewing UI code written by another instance.

@@ -119,4 +119,15 @@ if [ -f "$ADVISORY_STATE" ] && command -v jq &>/dev/null; then
   fi
 fi
 
+# Execution config
+EXEC_CONFIG=".claude/execution-config.json"
+if [ -f "$EXEC_CONFIG" ] && command -v jq &>/dev/null; then
+  AUTO=$(jq -r '.auto_proceed.enabled // "?"' "$EXEC_CONFIG" 2>/dev/null)
+  MILESTONE=$(jq -r '.milestone_pause.enabled // "?"' "$EXEC_CONFIG" 2>/dev/null)
+  DEFERRED=$(jq -r '.deferred_auto_action.action // "?"' "$EXEC_CONFIG" 2>/dev/null)
+  QA_PAUSE=$(jq -r '.runtime_qa_pause.enabled // "?"' "$EXEC_CONFIG" 2>/dev/null)
+  echo ""
+  echo "EXEC CONFIG: auto_proceed=$AUTO milestone_pause=$MILESTONE deferred=$DEFERRED qa_pause=$QA_PAUSE"
+fi
+
 echo "======================================="

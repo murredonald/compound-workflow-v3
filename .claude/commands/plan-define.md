@@ -166,7 +166,7 @@ For each question:
 
 **After formulating the questions in step 4, INVOKE the advisory protocol
 BEFORE presenting your response to the user.** This is not optional — it
-runs for every stage unless the user said "skip advisory".
+runs for every stage unless the user said "skip advisory" or `.workflow/advisory-state.json` exists with `skip_advisories: true`.
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = "planning" for this command.

@@ -11,6 +11,7 @@ import pytest
 from pipeline_tracker import (
     EVOLUTION_PHASES,
     GREENFIELD_PHASES,
+    PipelineError,
     add_phase,
     complete_phase,
     get_current,
@@ -18,6 +19,7 @@ from pipeline_tracker import (
     load_pipeline,
     render_backlog_summary,
     render_dashboard,
+    save_pipeline,
     skip_phase,
     start_phase,
     task_update,
@@ -91,7 +93,7 @@ class TestInitPipeline:
 
     def test_refuses_overwrite_without_force(self, status_file: Path) -> None:
         init_pipeline("greenfield", "First", path=status_file)
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             init_pipeline("greenfield", "Second", path=status_file)
 
     def test_force_overwrites(self, status_file: Path) -> None:
@@ -132,21 +134,21 @@ class TestStartPhase:
     def test_rejects_completed_phase(self, status_file: Path, greenfield: dict) -> None:
         start_phase("plan", path=status_file)
         complete_phase("plan", path=status_file)
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             start_phase("plan", path=status_file)
 
     def test_rejects_skipped_phase(self, status_file: Path, greenfield: dict) -> None:
         skip_phase("plan", path=status_file)
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             start_phase("plan", path=status_file)
 
     def test_rejects_concurrent_in_progress(self, status_file: Path, greenfield: dict) -> None:
         start_phase("plan", path=status_file)
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             start_phase("synthesize", path=status_file)
 
     def test_rejects_unknown_phase(self, status_file: Path, greenfield: dict) -> None:
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             start_phase("nonexistent", path=status_file)
 
 
@@ -184,11 +186,11 @@ class TestCompletePhase:
         assert data["current_phase"] is None
 
     def test_rejects_pending_phase(self, status_file: Path, greenfield: dict) -> None:
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             complete_phase("plan", path=status_file)
 
     def test_rejects_unknown_phase(self, status_file: Path, greenfield: dict) -> None:
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             complete_phase("nonexistent", path=status_file)
 
 
@@ -213,7 +215,7 @@ class TestSkipPhase:
     def test_rejects_completed_phase(self, status_file: Path, greenfield: dict) -> None:
         start_phase("plan", path=status_file)
         complete_phase("plan", path=status_file)
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             skip_phase("plan", path=status_file)
 
     def test_allows_skipping_in_progress_phase(self, status_file: Path, greenfield: dict) -> None:
@@ -321,11 +323,11 @@ class TestAddPhase:
 
     def test_rejects_duplicate(self, status_file: Path, greenfield: dict) -> None:
         add_phase("specialists/backend", "Backend", "plan-define", path=status_file)
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             add_phase("specialists/backend", "Backend Again", "plan-define", path=status_file)
 
     def test_rejects_unknown_after(self, status_file: Path, greenfield: dict) -> None:
-        with pytest.raises(SystemExit):
+        with pytest.raises(PipelineError):
             add_phase("specialists/backend", "Backend", "nonexistent", path=status_file)
 
     def test_multiple_inserts_preserve_order(self, status_file: Path, greenfield: dict) -> None:
@@ -1230,3 +1232,102 @@ Some random text but no structured fields.
         # Filter to only statuses that appear
         present = [s for s in expected_order if s in status_lines]
         assert present == [s for s in status_lines if s in expected_order]
+
+
+# ---------------------------------------------------------------------------
+# v3.15: Corrupted JSON recovery
+# ---------------------------------------------------------------------------
+
+
+class TestCorruptedJsonRecovery:
+    """Test load_pipeline handles corrupted JSON files."""
+
+    def test_corrupted_file_raises_pipeline_error(self, status_file: Path) -> None:
+        """Corrupted JSON raises PipelineError with backup info."""
+        status_file.parent.mkdir(parents=True, exist_ok=True)
+        status_file.write_text("{invalid json!!!", encoding="utf-8")
+        with pytest.raises(PipelineError, match="corrupted"):
+            load_pipeline(status_file)
+
+    def test_corrupted_file_creates_backup(self, status_file: Path) -> None:
+        """Corrupted JSON file is renamed to .bak."""
+        status_file.parent.mkdir(parents=True, exist_ok=True)
+        status_file.write_text("{bad", encoding="utf-8")
+        backup = status_file.with_suffix(".json.bak")
+        with pytest.raises(PipelineError):
+            load_pipeline(status_file)
+        assert backup.exists()
+        assert not status_file.exists()
+
+    def test_missing_file_raises_pipeline_error(self, status_file: Path) -> None:
+        """Missing file raises PipelineError (not SystemExit)."""
+        with pytest.raises(PipelineError, match="not initialized"):
+            load_pipeline(status_file)
+
+
+# ---------------------------------------------------------------------------
+# v3.15: Atomic writes
+# ---------------------------------------------------------------------------
+
+
+class TestAtomicWrites:
+    """Test save_pipeline uses atomic write pattern."""
+
+    def test_no_tmp_file_remains_after_save(self, status_file: Path) -> None:
+        """Atomic write cleans up .tmp file after successful save."""
+        init_pipeline("greenfield", "Atomic Test", path=status_file)
+        tmp_file = status_file.with_suffix(".json.tmp")
+        assert not tmp_file.exists()
+        assert status_file.exists()
+
+    def test_saved_data_is_valid_json(self, status_file: Path) -> None:
+        """Atomically saved file contains valid JSON."""
+        init_pipeline("greenfield", "JSON Test", path=status_file)
+        data = json.loads(status_file.read_text(encoding="utf-8"))
+        assert data["project_name"] == "JSON Test"
+
+    def test_save_creates_parent_dirs(self, tmp_path: Path) -> None:
+        """save_pipeline creates parent directories if needed."""
+        deep_path = tmp_path / "a" / "b" / "status.json"
+        data = {
+            "pipeline_type": "greenfield",
+            "project_name": "Deep",
+            "phases": [],
+            "current_phase": None,
+            "started_at": "2026-01-01T00:00:00Z",
+        }
+        save_pipeline(data, deep_path)
+        assert deep_path.exists()
+
+
+# ---------------------------------------------------------------------------
+# v3.15: PipelineError raised instead of SystemExit
+# ---------------------------------------------------------------------------
+
+
+class TestPipelineErrorRaised:
+    """Verify PipelineError is raised (not SystemExit) for all error paths."""
+
+    def test_start_nonexistent_phase_raises_pipeline_error(self, status_file: Path, greenfield: dict) -> None:
+        with pytest.raises(PipelineError, match="not found"):
+            start_phase("does-not-exist", path=status_file)
+
+    def test_complete_pending_phase_raises_pipeline_error(self, status_file: Path, greenfield: dict) -> None:
+        with pytest.raises(PipelineError, match="pending"):
+            complete_phase("plan", path=status_file)
+
+    def test_skip_completed_phase_raises_pipeline_error(self, status_file: Path, greenfield: dict) -> None:
+        start_phase("plan", path=status_file)
+        complete_phase("plan", path=status_file)
+        with pytest.raises(PipelineError, match="completed"):
+            skip_phase("plan", path=status_file)
+
+    def test_add_duplicate_phase_raises_pipeline_error(self, status_file: Path, greenfield: dict) -> None:
+        add_phase("specialists/backend", "Backend", "plan-define", path=status_file)
+        with pytest.raises(PipelineError, match="already exists"):
+            add_phase("specialists/backend", "Backend", "plan-define", path=status_file)
+
+    def test_init_without_force_raises_pipeline_error(self, status_file: Path) -> None:
+        init_pipeline("greenfield", "First", path=status_file)
+        with pytest.raises(PipelineError, match="already exists"):
+            init_pipeline("greenfield", "Second", path=status_file)

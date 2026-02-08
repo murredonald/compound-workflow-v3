@@ -77,6 +77,10 @@ if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
 from pathlib import Path
 from typing import Any
 
+
+class SecondOpinionError(Exception):
+    """Raised when second opinion operations fail."""
+
 SYSTEM_PROMPT_SINGLE = """\
 You are a senior technical advisor providing an independent perspective on
 software architecture and planning questions. You bring deep expertise and
@@ -491,11 +495,9 @@ def resolve_api_key(
 
         api_key = os.environ.get(key_name, "")
     if not api_key:
-        print(
-            f"Error: {key_name} not found in .claude/.env or environment variables",
-            file=sys.stderr,
+        raise SecondOpinionError(
+            f"{key_name} not found in .claude/.env or environment variables"
         )
-        sys.exit(1)
     return api_key
 
 
@@ -510,11 +512,9 @@ def call_openai(
     try:
         from openai import OpenAI  # type: ignore[import-untyped]
     except ImportError:
-        print(
-            "Error: openai package not installed. Run: pip install openai",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+        raise SecondOpinionError(
+            "openai package not installed. Run: pip install openai"
+        ) from None
 
     prompt = system_prompt if system_prompt is not None else SYSTEM_PROMPT_SINGLE
     client = OpenAI(api_key=api_key, timeout=timeout)
@@ -554,15 +554,12 @@ def call_gemini(
         from google import genai  # type: ignore[import-untyped]
         from google.genai import types  # type: ignore[import-untyped]
     except ImportError:
-        print(
-            "Error: google-genai package not installed. "
-            "Run: pip install google-genai",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+        raise SecondOpinionError(
+            "google-genai package not installed. Run: pip install google-genai"
+        ) from None
 
     prompt = system_prompt if system_prompt is not None else SYSTEM_PROMPT_SINGLE
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key=api_key, http_options={"timeout": 90_000})
     response = client.models.generate_content(
         model=model,
         contents=user_message,
@@ -635,8 +632,12 @@ def main() -> None:
         print(f"Error: context file not found: {args.context_file}", file=sys.stderr)
         sys.exit(1)
 
-    with open(args.context_file, "r", encoding="utf-8") as f:
-        context = json.load(f)
+    try:
+        with open(args.context_file, "r", encoding="utf-8") as f:
+            context = json.load(f)
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"Error: malformed context file {args.context_file}: {e}", file=sys.stderr)
+        sys.exit(1)
 
     # Resolve model: CLI flag > advisory-config.json > hardcoded default
     model = args.model or get_configured_model(args.provider) or PROVIDER_DEFAULTS[args.provider]

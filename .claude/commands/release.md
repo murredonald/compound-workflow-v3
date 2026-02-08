@@ -25,7 +25,7 @@ Read before starting:
 **Required** (stop and notify user if not met):
 - A `## Release: v{X.Y}` section exists in task-queue.md
 - ALL tasks under that release section are `[x]` (complete)
-- End-of-queue verification has passed (check chain entries for FINAL-VERIFY)
+- End-of-queue verification has passed (check chain entries for EOQ-VERIFY)
 
 If preconditions are not met:
 ```
@@ -56,6 +56,7 @@ python .claude/tools/pipeline_tracker.py complete --phase release --summary "v{X
 
 ### Step 1: Verify Completeness
 
+0. Determine which release to close: read `task-queue.md` for `## Release: v{X.Y}` sections. If only one exists, use it. If multiple exist, pick the latest with all tasks complete. If ambiguous, ask the user which version to release.
 1. Read the `## Release: v{X.Y}` section — confirm all tasks `[x]`
 2. Read `.workflow/backlog.md` — confirm all CRs for this version lane
    are `resolved` (or `wontfix`/`duplicate`/`superseded`)
@@ -96,6 +97,7 @@ Present to user for review before proceeding.
 
 ```bash
 git tag -a v{X.Y} -m "Release v{X.Y}: {summary}"
+git push origin v{X.Y} 2>&1 || echo "⚠️ Tag push failed — push manually with: git push origin v{X.Y}"
 ```
 
 ### Step 4: Close CRs
@@ -126,6 +128,11 @@ python .claude/tools/chain_manager.py record \
   --description "Release v{X.Y}: {N} CRs closed, {N} tasks" \
   --metadata '{"release": "v{X.Y}", "crs_closed": ["CR-001"], "tag": "v{X.Y}"}'
 ```
+
+### Step 7: Pipeline Cleanup
+
+1. Delete `.workflow/advisory-state.json` if it exists (advisory skip state does not carry across pipelines)
+2. Delete `.workflow/specialist-session.json` if it exists (no active specialist at release time)
 
 ## Completion
 

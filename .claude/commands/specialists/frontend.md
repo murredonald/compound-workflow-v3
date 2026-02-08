@@ -313,6 +313,69 @@ on every share. Where are your OG tags?"
 'MyApp' in search results. Users can't distinguish your pricing page from your
 docs page in Google. Dynamic titles per route are table stakes."
 
+### 10. Product Analytics & Instrumentation
+
+**Skip if:** Internal tool, prototype, or project where the user explicitly opts out of analytics.
+
+Define how user behavior is tracked to inform product decisions:
+
+**Event taxonomy:**
+```
+EVENT SCHEMA:
+  Naming convention: {noun_verb — e.g., page_viewed, button_clicked, form_submitted}
+  Namespacing: {feature.action — e.g., onboarding.step_completed, billing.plan_upgraded}
+  Properties (always):
+    - timestamp, user_id (hashed), session_id, page_url
+  Properties (per event type):
+    - {event-specific properties — e.g., plan_name, error_code, search_query}
+```
+
+**Instrumentation strategy:**
+- Analytics tool: PostHog (self-hosted), Mixpanel, Amplitude, Segment (CDP), Plausible (privacy-first), or custom
+- Client-side vs server-side: which events fire from browser, which from backend?
+  - Client: page views, clicks, scrolls, form interactions, client errors
+  - Server: signups, purchases, API errors, background job completions
+- Identity resolution: how is an anonymous visitor linked to their account after signup?
+- Consent and privacy: cookie banner, opt-in/opt-out, event filtering for users who decline tracking
+  - GDPR: consent required before tracking in EU
+  - Events MUST NOT contain raw PII (email, name) — use hashed identifiers
+- Real User Monitoring (RUM): Core Web Vitals tracking in production (LCP, CLS, INP)
+  - Tool: Sentry Performance, Datadog RUM, web-vitals library + custom reporting
+  - Regression detection: alert when Core Web Vitals degrade between deploys
+
+**Key funnels to instrument:**
+```
+FUNNEL: {name — e.g., Signup, Onboarding, Purchase}
+Steps:
+  1. {event} — e.g., landing_page_viewed
+  2. {event} — e.g., signup_started
+  3. {event} — e.g., signup_completed
+  4. {event} — e.g., onboarding_step_1_completed
+  ...
+Drop-off alerts: notify if conversion < {threshold}%
+```
+
+**Dashboards:**
+- Product health: DAU/WAU/MAU, retention cohorts, feature adoption rates
+- Funnel performance: conversion rates per step, drop-off analysis
+- Error impact: which errors correlate with user churn or abandoned sessions
+- Performance: Core Web Vitals over time, by route, by device type
+
+**Challenge:** "You launched a new feature. 1000 users saw it. How many clicked
+the primary CTA? How many completed the workflow? Without events, you're guessing
+whether the feature works. Instrument every critical path."
+
+**Challenge:** "Your analytics tracks 200 events. 180 of them are never queried.
+Each event adds code, bandwidth, and storage cost. What's your event review cadence?
+Which events can you prune?"
+
+**Challenge:** "A GDPR-conscious user declines cookies. You're firing 15 analytics
+events per page load anyway. Are those events truly anonymous, or do they contain
+session data that constitutes personal information under GDPR?"
+
+**Decide:** Analytics tool, event naming convention, client vs server instrumentation
+split, consent/privacy approach, RUM tool, key funnels, dashboard requirements.
+
 ## Anti-Patterns
 
 - **Don't skip the orientation gate** — Ask questions first. The user's answers about framework, component library, and rendering strategy shape every decision.

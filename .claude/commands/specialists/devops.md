@@ -255,6 +255,91 @@ SLO TARGETS:
 Your RTO is 1 hour but your DB restore takes 2 hours. The math doesn't
 work. Fix it or lower the SLO."
 
+### 6. Incident Response & Operational Readiness
+
+Define how the team responds when production breaks:
+
+**Incident classification:**
+```
+SEVERITY LEVELS:
+  SEV-1 (Critical): Service down, data loss, security breach — page immediately
+  SEV-2 (Major): Degraded service, feature broken for all users — page within 15 min
+  SEV-3 (Minor): Partial degradation, workaround available — next business hour
+  SEV-4 (Low): Cosmetic issue, no user impact — next sprint
+```
+
+**Operational readiness checklist:**
+- On-call rotation: who gets paged? escalation path (engineer → team lead → management)
+- Runbooks: per-service recovery procedures (what to do in first 15 minutes)
+- Communication plan: who notifies customers? status page? internal Slack channel?
+- Rollback playbooks: how to revert each service (deploy previous version, feature flag off, DB rollback)
+- Postmortem process: blameless template, action item tracking, scheduled within 48h
+- Game days: periodic failure drills (chaos engineering lite — kill a service, test recovery)
+- Error budget policy: when SLO error budget is exhausted, what changes? (feature freeze, reliability sprint)
+
+**Output — runbook template per critical service:**
+```
+RUNBOOK: {service name}
+Symptoms: {what alerts fire, what users see}
+First response (< 5 min):
+  1. Check {dashboard URL} for {metric}
+  2. Check {log query} for {error pattern}
+  3. If {condition}: {action — restart, scale, rollback}
+Escalation: {when to page next person, contact info}
+Communication: {status page update template, Slack message}
+Recovery verification: {how to confirm service is healthy}
+Postmortem: {link to template}
+```
+
+**Challenge:** "It's 3 AM and your API returns 500s for 20% of requests. Who gets
+paged? What's the first thing they check? If you can't answer that in under 10
+seconds, you don't have a runbook — you have an aspiration."
+
+**Challenge:** "Your SLO is 99.9%. You've used 80% of your error budget this month
+with 10 days remaining. Do you ship the risky feature, or freeze and focus on
+reliability? Who makes that call?"
+
+**Decide:** Severity levels, on-call rotation, runbook scope (which services),
+postmortem process, error budget policy, game day cadence.
+
+### 7. Feature Flags & Progressive Delivery
+
+Define how changes reach users safely and incrementally:
+
+**Decide:**
+- Feature flag system: third-party (LaunchDarkly, Unleash, Flagsmith) vs built-in (env var, DB toggle, config-driven)
+- Flag types: release flags (temporary, remove after rollout), ops flags (permanent kill switches), experiment flags (A/B test variants), permission flags (entitlement-based)
+- Targeting: percentage rollout, user segment, geographic, internal-only first
+- Flag lifecycle: creation → rollout → cleanup (stale flag detection, technical debt)
+- Progressive delivery: canary deploys (1% → 10% → 50% → 100%), blue-green cutover, dark launches
+- Kill switches: per-feature circuit breakers that instantly disable without deploy
+- Flag evaluation: client-side (fast, stale), server-side (fresh, extra latency), edge (hybrid)
+
+**Output — rollout strategy:**
+```
+PROGRESSIVE DELIVERY:
+  1. Merge to main — CI runs, deploys to staging
+  2. Deploy to prod — behind feature flag (off by default)
+  3. Enable for internal team (dogfood for 24h)
+  4. Enable for 5% of users (monitor error rate, latency)
+  5. Ramp to 25% → 50% → 100% over {N days}
+  6. Observe for 1 week at 100%
+  7. Remove feature flag (code cleanup PR)
+
+KILL SWITCH: If error rate > {threshold} after flag enable → auto-disable flag
+```
+
+**Challenge:** "You shipped 50 features with feature flags. 30 of them are at
+100% and have been for 6 months. The flags are still in the code. Each flag adds
+a conditional branch that tests must cover. What's your flag cleanup cadence?"
+
+**Challenge:** "Your flag evaluation calls a third-party service. That service
+goes down. Do all flags default to on (risky — untested features exposed) or off
+(safe — but existing features may disappear for users)? What's your default policy?"
+
+**Decide:** Flag platform, flag types and naming convention, progressive delivery
+stages, kill switch thresholds, flag cleanup policy, default-on vs default-off.
+
 ---
 
 ## Anti-Patterns

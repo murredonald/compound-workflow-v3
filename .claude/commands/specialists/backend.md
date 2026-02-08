@@ -224,16 +224,91 @@ balancer to the database query? If not, your observability is incomplete."
 that's 86M log entries/day. What's the log retention policy? What gets
 sampled? What's the cost at scale?"
 
-### 7. API Versioning & Evolution
+### 7. API Versioning & Contract Evolution
 
-Lock decisions on how the API changes over time without breaking clients.
+Lock decisions on how the API changes over time without breaking clients:
 
-- What versioning strategy? (URL prefix `/v1/`, header-based, query param)
-- What deprecation policy? (sunset header, minimum support window)
-- What breaking change process? (changelog, migration guide, dual-support period)
+**Decide:**
+- Versioning strategy: URL prefix `/v1/` (explicit, easy to route) vs header-based `Accept: application/vnd.app.v2+json` (cleaner URLs) vs query param `?version=2` (simple)
+- Breaking change definition: what counts as breaking? (removed field, renamed field, type change, new required field, changed validation)
+- Deprecation policy: sunset header (`Sunset: <date>`), minimum support window (6 months?), deprecation warnings in response headers
+- Migration process: changelog per version, migration guide, dual-support period (serve both v1 and v2 simultaneously)
+- Consumer-driven contract testing: Pact or similar — consumers define what they need, provider verifies
+- Schema evolution patterns: additive-only (add fields, never remove), envelope versioning, content negotiation
+- SDK generation: auto-generate client SDKs from OpenAPI on version bump? (TypeScript, Python clients)
+
+**Output — versioning policy:**
+```
+API VERSIONING:
+  Strategy: {URL prefix / header / query param}
+  Current version: v1
+  Breaking change definition: {list of what counts as breaking}
+  Deprecation notice: {minimum N months before removal}
+  Sunset header: {yes — included on deprecated endpoints}
+  Dual-support: {serve both versions during migration window}
+  Contract tests: {Pact / OpenAPI diff / manual}
+  Changelog: {auto-generated from OpenAPI diff / manual}
+```
 
 **Challenge:** "Your second API consumer will arrive sooner than you think.
 How does a client on v1 know that v2 exists and what changed?"
+
+**Challenge:** "You added a required field to a request body. Every existing
+client breaks. That's a breaking change disguised as a feature. How do you
+catch this before it ships? OpenAPI diff in CI catches it automatically."
+
+**Decide:** Versioning strategy, breaking change policy, deprecation timeline,
+contract testing approach, schema evolution rules.
+
+### 8. Data Governance & Lifecycle
+
+Define how data is classified, retained, and deleted across the system:
+
+**Data classification:**
+```
+DATA CLASSIFICATION:
+  Critical PII: {email, phone, SSN, financial data} — encrypted at rest, masked in logs, retention-limited
+  Standard PII: {name, address, preferences} — encrypted at rest, excluded from analytics
+  Internal: {system metrics, audit logs, job results} — standard protection, longer retention
+  Public: {published content, product catalog} — no restrictions
+```
+
+**Retention policy per data type:**
+```
+RETENTION: {data type}
+Storage: {table/collection/bucket}
+Retention period: {N days/months/years / indefinite}
+Legal basis: {business need / regulatory / consent}
+Deletion method: {hard delete / soft delete + purge job / crypto-shredding}
+Backup impact: {backups also purged on schedule? or retained separately?}
+```
+
+**Right-to-deletion workflow (GDPR Article 17, CCPA, etc.):**
+- User requests deletion → what data is deleted? (all PII, but audit logs may be anonymized, not deleted)
+- Cascading deletion: which related records are affected? (orders, messages, files)
+- Third-party propagation: which external services need deletion forwarded? (analytics, email provider, payment processor)
+- Verification: how to confirm deletion is complete? (deletion receipt, audit log entry)
+- Timeline: regulatory deadline (GDPR: 30 days), internal SLA
+- Crypto-shredding: for encrypted data, delete the encryption key instead of every record
+
+**Data lineage & audit:**
+- Where does each data type originate? (user input, API import, system-generated)
+- Where does it flow? (DB → cache → analytics → backup → external service)
+- Who can access it? (ties to SEC-XX authorization model)
+- Audit trail for access: who viewed/exported sensitive data?
+
+**Challenge:** "A user requests account deletion. You delete their profile row.
+But their name is embedded in 50 invoice records, 200 chat messages, and 3
+analytics pipelines. Are those deleted too? Anonymized? Left as-is? Each
+answer has different compliance implications."
+
+**Challenge:** "Your backups retain deleted data for 90 days. A user requests
+deletion under GDPR. Is the data 'deleted' if it's still in a backup that
+could be restored? What's your crypto-shredding strategy?"
+
+**Decide:** Data classification scheme, retention periods per type, deletion
+method per type, right-to-deletion workflow, backup purge policy, third-party
+propagation list.
 
 ## Anti-Patterns
 

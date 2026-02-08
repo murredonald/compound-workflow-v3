@@ -392,6 +392,11 @@ Subscription analytics: dashboard or API for revenue metrics
 that's 6.7% of revenue to payment processing alone. At what price point does
 this become unsustainable? Have you considered annual-only for low tiers?"
 
+**Challenge:** "Your pricing model WILL change — tier names, prices, feature
+gates, billing cycles. How many of those changes require a code deploy vs a
+config change? If every price adjustment needs a developer, you'll move too
+slowly. Design the billing module for self-serve pricing updates."
+
 **Decide:** Payment platform, merchant of record approach, tax handling,
 payment methods, dunning schedule, revenue metrics to implement.
 

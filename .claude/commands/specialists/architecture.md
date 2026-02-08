@@ -66,6 +66,11 @@ Validate or refine the architecture pattern from planning:
 **Challenge:** "Planning chose monolith — does the module dependency graph
 support that, or will you need service boundaries sooner than expected?"
 
+**Challenge:** "Is this cloud-native or just cloud-hosted? Stateless services,
+12-factor config, container-first packaging, managed services over self-hosted —
+which of these apply? If you're deploying to a cloud provider but treating it
+like a VPS, you're paying cloud prices for bare-metal patterns."
+
 ### 2. Module Boundaries & Interfaces
 
 For each module identified in planning:
@@ -163,6 +168,11 @@ For external dependencies identified in planning:
 **Challenge:** "You have performance targets but no measurement plan.
 How will you know you've met them? Define the monitoring approach for
 each target — dashboard, alert threshold, and who gets paged."
+
+**Challenge:** "Design for 10x from day one. If you get rapid traction,
+which component breaks first — database connections, session storage,
+file uploads, background jobs? Identify the scaling bottleneck for each
+module and decide: will you scale horizontally, vertically, or redesign?"
 
 **Challenge:** "Your caching strategy invalidates on write. What happens
 during a burst of 100 writes/second — cache stampede? Thundering herd?

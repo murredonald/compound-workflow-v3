@@ -116,21 +116,45 @@ were added since the last synthesize (check decision IDs against existing tasks)
 
 ### Step 1: Load and Index All Decisions
 
-Read `.workflow/decisions.md` in full. Build a mental index by **concern area**:
+Read `.workflow/decisions.md` in full. Build a concern-area index and **persist it
+to `.workflow/decision-index.md`** — this artifact is consumed by Phase 1 (task
+generation) and Phase 2 (Check 8 validation).
 
+```markdown
+# Decision Index — Concern Areas
+
+**Generated:** {date}
+**Total decisions:** {N}
+**Concern areas:** {N}
+**Cross-specialist zones (2+ specialists):** {N}
+
+## Authentication
+- SEC-01: {brief text}
+- BACK-03: {brief text}
+- ARCH-05: {brief text}
+Specialists: security, backend, architecture
+
+## Database / Storage
+- ARCH-02: {brief text}
+- BACK-03: {brief text}
+- DATA-01: {brief text}
+- OPS-04: {brief text}
+Specialists: architecture, backend, data-ml, devops
+
+## State Management
+- FRONT-02: {brief text}
+- FRONT-03: {brief text}
+- ARCH-04: {brief text}
+Specialists: frontend, architecture
+
+{...all concern areas...}
 ```
-CONCERN AREAS (cross-cut specialists):
-  Authentication:     SEC-01, BACK-03, ARCH-05, ...
-  Database/storage:   ARCH-02, BACK-03, DATA-01, OPS-04, ...
-  State management:   FRONT-02, FRONT-03, ARCH-04, ...
-  API design:         BACK-01, ARCH-01, FRONT-05, ...
-  Deployment:         OPS-01, OPS-02, ARCH-03, ...
-  Cost/budget:        LLM-05, PRICE-03, OPS-07, ...
-  Logging/observability: BACK-06, OPS-04, SEC-05, ...
-  Data handling/privacy: BACK-08, SEC-04, LEGAL-02, ...
-  Caching:            ARCH-06, BACK-06, FRONT-06, LLM-04, ...
-  Error handling:     ARCH-04, BACK-01, FRONT-03, ...
-```
+
+Group every decision into at least one concern area. A single decision can appear
+in multiple areas. Common areas include: authentication, database/storage, state
+management, API design, deployment, cost/budget, logging/observability, data
+handling/privacy, caching, error handling — but derive areas from the actual
+decisions, don't force-fit into a fixed list.
 
 Any concern area with decisions from 2+ specialists is a **potential conflict zone**.
 
@@ -267,6 +291,19 @@ Each task in `task-queue.md` follows this format:
 Hooks (`scope-guard.sh`, `on-compact.sh`) parse these markers to find the active task.
 
 ## Generation Rules
+
+### Decision-Aware Task Generation
+
+Before writing any task, consult **`.workflow/decision-index.md`** (generated in
+Phase 0). For each task, identify which concern areas it touches based on its
+files, entities, and goal. Populate the task's `**Decisions:**` field with ALL
+decision IDs from those concern areas — not just the obvious ones from the
+primary specialist.
+
+Example: A task "Implement user login API" touches concern areas
+`Authentication` + `API design` + `Error handling`. Its `**Decisions:**` field
+should reference SEC-01, BACK-03, ARCH-05, BACK-01, ARCH-01, ARCH-04 — not
+just the BACK-XX decisions.
 
 ### Task Extraction
 
@@ -476,9 +513,32 @@ Cross-reference task queue against planning artifacts:
 
 ## Check 8: Decision Coverage
 
-- Every COMP, ARCH, BACK, FRONT, SEC, DATA decision is referenced by at least
-  one task
+**Part A — Forward coverage (decision → task):**
+- Every decision (all prefixes: GEN, DOM, COMP, ARCH, BACK, FRONT, STYLE, UIX,
+  SEC, DATA, TEST, OPS, LLM, LEGAL, PRICE, BRAND, INGEST) is referenced by at
+  least one task
 - Unreferenced decisions are either cross-cutting (handled globally) or gaps
+
+**Part B — Reverse coverage (task → concern cluster):**
+Using `.workflow/decision-index.md`, for each task:
+1. Identify which concern areas the task touches (based on its files, entities,
+   goal, and the concern areas from the index)
+2. Check that the task's `**Decisions:**` field includes ALL decision IDs from
+   those concern areas
+3. Flag missing references:
+```
+DECISION COVERAGE GAP:
+  Task T07: "Implement user login API"
+  Touches concern areas: Authentication, API design, Error handling
+  References: BACK-03, BACK-01
+  Missing: SEC-01, ARCH-05, ARCH-01, ARCH-04
+  Action: Add missing decision references to task
+```
+
+**Auto-fix:** Add missing decision IDs to the task's `**Decisions:**` field.
+**Escalate:** If adding the decisions would change the task's scope significantly
+(e.g., task needs new files or acceptance criteria to satisfy the missing
+decisions), escalate for user review.
 
 ---
 
@@ -500,7 +560,8 @@ SYNTHESIS VALIDATION
 | Coverage | ✅ / ⚠️ {N} gaps |
 | Milestone boundaries | ✅ / ⚠️ adjusted |
 | Technology consistency | ✅ / ⚠️ {N} fixed |
-| Decision coverage | ✅ / ⚠️ {N} unreferenced |
+| Decision coverage (fwd) | ✅ / ⚠️ {N} unreferenced |
+| Decision coverage (rev) | ✅ / ⚠️ {N} tasks missing refs |
 
 Plan Statistics:
   Tasks: {N}

@@ -168,6 +168,7 @@ All runtime state lives in `.workflow/`. Never manually edit these — commands 
 ├── project-spec.md              # Created by /plan (discovery), finalized by /plan-define
 ├── decisions.md                 # Created by /plan, continued by /plan-define, appended by /specialists and /plan-delta
 ├── constraints.md               # Created by /plan (discovery), finalized by /plan-define
+├── decision-index.md            # Concern-area index (created by /synthesize Phase 0, read by Phase 1 + Check 8)
 ├── task-queue.md                # Created by /synthesize (release sections appended for post-v1)
 ├── observations.md              # Raw feeder file (user pastes anything, read by /intake)
 ├── backlog.md                   # Structured CRs (created by /intake from observations)

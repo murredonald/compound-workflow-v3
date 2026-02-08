@@ -381,6 +381,9 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 
 1. **Read** project-spec.md, decisions.md, constraints.md
 2. 🛑 **GATE: Interview** — Ask user about known competitors, positioning, priorities.
+   **INVOKE advisory protocol** before presenting to user — pass your
+   orientation analysis and questions. Present advisory perspectives
+   in labeled boxes alongside your questions.
    **STOP and WAIT for answers before researching.** Their input determines which
    competitors to focus on and what positioning matters.
 3. **Research** — Multi-round competitor discovery + feature enumeration.
@@ -388,6 +391,10 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/competitio
 4. **Feature decomposition** — Entity-by-entity from spec (FA 4)
 5. 🛑 **GATE: Classify + review** — Present feature classification table
    (table-stakes, common, differentiator, unique) to user for validation.
+   **INVOKE advisory protocol** (`.claude/advisory-protocol.md`,
+   `specialist_domain` = "competition") — pass your classification
+   analysis and draft decisions. Present advisory perspectives VERBATIM
+   in labeled boxes alongside your classification table.
    **STOP and WAIT** — the user may reclassify features.
 6. 🛑 **GATE: Gap analysis** — Present missing features to user, get explicit
    IN/OUT decisions. **Do NOT decide IN/OUT yourself.**
@@ -415,10 +422,18 @@ Each response:
 4. Formulate 3-5 targeted questions
 5. **WAIT for user answers before continuing to the next focus area**
 
-### Advisory Perspectives
+### Advisory Perspectives (mandatory at Gates 1 and 2)
+
+**INVOKE the advisory protocol at every gate where you present analysis
+or questions.** This is not optional — it runs at Gates 1 (Orientation)
+and 2 (Validate findings) unless the user said "skip advisory".
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = "competition" for this specialist.
+
+Pass your analysis, draft decisions, and questions as `specialist_analysis`
+and `questions`. Present ALL advisory outputs VERBATIM in labeled boxes.
+Do NOT summarize, cherry-pick, or paraphrase.
 
 ---
 

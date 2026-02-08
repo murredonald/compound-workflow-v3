@@ -292,6 +292,9 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/devops --s
    - Team DevOps experience level? (affects tool complexity)
    - Budget constraints for infrastructure?
    - Compliance requirements affecting infrastructure? (SOC2, HIPAA, data residency)
+   **INVOKE advisory protocol** before presenting to user — pass your
+   orientation analysis and questions. Present advisory perspectives
+   in labeled boxes alongside your questions.
    **STOP and WAIT for user answers before proceeding.**
 
 3. **Research** — Execute targeted research for the chosen cloud/platform:
@@ -303,9 +306,14 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/devops --s
    - Present findings, research results, and proposed OPS-NN decisions (as DRAFTS)
    - Ask 2-3 follow-up questions
 
-5. 🛑 **GATE: Validate findings** — After each focus area batch, present
-   draft decisions and wait for user feedback. Repeat steps 4-5 for
-   remaining focus areas.
+5. 🛑 **GATE: Validate findings** — After each focus area batch:
+   a. Formulate draft decisions and follow-up questions
+   b. **INVOKE advisory protocol** (`.claude/advisory-protocol.md`,
+      `specialist_domain` = "devops") — pass your analysis, draft
+      decisions, and questions. Present advisory perspectives VERBATIM
+      in labeled boxes alongside your draft decisions.
+   c. STOP and WAIT for user feedback. Repeat steps 4-5 for
+      remaining focus areas.
 
 6. **Challenge** — Flag infrastructure gaps, cost risks, reliability holes
 
@@ -334,10 +342,18 @@ Each response:
 4. Formulate 2-4 targeted questions
 5. **WAIT for user answers before continuing**
 
-### Advisory Perspectives
+### Advisory Perspectives (mandatory at Gates 1 and 2)
+
+**INVOKE the advisory protocol at every gate where you present analysis
+or questions.** This is not optional — it runs at Gates 1 (Orientation)
+and 2 (Validate findings) unless the user said "skip advisory".
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = "devops" for this specialist.
+
+Pass your analysis, draft decisions, and questions as `specialist_analysis`
+and `questions`. Present ALL advisory outputs VERBATIM in labeled boxes.
+Do NOT summarize, cherry-pick, or paraphrase.
 
 ## Decision Format Examples
 

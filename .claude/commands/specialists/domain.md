@@ -670,6 +670,9 @@ the subject matter expert — their input shapes every decision.**
 1. **Read** project-spec.md and identify the business domain(s)
 
 2. 🛑 **GATE: Interview** — Ask the user 5-8 foundational domain questions.
+   **INVOKE advisory protocol** before presenting to user — pass your
+   orientation analysis and questions. Present advisory perspectives
+   in labeled boxes alongside your questions.
    **STOP and WAIT for answers before proceeding.** Always include:
    - **Jurisdictions:** What countries/states/regions does this project operate in?
    - **Effective date:** What version of regulations applies? (current law? specific date?)
@@ -687,14 +690,14 @@ the subject matter expert — their input shapes every decision.**
    research-scout to gather domain knowledge. Research 1-2 focus areas at a
    time, then present findings before continuing.
 
-4. 🛑 **GATE: Present & validate findings** — After researching each focus area
-   (or batch of 1-2 areas), present findings to the user with:
-   - Key discoveries and surprises
-   - Items that conflict with expectations or innate knowledge
-   - Proposed DOM-XX decisions (as DRAFTS, not final)
-   - 3-5 follow-up questions for the next research round
-   **STOP and WAIT for user feedback before writing any DOM-XX decisions.**
-   Repeat steps 3-4 for each focus area batch.
+4. 🛑 **GATE: Validate findings** — After each focus area batch:
+   a. Formulate draft decisions and follow-up questions
+   b. **INVOKE advisory protocol** (`.claude/advisory-protocol.md`,
+      `specialist_domain` = "domain") — pass your analysis, draft
+      decisions, and questions. Present advisory perspectives VERBATIM
+      in labeled boxes alongside your draft decisions.
+   c. STOP and WAIT for user feedback. Repeat steps 3-4 for
+      remaining focus areas.
 
 5. **Challenge** — Apply "what would an expert say is wrong?" to every finding
 
@@ -751,10 +754,18 @@ Each response:
 4. Formulate 3-5 targeted questions (mix of research gaps + user validation)
 5. **WAIT for user answers before continuing to the next focus area**
 
-### Advisory Perspectives
+### Advisory Perspectives (mandatory at Gates 1 and 2)
+
+**INVOKE the advisory protocol at every gate where you present analysis
+or questions.** This is not optional — it runs at Gates 1 (Orientation)
+and 2 (Validate findings) unless the user said "skip advisory".
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = "domain" for this specialist.
+
+Pass your analysis, draft decisions, and questions as `specialist_analysis`
+and `questions`. Present ALL advisory outputs VERBATIM in labeled boxes.
+Do NOT summarize, cherry-pick, or paraphrase.
 
 ## Knowledge Output Generation
 

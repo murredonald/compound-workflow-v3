@@ -21,7 +21,7 @@ Audit Chain  │ .workflow/state-chain/│ After agents    │ No   │ N/A
 
 ```
 Greenfield (v1):  /plan → /specialists/competition → /plan-define → /specialists/* → /synthesize → /execute (loop) → end-of-queue verification → QA fix pass → /retro
-Evolution (v1.1+): /intake → /plan-delta → /specialists/* (as needed) → /synthesize (release mode) → /execute → /retro (release scope)
+Evolution (v1.1+): /intake → /plan-delta → /specialists/* (as needed) → /synthesize (release mode) → /execute → end-of-queue verification → QA fix pass → /release → /retro (release scope)
 Debug shortcut:   /debug-session → reproduce → isolate → patch → verify → commit
 ```
 
@@ -40,9 +40,10 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 1. **`/intake`** — Captures raw observations from `.workflow/observations.md` or chat, structures them into Change Requests (CR-NNN) in `.workflow/backlog.md`. Optional triage (assign version lane + priority).
 2. **`/plan-delta`** — Lightweight planning for changes to existing systems. Three depth tiers: Quick (bugfix, ~5 min), Standard (feature, ~20 min), Major (breaking, ~45 min). User always chooses the tier.
 3. **`/specialists/*`** — Same existing specialists, invoked selectively (Standard: 1-2, Major: multiple, Quick: none).
-4. **`/synthesize`** (release mode) — Generates release-scoped tasks appended to `task-queue.md` under `## Release: v{X.Y}` headers. Lite validation (3 checks).
-5. **`/execute`** — Same Ralph loop. Reads `task-queue.md`, finds next `[ ]` task.
-6. **`/retro`** (release scope) — Same analysis filtered to a specific release's tasks.
+4. **`/synthesize`** (release mode) — Generates release-scoped tasks appended to `task-queue.md` under `## Release: v{X.Y}` headers. Tasks include `**CRs:**` field for traceability. Lite validation (6 checks). Bootstraps execution state if missing.
+5. **`/execute`** — Same Ralph loop. Reads `task-queue.md`, finds next `[ ]` task. CR auto-resolution when all linked tasks complete. Release-scoped end-of-queue verification.
+6. **`/release`** — Verifies release completeness, generates release notes, tags the release, bulk-closes CRs (`resolved` → `closed`), writes release record to `.workflow/releases.md`.
+7. **`/retro`** (release scope) — Same analysis filtered to a specific release's tasks. Includes debug session analysis.
 
 ### Debug Shortcut
 
@@ -62,7 +63,8 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 | "Start building" / "Next task" / "Continue" | `/execute` |
 | "Check scope" / "Am I in scope?" | `/scope-check` |
 | "Let's do a retro" / "How did that go?" | `/retro` |
-| "I found a bug" / "I noticed..." / "Here's feedback" | `/intake` |
+| "I found a bug" / "I noticed..." / "Here's feedback" | `/intake` (multiple issues) or `/debug-session` (single known bug) |
+| "Fix this bug" / "I know what's wrong" / "Quick fix" | `/debug-session` |
 | "Plan this fix/feature/change" | `/plan-delta` |
 | "What about the brand/name/logo/identity/positioning..." | `/specialists/branding` |
 | "What about the design/style/colors/typography..." | `/specialists/design` |
@@ -79,6 +81,7 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 | "Start debugging" / "Debug this" | `/debug-session` |
 | "Generate test data" / "Seed the database" / "Create fixtures" | `/generate-testdata` |
 | "Where are we?" / "Show progress" / "Status" | `/status` |
+| "Ship it" / "Release" / "Tag this version" / "Close the release" | `/release` |
 
 If the human's intent is ambiguous, ask — don't guess which phase to enter.
 
@@ -91,7 +94,8 @@ If the human's intent is ambiguous, ask — don't guess which phase to enter.
 3. **Present findings incrementally.** Work through 1-2 focus areas at a time. Present findings + draft decisions → get user feedback → continue. Do NOT batch all focus areas into one shot.
 4. **Research-heavy specialists (domain, competition) must interview first.** Ask foundational questions and WAIT for answers before starting research. The user's answers determine scope and direction.
 5. **Subjective specialists (design, uix) must validate choices.** Colors, typography, layouts, and UX flows are user preference — present options, don't pick.
-6. **Session tracking for compaction recovery.** At every 🛑 gate and at specialist start/completion, write `.workflow/specialist-session.json`. Delete the file on specialist completion. This lets `on-compact.sh` recover context if the session compacts mid-specialist.
+6. **Advisory is mandatory at Gates 1 and 2.** Every specialist INVOKES the advisory protocol (`.claude/advisory-protocol.md`) at Gate 1 (Orientation) and Gate 2 (Validate findings) — passing analysis, draft decisions, and questions. Present ALL advisory outputs VERBATIM. User can say "skip advisory" to disable. This matches how `/plan` and `/plan-define` invoke advisory per stage.
+7. **Session tracking for compaction recovery.** At every 🛑 gate and at specialist start/completion, write `.workflow/specialist-session.json`. Delete the file on specialist completion. This lets `on-compact.sh` recover context if the session compacts mid-specialist.
    ```json
    {
      "specialist": "domain",
@@ -177,6 +181,7 @@ All runtime state lives in `.workflow/`. Never manually edit these — commands 
 ├── pipeline-status.json         # Pipeline progress (written by all commands, read by /status + on-compact)
 ├── deferred-findings.md         # v1 scope gaps discovered during execution (DF-{NN}, promoted to tasks at milestones)
 ├── qa-fixes.md                  # End-of-queue verification findings (QA-{NN}, fixed before v1 ships)
+├── releases.md                  # Release records (created by /release, one section per version)
 ├── reflexion/
 │   └── index.json               # Lessons learned (written by /execute, read before each task)
 ├── evals/
@@ -250,7 +255,9 @@ If a hook blocks (exit 2), fix the issue before retrying. Do not bypass hooks.
 - **Decision IDs**: Prefixed by source. `COMP-01` (competition/features), `DOM-01` (domain knowledge), `BRAND-01` (branding/identity), `GEN-01` (plan), `ARCH-01` (architecture), `BACK-01` (backend), `FRONT-01` (frontend), `STYLE-01` (design/style), `UIX-01` (UI/UX QA), `SEC-01` (security), `OPS-01` (DevOps/deployment), `LEGAL-01` (legal/compliance), `PRICE-01` (pricing/monetization), `LLM-01` (LLM/prompt engineering), `INGEST-01` (scraping/external data), `DATA-01` (data-ml), `TEST-01` (testing). Post-v1 decisions use the same domain prefixes with continued numbering.
 - **CR IDs**: `CR-NNN` (Change Request). Global numbering across all releases. Created by `/intake`.
 - **Release sections**: In `task-queue.md`, post-v1 tasks appear under `## Release: v{X.Y}` headers.
-- **Task prefixes**: `T{NN}` (planned tasks from /synthesize), `DF-{NN}` (deferred findings promoted at milestone boundaries), `QA-{NN}` (end-of-queue verification fix tasks). All execute identically via the Ralph loop.
+- **CR lifecycle**: `new → triaged → planned → in-progress → resolved → closed` (plus `wontfix`, `duplicate`, `superseded`). Transitions driven by `/intake` → `/plan-delta` → `/synthesize` → `/execute` (auto-resolution) → `/release` (bulk close).
+- **Task prefixes**: `T{NN}` (planned tasks from /synthesize), `DF-{NN}` (deferred findings promoted at milestone boundaries), `QA-{NN}` (end-of-queue verification fix tasks), `DEBUG-{id}` (debug session eval entries). All execute identically via the Ralph loop.
+- **CRs field**: Release-mode tasks include `**CRs:** CR-{NNN}` linking tasks to the CRs they address. Every CR must appear in at least one task. When all tasks for a CR complete, the CR auto-resolves.
 - **Commits**: One commit per completed task. Message format: `T{NN}: brief description`, `DF-{NN}: brief description`, or `QA-{NN}: brief description`.
 - **Scope discipline**: Only touch files listed in the current task. If you need to touch others, run `/scope-check` first.
 - **No bonus work**: Do not refactor, optimize, or "improve" code outside the current task's scope. If you see something worth doing, log it as a future task.

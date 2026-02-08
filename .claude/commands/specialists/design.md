@@ -420,10 +420,17 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/design --s
    - **If no brand-guide.md:** Ask the user about: existing brand guidelines,
      color preferences, mood/tone (professional, playful, minimal, bold),
      inspiration sites, and must-haves.
+   **INVOKE advisory protocol** before presenting to user — pass your
+   orientation analysis and questions. Present advisory perspectives
+   in labeled boxes alongside your questions.
    **STOP and WAIT for answers** — their preferences override everything.
 3. **Phase-by-phase deep dive** — work through each focus area in order.
-   After each focus area (colors, typography, spacing, etc.), present
-   2-3 concrete options and **WAIT for user to pick**.
+   After each focus area (colors, typography, spacing, etc.):
+   a. Present 2-3 concrete options with draft STYLE-NN decisions
+   b. **INVOKE advisory protocol** (`.claude/advisory-protocol.md`,
+      `specialist_domain` = "design") — pass your analysis and options.
+      Present advisory perspectives VERBATIM in labeled boxes.
+   c. **WAIT for user to pick** before moving to next focus area.
 4. **Lock specific values** — no "choose a nice blue." Specify `#2563EB`.
    No "use consistent spacing." Specify `16px card padding, 8px form gap`.
 5. **Challenge** — for each area, apply the visual consistency challenge
@@ -450,10 +457,18 @@ Each response:
 4. Formulate 3-5 targeted questions about preferences
 5. **WAIT for user choice before continuing to the next focus area**
 
-### Advisory Perspectives
+### Advisory Perspectives (mandatory at Gates 1 and 2)
+
+**INVOKE the advisory protocol at every gate where you present analysis
+or questions.** This is not optional — it runs at Gates 1 (Orientation)
+and 2 (Validate findings) unless the user said "skip advisory".
 
 Follow the shared advisory protocol in `.claude/advisory-protocol.md`.
 Use `specialist_domain` = "design" for this specialist.
+
+Pass your analysis, draft decisions, and questions as `specialist_analysis`
+and `questions`. Present ALL advisory outputs VERBATIM in labeled boxes.
+Do NOT summarize, cherry-pick, or paraphrase.
 
 ## Decision Format Examples
 

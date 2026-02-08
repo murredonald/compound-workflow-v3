@@ -36,6 +36,7 @@ Append to `.workflow/decisions.md`.
 ## Outputs
 
 - `.workflow/decisions.md` — Append FRONT-XX decisions
+- `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
 

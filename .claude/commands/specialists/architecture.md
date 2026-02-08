@@ -37,6 +37,7 @@ Append to `.workflow/decisions.md` using the same format as existing entries.
 ## Outputs
 
 - `.workflow/decisions.md` — Append ARCH-XX decisions
+- `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
 

@@ -44,6 +44,7 @@ Append to `.workflow/decisions.md`.
 
 - `.workflow/decisions.md` — Append BRAND-XX decisions
 - `.workflow/brand-guide.md` — Machine-readable brand reference (name, positioning, color direction, voice, touchpoints)
+- `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
 

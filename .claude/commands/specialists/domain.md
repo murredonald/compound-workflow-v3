@@ -87,7 +87,7 @@ of "the code works but does the wrong thing."
 
 ## Output Artifacts
 
-This specialist produces **three layers** of output:
+This specialist produces **three layers** of output (plus optional cross-domain gaps):
 
 1. **DOM-XX decisions** in `.workflow/decisions.md` — domain constraints
    the code must respect. Concise, enforceable rules.
@@ -102,6 +102,8 @@ This specialist produces **three layers** of output:
    `hipaa-compliance.md`). Each file contains: detailed regulation text
    summaries, complete rate tables, extensive worked examples, source
    material analysis, edge case catalogs. No length limit per file.
+
+4. **`.workflow/cross-domain-gaps.md`** — GAP entries for work discovered outside this domain (if any)
 
 **What goes where:**
 - domain-knowledge.md says: "Belgian TOB tax applies at 0.12%-1.32%

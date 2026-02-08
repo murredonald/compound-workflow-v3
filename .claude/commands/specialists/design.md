@@ -67,11 +67,13 @@ with no customization.
 
 ## Output Artifacts
 
-This specialist produces **two** outputs:
+This specialist produces **two** outputs (plus optional cross-domain gaps):
 
 1. **STYLE-XX decisions** in `.workflow/decisions.md` — design choices with rationale
 2. **`.workflow/style-guide.md`** — structured visual reference used by the
    `frontend-style-reviewer` agent during `/execute`
+
+3. **`.workflow/cross-domain-gaps.md`** — GAP entries for work discovered outside this domain (if any)
 
 The style guide is NOT a markdown design document for humans — it's a
 **machine-readable reference** that reviewers validate code against.

@@ -190,6 +190,7 @@ integrity after writes to critical state files.
 ├── pipeline-status.json         # Pipeline progress (written by all commands, read by /status + on-compact)
 ├── deferred-findings.md         # v1 scope gaps discovered during execution (DF-{NN}, promoted to tasks at milestones)
 ├── qa-fixes.md                  # End-of-queue verification findings (QA-{NN}, fixed before v1 ships)
+├── cross-domain-gaps.md         # Cross-domain findings from specialists (written by any specialist, read by /synthesize)
 ├── releases.md                  # Release records (created by /release, one section per version)
 ├── reflexion/
 │   ├── index.json               # Per-task technical lessons (written by /execute step 7, read before each task)
@@ -271,6 +272,7 @@ If a hook blocks (exit 2), fix the issue before retrying. Do not bypass hooks.
 - **CRs field**: Release-mode tasks include `**CRs:** CR-{NNN}` linking tasks to the CRs they address. Every CR must appear in at least one task. When all tasks for a CR complete, the CR auto-resolves.
 - **Commits**: One commit per completed task. Message format: `T{NN}: brief description`, `DF-{NN}: brief description`, or `QA-{NN}: brief description`.
 - **Scope discipline**: Only touch files listed in the current task. If you need to touch others, run `/scope-check` first.
+- **Cross-domain gaps**: When a specialist discovers work outside its domain (e.g., UIX finds missing backend endpoints, Security finds missing frontend permission checks), it appends a GAP entry to `.workflow/cross-domain-gaps.md` instead of writing decisions in the wrong prefix. Format: `### GAP-{NN} [{TARGET_DOMAIN}] (from: {source specialist})` with description, originating decision, and priority. `/synthesize` reads this file and creates tasks for each gap. The file is created by the first specialist that needs it, consumed by `/synthesize` Phase 1.
 - **No bonus work**: Do not refactor, optimize, or "improve" code outside the current task's scope. If you see something worth doing, log it as a future task.
 - **Evidence over opinion**: Every review finding must cite specific code. Every retro insight must reference eval data.
 - **Audit chain**: After every agent call (reviewers, milestone-reviewer) and every pipeline phase completion, record a chain entry via `python .claude/tools/chain_manager.py record`. Do not skip chain recording.

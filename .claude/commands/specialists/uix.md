@@ -58,6 +58,7 @@ but "table rows on /holdings must navigate to /holdings/{id}".
 ## Outputs
 
 - `.workflow/decisions.md` — Append UIX-XX decisions
+- `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
 

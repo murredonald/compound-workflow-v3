@@ -51,6 +51,7 @@ verifiable by the `milestone-reviewer` agent during `/execute`.
 ## Outputs
 
 - `.workflow/decisions.md` — Append TEST-XX decisions
+- `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
 

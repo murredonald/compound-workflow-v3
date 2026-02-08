@@ -51,6 +51,7 @@ clearly state a feature and whether it's IN, OUT (non-goal), or DEFERRED
 
 - `.workflow/decisions.md` — Append COMP-XX decisions
 - `.workflow/competition-analysis.md` — Competition profiles, feature matrix, scope recommendations
+- `.workflow/cross-domain-gaps.md` — Append GAP entries for work discovered outside this domain (if any)
 
 ---
 

@@ -21,6 +21,7 @@ Read before starting:
 - `.workflow/decisions.md` — All decisions (GEN-XX, ARCH-XX, BACK-XX, etc.)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/competition-analysis.md` — Feature matrix and table-stakes (if exists)
+- `.workflow/cross-domain-gaps.md` — Cross-domain findings from specialists (if exists)
 - `.workflow/backlog.md` — Structured CRs (only in release mode)
 
 ---
@@ -325,6 +326,21 @@ Example: A task "Implement user login API" touches concern areas
 should reference SEC-01, BACK-03, ARCH-05, BACK-01, ARCH-01, ARCH-04 — not
 just the BACK-XX decisions.
 
+### Cross-Domain Gap Resolution
+
+If `.workflow/cross-domain-gaps.md` exists, read it before generating tasks.
+Each GAP entry describes work that a specialist discovered but couldn't write
+as a decision (wrong domain). Convert each gap to a task in the appropriate
+milestone, tagged with the originating specialist decision:
+
+```
+GAP-01 [BACKEND] (from: UIX) → backend task in the milestone that handles that entity
+GAP-02 [FRONTEND] (from: Security) → frontend task for permission UI
+```
+
+Mark each gap as resolved in the file after creating its task:
+`### ~~GAP-01~~ → T{NN}`
+
 ### Task Extraction
 
 Walk through specialist outputs and extract tasks:
@@ -333,6 +349,7 @@ Walk through specialist outputs and extract tasks:
 - Each data model → 1 task (models + migrations)
 - Each infrastructure piece → 1 task (setup + config)
 - Shared foundations (auth, error handling, config) → tasks first
+- Each cross-domain gap → 1 task in the target domain
 
 ### Ordering
 
@@ -515,6 +532,10 @@ Cross-reference task queue against planning artifacts:
   sub-checks above. This file is optional (competition specialist may have been
   skipped for internal tools with no public competitors). The remaining coverage
   checks (endpoints, screens, workflows, must-have features) still apply.
+
+- If `.workflow/cross-domain-gaps.md` exists:
+  - Every GAP entry → has a corresponding task?
+  - Flag any unresolved gaps
 
 **Gap found:** Escalate to user. Do not add tasks yourself.
 

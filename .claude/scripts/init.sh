@@ -179,7 +179,7 @@ if [ -n "${PYTHON:-}" ] && [ -f pyproject.toml ]; then
     fi
   done
 
-  # AI layer dependencies (advisory system)
+  # AI layer dependencies (advisory system + Playwright)
   if [ -f .claude/requirements.txt ]; then
     if $PYTHON -m pip install --quiet -r .claude/requirements.txt 2>/dev/null; then
       pass "AI layer deps installed (.claude/requirements.txt)"
@@ -188,6 +188,13 @@ if [ -n "${PYTHON:-}" ] && [ -f pyproject.toml ]; then
     fi
   else
     warn "no .claude/requirements.txt — AI advisory deps not installed"
+  fi
+
+  # Playwright browser (Chromium) for JS-rendered site scraping
+  if $PYTHON -m playwright install chromium 2>/dev/null; then
+    pass "Playwright Chromium browser installed"
+  else
+    warn "Playwright Chromium install failed — JS-rendered site scraping unavailable"
   fi
 elif [ -n "${PYTHON:-}" ]; then
   warn "no pyproject.toml — skipping venv and dev tools"

@@ -127,6 +127,10 @@ specialist **actively researches**. Use these tools:
    the primary SME — subject matter expert)
 5. **Advisory system** — Get perspectives from Claude/GPT/Gemini on
    domain-specific questions
+6. **Playwright scraping** — For JavaScript-rendered sites that `web_fetch`
+   can't read (government portals, regulatory databases, financial
+   calculators, interactive tools). Write and run Python scripts using
+   Playwright to extract content from dynamic pages.
 
 ### Parallelizing Research
 
@@ -142,6 +146,55 @@ have to re-run everything from scratch.
 CORRECT:  Single message → Task(agent1) + Task(agent2) + Task(agent3)  → all results returned
 WRONG:    Task(agent1, run_in_background=true) → output file empty → results lost
 ```
+
+### Playwright Scraping (JS-Rendered Sites)
+
+Many domain-relevant sites (government portals, regulatory databases,
+financial calculators, tax authority tools) are JavaScript-rendered and
+return empty or incomplete content via `web_fetch`. Use Playwright when:
+
+- `web_fetch` returns empty/incomplete content for a URL you need
+- The site requires interaction (dropdowns, tabs, pagination, search forms)
+- You need to extract data from a dynamic table or calculator
+- The site is a single-page application (SPA)
+
+**How to use:** Write a Python script using `playwright.sync_api` and run
+it via Bash. Save extracted content to the scratchpad directory for reading.
+
+```python
+# Example: Extract rate table from a JS-rendered government portal
+from playwright.sync_api import sync_playwright
+import json
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+    page.goto("https://example.gov/rates")
+    page.wait_for_selector("table.rate-table")  # wait for JS to render
+
+    # Extract table data
+    rows = page.query_selector_all("table.rate-table tr")
+    data = []
+    for row in rows:
+        cells = row.query_selector_all("td, th")
+        data.append([cell.inner_text() for cell in cells])
+
+    browser.close()
+
+# Write to scratchpad for reading
+with open("{scratchpad_dir}/rates.json", "w") as f:
+    json.dump(data, f, indent=2)
+```
+
+**Guidelines:**
+- Always `wait_for_selector` or `wait_for_load_state("networkidle")` —
+  don't assume content is immediately available
+- Save extracted data to the scratchpad directory as JSON or text
+- For multi-page extraction, navigate and extract in a single script
+- Respect rate limits and robots.txt — add `page.wait_for_timeout(1000)`
+  between requests if scraping multiple pages
+- If a site requires login/auth, ask the user for credentials instead of
+  guessing
 
 ### Research Methodology
 

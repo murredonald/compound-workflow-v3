@@ -446,6 +446,77 @@ does the feature name imply reliability?"
 **Decide:** Input validation strategy, output filtering approach, prompt
 injection defense, PII handling, AI content labeling, guardrail logging.
 
+### 9. Conversation Memory & Persistence
+
+Define how the system remembers context across turns and sessions:
+
+**Memory architecture:**
+```
+MEMORY: {feature name}
+Scope: {single session / cross-session / cross-user (shared knowledge)}
+Strategy: {sliding window / summarization / hybrid / vector retrieval / full history}
+Storage: {in-memory / database / vector store / combination}
+Retrieval: {recency-based / relevance-based (embedding search) / hybrid}
+Injection point: {system prompt / before user message / dedicated memory block}
+Max memory tokens: {budget within context window}
+```
+
+**Short-term memory (within a session):**
+- Context window management: what happens when the conversation exceeds the window?
+  - Sliding window: drop oldest messages (loses early context)
+  - Summarization: periodically summarize older turns into a condensed block
+  - Hybrid: keep recent N turns verbatim + summary of everything before
+- Turn-pair management: are tool calls, system messages, and assistant reasoning all kept or pruned?
+- Branching: if the user backtracks ("actually, go back to what you said earlier"), how is history restructured?
+
+**Long-term memory (across sessions):**
+- What gets remembered: explicit user facts ("I'm a Python developer"), inferred preferences (always asks for concise answers), past decisions, project context
+- Memory extraction: how are memories identified? (explicit "remember this" / auto-extraction from conversation / LLM-based summarization at session end)
+- Memory format: structured (key-value facts) vs unstructured (text snippets) vs embeddings
+- Memory retrieval: how are relevant memories found at the start of a new session?
+  - Recency: always inject the last N memories
+  - Relevance: embed the current query, find similar past memories
+  - Category: inject memories tagged with the current topic
+  - Hybrid: recent + relevant
+- Memory update: what happens when new information contradicts stored memory? ("I switched to TypeScript" vs stored "uses Python")
+  - Overwrite: latest wins
+  - Versioned: keep history of changes
+  - Conflict resolution: ask the user which is current
+
+**Memory lifecycle:**
+- Expiry: do memories expire? (time-based TTL, usage-based decay, never)
+- Forgetting: can users delete specific memories? All memories? ("forget everything about my project")
+- Capacity: maximum memories per user (storage cost, retrieval noise)
+- Compaction: periodic merge of redundant or superseded memories
+
+**Privacy and compliance:**
+- User consent: does the user know what's being remembered? Opt-in or opt-out?
+- Data residency: where are memories stored? (same constraints as user data — SEC-XX, LEGAL-XX)
+- Export: can users export their memory (GDPR data portability)?
+- PII in memory: memories may contain sensitive data — same encryption/handling as user data
+- Cross-session data sharing: are memories visible to other users? (shared workspace vs personal)
+
+**Challenge:** "Your chatbot summarizes the conversation when it exceeds 8K tokens.
+The summary is 500 tokens. But summaries are lossy — the user references a specific
+detail from turn 3 that was dropped. How do you detect when the user needs a detail
+that was summarized away? Do you keep a searchable archive alongside the summary?"
+
+**Challenge:** "You auto-extract memories from every conversation. After 6 months,
+a power user has 2000 stored memories. You embed-search and inject the top 10 per
+query. But memory 847 says 'prefers Python' and memory 1203 says 'switched to Rust.'
+How do you handle contradictions? How do you keep memory quality from degrading?"
+
+**Challenge:** "Your memory system remembers that a user asked about divorce lawyers
+last month. This session they're asking about restaurant recommendations. Your
+relevance retrieval doesn't fire, but a naive 'recent memories' approach would
+inject deeply personal context into an unrelated conversation. What's your
+relevance threshold? What's the cost of a false positive?"
+
+**Decide:** Memory scope per feature, short-term strategy (sliding window vs
+summarization vs hybrid), long-term extraction and retrieval approach,
+memory update/conflict policy, lifecycle rules (expiry, deletion, compaction),
+privacy controls, max memory budget per context window.
+
 ---
 
 ## Anti-Patterns

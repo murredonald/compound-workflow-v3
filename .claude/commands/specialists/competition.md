@@ -156,6 +156,11 @@ Positioning: {one-line — what they emphasize}
 - What's your positioning relative to these? (cheaper, simpler, more
   specialized, better UX, different audience?)
 
+**Challenge:** "You listed 3 competitors. But you're building a {type} tool —
+there are always indirect competitors. What do your users use TODAY to solve
+this problem? Excel spreadsheets count. Manual processes count. Those are your
+real competition."
+
 **Output:** Competitor profiles, validated with user.
 
 ### FA 2: Feature Matrix
@@ -185,6 +190,10 @@ For each competitor, enumerate features across these categories:
 
 Legend: ✅ = has it, ❌ = doesn't, ⭐ = does it exceptionally, — = not in spec
 
+**Challenge:** "Your matrix shows 8 features across 5 competitors. But you only
+checked their marketing pages. Did you actually USE each product? Marketing says
+'AI-powered analytics' — the reality might be a basic chart with a sparkline."
+
 ### FA 3: UX Patterns & Positioning
 
 Not a deep dive — a pattern scan to inform frontend/design specialists:
@@ -195,6 +204,10 @@ Not a deep dive — a pattern scan to inform frontend/design specialists:
 - **Data density:** Dense tables? Cards? Mixed? Configurable?
 - **Key differentiators:** What does each competitor do notably well?
 - **Pricing gates:** What features are free vs paid? (informs v1 scope)
+
+**Challenge:** "Every competitor positions as 'simple and intuitive.' That's not
+positioning — that's a default adjective. What's SPECIFICALLY different about
+your user experience that a user would notice in the first 5 minutes?"
 
 **Output:** Pattern summary with notes for FRONT and STYLE specialists.
 
@@ -324,6 +337,11 @@ doesn't need it. Worth the investment?
 
 Your call: KEEP (differentiator) / DROP (not needed) / SIMPLIFY?
 ```
+
+**Challenge:** "You found 12 features competitors have that you don't. Before
+adding them to your backlog: which of these features do competitors' users
+actually USE vs which exist but nobody cares about? Feature lists lie —
+usage data tells the truth."
 
 **After all decisions are made:**
 

@@ -37,6 +37,36 @@ Also read the `diversity` section — if `diversity.enabled` is true, set
 - Run: `python .claude/tools/second_opinion.py --provider gemini --context-file {temp_json}` (append `--answers {answers_count}` if diversity enabled)
 - If exit 1: note Gemini advisory unavailable, continue without it
 
+## Challenge Amplification (optional but recommended)
+
+When formulating questions for advisors, include 1-2 **challenge questions** —
+specific decisions or assumptions you want the advisors to stress-test.
+
+Frame challenges as: "The specialist/planner proposes X. What could go wrong?
+What's the strongest argument against X? What alternative would you recommend?"
+
+This works best when:
+- A decision has been made quickly without much debate
+- The user seems certain but the specialist has doubts
+- A trade-off exists that hasn't been explicitly discussed
+- A common beginner mistake pattern applies
+
+**Include challenge context in the temp JSON:**
+```json
+{
+  "specialist_domain": "frontend",
+  "specialist_analysis": "...",
+  "questions": ["..."],
+  "challenge_targets": [
+    "User chose CSR for all pages including marketing. SEO impact?",
+    "Browser support matrix says 'modern only' but 15% of traffic is Firefox ESR"
+  ]
+}
+```
+
+The `challenge_targets` field is optional. When present, advisors will specifically
+stress-test these decisions in addition to providing their regular perspectives.
+
 ## Present Results
 
 Display ALL enabled perspectives **VERBATIM and UNEDITED** in labeled boxes:

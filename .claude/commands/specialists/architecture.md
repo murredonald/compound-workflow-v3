@@ -141,11 +141,40 @@ For external dependencies identified in planning:
 - Data mapping (external format → internal format)
 - Testing approach (mock, sandbox, contract tests)
 
+### 6. Performance & Scalability Requirements
+
+**Decide:**
+- API latency targets: P50, P95, P99 per endpoint category (read, write, search)
+- Throughput requirements: requests/second, concurrent users
+- Frontend performance budgets: LCP, FID, CLS targets (Core Web Vitals)
+- Database query budget: max query time, max queries per request
+- Caching strategy: what to cache, TTLs, invalidation approach
+- CDN strategy: static assets, API caching, edge functions
+- Scaling approach: horizontal vs vertical, auto-scaling triggers
+- Graceful degradation: what happens under load? circuit breakers?
+
+**Challenge:** "You have performance targets but no measurement plan.
+How will you know you've met them? Define the monitoring approach for
+each target — dashboard, alert threshold, and who gets paged."
+
+**Challenge:** "Your caching strategy invalidates on write. What happens
+during a burst of 100 writes/second — cache stampede? Thundering herd?
+What's the mitigation?"
+
+**Challenge:** "Your API sets `Cache-Control: no-cache` on everything. Your CDN caches nothing.
+Every page load hits your origin server. What's your cache header strategy per resource type?
+(static assets: immutable 1yr, API: short TTL or ETag, HTML: no-cache with revalidate)"
+
+**Decide:** Performance budget per tier, caching layer selection,
+monitoring/alerting approach, load testing plan.
+
 ---
 
 ## Anti-Patterns
 
-- **Don't auto-pilot** — Present ARCH-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
+- **Don't skip the orientation gate** — Ask questions first. The user's answers about deployment targets, team size, and existing infrastructure shape every decision.
+- **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
+- **Don't finalize ARCH-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
 - Don't pick a pattern just because it's popular — justify from project requirements
 - Don't define module boundaries without considering the team size and deploy cadence
 - Don't defer infrastructure decisions to "later" — they shape everything downstream
@@ -167,10 +196,31 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/architectu
 ## Procedure
 
 1. **Read** all planning artifacts
-2. **Validate** — Does the planned architecture actually support the workflows and data model?
-3. **Deepen** — For each focus area, ask targeted questions and lock decisions
-4. **Challenge** — Flag any planning decisions that create architectural tension
-5. **Output** — Append ARCH-XX decisions to decisions.md, update constraints.md if needed
+
+2. 🛑 **GATE: Orientation** — Present your understanding of the project's
+   architecture needs. Ask 3-5 targeted questions:
+   - Deployment target preference? (cloud, container, PaaS, serverless)
+   - Team size and skill distribution? (affects module boundary granularity)
+   - Monolith vs services preference? (or let architecture drive the choice)
+   - Expected scale at launch and 12-month horizon?
+   - Existing infrastructure or greenfield?
+   **STOP and WAIT for user answers before proceeding.**
+
+3. **Analyze** — Work through focus areas 1-2 at a time. For each batch:
+   - Present findings and proposed ARCH-NN decisions (as DRAFTS)
+   - Ask 2-3 follow-up questions specific to the focus area
+
+4. 🛑 **GATE: Validate findings** — After each focus area batch, present
+   draft decisions and wait for user feedback. Repeat steps 3-4 for
+   remaining focus areas.
+
+5. **Challenge** — Flag any planning decisions that create architectural tension
+
+6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
+   proposed ARCH-NN decisions grouped by focus area. Wait for approval.
+   **Do NOT write to decisions.md until user approves.**
+
+7. **Output** — Append approved ARCH-XX decisions to decisions.md, update constraints.md if needed
 
 ## Quick Mode
 
@@ -180,11 +230,16 @@ prioritized areas. Mark skipped areas in decisions.md: `ARCH-XX: DEFERRED — sk
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which focus area you're exploring
-2. Reference relevant planning decisions (GEN-XX)
-3. Present options with trade-offs (same format as /plan)
-4. Formulate 5-8 targeted questions
+2. Present analysis and draft decisions
+3. Highlight tradeoffs or things the user should weigh in on
+4. Formulate 2-4 targeted questions
+5. **WAIT for user answers before continuing**
 
 ### Advisory Perspectives
 

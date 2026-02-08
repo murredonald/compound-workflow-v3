@@ -30,7 +30,7 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 1a. **`/plan`** — Discovery phase (Stages 0-5). Interactive planning produces partial `project-spec.md`, `decisions.md`, `constraints.md` in `.workflow/`.
 1b. **`/specialists/competition`** — Competitive landscape + feature decomposition (optional, recommended). Produces `competition-analysis.md` and COMP-XX decisions.
 1c. **`/plan-define`** — Definition phase (Stages 6-8). Reads competition output, finalizes MVP scope, modules, milestones. Finalizes all planning artifacts.
-2. **`/specialists/*`** — Domain-specific deep dives (domain, architecture, backend, frontend, design, uix, security, data-ml, testing). Each appends to `decisions.md` with prefixed IDs. Domain also generates `.workflow/domain-knowledge.md`. Design also generates `.workflow/style-guide.md`.
+2. **`/specialists/*`** — Domain-specific deep dives (domain, branding, architecture, backend, frontend, design, uix, security, devops, legal, pricing, llm, scraping, data-ml, testing). Each appends to `decisions.md` with prefixed IDs. Domain also generates `.workflow/domain-knowledge.md`. Branding also generates `.workflow/brand-guide.md`. Design also generates `.workflow/style-guide.md`.
 3. **`/synthesize`** — Merges all planning into `.workflow/task-queue.md`. Phase 2 validates the queue (Steve's 8 checks). Nothing reaches execution unvalidated.
 4. **`/execute`** — The Ralph loop. Picks a task, implements, triggers subagent reviews, commits on pass, fixes on fail. Repeat until milestone complete.
 5. **`/retro`** — Evidence-based retrospective from evals + reflections.
@@ -64,9 +64,15 @@ Debug shortcut:   /debug-session → reproduce → isolate → patch → verify 
 | "Let's do a retro" / "How did that go?" | `/retro` |
 | "I found a bug" / "I noticed..." / "Here's feedback" | `/intake` |
 | "Plan this fix/feature/change" | `/plan-delta` |
+| "What about the brand/name/logo/identity/positioning..." | `/specialists/branding` |
 | "What about the design/style/colors/typography..." | `/specialists/design` |
 | "What about the UX/usability/user flows..." | `/specialists/uix` |
 | "What about the tests/testing strategy/test plan..." | `/specialists/testing` |
+| "What about deployment/DevOps/CI-CD/infrastructure..." | `/specialists/devops` |
+| "What about legal/terms of service/privacy policy/GDPR/disclaimers..." | `/specialists/legal` |
+| "What about pricing/tiers/billing/monetization..." | `/specialists/pricing` |
+| "What about prompts/LLM integration/AI features/model selection..." | `/specialists/llm` |
+| "What about scraping/data ingestion/external APIs/web crawling..." | `/specialists/scraping` |
 | "Research the domain/industry/regulations..." | `/specialists/domain` |
 | "Analyze competitors" / "What's the competition?" / "Feature analysis" | `/specialists/competition` |
 | "Define scope" / "Finalize the plan" / "MVP scope" / "Continue planning" | `/plan-define` |
@@ -166,6 +172,7 @@ All runtime state lives in `.workflow/`. Never manually edit these — commands 
 ├── domain-library/              # Deep domain knowledge files (created by /specialists/domain)
 │   └── {topic}.md              # Per-topic deep dives with sources and worked examples
 ├── style-guide.md               # Visual reference (created by /specialists/design, read by frontend-style-reviewer)
+├── brand-guide.md               # Brand identity reference (created by /specialists/branding, read by /specialists/design)
 ├── specialist-session.json       # Active specialist session state (written by /specialists/*, read by on-compact, deleted on completion)
 ├── pipeline-status.json         # Pipeline progress (written by all commands, read by /status + on-compact)
 ├── deferred-findings.md         # v1 scope gaps discovered during execution (DF-{NN}, promoted to tasks at milestones)
@@ -240,7 +247,7 @@ If a hook blocks (exit 2), fix the issue before retrying. Do not bypass hooks.
 
 ## Conventions
 
-- **Decision IDs**: Prefixed by source. `COMP-01` (competition/features), `DOM-01` (domain knowledge), `GEN-01` (plan), `ARCH-01` (architecture), `BACK-01` (backend), `FRONT-01` (frontend), `STYLE-01` (design/style), `UIX-01` (UI/UX QA), `SEC-01` (security), `DATA-01` (data-ml), `TEST-01` (testing). Post-v1 decisions use the same domain prefixes with continued numbering.
+- **Decision IDs**: Prefixed by source. `COMP-01` (competition/features), `DOM-01` (domain knowledge), `BRAND-01` (branding/identity), `GEN-01` (plan), `ARCH-01` (architecture), `BACK-01` (backend), `FRONT-01` (frontend), `STYLE-01` (design/style), `UIX-01` (UI/UX QA), `SEC-01` (security), `OPS-01` (DevOps/deployment), `LEGAL-01` (legal/compliance), `PRICE-01` (pricing/monetization), `LLM-01` (LLM/prompt engineering), `INGEST-01` (scraping/external data), `DATA-01` (data-ml), `TEST-01` (testing). Post-v1 decisions use the same domain prefixes with continued numbering.
 - **CR IDs**: `CR-NNN` (Change Request). Global numbering across all releases. Created by `/intake`.
 - **Release sections**: In `task-queue.md`, post-v1 tasks appear under `## Release: v{X.Y}` headers.
 - **Task prefixes**: `T{NN}` (planned tasks from /synthesize), `DF-{NN}` (deferred findings promoted at milestone boundaries), `QA-{NN}` (end-of-queue verification fix tasks). All execute identically via the Ralph loop.
@@ -250,6 +257,9 @@ If a hook blocks (exit 2), fix the issue before retrying. Do not bypass hooks.
 - **Evidence over opinion**: Every review finding must cite specific code. Every retro insight must reference eval data.
 - **Audit chain**: After every agent call (reviewers, milestone-reviewer) and every pipeline phase completion, record a chain entry via `python .claude/tools/chain_manager.py record`. Do not skip chain recording.
 - **Execution config**: `.claude/execution-config.json` controls auto-proceed, milestone pausing, deferred finding handling (`promote`/`defer`/`ask`/`preview`), and runtime QA pausing. Read and **validate** it at the start of `/execute`. Bad values → warn + use safe defaults. Never pause between tasks/milestones unless the config says to or you hit a genuine BLOCKED escalation.
+- **Visual quality:** `.claude/visual-antipatterns.md` defines common LLM frontend mistakes (10 categories, ~40 anti-patterns). Referenced by qa-browser-tester (Phase 7), style-guide-auditor (baseline floor), frontend-style-reviewer (Step 4), and specialists uix/design. Updated as new patterns are discovered.
+- **Conditional FAs in frontend specialist:** Browser Compatibility (FA 7, always), Internationalization (FA 8, skip if single-language), SEO (FA 9, skip if no public pages). These produce FRONT-XX decisions consumed by testing (cross-browser matrix, i18n tests) and qa-browser-tester (multi-browser execution, SEO checks).
+- **Challenge amplification:** Advisory protocol supports optional `challenge_targets` field — specific decisions or assumptions for advisors to stress-test. Specialists should frame their strongest challenges as advisory questions.
 - **Pipeline tracking**: Every command calls `pipeline_tracker.py start` at entry and `pipeline_tracker.py complete` at exit. `/plan` calls `init --type greenfield`. `/intake` calls `init --type evolution` if no pipeline exists. `/plan-define` calls `add-phase` for each specialist in the routing table. `/execute` calls `task-update` at each task load and milestone.
 
 ## Prerequisites

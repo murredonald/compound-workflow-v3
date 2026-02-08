@@ -74,6 +74,32 @@ of type (web app, API, CLI, library). The focus areas adapt:
 
 ---
 
+## Research Tools
+
+For **tooling decisions and ecosystem best practices**, this specialist does
+targeted research to ensure recommendations match the project's stack.
+
+1. **Web search** — Search for testing framework comparisons, coverage tools,
+   flake mitigation strategies, CI integration patterns
+2. **Web fetch** — Read framework docs, test runner configuration guides
+3. **`research-scout` agent** — Delegate specific lookups (e.g.,
+   "Playwright vs Cypress 2026 comparison", "pytest-xdist parallel config")
+
+### When to Research
+
+Research when:
+- Selecting test frameworks and runners (FA 1)
+- Evaluating test data tools (factories, fixtures, seeding) (FA 2)
+- Choosing E2E framework (FA 5)
+- Evaluating visual regression tools (FA 8)
+- Checking CI-specific test parallelization options
+
+Do NOT research for:
+- Test coverage targets (FA 3-4) — reasoning from spec is sufficient
+- Security test design (FA 6) — derived from SEC-XX decisions
+
+---
+
 ## Focus Areas
 
 ### 1. Test Architecture & Tooling
@@ -283,10 +309,28 @@ Load test:
   - Assert: no console errors
 ```
 
-**Cross-browser/responsive:**
-- Which browsers to test: {Chrome, Firefox, Safari, mobile}
-- Which breakpoints to verify: {from FRONT-XX/STYLE-XX}
-- Screenshot comparison: {yes/no — tool}
+**Cross-browser testing matrix:**
+- Which browsers to test in CI: {Chromium, Firefox, WebKit — via Playwright}
+- Which browsers for manual spot-check: {Safari iOS, Chrome Android}
+- Browser-specific test scenarios: {CSS fallbacks, touch events, viewport quirks}
+- Playwright `--project` configuration: define browser projects matching FRONT-XX matrix
+- Screenshot comparison across browsers: {yes/no — tool: Playwright, Percy, Chromatic}
+- When to run full matrix: {every PR, nightly, pre-release only}
+
+**Challenge:** "You're running E2E tests in Chromium only. Your users report Safari-specific
+bugs every release. How long until cross-browser testing pays for itself vs bug-fixing?"
+
+**Internationalization testing (if FRONT-XX includes i18n decisions):**
+- Pseudo-localization test: run E2E suite with pseudo-locale
+  (accented English: Ḥëḷḷö Ẁöṛḷḋ) to catch hardcoded strings
+- RTL layout test: if RTL supported, run smoke tests with RTL locale
+  and verify layout mirroring
+- Text expansion test: verify no overflow with longest supported locale
+- Locale-specific formatting: dates, numbers, currencies display correctly
+- Missing translation fallback: verify fallback behavior, no raw keys shown
+
+**Challenge:** "You have 200 UI strings. How do you verify none are hardcoded?
+Pseudo-localization catches every missed extraction in one test run."
 
 **Challenge:** "Every primary user flow from the project-spec must have
 an E2E test. List each job-to-be-done and the E2E test that proves it
@@ -390,11 +434,38 @@ an index?"
 thresholds per endpoint category, CI integration (run on every PR
 or nightly), acceptable degradation under load.
 
+### 8. Test Reliability & Flake Management
+
+**Research:** Search for flake mitigation strategies and visual regression
+tools for the project's chosen stack.
+
+**Decide:**
+- Flake detection: how to identify flaky tests (retry analysis, quarantine)
+- Quarantine strategy: tag flaky tests, run separately, fix cadence
+- Deterministic patterns: fixed seeds, controlled time, network mocking
+- Visual regression approach: Playwright snapshots, Percy, Chromatic, or skip
+- Performance regression detection: benchmark tests, latency assertions
+- CI parallelization: test sharding strategy, optimal worker count
+- Test timeout policy: per-test and per-suite timeouts
+
+**Challenge:** "Your CI runs 500 tests in 10 minutes. 3 tests fail
+intermittently. You re-run and they pass. How do you find them?
+How do you prevent them from blocking deploys?"
+
+**Challenge:** "You parallelized tests across 4 workers. Tests that
+passed alone now fail. Which test is leaking state? What's your
+isolation strategy?"
+
+**Decide:** Flake detection tool, quarantine workflow, CI parallelization
+approach, visual regression tool selection.
+
 ---
 
 ## Anti-Patterns
 
-- **Don't auto-pilot** — Present TEST-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
+- **Don't skip the orientation gate** — Ask questions first. The user's answers about CI/CD, coverage targets, and framework preferences shape every decision.
+- **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
+- **Don't finalize TEST-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
 - Don't mandate 100% coverage — identify critical paths and cover those first
 - Don't write a test plan that assumes a specific framework before it's decided
 - Don't skip test data strategy — tests without realistic data find fewer bugs
@@ -417,10 +488,31 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/testing --
 
 1. **Read** all planning + specialist artifacts (especially BACK-XX for endpoints,
    FRONT-XX for screens, UIX-XX for user flows, SEC-XX for permissions)
-2. **Map** — Build the test coverage map: every feature → test type → specific test
-3. **Deepen** — For each focus area, ask targeted questions and lock decisions
-4. **Challenge** — Flag gaps: untested endpoints, unmapped flows, missing negative tests
-5. **Output** — Append TEST-XX decisions to decisions.md
+
+2. 🛑 **GATE: Orientation** — Present your understanding of the project's
+   testing needs. Ask 3-5 targeted questions:
+   - CI/CD pipeline exists or being built? (affects test runner integration)
+   - Coverage target preference? (line, branch, or mutation-based)
+   - E2E framework preference? (Playwright, Cypress, or other)
+   - Test data strategy preference? (factories, fixtures, seeding)
+   - Performance testing needed for v1?
+   **STOP and WAIT for user answers before proceeding.**
+
+3. **Analyze** — Work through focus areas 1-2 at a time. For each batch:
+   - Present findings and proposed TEST-NN decisions (as DRAFTS)
+   - Ask 2-3 follow-up questions specific to the focus area
+
+4. 🛑 **GATE: Validate findings** — After each focus area batch, present
+   draft decisions and wait for user feedback. Repeat steps 3-4 for
+   remaining focus areas.
+
+5. **Challenge** — Flag gaps: untested endpoints, unmapped flows, missing negative tests
+
+6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
+   proposed TEST-NN decisions grouped by focus area. Wait for approval.
+   **Do NOT write to decisions.md until user approves.**
+
+7. **Output** — Append approved TEST-XX decisions to decisions.md
 
 ## Quick Mode
 
@@ -430,12 +522,16 @@ prioritized areas. Mark skipped areas in decisions.md: `TEST-XX: DEFERRED — sk
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which focus area you're exploring
-2. Reference relevant decisions (BACK-XX for endpoints, FRONT-XX for screens,
-   UIX-XX for user flows, SEC-XX for security)
-3. Present concrete test specifications, not abstract principles
-4. Formulate 5-8 targeted questions
+2. Present analysis and draft decisions
+3. Highlight tradeoffs or things the user should weigh in on
+4. Formulate 2-4 targeted questions
+5. **WAIT for user answers before continuing**
 
 ### Advisory Perspectives
 

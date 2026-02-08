@@ -67,13 +67,14 @@ Triggered by the parent agent (`/execute`) at end-of-queue.
 | `milestone_definition` | Yes | -- |
 | `completed_tasks` | Yes | -- |
 | `app_url` | Yes | -- |
-| `uix_decisions` | No | Skip UIX-XX verification in Phase 7 |
-| `test_decisions` | No | Skip TEST-XX verification in Phase 7 |
+| `uix_decisions` | No | Skip UIX-XX verification in Phase 8 |
+| `test_decisions` | No | Skip TEST-XX verification in Phase 8 |
 | `project_spec_excerpt` | No | Rely on milestone_definition for scope |
-| `competition_analysis_excerpt` | No | Skip COMP-XX checks in Phase 7 |
+| `competition_analysis_excerpt` | No | Skip COMP-XX checks in Phase 8 |
 | `route_map` | No | Default: discover routes from navigation and sitemap |
+| `browsers` | No | Default: ["chromium"]. When provided, run all phases in each browser. Options: "chromium", "firefox", "webkit". |
 | `targeted_routes` | No | Default: full audit (all routes). When provided, only test these routes. |
-| `reverify_mode` | No | Default: false. When true, run Phases 1-4 only on targeted_routes. |
+| `reverify_mode` | No | Default: false. When true, run Phases 1-4 and 7 only on targeted_routes. |
 
 If `app_url` is missing, BLOCK with: "Cannot test -- no application URL provided."
 
@@ -107,6 +108,26 @@ When invoked with `reverify_mode: true` and `targeted_routes: ["/route1", "/rout
 
 This mode is used by the QA Fix Pass in `/execute` after fixing CRITICAL/MAJOR
 findings — it confirms fixes work without re-running the full 7-phase audit.
+
+---
+
+## Browser Matrix
+
+If `browsers` input contains multiple entries, execute the full phase sequence
+once per browser. Use Playwright's browser launcher:
+
+- `chromium`: Chrome/Edge equivalent
+- `firefox`: Firefox equivalent
+- `webkit`: Safari equivalent
+
+**Finding format:** Append `[{browser}]` to each finding when running multi-browser.
+Flag browser-specific findings: issues that appear in one browser but not others.
+
+**Summary table:** Add a "Browser" column:
+| Phase | Browser | Checks | Pass | Fail | Findings |
+
+**Default behavior:** When `browsers` is not provided, run in Chromium only
+(backward compatible with existing behavior).
 
 ---
 
@@ -400,7 +421,104 @@ These should exist in virtually every web application:
 
 **Output:** Resilience report
 
-### Phase 7: Requirements Cross-Check
+### Phase 7: Visual Anti-Pattern Scan
+
+Programmatic visual quality checks on the running application. These run
+on EVERY page regardless of style guide existence.
+
+**Reference:** `.claude/visual-antipatterns.md`
+
+For EACH route discovered in Phase 1, run these programmatic checks:
+
+#### 7.1 Contrast Audit
+- For every text element: extract computed `color` and `background-color`
+- Walk up the DOM to find the effective background (handles transparent backgrounds)
+- Calculate WCAG 2.1 contrast ratio: `(L1 + 0.05) / (L2 + 0.05)` where L is relative luminance
+- Flag: < 4.5:1 for text < 18px (or < 14px bold) = **CRITICAL**
+- Flag: < 3:1 for text ≥ 18px (or ≥ 14px bold) = **MAJOR**
+- Sample: all headings, body text paragraphs, button text, form labels, links, table cells
+
+**Contrast edge cases:**
+- If `backgroundImage !== 'none'` or `backdropFilter`/`mixBlendMode` is set on element
+  or ancestor: mark contrast as **"non-auditable"** and flag as MAJOR unless element has
+  explicit opaque `background-color` with alpha=1
+- For `rgba()`/`hsla()` colors: composite against nearest opaque ancestor using
+  Porter-Duff source-over before calculating ratio
+- For pseudo-elements (`::before`/`::after`): include in background audit if they set
+  `background-color` or `background-image`
+
+#### 7.2 Overflow & Scroll Check
+- At desktop (1280×800) and mobile (375×667):
+  `document.documentElement.scrollWidth > document.documentElement.clientWidth` → **CRITICAL**
+- Check every container with `overflow: hidden`:
+  `scrollHeight > clientHeight` by > 10px → **MAJOR** (content clipped)
+- Check images: `naturalWidth/naturalHeight` ratio vs rendered ratio — distortion > 5% → **MAJOR**
+
+#### 7.3 Touch Target Sizing (mobile viewport only)
+- All interactive elements (buttons, links, inputs, selects):
+  `getBoundingClientRect()` → width < 44 OR height < 44 → **MAJOR**
+- Exception: inline text links in paragraphs → **MINOR**
+
+#### 7.4 Typography Baseline
+- Body text `font-size` < 14px → **MAJOR**
+- Body text `line-height` < 1.3 → **MAJOR**
+- Any text container with `clientWidth` > 720px and no `max-width` → **MINOR** (line length)
+- Count distinct `font-size` values on page: > 8 → **MINOR** (font size chaos)
+
+#### 7.5 Component Affordance Check
+- Buttons: must differ from background (`background-color` ≠ page background OR has visible border) → **MAJOR** if invisible
+- Form inputs: must have visible border (`border-width` > 0 OR `outline` OR `box-shadow`) → **MAJOR** if borderless
+- Table headers: must differ from table body (different bg, weight, or size) → **MINOR**
+- Links: must be visually distinct from non-link text (different color OR underline) → **MAJOR** if identical
+
+#### 7.6 Spacing Sanity
+- Content containers (`main`, `article`, `section`) with `padding: 0` → **MAJOR** (content touching edges)
+- Adjacent sibling elements with `gap`/`margin`: 0 between them → **MINOR** (cramped)
+
+#### 7.7 Interaction State Check
+- Tab through all interactive elements: verify `:focus-visible` style change → **CRITICAL** if no visible focus
+- Check disabled buttons/inputs: must have visual distinction (opacity, color change) → **MAJOR**
+- Check form labels: every input must have associated `<label>` or `aria-label` → **MAJOR**
+
+#### 7.8 Content Stress Test
+- For key form fields: inject long text (50+ chars), verify no overflow/clipping → **MAJOR**
+- Check for empty containers without placeholder/empty-state content → **MINOR**
+
+#### 7.9 Dark Mode Re-test (if app supports theming)
+- If page has theme toggle or `data-theme` attribute:
+  Switch to dark mode via `page.emulateMedia({ colorScheme: 'dark' })` or toggle
+- Re-run checks 7.1 (contrast) and 7.5 (affordance) in dark mode → same severity rules
+- Flag elements that pass in light mode but fail in dark → **CRITICAL**
+
+#### 7.10 Font Verification
+- Check `document.fonts.check()` for each declared `font-family` → **MINOR** if font not loaded (fallback active)
+
+**Severity classification:**
+- **Hard Fails** (CRITICAL/MAJOR): Contrast < 4.5:1, horizontal overflow, invisible inputs/buttons,
+  missing focus states, touch targets < 44px. These block the queue.
+- **Soft Warnings** (MINOR/INFO): Line length, font-size count, spacing rhythm, font fallbacks,
+  empty state suggestions. Logged but don't block.
+
+**Finding format:** Each finding cites: route, element selector, computed values, expected threshold.
+
+#### 7.11 Semantic Structure Check
+- Verify exactly one `<h1>` per page → MAJOR if 0 or 2+
+- Verify heading levels don't skip (no h1→h3 without h2) → MINOR
+- Verify `<main>` landmark exists on each page → MAJOR if missing
+- Verify navigation is in `<nav>` element → MINOR
+
+#### 7.12 Keyboard Flow Check
+- Tab through entire page: verify all interactive elements are reachable → MAJOR
+- Check for focus traps (excluding modals): tab should eventually cycle → CRITICAL
+- If modal present: verify focus trapped inside modal → MAJOR
+- Press Escape on open modal/dropdown: verify it closes → MAJOR
+- Check first focusable element: is it a skip link? → MINOR
+
+**Re-verification mode:** When `reverify_mode: true`, run Phase 7 only on `targeted_routes`.
+
+**Output:** Visual anti-pattern report
+
+### Phase 8: Requirements Cross-Check
 
 Final audit against all input documents:
 
@@ -428,6 +546,14 @@ COMP-{NN}: {feature} — IN SCOPE
 Present: YES | NO | PARTIAL
 Evidence: {what was found or not found}
 ```
+
+#### SEO Baseline Check (if project has public-facing pages from FRONT-XX)
+- Every public route has a unique `<title>` tag (not empty, not generic app name) → MINOR
+- Every public route has a `<meta name="description">` tag → MINOR
+- Open Graph tags present: `og:title`, `og:description`, `og:image` → MINOR
+- No `<meta name="robots" content="noindex">` on pages that should be indexed → MINOR
+- Canonical URL present: `<link rel="canonical">` → MINOR
+- Heading hierarchy: one `<h1>` per page, no skipped levels (h1→h3) → MINOR
 
 #### Project Spec Jobs-to-be-Done
 For every job-to-be-done in the project spec:
@@ -474,7 +600,11 @@ Total findings: {N} ({N} critical, {N} major, {N} minor, {N} info)
 ### Phase 6: Edge Cases & Resilience
 {loading, errors, empty states, auth, responsive, URLs}
 
-### Phase 7: Requirements Cross-Check
+### Phase 7: Visual Anti-Pattern Scan
+{contrast audit, overflow, touch targets, typography, affordance, spacing,
+ interaction states, content stress, dark mode re-test, font verification}
+
+### Phase 8: Requirements Cross-Check
 {UIX-XX, TEST-XX, COMP-XX, Jobs-to-be-Done traceability}
 
 ───────────────────────────────────────────────────────────────
@@ -489,7 +619,8 @@ Total findings: {N} ({N} critical, {N} major, {N} minor, {N} info)
 | 4. User Journeys | {N} | {N} | {N} | {N} |
 | 5. Missing Functionality | {N} | {N} | {N} | {N} |
 | 6. Edge Cases | {N} | {N} | {N} | {N} |
-| 7. Requirements Cross-Check | {N} | {N} | {N} | {N} |
+| 7. Visual Anti-Patterns | {N} | {N} | {N} | {N} |
+| 8. Requirements Cross-Check | {N} | {N} | {N} | {N} |
 | **TOTAL** | **{N}** | **{N}** | **{N}** | **{N}** |
 
 ### Findings (Ordered by Severity)

@@ -70,6 +70,11 @@ For each ML/computation component:
 - Performance characteristics (latency, throughput, accuracy)
 - Fallback behavior when model/service is unavailable
 
+**Challenge:** "You chose a neural network for classification. Your training set
+has 500 rows. A logistic regression would train in milliseconds, be fully
+interpretable, and probably perform equally well. Why the complex model?
+Can you prove the neural net outperforms the simpler baseline?"
+
 **Decide:** Model provider (local vs API), embedding dimensions, chunking
 strategy, similarity threshold, or calculation precision.
 
@@ -92,6 +97,10 @@ Steps:
 Error handling: {strategy}
 Idempotent: {yes/no — how}
 ```
+
+**Challenge:** "Your pipeline runs great on your dev machine with 1000 rows.
+In production you'll have 10 million. What happens to memory usage? Does
+it stream or load everything into RAM? What's the failure mode at 100x scale?"
 
 ### 3. Numerical Precision & Edge Cases
 
@@ -162,6 +171,11 @@ For ML components:
 - Regression detection (quality degradation over time)
 - A/B testing approach (if applicable)
 
+**Challenge:** "Your model accuracy is 95%. But your classes are 95% negative
+and 5% positive — a model that always predicts 'negative' gets 95% accuracy.
+What's the precision, recall, and F1 on the minority class? What's the
+confusion matrix? Accuracy alone is meaningless on imbalanced data."
+
 For calculations:
 - Reference implementations or known-correct examples
 - Boundary value tests
@@ -169,7 +183,9 @@ For calculations:
 
 ## Anti-Patterns
 
-- **Don't auto-pilot** — Present DATA-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
+- **Don't skip the orientation gate** — Ask questions first. The user's answers about ML vs rules-based, data sources, and precision requirements shape every decision.
+- **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
+- **Don't finalize DATA-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
 - Don't design schemas without understanding query patterns first
 - Don't add ML when rules-based logic would suffice
 - Don't skip data migration strategy for existing datasets
@@ -191,10 +207,31 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/data-ml --
 ## Procedure
 
 1. **Read** all planning + architecture artifacts
-2. **Identify** — Which components need data/ML depth?
-3. **Deepen** — For each component, ask targeted questions
-4. **Challenge** — Flag precision issues, missing edge cases, pipeline gaps
-5. **Output** — Append DATA-XX decisions to decisions.md
+
+2. 🛑 **GATE: Orientation** — Present your understanding of the project's
+   data/ML needs. Ask 3-5 targeted questions:
+   - ML vs rules-based? (or hybrid — ML for some, rules for others)
+   - Existing data sources or building from scratch?
+   - Precision requirements? (financial = exact, analytics = approximate)
+   - Real-time inference or batch processing?
+   - Training data available or cold-start problem?
+   **STOP and WAIT for user answers before proceeding.**
+
+3. **Analyze** — Work through focus areas 1-2 at a time. For each batch:
+   - Present findings and proposed DATA-NN decisions (as DRAFTS)
+   - Ask 2-3 follow-up questions specific to the focus area
+
+4. 🛑 **GATE: Validate findings** — After each focus area batch, present
+   draft decisions and wait for user feedback. Repeat steps 3-4 for
+   remaining focus areas.
+
+5. **Challenge** — Flag precision issues, missing edge cases, pipeline gaps
+
+6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
+   proposed DATA-NN decisions grouped by focus area. Wait for approval.
+   **Do NOT write to decisions.md until user approves.**
+
+7. **Output** — Append approved DATA-XX decisions to decisions.md
 
 ## Quick Mode
 
@@ -204,11 +241,16 @@ prioritized areas. Mark skipped areas in decisions.md: `DATA-XX: DEFERRED — sk
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which component you're exploring
-2. Reference relevant existing decisions
-3. Present algorithm/approach options with trade-offs
-4. Formulate 5-8 targeted questions
+2. Present analysis and draft decisions
+3. Highlight tradeoffs or things the user should weigh in on
+4. Formulate 2-4 targeted questions
+5. **WAIT for user answers before continuing**
 
 ### Advisory Perspectives
 

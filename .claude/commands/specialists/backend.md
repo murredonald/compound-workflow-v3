@@ -74,7 +74,29 @@ GET /api/{resource}/{id}
   Response 404: { error envelope }
 ```
 
-**Decide:** Error envelope format, pagination strategy, versioning approach.
+**API Documentation Strategy:**
+- Spec format: OpenAPI 3.x (YAML/JSON) — auto-generated from code or hand-written?
+- Documentation UI: Swagger UI, Redoc, Stoplight — served at `/docs` or `/api-docs`
+- Example requests/responses: include at least one example per endpoint
+- Authentication in docs: how to authenticate when trying endpoints interactively
+- Generation approach:
+  - Code-first: decorators/annotations generate OpenAPI spec (FastAPI, NestJS)
+  - Spec-first: write OpenAPI YAML, generate server stubs + client SDKs
+  - Hybrid: code-first generation with manual enrichment
+- Client SDK generation: auto-generate TypeScript/Python clients from OpenAPI spec?
+- Changelog: API changes tracked in CHANGELOG.md or auto-generated from spec diffs
+
+**Challenge:** "Your frontend developer asks 'what does the /api/invoices endpoint
+return?' Right now the answer is 'read the source code.' An OpenAPI spec with Swagger UI
+gives them a self-service answer and a try-it-out button. How long until that saves
+more time than it costs to maintain?"
+
+**Challenge:** "You've documented 15 endpoints. Then you add a field to the response
+and forget to update the docs. Now they're wrong, which is worse than no docs.
+Code-first generation prevents this — the spec IS the code."
+
+**Decide:** Error envelope format, pagination strategy, versioning approach,
+API documentation format, documentation UI.
 
 ### 2. Validation & Business Rules
 
@@ -180,17 +202,27 @@ Failure mode: {what happens when it's down}
 Testing: {approach}
 ```
 
-### 6. Observability & Monitoring
+### 6. Observability & Operations
 
-Lock decisions on structured logging, health checks, and metrics. Key questions:
+Lock decisions on structured logging, health checks, metrics, and operational readiness:
 
-- What logging framework and format? (structured JSON, correlation IDs)
-- What health check endpoints? (`/health` for load balancer, `/ready` for k8s)
-- What metrics matter? (request latency p50/p95/p99, error rates, queue depth)
-- What alerting thresholds? (error rate > 1%, latency p99 > 2s)
+**Decide:**
+- Structured logging format (JSON, key-value, log levels per environment)
+- What to log: request/response metadata, business events, errors, performance
+- What NOT to log: PII, tokens, passwords, request bodies with sensitive data
+- Health check endpoints: `/health` (liveness), `/ready` (readiness), `/metrics`
+- Metrics: request duration histograms, error rates, queue depths, DB pool usage
+- Distributed tracing: OpenTelemetry integration, trace context propagation
+- Error tracking: Sentry/Datadog integration, error grouping, alert thresholds
+- Database monitoring: slow query logging, connection pool metrics
+- Background job monitoring: queue length, processing time, failure rates
 
 **Challenge:** "If a request fails at 3 AM, can you trace it from the load
 balancer to the database query? If not, your observability is incomplete."
+
+**Challenge:** "Your app logs everything. In production with 1000 req/s,
+that's 86M log entries/day. What's the log retention policy? What gets
+sampled? What's the cost at scale?"
 
 ### 7. API Versioning & Evolution
 
@@ -205,7 +237,9 @@ How does a client on v1 know that v2 exists and what changed?"
 
 ## Anti-Patterns
 
-- **Don't auto-pilot** — Present BACK-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
+- **Don't skip the orientation gate** — Ask questions first. The user's answers about API style, existing database, and data volume shape every decision.
+- **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
+- **Don't finalize BACK-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
 - Don't design APIs in isolation from the UI flows that consume them
 - Don't skip error response design — every endpoint needs defined failure modes
 - Don't conflate validation (400) with authorization (403) with not-found (404)
@@ -227,10 +261,31 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/backend --
 ## Procedure
 
 1. **Read** all planning + architecture artifacts
-2. **Validate** — Do the API contracts support every workflow step?
-3. **Deepen** — For each focus area, ask targeted questions and lock decisions
-4. **Challenge** — Flag gaps: missing endpoints, unhandled error states, validation holes
-5. **Output** — Append BACK-XX decisions to decisions.md
+
+2. 🛑 **GATE: Orientation** — Present your understanding of the project's
+   backend needs. Ask 3-5 targeted questions:
+   - API style preference? (REST, GraphQL, gRPC, or mixed)
+   - Existing database or greenfield? ORM preference?
+   - Authentication approach already decided (from ARCH-XX) or open?
+   - Expected data volume and query complexity?
+   - External integrations already identified?
+   **STOP and WAIT for user answers before proceeding.**
+
+3. **Analyze** — Work through focus areas 1-2 at a time. For each batch:
+   - Present findings and proposed BACK-NN decisions (as DRAFTS)
+   - Ask 2-3 follow-up questions specific to the focus area
+
+4. 🛑 **GATE: Validate findings** — After each focus area batch, present
+   draft decisions and wait for user feedback. Repeat steps 3-4 for
+   remaining focus areas.
+
+5. **Challenge** — Flag gaps: missing endpoints, unhandled error states, validation holes
+
+6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
+   proposed BACK-NN decisions grouped by focus area. Wait for approval.
+   **Do NOT write to decisions.md until user approves.**
+
+7. **Output** — Append approved BACK-XX decisions to decisions.md
 
 ## Quick Mode
 
@@ -240,11 +295,16 @@ prioritized areas. Mark skipped areas in decisions.md: `BACK-XX: DEFERRED — sk
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which focus area you're exploring
-2. Reference relevant decisions (GEN-XX, ARCH-XX)
-3. Present options with trade-offs where choices exist
-4. Formulate 5-8 targeted questions
+2. Present analysis and draft decisions
+3. Highlight tradeoffs or things the user should weigh in on
+4. Formulate 2-4 targeted questions
+5. **WAIT for user answers before continuing**
 
 ### Advisory Perspectives
 

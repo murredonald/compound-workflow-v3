@@ -423,6 +423,30 @@ Compare the same component types across ALL pages to find intra-app inconsistenc
 
 **Output:** Cross-page consistency report
 
+### Baseline Visual Quality Floor
+
+These checks run **in addition to** style-guide compliance. Even if the
+style guide says nothing about a specific threshold, these are non-negotiable
+baselines. Reference: `.claude/visual-antipatterns.md`
+
+1. **Contrast:** All text must have ≥ 4.5:1 contrast ratio (normal text)
+   or ≥ 3:1 (large text ≥18px / ≥14px bold) — WCAG AA
+2. **Overflow:** No horizontal scroll at desktop viewport (1280px)
+3. **Typography:** Body text ≥ 14px, line-height ≥ 1.3
+4. **Touch targets:** Interactive elements ≥ 44×44px at mobile viewport (375px)
+5. **Form inputs:** Must have visible border (width > 0), outline, or box-shadow
+6. **Buttons:** Primary buttons must be visually distinct from page background
+7. **Focus:** Interactive elements must have visible `:focus-visible` style
+
+**Severity:** These fire as **MAJOR** findings even when the style guide
+doesn't explicitly define them. They represent the minimum quality floor
+below which no frontend should ship.
+
+**Finding format:** Same as other phases — cite route, element, computed
+values, expected threshold.
+
+**Output:** Baseline quality floor report
+
 ```
 Component: Primary Button
   /dashboard: bg=#2563EB, radius=8px, padding=8px 16px — matches style-guide
@@ -472,6 +496,9 @@ Categories: colors ({N}), typography ({N}), spacing ({N}), borders ({N}),
 
 ### Phase 7: Cross-Page Consistency
 {cross-page comparison results}
+
+### Baseline Visual Quality Floor
+{contrast, overflow, typography, touch targets, form inputs, buttons, focus}
 
 ───────────────────────────────────────────────────────────────
 

@@ -107,6 +107,32 @@ For each finding, cite the specific `STYLE-XX` decision ID from `.workflow/decis
 that the code violates. Format: `Violates: STYLE-{NN} -- {brief description}`.
 If no matching STYLE-XX exists, flag as "No governing STYLE decision -- consider adding one."
 
+### 4. Visual Anti-Pattern Check (static)
+
+Reference `.claude/visual-antipatterns.md`. Flag code patterns known to
+cause visual quality issues:
+
+- `color` and `background-color` on same element/container where both are
+  dark (lightness < 40%) or both light (lightness > 70%) — AP-01
+- `color: inherit` or `color: currentColor` on elements inside dark-themed
+  containers without checking effective contrast — AP-01
+- Fixed `width` values on elements that should be responsive (use `max-width`
+  instead) — AP-15, AP-16
+- `padding: 0` on content-wrapping containers (`main`, `article`, `section`,
+  `.container`) — AP-06
+- `font-size` values below 12px (excluding labels, captions, fine print) — AP-10
+- Missing `:hover` / `:focus` / `:focus-visible` styles on interactive
+  elements (buttons, links, inputs) — AP-25, AP-30
+- `border: none` on form inputs without compensating `box-shadow` or
+  `outline` — AP-23
+- `overflow: hidden` without explicit height management (may clip content) — AP-16
+- `transition: all` (should specify exact properties to avoid jank) — AP-38
+- Hover-only visibility patterns (`opacity: 0` / `visibility: hidden` +
+  `:hover` reveal) without touch alternative — AP-39
+- Fixed `height` on text-containing elements without `overflow` handling — AP-34
+- `font-family` declarations without system fallback stack (e.g., missing
+  `sans-serif`, `serif`, or `monospace` fallback) — AP-41
+
 ## Output Format
 
 ```

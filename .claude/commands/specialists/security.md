@@ -58,6 +58,42 @@ This specialist is **conditional**. Run when the project involves:
 
 ---
 
+## Research Tools
+
+This specialist **actively researches** security threats for the chosen stack.
+Unlike other reasoning specialists, security decisions based on innate
+knowledge alone are dangerous — CVEs, framework defaults, and best practices
+change frequently.
+
+1. **Web search** — Search for CVEs, framework security guides, OWASP updates
+2. **Web fetch** — Read security advisories, hardening guides, framework docs
+3. **`research-scout` agent** — Delegate specific lookups (library vuln history,
+   OWASP ASVS checklist items, security header recommendations)
+
+### Stack-Specific Research Protocol
+
+After reading project-spec.md and architecture decisions (ARCH-XX), research
+security implications of the SPECIFIC stack:
+
+**Round 1 — Framework security defaults:**
+- Search "{framework} security best practices {year}"
+- Search "{framework} security vulnerabilities recent"
+- Fetch the framework's official security documentation
+- Check default configs: are they secure by default or need hardening?
+
+**Round 2 — Dependency scanning:**
+- Search "{major dependency} CVE" for each major dependency in the stack
+- Check if the chosen versions have known vulnerabilities
+- Research dependency pinning strategy for the ecosystem
+
+**Round 3 — OWASP ASVS mapping:**
+- Fetch OWASP ASVS (Application Security Verification Standard) for the
+  project's risk level
+- Map ASVS requirements to the specific framework's implementation patterns
+- Identify which ASVS items require explicit implementation vs framework default
+
+---
+
 ## Focus Areas
 
 ### 1. Authentication Flow
@@ -161,9 +197,38 @@ traces, SQL errors, internal IDs, or file paths in error responses are
 information leakage. Define what error responses look like for each
 status code."
 
+**Security observability (cross-cutting with OPS-XX if DevOps specialist ran):**
+- Security event logging (failed logins, permission denials, rate limit hits)
+- Audit trail completeness (who did what, when, from where)
+- Alerting strategy for security events (thresholds, escalation)
+
+### 6. Supply Chain & Dependency Security
+
+**Research:** Run web searches for CVEs in the project's major dependencies.
+
+**Decide:**
+- Dependency pinning strategy (lock files, exact versions vs ranges)
+- Automated vulnerability scanning tool (Dependabot, Snyk, Trivy, npm audit)
+- Update cadence (weekly auto-PR, monthly review, security-only patches)
+- Container base image policy (official only, version pinning, scan on build)
+- Allowlist/blocklist for transitive dependencies
+
+**Challenge:** "Your package.json has 200 transitive dependencies. How
+many have you actually audited? What's your policy when a transitive
+dependency has a known CVE but the direct dependency hasn't patched it?"
+
+**Challenge:** "Your Docker base image is `node:latest`. What version
+is that today? What version will it be in 6 months? Pin it."
+
+**Decide:** Scanning tool selection, pinning strategy, update cadence,
+container policy.
+
 ## Anti-Patterns
 
-- **Don't auto-pilot** — Present SEC-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
+- **Don't skip the orientation gate** — Ask questions first. The user's answers about compliance, multi-tenancy, and data sensitivity shape every decision.
+- **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
+- **Don't finalize SEC-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
+- **Don't skip research** — This specialist MUST research the specific stack's security landscape. Innate knowledge alone misses recent CVEs and framework-specific hardening.
 - Don't treat security as a checklist — prioritize by actual threat likelihood
 - Don't copy-paste OWASP items without mapping them to this app's attack surface
 - Don't specify crypto primitives unless the project truly needs custom crypto
@@ -185,15 +250,40 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/security -
 ## Procedure
 
 1. **Read** all planning + architecture artifacts
-2. **Assess** — Build the threat model:
+
+2. **Research** — Execute the Stack-Specific Research Protocol (see Research Tools).
+   Gather CVEs, framework security defaults, and OWASP ASVS mapping.
+
+3. **Assess** — Build the threat model:
    - **Assets**: What data/functionality is worth protecting? (PII, financial data, admin access)
    - **Actors**: Who are the threat actors? (anonymous, authenticated users, admins, external services)
    - **Attack surface**: What's exposed? (public APIs, auth endpoints, file uploads, webhooks)
    - **Impact tiers**: Classify threats by impact (critical: data breach, high: privilege escalation, medium: data leakage, low: information disclosure)
-   - Prioritize focus areas below by threat impact — spend more time on critical/high
-3. **Deepen** — For each relevant focus area, ask targeted questions
-4. **Challenge** — Flag security gaps in existing decisions
-5. **Output** — Append SEC-XX decisions to decisions.md, update constraints.md
+
+4. 🛑 **GATE: Threat Model Review** — Present the threat model (assets, actors,
+   attack surface) and research findings. Ask 3-5 targeted questions:
+   - Compliance requirements? (GDPR, SOC2, HIPAA, PCI-DSS)
+   - MFA needed? For which roles?
+   - Multi-tenant? Data residency requirements?
+   - What's the most sensitive data in the system?
+   - Existing security infrastructure (WAF, IDS, SIEM)?
+   **STOP and WAIT for user answers before proceeding.**
+
+5. **Analyze** — Work through focus areas 1-2 at a time. For each batch:
+   - Present findings, research results, and proposed SEC-NN decisions (as DRAFTS)
+   - Ask 2-3 follow-up questions
+
+6. 🛑 **GATE: Validate findings** — After each focus area batch, present
+   draft decisions and wait for user feedback. Repeat steps 5-6 for
+   remaining focus areas.
+
+7. **Challenge** — Flag security gaps in existing decisions
+
+8. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
+   proposed SEC-NN decisions grouped by focus area. Wait for approval.
+   **Do NOT write to decisions.md until user approves.**
+
+9. **Output** — Append approved SEC-XX decisions to decisions.md, update constraints.md
 
 ## Quick Mode
 
@@ -203,11 +293,16 @@ prioritized areas. Mark skipped areas in decisions.md: `SEC-XX: DEFERRED — ski
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which focus area you're exploring
-2. Reference relevant existing decisions
-3. Present options with security trade-offs
-4. Formulate 5-8 targeted questions
+2. Present analysis, research findings, and draft decisions
+3. Highlight security tradeoffs the user should weigh in on
+4. Formulate 2-4 targeted questions
+5. **WAIT for user answers before continuing**
 
 ### Advisory Perspectives
 

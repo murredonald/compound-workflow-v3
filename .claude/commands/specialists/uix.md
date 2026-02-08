@@ -145,6 +145,71 @@ define its expected behavior:
 **Decide:** Interactive behavior conventions, table interaction pattern,
 form validation strategy.
 
+#### Visual Quality Expectations
+
+When auditing interactive elements, also flag missing visual quality
+specifications. Produce UIX-XX decisions that are **testable by Playwright**
+(qa-browser-tester Phase 7). Reference: `.claude/visual-antipatterns.md`
+
+Assess which anti-patterns are relevant to THIS project and convert them
+to enforceable decisions. Common examples:
+
+- `UIX-XX: Every form field must have a visible border or shadow distinguishing it from the page background`
+- `UIX-XX: Primary action buttons must be visually distinct (different color or weight) from secondary actions`
+- `UIX-XX: All text must meet WCAG AA contrast ratio (4.5:1 normal, 3:1 large)`
+- `UIX-XX: No horizontal scroll at 375px mobile viewport`
+- `UIX-XX: Body text minimum 14px, maximum line length 75ch`
+- `UIX-XX: Table headers must be visually differentiated from table data rows`
+- `UIX-XX: All interactive elements must have visible :focus-visible state`
+- `UIX-XX: Disabled elements must have visual distinction from enabled (opacity or color)`
+- `UIX-XX: Form inputs must have persistent labels (not placeholder-only)`
+
+These decisions are verified by the qa-browser-tester during end-of-queue
+Phase 7 (Visual Anti-Pattern Scan) and Phase 8 (Requirements Cross-Check).
+
+#### Accessibility Beyond Visual
+
+When auditing interactive elements, verify these non-visual accessibility
+requirements. Produce UIX-XX decisions that are testable:
+
+**Semantic HTML & ARIA:**
+- Heading hierarchy: one `<h1>` per page, sequential levels (no h1→h3 skip)
+- Landmark regions: `<main>`, `<nav>`, `<aside>`, `<footer>` — screen reader navigation
+- ARIA roles: custom components must have appropriate roles
+  (e.g., tabs → `role="tablist"`, `role="tab"`, `role="tabpanel"`)
+- ARIA states: `aria-expanded` on collapsibles, `aria-selected` on tabs,
+  `aria-current="page"` on active nav items
+- Live regions: `aria-live="polite"` for dynamic content updates
+  (toast notifications, search results, form validation messages)
+
+**Keyboard Navigation:**
+- Full flows: can a user complete every primary workflow using only keyboard?
+- Tab order: logical reading order, no focus traps (except modals)
+- Skip links: "Skip to main content" link as first focusable element
+- Escape key: closes modals, dropdowns, popovers
+- Arrow keys: navigate within composite widgets (tabs, menus, listboxes)
+
+**Content Accessibility:**
+- Alt text strategy: meaningful alt for informational images, empty `alt=""` for decorative
+- Error announcements: form validation errors announced to screen readers
+- Loading announcements: `aria-busy="true"` on containers during async loads
+- Timeout warnings: if session expires, warn user before logout
+
+**Challenge:** "A blind user opens your app with a screen reader. The first thing
+they hear is 'button button link link link navigation list list item.' Is your
+landmark structure meaningful? Can they navigate to main content in 2 keystrokes?"
+
+**Challenge:** "Your modal dialog opens. A keyboard user tabs through it and...
+focus escapes behind the modal into the page. Now they're lost. Do you have
+a focus trap? Does Escape close it?"
+
+**Challenge:** "Your toast notification says 'Saved!' but a screen reader user
+never hears it because it's not in a live region. How do they know their
+action succeeded?"
+
+**Decide:** WCAG target level (AA minimum, AAA aspirational), keyboard flow
+coverage, ARIA pattern library, screen reader testing approach.
+
 ### 3. User Flow Testing Plan
 
 For each primary workflow from project-spec Jobs-to-be-Done, define
@@ -220,6 +285,17 @@ Align with FRONT-XX breakpoint decisions and challenge gaps:
 - Autocomplete attributes set
 - Multi-step forms show progress indicator
 - Submit button always visible (not hidden below fold)
+
+**Internationalization UX (if FRONT-XX includes i18n decisions):**
+- Language switcher: where in the UI? (header, footer, settings, auto-detect)
+- Text expansion: UI must accommodate 40% longer strings (German, Finnish)
+  without overflow or layout breaking. Test with pseudo-localization.
+- RTL layout: if supporting Arabic/Hebrew, mirror entire layout (not just text)
+- Date/time/number display: must respect user's locale (not hardcoded US format)
+- Content that can't be translated: user-generated content, proper nouns, code
+
+**Challenge:** "Your language switcher is in Settings, 3 clicks deep.
+A non-English speaker lands on the English homepage. How do they find it?"
 
 **Decide:** Mobile interaction patterns, table collapse strategy,
 navigation transformation approach.
@@ -326,7 +402,9 @@ Flag any gaps.
 
 ## Anti-Patterns
 
-- **Don't auto-pilot** — Present UIX-XX decisions as drafts, get user approval before writing to decisions.md. See "Specialist Interactivity Rules" in CLAUDE.md.
+- **Don't skip the orientation gate** — Ask questions first. The user's answers about target devices, accessibility, and user sophistication shape every decision.
+- **Don't batch all focus areas** — Present 1-2 focus areas at a time with draft decisions. Get feedback before continuing.
+- **Don't finalize UIX-NN without approval** — Draft decisions are proposals. Present the complete list grouped by focus area for review before writing.
 - Don't write abstract usability guidelines — every expectation must be testable
 - Don't skip mobile viewport testing expectations
 - Don't assume navigation works — explicitly trace every "how do I get to X?" path
@@ -349,11 +427,33 @@ python .claude/tools/pipeline_tracker.py complete --phase specialists/uix --summ
 
 1. **Read** all planning artifacts + all prior specialist decisions
    (architecture, backend, frontend, security)
-2. **Phase-by-phase deep dive** — work through each phase in order,
-   producing UIX-XX decisions as you go
-3. **Challenge aggressively** — apply the "Where Is...?" mindset to
+
+2. 🛑 **GATE: Orientation** — Present your understanding of the project's
+   UI/UX needs. Ask 3-5 targeted questions:
+   - Target devices? (desktop-only, responsive, mobile-first)
+   - Accessibility level required? (WCAG AA, AAA, or basic)
+   - Offline capability needed? (PWA, service workers)
+   - Primary user sophistication level? (technical, non-technical, mixed)
+   - Existing design system or building from scratch?
+   **STOP and WAIT for user answers before proceeding.**
+
+3. **Phase-by-phase deep dive** — work through focus areas 1-2 at a time.
+   For each batch:
+   - Present findings and proposed UIX-NN decisions (as DRAFTS)
+   - Ask 2-3 follow-up questions specific to the focus area
+
+4. 🛑 **GATE: Validate findings** — After each focus area batch, present
+   draft decisions and wait for user feedback. Repeat steps 3-4 for
+   remaining focus areas.
+
+5. **Challenge aggressively** — apply the "Where Is...?" mindset to
    every entity, workflow, and screen. Flag every gap you find.
-4. **Output** — Append UIX-XX decisions to decisions.md
+
+6. 🛑 **GATE: Final decision review** — Present the COMPLETE list of
+   proposed UIX-NN decisions grouped by focus area. Wait for approval.
+   **Do NOT write to decisions.md until user approves.**
+
+7. **Output** — Append approved UIX-XX decisions to decisions.md
 
 ## Quick Mode
 
@@ -363,12 +463,16 @@ prioritized areas. Mark skipped areas in decisions.md: `UIX-XX: DEFERRED — ski
 
 ## Response Structure
 
+**Every response MUST end with questions for the user.** This specialist is
+a conversation, not a monologue. If you find yourself writing output without
+asking questions, you are auto-piloting — stop and formulate questions.
+
 Each response:
 1. State which phase you're exploring
-2. Reference relevant decisions (FRONT-XX for screens, BACK-XX for data,
-   SEC-XX for permissions)
-3. Present findings with specific, testable expectations
-4. Formulate 5-8 targeted questions
+2. Present analysis and draft decisions
+3. Highlight tradeoffs or things the user should weigh in on
+4. Formulate 2-4 targeted questions
+5. **WAIT for user answers before continuing**
 
 ### Advisory Perspectives
 

@@ -400,20 +400,31 @@ Ready to finalize artifacts? YES / NO
 |------------|--------|--------|
 | /specialists/competition | ✅ DONE | Completed before /plan-define |
 | /specialists/domain | ✅ / ⏭️ | Run for any project with domain complexity |
+| /specialists/branding | ✅ / ⏭️ | Run for consumer-facing products, SaaS apps, public tools needing brand identity |
 | /specialists/architecture | ✅ RUN | Always required |
 | /specialists/backend | ✅ RUN | Always required |
 | /specialists/frontend | ✅ / ⏭️ | {reason} |
 | /specialists/design | ✅ / ⏭️ | Run for any project with a web UI (after frontend) |
 | /specialists/uix | ✅ / ⏭️ | Run for any project with a web UI (after frontend + backend) |
 | /specialists/security | ✅ / ⏭️ | {reason} |
+| /specialists/devops | ✅ / ⏭️ | Run for any project deploying to cloud/containers (after architecture) |
+| /specialists/legal | ✅ / ⏭️ | Run when collecting PII, processing payments, GDPR jurisdictions, or needing ToS/privacy policy |
+| /specialists/pricing | ✅ / ⏭️ | Run for SaaS/subscription products needing tier structure and monetization strategy |
+| /specialists/llm | ✅ / ⏭️ | Run when product uses LLM APIs as features (AI chat, summarization, extraction, agents) |
+| /specialists/scraping | ✅ / ⏭️ | Run when project scrapes websites, consumes third-party APIs, or ingests external data feeds |
 | /specialists/data-ml | ✅ / ⏭️ | {reason} |
 | /specialists/testing | ✅ RUN | Always recommended (runs last — needs all other specialist decisions) |
 
 Execution order: {numbered list — competition already done}
 Note: /specialists/domain should run FIRST of remaining (domain knowledge informs architecture, backend, security, and data decisions).
-Note: /specialists/design must run AFTER /specialists/frontend (needs component library decisions).
+Note: /specialists/branding should run AFTER /specialists/domain and /specialists/competition (needs domain knowledge + competitor landscape), and BEFORE /specialists/design (BRAND-XX informs color system, typography mood, visual identity).
+Note: /specialists/design must run AFTER /specialists/frontend (needs component library decisions). If /specialists/branding ran, design reads brand-guide.md as foundation.
 Note: /specialists/uix must run AFTER /specialists/frontend and /specialists/backend (needs their decisions).
 Note: /specialists/design and /specialists/uix can run in parallel if both are enabled.
+Note: /specialists/legal should run AFTER /specialists/security (SEC-XX data protection decisions inform privacy policy scope).
+Note: /specialists/pricing should run AFTER /specialists/competition (COMP-XX provides competitor pricing data).
+Note: /specialists/llm should run AFTER /specialists/backend and /specialists/security (needs API architecture and guardrail context).
+Note: /specialists/scraping should run AFTER /specialists/backend (BACK-XX informs API consumption patterns) and before /specialists/testing (TEST-XX needs to know what to mock).
 Note: /specialists/testing should run LAST (needs BACK-XX, FRONT-XX, UIX-XX, SEC-XX to build complete test coverage map).
 ```
 

@@ -1,8 +1,8 @@
 # Decisions Log — Workflow Engine
 
-**Source:** /plan (Discovery Phase)
-**Phase:** discovery
-**Total:** 24 decisions
+**Source:** /plan + /plan-define (Strategic Planning)
+**Phase:** complete
+**Total:** 28 decisions
 
 ---
 
@@ -246,11 +246,56 @@
 
 ---
 
+### GEN-25: MVP = 13 features, 7 non-goals
+**Category:** Scope
+**Stage:** 6+7
+**Decision:** v1 includes: Pydantic models, workflow engine, Anthropic API integration, SQLite persistence, FastAPI REST API, WebSocket streaming, React dashboard, template management, LLM provider settings, checkpoint/rollback, auto-mode toggle, default template, second-opinion LLM routing. Non-goals: visual template editor, auth, cloud deploy, artifact diffing, mobile, plugins, NL template creation.
+**Alternatives:** Smaller MVP (engine + CLI only), larger MVP (visual editor included)
+**Rationale:** 13 features covers the full loop: define workflow → run it → see it → recover from errors. Non-goals prevent scope creep without losing core value.
+**Trade-offs:** Ambitious for solo dev — mitigated by milestone structure.
+
+---
+
+### GEN-26: 9 modules with clean dependency DAG
+**Category:** Scope
+**Stage:** 6+7
+**Decision:** M1 (Data Layer), M2 (Workflow Engine), M3 (LLM Integration), M4 (Tool Registry), M5 (API Layer), M6 (Frontend Shell), M7 (Pipeline UI), M8 (Management UI), M9 (Default Template). No circular dependencies.
+**Alternatives:** Fewer coarser modules, more fine-grained modules
+**Rationale:** Each module has clear responsibility and testable boundaries. Dependencies flow one direction.
+**Trade-offs:** 9 modules is moderate — manageable with milestone grouping.
+
+---
+
+### GEN-27: 3 milestones — backend-first, API-second, frontend-last
+**Category:** Scope
+**Stage:** 6+7
+**Decision:** MS1 "State Machine Walks" (M1+M2+M4+M9), MS2 "API Talks" (M3+M5), MS3 "Eyes On" (M6+M7+M8). Each is independently demo-able.
+**Alternatives:** Vertical slices (thin feature end-to-end), frontend-first prototyping
+**Rationale:** Backend-first ensures the hard problems (engine, validation, tool execution) are solved before building UI on top. Each milestone produces a working system at increasing capability.
+**Trade-offs:** No visual feedback until MS3 — acceptable because CLI/API testing covers MS1-MS2.
+
+---
+
+### GEN-28: Highest-risk module = M2 (Workflow Engine)
+**Category:** Scope
+**Stage:** 6+7
+**Decision:** The workflow engine (state machine, parallel phases, checkpoint/rollback, validation gates) is the most complex and highest-risk module. Built first in MS1 to de-risk early.
+**Alternatives:** Start with simpler modules to build momentum
+**Rationale:** If the engine doesn't work, nothing else matters. Early de-risking.
+**Trade-offs:** Slower start — harder module first means more time before first visible result.
+
+---
+
 ## Pending for Specialists
 
 | Decision | Assigned To | Context |
 |----------|-------------|---------|
-| Backend API design, endpoint structure | /specialists/backend | FastAPI routes, WebSocket design |
-| Frontend page layout, component hierarchy | /specialists/frontend | React pages, React Flow integration |
-| Architecture: engine internals, LLM adapter pattern | /specialists/architecture | Workflow engine, provider abstraction |
-| Security: API key handling, tool sandboxing | /specialists/security | Fernet encryption, file access boundaries |
+| Engine internals: state machine, phase transitions, checkpoint strategy | /specialists/architecture | Core system design |
+| LLM adapter pattern, provider abstraction, context management | /specialists/architecture | Multi-LLM integration pattern |
+| FastAPI routes, WebSocket design, request/response schemas | /specialists/backend | API layer design |
+| DB schema finalization, migration strategy | /specialists/backend | SQLModel details |
+| Prompt design per phase, tool schemas, model routing strategy | /specialists/llm | LLM integration details |
+| Context window management, structured output patterns | /specialists/llm | Anthropic API specifics |
+| React pages, React Flow integration, component hierarchy | /specialists/frontend | UI architecture |
+| Real-time streaming UX, state synchronization | /specialists/frontend | WebSocket + Zustand |
+| Test strategy: engine unit tests, API integration tests, E2E | /specialists/testing | Quality assurance |

@@ -1,7 +1,7 @@
 # Constraints — Workflow Engine
 
-**Source:** /plan (Discovery Phase)
-**Phase:** discovery
+**Source:** /plan + /plan-define (Strategic Planning)
+**Phase:** complete
 
 ---
 
@@ -26,7 +26,35 @@
 ---
 
 ## Scope Boundaries
-<!-- PENDING: Populated by /plan-define after MVP scope decisions -->
+
+### In Scope (v1)
+- Pydantic models for all artifact types
+- Workflow engine with template-driven state machine
+- Anthropic API integration with tool use
+- SQLite persistence via SQLModel
+- FastAPI REST API + WebSocket streaming
+- React dashboard with React Flow pipeline visualization
+- Template management (JSON config)
+- LLM provider settings with encrypted API keys
+- Checkpoint-based rollback
+- Auto-mode toggle
+- Default template (compound workflow)
+- Second-opinion LLM routing
+
+### Out of Scope (v1)
+- Visual drag-and-drop template editor (v2)
+- Multi-user auth / sharing (if ever shared)
+- Cloud deployment / Docker (v2 if needed)
+- Artifact diffing / cross-project comparison (v2)
+- Mobile responsive UI (never)
+- Plugin system for custom tools (v2)
+- Natural language template creation (v2+)
+
+### Boundaries
+- Max 1 concurrent pipeline run
+- Tool execution is local only (no remote/container sandboxing)
+- Frontend is desktop-width only
+- No file size limits on artifacts (local SQLite)
 
 ---
 

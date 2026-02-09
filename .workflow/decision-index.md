@@ -26,3 +26,7 @@
 | GEN-22 | State management = Zustand | /plan | 3+4 |
 | GEN-23 | API client = TanStack Query | /plan | 3+4 |
 | GEN-24 | Project directory structure = monorepo (backend/frontend/templates) | /plan | 3+4 |
+| GEN-25 | MVP = 13 features, 7 non-goals | /plan-define | 6+7 |
+| GEN-26 | 9 modules with clean dependency DAG | /plan-define | 6+7 |
+| GEN-27 | 3 milestones — backend-first, API-second, frontend-last | /plan-define | 6+7 |
+| GEN-28 | Highest-risk module = M2 (Workflow Engine) | /plan-define | 6+7 |

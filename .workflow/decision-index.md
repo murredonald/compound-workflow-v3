@@ -46,3 +46,18 @@
 | ARCH-14 | LLM adapter protocol with per-provider implementations | /specialists/architecture | FA5 |
 | ARCH-15 | StreamEvent union type for real-time WebSocket updates | /specialists/architecture | FA5 |
 | ARCH-16 | Log-based monitoring only, no observability stack | /specialists/architecture | FA6 |
+| BACK-01 | REST API at /api/ prefix, auto-generated OpenAPI docs | /specialists/backend | FA1 |
+| BACK-02 | 7 endpoint groups, ~25 endpoints total | /specialists/backend | FA1 |
+| BACK-03 | Pagination via limit/offset query params | /specialists/backend | FA1 |
+| BACK-04 | Pydantic v2 strict mode for all request/response schemas | /specialists/backend | FA2 |
+| BACK-05 | Pipeline + phase state machine with defined transitions | /specialists/backend | FA2 |
+| BACK-06 | Three validation layers — request, service, DB | /specialists/backend | FA2 |
+| BACK-07 | Template validation on create/update (no circular deps, valid schemas) | /specialists/backend | FA2 |
+| BACK-08 | UUID primary keys, snake_case naming | /specialists/backend | FA3 |
+| BACK-09 | 8 core tables with typed columns, indexes, FK constraints | /specialists/backend | FA3 |
+| BACK-10 | Cascade deletes for children, RESTRICT for references, no soft delete | /specialists/backend | FA3 |
+| BACK-11 | Alembic migrations with descriptive names, auto-run on startup | /specialists/backend | FA3 |
+| BACK-12 | Transactional operations with post-commit side effects | /specialists/backend | FA4 |
+| BACK-13 | No concurrency control needed (single user) | /specialists/backend | FA4 |
+| BACK-14 | Three LLM provider integrations via SDK with retry/backoff | /specialists/backend | FA5 |
+| BACK-15 | Secondary LLM failure is non-blocking | /specialists/backend | FA5 |

@@ -118,7 +118,7 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 
 | Agent | When to invoke | Model |
 |---|---|---|
-| `code-reviewer` | After every task implementation, before commit | Sonnet |
+| `code-reviewer` | After every task implementation, before commit | Opus |
 | `security-auditor` | After tasks touching auth, data handling, APIs, or secrets | Sonnet |
 | `test-analyst` | After test failures to diagnose root cause | Sonnet |
 | `milestone-reviewer` | At milestone boundaries (runs 4-suite test cascade) | Sonnet |

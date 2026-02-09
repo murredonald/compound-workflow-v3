@@ -205,7 +205,10 @@ Acceptance criteria:
   1. {criterion} — {how you'll verify}
   2. {criterion} — {how you'll verify}
 
-Relevant decisions: {IDs}
+Decision checklist:
+  {ID}: {one-line summary} → {target file(s)}
+  {ID}: {one-line summary} → {target file(s)}
+
 Relevant reflections: {IDs or "None"}
 ═══════════════════════════════════════════════════════════════
 ```
@@ -364,7 +367,8 @@ Load persona: `.claude/agents/code-reviewer.md`
 Provide:
 - `task_id`: T{NN}
 - `task_definition`: acceptance criteria, allowed files
-- `decisions`: relevant decision entries
+- `decisions`: relevant decision entries (full text, not just IDs)
+- `decision_checklist`: the decision checklist from Step 2's plan (decision ID → target file mapping). This gives the reviewer a concrete verification target for each decision.
 - `constraints`: relevant constraint entries
 - `changed_files`: list of files modified
 - `verification_output`: The console output from Step 4 (proof it runs)

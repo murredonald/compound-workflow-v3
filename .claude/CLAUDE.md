@@ -143,8 +143,8 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 **Multi-LLM review system (inside /execute, /debug-session, and test-analyst):**
 - Controlled by `multi_llm_review` section in `advisory-config.json` (`enabled`, `contexts[]`)
 - `second_opinion.py` supports 4 modes: `planning` (default), `code-review`, `diagnosis`, `debugging`
-- Feed-forward architecture: external LLMs review first → findings fed INTO Claude primary reviewer → unified verdict
-- Code review: GPT + Gemini review diff → findings passed as `external_review_findings` to `code-reviewer`
+- Independent parallel review: code-reviewer (Opus) + GPT + Gemini run simultaneously, no cross-contamination → Ralph adjudicates
+- Code review: all reviewers run blind, Ralph cross-references findings after all return. Opus is primary signal; external-only findings validated against code before accepting.
 - Test diagnosis: GPT + Gemini diagnose failures → findings passed as `external_diagnoses` to `test-analyst`
 - Debugging: Claude hypothesizes first → GPT + Gemini propose alternatives → Claude merges & re-ranks
 - Milestone review: external LLMs can review integration points → findings passed as `external_review_findings` to `milestone-reviewer`
@@ -153,8 +153,8 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 
 **Review gate (inside /execute):**
 1. Implement task
-2. If `multi_llm_review.enabled` and `"code-review"` in contexts: run GPT + Gemini external code review on diff (Phase 1)
-3. Run `code-reviewer` (always, with `external_review_findings` if Phase 1 ran) + `security-auditor` (conditional: tasks touching auth, data, APIs, secrets, financial logic)
+2. Run ALL reviewers in parallel (single message): `code-reviewer` (Opus, independent — no external findings) + GPT + Gemini (if multi_llm_review enabled) + `security-auditor` (conditional) + `frontend-style-reviewer` (conditional)
+3. Ralph adjudicates: cross-references all findings, validates external-only findings against code, produces unified verdict
 4. Record each reviewer's input/output in the audit chain (`python .claude/tools/chain_manager.py record`)
 5. If PASS → commit. If FAIL with fixable issues → fix and re-review (max 3 cycles). If FAIL with unfixable → escalate to human.
 6. At milestone boundaries → run `milestone-reviewer` for integration test cascade.

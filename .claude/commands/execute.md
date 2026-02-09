@@ -320,14 +320,32 @@ For every subagent call in this step:
 Do NOT paraphrase the persona. Do NOT write your own review prompt.
 The persona defines review criteria, output format, and bias rules.
 
-### External Code Review (conditional — multi-LLM feed-forward)
+### Independent parallel review (bias-free architecture)
+
+All reviewers run **independently and in parallel** — no reviewer sees another's
+findings. This prevents anchoring bias. Ralph adjudicates after all return.
+
+**Phase 1 — All reviews in parallel (single message, multiple Task calls):**
+
+**code-reviewer (always — Opus):**
+Load persona: `.claude/agents/code-reviewer.md`
+
+Provide:
+- `task_id`: T{NN}
+- `task_definition`: acceptance criteria, allowed files
+- `decisions`: relevant decision entries (full text, not just IDs)
+- `decision_checklist`: the decision checklist from Step 2's plan (decision ID → target file mapping)
+- `constraints`: relevant constraint entries
+- `changed_files`: list of files modified
+- `verification_output`: The console output from Step 4 (proof it runs)
+
+Do NOT pass external findings. The code-reviewer must form its own conclusions first.
+
+**External LLM reviews (conditional — GPT + Gemini):**
 
 Read `.claude/advisory-config.json`. If `multi_llm_review.enabled` is true
 AND `"code-review"` is in `multi_llm_review.contexts`, run external reviews
-BEFORE the Claude code-reviewer. Their findings will be fed INTO the
-code-reviewer as additional input.
-
-**Phase 1 — External reviews (run GPT + Gemini in parallel):**
+in the SAME parallel batch as the code-reviewer:
 
 1. Generate git diff of changed files:
    ```bash
@@ -359,20 +377,42 @@ code-reviewer as additional input.
      --description "{Provider} external code review of T{NN}"
    ```
 
-**Phase 2 — Claude code-reviewer (runs after externals complete):**
+**Phase 2 — Adjudication (Ralph cross-references all findings):**
 
-### code-reviewer (always)
-Load persona: `.claude/agents/code-reviewer.md`
+After ALL reviewers return (code-reviewer + GPT + Gemini + security-auditor
++ frontend-style-reviewer as applicable), Ralph produces a unified verdict:
 
-Provide:
-- `task_id`: T{NN}
-- `task_definition`: acceptance criteria, allowed files
-- `decisions`: relevant decision entries (full text, not just IDs)
-- `decision_checklist`: the decision checklist from Step 2's plan (decision ID → target file mapping). This gives the reviewer a concrete verification target for each decision.
-- `constraints`: relevant constraint entries
-- `changed_files`: list of files modified
-- `verification_output`: The console output from Step 4 (proof it runs)
-- `external_review_findings`: (if Phase 1 ran) The raw, unedited GPT and Gemini code review outputs from Phase 1. Format: `"GPT: {output}\n\nGemini: {output}"`. If Phase 1 didn't run or both failed, omit this field.
+```
+REVIEW ADJUDICATION — T{NN}
+═══════════════════════════════════════════════════════════════
+
+Code-reviewer (Opus):  {PASS|CONCERN|BLOCK} — {N} findings
+GPT:                   {summary or "unavailable"}
+Gemini:                {summary or "unavailable"}
+Security-auditor:      {verdict or "not applicable"}
+Style-reviewer:        {verdict or "not applicable"}
+
+Cross-reference:
+  Confirmed (2+ sources):   {findings agreed on by multiple reviewers}
+  Unique to Opus:           {findings only Opus caught — TRUST these}
+  Unique to external:       {findings only GPT/Gemini caught — VALIDATE against code}
+  Contradictions:           {where reviewers disagree — investigate, cite evidence}
+
+External-only findings validation:
+  {For each finding unique to GPT/Gemini, Ralph checks the actual code:}
+  - {finding}: CONFIRMED (real issue) | DISMISSED (false positive — {reason})
+
+Unified verdict: PASS | CONCERN | BLOCK
+Fix list: {merged, deduplicated, numbered}
+═══════════════════════════════════════════════════════════════
+```
+
+**Adjudication rules:**
+- Code-reviewer (Opus) verdict is the **primary signal** — it reads the actual files
+- External findings that Opus missed: validate by reading the code yourself before accepting
+- External findings that Opus contradicts: trust Opus (it read the files; externals only saw the diff)
+- Findings confirmed by 2+ sources: high confidence, always include
+- The unified verdict is the WORST of all confirmed findings (BLOCK > CONCERN > PASS)
 
 ### security-auditor (conditional — auth, data, APIs, secrets, financial)
 Load persona: `.claude/agents/security-auditor.md`

@@ -161,26 +161,28 @@ Check for regressions — run related tests beyond the immediate fix:
 
 ### 7. REVIEW
 
-**External LLM code review (conditional — multi-LLM feed-forward):**
+**Independent parallel review (bias-free — same architecture as /execute):**
 
-Read `.claude/advisory-config.json`. If `multi_llm_review.enabled` is true
-AND `"code-review"` is in `multi_llm_review.contexts`:
+Run ALL reviewers in parallel (no cross-contamination):
 
-1. Get the diff: `git diff HEAD~1`
-2. Write context JSON: `{"diff": "{diff}", "task_context": "Debug fix for {bug title}", "files_changed": [...]}`
-3. Run GPT + Gemini in parallel:
-   ```bash
-   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
-   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode code-review
-   ```
-4. Collect outputs as `external_review_findings`.
-
-**Primary reviewers:**
-Delegate to subagent reviewers:
-- **Always:** `code-reviewer` — pass `external_review_findings` if available
+- **Always:** `code-reviewer` (Opus) — independent review, NO external findings
 - **If auth/data/API related:** `security-auditor` — security review
+- **If multi_llm_review enabled** (`advisory-config.json` → `multi_llm_review.enabled` +
+  `"code-review"` in contexts): GPT + Gemini review the diff in the same parallel batch:
+  1. Get the diff: `git diff HEAD~1`
+  2. Write context JSON: `{"diff": "{diff}", "task_context": "Debug fix for {bug title}", "files_changed": [...]}`
+  3. Run both providers:
+     ```bash
+     python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
+     python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode code-review
+     ```
 
-Both run in parallel. Follow the standard review gate:
+**Adjudication:** After all reviewers return, cross-reference findings:
+- Opus verdict is the primary signal
+- External-only findings: validate against the actual code before accepting
+- Produce unified verdict: PASS | CONCERN | BLOCK
+
+Follow the standard review gate:
 - PASS → proceed to commit
 - FAIL with fixable issues → fix and re-review (max 3 cycles)
 - FAIL with unfixable → escalate to user

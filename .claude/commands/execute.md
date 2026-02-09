@@ -176,6 +176,8 @@ If the task touches files listed in a deferred finding, display:
 If the fix is trivial and in-scope, address it during implementation. Otherwise note it.
 
 On first task of session, also read `.workflow/reflexion/process-learnings.md` once (not per-task).
+If it contains any entries tagged `**MUST-APPLY**`, note them — these are systemic patterns
+(3+ recurrences) that apply to ALL tasks, not just matching ones.
 ```
 
 ## Step 2: PLAN
@@ -537,6 +539,27 @@ If reviewers returned CONCERN or BLOCK findings:
 2. Re-run verification (step 4)
 3. Re-run the reviewer that flagged the issue (step 5)
 4. Repeat until PASS or CONCERN-only
+
+**Cross-cycle error accumulation:** When entering cycle 2+, inject the full error
+history from ALL previous cycles before fixing. This prevents the pendulum effect
+(fixing issue A reintroduces issue B from cycle 1):
+
+```
+REVIEW ERROR HISTORY — T{NN}
+═══════════════════════════
+Cycle 1 findings (FIXED — do NOT reintroduce):
+  1. {finding} — {what was fixed}
+  2. {finding} — {what was fixed}
+
+Cycle 2 findings (CURRENT — fix these):
+  1. {finding}
+  2. {finding}
+═══════════════════════════
+```
+
+Keep this history in working memory for the duration of the task. On cycle 3 (max),
+all three cycles' findings are visible. If cycle 3 still BLOCKs, escalate to user
+with the full error history attached.
 
 **Do not create new tasks for code-level findings.** The original task wasn't done.
 Fix it within the same task scope.

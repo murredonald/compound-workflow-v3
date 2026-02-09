@@ -204,7 +204,9 @@ Run ALL reviewers in parallel (no cross-contamination):
 
 Follow the standard review gate:
 - PASS → proceed to commit
-- FAIL with fixable issues → fix and re-review (max 3 cycles)
+- FAIL with fixable issues → fix and re-review (max 3 cycles).
+  On cycle 2+, inject previous cycles' findings as "FIXED — do NOT reintroduce"
+  to prevent the pendulum effect (see execute.md Step 6 for full template).
 - FAIL with unfixable → escalate to user
 
 ### 8. REPORT

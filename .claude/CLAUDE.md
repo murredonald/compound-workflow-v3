@@ -335,6 +335,15 @@ On Windows, bash is provided by Git Bash (bundled with Git for Windows). Claude 
 - Strict mypy
 - Tool config in `pyproject.toml`
 
+## Context Hygiene During Execution
+
+The executor processes tasks sequentially. Each task's implementation details (file contents,
+diffs, review output, test results) are **dead weight** after the task commits. Step 10
+(CONTEXT BOUNDARY) writes a compact transition summary and discards stale context.
+
+**Compaction cadence:** Every 3 completed tasks OR at every milestone boundary, recommend
+compaction to the user. The on-compact hook re-injects only essential state.
+
 ## When Context Compacts
 
 The `on-compact.sh` hook will re-inject your current state. After compaction:

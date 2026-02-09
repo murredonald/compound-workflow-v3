@@ -762,7 +762,42 @@ Append an entry to the `"entries"` array in `.workflow/evals/task-evals.json`:
 }
 ```
 
-## Step 10: ADVANCE
+## Step 10: CONTEXT BOUNDARY
+
+After completing a task, context from the implementation is no longer needed.
+Previous task's file contents, diffs, review output, and test results are dead weight
+that pollutes the window and degrades quality on subsequent tasks.
+
+**Task transition summary** — write this to yourself before moving on:
+```
+═══ TASK COMPLETE ═══════════════════
+Task: T{NN} — {title}
+Commit: {hash}
+Files: {list of files touched}
+Review cycles: {N}
+Reflexion: {entry ID if written, else "none"}
+Milestone: M{N} — {X}/{Y} tasks done
+═════════════════════════════════════
+```
+
+**Context hygiene rules:**
+1. After writing the transition summary, all implementation details from the completed
+   task (file contents read, code written, diffs generated, review findings, test output)
+   are **stale context**. Do not reference them for subsequent tasks.
+2. The ONLY information that carries forward between tasks:
+   - Task queue position (which task is next)
+   - Milestone progress (X/Y tasks complete)
+   - Reflexion entries (externalized to files — re-read per Step 1)
+   - Error accumulation history (only within the SAME task's review cycles)
+   - Execution config settings
+3. **Compaction trigger:** After completing **every 3 tasks** in the same session,
+   tell the user: `"3 tasks completed in this session — recommend /compact or starting
+   a fresh session to keep context clean. Say 'continue' to proceed without compaction."`
+   The on-compact.sh hook will re-inject essential state (current task, milestone, queue).
+4. At milestone boundaries, compaction is **strongly recommended** regardless of task count,
+   since the milestone review itself generates significant context.
+
+## Step 11: ADVANCE
 
 Check what comes next:
 
@@ -771,6 +806,7 @@ IF next item is a task:
   → Return to step 1 with next task
 
 IF current task is the last in a milestone:
+  → Recommend compaction before milestone review (milestone review is context-heavy)
   → Run milestone review (see below)
 
 IF all tasks complete:

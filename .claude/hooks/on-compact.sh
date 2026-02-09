@@ -78,6 +78,14 @@ if [ -f "$PIPELINE_STATUS" ] && command -v jq &>/dev/null; then
   echo "PIPELINE: $(jq -r '.pipeline_type' "$PIPELINE_STATUS") | Phase: $CURRENT | Progress: $COMPLETED/$TOTAL"
 fi
 
+# Tasks completed in this milestone (for context boundary tracking)
+if [ -f "$TASK_QUEUE" ]; then
+  MILESTONE_DONE=$(grep -c '\[x\]' "$TASK_QUEUE" 2>/dev/null || echo 0)
+  MILESTONE_TOTAL=$(grep -cE '\[[ x~]\]' "$TASK_QUEUE" 2>/dev/null || echo 0)
+  echo ""
+  echo "TASKS COMPLETED: $MILESTONE_DONE / $MILESTONE_TOTAL (recommend /compact every 3 tasks)"
+fi
+
 # Show recent reflections
 if [ -f "$REFLEXION" ] && command -v jq &>/dev/null; then
   LESSONS=$(jq -r '.entries[-3:][] | "- " + .lesson' "$REFLEXION" 2>/dev/null)

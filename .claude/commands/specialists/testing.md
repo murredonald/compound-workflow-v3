@@ -61,10 +61,10 @@ verifiable by the `milestone-reviewer` agent during `/execute`.
 This specialist is **always recommended**. Run for every project regardless
 of type (web app, API, CLI, library). The focus areas adapt:
 
-- **Web apps with UI:** All 7 focus areas
-- **Pure APIs / libraries:** Skip Focus Area 5 (E2E/UI), focus on contract tests
-- **CLI tools:** Skip Focus Area 5, add CLI invocation tests in Focus Area 3
-- **Data/ML projects:** Extra weight on Focus Area 6 (data quality, numerical precision)
+- **Web apps with UI:** All 9 focus areas
+- **Pure APIs / libraries:** Skip FA 5 (E2E/UI), extra weight on FA 9 (property-based — APIs have many roundtrip/invariant candidates)
+- **CLI tools:** Skip FA 5, add CLI invocation tests in FA 3, FA 9 for parsers/formatters
+- **Data/ML projects:** Extra weight on FA 6 (data quality, numerical precision), FA 9 for transformation pipelines
 
 ---
 
@@ -105,6 +105,7 @@ Research when:
 - Choosing E2E framework (FA 5)
 - Evaluating visual regression tools (FA 8)
 - Checking CI-specific test parallelization options
+- Evaluating property-based testing libraries (FA 9)
 
 Do NOT research for:
 - Test coverage targets (FA 3-4) — reasoning from spec is sufficient
@@ -471,6 +472,62 @@ isolation strategy?"
 **Decide:** Flake detection tool, quarantine workflow, CI parallelization
 approach, visual regression tool selection.
 
+### 9. Property-Based Testing
+
+*Skip if: project has no pure functions, no data transformations, and no serialization/parsing logic.*
+
+Property-based testing generates hundreds of random inputs and verifies
+that **invariants hold across all of them**. Where example-based tests
+check "given X, expect Y," property-based tests check "for ALL valid X,
+property P must hold." This catches edge cases that hand-written examples miss.
+
+**Identify candidates** — scan BACK-XX and ARCH-XX for operations with invariants:
+
+```
+PROPERTY-BASED TEST CANDIDATES:
+  Operation: {name}
+  Invariant type: {roundtrip | idempotency | invariant | commutativity | no-crash}
+  Property: {description — e.g., "encode then decode returns original"}
+  Input domain: {what constitutes a valid input}
+  Library: {hypothesis (Python) / fast-check (JS/TS)}
+```
+
+**Common invariant types:**
+
+| Type | Property | Example |
+|------|----------|---------|
+| **Roundtrip** | encode(decode(x)) == x | Serializers, formatters, parsers, URL builders |
+| **Idempotency** | f(f(x)) == f(x) | Normalization, formatting, deduplication, sanitization |
+| **Invariant** | Property holds for all valid inputs | Sorted output stays sorted, total >= 0, valid date range |
+| **Commutativity** | f(a, b) == f(b, a) | Set operations, merge functions, tax calculations |
+| **No-crash** | f(x) doesn't throw for any valid x | Input validation, parsers, API request builders |
+
+**Integration with unit tests:**
+
+Property-based tests live alongside unit tests in the same directory.
+They complement — not replace — example-based tests:
+- Example tests: document expected behavior for specific known cases
+- Property tests: discover unknown edge cases via random exploration
+
+```
+tests/unit/services/
+  test_pricing.py          # Example-based: known price calculations
+  test_pricing_props.py    # Property-based: price >= 0, discount <= original, roundtrip serialization
+```
+
+**Challenge:** "Which operations in BACK-XX have roundtrip properties?
+(serialize/deserialize, format/parse, encrypt/decrypt, compress/decompress)
+Each one is a property-based test candidate. List them."
+
+**Challenge:** "Your pricing calculation has 6 parameters with edge cases
+at zero, negative, and boundary values. You wrote 12 example tests.
+Hypothesis would test 200 random combinations in 2 seconds. Which
+approach finds the off-by-one error in the discount cap?"
+
+**Decide:** Property-based testing library, which modules get property
+tests (minimum: all pure transformations and serializers), max examples
+per test (default 200), CI integration (run with unit tests or separate).
+
 ---
 
 ## Anti-Patterns
@@ -604,7 +661,7 @@ python .claude/tools/chain_manager.py record \
 TESTING SPECIALIST COMPLETE
 ═══════════════════════════════════════════════════════════════
 Decisions added: TEST-01 through TEST-{N}
-Test types planned: {list — unit, integration, e2e, security, performance}
+Test types planned: {list — unit, integration, e2e, security, performance, property-based}
 Endpoints covered: {N}/{N} from BACK-XX
 User flows covered: {N}/{N} from UIX-XX
 Security scenarios: {N} from SEC-XX

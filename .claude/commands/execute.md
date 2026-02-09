@@ -92,9 +92,8 @@ python .claude/tools/pipeline_tracker.py complete --phase runtime-qa --summary "
 Read before starting:
 - `.claude/execution-config.json` — Execution behavior settings (read FIRST, validate — see Config Validation)
 - `.workflow/task-queue.md` — The validated task queue
-- `.workflow/decision-index.md` — Compact index of all decisions
+- `.workflow/decision-index.md` — Compact index of all decisions (also used for cross-referencing during implementation)
 - `.workflow/decisions/*.md` — Per-domain decision files (read only referenced IDs)
-- `.workflow/decision-index.md` — Concern-area index (for cross-referencing during implementation)
 - `.workflow/constraints.md` — Boundaries and limits
 - `.workflow/project-spec.md` — Project specification (needed for milestone-reviewer and QA agent excerpts)
 - `.workflow/domain-knowledge.md` — Domain glossary and business rules (if exists — prevents implementation misunderstandings)
@@ -339,7 +338,7 @@ For every subagent call in this step:
 1. **Read** the persona file with the Read tool: `.claude/agents/{agent-name}.md`
 2. **Include the full persona content** verbatim at the top of the Task tool prompt
 3. Append the structured inputs listed below for that agent
-4. Use `subagent_type: "general-purpose"` with `model: "sonnet"`
+4. Use `subagent_type: "general-purpose"` with the model specified in the agent's `## Model:` header (code-reviewer → `"opus"`, most others → `"sonnet"`, context-loader → `"haiku"`)
 
 Do NOT paraphrase the persona. Do NOT write your own review prompt.
 The persona defines review criteria, output format, and bias rules.
@@ -925,7 +924,7 @@ Classify failures by severity:
 Record chain entry:
 ```bash
 python .claude/tools/chain_manager.py record \
-  --task FINAL-VERIFY --pipeline execute --stage final_test_suite --agent self \
+  --task EOQ-VERIFY --pipeline execute --stage final_test_suite --agent self \
   --input-file {temp_input} --output-file {temp_test_output} \
   --description "End-of-queue full test suite: {N} tests, {N} failures" \
   --verdict {PASS|CONCERN|BLOCK} \

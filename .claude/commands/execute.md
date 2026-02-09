@@ -277,7 +277,17 @@ If tests fail AND `.claude/advisory-config.json` has `multi_llm_review.enabled`
 = true AND `"diagnosis"` is in `multi_llm_review.contexts`, run external
 diagnosis IN PARALLEL with the Claude test-analyst (same message, multiple Task calls):
 
-1. Write context JSON: `{"test_output": "{failure output}", "task_context": "{task description}", "recent_changes": "{changed files}"}`
+1. Write context JSON (include file contents so external LLMs can see the actual code, not just test output):
+   ```json
+   {
+     "test_output": "{failure output}",
+     "task_context": "{task description}",
+     "recent_changes": ["list of changed files"],
+     "changed_file_contents": {
+       "{path/to/changed_file.py}": "{full file content after changes}"
+     }
+   }
+   ```
 2. Run ALL diagnosticians in parallel (single message):
    - **test-analyst** (Claude Sonnet) — independent, NO external diagnoses passed
    - GPT diagnosis:
@@ -374,16 +384,38 @@ in the SAME parallel batch as the code-reviewer:
    ```bash
    git diff HEAD -- {changed_files} > {temp_diff_file}
    ```
-2. Write context JSON to a temp file:
+2. Write context JSON to a temp file. **Include full file contents** — external
+   LLMs cannot read files, so the diff alone causes false positives when they
+   can't see surrounding code (e.g., flagging a "missing" config that exists
+   elsewhere in the file):
    ```json
    {
      "task_id": "T{NN}",
-     "task_definition": "{acceptance criteria}",
+     "task_definition": "{acceptance criteria from task-queue.md}",
      "git_diff": "{diff content}",
-     "decisions": "{relevant decisions}",
-     "constraints": "{relevant constraints}"
+     "files_after": {
+       "{path/to/file1.py}": "{full file content after changes}",
+       "{path/to/file2.py}": "{full file content after changes}"
+     },
+     "decisions": [
+       "{BACK-01: decision text}",
+       "{SEC-13: decision text}"
+     ],
+     "constraints": "{relevant constraints}",
+     "project_context": "{1-2 sentence description of the project and tech stack}"
    }
    ```
+   **`files_after` rules:**
+   - Include the COMPLETE content of every file touched in the diff
+   - For new files: full content (same as what's in the diff, but easier to read)
+   - For modified files: full content AFTER the changes (critical — this is what
+     prevents false positives about "missing" code that exists outside the diff hunk)
+   - For deleted files: omit from `files_after` (the diff shows the deletion)
+   - If a single file exceeds 500 lines, include only the changed functions/classes
+     plus 20 lines of surrounding context, with a note: `"[truncated — showing changed sections with context]"`
+   - **`decisions`**: List specific decision IDs + text that govern this task's domain
+     (not the entire decisions file — just the ones referenced in the task definition
+     or that apply to the modules being modified)
 3. Run both providers in parallel (if enabled in `advisors`):
    ```bash
    python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
@@ -431,9 +463,9 @@ Fix list: {merged, deduplicated, numbered}
 ```
 
 **Adjudication rules:**
-- Code-reviewer (Opus) verdict is the **primary signal** — it reads the actual files
+- Code-reviewer (Opus) verdict is the **primary signal** — it reads the actual files via tools
 - External findings that Opus missed: validate by reading the code yourself before accepting
-- External findings that Opus contradicts: trust Opus (it read the files; externals only saw the diff)
+- External findings that Opus contradicts: trust Opus (it has tool access; externals work from context JSON only)
 - Findings confirmed by 2+ sources: high confidence, always include
 - The unified verdict is the WORST of all confirmed findings (BLOCK > CONCERN > PASS)
 
@@ -746,7 +778,22 @@ If `multi_llm_review.enabled` and `"code-review"` in contexts, run GPT + Gemini
 milestone-level integration reviews IN PARALLEL with the milestone-reviewer
 (same message, multiple calls):
 
-1. Write context JSON summarizing cross-module integration points, changed files, milestone deliverables
+1. Write context JSON including integration points, deliverables, and key file contents:
+   ```json
+   {
+     "milestone_id": "M{N}",
+     "milestone_deliverables": "{what this milestone delivers}",
+     "tasks_completed": ["T01", "T02", "..."],
+     "integration_points": ["module A → module B", "..."],
+     "changed_files": ["..."],
+     "key_file_contents": {
+       "{path/to/api_route.py}": "{content of key integration files}",
+       "{path/to/config.py}": "{content of config files}"
+     }
+   }
+   ```
+   For milestone reviews, include files at integration seams (APIs, configs,
+   shared models) rather than every file. Cap at ~10 key files.
 2. Run both providers:
    ```bash
    python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review

@@ -100,7 +100,17 @@ Read `.claude/advisory-config.json`. If `multi_llm_review.enabled` is true
 AND `"debugging"` is in `multi_llm_review.contexts`, invoke external LLMs
 AFTER generating your initial hypotheses:
 
-1. Write context JSON: `{"bug_description": "{bug}", "reproduction_steps": "{steps}", "current_hypotheses": "{your H1, H2, H3}"}`
+1. Write context JSON (include relevant file contents — external LLMs cannot read files):
+   ```json
+   {
+     "bug_description": "{bug}",
+     "reproduction_steps": "{steps}",
+     "current_hypotheses": "{your H1, H2, H3}",
+     "relevant_files": {
+       "{path/to/suspect_file.py}": "{full file content or key sections with context}"
+     }
+   }
+   ```
 2. Run GPT + Gemini in parallel:
    ```bash
    python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode debugging
@@ -170,7 +180,17 @@ Run ALL reviewers in parallel (no cross-contamination):
 - **If multi_llm_review enabled** (`advisory-config.json` → `multi_llm_review.enabled` +
   `"code-review"` in contexts): GPT + Gemini review the diff in the same parallel batch:
   1. Get the diff: `git diff HEAD~1`
-  2. Write context JSON: `{"diff": "{diff}", "task_context": "Debug fix for {bug title}", "files_changed": [...]}`
+  2. Write context JSON (include full file contents — external LLMs only see what's in this JSON):
+     ```json
+     {
+       "diff": "{diff}",
+       "task_context": "Debug fix for {bug title}",
+       "files_changed": ["..."],
+       "files_after": {
+         "{path/to/file.py}": "{full file content after changes}"
+       }
+     }
+     ```
   3. Run both providers:
      ```bash
      python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review

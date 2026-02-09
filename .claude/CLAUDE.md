@@ -143,11 +143,11 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 **Multi-LLM review system (inside /execute, /debug-session, and test-analyst):**
 - Controlled by `multi_llm_review` section in `advisory-config.json` (`enabled`, `contexts[]`)
 - `second_opinion.py` supports 4 modes: `planning` (default), `code-review`, `diagnosis`, `debugging`
-- Independent parallel review: code-reviewer (Opus) + GPT + Gemini run simultaneously, no cross-contamination → Ralph adjudicates
-- Code review: all reviewers run blind, Ralph cross-references findings after all return. Opus is primary signal; external-only findings validated against code before accepting.
-- Test diagnosis: GPT + Gemini diagnose failures → findings passed as `external_diagnoses` to `test-analyst`
-- Debugging: Claude hypothesizes first → GPT + Gemini propose alternatives → Claude merges & re-ranks
-- Milestone review: external LLMs can review integration points → findings passed as `external_review_findings` to `milestone-reviewer`
+- Independent parallel review: ALL Claude subagents + GPT + Gemini run simultaneously, no cross-contamination → Ralph adjudicates after all return
+- Code review: code-reviewer (Opus) + GPT + Gemini run blind. Ralph cross-references findings. Opus is primary signal; external-only findings validated against code.
+- Test diagnosis: test-analyst + GPT + Gemini diagnose independently in parallel. Ralph cross-references. test-analyst is primary signal (it ran the tests).
+- Milestone review: milestone-reviewer + GPT + Gemini review independently in parallel. Ralph cross-references. milestone-reviewer is primary signal (it ran the test cascade).
+- Debugging: Claude hypothesizes first → GPT + Gemini propose alternatives → Claude merges & re-ranks (sequential by design — hypotheses need initial formation)
 - Research: `research-scout` supports optional cross-validation (parent orchestrates GPT + Gemini in parallel)
 - External LLM calls retry once on failure (5s delay), then degrade gracefully ("unavailable")
 
@@ -157,7 +157,7 @@ Subagents run as **separate Claude instances** with isolated context. Delegate t
 3. Ralph adjudicates: cross-references all findings, validates external-only findings against code, produces unified verdict
 4. Record each reviewer's input/output in the audit chain (`python .claude/tools/chain_manager.py record`)
 5. If PASS → commit. If FAIL with fixable issues → fix and re-review (max 3 cycles). If FAIL with unfixable → escalate to human.
-6. At milestone boundaries → run `milestone-reviewer` for integration test cascade.
+6. At milestone boundaries → run `milestone-reviewer` + GPT + Gemini (if enabled) in parallel for integration review. Ralph adjudicates after all return.
 7. After ALL tasks complete (end-of-queue) → run 3-layer verification: full test suite (always) + `qa-browser-tester` (if web UI) + `style-guide-auditor` (if style-guide.md exists). CRITICAL/MAJOR findings enter QA Fix Pass (tracked in `qa-fixes.md` as `QA-{NN}`). MINOR/INFO findings go to `observations.md` → `/intake` → `/plan-delta`.
 
 ## State Files

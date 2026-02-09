@@ -272,21 +272,45 @@ Also run:
 
 Do not proceed to review with failing tests (except pre-existing failures).
 
-**External Test Diagnosis (conditional — multi-LLM feed-forward):**
+**External Test Diagnosis (conditional — independent parallel):**
 
 If tests fail AND `.claude/advisory-config.json` has `multi_llm_review.enabled`
 = true AND `"diagnosis"` is in `multi_llm_review.contexts`, run external
-diagnosis BEFORE invoking the Claude test-analyst:
+diagnosis IN PARALLEL with the Claude test-analyst (same message, multiple Task calls):
 
 1. Write context JSON: `{"test_output": "{failure output}", "task_context": "{task description}", "recent_changes": "{changed files}"}`
-2. Run GPT + Gemini in parallel:
-   ```bash
-   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode diagnosis
-   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode diagnosis
-   ```
+2. Run ALL diagnosticians in parallel (single message):
+   - **test-analyst** (Claude Sonnet) — independent, NO external diagnoses passed
+   - GPT diagnosis:
+     ```bash
+     python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode diagnosis
+     ```
+   - Gemini diagnosis:
+     ```bash
+     python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode diagnosis
+     ```
 3. Collect outputs. If a provider fails (exit 1), **retry once** after 5 seconds.
    If the retry also fails, note as unavailable and continue — failures are non-blocking.
-4. When invoking the test-analyst subagent, pass `external_diagnoses` with the raw GPT + Gemini outputs. The test-analyst validates external categorizations against its own analysis.
+4. **Ralph adjudicates** after all diagnosticians return:
+   ```
+   DIAGNOSIS ADJUDICATION — T{NN}
+   ═══════════════════════════════════════════════════════════════
+   test-analyst (Claude): {DIAG_CLEAR|DIAG_FAILURES|DIAG_BLOCKED}
+   GPT:                   {summary or "unavailable"}
+   Gemini:                {summary or "unavailable"}
+
+   Cross-reference:
+     Confirmed (2+ sources):  {failures categorized identically}
+     Unique to Claude:        {diagnoses only test-analyst found — TRUST these}
+     Unique to external:      {diagnoses only GPT/Gemini found — VALIDATE}
+     Contradictions:          {different root cause for same failure — investigate}
+
+   Unified diagnosis: {merged, prioritized fix list}
+   ═══════════════════════════════════════════════════════════════
+   ```
+   - test-analyst verdict is the **primary signal** (it ran the actual tests)
+   - External-only diagnoses: verify by checking the code/test output yourself
+   - Contradictions: trust test-analyst (it has runtime evidence; externals only saw text)
 
 **Audit trail:** After verification completes (pass or fail), record a chain entry:
 1. Write the task definition block to a temp file (input)
@@ -714,7 +738,39 @@ Provide:
 - `task_list`: tasks in this milestone
 - `prior_milestones`: previously completed milestones
 - `project_spec_excerpt`: relevant workflows
-- `external_review_findings`: (optional) if `multi_llm_review.enabled` and `"code-review"` in contexts, run GPT + Gemini with a milestone-level integration review before invoking the milestone-reviewer. Use `--mode code-review` with a context summarizing cross-module integration points. Pass their outputs as `external_review_findings`.
+
+Do NOT pass external findings. The milestone-reviewer must form its own conclusions first.
+
+**External milestone review (conditional — independent parallel):**
+
+If `multi_llm_review.enabled` and `"code-review"` in contexts, run GPT + Gemini
+milestone-level integration reviews IN PARALLEL with the milestone-reviewer
+(same message, multiple calls):
+
+1. Write context JSON summarizing cross-module integration points, changed files, milestone deliverables
+2. Run both providers:
+   ```bash
+   python .claude/tools/second_opinion.py --provider openai --context-file {ctx} --mode code-review
+   python .claude/tools/second_opinion.py --provider gemini --context-file {ctx} --mode code-review
+   ```
+3. After ALL reviewers return, Ralph adjudicates:
+   ```
+   MILESTONE ADJUDICATION — M{N}
+   ═══════════════════════════════════════════════════════════════
+   milestone-reviewer (Claude): {MILESTONE_COMPLETE|FIXABLE|BLOCKED}
+   GPT:                         {summary or "unavailable"}
+   Gemini:                      {summary or "unavailable"}
+
+   Cross-reference:
+     Confirmed (2+ sources):  {integration issues agreed on}
+     Unique to Claude:        {issues only milestone-reviewer found — TRUST}
+     Unique to external:      {issues only GPT/Gemini found — VALIDATE}
+
+   Unified verdict: {MILESTONE_COMPLETE|FIXABLE|BLOCKED}
+   ═══════════════════════════════════════════════════════════════
+   ```
+   - milestone-reviewer verdict is the **primary signal** (it ran actual tests)
+   - External-only findings: verify against test output before accepting
 
 ### Audit trail for milestone review
 

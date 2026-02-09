@@ -30,3 +30,19 @@
 | GEN-26 | 9 modules with clean dependency DAG | /plan-define | 6+7 |
 | GEN-27 | 3 milestones — backend-first, API-second, frontend-last | /plan-define | 6+7 |
 | GEN-28 | Highest-risk module = M2 (Workflow Engine) | /plan-define | 6+7 |
+| ARCH-01 | Modular monolith — single FastAPI process, package-level boundaries | /specialists/architecture | FA1 |
+| ARCH-02 | Async-first with sync fallback via asyncio.to_thread() | /specialists/architecture | FA1 |
+| ARCH-03 | Strict dependency direction — no circular imports | /specialists/architecture | FA2 |
+| ARCH-04 | Shared types via Pydantic schemas, no ORM objects crossing boundaries | /specialists/architecture | FA2 |
+| ARCH-05 | SQLite with aiosqlite, WAL mode, auto-migrations on startup | /specialists/architecture | FA3 |
+| ARCH-06 | No caching layer for v1 | /specialists/architecture | FA3 |
+| ARCH-07 | No background job system — engine IS the job runner | /specialists/architecture | FA3 |
+| ARCH-08 | Env config via .env + Pydantic BaseSettings | /specialists/architecture | FA3 |
+| ARCH-09 | Local dev = uvicorn + vite dev, no Docker | /specialists/architecture | FA3 |
+| ARCH-10 | Error hierarchy — WorkflowError base with typed subclasses | /specialists/architecture | FA4 |
+| ARCH-11 | Structured JSON logging via stdlib | /specialists/architecture | FA4 |
+| ARCH-12 | DI via FastAPI Depends(), singletons at startup | /specialists/architecture | FA4 |
+| ARCH-13 | Consistent API error envelope with typed error codes | /specialists/architecture | FA4 |
+| ARCH-14 | LLM adapter protocol with per-provider implementations | /specialists/architecture | FA5 |
+| ARCH-15 | StreamEvent union type for real-time WebSocket updates | /specialists/architecture | FA5 |
+| ARCH-16 | Log-based monitoring only, no observability stack | /specialists/architecture | FA6 |

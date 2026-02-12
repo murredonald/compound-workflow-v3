@@ -277,3 +277,51 @@ User flow: Update email address
 ```
 (The action succeeded. The user has no idea.)
 **Instead:** Every user action must produce visible confirmation: "Saves: toast notification ('Email updated successfully') that auto-dismisses after 5 seconds with a dismiss button. Alternatively, inline confirmation (the field briefly highlights green with a checkmark). Deletes: item animates out of the list + toast with undo option. Form submissions: redirect to success state or clear the form + show confirmation message. File uploads: progress indicator during upload + 'Upload complete' with file name/size. Rule: if you cannot point to the visual element that tells the user 'it worked,' the flow is incomplete."
+
+---
+
+## E. Component Affordance & Visual States
+
+LLM-generated components commonly lack visual affordance — users can't tell what's clickable, what's a form field, or what state something is in. These are implementation-level patterns to catch during review.
+
+### UIX-AP-16: Invisible Buttons
+**Mistake:** Buttons have no background, no border, and no distinct color — they look identical to surrounding text. Users don't know they can click.
+**Why:** LLMs apply "ghost button" styling (`background: transparent; border: none`) to primary actions for a "clean" aesthetic without realizing the button disappears visually.
+**Detect:** Check button `background-color` vs page background. Flag if identical and no visible border or shadow. **Severity: MAJOR.**
+**Prevent:** Every button must differ from its background by color, border, or shadow. Ghost buttons are acceptable only for tertiary actions with an accompanying text label.
+
+### UIX-AP-17: Borderless Form Inputs
+**Mistake:** Form inputs have no visible border, shadow, or background distinction — invisible fields on the page. Users can't tell where to type.
+**Why:** LLMs apply `border: none` for a "modern" look, relying on the focus ring to reveal inputs. But users need to find the input before they can focus it.
+**Detect:** Check `border-width`, `outline`, `box-shadow` on form elements at rest (not focused). Flag if all are 0/none with no distinct background. **Severity: MAJOR.**
+**Prevent:** Form inputs must have a visible boundary at rest: `border >= 1px` OR `box-shadow` OR distinct background color from the container.
+
+### UIX-AP-18: Missing Hover/Focus States
+**Mistake:** Interactive elements show no visual change on hover or keyboard focus — zero interaction feedback. Users don't know if a click registered or which element has focus.
+**Why:** LLMs define only the default state. `:hover`, `:focus-visible`, and `:active` styles are omitted because the model generates appearance, not behavior.
+**Detect:** Programmatically hover/focus elements, compare computed styles before vs after. Flag if no change. **Severity: MAJOR.**
+**Prevent:** All interactive elements need: hover state (subtle color/shadow change), focus-visible state (visible ring or outline), active state (slight press effect). Never apply `outline: none` without a replacement.
+
+### UIX-AP-19: Placeholder-as-Label
+**Mistake:** Form inputs use only placeholder text as labels. When the user focuses the field and starts typing, the label disappears — they forget what the field is for.
+**Why:** LLMs use placeholders to save vertical space. In training data, placeholders appear in many form examples as the only label.
+**Detect:** Check `<input>` elements without associated `<label>` or `aria-label`. **Severity: MAJOR.**
+**Prevent:** Every input must have a persistent visible label (above or beside the field). Placeholders are supplementary hints ("e.g., john@example.com"), not replacements for labels.
+
+### UIX-AP-20: Blank Empty States
+**Mistake:** When no data exists, the container shows blank white space — no message, no illustration, no call-to-action. The user thinks the page is broken.
+**Why:** LLMs implement the "data exists" rendering path. The empty case is either forgotten or shows an empty `<table>` / `<ul>` with headers but no rows.
+**Detect:** Check for containers with no visible child content (empty `<tbody>`, empty `<ul>`, empty `<div>` with no text). **Severity: MINOR.**
+**Prevent:** Every data container must have an empty state: a message explaining why it's empty ("No projects yet") and a primary CTA ("Create your first project").
+
+### UIX-AP-21: Hover-Only Disclosure
+**Mistake:** Content or controls are only visible on `:hover` — completely inaccessible on touch devices where hover doesn't exist.
+**Why:** LLMs use hover-reveal as a space-saving technique (tooltip triggers, action menus on table rows, edit icons that appear on card hover). Training data is desktop-heavy where hover is natural.
+**Detect:** At mobile viewport, verify all content/controls are discoverable without hover. Flag `opacity: 0` or `visibility: hidden` elements that only become visible via `:hover` with no touch fallback. **Severity: MAJOR.**
+**Prevent:** All hover-revealed controls must have a touch alternative: always-visible icon buttons, long-press menus, or swipe actions. Use `@media (hover: hover)` to scope hover-only styles to devices that support it.
+
+### UIX-AP-22: Dropdown Behind Content
+**Mistake:** Dropdown menus render behind sibling elements or overlapping containers because of z-index conflicts or stacking context issues.
+**Why:** LLMs don't track z-index across components. Each component gets its own z-index without considering the page-level stacking order.
+**Detect:** Open dropdowns/menus, check if visible content is obscured via `elementFromPoint()`. **Severity: MAJOR.**
+**Prevent:** Define a z-index scale in the style guide (content: 0, dropdowns: 100, overlays: 200, modals: 300, toasts: 400). All z-index values must come from this scale.

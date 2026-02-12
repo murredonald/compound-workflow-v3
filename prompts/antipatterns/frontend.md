@@ -256,3 +256,39 @@ const useUserStore = create((set) => ({ userId: null }));
 // Now userId is invisible in the component tree — harder to trace, harder to test
 ```
 **Instead:** Prop drilling becomes a problem at 4+ levels or when many unrelated props are threaded through components that don't use them. For 2-3 levels, explicit props are clearer and more maintainable than implicit global state. Define the threshold in a FRONT-NN decision: "Use explicit props for up to 3 levels. Use Context for widely-shared, rarely-changing data (theme, locale, current user). Use a state management library only for complex shared state that multiple unrelated components read and write."
+
+---
+
+## E. Visual Implementation Bugs
+
+LLM-generated CSS commonly produces visual defects that a human spots immediately but the LLM cannot "see." These are implementation-level patterns to watch for during code review and QA.
+
+### FRONT-AP-16: Horizontal Scroll
+**Mistake:** Page has a horizontal scrollbar — content wider than the viewport. Fixed-width elements, uncontrolled images, or wide tables break layout at narrower viewports.
+**Why:** LLMs set pixel widths on containers, omit `max-width: 100%` on images, and don't test at mobile widths.
+**Detect:** `document.documentElement.scrollWidth > document.documentElement.clientWidth` at both desktop and mobile viewports. **Severity: CRITICAL.**
+**Prevent:** `max-width: 100%` on all images/media. Responsive table patterns (horizontal scroll wrapper or card layout on mobile). No fixed widths on content containers.
+
+### FRONT-AP-17: Content Overflow / Clipping
+**Mistake:** Text or elements spill outside their container, or `overflow: hidden` silently clips dynamic content. Users see truncated text with no indication there's more.
+**Why:** LLMs set fixed `height` on containers that hold variable-length content, then add `overflow: hidden` to "fix" the visual.
+**Detect:** Containers where `scrollHeight > clientHeight` by > 10px with `overflow: hidden`. **Severity: MAJOR.**
+**Prevent:** Use `min-height` instead of `height` for text containers. If fixed height is required, add explicit overflow handling (scroll, ellipsis, expand/collapse).
+
+### FRONT-AP-18: Distorted Images
+**Mistake:** Images appear stretched or squished because both `width` and `height` are set to fixed values that don't match the image's natural aspect ratio.
+**Why:** LLMs set explicit dimensions for layout stability without checking the source image ratio.
+**Detect:** Compare `naturalWidth/naturalHeight` vs rendered ratio — flag distortion > 5%. **Severity: MAJOR.**
+**Prevent:** Use `object-fit: cover` or `object-fit: contain`. Constrain only one dimension and let the other scale proportionally.
+
+### FRONT-AP-19: Fixed-Height Text Clipping
+**Mistake:** Text containers with fixed `height` clip content when real data is longer than the placeholder "John Doe" or "Lorem ipsum" used during development.
+**Why:** LLMs design for placeholder-length content, not real data variability.
+**Detect:** Inject long strings (50+ chars) into form fields and card titles — check for visual overflow or clipping. **Severity: MAJOR.**
+**Prevent:** Use `min-height` instead of `height`. Add `text-overflow: ellipsis` with `overflow: hidden` and `white-space: nowrap` for single-line truncation, or `-webkit-line-clamp` for multi-line.
+
+### FRONT-AP-20: Transition All
+**Mistake:** `transition: all 200ms` causes unintended animations on every property change — layout shifts, color flashes, and jank when classes toggle.
+**Why:** LLMs use `transition: all` as a shortcut instead of specifying exact properties.
+**Detect:** Flag `transition: all` in any stylesheet. **Severity: MINOR.**
+**Prevent:** Always specify exact transition properties: `transition: background-color 200ms, box-shadow 200ms`.

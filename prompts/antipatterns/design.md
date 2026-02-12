@@ -193,3 +193,39 @@ Themes: Light, Dark, High-Contrast
 Breakpoints: 8 (xs, sm, md, lg, xl, 2xl, 3xl, 4xl)
 ```
 **Instead:** Start with the minimum viable design system: 20-30 tokens (3-5 colors with shades, 6 spacing values, 5 font sizes, 2 border radii, 2 shadows). 8-12 components (the ones the app actually uses in the first milestone). 1 theme (add dark mode in v2 if users request it). 3 breakpoints. Document the system in a way that is easy to extend. A small, consistent system beats a large, partially-implemented one.
+
+---
+
+## D. Visual Consistency
+
+These patterns describe implementation-level visual defects where the code technically works but the result looks broken to a human eye. LLMs cannot "see" the rendered output, so they produce these patterns consistently.
+
+### STYLE-AP-14: Flat Visual Hierarchy
+**Mistake:** Everything on the page has the same visual weight — headings, body text, buttons, and secondary actions are all similar in size, color, and emphasis. The user cannot tell what matters.
+**Why:** LLMs apply styles uniformly. When generating multiple buttons, they all get the same styling. The model doesn't simulate scanning the page and asking "what grabs my eye first?"
+**Detect:** Compare primary vs secondary button colors/sizes. Check heading sizes vs body text. Flag if the primary CTA is visually indistinguishable from secondary actions. **Severity: MAJOR.**
+**Prevent:** Style guide defines primary/secondary/tertiary button variants with distinct visual weight. Heading sizes follow a defined scale ratio. Primary actions use the brand color; secondary actions use muted/outline styles.
+
+### STYLE-AP-15: Inconsistent Spacing
+**Mistake:** Same component type has different spacing values across the page — one card has 16px padding, another has 24px, a third has 20px.
+**Why:** Each component instance gets independently styled with arbitrary values instead of referencing shared spacing tokens.
+**Detect:** Compare margin/padding values across same-class elements. Flag variance. **Severity: MINOR.**
+**Prevent:** All spacing must come from a defined scale (e.g., 4, 8, 12, 16, 24, 32, 48). No arbitrary pixel values.
+
+### STYLE-AP-16: Font Size Chaos
+**Mistake:** Too many distinct font sizes on one page — 10+ different sizes with no clear hierarchy rhythm. Body text is 14px here and 16px there, headings vary arbitrarily.
+**Why:** LLMs pick sizes per-element without referencing a type scale. Each component gets a "reasonable" size that doesn't match its neighbors.
+**Detect:** Count distinct computed font-size values on a page. Flag > 8 distinct sizes. **Severity: MINOR.**
+**Prevent:** Type scale with defined steps (e.g., 12, 14, 16, 20, 24, 30, 36). Every text element maps to a scale step. No ad-hoc sizes.
+
+### STYLE-AP-17: Indistinguishable Status Colors
+**Mistake:** Success, error, warning, and info states all use similar shades or look identical in certain lighting or to color-blind users.
+**Why:** LLMs pick colors from similar hue ranges (light green vs lime green for success/warning) without checking pairwise contrast.
+**Detect:** Extract computed colors for success/error/warning/info elements. Check pairwise contrast. Flag if any pair has contrast < 3:1. **Severity: MAJOR.**
+**Prevent:** Semantic color tokens with distinct hues (green, red, amber, blue). Each must differ by hue, not just lightness. Supplement with icons for colorblind users.
+
+### STYLE-AP-18: Color Overload
+**Mistake:** Too many competing colors on one page — every section has a unique accent, every button a different background. The page looks like a carnival instead of a cohesive product.
+**Why:** LLMs apply variety where consistency is needed. Each component gets a "distinctive" color instead of pulling from a shared palette.
+**Detect:** Count distinct hue values across the page (excluding grays). Flag > 5 distinct hues. **Severity: MINOR.**
+**Prevent:** Palette limited to: 1 primary + 1 neutral scale + 3-4 semantic colors. Every colored element must trace back to a palette token.

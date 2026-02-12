@@ -1,0 +1,52 @@
+---
+interface Props {
+  variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
+  href?: string;
+  class?: string;
+  type?: "button" | "submit" | "reset";
+  [key: string]: unknown;
+}
+
+const {
+  variant = "default",
+  size = "default",
+  href,
+  class: className = "",
+  type = "button",
+  ...rest
+} = Astro.props;
+
+const baseClasses =
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+
+const variantClasses: Record<string, string> = {
+  default: "bg-primary text-primary-foreground hover:bg-primary/90",
+  outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+  ghost: "hover:bg-accent hover:text-accent-foreground",
+  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+  link: "text-primary-text underline decoration-dotted underline-offset-4 hover:decoration-solid",
+};
+
+const sizeClasses: Record<string, string> = {
+  default: "h-11 min-h-[44px] px-5 py-2 text-body-sm",
+  sm: "h-9 px-3 text-body-sm",
+  lg: "h-12 min-h-[44px] px-8 text-body",
+  icon: "h-11 w-11 min-h-[44px] min-w-[44px]",
+};
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+
+const Tag = href ? "a" : "button";
+---
+
+{href ? (
+  <a href={href} class={classes} {...rest}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class={classes} {...rest}>
+    <slot />
+  </button>
+)}

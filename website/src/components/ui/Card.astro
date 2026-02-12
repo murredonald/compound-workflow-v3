@@ -1,0 +1,16 @@
+---
+interface Props {
+  class?: string;
+  highlighted?: boolean;
+}
+
+const { class: className = "", highlighted = false } = Astro.props;
+
+const baseClasses = "bg-card rounded-lg border p-6 transition-shadow hover:shadow-md";
+const highlightClasses = highlighted ? "border-primary ring-2 ring-primary/20" : "border-border";
+const classes = `${baseClasses} ${highlightClasses} ${className}`;
+---
+
+<div class={classes}>
+  <slot />
+</div>

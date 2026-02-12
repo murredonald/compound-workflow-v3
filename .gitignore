@@ -31,8 +31,16 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+nul
 
-# Workflow runtime state (created by /plan — not part of template)
-# Uncomment the line below if you want to EXCLUDE workflow state from git.
-# By default, .workflow/ IS tracked so your decisions and specs are versioned.
-# .workflow/
+# Orchestrator state (SQLite) — local per-project, not part of template
+state.db
+state.db-wal
+state.db-shm
+checkpoints/
+
+# Local settings (per-machine)
+.claude/settings.local.json
+
+# Migration staging
+_old/

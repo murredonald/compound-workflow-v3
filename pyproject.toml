@@ -3,7 +3,7 @@ name = "compound-workflow"
 requires-python = ">=3.11"
 
 # =============================================================================
-# Ruff — linter + formatter (used by lint-format.sh and pre-commit-gate.sh)
+# Ruff — linter + formatter
 # =============================================================================
 [tool.ruff]
 target-version = "py311"
@@ -27,14 +27,14 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["core", "engine"]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 
 # =============================================================================
-# mypy — type checking (used by type-check.sh)
+# mypy — type checking
 # =============================================================================
 [tool.mypy]
 python_version = "3.11"
@@ -47,15 +47,20 @@ check_untyped_defs = true
 no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
+# core/ and engine/ use flat imports (from core import db) — root is already on path
+mypy_path = ["."]
 
-# Relax for tests
+# Relax for tests — Pydantic StrEnum coercion (str→enum) is runtime-valid
+# but mypy can't see it, so we suppress arg-type and untyped-call in tests.
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+disallow_untyped_calls = false
 strict = false
+disable_error_code = ["arg-type", "no-untyped-call"]
 
 # =============================================================================
-# pytest (used by test-analyst.md and milestone-reviewer.md)
+# pytest
 # =============================================================================
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -77,20 +82,20 @@ markers = [
 filterwarnings = ["error::pytest.PytestUnknownMarkWarning"]
 
 # =============================================================================
-# bandit — security linting (used by pre-commit-gate.sh)
+# bandit — security linting
 # =============================================================================
 [tool.bandit]
-exclude_dirs = ["tests", "scripts", ".claude"]
+exclude_dirs = ["tests"]
 skips = [
     "B101",  # assert used in tests
 ]
 
 # =============================================================================
-# coverage (optional, used by milestone-reviewer.md if enabled)
+# coverage
 # =============================================================================
 [tool.coverage.run]
-source = ["src"]
-omit = ["tests/*", "scripts/*"]
+source = ["core", "engine"]
+omit = ["*/tests/*", "scripts/*"]
 
 [tool.coverage.report]
 fail_under = 80

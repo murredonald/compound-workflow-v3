@@ -108,7 +108,7 @@ All commands: `python orchestrator.py <command> [args]`
 ### Greenfield (v1)
 
 ```
-/plan → /specialists/* → /synthesize → /execute (loop) → /retro
+plan → specialists/* → synthesize → execute (loop) → retro
 ```
 
 1. **Plan** — Discovery (stages 0-6: Vision, Users, Workflows, Scope, Constraints, Risks). Produces GEN-* decisions + executive summary.
@@ -120,13 +120,13 @@ All commands: `python orchestrator.py <command> [args]`
 ### Evolution (v1+)
 
 ```
-/intake → /plan-delta → /specialists/* → /synthesize (release) → /execute → /release → /retro
+intake → plan-delta → specialists/* → synthesize (release) → execute → release → retro
 ```
 
 ### Debug Shortcut
 
 ```
-/debug-session → reproduce → isolate → patch → verify → commit
+debug → reproduce → isolate → patch → verify → commit
 ```
 
 ## Phase Prerequisites
@@ -244,18 +244,20 @@ Large tasks can be split: `decompose-list` → `decompose-prompt TASK_ID` → de
 
 ## Command Routing
 
-| User says... | Route to |
-|---|---|
-| "Let's plan/design/spec out..." | `/plan` |
-| "What about the architecture/backend/..." | `/specialists/{domain}` |
-| "Generate the task queue" / "Let's synthesize" | `/synthesize` |
-| "Start building" / "Next task" / "Continue" | `/execute` |
-| "Let's do a retro" / "How did that go?" | `/retro` |
-| "I found a bug" / "I noticed..." / "Here's feedback" | `/intake` |
-| "Fix this bug" / "Quick fix" | `/debug-session` |
-| "Plan this fix/feature/change" | `/plan-delta` |
-| "Where are we?" / "Status" | `python orchestrator.py status` |
-| "Ship it" / "Release" | `/release` |
+These are workflow phases, not slash commands. Enter them via orchestrator CLI.
+
+| User says... | Phase | Key CLI commands |
+|---|---|---|
+| "Let's plan/design/spec out..." | Plan | `start-phase plan` → `render-prompt --phase plan` |
+| "What about the architecture/backend/..." | Specialist | `start-phase specialist/{name}` → `render-prompt --phase specialist/{name}` |
+| "Generate the task queue" / "Let's synthesize" | Synthesize | `start-phase synthesize` → `synthesize-prompt` → `store-tasks` |
+| "Start building" / "Next task" / "Continue" | Execute | `next` or `resume` → follow Ralph loop |
+| "Let's do a retro" / "How did that go?" | Retro | Analyze evals + reflexion data |
+| "I found a bug" / "I noticed..." / "Here's feedback" | Intake | Capture as Change Request |
+| "Fix this bug" / "Quick fix" | Debug | Reproduce → isolate → patch → verify → commit |
+| "Plan this fix/feature/change" | Plan-delta | Lightweight planning for changes |
+| "Where are we?" / "Status" | Status | `status` |
+| "Ship it" / "Release" | Release | Verify completeness → tag → close CRs |
 
 If the user's intent is ambiguous, ask — don't guess which phase to enter.
 

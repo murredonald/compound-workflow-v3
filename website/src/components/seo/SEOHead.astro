@@ -1,0 +1,71 @@
+---
+import type { Locale } from "@/i18n/utils";
+import { locales, getLocalePath } from "@/i18n/utils";
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+  path: string;
+  ogImage?: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  locale,
+  path,
+  ogImage = "/og-default.png",
+  type = "website",
+  publishedTime,
+  noindex = false,
+} = Astro.props;
+
+const site = "https://auryth.ai";
+const canonicalUrl = `${site}${getLocalePath(path, locale)}`;
+---
+
+<!-- Primary Meta -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Hreflang -->
+{locales.map((loc) => (
+  <link
+    rel="alternate"
+    hreflang={loc}
+    href={`${site}${getLocalePath(path, loc)}`}
+  />
+))}
+<link rel="alternate" hreflang="x-default" href={`${site}${getLocalePath(path, "en")}`} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content="Auryth TX AI" />
+<meta property="og:image" content={`${site}${ogImage}`} />
+<meta property="og:locale" content={locale} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={`${site}${ogImage}`} />
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+
+<!-- Theme color -->
+<meta name="theme-color" content="#91754b" />

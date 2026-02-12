@@ -1,16 +1,19 @@
 ---
 // Placeholder — replaced by T09 (Homepage)
-import "@/styles/global.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "en";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Auryth TX AI</title>
-  </head>
-  <body class="bg-background text-foreground">
-    <h1 class="text-display text-foreground">Auryth TX AI</h1>
-    <p class="text-body-lg text-muted-foreground">Every claim cited. Every source linked. Every answer scored.</p>
-  </body>
-</html>
+<BaseLayout
+  title={t("site.title", locale)}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/"
+>
+  <main class="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-24">
+    <h1 class="text-display text-foreground">{t("hero.headline", locale)}</h1>
+    <p class="text-body-lg text-muted-foreground mt-4">{t("site.tagline", locale)}</p>
+  </main>
+</BaseLayout>

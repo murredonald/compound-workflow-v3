@@ -1,0 +1,87 @@
+---
+interface Props {
+  locale?: string;
+  labels?: {
+    solo?: string;
+    team?: string;
+    firm?: string;
+    enterprise?: string;
+  };
+}
+
+const { locale = "en", labels = {} } = Astro.props;
+const { solo = "Solo", team = "Team", firm = "Firm", enterprise = "Enterprise" } = labels;
+
+// PRICE-04: 8+ key feature rows with query counts (PRICE-05)
+const rows = [
+  { feature: locale === "nl" ? "Gebruikers" : locale === "fr" ? "Utilisateurs" : locale === "de" ? "Benutzer" : "Seats", solo: "1", team: "5", firm: "15", enterprise: locale === "nl" ? "Onbeperkt" : locale === "fr" ? "Illimité" : locale === "de" ? "Unbegrenzt" : "Unlimited" },
+  { feature: locale === "nl" ? "Jurisdicties" : locale === "fr" ? "Juridictions" : locale === "de" ? "Jurisdiktionen" : "Jurisdictions", solo: "1", team: "1", firm: "2", enterprise: locale === "nl" ? "Alle" : locale === "fr" ? "Toutes" : locale === "de" ? "Alle" : "All" },
+  { feature: locale === "nl" ? "Zoekopdrachten/maand" : locale === "fr" ? "Requêtes/mois" : locale === "de" ? "Abfragen/Monat" : "Queries/month", solo: "~150–300", team: "~750–3,000", firm: "~2,000–8,000", enterprise: locale === "nl" ? "Onbeperkt" : locale === "fr" ? "Illimité" : locale === "de" ? "Unbegrenzt" : "Unlimited" },
+  { feature: locale === "nl" ? "Broncitaties" : locale === "fr" ? "Citations de sources" : locale === "de" ? "Quellenangaben" : "Source citations", solo: "✓", team: "✓", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Betrouwbaarheidsscores" : locale === "fr" ? "Scores de confiance" : locale === "de" ? "Vertrauenswerte" : "Confidence scoring", solo: "✓", team: "✓", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Wijzigingsmeldingen" : locale === "fr" ? "Alertes de changement" : locale === "de" ? "Änderungsbenachrichtigungen" : "Change alerts", solo: "—", team: "✓", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Gedeelde werkruimte" : locale === "fr" ? "Espace partagé" : locale === "de" ? "Geteilter Arbeitsbereich" : "Shared workspace", solo: "—", team: "✓", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Klantenmappen" : locale === "fr" ? "Dossiers clients" : locale === "de" ? "Mandantenordner" : "Client folders", solo: "—", team: "✓", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Beheerdersdashboard" : locale === "fr" ? "Tableau de bord admin" : locale === "de" ? "Admin-Dashboard" : "Admin dashboard", solo: "—", team: "—", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Bulkanalyse" : locale === "fr" ? "Analyse en masse" : locale === "de" ? "Massenanalyse" : "Bulk analysis", solo: "—", team: "—", firm: "✓", enterprise: "✓" },
+  { feature: "SSO", solo: "—", team: "—", firm: "✓", enterprise: "✓" },
+  { feature: locale === "nl" ? "Ondersteuning" : locale === "fr" ? "Support" : locale === "de" ? "Support" : "Support", solo: "Email", team: locale === "nl" ? "Prioriteit" : locale === "fr" ? "Prioritaire" : locale === "de" ? "Priorität" : "Priority", firm: locale === "nl" ? "Toegewijd" : locale === "fr" ? "Dédié" : locale === "de" ? "Dediziert" : "Dedicated", enterprise: locale === "nl" ? "Accountmanager" : locale === "fr" ? "Responsable de compte" : locale === "de" ? "Account Manager" : "Account Manager" },
+];
+
+const tierNames = [solo, team, firm, enterprise];
+const tierKeys = ["solo", "team", "firm", "enterprise"] as const;
+---
+
+{/* Desktop table — hidden below md */}
+<div class="hidden md:block overflow-x-auto">
+  <table class="w-full text-left" role="table" aria-label="Feature comparison">
+    <thead>
+      <tr class="border-b border-border">
+        <th class="pb-4 pr-4 text-body-sm font-medium text-muted-foreground" scope="col">
+          {locale === "nl" ? "Functie" : locale === "fr" ? "Fonctionnalité" : locale === "de" ? "Funktion" : "Feature"}
+        </th>
+        {tierNames.map((name, i) => (
+          <th
+            class={`pb-4 px-4 text-center text-body-sm font-semibold ${i === 1 ? "text-primary-text" : "text-foreground"}`}
+            scope="col"
+          >
+            {name}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr class="border-b border-border/50">
+          <td class="py-3 pr-4 text-body-sm text-foreground">{row.feature}</td>
+          {tierKeys.map((key, i) => (
+            <td class={`py-3 px-4 text-center text-body-sm ${row[key] === "✓" ? "text-primary-text font-medium" : row[key] === "—" ? "text-muted-foreground/50" : "text-muted-foreground"} ${i === 1 ? "bg-primary/5" : ""}`}>
+              {row[key]}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* Mobile accordion — visible below md */}
+<div class="md:hidden space-y-4">
+  {tierNames.map((name, tierIdx) => (
+    <details class="rounded-lg border border-border bg-card">
+      <summary class={`cursor-pointer px-4 py-3 text-body-sm font-semibold ${tierIdx === 1 ? "text-primary-text" : "text-foreground"}`}>
+        {name}
+      </summary>
+      <div class="px-4 pb-4 space-y-2">
+        {rows.map((row) => (
+          <div class="flex justify-between text-body-sm">
+            <span class="text-muted-foreground">{row.feature}</span>
+            <span class={row[tierKeys[tierIdx]] === "✓" ? "text-primary-text font-medium" : row[tierKeys[tierIdx]] === "—" ? "text-muted-foreground/50" : "text-foreground"}>
+              {row[tierKeys[tierIdx]]}
+            </span>
+          </div>
+        ))}
+      </div>
+    </details>
+  ))}
+</div>

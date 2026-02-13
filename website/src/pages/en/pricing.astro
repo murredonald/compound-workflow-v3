@@ -24,7 +24,7 @@ const tiers = [
   locale={locale}
   path="/pricing/"
 >
-  <main>
+  <main id="main-content">
     <Section class="py-24 md:py-32">
       <div class="mx-auto max-w-3xl text-center">
         <h1 class="text-display text-foreground">{t("pricing.title", locale)}</h1>
@@ -99,7 +99,7 @@ const tiers = [
 
     {/* Jurisdiction add-ons — PRICE-03 */}
     <Section muted>
-      <h2 class="text-heading text-foreground">Jurisdiction Add-ons</h2>
+      <h2 class="text-h2 text-foreground">Jurisdiction Add-ons</h2>
       <p class="mt-2 text-body text-muted-foreground">Extend coverage beyond Belgium</p>
       <div class="mt-8 grid gap-6 sm:grid-cols-2">
         <Card>
@@ -116,7 +116,7 @@ const tiers = [
 
     {/* Feature comparison matrix — PRICE-04 / UIX-05 */}
     <Section>
-      <h2 class="text-heading text-foreground">Feature Comparison</h2>
+      <h2 class="text-h2 text-foreground">Feature Comparison</h2>
       <p class="mt-2 text-body text-muted-foreground">See what's included in each plan</p>
       <div class="mt-8">
         <ComparisonMatrix locale={locale} labels={{ solo: "Solo", team: "Team", firm: "Firm", enterprise: "Enterprise" }} />

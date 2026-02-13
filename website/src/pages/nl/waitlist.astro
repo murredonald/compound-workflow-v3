@@ -31,11 +31,16 @@ const locale = "nl";
           <WaitlistForm
             client:load
             labels={{
-              emailLabel: "E-mailadres",
+              emailLabel: t("waitlist.email_label", locale),
               emailPlaceholder: t("waitlist.placeholder", locale),
               submit: t("waitlist.submit", locale),
               success: t("waitlist.success", locale),
+              consent: t("waitlist.consent", locale),
+              privacyLinkText: t("waitlist.privacy_link", locale),
               privacyHref: `/${locale}/privacy/`,
+              errorInvalidEmail: t("waitlist.error_invalid_email", locale),
+              errorRateLimit: t("waitlist.error_rate_limit", locale),
+              errorGeneric: t("waitlist.error_generic", locale),
             }}
           />
         </div>

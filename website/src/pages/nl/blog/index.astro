@@ -1,0 +1,55 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { getCollection } from "astro:content";
+import { t } from "@/i18n/utils";
+
+const locale = "nl";
+
+const posts = (await getCollection("blog", ({ data }) => data.locale === locale && !data.draft))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<BaseLayout
+  title={`Blog — ${t("site.title", locale)}`}
+  description="Laatste inzichten over Belgisch fiscaal recht, AI-onderzoek en productupdates van Auryth."
+  locale={locale}
+  path="/blog/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl text-center">
+        <h1 class="text-display text-foreground">Blog</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Inzichten over Belgisch fiscaal recht en AI-onderzoek</p>
+      </div>
+    </Section>
+
+    <Section>
+      {posts.length > 0 ? (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <Card>
+              <a href={`/${locale}/blog/${post.id}/`} class="block group">
+                <time class="text-caption text-muted-foreground" datetime={post.data.publishDate.toISOString()}>
+                  {post.data.publishDate.toLocaleDateString("nl-BE", { year: "numeric", month: "long", day: "numeric" })}
+                </time>
+                <h2 class="mt-2 text-body-lg font-semibold text-foreground group-hover:text-primary-text transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="mt-2 text-body-sm text-muted-foreground">{post.data.description}</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  {post.data.tags.map((tag: string) => (
+                    <span class="text-caption text-primary-text">{tag}</span>
+                  ))}
+                </div>
+              </a>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-body text-muted-foreground">Nog geen berichten. Kom snel terug!</p>
+      )}
+    </Section>
+  </main>
+</BaseLayout>

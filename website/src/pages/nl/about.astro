@@ -1,0 +1,107 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "nl";
+---
+
+<BaseLayout
+  title={`${t("nav.about", locale)} — ${t("site.title", locale)}`}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/about/"
+>
+  <Section class="py-24 md:py-32">
+    <div class="container">
+      <h1 class="text-display-lg font-bold tracking-tight mb-6">
+        {t("nav.about", locale)}
+      </h1>
+      <p class="text-body-lg text-muted-foreground max-w-3xl mb-12">
+        We bouwen AI-gestuurd fiscaal onderzoek voor Belgische professionals.
+      </p>
+    </div>
+  </Section>
+
+  <Section muted class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-display-md font-bold mb-6">Ons verhaal</h2>
+        <div class="space-y-4 text-body-md text-muted-foreground">
+          <p>
+            Auryth BV is een Belgisch bedrijf dat fiscaal recht toegankelijk wil
+            maken via kunstmatige intelligentie. We begonnen met een simpele
+            vaststelling: fiscale experten besteden ontelbare uren aan het
+            doorzoeken van gefragmenteerde documentatie, wetteksten en databases
+            met voorafgaande beslissingen.
+          </p>
+          <p>
+            Ons platform brengt het Belgische fiscale landschap samen—federale
+            en regionale wetgeving, administratieve circulaires, voorafgaande
+            beslissingen en rechtspraak—in één intelligente onderzoeksassistent.
+          </p>
+          <p>
+            We bouwen voor accountants, fiscale adviseurs en juridische
+            professionals die betrouwbare antwoorden nodig hebben ondersteund
+            door verifieerbare bronnen. Elk antwoord bevat precieze citaten,
+            zodat je de informatie kan vertrouwen en zelf kan verifiëren.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-display-md font-bold mb-6">Onze missie</h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Het Belgische fiscale recht toegankelijk en transparant maken via AI
+          waar professionals op kunnen vertrouwen.
+        </p>
+        <Card>
+          <h3 class="text-body-lg font-semibold mb-3">Onze aanpak</h3>
+          <ul class="space-y-2 text-body-md text-muted-foreground">
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Nauwkeurigheid eerst: elk antwoord citeert officiële bronnen</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Gebouwd voor professionals: gezaghebbend maar toegankelijk</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Belgisch gericht: uitgebreide dekking van federaal en regionaal fiscaal recht</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Transparant: je kan onze bronnen altijd verifiëren</span>
+            </li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
+  <Section muted class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-display-md font-bold mb-6">
+          Schrijf je in op de wachtlijst
+        </h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Wees een van de eersten die AI-gestuurd Belgisch fiscaal onderzoek
+          ervaart, gebouwd voor professionals.
+        </p>
+        <a
+          href={`/${locale}/waitlist`}
+          class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Schrijf je in
+        </a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

@@ -1,0 +1,110 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "fr";
+---
+
+<BaseLayout
+  title={`${t("nav.about", locale)} — ${t("site.title", locale)}`}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/about/"
+>
+  <Section class="py-24 md:py-32">
+    <div class="container">
+      <h1 class="text-display-lg font-bold tracking-tight mb-6">
+        {t("nav.about", locale)}
+      </h1>
+      <p class="text-body-lg text-muted-foreground max-w-3xl mb-12">
+        Nous développons la recherche fiscale assistée par IA pour les
+        professionnels belges.
+      </p>
+    </div>
+  </Section>
+
+  <Section muted class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-display-md font-bold mb-6">Notre histoire</h2>
+        <div class="space-y-4 text-body-md text-muted-foreground">
+          <p>
+            Auryth BV est une entreprise belge dédiée à rendre le droit fiscal
+            accessible grâce à l'intelligence artificielle. Nous sommes partis
+            d'un constat simple : les professionnels de la fiscalité passent
+            d'innombrables heures à parcourir une documentation fragmentée, des
+            textes légaux et des bases de données de décisions anticipées.
+          </p>
+          <p>
+            Notre plateforme rassemble le paysage fiscal belge—législation
+            fédérale et régionale, circulaires administratives, décisions
+            anticipées et jurisprudence—en un seul assistant de recherche
+            intelligent.
+          </p>
+          <p>
+            Nous développons pour les comptables, les conseillers fiscaux et les
+            professionnels du droit qui ont besoin de réponses fiables étayées
+            par des sources vérifiables. Chaque réponse comprend des citations
+            précises, vous permettant de faire confiance à l'information et de
+            la vérifier vous-même.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-display-md font-bold mb-6">Notre mission</h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Rendre le droit fiscal belge accessible et transparent grâce à une IA
+          en laquelle les professionnels peuvent avoir confiance.
+        </p>
+        <Card>
+          <h3 class="text-body-lg font-semibold mb-3">Notre approche</h3>
+          <ul class="space-y-2 text-body-md text-muted-foreground">
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>La précision d'abord : chaque réponse cite des sources officielles</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Conçu pour les professionnels : autoritaire mais accessible</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Axé sur la Belgique : couverture approfondie du droit fiscal fédéral et régional</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2">•</span>
+              <span>Transparent : vous pouvez toujours vérifier nos sources</span>
+            </li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
+  <Section muted class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-display-md font-bold mb-6">
+          Rejoignez la liste d'attente
+        </h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Soyez parmi les premiers à découvrir la recherche fiscale belge
+          alimentée par l'IA, conçue pour les professionnels.
+        </p>
+        <a
+          href={`/${locale}/waitlist`}
+          class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Rejoindre la liste
+        </a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

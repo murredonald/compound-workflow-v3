@@ -21,6 +21,7 @@ const { locale, ...seoProps } = Astro.props;
 <html lang={locale} class="scroll-smooth">
   <head>
     <SEOHead locale={locale} {...seoProps} />
+    <slot name="head" />
     {/* Dark mode: inline script prevents flash of wrong theme */}
     <script is:inline>
       (function () {

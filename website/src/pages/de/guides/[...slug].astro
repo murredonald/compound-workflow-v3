@@ -1,0 +1,84 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { getCollection } from "astro:content";
+import { t } from "@/i18n/utils";
+
+const locale = "de";
+
+export async function getStaticPaths() {
+  const guides = await getCollection("guides", ({ data }) => data.locale === "de");
+  return guides.map((guide) => ({
+    params: { slug: guide.id.replace(/\.mdx?$|\.md$/, "") },
+    props: { guide },
+  }));
+}
+
+const { guide } = Astro.props;
+const { Content } = await guide.render();
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": guide.data.title,
+  "description": guide.data.description,
+  "dateModified": guide.data.lastUpdated.toISOString(),
+  "author": { "@type": "Organization", "name": "Auryth BV" },
+  "publisher": { "@type": "Organization", "name": "Auryth BV", "url": "https://auryth.ai" },
+  ...(guide.data.sources.length > 0 ? {
+    "citation": guide.data.sources.map((s) => ({
+      "@type": "CreativeWork",
+      "name": s.title,
+      "url": s.url,
+    }))
+  } : {}),
+});
+---
+
+<BaseLayout
+  title={`${guide.data.title} — ${t("site.title", locale)}`}
+  description={guide.data.description}
+  locale={locale}
+  path={`/guides/${guide.id.replace(/\.mdx?$|\.md$/, "")}/`}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={jsonLd} />
+  </Fragment>
+
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl">
+        <a href={`/${locale}/guides/`} class="text-body-sm text-primary-text hover:underline">&larr; Alle Leitfäden</a>
+
+        <header class="mt-8">
+          <span class="text-caption text-primary-text">{guide.data.topic}</span>
+          <h1 class="mt-2 text-display text-foreground">{guide.data.title}</h1>
+          <p class="mt-4 text-body-lg text-muted-foreground">{guide.data.description}</p>
+          <p class="mt-4 text-caption text-muted-foreground">
+            Zuletzt aktualisiert: {guide.data.lastUpdated.toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
+          </p>
+        </header>
+
+        <article class="prose mt-12">
+          <Content />
+        </article>
+
+        {guide.data.sources.length > 0 && (
+          <aside class="mt-12 rounded-lg border border-border bg-card p-6">
+            <h2 class="text-body-lg font-semibold text-foreground">Quellen</h2>
+            <ul class="mt-4 space-y-2">
+              {guide.data.sources.map((source) => (
+                <li class="text-body-sm">
+                  <a href={source.url} target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">
+                    {source.title}
+                  </a>
+                  {source.authority && <span class="text-muted-foreground"> — {source.authority}</span>}
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

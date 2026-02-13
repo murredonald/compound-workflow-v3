@@ -18,7 +18,7 @@ const guides = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
-    slug: z.string(),
+    description: z.string(),
     topic: z.string(),
     sources: z.array(
       z.object({
@@ -27,7 +27,7 @@ const guides = defineCollection({
         authority: z.string().optional(),
       })
     ),
-    lastUpdated: z.date(),
+    lastUpdated: z.coerce.date(),
     locale: z.enum(["en", "nl", "fr", "de"]),
   }),
 });

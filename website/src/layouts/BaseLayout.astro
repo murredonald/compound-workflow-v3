@@ -15,12 +15,50 @@ interface Props {
 }
 
 const { locale, ...seoProps } = Astro.props;
+
+const organizationSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Auryth BV",
+  "url": "https://auryth.ai",
+  "logo": "https://auryth.ai/auryth-logo.svg",
+  "description": "AI-powered Belgian tax research platform",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Antwerp",
+    "addressCountry": "BE",
+  },
+});
+
+const softwareSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Auryth TX AI",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "AI-powered tax research tool for Belgian fiscal professionals",
+  "url": "https://auryth.ai",
+  "provider": {
+    "@type": "Organization",
+    "name": "Auryth BV",
+    "url": "https://auryth.ai",
+  },
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/PreOrder",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "description": "Pre-launch waitlist — founding member pricing available",
+  },
+});
 ---
 
 <!doctype html>
 <html lang={locale} class="scroll-smooth">
   <head>
     <SEOHead locale={locale} {...seoProps} />
+    <script type="application/ld+json" set:html={organizationSchema} />
+    <script type="application/ld+json" set:html={softwareSchema} />
     <slot name="head" />
     {/* Dark mode: inline script prevents flash of wrong theme */}
     <script is:inline>

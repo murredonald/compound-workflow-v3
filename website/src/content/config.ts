@@ -4,13 +4,13 @@ const blog = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
-    slug: z.string(),
-    date: z.date(),
+    description: z.string(),
+    publishDate: z.coerce.date(),
     author: z.string(),
     category: z.enum(["tax-update", "product", "insight", "guide"]),
     tags: z.array(z.string()),
-    excerpt: z.string(),
     locale: z.enum(["en", "nl", "fr", "de"]),
+    draft: z.boolean().default(false),
   }),
 });
 

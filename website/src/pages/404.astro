@@ -1,0 +1,42 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+---
+
+<BaseLayout
+  title="Page Not Found — Auryth TX AI"
+  description="The page you are looking for does not exist."
+  locale="en"
+  path="/404/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-xl text-center">
+        <p class="text-8xl font-bold text-primary-text">404</p>
+        <h1 class="mt-6 text-display text-foreground">Page not found</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">The page you are looking for doesn't exist or has been moved.</p>
+
+        <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <a href="/en/" class="inline-flex items-center rounded-md bg-primary px-6 py-3 text-body-sm font-medium text-white transition-colors hover:bg-primary/90">
+            Go to Homepage
+          </a>
+        </div>
+
+        <div class="mt-12 grid gap-3 text-body-sm sm:grid-cols-2">
+          <a href="/nl/" class="rounded-lg border border-border px-4 py-3 text-muted-foreground transition-colors hover:border-primary-text hover:text-foreground">
+            Nederlands — Startpagina
+          </a>
+          <a href="/fr/" class="rounded-lg border border-border px-4 py-3 text-muted-foreground transition-colors hover:border-primary-text hover:text-foreground">
+            Français — Page d'accueil
+          </a>
+          <a href="/de/" class="rounded-lg border border-border px-4 py-3 text-muted-foreground transition-colors hover:border-primary-text hover:text-foreground">
+            Deutsch — Startseite
+          </a>
+          <a href="/en/" class="rounded-lg border border-border px-4 py-3 text-muted-foreground transition-colors hover:border-primary-text hover:text-foreground">
+            English — Homepage
+          </a>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,123 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "fr";
+---
+
+<BaseLayout
+  title={`Conditions d'utilisation — ${t("site.title", locale)}`}
+  description="Conditions d'utilisation d'Auryth TX AI — conditions de la liste d'attente pré-lancement, clause de non-responsabilité IA et droit applicable."
+  locale={locale}
+  path="/terms/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-display text-foreground">Conditions d'utilisation</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Dernière mise à jour : février 2026</p>
+
+        <div class="mt-12 space-y-10">
+          <section>
+            <h2 class="text-heading text-foreground">1. Prestataire de services</h2>
+            <div class="mt-4 rounded-lg border border-border bg-card p-6 text-body text-foreground">
+              <p><strong>Auryth BV</strong></p>
+              <p>KBO/BCE : 1025.028.655</p>
+              <p>Siège social : Anvers, Belgique</p>
+              <p>E-mail : <a href="mailto:info@auryth.ai" class="text-primary-text hover:underline">info@auryth.ai</a></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">2. Étendue du service</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Auryth TX AI est actuellement en <strong class="text-foreground">phase de pré-lancement</strong>. Le service disponible via ce site web se limite à :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li>Du contenu informatif sur la fiscalité belge</li>
+                <li>Une inscription sur liste d'attente pour un accès anticipé à la plateforme Auryth TX AI</li>
+              </ul>
+              <p>Aucun service payant, abonnement ou outil de recherche IA n'est proposé pour le moment. Ces Conditions seront mises à jour lors du lancement complet du service.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">3. Inscription à la liste d'attente</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>En vous inscrivant sur la liste d'attente, vous acceptez de :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li>Fournir une adresse e-mail valide</li>
+                <li>Recevoir des communications relatives au lancement d'Auryth TX AI et aux mises à jour du produit</li>
+              </ul>
+              <p>Vous pouvez vous désinscrire à tout moment en contactant <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a> ou via le lien de désinscription dans chaque e-mail.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">4. Clause de non-responsabilité — contenu généré par IA</h2>
+            <div class="mt-4 rounded-lg border border-border bg-amber-50 p-6 text-body text-foreground dark:bg-amber-950/20">
+              <p class="font-semibold">Avis important concernant le contenu de ce site web :</p>
+              <ul class="mt-4 list-disc space-y-2 pl-6 text-muted-foreground">
+                <li>Certains contenus de ce site web ont été générés ou assistés par l'intelligence artificielle</li>
+                <li>Bien que nous visions l'exactitude, le contenu généré par IA peut contenir des erreurs ou omissions</li>
+                <li>Le contenu de ce site web ne constitue <strong class="text-foreground">pas</strong> un conseil juridique, fiscal ou financier</li>
+                <li>Consultez toujours un professionnel fiscal qualifié pour les décisions affectant votre situation fiscale</li>
+                <li>Les citations de sources sont fournies pour vérification — vérifiez toujours la source originale</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">5. Propriété intellectuelle</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Tout le contenu, le design, le code et l'image de marque de ce site web sont la propriété d'Auryth BV, sauf indication contraire. Vous ne pouvez pas reproduire, distribuer ou créer des œuvres dérivées sans consentement écrit préalable.</p>
+              <p>La législation fiscale et les publications officielles du gouvernement référencées sur ce site restent la propriété intellectuelle de leurs auteurs respectifs et sont citées à titre informatif.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">6. Limitation de responsabilité</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Dans la mesure maximale autorisée par le droit belge :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li>Ce site web et son contenu sont fournis « en l'état », sans garantie d'aucune sorte</li>
+                <li>Auryth BV n'est pas responsable des dommages résultant de l'utilisation des informations de ce site</li>
+                <li>Auryth BV n'est pas responsable des décisions prises sur base du contenu publié ici</li>
+                <li>Nous ne garantissons pas l'exactitude, l'exhaustivité ou l'actualité de toute information</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">7. Liens externes</h2>
+            <div class="mt-4 text-body text-muted-foreground">
+              <p>Ce site web peut contenir des liens vers des ressources externes, y compris des sites gouvernementaux et des bases de données législatives. Auryth BV n'est pas responsable du contenu ou de la disponibilité de ces sites externes.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">8. Droit applicable et juridiction</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Les présentes Conditions sont régies par le <strong class="text-foreground">droit belge</strong>.</p>
+              <p>Tout litige découlant de ou en rapport avec ces Conditions relève de la compétence exclusive des tribunaux d'Anvers, Belgique.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">9. Modifications de ces conditions</h2>
+            <div class="mt-4 text-body text-muted-foreground">
+              <p>Nous pouvons mettre à jour ces Conditions de temps à autre. Les modifications importantes seront communiquées par e-mail aux abonnés de la liste d'attente. L'utilisation continue du site web après les modifications vaut acceptation des Conditions mises à jour.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">10. Contact</h2>
+            <div class="mt-4 text-body text-muted-foreground">
+              <p>Pour toute question concernant ces Conditions, contactez-nous à <a href="mailto:info@auryth.ai" class="text-primary-text hover:underline">info@auryth.ai</a>.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

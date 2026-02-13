@@ -9,7 +9,21 @@ export default defineConfig({
   site: "https://auryth.ai",
   output: "static",
   adapter: vercel(),
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [
+    react(),
+    mdx(),
+    sitemap({
+      i18n: {
+        defaultLocale: "en",
+        locales: {
+          en: "en",
+          nl: "nl",
+          fr: "fr",
+          de: "de",
+        },
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

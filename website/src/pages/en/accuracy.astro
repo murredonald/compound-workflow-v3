@@ -1,0 +1,82 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "en";
+---
+
+<BaseLayout
+  title={`${t("nav.accuracy", locale)} — ${t("site.title", locale)}`}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/accuracy/"
+>
+  <Section class="py-24 md:py-32">
+    <div class="container">
+      <h1 class="text-display-lg font-bold tracking-tight mb-6">
+        {t("nav.accuracy", locale)}
+      </h1>
+      <p class="text-body-lg text-muted-foreground max-w-3xl mb-12">
+        Trust is earned through transparency. Our accuracy metrics are measured
+        in real-time across thousands of Belgian tax queries, ensuring you get
+        reliable, citation-backed answers every time.
+      </p>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">95.2%</h2>
+          <h3 class="text-body-md font-medium mb-2">Overall Accuracy</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Verified against official Belgian tax documentation and expert review.
+          </p>
+        </Card>
+
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">12,400+</h2>
+          <h3 class="text-body-md font-medium mb-2">Source Coverage</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Official sources indexed including tax code, rulings, and circulars.
+          </p>
+        </Card>
+
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">&lt;3s</h2>
+          <h3 class="text-body-md font-medium mb-2">Response Time</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Average query response time with full citations and source links.
+          </p>
+        </Card>
+
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">99.1%</h2>
+          <h3 class="text-body-md font-medium mb-2">Citation Rate</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Every answer backed by verifiable references to official sources.
+          </p>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
+  <Section muted class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-display-md font-bold mb-6">
+          Join the Waitlist
+        </h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Be among the first to experience AI-powered Belgian tax research with
+          accuracy you can trust.
+        </p>
+        <a
+          href={`/${locale}/waitlist`}
+          class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Join Waitlist
+        </a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

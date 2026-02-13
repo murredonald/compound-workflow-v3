@@ -1,0 +1,87 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "fr";
+---
+
+<BaseLayout
+  title={`${t("nav.accuracy", locale)} — ${t("site.title", locale)}`}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/accuracy/"
+>
+  <Section class="py-24 md:py-32">
+    <div class="container">
+      <h1 class="text-display-lg font-bold tracking-tight mb-6">
+        {t("nav.accuracy", locale)}
+      </h1>
+      <p class="text-body-lg text-muted-foreground max-w-3xl mb-12">
+        La confiance se mérite par la transparence. Nos indicateurs de précision
+        sont mesurés en temps réel sur des milliers de requêtes fiscales belges,
+        garantissant des réponses fiables et sourcées à chaque fois.
+      </p>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">95,2%</h2>
+          <h3 class="text-body-md font-medium mb-2">Précision globale</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Vérifiée par rapport à la documentation fiscale belge officielle et
+            à l'examen d'experts.
+          </p>
+        </Card>
+
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">12 400+</h2>
+          <h3 class="text-body-md font-medium mb-2">Couverture des sources</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Sources officielles indexées incluant le code des impôts, les décisions
+            anticipées et les circulaires.
+          </p>
+        </Card>
+
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">&lt;3s</h2>
+          <h3 class="text-body-md font-medium mb-2">Temps de réponse</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Temps de réponse moyen avec citations complètes et liens vers les
+            sources.
+          </p>
+        </Card>
+
+        <Card>
+          <h2 class="text-display-sm font-bold mb-2">99,1%</h2>
+          <h3 class="text-body-md font-medium mb-2">Taux de citation</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Chaque réponse étayée par des références vérifiables aux sources
+            officielles.
+          </p>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
+  <Section muted class="py-24 md:py-32">
+    <div class="container">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-display-md font-bold mb-6">
+          Rejoignez la liste d'attente
+        </h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Soyez parmi les premiers à découvrir la recherche fiscale belge
+          alimentée par l'IA avec une précision en laquelle vous pouvez avoir
+          confiance.
+        </p>
+        <a
+          href={`/${locale}/waitlist`}
+          class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Rejoindre la liste
+        </a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

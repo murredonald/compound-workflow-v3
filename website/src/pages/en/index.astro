@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
 import ScarcityBanner from "@/components/marketing/ScarcityBanner.astro";
 import WaitlistCounter from "@/components/marketing/WaitlistCounter";
 import { t } from "@/i18n/utils";
@@ -49,6 +50,44 @@ const locale = "en";
             client:visible
             text={t("waitlist.counter", locale)}
           />
+        </div>
+      </div>
+    </Section>
+
+    {/* Trust pillars — BRAND-02: Transparency, Precision, Built for Belgium */}
+    <Section muted>
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-heading text-foreground">{t("trust.transparency", locale)}</h2>
+        <p class="mt-2 text-body text-muted-foreground">{t("site.tagline", locale)}</p>
+      </div>
+      <div class="mt-12 grid gap-6 sm:grid-cols-3">
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">{t("trust.transparency", locale)}</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">{t("trust.transparency_desc", locale)}</p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">{t("trust.precision", locale)}</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">{t("trust.precision_desc", locale)}</p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">{t("trust.belgium", locale)}</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">{t("trust.belgium_desc", locale)}</p>
+        </Card>
+      </div>
+    </Section>
+
+    {/* Secondary CTA — UIX-03: waitlist path on every page */}
+    <Section>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-heading text-foreground">{t("waitlist.title", locale)}</h2>
+        <p class="mt-4 text-body text-muted-foreground">{t("waitlist.subtitle", locale)}</p>
+        <div class="mt-8">
+          <a
+            href={`/${locale}/waitlist/`}
+            class="inline-flex h-12 min-h-[44px] items-center justify-center gap-2 rounded-lg bg-primary px-8 text-body font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            {t("hero.cta", locale)}
+          </a>
         </div>
       </div>
     </Section>

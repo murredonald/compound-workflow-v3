@@ -16,6 +16,8 @@ interface Props {
 
 const { locale, ...seoProps } = Astro.props;
 
+const cfBeacon = import.meta.env.PUBLIC_CF_BEACON;
+
 const organizationSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -72,5 +74,13 @@ const softwareSchema = JSON.stringify({
   </head>
   <body class="bg-background text-foreground min-h-screen antialiased">
     <slot />
+    {cfBeacon && (
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={`{"token":"${cfBeacon}"}`}
+        is:inline
+      />
+    )}
   </body>
 </html>

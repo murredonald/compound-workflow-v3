@@ -1,0 +1,116 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import Badge from "@/components/ui/Badge.astro";
+import PricingToggle from "@/components/marketing/PricingToggle";
+import { t } from "@/i18n/utils";
+
+const locale = "nl";
+
+// Tier data inline to avoid island serialization issues
+const tiers = [
+  { id: "solo", name: t("pricing.solo", locale), monthly: 99, annual: 89, founding: 69, queries: "~150–300/mnd", features: ["1 seat", "1 jurisdiction", "Source citations", "Confidence scoring", "Query history", "Email support"] },
+  { id: "team", name: t("pricing.team", locale), monthly: 299, annual: 269, founding: 209, queries: "~750–3.000/mnd", highlighted: true, features: ["5 seats", "1 jurisdiction", "Source citations", "Confidence scoring", "Shared workspace", "Client folders", "Templates", "Priority support"] },
+  { id: "firm", name: t("pricing.firm", locale), monthly: 549, annual: 494, founding: 384, queries: "~2.000–8.000/mnd", features: ["15 seats", "2 jurisdictions", "Source citations", "Confidence scoring", "Admin dashboard", "Knowledge base", "Bulk analysis", "Audit trail", "SSO", "Dedicated support"] },
+  { id: "enterprise", name: t("pricing.enterprise", locale), monthly: null, annual: null, founding: null, queries: "Unlimited", features: ["Unlimited seats", "All jurisdictions", "All features", "Custom integrations", "SLA", "Dedicated account manager"] },
+];
+---
+
+<BaseLayout
+  title={`${t("pricing.title", locale)} — ${t("site.title", locale)}`}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/pricing/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl text-center">
+        <h1 class="text-display text-foreground">{t("pricing.title", locale)}</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">{t("pricing.subtitle", locale)}</p>
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <PricingToggle
+          client:load
+          monthlyLabel={t("pricing.monthly", locale)}
+          annualLabel={t("pricing.annual", locale)}
+          annualSave={t("pricing.annual_save", locale)}
+        />
+      </div>
+
+      {/* Founding member offer */}
+      <p class="mt-6 text-center text-body-sm font-medium text-primary-text">
+        {t("pricing.founding_offer", locale)}
+      </p>
+    </Section>
+
+    {/* Tier cards — UIX-05 */}
+    <Section>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {tiers.map((tier) => (
+          <Card highlighted={tier.highlighted} class={tier.highlighted ? "shadow-lg" : ""}>
+            <div class="flex flex-col h-full">
+              <div class="mb-4">
+                {tier.highlighted && (
+                  <Badge class="mb-2">{t("pricing.most_popular", locale)}</Badge>
+                )}
+                <h3 class="text-body-lg font-semibold text-foreground">{tier.name}</h3>
+              </div>
+
+              {tier.monthly ? (
+                <div class="mb-4">
+                  {/* Founding member price (PRICE-06) */}
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-display-sm font-bold text-foreground">€{tier.founding}</span>
+                    <span class="text-body-sm text-muted-foreground">{t("pricing.per_month", locale)}</span>
+                  </div>
+                  <p class="text-body-xs text-muted-foreground line-through">€{tier.monthly}{t("pricing.per_month", locale)}</p>
+                </div>
+              ) : (
+                <div class="mb-4">
+                  <span class="text-display-sm font-bold text-foreground">{t("pricing.custom", locale)}</span>
+                </div>
+              )}
+
+              <p class="mb-4 text-body-xs text-muted-foreground">{tier.queries} zoekopdrachten</p>
+
+              <ul class="mb-6 flex-1 space-y-2">
+                {tier.features.map((f: string) => (
+                  <li class="flex items-start text-body-sm text-muted-foreground">
+                    <span class="mr-2 text-primary-text">✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href={tier.monthly ? `/${locale}/waitlist/` : `/${locale}/contact/`}
+                class="inline-flex h-11 min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {tier.monthly ? t("pricing.cta", locale) : t("pricing.enterprise_cta", locale)}
+              </a>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </Section>
+
+    {/* Jurisdiction add-ons — PRICE-03 */}
+    <Section muted>
+      <h2 class="text-heading text-foreground">Jurisdictie-uitbreidingen</h2>
+      <p class="mt-2 text-body text-muted-foreground">Breid dekking uit buiten België</p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">+1 Jurisdictie</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Solo +€29/mnd · Team +€79/mnd · Firm +€149/mnd</p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">Benelux-bundel</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Solo +€49/mnd · Team +€129/mnd · Firm +€249/mnd</p>
+          <p class="mt-1 text-body-xs text-primary-text">Bespaar vs. individuele uitbreidingen</p>
+        </Card>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

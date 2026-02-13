@@ -1,0 +1,125 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "nl";
+---
+
+<BaseLayout
+  title={`Privacybeleid — ${t("site.title", locale)}`}
+  description="Privacybeleid van Auryth TX AI — hoe wij uw gegevens verwerken, uw GDPR-rechten en ons engagement voor cookievrije analytics."
+  locale={locale}
+  path="/privacy/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-display text-foreground">Privacybeleid</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Laatst bijgewerkt: februari 2026</p>
+
+        <div class="mt-12 space-y-10">
+          <section>
+            <h2 class="text-heading text-foreground">1. Verwerkingsverantwoordelijke</h2>
+            <div class="mt-4 rounded-lg border border-border bg-card p-6 text-body text-foreground">
+              <p><strong>Auryth BV</strong></p>
+              <p>KBO/BCE: 1025.028.655</p>
+              <p>Maatschappelijke zetel: Antwerpen, België</p>
+              <p>E-mail: <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">2. Welke gegevens wij verzamelen</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Wij verzamelen het minimum aan gegevens dat nodig is voor onze wachtlijst:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">E-mailadres</strong> — opgegeven bij inschrijving op de wachtlijst</li>
+                <li><strong class="text-foreground">Taalvoorkeur</strong> — lokaal opgeslagen in uw browser (localStorage), nooit naar onze servers verzonden</li>
+                <li><strong class="text-foreground">Themavoorkeur</strong> — lokaal opgeslagen in uw browser (localStorage), nooit naar onze servers verzonden</li>
+              </ul>
+              <p>Wij verzamelen <strong class="text-foreground">geen</strong> namen, IP-adressen, browsegeschiedenis of andere persoonsgegevens.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">3. Doel en rechtsgrond</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Uw e-mailadres wordt verwerkt voor de volgende doeleinden:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Wachtlijstbeheer</strong> — om u te verwittigen wanneer Auryth TX AI gelanceerd wordt</li>
+                <li><strong class="text-foreground">Pre-launch communicatie</strong> — om u relevante updates over ons product te sturen</li>
+              </ul>
+              <p>Rechtsgrond: uw toestemming, gegeven door het invullen van het wachtlijstformulier (art. 6, lid 1, a) AVG).</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">4. Verwerker</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Uw e-mailadres wordt opgeslagen en verwerkt door <strong class="text-foreground">Brevo (Sendinblue)</strong>, die optreedt als onze verwerker op basis van een Verwerkersovereenkomst (DPA).</p>
+              <p>Brevo slaat gegevens op in de Europese Unie en is AVG-conform. Meer informatie vindt u in het <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">privacybeleid van Brevo</a>.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">5. Cookies en analytics</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p><strong class="text-foreground">Deze website gebruikt geen cookies.</strong></p>
+              <p>Wij gebruiken <strong class="text-foreground">Cloudflare Web Analytics</strong> voor anonieme, geaggregeerde websitestatistieken. Cloudflare Web Analytics gebruikt geen cookies, volgt geen individuele bezoekers en verzamelt geen persoonsgegevens. Er is geen toestemmingsbanner vereist.</p>
+              <p>Uw thema- en taalvoorkeuren worden opgeslagen in de <code>localStorage</code> van uw browser. Dit is een functioneel, client-side opslagmechanisme dat is vrijgesteld van de ePrivacy-richtlijn — het wordt nooit naar een server verzonden.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">6. Bewaartermijn</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Uw e-mailadres wordt bewaard tot:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li>U verwijdering aanvraagt (zie uw rechten hieronder), of</li>
+                <li>Het wachtlijstdoel is bereikt (productlancering), waarna u de keuze krijgt om een account aan te maken of uw gegevens te laten verwijderen</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">7. Uw rechten (AVG)</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Op grond van de Algemene Verordening Gegevensbescherming heeft u het recht op:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Inzage</strong> — een kopie opvragen van uw persoonsgegevens</li>
+                <li><strong class="text-foreground">Rectificatie</strong> — onjuiste gegevens corrigeren</li>
+                <li><strong class="text-foreground">Wissing</strong> — verwijdering van uw gegevens aanvragen</li>
+                <li><strong class="text-foreground">Gegevensoverdraagbaarheid</strong> — uw gegevens ontvangen in een gestructureerd formaat</li>
+                <li><strong class="text-foreground">Toestemming intrekken</strong> — op elk moment, zonder gevolgen voor eerdere verwerkingen</li>
+                <li><strong class="text-foreground">Klacht indienen</strong> — bij de Gegevensbeschermingsautoriteit (GBA)</li>
+              </ul>
+              <p>Om een van deze rechten uit te oefenen, contacteer ons via <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a>.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">8. Toezichthoudende autoriteit</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>De bevoegde toezichthoudende autoriteit is:</p>
+              <div class="rounded-lg border border-border bg-card p-6 text-foreground">
+                <p><strong>Gegevensbeschermingsautoriteit (GBA)</strong></p>
+                <p>Autorité de protection des données (APD)</p>
+                <p>Drukpersstraat 35 / Rue de la Presse 35</p>
+                <p>1000 Brussel, België</p>
+                <p><a href="https://www.gegevensbeschermingsautoriteit.be" target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">www.gegevensbeschermingsautoriteit.be</a></p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">9. Wijzigingen aan dit beleid</h2>
+            <div class="mt-4 text-body text-muted-foreground">
+              <p>Wij kunnen dit beleid van tijd tot tijd bijwerken. Belangrijke wijzigingen worden per e-mail meegedeeld aan wachtlijstabonnees. De datum "laatst bijgewerkt" bovenaan deze pagina geeft de meest recente herziening weer.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

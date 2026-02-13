@@ -1,0 +1,125 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "en";
+---
+
+<BaseLayout
+  title={`Privacy Policy — ${t("site.title", locale)}`}
+  description="Privacy policy for Auryth TX AI — how we handle your data, your GDPR rights, and our commitment to zero-cookie analytics."
+  locale={locale}
+  path="/privacy/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-display text-foreground">Privacy Policy</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Last updated: February 2026</p>
+
+        <div class="mt-12 space-y-10">
+          <section>
+            <h2 class="text-heading text-foreground">1. Data Controller</h2>
+            <div class="mt-4 rounded-lg border border-border bg-card p-6 text-body text-foreground">
+              <p><strong>Auryth BV</strong></p>
+              <p>KBO/BCE: 1025.028.655</p>
+              <p>Registered office: Antwerp, Belgium</p>
+              <p>Email: <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">2. What Data We Collect</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>We collect the minimum data necessary to operate our waitlist:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Email address</strong> — provided when you join the waitlist</li>
+                <li><strong class="text-foreground">Language preference</strong> — stored locally in your browser (localStorage), never sent to our servers</li>
+                <li><strong class="text-foreground">Theme preference</strong> — stored locally in your browser (localStorage), never sent to our servers</li>
+              </ul>
+              <p>We do <strong class="text-foreground">not</strong> collect names, IP addresses, browsing history, or any other personal data.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">3. Purpose and Legal Basis</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Your email address is processed for the following purposes:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Waitlist management</strong> — to notify you when Auryth TX AI launches</li>
+                <li><strong class="text-foreground">Pre-launch communications</strong> — to send you relevant updates about our product</li>
+              </ul>
+              <p>Legal basis: your consent, given by submitting the waitlist form (Art. 6(1)(a) GDPR).</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">4. Data Processor</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Your email address is stored and processed by <strong class="text-foreground">Brevo (Sendinblue)</strong>, acting as our data processor under a Data Processing Agreement (DPA).</p>
+              <p>Brevo stores data in the European Union and is GDPR-compliant. For details, see <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">Brevo's privacy policy</a>.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">5. Cookies and Analytics</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p><strong class="text-foreground">This website uses zero cookies.</strong></p>
+              <p>We use <strong class="text-foreground">Cloudflare Web Analytics</strong> for anonymous, aggregated website statistics. Cloudflare Web Analytics does not use cookies, does not track individual visitors, and does not collect personal data. No consent banner is required.</p>
+              <p>Your theme and language preferences are stored in your browser's <code>localStorage</code>. This is a functional, client-side storage mechanism exempt from the ePrivacy Directive — it is never transmitted to any server.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">6. Data Retention</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Your email address is retained until:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li>You request deletion (see your rights below), or</li>
+                <li>The waitlist purpose is fulfilled (product launch), after which you will be given the option to create an account or have your data deleted</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">7. Your Rights (GDPR)</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Under the General Data Protection Regulation, you have the right to:</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Access</strong> — request a copy of your personal data</li>
+                <li><strong class="text-foreground">Rectification</strong> — correct inaccurate data</li>
+                <li><strong class="text-foreground">Erasure</strong> — request deletion of your data</li>
+                <li><strong class="text-foreground">Data portability</strong> — receive your data in a structured format</li>
+                <li><strong class="text-foreground">Withdraw consent</strong> — at any time, without affecting prior processing</li>
+                <li><strong class="text-foreground">Lodge a complaint</strong> — with the Belgian Data Protection Authority (APD/GBA)</li>
+              </ul>
+              <p>To exercise any of these rights, contact us at <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a>.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">8. Supervisory Authority</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>The competent supervisory authority is:</p>
+              <div class="rounded-lg border border-border bg-card p-6 text-foreground">
+                <p><strong>Autorité de protection des données (APD)</strong></p>
+                <p>Gegevensbeschermingsautoriteit (GBA)</p>
+                <p>Rue de la Presse 35 / Drukpersstraat 35</p>
+                <p>1000 Brussels, Belgium</p>
+                <p><a href="https://www.autoriteprotectiondonnees.be" target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">www.autoriteprotectiondonnees.be</a></p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">9. Changes to This Policy</h2>
+            <div class="mt-4 text-body text-muted-foreground">
+              <p>We may update this policy from time to time. Material changes will be communicated via email to waitlist subscribers. The "last updated" date at the top of this page reflects the most recent revision.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

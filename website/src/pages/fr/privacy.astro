@@ -1,0 +1,125 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "fr";
+---
+
+<BaseLayout
+  title={`Politique de confidentialité — ${t("site.title", locale)}`}
+  description="Politique de confidentialité d'Auryth TX AI — comment nous traitons vos données, vos droits RGPD et notre engagement pour des analytics sans cookies."
+  locale={locale}
+  path="/privacy/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-display text-foreground">Politique de confidentialité</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Dernière mise à jour : février 2026</p>
+
+        <div class="mt-12 space-y-10">
+          <section>
+            <h2 class="text-heading text-foreground">1. Responsable du traitement</h2>
+            <div class="mt-4 rounded-lg border border-border bg-card p-6 text-body text-foreground">
+              <p><strong>Auryth BV</strong></p>
+              <p>KBO/BCE : 1025.028.655</p>
+              <p>Siège social : Anvers, Belgique</p>
+              <p>E-mail : <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a></p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">2. Données collectées</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Nous collectons le minimum de données nécessaire au fonctionnement de notre liste d'attente :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Adresse e-mail</strong> — fournie lors de l'inscription à la liste d'attente</li>
+                <li><strong class="text-foreground">Préférence linguistique</strong> — stockée localement dans votre navigateur (localStorage), jamais transmise à nos serveurs</li>
+                <li><strong class="text-foreground">Préférence de thème</strong> — stockée localement dans votre navigateur (localStorage), jamais transmise à nos serveurs</li>
+              </ul>
+              <p>Nous ne collectons <strong class="text-foreground">pas</strong> de noms, adresses IP, historique de navigation ou autres données personnelles.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">3. Finalité et base juridique</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Votre adresse e-mail est traitée aux fins suivantes :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Gestion de la liste d'attente</strong> — pour vous notifier du lancement d'Auryth TX AI</li>
+                <li><strong class="text-foreground">Communications pré-lancement</strong> — pour vous envoyer des mises à jour pertinentes sur notre produit</li>
+              </ul>
+              <p>Base juridique : votre consentement, donné en soumettant le formulaire de liste d'attente (art. 6, par. 1, a) RGPD).</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">4. Sous-traitant</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Votre adresse e-mail est stockée et traitée par <strong class="text-foreground">Brevo (Sendinblue)</strong>, agissant en tant que sous-traitant en vertu d'un Accord de Traitement des Données (DPA).</p>
+              <p>Brevo stocke les données dans l'Union européenne et est conforme au RGPD. Pour plus de détails, consultez la <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">politique de confidentialité de Brevo</a>.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">5. Cookies et analytics</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p><strong class="text-foreground">Ce site web n'utilise aucun cookie.</strong></p>
+              <p>Nous utilisons <strong class="text-foreground">Cloudflare Web Analytics</strong> pour des statistiques anonymes et agrégées. Cloudflare Web Analytics n'utilise pas de cookies, ne suit pas les visiteurs individuels et ne collecte pas de données personnelles. Aucune bannière de consentement n'est requise.</p>
+              <p>Vos préférences de thème et de langue sont stockées dans le <code>localStorage</code> de votre navigateur. Il s'agit d'un mécanisme de stockage fonctionnel côté client, exempté de la directive ePrivacy — il n'est jamais transmis à un serveur.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">6. Conservation des données</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>Votre adresse e-mail est conservée jusqu'à :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li>Votre demande de suppression (voir vos droits ci-dessous), ou</li>
+                <li>La réalisation de l'objectif de la liste d'attente (lancement du produit), après quoi vous aurez la possibilité de créer un compte ou de faire supprimer vos données</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">7. Vos droits (RGPD)</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>En vertu du Règlement Général sur la Protection des Données, vous avez le droit de :</p>
+              <ul class="list-disc space-y-2 pl-6">
+                <li><strong class="text-foreground">Accès</strong> — demander une copie de vos données personnelles</li>
+                <li><strong class="text-foreground">Rectification</strong> — corriger des données inexactes</li>
+                <li><strong class="text-foreground">Effacement</strong> — demander la suppression de vos données</li>
+                <li><strong class="text-foreground">Portabilité</strong> — recevoir vos données dans un format structuré</li>
+                <li><strong class="text-foreground">Retrait du consentement</strong> — à tout moment, sans affecter la licéité du traitement antérieur</li>
+                <li><strong class="text-foreground">Introduire une réclamation</strong> — auprès de l'Autorité de protection des données (APD)</li>
+              </ul>
+              <p>Pour exercer l'un de ces droits, contactez-nous à <a href="mailto:privacy@auryth.ai" class="text-primary-text hover:underline">privacy@auryth.ai</a>.</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">8. Autorité de contrôle</h2>
+            <div class="mt-4 space-y-4 text-body text-muted-foreground">
+              <p>L'autorité de contrôle compétente est :</p>
+              <div class="rounded-lg border border-border bg-card p-6 text-foreground">
+                <p><strong>Autorité de protection des données (APD)</strong></p>
+                <p>Gegevensbeschermingsautoriteit (GBA)</p>
+                <p>Rue de la Presse 35 / Drukpersstraat 35</p>
+                <p>1000 Bruxelles, Belgique</p>
+                <p><a href="https://www.autoriteprotectiondonnees.be" target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">www.autoriteprotectiondonnees.be</a></p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-heading text-foreground">9. Modifications de cette politique</h2>
+            <div class="mt-4 text-body text-muted-foreground">
+              <p>Nous pouvons mettre à jour cette politique de temps à autre. Les modifications importantes seront communiquées par e-mail aux abonnés de la liste d'attente. La date de « dernière mise à jour » en haut de cette page reflète la révision la plus récente.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

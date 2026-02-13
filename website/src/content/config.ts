@@ -33,12 +33,12 @@ const guides = defineCollection({
 });
 
 const topics = defineCollection({
-  type: "data",
+  type: "content",
   schema: z.object({
+    title: z.string(),
+    description: z.string(),
     template: z.enum(["tob-rate", "inheritance-tax", "treaty", "wib-article"]),
     params: z.record(z.string(), z.string()),
-    title: z.string(),
-    teaser: z.string(),
     sources: z.array(
       z.object({
         title: z.string(),
@@ -46,6 +46,7 @@ const topics = defineCollection({
       })
     ),
     locale: z.enum(["en", "nl", "fr", "de"]),
+    relatedGuide: z.string().optional(),
   }),
 });
 

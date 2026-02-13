@@ -1,0 +1,67 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { getCollection } from "astro:content";
+import { t } from "@/i18n/utils";
+
+const locale = "en";
+
+export async function getStaticPaths() {
+  const topics = await getCollection("topics", ({ data }) => data.locale === "en");
+  return topics.map((topic) => ({
+    params: { slug: topic.id.replace(/\.mdx?$|\.md$/, "") },
+    props: { topic },
+  }));
+}
+
+const { topic } = Astro.props;
+const { Content } = await topic.render();
+---
+
+<BaseLayout
+  title={`${topic.data.title} — ${t("site.title", locale)}`}
+  description={topic.data.description}
+  locale={locale}
+  path={`/topics/${topic.id.replace(/\.mdx?$|\.md$/, "")}/`}
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl">
+        <a href={`/${locale}/topics/`} class="text-body-sm text-primary-text hover:underline">&larr; All topics</a>
+
+        <header class="mt-8">
+          <span class="text-overline text-primary-text">{topic.data.template.replace(/-/g, " ")}</span>
+          <h1 class="mt-2 text-display text-foreground">{topic.data.title}</h1>
+          <p class="mt-4 text-body-lg text-muted-foreground">{topic.data.description}</p>
+        </header>
+
+        <article class="prose mt-12">
+          <Content />
+        </article>
+
+        {topic.data.sources.length > 0 && (
+          <aside class="mt-12 rounded-lg border border-border bg-card p-6">
+            <h2 class="text-body-lg font-semibold text-foreground">Sources</h2>
+            <ul class="mt-4 space-y-2">
+              {topic.data.sources.map((source) => (
+                <li class="text-body-sm">
+                  <a href={source.url} target="_blank" rel="noopener noreferrer" class="text-primary-text hover:underline">
+                    {source.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
+
+        {topic.data.relatedGuide && (
+          <div class="mt-8">
+            <a href={`/${locale}/guides/${topic.data.relatedGuide}/`} class="inline-flex items-center text-body-sm text-primary-text hover:underline">
+              Read the complete guide &rarr;
+            </a>
+          </div>
+        )}
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

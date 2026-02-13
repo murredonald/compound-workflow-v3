@@ -1,0 +1,48 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { getCollection } from "astro:content";
+import { t } from "@/i18n/utils";
+
+const locale = "de";
+
+const topics = (await getCollection("topics", ({ data }) => data.locale === locale))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout
+  title={`Topics — ${t("site.title", locale)}`}
+  description="Belgische Steuerthemen — TOB-Sätze, Erbschaftsteuer, Doppelbesteuerungsabkommen und mehr."
+  locale={locale}
+  path="/topics/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl text-center">
+        <h1 class="text-display text-foreground">Steuerthemen</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Gezielte Analysen zu spezifischen belgischen Steuerthemen</p>
+      </div>
+    </Section>
+
+    <Section>
+      {topics.length > 0 ? (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {topics.map((topic) => (
+            <Card>
+              <a href={`/${locale}/topics/${topic.id.replace(/\.mdx?$|\.md$/, "")}/`} class="block group">
+                <span class="text-overline text-primary-text">{topic.data.template.replace(/-/g, " ")}</span>
+                <h2 class="mt-1 text-body-lg font-semibold text-foreground group-hover:text-primary-text transition-colors">
+                  {topic.data.title}
+                </h2>
+                <p class="mt-2 text-body-sm text-muted-foreground">{topic.data.description}</p>
+              </a>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-body text-muted-foreground">Themen kommen bald nach dem Launch.</p>
+      )}
+    </Section>
+  </main>
+</BaseLayout>

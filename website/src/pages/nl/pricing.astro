@@ -4,6 +4,7 @@ import Section from "@/components/layout/Section.astro";
 import Card from "@/components/ui/Card.astro";
 import Badge from "@/components/ui/Badge.astro";
 import PricingToggle from "@/components/marketing/PricingToggle";
+import ComparisonMatrix from "@/components/marketing/ComparisonMatrix.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "nl";
@@ -110,6 +111,15 @@ const tiers = [
           <p class="mt-2 text-body-sm text-muted-foreground">Solo +€49/mnd · Team +€129/mnd · Firm +€249/mnd</p>
           <p class="mt-1 text-body-xs text-primary-text">Bespaar vs. individuele uitbreidingen</p>
         </Card>
+      </div>
+    </Section>
+
+    {/* Feature comparison matrix — PRICE-04 / UIX-05 */}
+    <Section>
+      <h2 class="text-heading text-foreground">Functievergelijking</h2>
+      <p class="mt-2 text-body text-muted-foreground">Bekijk wat er in elk plan zit</p>
+      <div class="mt-8">
+        <ComparisonMatrix locale={locale} labels={{ solo: "Solo", team: "Team", firm: "Firm", enterprise: "Enterprise" }} />
       </div>
     </Section>
   </main>

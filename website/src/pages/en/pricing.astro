@@ -5,6 +5,7 @@ import Card from "@/components/ui/Card.astro";
 import Badge from "@/components/ui/Badge.astro";
 import PricingToggle from "@/components/marketing/PricingToggle";
 import ComparisonMatrix from "@/components/marketing/ComparisonMatrix.astro";
+import PricingFAQ from "@/components/marketing/PricingFAQ.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "en";
@@ -120,6 +121,14 @@ const tiers = [
       <p class="mt-2 text-body text-muted-foreground">See what's included in each plan</p>
       <div class="mt-8">
         <ComparisonMatrix locale={locale} labels={{ solo: "Solo", team: "Team", firm: "Firm", enterprise: "Enterprise" }} />
+      </div>
+    </Section>
+
+    {/* Pricing FAQ */}
+    <Section muted>
+      <h2 class="text-h2 text-foreground">Frequently Asked Questions</h2>
+      <div class="mt-8 mx-auto max-w-3xl">
+        <PricingFAQ faqs={[{ question: "When does Auryth TX AI launch?", answer: "We are currently in pre-launch. Join the waitlist to be notified when we launch and to secure founding member pricing at 30%% off." }, { question: "Is there a free trial?", answer: "Yes. Every plan includes a 14-day free trial with full access. No credit card required to start." }, { question: "Can I change plans later?", answer: "Absolutely. You can upgrade or downgrade your plan at any time. Changes take effect at the next billing cycle." }, { question: "What payment methods do you accept?", answer: "We will accept all major credit cards and SEPA direct debit at launch." }, { question: "Is my data secure?", answer: "Yes. We are a Belgian company subject to GDPR. Your data is processed and stored within the EU. See our privacy policy for details." }]} />
       </div>
     </Section>
   </main>

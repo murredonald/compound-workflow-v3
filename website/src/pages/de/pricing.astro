@@ -5,6 +5,7 @@ import Card from "@/components/ui/Card.astro";
 import Badge from "@/components/ui/Badge.astro";
 import PricingToggle from "@/components/marketing/PricingToggle";
 import ComparisonMatrix from "@/components/marketing/ComparisonMatrix.astro";
+import PricingFAQ from "@/components/marketing/PricingFAQ.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "de";
@@ -120,6 +121,14 @@ const tiers = [
       <p class="mt-2 text-body text-muted-foreground">Sehen Sie, was in jedem Plan enthalten ist</p>
       <div class="mt-8">
         <ComparisonMatrix locale={locale} labels={{ solo: "Solo", team: "Team", firm: "Firm", enterprise: "Enterprise" }} />
+      </div>
+    </Section>
+
+    {/* Pricing FAQ */}
+    <Section muted>
+      <h2 class="text-h2 text-foreground">Häufig gestellte Fragen</h2>
+      <div class="mt-8 mx-auto max-w-3xl">
+        <PricingFAQ faqs={[{ question: "Wann wird Auryth TX AI gestartet?", answer: "Wir befinden uns derzeit in der Pre-Launch-Phase. Melden Sie sich für die Warteliste an, um über den Start informiert zu werden und Gründermitglied-Preise mit 30%% Rabatt zu sichern." }, { question: "Gibt es eine kostenlose Testversion?", answer: "Ja. Jeder Plan enthält eine 14-tägige kostenlose Testversion mit vollem Zugang. Keine Kreditkarte erforderlich." }, { question: "Kann ich später den Plan wechseln?", answer: "Selbstverständlich. Sie können jederzeit upgraden oder downgraden. Änderungen werden zum nächsten Abrechnungszyklus wirksam." }, { question: "Welche Zahlungsmethoden akzeptieren Sie?", answer: "Zum Start akzeptieren wir alle gängigen Kreditkarten und SEPA-Lastschrift." }, { question: "Sind meine Daten sicher?", answer: "Ja. Wir sind ein belgisches Unternehmen, das der DSGVO unterliegt. Ihre Daten werden innerhalb der EU verarbeitet und gespeichert. Details finden Sie in unserer Datenschutzerklärung." }]} />
       </div>
     </Section>
   </main>

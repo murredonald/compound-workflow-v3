@@ -5,6 +5,7 @@ import Card from "@/components/ui/Card.astro";
 import Badge from "@/components/ui/Badge.astro";
 import PricingToggle from "@/components/marketing/PricingToggle";
 import ComparisonMatrix from "@/components/marketing/ComparisonMatrix.astro";
+import PricingFAQ from "@/components/marketing/PricingFAQ.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "nl";
@@ -120,6 +121,14 @@ const tiers = [
       <p class="mt-2 text-body text-muted-foreground">Bekijk wat er in elk plan zit</p>
       <div class="mt-8">
         <ComparisonMatrix locale={locale} labels={{ solo: "Solo", team: "Team", firm: "Firm", enterprise: "Enterprise" }} />
+      </div>
+    </Section>
+
+    {/* Pricing FAQ */}
+    <Section muted>
+      <h2 class="text-h2 text-foreground">Veelgestelde vragen</h2>
+      <div class="mt-8 mx-auto max-w-3xl">
+        <PricingFAQ faqs={[{ question: "Wanneer wordt Auryth TX AI gelanceerd?", answer: "We zijn momenteel in pre-launch. Schrijf u in op de wachtlijst om op de hoogte te worden gebracht bij de lancering en om founding member-prijzen te krijgen met 30%% korting." }, { question: "Is er een gratis proefperiode?", answer: "Ja. Elk abonnement bevat een gratis proefperiode van 14 dagen met volledige toegang. Geen creditcard nodig om te starten." }, { question: "Kan ik later van abonnement wisselen?", answer: "Zeker. U kunt op elk moment upgraden of downgraden. Wijzigingen worden van kracht bij de volgende factureringscyclus." }, { question: "Welke betaalmethoden accepteren jullie?", answer: "Bij de lancering accepteren we alle gangbare creditcards en SEPA-domiciliering." }, { question: "Zijn mijn gegevens veilig?", answer: "Ja. Wij zijn een Belgisch bedrijf onderworpen aan de AVG. Uw gegevens worden verwerkt en opgeslagen binnen de EU. Zie ons privacybeleid voor details." }]} />
       </div>
     </Section>
   </main>

@@ -1,0 +1,87 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "en";
+---
+
+<BaseLayout
+  title={`${t("nav.features", locale)} — ${t("site.title", locale)}`}
+  description={t("site.description", locale)}
+  locale={locale}
+  path="/features/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-3xl text-center">
+        <h1 class="text-display text-foreground">{t("nav.features", locale)}</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">{t("site.description", locale)}</p>
+      </div>
+    </Section>
+
+    <Section muted id="transparency">
+      <h2 class="text-heading text-foreground">{t("trust.transparency", locale)}</h2>
+      <p class="mt-4 text-body text-muted-foreground">{t("trust.transparency_desc", locale)}</p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">Confidence Scores</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Every answer scored for reliability. High, moderate, or low confidence — always visible.</p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">Source Citations</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Every claim linked to its legal source. Article references, rulings, and circulars — always verifiable.</p>
+        </Card>
+      </div>
+      <div class="mt-8 rounded-lg border border-border bg-muted/50 p-8 text-center text-muted-foreground">
+        <p class="text-body-sm">Screenshot placeholder — Transparency dashboard</p>
+      </div>
+      <div class="mt-8 text-center">
+        <a href={`/${locale}/waitlist/`} class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{t("hero.cta", locale)}</a>
+      </div>
+    </Section>
+
+    <Section id="precision">
+      <h2 class="text-heading text-foreground">{t("trust.precision", locale)}</h2>
+      <p class="mt-4 text-body text-muted-foreground">{t("trust.precision_desc", locale)}</p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">Temporal Versioning</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Tax law changes over time. Auryth tracks effective dates and applies the correct version to your query.</p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">Cross-Domain Analysis</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Connects income tax, VAT, company law, and social contributions when your question spans multiple domains.</p>
+        </Card>
+      </div>
+      <div class="mt-8 rounded-lg border border-border bg-muted/50 p-8 text-center text-muted-foreground">
+        <p class="text-body-sm">Screenshot placeholder — Precision engine</p>
+      </div>
+      <div class="mt-8 text-center">
+        <a href={`/${locale}/waitlist/`} class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{t("hero.cta", locale)}</a>
+      </div>
+    </Section>
+
+    <Section muted id="belgium">
+      <h2 class="text-heading text-foreground">{t("trust.belgium", locale)}</h2>
+      <p class="mt-4 text-body text-muted-foreground">{t("trust.belgium_desc", locale)}</p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">Belgian Source Hierarchy</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Understands the Belgian legal hierarchy: federal law, regional decrees, circulars, rulings, and administrative commentary.</p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground">NL/FR Bilingual</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Searches and cites sources in both official languages. Query in Dutch, cite French-only provisions — or vice versa.</p>
+        </Card>
+      </div>
+      <div class="mt-8 rounded-lg border border-border bg-muted/50 p-8 text-center text-muted-foreground">
+        <p class="text-body-sm">Screenshot placeholder — Belgian tax intelligence</p>
+      </div>
+      <div class="mt-8 text-center">
+        <a href={`/${locale}/waitlist/`} class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{t("hero.cta", locale)}</a>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

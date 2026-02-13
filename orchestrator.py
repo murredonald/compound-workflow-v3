@@ -320,6 +320,37 @@ def cmd_next(args: argparse.Namespace) -> int:
                 })
             return 0
 
+        # If in synthesize phase, guide through post-synthesize pipeline
+        if pipeline.current_phase == "synthesize":
+            readiness = db.check_synthesize_readiness(conn)
+            if readiness["ready"]:
+                _out({
+                    "action": "complete_phase",
+                    "phase_id": "synthesize",
+                    "reason": "All quality gates passed — ready to complete synthesize",
+                    "warnings": readiness["warnings"],
+                })
+            else:
+                # Tell Claude exactly what's still needed
+                pending_steps: list[str] = []
+                if readiness["task_count"] == 0:
+                    pending_steps.append("store-tasks (no tasks in DB)")
+                if not readiness["audit_run"]:
+                    pending_steps.append("audit (completeness audit not run)")
+                if readiness["open_gaps"] > 0:
+                    pending_steps.append(
+                        f"audit-accept/audit-dismiss ({readiness['open_gaps']} open gap(s))"
+                    )
+                _out({
+                    "action": "synthesize_pipeline",
+                    "phase_id": "synthesize",
+                    "reason": "Post-synthesize quality gates pending",
+                    "pending_steps": pending_steps,
+                    "blockers": readiness["blockers"],
+                    "warnings": readiness["warnings"],
+                })
+            return 0
+
         # Find the next pending phase
         for phase in phases:
             if phase.status == PhaseStatus.PENDING:
@@ -401,6 +432,27 @@ def cmd_resume(args: argparse.Namespace) -> int:
                     print("Run: task-start", next_task.id)
                 else:
                     print("\nAll tasks done. Run: complete-phase execute")
+        elif current == "synthesize":
+            # Synthesize phase — show quality gate status
+            readiness = db.check_synthesize_readiness(conn)
+            print(f"\nSynthesize pipeline — Tasks: {readiness['task_count']}, "
+                  f"Audit: {'done' if readiness['audit_run'] else 'pending'}, "
+                  f"Open gaps: {readiness['open_gaps']}")
+            if readiness["blockers"]:
+                for b in readiness["blockers"]:
+                    print(f"  BLOCKER: {b}")
+            if readiness["warnings"]:
+                for w in readiness["warnings"]:
+                    print(f"  WARNING: {w}")
+            if readiness["ready"]:
+                print("\nReady: complete-phase synthesize")
+            else:
+                print("\nResolve blockers before completing synthesize.")
+            # Also render the synthesize prompt if available
+            ctx = compose_phase_context(conn, current)
+            template = ctx.pop("prompt", "")
+            if template:
+                print(f"\n{render(template, ctx)}")
         elif current:
             # Non-execute phase — render the phase prompt with context
             ctx = compose_phase_context(conn, current)
@@ -937,6 +989,14 @@ def cmd_store_tasks(args: argparse.Namespace) -> int:
             "status": "ok",
             **counts,
             "warnings": result["warnings"],
+            "next_steps": [
+                "Run 'audit' for deterministic gap checks",
+                "Delegate completeness.md prompt to Opus subagent for 7-lens analysis",
+                "Run 'audit-validate' with LLM output to merge gaps",
+                "Resolve all gaps: 'audit-accept GAP-01,...' or 'audit-dismiss GAP-02,...'",
+                "Run 'decompose-list' to check if any tasks need decomposition (optional)",
+                "Then 'complete-phase synthesize' → 'start-phase execute'",
+            ],
         })
     finally:
         conn.close()
@@ -951,10 +1011,36 @@ def cmd_start_phase(args: argparse.Namespace) -> int:
     db_path = _get_db_path()
     conn = db.get_db(db_path)
     try:
+        # Gate: execute phase requires synthesize quality gates to have passed
+        if args.phase_id == "execute":
+            readiness = db.check_synthesize_readiness(conn)
+            if not readiness["ready"]:
+                _out({
+                    "status": "error",
+                    "phase": args.phase_id,
+                    "reason": "Cannot start execute — post-synthesize quality gates not met",
+                    "blockers": readiness["blockers"],
+                    "warnings": readiness["warnings"],
+                    "fix_hint": "Complete audit + gap resolution before starting execute. "
+                                + " → ".join(readiness["blockers"]),
+                    "command": "start-phase",
+                })
+                return 1
+
         db.create_checkpoint(db_path, args.phase_id)
         phase = db.start_phase(conn, args.phase_id)
-        _out({"status": "ok", "phase": phase.id, "started_at": phase.started_at,
-              "checkpoint": f"Created checkpoint '{args.phase_id}'"})
+        result: dict[str, Any] = {
+            "status": "ok",
+            "phase": phase.id,
+            "started_at": phase.started_at,
+            "checkpoint": f"Created checkpoint '{args.phase_id}'",
+        }
+        # Include advisory warnings when entering execute
+        if args.phase_id == "execute":
+            readiness = db.check_synthesize_readiness(conn)
+            if readiness["warnings"]:
+                result["warnings"] = readiness["warnings"]
+        _out(result)
     except db.PhaseGuardError as e:
         _out({
             "status": "error",
@@ -974,14 +1060,47 @@ def cmd_start_phase(args: argparse.Namespace) -> int:
 def cmd_complete_phase(args: argparse.Namespace) -> int:
     conn = db.get_db(_get_db_path())
     try:
-        phase = db.complete_phase(conn, args.phase_id)
-        _out({"status": "ok", "phase": phase.id, "completed_at": phase.completed_at})
+        # Gate: synthesize phase requires audit + gap resolution before completion
+        if args.phase_id == "synthesize":
+            readiness = db.check_synthesize_readiness(conn)
+            if not readiness["ready"]:
+                _out({
+                    "status": "error",
+                    "phase": args.phase_id,
+                    "reason": "Synthesize completion blocked — quality gates not met",
+                    "blockers": readiness["blockers"],
+                    "warnings": readiness["warnings"],
+                    "fix_hint": " → ".join(readiness["blockers"]),
+                    "command": "complete-phase",
+                })
+                return 1
+            # Pass through warnings even on success
+            phase = db.complete_phase(conn, args.phase_id)
+            _out({
+                "status": "ok",
+                "phase": phase.id,
+                "completed_at": phase.completed_at,
+                "warnings": readiness["warnings"],
+            })
+        else:
+            phase = db.complete_phase(conn, args.phase_id)
+            _out({"status": "ok", "phase": phase.id, "completed_at": phase.completed_at})
     finally:
         conn.close()
     return 0
 
 
+_UNSKIPPABLE_PHASES = {"plan", "synthesize", "execute"}
+
+
 def cmd_skip_phase(args: argparse.Namespace) -> int:
+    if args.phase_id in _UNSKIPPABLE_PHASES:
+        return _err(
+            f"Cannot skip mandatory phase '{args.phase_id}'",
+            fix_hint="Only specialist phases can be skipped. "
+                     "Use 'complete-phase' after finishing the phase.",
+            command="skip-phase",
+        )
     conn = db.get_db(_get_db_path())
     try:
         db.skip_phase(conn, args.phase_id)
@@ -998,6 +1117,14 @@ def cmd_skip_phase(args: argparse.Namespace) -> int:
 def cmd_task_start(args: argparse.Namespace) -> int:
     conn = db.get_db(_get_db_path())
     try:
+        # Phase guard: must be in execute phase
+        pipeline = db.get_pipeline(conn)
+        if pipeline.current_phase != "execute":
+            return _err(
+                f"Cannot start tasks outside execute phase (current: {pipeline.current_phase})",
+                fix_hint="Complete current phase first, then 'start-phase execute'.",
+                command="task-start",
+            )
         task = db.get_task(conn, args.task_id)
         if not task:
             return _err(
@@ -1769,6 +1896,9 @@ def cmd_audit(args: argparse.Namespace) -> int:
         # Store deterministic gaps
         for gap in result["deterministic_gaps"]:
             db.store_audit_gap(conn, gap)
+
+        # Record successful completion (check_synthesize_readiness looks for this)
+        db.log_audit_completed(conn, result["gap_count"])
 
         _out({
             "status": "ok",

@@ -1443,13 +1443,93 @@ def update_audit_gap_status(
 
 
 def clear_audit_gaps(conn: sqlite3.Connection) -> int:
-    """Delete all audit gaps. Returns count of deleted rows."""
+    """Delete open audit gaps. Preserves accepted/dismissed gaps.
+
+    Returns count of deleted rows.
+    """
     with conn:
-        cursor = conn.execute("DELETE FROM audit_gaps")
+        cursor = conn.execute(
+            "DELETE FROM audit_gaps WHERE status = 'open'"
+        )
         count: int = cursor.rowcount
         _log_event(conn, "clear_audit_gaps", "audit_gap", "",
-                   f"Cleared {count} gaps")
+                   f"Cleared {count} open gaps")
     return count
+
+
+def log_audit_completed(conn: sqlite3.Connection, gap_count: int) -> None:
+    """Record that a full audit cycle completed successfully.
+
+    Called at the END of cmd_audit, after all gaps are stored.
+    check_synthesize_readiness() looks for this event as proof the audit ran.
+    """
+    with conn:
+        _log_event(conn, "audit_completed", "audit_gap", "",
+                   f"Audit completed: {gap_count} gaps found")
+
+
+def check_synthesize_readiness(conn: sqlite3.Connection) -> dict[str, Any]:
+    """Check whether the synthesize phase can be completed.
+
+    Returns a structured dict with hard blockers and advisory warnings.
+    Hard blockers prevent complete-phase; warnings are informational.
+    """
+    blockers: list[str] = []
+    warnings: list[str] = []
+
+    # 1. Tasks must exist
+    task_count_row = conn.execute(
+        "SELECT COUNT(*) AS cnt FROM tasks"
+    ).fetchone()
+    task_count: int = task_count_row["cnt"] if task_count_row else 0
+    if task_count == 0:
+        blockers.append("No tasks stored. Run 'store-tasks' first.")
+
+    # 2. Audit must have completed (check for audit_completed event, logged at end)
+    audit_event = conn.execute(
+        "SELECT COUNT(*) AS cnt FROM events WHERE action = 'audit_completed'"
+    ).fetchone()
+    audit_run = bool(audit_event and audit_event["cnt"] > 0)
+    if not audit_run:
+        blockers.append(
+            "Completeness audit has not been run. "
+            "Run 'audit' then resolve gaps with 'audit-accept'/'audit-dismiss'."
+        )
+
+    # 3. No open audit gaps (all must be accepted or dismissed)
+    open_gaps_row = conn.execute(
+        "SELECT COUNT(*) AS cnt FROM audit_gaps WHERE status = 'open'"
+    ).fetchone()
+    open_gaps: int = open_gaps_row["cnt"] if open_gaps_row else 0
+    if open_gaps > 0:
+        blockers.append(
+            f"{open_gaps} open audit gap(s) remain. "
+            f"Resolve with 'audit-accept' or 'audit-dismiss' before proceeding."
+        )
+
+    # 4. Decomposition — advisory only (per-task check, not global boolean)
+    decomp_row = conn.execute(
+        "SELECT COUNT(*) AS cnt FROM tasks t "
+        "WHERE t.id LIKE 'T%' AND t.id NOT LIKE 'T%.%' "
+        "AND NOT EXISTS ("
+        "  SELECT 1 FROM tasks sub WHERE sub.id LIKE t.id || '.%'"
+        ")"
+    ).fetchone()
+    undecomposed: int = decomp_row["cnt"] if decomp_row else 0
+    if undecomposed > 0:
+        warnings.append(
+            f"{undecomposed} parent task(s) could be decomposed. "
+            f"Run 'decompose-list' to review. (Optional — not blocking.)"
+        )
+
+    return {
+        "ready": len(blockers) == 0,
+        "task_count": task_count,
+        "audit_run": audit_run,
+        "open_gaps": open_gaps,
+        "blockers": blockers,
+        "warnings": warnings,
+    }
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,61 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import ScarcityBanner from "@/components/marketing/ScarcityBanner.astro";
+import WaitlistForm from "@/components/marketing/WaitlistForm";
+import WaitlistCounter from "@/components/marketing/WaitlistCounter";
+import { t } from "@/i18n/utils";
+
+const locale = "fr";
+---
+
+<BaseLayout
+  title={`${t("waitlist.title", locale)} — ${t("site.title", locale)}`}
+  description={t("waitlist.subtitle", locale)}
+  locale={locale}
+  path="/waitlist/"
+>
+  <main>
+    <Section class="py-24 md:py-32">
+      <div class="mx-auto max-w-xl text-center">
+        <h1 class="text-display text-foreground">{t("waitlist.title", locale)}</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">
+          {t("waitlist.subtitle", locale)}
+        </p>
+
+        <div class="mt-8">
+          <ScarcityBanner text={t("scarcity.banner", locale)} />
+        </div>
+
+        <div class="mt-8 flex justify-center">
+          <WaitlistForm
+            client:load
+            labels={{
+              emailLabel: "Adresse e-mail",
+              emailPlaceholder: t("waitlist.placeholder", locale),
+              submit: t("waitlist.submit", locale),
+              success: t("waitlist.success", locale),
+              privacyHref: `/${locale}/privacy/`,
+            }}
+          />
+        </div>
+
+        <div class="mt-6 flex justify-center">
+          <WaitlistCounter client:visible text={t("waitlist.counter", locale)} />
+        </div>
+      </div>
+    </Section>
+
+    <Section muted>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-heading text-foreground">{t("pricing.founding_offer", locale)}</h2>
+        <ul class="mt-6 space-y-2 text-body-sm text-muted-foreground text-left max-w-md mx-auto">
+          <li>Remise de 30% applicable à tous les plans payants pour vos 12 premiers mois.</li>
+          <li>100 places de membre fondateur sélectionnées par tirage au sort.</li>
+          <li>Les tarifs standards s'appliquent après la première année.</li>
+          <li>Les tarifs définitifs seront confirmés avant le lancement.</li>
+        </ul>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

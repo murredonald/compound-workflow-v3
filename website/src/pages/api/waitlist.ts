@@ -71,6 +71,51 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ success: false, error: "Too many requests" }, 429);
   }
 
-  // Brevo integration will be added in T07.2
-  return json({ success: true }, 200);
+  // --- Brevo contact creation (BACK-06: direct fetch, no SDK) ---
+  const BREVO_API_KEY = import.meta.env.BREVO_API_KEY;
+  const BREVO_LIST_ID = Number(import.meta.env.BREVO_LIST_ID) || 2;
+
+  // UTM parameter forwarding (BACK-05)
+  const utm_source = typeof body.utm_source === "string" ? body.utm_source : "";
+  const utm_medium = typeof body.utm_medium === "string" ? body.utm_medium : "";
+  const utm_campaign =
+    typeof body.utm_campaign === "string" ? body.utm_campaign : "";
+
+  try {
+    const res = await fetch("https://api.brevo.com/v3/contacts", {
+      method: "POST",
+      headers: {
+        "api-key": BREVO_API_KEY,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        listIds: [BREVO_LIST_ID],
+        attributes: {
+          ...(utm_source && { UTM_SOURCE: utm_source }),
+          ...(utm_medium && { UTM_MEDIUM: utm_medium }),
+          ...(utm_campaign && { UTM_CAMPAIGN: utm_campaign }),
+        },
+        updateEnabled: true,
+      }),
+    });
+
+    if (!res.ok) {
+      const brevoErr = await res.json().catch(() => null);
+      // Duplicate contact is acceptable — treat as success
+      if (brevoErr?.code === "duplicate_parameter") {
+        return json({ success: true }, 200);
+      }
+      // Log server-side only, never expose to client (BACK-07)
+      console.error("Brevo API error:", res.status, brevoErr);
+      return json({ success: false, error: "Service temporarily unavailable" }, 502);
+    }
+
+    return json({ success: true }, 200);
+  } catch (err) {
+    // Network/timeout — log server-side, generic client error (BACK-07)
+    console.error("Brevo fetch failed:", err);
+    return json({ success: false, error: "Service temporarily unavailable" }, 502);
+  }
 };

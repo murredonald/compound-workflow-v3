@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-A knowledge retrieval strategy defines how content is chunked, indexed, filtered, and combined so that downstream AI systems can reliably access the right information at the right time.
+A knowledge retrieval strategy is the high-level design blueprint for how an AI system organises, indexes, searches, and delivers knowledge to the language model for answer generation. It encompasses the full set of decisions: how documents are chunked, what embedding models are used, whether search is lexical, semantic, or hybrid, how results are filtered and reranked, and how context is assembled for the generation layer. The retrieval strategy is an architectural choice that shapes every aspect of system performance — accuracy, latency, coverage, and explainability.
+
+## Why it matters
+
+- **Accuracy foundation** — the retrieval strategy determines what the language model sees; a strategy that misses relevant documents or includes irrelevant ones directly degrades answer quality
+- **Domain fitness** — generic retrieval strategies do not account for legal-specific requirements like temporal versioning, authority hierarchies, and jurisdictional filtering; a domain-appropriate strategy addresses these needs
+- **Performance architecture** — the strategy defines the latency budget: how many stages the pipeline has, how expensive each stage is, and what trade-offs between thoroughness and speed are acceptable
+- **Evolvability** — a well-designed strategy is modular, allowing individual components (embedding model, reranker, filter rules) to be upgraded without redesigning the entire system
+
+## How it works
+
+A knowledge retrieval strategy addresses several interconnected design dimensions:
+
+**Chunking strategy** — how documents are split into retrieval units. Options range from fixed-size sliding windows to structure-aware chunking (one chunk per article or section) to hierarchical chunking (different granularities for different purposes). The choice affects embedding quality, retrieval granularity, and citation precision.
+
+**Indexing strategy** — what index types are maintained and how they are configured. Most systems use a hybrid approach: a lexical index (BM25) for exact term matching and a vector index (HNSW) for semantic matching. The indexes may be supplemented with a metadata store for structured filtering and a knowledge graph for relational queries.
+
+**Search strategy** — how queries are processed and matched against the indexes. This includes query understanding (expansion, rewriting, decomposition), retrieval mode (sparse, dense, or hybrid), and candidate generation parameters (how many candidates to retrieve from each index).
+
+**Ranking strategy** — how candidates are scored, filtered, and reranked. This includes metadata filtering (jurisdiction, date, authority), cross-encoder reranking, and score fusion across multiple retrieval methods.
+
+**Context assembly** — how the final set of passages is formatted and injected into the language model prompt. This includes selecting the number of passages, ordering them by relevance or source type, and including metadata for citation generation.
+
+The strategy must also address edge cases: what happens when no relevant documents are found (abstain vs. answer from training knowledge), how contradictions between sources are handled, and how the system behaves when the question is outside its scope.
+
+## Common questions
+
+**Q: Can the retrieval strategy be changed after deployment?**
+
+A: Yes, if the system is modular. Individual components (embedding model, reranker, filter rules) can be updated independently. However, changing fundamental decisions (chunking granularity, index type) may require reprocessing the entire knowledge base.
+
+**Q: What is the most important component of a retrieval strategy?**
+
+A: The embedding model and chunking strategy typically have the largest impact on retrieval quality. The embedding model determines whether semantic matching works well; the chunking strategy determines the granularity and coherence of what is retrieved.
 
 ## References
 

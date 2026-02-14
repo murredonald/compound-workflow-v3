@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-[Relevance scoring](/en/glossary/retrieval-scoring/) aggregates lexical, semantic, and behavioral features into a single score that determines how high each result should appear for a query.
+Relevance scoring is the process of computing a composite score that reflects how well a search result matches a user's query and intent, often combining multiple signals beyond basic text matching. While retrieval scoring focuses on query-document similarity, relevance scoring may additionally incorporate behavioural signals (click-through rates, dwell time), contextual factors (the user's practice area, recent query history), and domain-specific rules (authority ranking, temporal priority) to produce a score that better reflects what the user actually needs.
+
+## Why it matters
+
+- **User-centric ranking** — pure text similarity does not always predict what the user needs; relevance scoring incorporates additional signals to bridge the gap between textual similarity and practical usefulness
+- **Authority differentiation** — in legal search, not all matches are equally authoritative; relevance scoring can boost legislation over commentary, or Supreme Court decisions over lower court rulings, reflecting their actual importance
+- **Temporal priority** — more recent provisions and rulings are often more relevant than older ones; relevance scoring can weight recency alongside semantic similarity
+- **Personalisation** — relevance scoring can adapt to the user's context: a corporate tax specialist sees corporate tax provisions ranked higher, even for general queries
+
+## How it works
+
+Relevance scoring typically combines multiple feature categories into a single score:
+
+**Textual relevance** — the baseline similarity between query and document, computed through lexical matching (BM25), semantic similarity (embedding cosine), or cross-encoder scoring. This is the foundation that ensures results are topically related to the query.
+
+**Authority features** — domain-specific weights that reflect the source's legal authority. Primary legislation scores higher than administrative circulars. Constitutional Court decisions score higher than first-instance rulings. These weights encode legal hierarchy into the ranking.
+
+**Temporal features** — recency signals that boost newer documents when appropriate. Current legislation is more relevant than repealed provisions. However, temporal relevance must be context-aware: a query about historical tax rates should prioritise the relevant historical period, not the most recent year.
+
+**Behavioural features** — in systems with sufficient usage data, click-through rates and engagement metrics indicate which results users find most useful. Documents that are consistently selected and read receive a relevance boost for similar queries.
+
+**Contextual features** — the user's profile, practice area, or recent query history can inform relevance. A user who has been researching VAT all day likely wants VAT-related results, even for ambiguous queries.
+
+These features are combined using learned-to-rank models (LambdaMART, neural ranking models) or simpler weighted combinations. The weights are calibrated on human relevance judgements: annotators rate the relevance of search results for test queries, and the scoring model is trained to reproduce these ratings.
+
+## Common questions
+
+**Q: How is relevance scoring different from retrieval scoring?**
+
+A: The terms overlap significantly. Retrieval scoring typically refers to the query-document similarity computation within the retrieval pipeline. Relevance scoring is broader — it may incorporate additional signals beyond text similarity (authority, recency, user context) to produce a more holistic relevance judgement.
+
+**Q: Can relevance scoring be gamed?**
+
+A: In web search, yes — SEO techniques manipulate relevance signals. In closed legal AI systems where the corpus is curated, gaming is not a concern because the content is authoritative legal text, not user-generated content optimised for ranking.

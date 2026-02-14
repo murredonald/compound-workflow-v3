@@ -10,6 +10,43 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Stress testing evalueert hoe een AI-systeem zich gedraagt onder extreme of gedegradeerde omstandigheden die de normale operationele parameters overschrijden. Dit omvat hoge queryvolumes die de systeemcapaciteit verzadigen, ruis of vijandige invoer, gedeeltelijke infrastructuuruitval en ongebruikelijke querypatronen. Het doel is niet om normale prestaties te testen (dat doet standaardevaluatie), maar om de breekpunten van het systeem te vinden, de faalwijzen te begrijpen en te verifiëren dat het systeem geleidelijk degradeert in plaats van catastrofaal te falen wanneer het voorbij zijn grenzen wordt geduwd.
+
+## Waarom het belangrijk is
+
+- **Ontdekking van faalwijzen** — stress testing onthult hoe het systeem faalt: vertraagt het geleidelijk, geeft het foutmeldingen op een nette manier, of produceert het stilzwijgend onjuiste antwoorden? Elke faalwijze heeft andere implicaties voor gebruikersvertrouwen en veiligheid
+- **Capaciteitsplanning** — inzicht in de doorvoerlimieten en de degradatiecurve van het systeem vormt de basis voor beslissingen over infrastructuuromvang en schaling
+- **Weerbaarheid tegen aanvallen** — stress testing met vijandige invoer onthult kwetsbaarheden voor prompt injection, querymanipulatie en andere aanvallen die bij normaal gebruik mogelijk niet aan het licht komen
+- **Regelgevingsgereedheid** — de EU AI Act vereist dat AI-systemen met hoog risico presteren onder "redelijkerwijs voorzienbare gebruiksomstandigheden"; stress testing levert bewijs voor deze vereiste
+
+## Hoe het werkt
+
+Stress testing bestrijkt meerdere dimensies:
+
+**Load testing** verhoogt geleidelijk het queryvolume totdat de prestaties van het systeem degraderen. Bijgehouden metrieken zijn onder meer responstijd (hoeveel neemt de latentie toe?), foutpercentage (beginnen verzoeken te falen?) en antwoordkwaliteit (worden antwoorden minder nauwkeurig onder belasting?). De test identificeert de maximale duurzame doorvoer en het degradatiepatroon daarna.
+
+**Invoerperturbatietesting** stuurt invoer die afwijkt van normale patronen: extreem lange zoekopdrachten, zoekopdrachten in onverwachte talen, zoekopdrachten met speciale tekens of opmaak, en zoekopdrachten die ontworpen zijn om de retrieval- of generatielagen te verwarren. Het doel is te verifiëren dat het systeem ongebruikelijke invoer verwerkt zonder te crashen of gevaarlijke uitvoer te produceren.
+
+**Infrastructuurfaaltesting** simuleert componentuitval: een vectordatabase-shard die offline gaat, een embeddingmodeldienst die onbeschikbaar wordt, of een netwerkpartitie tussen systeemcomponenten. De test verifieert dat het systeem storingen detecteert, er waar mogelijk omheen routeert en degradatie duidelijk communiceert naar gebruikers.
+
+**Adversarial testing** gebruikt doelbewust geconstrueerde invoer die probeert systeemzwakheden te misbruiken: prompt-injectieaanvallen, zoekopdrachten die ontworpen zijn om trainingsdata te extraheren, en invoer die probeert veiligheidsmaatregelen te omzeilen. Dit overlapt met beveiligingstesting, maar richt zich specifiek op AI-specifieke kwetsbaarheden.
+
+**Edge case testing** richt zich op bekende moeilijke scenario's: ambigue zoekopdrachten, zoekopdrachten op de grens van de systeemscope, zoekopdrachten over onderwerpen met schaarse dekking in de kennisbank, en zoekopdrachten die redenering over meerdere bronnen vereisen.
+
+Resultaten worden gedocumenteerd in termen van ontdekte faalwijzen, breekpunten en remediërende prioriteiten.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt stress testing van regressietesting?**
+
+A: Regressietesting verifieert dat het systeem de kwaliteit behoudt onder normale omstandigheden na wijzigingen. Stress testing duwt het systeem voorbij normale omstandigheden om zijn grenzen te vinden. Regressietesting vraagt "werkt het nog?"; stress testing vraagt "wanneer stopt het met werken, en hoe?"
+
+**V: Hoe vaak moet stress testing worden uitgevoerd?**
+
+A: Na significante architectuurwijzigingen, voor grote releases en periodiek (elk kwartaal) als gezondheidscheck. Geautomatiseerde load testing kan vaker worden uitgevoerd als onderdeel van de CI/CD-pipeline.
+
 ## References
 
 - Ribeiro et al. (2020), "[Beyond Accuracy: Behavioral Testing of NLP Models with CheckList](https://doi.org/10.18653/v1/2020.acl-main.442)", ACL.

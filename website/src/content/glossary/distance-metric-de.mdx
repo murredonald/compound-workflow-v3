@@ -12,7 +12,37 @@ draft: false
 
 ## Definition
 
-Eine Distanzmetrik legt fest, wie weit zwei Vektoren voneinander entfernt sind oder wie ähnlich sie sich sind, und steuert so das Ranking bei [Similarity Search](/de/glossary/similarity-search/) und Clustering.
+Eine Distanzmetrik ist eine mathematische Funktion, die den Abstand zwischen zwei Punkten in einem Raum misst. Um als echte Metrik zu gelten, muss sie vier Eigenschaften erfüllen: Nichtnegativität, Identität der Ununterscheidbaren (Abstand null nur bei identischen Punkten), Symmetrie und die Dreiecksungleichung. In KI- und Retrieval-Systemen bestimmen Distanzmetriken, wie „nah" oder „weit entfernt" zwei Embeddings sind, was sich direkt in die Einschätzung übersetzt, wie ähnlich oder verschieden ihre Bedeutungen sind.
+
+## Warum es wichtig ist
+
+- **Retrieval-Qualität** — die Wahl der Distanzmetrik bestimmt, welche Dokumente als am relevantesten gelten; eine schlechte Wahl kann irrelevante Ergebnisse höher ranken
+- **Konsistenz** — metrische Eigenschaften wie die Dreiecksungleichung stellen sicher, dass Ähnlichkeitsbeziehungen im gesamten Embedding-Raum vorhersagbar bleiben
+- **Index-Performance** — Approximate-Nearest-Neighbour-Algorithmen (HNSW, IVF) sind für bestimmte Metriken optimiert; eine falsche Zuordnung verschlechtert sowohl Geschwindigkeit als auch Recall
+- **Juristische Präzision** — in der Steuerrecherche können kleine semantische Unterschiede zwischen Bestimmungen große praktische Konsequenzen haben, was die Wahl der Metrik entscheidend macht
+
+## Wie es funktioniert
+
+Wenn eine Abfrage in einen Vektor eingebettet wird, berechnet das Retrieval-System die Abstände zwischen dem Abfragevektor und allen Dokumentvektoren im Index. Die Dokumente mit den kleinsten Abständen (oder höchsten Ähnlichkeitswerten) werden als Ergebnisse zurückgegeben.
+
+Gängige Distanzmetriken sind:
+
+- **Euklidische Distanz** — geradliniger Abstand im Vektorraum; empfindlich gegenüber der Vektorgröße
+- **Kosinus-Ähnlichkeit** — misst den Winkel zwischen Vektoren und ignoriert die Größe; weit verbreitet für Text-Embeddings, bei denen die Richtung wichtiger ist als die Länge
+- **Skalarprodukt** — entspricht der Kosinus-Ähnlichkeit bei normalisierten Vektoren; schneller zu berechnen
+- **Manhattan-Distanz** — Summe der absoluten Differenzen entlang jeder Dimension; gelegentlich für dünnbesetzte Darstellungen verwendet
+
+Die meisten modernen Embedding-Modelle werden mit Kosinus-Ähnlichkeit trainiert, sodass Retrieval-Systeme typischerweise Vektoren normalisieren und das Skalarprodukt für effiziente Berechnung nutzen.
+
+## Häufige Fragen
+
+**F: Muss die Distanzmetrik zur Trainingsweise des Modells passen?**
+
+A: Ja. Wenn ein Embedding-Modell mit Kosinus-Ähnlichkeit als Zielfunktion trainiert wurde, sollte man beim Retrieval ebenfalls Kosinus-Ähnlichkeit (oder das Skalarprodukt bei normalisierten Vektoren) verwenden. Die Verwendung der euklidischen Distanz mit einem auf Kosinus trainierten Modell kann die Ergebnisse verschlechtern.
+
+**F: Was ist der Unterschied zwischen Distanz und Ähnlichkeit?**
+
+A: Sie sind umgekehrt proportional. Ein kleiner Abstand bedeutet hohe Ähnlichkeit. Die Kosinus-Ähnlichkeit reicht von -1 bis 1 (höher ist ähnlicher), während die euklidische Distanz von 0 bis unendlich reicht (niedriger ist ähnlicher). Die meisten Systeme konvertieren bei Bedarf zwischen beiden.
 
 ## References
 

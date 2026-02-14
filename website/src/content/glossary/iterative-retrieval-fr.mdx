@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’iterative retrieval met à jour la [requête](/fr/glossary/prompt/) ou la sélection de documents sur plusieurs tours, souvent en laissant un [LLM](/fr/glossary/llm/) décider, à partir de ce qui a déjà été vu, de ce qu’il faut récupérer ensuite.
+L'iterative retrieval est une stratégie de récupération qui exécute plusieurs passes de recherche successives, en utilisant les résultats de chaque passe pour affiner la requête, élargir la recherche ou combler les lacunes avant le tour suivant. Contrairement à la récupération en une seule passe, qui émet une requête unique et retourne ce qu'elle trouve, l'iterative retrieval traite les résultats initiaux comme un point de départ et améliore progressivement le contexte récupéré par des cycles répétés de recherche, d'évaluation et d'affinement. Dans les systèmes d'IA juridique, l'iterative retrieval est essentiel car les questions complexes nécessitent souvent des informations qui ne peuvent pas être trouvées avec une seule requête — les références croisées doivent être suivies, les dispositions connexes doivent être rassemblées, et les exceptions ou amendements doivent être identifiés.
+
+## Pourquoi c'est important
+
+- **Couverture des questions complexes** — une question sur l'interaction entre les règles fédérales belges d'impôt des sociétés et les incitants régionaux flamands nécessite de récupérer des informations dans plusieurs domaines juridiques ; l'iterative retrieval suit les connexions entre eux plutôt que d'espérer qu'une seule requête capture tout
+- **Comblement des lacunes** — après une première passe de récupération, le système peut identifier quels aspects de la question restent sans réponse et émettre des requêtes de suivi ciblées pour les informations manquantes, garantissant un contexte complet
+- **Résolution des références croisées** — la législation belge fait fréquemment référence à d'autres dispositions (« tel que défini à l'article 2, §1, 5° CIR92 ») ; l'iterative retrieval suit ces références pour assembler le contexte juridique complet nécessaire à des réponses précises
+- **Amélioration de la qualité** — chaque itération peut appliquer des critères de pertinence plus stricts, en utilisant les résultats précédents pour mieux comprendre ce qui est vraiment pertinent ; les passes ultérieures récupèrent de manière plus précise que la recherche initiale large
+
+## Comment ça fonctionne
+
+L'iterative retrieval fonctionne par une boucle récupérer-évaluer-affiner :
+
+**Récupération initiale** — le système émet une première requête basée sur la question de l'utilisateur et récupère un ensemble initial de documents candidats. Cette passe utilise une correspondance large pour maximiser le rappel, en acceptant que certains résultats puissent n'être que tangentiellement pertinents.
+
+**Évaluation des résultats** — le système (souvent un [LLM](/fr/glossary/llm/)) examine les résultats initiaux et détermine si le contexte récupéré est suffisant pour répondre à la question. Il identifie les lacunes : juridictions manquantes, articles non référencés, périodes non couvertes ou aspects de la question non traités.
+
+**Affinement de la requête** — sur base de l'analyse des lacunes, le système génère de nouvelles requêtes ciblant les informations manquantes. Ces requêtes affinées sont plus spécifiques que l'originale — par exemple, si les résultats initiaux couvraient le taux général d'impôt des sociétés mais pas le taux réduit PME, la requête affinée cible spécifiquement « KMO-tarief vennootschapsbelasting » ou son équivalent.
+
+**Passes suivantes** — les requêtes affinées sont exécutées et leurs résultats sont fusionnés avec le contexte existant. L'étape d'évaluation se répète : y a-t-il encore des lacunes ? Si oui, un nouveau cycle d'affinement est lancé. Une limite maximale d'itérations (typiquement 2 à 4 tours) empêche les boucles infinies.
+
+**Terminaison** — la boucle se termine lorsque le contexte est jugé suffisant, que le nombre maximal d'itérations est atteint, ou que les passes supplémentaires ne retournent plus de nouvelles informations pertinentes. Le contexte assemblé à partir de toutes les passes est ensuite transmis à la couche de génération.
+
+Les implémentations avancées utilisent un LLM comme contrôleur de boucle (récupération agentique), lui permettant de décider dynamiquement quoi rechercher ensuite en fonction de ce qu'il a appris jusqu'à présent. Les implémentations plus simples utilisent un affinement basé sur des règles — par exemple, toujours suivre les références croisées législatives ou toujours rechercher les amendements lorsque le résultat initial est une législation.
+
+## Questions fréquentes
+
+**Q : Combien d'itérations sont généralement nécessaires ?**
+
+R : La plupart des questions sont adéquatement servies par 1 à 3 itérations. Les questions factuelles simples ne nécessitent souvent qu'une seule passe. Les questions analytiques complexes impliquant plusieurs domaines juridiques ou des références croisées bénéficient typiquement de 2 à 3 passes. Au-delà de 3 à 4 itérations, les rendements décroissants s'installent et la latence devient une préoccupation.
+
+**Q : L'iterative retrieval augmente-t-il la latence ?**
+
+R : Oui — chaque itération ajoute un aller-retour de récupération. Le coût en latence est géré par la parallélisation au sein de chaque tour, l'arrêt anticipé lorsque le contexte est suffisant, et la mise en cache des résultats précédemment récupérés. Le compromis en vaut la peine lorsque l'alternative est une réponse incomplète ou incorrecte.
 
 ## References
 

@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Document Parsing extrahiert Text, Struktur (Überschriften, Tabellen) und teils Bilder aus Dateien wie PDFs oder Word‑Dokumenten und wandelt sie in ein einheitliches internes Format um.
+Document Parsing ist der Prozess der Extraktion von strukturiertem Text und Layoutinformationen aus Rohdokumentformaten — PDFs, HTML-Seiten, Word-Dokumenten, gescannten Bildern und XML-Feeds — und deren Umwandlung in eine saubere, strukturierte Darstellung, die für Indexierung und Retrieval geeignet ist. Parsing ist der erste Transformationsschritt in der Datenpipeline: Es überbrückt die Lücke zwischen der Veröffentlichungsform von Dokumenten (optimiert für menschliches Lesen) und deren Verarbeitung durch KI-Systeme (die sauberen Text mit strukturellen Annotationen benötigen). Die Qualität des Document Parsing beeinflusst direkt alles Nachgelagerte — ein schlecht geparster Text mit verstümmeltem Text, verlorener Struktur oder fehlendem Inhalt erzeugt schlechte Embeddings, schlechte Suchergebnisse und schlechte Antworten.
+
+## Warum es wichtig ist
+
+- **Grundlage der Datenqualität** — alle nachgelagerten Verarbeitungsschritte (Chunking, Embedding, Retrieval, Generierung) arbeiten mit der Ausgabe des Parsers; Fehler, die beim Parsing eingeführt werden, pflanzen sich durch die gesamte Pipeline fort
+- **Formatvielfalt** — belgische Rechtsquellen kommen in vielen Formaten: PDFs des Belgischen Staatsblatts, HTML der Gesetzesdatenbank, XML von Gerichtsentscheidungen und gescannte historische Rundschreiben; der Parser muss alle verarbeiten können
+- **Strukturerhaltung** — Rechtsdokumente haben eine bedeutungstragende Struktur (Artikel, Absätze, nummerierte Aufzählungen, Tabellen), die beim Parsing erhalten bleiben muss, damit akkurates Chunking und Zitieren möglich ist
+- **Tabellen- und Listenextraktion** — Steuergesetzgebung enthält häufig Steuersatztabellen, Schwellenwertlisten und strukturierte Kriterien, die als strukturierte Daten extrahiert werden müssen, nicht als verstümmelter Fließtext
+
+## So funktioniert es
+
+Document Parsing verwendet formatspezifische Techniken:
+
+**PDF-Parsing** ist am anspruchsvollsten, weil PDFs Anzeigeformat-Dokumente sind — sie legen fest, wo Zeichen auf einer Seite gezeichnet werden, nicht die logische Struktur des Textes. Parser müssen die Lesereihenfolge aus Zeichenpositionen rekonstruieren, Spalten erkennen, Kopf- und Fußzeilen identifizieren, Silbentrennung verarbeiten und Tabellen extrahieren. Werkzeuge wie pdfplumber, PyMuPDF und kommerzielle Lösungen (ABBYY, Amazon Textract) bieten unterschiedliche Kompromisse zwischen Genauigkeit und Geschwindigkeit.
+
+**HTML-Parsing** extrahiert Inhalte aus Webseiten, indem Navigation, Werbung und Standardelemente entfernt werden, während der bedeutungstragende Inhalt und seine Struktur (Überschriften, Absätze, Listen, Tabellen) erhalten bleiben. HTML ist im Allgemeinen einfacher zu parsen als PDF, da die Struktur explizit in Tags kodiert ist, obwohl inkonsistente Markup-Qualität das Parsing in der Praxis erschwert.
+
+**XML-Parsing** verarbeitet strukturierte Datenfeeds unter Verwendung des Dokumentschemas. Belgische Gesetzesdatenbanken bieten oft XML mit explizitem strukturellem Markup (Artikelnummern, Absätze, Querverweise), was XML zum saubersten Eingabeformat macht, wenn es verfügbar ist.
+
+**[OCR](/de/glossary/ocr/) (Optical Character Recognition)** verarbeitet gescannte Dokumente, indem Textbilder in maschinenlesbare Zeichen umgewandelt werden. Die OCR-Qualität hängt von der Scanauflösung, dem Dokumentzustand und der Sprache ab. Für belgische Rechtsdokumente muss OCR drei Sprachen, juristische Formatierung und potenziell beschädigte historische Scans verarbeiten. OCR-Konfidenzwerte markieren Zeichen oder Bereiche, bei denen die Erkennung unsicher ist.
+
+Nach der initialen Extraktion bereinigt die **Nachverarbeitung** die Ausgabe: Behebung von Kodierungsproblemen, Zusammenführung getrennter Wörter, Normalisierung von Leerzeichen und Validierung der strukturellen Integrität.
+
+## Häufige Fragen
+
+**F: Was ist die größte Parsing-Herausforderung bei Rechtsdokumenten?**
+
+A: Mehrspaltige PDF-Layouts und komplexe Tabellen. Rechtsdokumente verwenden häufig mehrspaltige Formatierung, die einfache PDF-Parser falsch interpretieren, indem sie Text aus verschiedenen Spalten vermischen. Tabellen mit verbundenen Zellen, verschachtelten Überschriften und Fußnoten sind ebenfalls schwer korrekt zu extrahieren.
+
+**F: Wie misst man die Parsing-Qualität?**
+
+A: Durch den Vergleich der Parser-Ausgabe mit manuell verifizierter Ground Truth für eine Stichprobe von Dokumenten. Metriken umfassen die Genauigkeit auf Zeichenebene, die Erkennung struktureller Elemente (Überschriften, Tabellen, Listen) und die nachgelagerte Retrieval-Qualität (verbessert besseres Parsing die Suchergebnisse?).

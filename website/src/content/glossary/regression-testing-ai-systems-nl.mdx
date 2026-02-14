@@ -10,6 +10,48 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Regressietesten voor AI-systemen is de praktijk waarbij een vaste set evaluatiequery's tegen een systeem wordt uitgevoerd na elke wijziging — modelupdate, promptherziening, uitbreiding van de kennisbank, configuratiewijziging — om te verifiëren dat de wijziging bestaand gedrag niet onbedoeld heeft verslechterd. In tegenstelling tot traditionele softwareregressietesten, die binaire slaag/faal-uitkomsten controleren, moeten AI-regressietesten subtiele kwaliteitsdegradatie detecteren: iets slechtere relevantiescores, kleine dalingen in citaatnauwkeurigheid of verschuivingen in vertrouwenskalibratie die individueel klein lijken maar samen de systeemkwaliteit uithollen.
+
+## Waarom het ertoe doet
+
+- **Veilig wijzigen** — elke systeemwijziging brengt risico's met zich mee; regressietesten vangen onbedoelde degradatie op voordat deze gebruikers bereikt, waardoor men met vertrouwen kan itereren
+- **Kwaliteitsbasislijn** — het bijhouden van een vaste evaluatieset creëert een stabiel referentiepunt waaraan alle wijzigingen worden gemeten, waardoor geleidelijke kwaliteitserosie wordt voorkomen die zonder systematische meting onopgemerkt zou blijven
+- **Interactie-effecten** — een promptwijziging die antwoorden in één onderwerpsgebied verbetert, kan onverwacht antwoorden in een ander gebied verslechteren; regressietesten over de volledige evaluatieset vangen deze cross-domain effecten op
+- **Nalevingsbewijs** — aantonen dat systeemupdates kwaliteitsniveaus handhaven levert regelgevend bewijs voor naleving van de EU AI Act, die voortdurende monitoring vereist gedurende de gehele systeemlevenscyclus
+
+## Hoe het werkt
+
+AI-regressietesten werken via een gestructureerd proces:
+
+**Basislijn vaststellen** — de huidige prestatie van het systeem wordt gemeten over een uitgebreide evaluatiedataset, wat basislijnscores oplevert voor alle bijgehouden metrieken (nauwkeurigheid, precisie, recall, getrouwheid, kalibratie). Deze basislijnen vertegenwoordigen de kwaliteitsbodem die moet worden gehandhaafd.
+
+**Wijziging toepassen** — een aanpassing wordt gemaakt aan het systeem: een nieuwe modelversie, een bijgewerkte prompt, aanvullende documenten in de kennisbank of een configuratiewijziging.
+
+**Herevaluatie** — dezelfde evaluatiedataset wordt uitgevoerd tegen het gewijzigde systeem, wat een nieuwe set metriekscores oplevert.
+
+**Vergelijking** — nieuwe scores worden vergeleken met basislijnen, zowel geaggregeerd (algehele nauwkeurigheid) als uitgesplitst (nauwkeurigheid per onderwerp, per querytype, per moeilijkheidsgraad). Statistisch significante degradatie in welke categorie dan ook leidt tot onderzoek.
+
+**Beslissing** — als er geen regressies worden gedetecteerd, wordt de wijziging goedgekeurd voor productie. Als er regressies worden gedetecteerd, worden deze onderzocht: is de degradatie verwacht en acceptabel (een afweging voor verbeteringen elders)? Is het een echte bug? Raakt het kritieke gebruiksscenario's? Het team beslist of de wijziging wordt uitgerold, hersteld of teruggedraaid.
+
+Belangrijke praktijken voor effectieve AI-regressietesten zijn:
+
+- **Gestratificeerde evaluatiesets** die alle belangrijke dimensies dekken (onderwerpen, jurisdicties, vraagtypes, moeilijkheidsgraden) om gelokaliseerde regressies op te vangen
+- **Statistische significantietests** om echte regressies te onderscheiden van normale variantie in modeluitvoer
+- **Geautomatiseerde uitvoering** geïntegreerd in de deployment-pipeline, die wijzigingen blokkeert die de regressiedrempels niet halen
+- **Versiebeheer** dat elke testrun koppelt aan de specifieke systeemstatus, wat root cause analyse mogelijk maakt wanneer regressies worden gedetecteerd
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt AI-regressietesten van softwareregressietesten?**
+
+A: Softwareregressietesten controleren deterministische, binaire uitkomsten (de functie retourneert de juiste waarde of niet). AI-regressietesten gaan over probabilistische, graduele uitkomsten — een iets slechtere ranking of een marginaal minder nauwkeurig antwoord. Dit vereist statistische analyse en drempelgebaseerde beslissingen in plaats van eenvoudige slaag/faal-controles.
+
+**V: Hoe vaak moeten regressietesten worden uitgevoerd?**
+
+A: Na elke systeemwijziging die de uitvoerkwaliteit kan beïnvloeden. Voor actief ontwikkelde systemen betekent dit dagelijks of per deployment. Geautomatiseerde integratie in de CI/CD-pipeline zorgt ervoor dat geen enkele wijziging wordt uitgerold zonder regressieverificatie.
+
 ## References
 
 - Breck et al. (2017), "[The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction](https://research.google/pubs/pub46555/)", IEEE Big Data.

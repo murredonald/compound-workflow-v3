@@ -10,6 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Schema markup gebruikt standaarden zoals Schema.org om entiteiten – bijvoorbeeld personen, artikelen of organisaties – in HTML te labelen zodat zoekmachines en AIsystemen de inhoud beter begrijpen.
+Schema markup is een gestandaardiseerd vocabularium van machineleesbare annotaties die aan webinhoud of documenten worden toegevoegd en die hun structuur, type en betekenis beschrijven. Met formaten zoals JSON-LD, microdata of RDFa vertelt schema markup aan zoekmachines en andere systemen wat een pagina bevat — niet alleen de tekst, maar de semantische betekenis: dit is een artikel over een juridisch concept, dat is een definitie, dit is een publicatiedatum, dat zijn gerelateerde termen. Schema markup overbrugt de kloof tussen voor mensen leesbare inhoud en machinaal interpreteerbare gestructureerde data.
+
+## Waarom het ertoe doet
+
+- **Begrip door zoekmachines** — schema markup helpt Google en andere zoekmachines pagina-inhoud te begrijpen, waardoor verrijkte resultaten (featured snippets, kennispanelen, FAQ-kaarten) mogelijk worden die de zichtbaarheid en klikfrequentie verhogen
+- **SEO-waarde** — pagina's met schema markup verschijnen vaker in verbeterde zoekresultaten, die consequent beter presteren dan standaard blauwe links qua klikfrequentie
+- **Verbetering van intern zoeken** — naast externe zoekmachines helpt schema markup ook interne retrievalsystemen om de inhoudstructuur te begrijpen, wat preciezere filtering en categorisatie mogelijk maakt
+- **Interoperabiliteit** — schema markup gebruikt gedeelde vocabularia (voornamelijk Schema.org) waarmee verschillende systemen inhoudsbeschrijvingen consistent kunnen begrijpen en uitwisselen
+
+## Hoe het werkt
+
+Schema markup wordt geïmplementeerd door gestructureerde data-annotaties aan webpagina's of documenten toe te voegen:
+
+**JSON-LD** (JSON for Linking Data) is het aanbevolen formaat. Een JSON-LD-blok wordt in de HTML `<head>` of `<body>` van de pagina geplaatst en beschrijft de inhoud van de pagina in een gestructureerd formaat. Voor een glossarypagina kan dit specificeren: de term die wordt gedefinieerd (name), de definitie (description), de categorie (about), gerelateerde termen (relatedLink) en de taal van de pagina (inLanguage).
+
+**Schema.org-vocabularium** levert de gestandaardiseerde types en eigenschappen. Veelgebruikte types voor een juridische AI-website zijn:
+- **DefinedTerm** — voor glossary-items (termnaam, beschrijving, categorie)
+- **Article** — voor blogposts (kop, auteur, publicatiedatum, artikeltekst)
+- **FAQPage** — voor pagina's met vraag-en-antwoordinhoud
+- **WebSite** — voor de algehele website met zoekfunctionaliteit
+- **Organization** — voor het bedrijf met contactinformatie
+
+**Implementatie** omvat het identificeren van welke inhoudstypen elke pagina bevat, het koppelen daarvan aan de juiste Schema.org-types en het genereren van de JSON-LD-markup. Voor een meertalige website zoals een Belgisch juridisch platform onderscheidt de eigenschap `inLanguage` tussen Nederlandstalige, Franstalige en Duitstalige inhoud.
+
+**Validatie** gebruikt Google's Rich Results Test of de validator van Schema.org om te verifiëren dat de markup syntactisch correct is, geldige types en eigenschappen gebruikt, en waarschijnlijk verbeterde zoekresultaten genereert.
+
+Schema markup verandert de zichtbare pagina-inhoud niet — het betreft metadata die door machines wordt geconsumeerd, niet door menselijke lezers. De informatie die het overbrengt moet echter de zichtbare inhoud nauwkeurig weerspiegelen; misleidende markup schendt de richtlijnen van zoekmachines en kan leiden tot sancties.
+
+## Veelgestelde vragen
+
+**V: Verbetert schema markup rechtstreeks de zoekrangschikking?**
+
+A: Schema markup is geen directe rangschikkingsfactor, maar het maakt verrijkte resultaten mogelijk die de klikfrequentie verhogen, wat indirect SEO ondersteunt. Belangrijker nog, het helpt zoekmachines de semantiek van inhoud te begrijpen, wat kan verbeteren hoe en wanneer pagina's in zoekresultaten verschijnen.
+
+**V: Hoeveel schema markup moet een pagina hebben?**
+
+A: Genoeg om de primaire inhoud van de pagina te beschrijven. Een glossarypagina moet DefinedTerm-markup hebben. Een blogpost moet Article-markup hebben. Het overmatig markeren van bijkomstige inhoud (navigatie, voetteksten, advertenties) is onnodig en kan validators verwarren.

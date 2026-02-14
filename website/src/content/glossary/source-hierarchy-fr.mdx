@@ -10,6 +10,45 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La source hierarchy définit quelles sources priment sur d’autres – par exemple la loi avant les billets de blog – afin que les systèmes de recherche et d’IA pondèrent davantage les documents les plus fiables.
+La hiérarchie des sources est le classement ordonné des sources juridiques selon leur autorité et leur force contraignante, reflétant quelles sources l'emportent en cas de conflit. En droit belge, la Constitution prime sur la législation ordinaire, la législation prime sur les arrêtés royaux, les arrêtés royaux priment sur les circulaires ministérielles, et la jurisprudence contraignante des juridictions supérieures prime sur les décisions des juridictions inférieures. Un système d'IA qui comprend la hiérarchie des sources peut prioriser les sources faisant autorité dans sa recherche et sa génération, garantissant que ses réponses reflètent le droit tel qu'il est effectivement appliqué plutôt que d'accorder le même poids à une loi contraignante et à une FAQ non contraignante.
+
+## Pourquoi c'est important
+
+- **Résolution correcte des conflits** — lorsqu'une circulaire contredit une loi, c'est la loi qui prévaut ; sans hiérarchie des sources, le système pourrait citer la circulaire et produire une réponse incorrecte
+- **Recherche pondérée par l'autorité** — la hiérarchie des sources permet au pipeline de recherche de valoriser les sources faisant autorité et de rétrograder les sources plus faibles, améliorant la pertinence des premiers résultats
+- **Crédibilité professionnelle** — les conseillers fiscaux s'attendent à ce qu'un outil d'IA comprenne que la législation prime sur les directives administratives ; un système qui traite toutes les sources de manière égale compromet la confiance professionnelle
+- **Réponses nuancées** — la hiérarchie des sources permet au système de distinguer entre ce que dit la loi (texte contraignant), ce que pense l'administration (circulaire) et ce que les tribunaux ont décidé (jurisprudence), produisant des réponses plus nuancées et utiles
+
+## Comment ça fonctionne
+
+La hiérarchie des sources est mise en œuvre par le balisage des métadonnées et un système de scoring :
+
+**Classification par autorité** — chaque document de la base de connaissances est étiqueté avec son type de source et son niveau d'autorité lors de l'ingestion. Une hiérarchie typique pour le droit fiscal belge, de l'autorité la plus élevée à la plus faible :
+
+1. **Dispositions constitutionnelles** — règles fondamentales qui priment sur toutes les autres sources
+2. **Droit de l'Union européenne** — règlements et directives à effet direct ou indirect
+3. **Législation fédérale** — codes (CIR92, CTVA), lois et lois-programmes
+4. **Législation régionale** — codes et décrets flamands, wallons, bruxellois et de la Communauté germanophone
+5. **Arrêtés royaux** — règlements d'exécution émis par l'exécutif
+6. **Arrêtés ministériels** — règles d'exécution plus spécifiques
+7. **Circulaires administratives** — l'interprétation de l'administration fiscale (non contraignante pour les tribunaux)
+8. **Décisions anticipées** — rulings individuels sur des situations spécifiques
+9. **Jurisprudence** — décisions judiciaires (la force contraignante dépend du niveau de la juridiction)
+10. **Questions parlementaires** — réponses ministérielles (informatives, non contraignantes)
+11. **Commentaires et doctrine** — analyses académiques et de praticiens
+
+**Valorisation lors de la recherche** — lors de la recherche, les scores d'autorité sont intégrés dans le calcul de pertinence. Un texte de loi correspondant à la requête avec une similarité sémantique modérée peut être classé au-dessus d'une circulaire ayant une similarité sémantique plus élevée en raison de son autorité supérieure.
+
+**Signalement des conflits** — lorsque le système détecte des sources de niveaux d'autorité différents présentant des informations contradictoires, il peut le signaler à l'utilisateur en expliquant quelle source prévaut et pourquoi.
+
+## Questions fréquentes
+
+**Q : La hiérarchie des sources est-elle toujours claire ?**
+
+R : Aux extrêmes, oui — la Constitution prime toujours sur une circulaire. Dans les cas intermédiaires, le classement peut être nuancé : comment une circulaire récente qui modifie explicitement la pratique administrative se compare-t-elle à une jurisprudence plus ancienne ? La hiérarchie fournit le cadre, mais le jugement professionnel reste nécessaire pour les cas limites.
+
+**Q : En quoi la hiérarchie des sources diffère-t-elle de la provenance des sources ?**
+
+R : La provenance des sources retrace d'où vient un document et comment il a été traité (origine et historique de traitement). La hiérarchie des sources classe les documents selon leur autorité juridique. Une circulaire a une provenance claire (publiée par le SPF Finances à une date précise) et une position spécifique dans la hiérarchie (en dessous de la législation, au-dessus de la doctrine).

@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Semantic ranking uses learned models and [embeddings](/en/glossary/embeddings/) to score documents by meaning, so that conceptually relevant results outrank those that merely match keywords.
+Semantic ranking is the process of ordering search results based on their meaning-level relevance to a query, using neural models that understand context and intent rather than relying solely on keyword overlap. While lexical ranking (BM25) rewards documents that contain the query's exact words, semantic ranking rewards documents that express the same concepts — even when completely different words are used. A query about "tax deductions for home office expenses" semantically matches a document about "aftrek beroepsmatig gebruik woning" because the meaning is the same, despite zero word overlap.
+
+## Why it matters
+
+- **Cross-lingual matching** — in Belgium's trilingual legal system, semantic ranking enables a Dutch query to find relevant French legislation because both map to the same meaning in embedding space
+- **Vocabulary mismatch resolution** — legal professionals and legislation often use different terminology for the same concept; semantic ranking bridges this gap without requiring exact term matches
+- **Intent understanding** — semantic models can distinguish between different meanings of the same word based on context: "interest" in a tax deduction context vs. a financial interest context
+- **Improved user experience** — semantic ranking surfaces relevant results that keyword search would miss entirely, reducing the effort required to find applicable legal provisions
+
+## How it works
+
+Semantic ranking operates through neural models that encode meaning:
+
+**Bi-encoder (embedding-based) ranking** encodes the query and each document independently into embedding vectors, then ranks by vector similarity (cosine, dot product). This is fast because document embeddings are precomputed and stored in the vector index — only the query needs to be encoded at search time. However, the independent encoding means the model cannot attend to query-document interactions.
+
+**Cross-encoder ranking** processes the query and each candidate document together as a single input, allowing deep token-level interaction. The model can attend to how specific query terms relate to specific document passages, capturing nuances like negation, conditionals, and implicit requirements. Cross-encoders are more accurate but much slower because each query-document pair requires a full model forward pass.
+
+**Hybrid approach** — production systems typically use bi-encoder ranking for initial candidate generation (fast, broad) followed by cross-encoder reranking of the top candidates (accurate, focused). This two-stage approach combines the speed of bi-encoders with the accuracy of cross-encoders.
+
+**Domain adaptation** — general-purpose semantic models underperform on specialised legal text. Fine-tuning the ranking model on legal query-document pairs — for example, tax questions matched to their relevant legislative articles — significantly improves ranking quality for domain-specific content.
+
+## Common questions
+
+**Q: Does semantic ranking replace keyword ranking?**
+
+A: No. The most effective systems combine both in hybrid search. Keyword ranking handles precise queries (specific article numbers, exact legal references) that semantic models may not rank correctly. Semantic ranking handles conceptual queries that keyword matching cannot resolve. Together, they cover more query types than either alone.
+
+**Q: How is semantic ranking different from semantic search?**
+
+A: Semantic search is the broader concept of finding documents by meaning. Semantic ranking is the specific scoring mechanism within semantic search that determines the order of results. Semantic search includes query processing, retrieval, and ranking; semantic ranking is the scoring step.

@@ -10,9 +10,44 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’index refresh couvre le ré‑embedding des contenus, la reconstruction de l’index ou l’ajout de nouveaux segments afin que la récupération reste alignée sur les données et modèles d’embedding actuels.
+L'index refresh est le processus de mise à jour des index de recherche et vectoriels pour refléter les changements dans la base de connaissances sous-jacente — ajout de nouveaux documents, mise à jour des documents modifiés et suppression du contenu supprimé ou remplacé. Sans rafraîchissements réguliers de l'index, le système de récupération renvoie des résultats obsolètes qui peuvent référencer une législation abrogée, des taux d'imposition périmés ou des instructions administratives remplacées. En IA juridique, la fréquence de rafraîchissement de l'index détermine directement la rapidité avec laquelle les nouvelles législations et décisions deviennent trouvables dans le système.
+
+## Pourquoi c'est important
+
+- **Actualité juridique** — le droit fiscal belge évolue par le biais de lois-programmes, d'arrêtés royaux et de circulaires publiés en continu ; un index qui accuse un retard par rapport à ces changements renverra des dispositions obsolètes comme si elles étaient en vigueur
+- **Exactitude** — si une disposition est modifiée mais que l'index contient encore l'ancienne version, le système peut produire des réponses basées sur une loi abrogée, créant un risque professionnel sérieux
+- **Exhaustivité** — les nouvelles décisions de justice et rulings administratifs doivent être indexés rapidement pour être disponibles lors de la récupération ; les retards créent des lacunes de couverture
+- **Cohérence** — l'index doit refléter le même état que le magasin de documents sous-jacent ; les incohérences entre les deux provoquent des résultats déroutants (par exemple, un document apparaît dans la recherche mais est manquant lorsqu'on y accède)
+
+## Comment ça fonctionne
+
+Le rafraîchissement d'index peut fonctionner selon plusieurs modes :
+
+**Rafraîchissement incrémental** — ne traite que les documents nouveaux ou modifiés depuis le dernier rafraîchissement. Lorsqu'une nouvelle circulaire est ingérée, seuls les chunks de cette circulaire sont vectorisés et ajoutés à l'index. C'est efficace mais nécessite une détection fiable des changements — le système doit savoir quels documents sont nouveaux ou modifiés.
+
+**Reconstruction complète** — reconstruit l'intégralité de l'index à partir de zéro. Cela garantit la cohérence mais est coûteux pour les grandes bases de connaissances (ré-embedding de millions de chunks). Les reconstructions complètes sont généralement programmées périodiquement (hebdomadaire ou mensuel) comme vérification de cohérence, les rafraîchissements incrémentaux gérant les mises à jour quotidiennes.
+
+**Indexation en temps réel** — ajoute les documents à l'index immédiatement après l'ingestion, sans délai. Cela offre la latence de mise à jour la plus rapide mais nécessite que la structure de l'index supporte les lectures et écritures concurrentes sans dégradation.
+
+**Rafraîchissement versionné** — maintient plusieurs versions de l'index, construisant un nouvel index en arrière-plan pendant que l'ancien continue de servir les requêtes. Une fois le nouvel index prêt et validé, le trafic est basculé de manière atomique. Cela évite toute période où l'index est partiellement mis à jour.
+
+Les considérations opérationnelles clés incluent :
+
+- **Cohérence des embeddings** — si le modèle d'embedding est mis à jour, tous les documents doivent être ré-vectorisés ; un ré-embedding partiel crée un index incohérent où les anciens et nouveaux embeddings ne sont pas comparables
+- **Gestion des suppressions** — lorsqu'un document est abrogé ou remplacé, ses chunks doivent être supprimés de l'index, pas simplement marqués comme inactifs dans le magasin de documents
+- **Validation** — après chaque rafraîchissement, des vérifications automatisées confirment que l'index contient le nombre attendu de documents, que les documents clés sont récupérables et qu'aucune corruption n'est survenue pendant la mise à jour
+
+## Questions fréquentes
+
+**Q : À quelle vitesse la nouvelle législation doit-elle apparaître dans l'index ?**
+
+R : Pour un outil d'IA juridique professionnel, l'indexation le jour même des publications au Moniteur belge est l'attente standard. Cela signifie généralement des cycles quotidiens d'ingestion et de rafraîchissement d'index, avec la possibilité de déclencher des rafraîchissements ad hoc pour les mises à jour urgentes.
+
+**Q : Le système peut-il répondre aux requêtes pendant un rafraîchissement d'index ?**
+
+R : Oui, avec une architecture adaptée. Les mises à jour incrémentales et les rafraîchissements versionnés permettent au système de continuer à servir les requêtes depuis l'index en cours pendant que la mise à jour se déroule. Seules les reconstructions complètes sans versionnement nécessitent une dégradation temporaire.
 
 ## References
 

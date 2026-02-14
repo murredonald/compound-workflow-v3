@@ -12,4 +12,35 @@ draft: false
 
 ## Définition
 
-L'[interprétabilité](/fr/glossary/explainability/) d'un modèle concerne la facilité avec laquelle le comportement d'un modèle peut être expliqué et inspecté, ce qui est important pour le contrôle réglementaire et éthique.
+L'interprétabilité du modèle désigne le degré auquel un humain peut comprendre comment et pourquoi un modèle d'IA produit un résultat particulier. Un modèle interprétable permet à ses utilisateurs, développeurs et régulateurs de retracer le chemin de l'entrée à la sortie — en comprenant quelles caractéristiques, quels points de données ou quelles étapes de raisonnement ont influencé le résultat. En IA juridique, l'interprétabilité n'est pas une simple préférence technique mais une exigence réglementaire : le règlement européen sur l'IA (AI Act) impose que les systèmes d'IA à haut risque offrent une transparence suffisante pour que les utilisateurs puissent interpréter les résultats du système et les utiliser de manière appropriée.
+
+## Pourquoi c'est important
+
+- **Responsabilité professionnelle** — lorsqu'un conseiller fiscal s'appuie sur une analyse générée par l'IA, il doit comprendre pourquoi le système est arrivé à sa conclusion pour remplir son propre devoir de diligence professionnelle ; une réponse de type « boîte noire » n'est pas suffisante
+- **Conformité réglementaire** — le règlement européen sur l'IA exige que les systèmes d'IA à haut risque soient « suffisamment transparents pour permettre aux utilisateurs d'interpréter les résultats du système et de les utiliser de manière appropriée » (article 13) ; les mécanismes d'interprétabilité sont le principal moyen de satisfaire à cette exigence
+- **Détection des erreurs** — des résultats interprétables permettent aux utilisateurs de repérer les erreurs : si le système cite une source non pertinente ou ignore une disposition clé, une chaîne de raisonnement transparente rend cela visible
+- **Confiance et adoption** — les professionnels sont plus enclins à adopter des outils d'IA qu'ils peuvent comprendre et vérifier ; les systèmes opaques rencontrent une résistance indépendamment de leur exactitude
+
+## Comment ça fonctionne
+
+L'interprétabilité opère à plusieurs niveaux dans un système d'IA :
+
+**L'attribution des sources** est la forme la plus directe d'interprétabilité dans la génération augmentée par récupération. Le système montre quels documents ont été récupérés, quels passages ont éclairé la réponse, et comment chaque source a contribué. Cela permet à l'utilisateur de vérifier la réponse par rapport aux sources citées plutôt que de faire confiance aveuglément au modèle.
+
+**La communication de la confiance** fournit un signal calibré du degré de certitude du système concernant sa réponse. Lorsque le système rencontre des sources contradictoires, des preuves insuffisantes ou des requêtes ambiguës, il communique explicitement cette incertitude plutôt que de présenter une réponse à l'apparence définitive mais en réalité incertaine.
+
+**Les traces de raisonnement** montrent les étapes intermédiaires du raisonnement du système : quelles requêtes de recherche ont été générées, comment les résultats ont été filtrés et classés, et comment la réponse finale a été synthétisée à partir de sources multiples. Elles sont plus détaillées que l'attribution des sources et sont principalement utiles aux développeurs et aux utilisateurs avancés qui diagnostiquent le comportement du système.
+
+**Les méthodes d'importance des caractéristiques** (comme la visualisation de l'attention ou les valeurs SHAP) identifient quelles parties de l'entrée ont eu la plus grande influence sur la sortie. Dans les modèles textuels, cela peut mettre en évidence quels mots de la requête ou quels passages du contexte récupéré ont été les plus influents dans la génération de la réponse.
+
+La tension fondamentale en matière d'interprétabilité se situe entre la complexité du modèle et l'explicabilité. Les modèles plus simples (arbres de décision, classifieurs linéaires) sont intrinsèquement interprétables mais moins performants. Les modèles complexes (transformers, réseaux profonds) atteignent de meilleures performances mais sont plus difficiles à expliquer. Les systèmes RAG atténuent cette tension en rendant le composant de récupération transparent — même si le modèle de génération est opaque, l'utilisateur peut voir quelles sources il a utilisées.
+
+## Questions fréquentes
+
+**Q : l'interprétabilité est-elle la même chose que l'explicabilité ?**
+
+R : les termes sont souvent utilisés de manière interchangeable. Lorsqu'une distinction est faite, l'interprétabilité désigne la compréhensibilité inhérente du mécanisme d'un modèle, tandis que l'explicabilité désigne les méthodes a posteriori qui expliquent les résultats d'un modèle. En pratique, les deux contribuent au même objectif : permettre aux humains de comprendre les décisions de l'IA.
+
+**Q : l'interprétabilité réduit-elle les performances du modèle ?**
+
+R : pas nécessairement. L'attribution des sources et les scores de confiance peuvent être ajoutés à un système RAG sans modifier les modèles sous-jacents. Cependant, contraindre un modèle à être intrinsèquement interprétable (par exemple, utiliser un système basé sur des règles au lieu d'un réseau neuronal) peut limiter ses capacités.

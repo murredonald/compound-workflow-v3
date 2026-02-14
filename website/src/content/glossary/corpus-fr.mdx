@@ -12,4 +12,31 @@ draft: false
 
 ## Definition
 
-Un corpus rassemble tous les textes, documents ou données inclus dans un système donné et sur lesquels portent la recherche, l’analyse ou le raisonnement.
+Un corpus est l'ensemble complet de documents ou de textes sur lesquels opère un système de recherche, d'entraînement ou d'évaluation. En IA juridique et fiscale, un corpus peut comprendre toute la législation indexée, les décisions administratives, la jurisprudence ou les travaux préparatoires parlementaires d'une juridiction donnée. La qualité, la couverture et la fraîcheur du corpus déterminent directement ce que le système peut et ne peut pas traiter.
+
+## Pourquoi c'est important
+
+- **La couverture détermine la précision** — si une décision ou un amendement manque dans le corpus, le système ne peut pas le retrouver, ce qui mène à des conseils incomplets ou obsolètes
+- **Spécificité du domaine** — un corpus web généraliste performe mal sur des questions fiscales spécialisées ; un corpus juridique ciblé, entraîné sur le WIB/CIR belge, produit des résultats bien plus pertinents
+- **Base d'évaluation** — les jeux de données de benchmark sont eux-mêmes de petits corpus utilisés pour mesurer la précision de la recherche et la qualité de la génération
+- **Complexité multi-juridictionnelle** — le droit fiscal belge couvre des sources fédérales, régionales et européennes en trois langues, ce qui rend la construction du corpus particulièrement complexe
+
+## Comment ça fonctionne
+
+La construction d'un corpus de recherche implique plusieurs étapes. Les documents bruts sont collectés à partir de sources faisant autorité (Moniteur belge, publications du SPF Finances, bases de données judiciaires). Chaque document passe par un pipeline de parsing, de nettoyage et de normalisation pour éliminer les artefacts de formatage et standardiser la structure. Le texte nettoyé est ensuite découpé en chunks, converti en vecteurs et indexé pour la recherche.
+
+Un corpus n'est pas statique. De nouvelles législations, circulaires et décisions sont publiées en continu, ce qui nécessite des cycles de mise à jour réguliers. Le contrôle de version garantit que les requêtes temporelles (« Quel était le taux en 2022 ? ») renvoient le texte historique correct plutôt que la version actuelle.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre un corpus et une base de connaissances ?**
+
+R : Un corpus est généralement une collection plate de documents utilisée pour la recherche ou l'entraînement. Une [base de connaissances](/fr/glossary/knowledge-base/) ajoute de la structure — entités, relations et métadonnées — par-dessus le texte brut, permettant des interrogations et un raisonnement plus précis.
+
+**Q : Quelle taille doit avoir un corpus juridique ?**
+
+R : La taille dépend des objectifs de couverture. Un corpus fiscal belge exhaustif peut comprendre des dizaines de milliers de documents (législation, décisions, circulaires, travaux parlementaires), tandis qu'un corpus thématique restreint sur les taux de TOB peut ne contenir que quelques centaines de documents. La complétude compte plus que la taille brute.
+
+**Q : Un corpus peut-il contenir plusieurs langues ?**
+
+R : Oui. Les corpus multilingues sont courants en IA juridique belge, où la même législation existe en néerlandais, en français et en allemand. Les modèles d'embedding multilingues permettent la recherche entre les langues à partir d'un seul index.

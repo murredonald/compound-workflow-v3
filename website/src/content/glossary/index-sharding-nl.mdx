@@ -10,9 +10,38 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Index sharding verdeelt een vector‑ of documentindex in meerdere stukken zodat zoekverkeer en opslag horizontaal over servers kunnen worden geschaald.
+Index sharding is de praktijk waarbij een zoekindex wordt opgesplitst in meerdere kleinere partities (shards) die over verschillende servers of opslagapparaten kunnen worden verdeeld. Elke shard bevat een deelverzameling van de totale documentcollectie en kan onafhankelijk worden doorzocht. Op het moment van een zoekopdracht wordt de zoekactie parallel over alle shards uitgevoerd en worden de resultaten samengevoegd tot één gerangschikte lijst. Sharding stelt retrievalsystemen in staat om verder te schalen dan de geheugen- en verwerkingscapaciteit van één enkele machine, waardoor collecties van miljarden documenten kunnen worden verwerkt met behoud van lage latentie.
+
+## Waarom het belangrijk is
+
+- **Horizontale schaalbaarheid** — wanneer een index de geheugen- of verwerkingscapaciteit van één machine overschrijdt, verdeelt sharding de belasting over meerdere machines, waardoor groei mogelijk is zonder hardwarebeperkingen
+- **Parallelle queryverwerking** — het gelijktijdig doorzoeken van meerdere shards verlaagt de latentie in vergelijking met het sequentieel doorzoeken van één grote index; met N shards verwerkt elke shard 1/N van de data
+- **Fouttolerantie** — als de host van één shard uitvalt, blijven andere shards zoekopdrachten verwerken (met verminderde dekking); gerepliceerde shards bieden volledige fouttolerantie
+- **Incrementele groei** — nieuwe data kan aan nieuwe shards worden toegevoegd zonder bestaande shards opnieuw op te bouwen, wat uitbreiding van de kennisbank vereenvoudigt
+
+## Hoe het werkt
+
+Shardingstrategieën bepalen hoe documenten over shards worden verdeeld:
+
+**Random of hash-gebaseerde sharding** verdeelt documenten gelijkmatig over shards met behulp van een hash van het document-ID. Dit zorgt voor gebalanceerde shardgroottes en querybelasting. Elke zoekopdracht moet alle shards doorzoeken, omdat elk document zich in elke shard kan bevinden.
+
+**Inhoudsgebaseerde sharding** groepeert gerelateerde documenten samen — bijvoorbeeld één shard per jurisdictie of één shard per documenttype. Dit maakt selectief zoeken mogelijk: een zoekopdracht die gefilterd is op Vlaamse wetgeving hoeft alleen de Vlaamse shard te doorzoeken. Dit vermindert de berekening per zoekopdracht, maar creëert ongelijke shardgroottes en riskeert het missen van cross-shardresultaten.
+
+**Temporele sharding** wijst documenten toe aan shards op basis van tijdsperiode — bijvoorbeeld één shard per jaar. Zoekopdrachten naar huidig recht doorzoeken alleen de meest recente shard; historische zoekopdrachten doorzoeken oudere shards. Dit sluit goed aan bij juridische inhoud met duidelijke temporele grenzen.
+
+Op het moment van een zoekopdracht stuurt een **coördinator** de query naar alle relevante shards, elke shard zoekt onafhankelijk en retourneert zijn top-k resultaten, en de coördinator voegt deze deelresultaten samen tot een definitieve gerangschikte lijst. De samenvoegstap moet verschillende scoreverdelingen over shards met elkaar in overeenstemming brengen.
+
+## Veelgestelde vragen
+
+**V: Hoeveel shards moet een index hebben?**
+
+A: Genoeg om de data over de beschikbare hardware te verdelen, maar niet zoveel dat de coördinatieoverhead significant wordt. Een gangbare vuistregel is één shard per 1-10 miljoen documenten, aangepast op basis van documentgrootte, latentievereisten en hardwarespecificaties.
+
+**V: Beïnvloedt sharding de zoekkwaliteit?**
+
+A: Bij random sharding en uitputtend zoeken (alle shards bevragen) is de kwaliteit identiek aan een zoekactie met één index. Bij selectieve sharding (alleen relevante shards bevragen) hangt de kwaliteit af van hoe goed de shardingstrategie overeenkomt met zoekpatronen.
 
 ## References
 

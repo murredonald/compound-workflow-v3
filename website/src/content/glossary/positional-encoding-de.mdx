@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Positional Encoding ist ein zusätzlicher Vektor, der zu Token-[Embeddings](/de/glossary/embeddings/) addiert oder mit ihnen verknüpft wird, damit ein [Transformer](/de/glossary/transformer-architecture/) die Reihenfolge und relativen Positionen von Tokens in einer Sequenz unterscheiden kann.
+Positional Encoding ist ein Verfahren, das Informationen über die Position jedes Tokens innerhalb einer Sequenz in die Repräsentation des Tokens einfügt, damit [Transformer](/de/glossary/transformer-architecture/)-Modelle die Wortstellung verstehen können. Transformer verarbeiten alle Tokens parallel statt sequenziell, was sie schnell macht, aber bedeutet, dass sie kein inhärentes Positionsbewusstsein haben — ohne Positional Encoding würden die Sätze „die Steuer gilt für Einkommen" und „Einkommen gilt für die Steuer" identische Repräsentationen erzeugen. Positional Encoding löst dieses Problem, indem ein positionsabhängiges Signal zu den [Embeddings](/de/glossary/embeddings/) jedes Tokens addiert wird.
+
+## Warum es wichtig ist
+
+- **Empfindlichkeit für Reihenfolge** — in juristischen Texten verändert die Wortstellung die Bedeutung dramatisch; „die Ausnahme gilt nicht" bedeutet das Gegenteil von „die Ausnahme gilt"; Positional Encoding stellt sicher, dass das Modell diese Unterschiede erkennt
+- **Verarbeitung langer Kontexte** — moderne juristische KI-Systeme verarbeiten lange Dokumente (ganze Gesetze, mehrseitige Urteile); die Wahl der Positional-Encoding-Methode bestimmt, wie gut das Modell mit Positionen jenseits seiner Trainingslänge umgeht
+- **Auflösung von Querverweisen** — das Verständnis relativer Positionen hilft dem Modell zu bestimmen, worauf sich „der vorstehende Absatz" oder „der oben genannte Artikel" in juristischen Texten bezieht
+- **Architekturgrundlage** — Positional Encoding ist eine grundlegende Komponente jedes transformerbasierten Modells, einschließlich der Sprachmodelle und Embedding-Modelle, die in [RAG](/de/glossary/retrieval-augmented-generation/)-Systemen verwendet werden
+
+## Wie es funktioniert
+
+Es gibt mehrere Ansätze für Positional Encoding, jeweils mit unterschiedlichen Vor- und Nachteilen:
+
+**Sinusoidale Kodierung** (aus dem ursprünglichen Transformer-Paper) erzeugt Positionsvektoren mithilfe von Sinus- und Kosinusfunktionen bei verschiedenen Frequenzen. Jede Position erhält ein einzigartiges Muster, und die glatte mathematische Beziehung zwischen den Positionen ermöglicht es dem Modell, relative Abstände zu lernen. Dieser Ansatz ist fest und deterministisch — es werden keine zusätzlichen Parameter gelernt.
+
+**Gelernte Positionsembeddings** weisen jeder Position (Position 1, Position 2, ..., bis zur maximalen Sequenzlänge) einen trainierbaren Embedding-Vektor zu. Das Modell lernt diese Embeddings während des Trainings. Dies ist einfach und effektiv, begrenzt das Modell aber auf Sequenzen, die nicht länger sind als die maximale Position, die im Training vorkam.
+
+**Rotary Position Embedding (RoPE)** kodiert die Position durch Rotation des Embedding-Vektors in zweidimensionalen Unterräumen. Der Rotationswinkel ist proportional zur Position, sodass relative Positionen durch den Winkel zwischen rotierten Vektoren erfasst werden. RoPE hat sich als dominanter Ansatz in modernen LLMs durchgesetzt, weil es relative Positionen natürlich handhabt und auf Sequenzlängen extrapolieren kann, die über die im Training gesehenen hinausgehen.
+
+**ALiBi (Attention with Linear Biases)** verfolgt einen anderen Ansatz: Statt die Embeddings zu verändern, wird ein linearer Bias zu den Attention-Scores basierend auf dem Abstand zwischen Tokens addiert. Weit voneinander entfernte Tokens erhalten eine Strafe, wodurch das Modell bevorzugt auf nahegelegenen Kontext achtet. ALiBi extrapoliert gut auf längere Sequenzen und benötigt keine zusätzlichen Parameter.
+
+Die Wahl des Positional Encoding beeinflusst direkt das Kontextfenster des Modells — die maximale Sequenzlänge, die es effektiv verarbeiten kann. Methoden wie RoPE und ALiBi ermöglichen längere Kontextfenster als feste gelernte Embeddings, was für die Verarbeitung umfangreicher juristischer Dokumente wichtig ist.
+
+## Häufige Fragen
+
+**F: Was passiert, wenn die Eingabe länger ist als die Positionen, auf die das Modell trainiert wurde?**
+
+A: Mit gelernten Positionsembeddings kann das Modell längere Sequenzen überhaupt nicht verarbeiten. Mit sinusoidaler, RoPE- oder ALiBi-Kodierung kann das Modell bis zu einem gewissen Grad extrapolieren, wobei die Leistung für Positionen weit jenseits des Trainingsbereichs typischerweise abnimmt. Techniken wie Positionsinterpolation oder NTK-bewusstes Skalieren helfen, die effektive Kontextlänge zu erweitern.
+
+**F: Beeinflusst Positional Encoding die Embedding-Qualität beim Retrieval?**
+
+A: Ja. Embedding-Modelle für das Retrieval verwenden intern Positional Encoding, und es beeinflusst, wie gut sie lange Passagen repräsentieren. Modelle mit besserem Positional Encoding erzeugen genauere Embeddings für lange Dokumente und verbessern so die Retrieval-Qualität.
 
 ## References
 

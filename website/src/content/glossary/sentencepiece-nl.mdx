@@ -12,7 +12,39 @@ draft: false
 
 ## Definitie
 
-SentencePiece is een open-source tokenizer die invoer als ruwe byte- of Unicode-stroom behandelt en een subwoord-vocabulaire leert (bijvoorbeeld BPE of unigram) zonder taalspecifieke pre-[tokenisatie](/nl/glossary/tokenization/).
+SentencePiece is een open-source, taalagnostische Tokenisatiebibliotheek die een subwoord-Vocabulaire direct uit ruwe Tekst leert zonder pre-tokenisatieregels zoals Woordgrensdetectie of taalspecifieke Splitsing te vereisen. In tegenstelling tot traditionele Tokenizers die Tekst eerst in Woorden en vervolgens in Subwoorden splitsen, behandelt SentencePiece de volledige Invoer als een Reeks van Unicode-tekens (of Bytes) en leert deze te segmenteren met behulp van Byte Pair Encoding (BPE) of een unigram-taalmodel. Dit ontwerp maakt het bijzonder effectief voor meertalige Toepassingen waar taalspecifieke Verwerkingsregels onpraktisch zijn.
+
+## Waarom het ertoe doet
+
+- **Taalonafhankelijkheid** — SentencePiece werkt identiek op Nederlands, Frans, Duits en elke andere Taal zonder taalspecifieke Regels, waardoor het ideaal is voor meertalige juridische AI-systemen
+- **Witruimtebehandeling** — door Witruimte als een gewoon Teken te behandelen (weergegeven als ▁) kan SentencePiece de originele Tekst uit Tokens reconstrueren zonder Informatieverlies, wat belangrijk is voor het behouden van de Opmaak van juridische Teksten
+- **Reproduceerbaarheid** — hetzelfde SentencePiece-model produceert identieke Tokenisatie ongeacht Platform of Omgeving, wat consistente Verwerking garandeert tijdens Training en Inferentie
+- **Fundament voor moderne Modellen** — SentencePiece is de Tokenizer achter veel veelgebruikte Taalmodellen, waaronder T5, ALBERT en diverse meertalige Modellen; het begrijpen ervan helpt bij het begrijpen van Modelgedrag
+
+## Hoe het werkt
+
+SentencePiece werkt in twee Fasen:
+
+**Training** — gegeven een Tekstcorpus leert SentencePiece een Vocabulaire van subwoord-eenheden. Het ondersteunt twee Algoritmen:
+
+- **BPE-modus** begint met individuele Tekens en voegt iteratief het meest voorkomende Paar van aangrenzende Tokens samen, waardoor een Vocabulaire van steeds langere Eenheden wordt opgebouwd. De samenvoegsoperaties worden als Model opgeslagen.
+- **Unigram-modus** begint met een grote initiële Vocabulaire van alle mogelijke Substrings (tot een Lengtelimiet) en verwijdert iteratief Tokens waarvan het Verlies de minste impact heeft op de Corpuslikelihood, terugsnoeien tot de gewenste Vocabulairegrootte. Deze Aanpak levert doorgaans linguïstisch zinvollere Segmentaties op.
+
+Beide Modi werken rechtstreeks op de ruwe Tekenstroom, waarbij Witruimte als een gewoon Teken wordt behandeld, voorafgegaan door een speciaal Symbool (▁). Dit elimineert de behoefte aan taalspecifieke Woordgrensregels — cruciaal voor Talen als Duits en Nederlands, waar Samenstellingen gebruikelijk zijn ("vennootschapsbelasting" is één Woord waarmee traditionele Tokenizers moeite kunnen hebben).
+
+**Codering** — tijdens Inferentie segmenteert het getrainde Model elke Invoertekst in subwoord-Tokens. Veelvoorkomende Woorden worden enkele Tokens; zeldzame of onbekende Woorden worden ontleed in kleinere Eenheden. De Codering is deterministisch — dezelfde Invoer levert altijd dezelfde Tokens op.
+
+SentencePiece ondersteunt ook byte-level Fallback: elk Teken dat niet door de geleerde Vocabulaire wordt gedekt, wordt weergegeven als zijn ruwe Bytereeks, wat garandeert dat geen enkele Invoer onrepresenteerbaar is. Dit is essentieel voor het verwerken van speciale Tekens, wiskundige Symbolen of ongebruikelijke Unicode in juridische Documenten.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt SentencePiece van de standaard BPE-tokenizer?**
+
+A: Traditionele BPE-tokenizers vereisen pre-tokenisatie — eerst de Tekst in Woorden splitsen met taalspecifieke Regels (Witruimte, Leestekens), daarna BPE toepassen binnen elk Woord. SentencePiece slaat pre-tokenisatie volledig over en werkt op de ruwe Tekststroom. Dit maakt het taalagnostisch en voorkomt Fouten door onjuiste Woordgrensdetectie.
+
+**V: Beïnvloedt de keuze van Tokenizer de Modelkwaliteit?**
+
+A: Ja. De Tokenizer bepaalt hoe Tekst wordt gesegmenteerd, wat direct beïnvloedt hoe het Model deze verwerkt. Een Tokenizer die voornamelijk op Engelse Tekst is getraind, zal Nederlandse juridische Termen in meer Tokens opsplitsen dan nodig, wat de Efficiëntie vermindert en mogelijk de Prestaties schaadt. Het trainen van SentencePiece op een meertalig juridisch Corpus levert een Vocabulaire op die beter bij het Domein past.
 
 ## References
 

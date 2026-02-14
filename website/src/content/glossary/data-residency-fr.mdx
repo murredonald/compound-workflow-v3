@@ -12,4 +12,35 @@ draft: false
 
 ## Définition
 
-Les exigences de résidence des données précisent dans quelles juridictions les données doivent être stockées ou traitées, influençant les choix de cloud, d'hébergement et de fournisseurs pour les systèmes d'IA.
+La résidence des données désigne les exigences géographiques et juridiques qui régissent l'endroit où les données sont physiquement stockées et traitées. Les réglementations, contrats et politiques organisationnelles peuvent imposer que certaines catégories de données — en particulier les données personnelles, les documents financiers ou les informations confidentielles des clients — restent dans des juridictions spécifiques. Pour les systèmes d'IA traitant des données fiscales sensibles en Belgique, la résidence des données détermine quels fournisseurs cloud, régions d'hébergement et architectures de traitement sont autorisés, et influence directement la sélection des prestataires et la conception du système.
+
+## Pourquoi c'est important
+
+- **Conformité au RGPD** — le RGPD restreint les transferts de données personnelles en dehors de l'Espace économique européen (EEE) sauf si des garanties adéquates sont en place ; les systèmes d'IA traitant des données de contribuables belges doivent s'assurer que les données restent dans des juridictions autorisées
+- **Obligations professionnelles** — les conseillers fiscaux et comptables sont soumis à des lois sur le secret professionnel qui peuvent imposer des contraintes géographiques supplémentaires quant à l'endroit où les données clients peuvent être stockées ou traitées
+- **Exigences des clients** — les clients entreprises incluent souvent des clauses de résidence des données dans leurs contrats, exigeant que leurs données ne quittent jamais certains pays ou régions
+- **Souveraineté et contrôle** — garder les données dans l'UE garantit qu'elles sont soumises au droit européen et à la surveillance réglementaire, offrant des protections juridiques plus fortes que le stockage dans des juridictions disposant de cadres de protection des données plus faibles
+
+## Comment ça fonctionne
+
+La résidence des données s'applique à plusieurs couches du système :
+
+**Couche de stockage** — les bases de données, les espaces de stockage objet et les systèmes de fichiers doivent être provisionnés dans des régions géographiques approuvées. Les principaux fournisseurs cloud (AWS, Azure, GCP) proposent un déploiement par région, permettant aux organisations de sélectionner des centres de données dans l'UE. La région spécifique (par ex. eu-west-1 en Irlande vs. eu-central-1 à Francfort) peut avoir son importance selon les exigences applicables.
+
+**Couche de traitement** — la résidence des données ne concerne pas seulement l'endroit où les données sont stockées au repos, mais aussi l'endroit où elles sont traitées. Si un modèle d'IA s'exécute dans un centre de données américain et reçoit des données de clients belges pour l'inférence, les données ont quitté l'UE même si elles sont stockées en Europe. Cela signifie que les appels API aux LLM, les calculs d'embeddings et les opérations de récupération doivent tous avoir lieu dans des régions approuvées.
+
+**Couche de transit** — les données en transit (transférées entre services) doivent être chiffrées et acheminées via des chemins réseau approuvés. Certaines organisations exigent que même les données chiffrées ne transitent pas par des juridictions non approuvées.
+
+**Évaluation des fournisseurs** — lors de l'utilisation de services d'IA tiers (API d'embeddings, fournisseurs de LLM, bases de données vectorielles), les organisations doivent vérifier que le traitement des données du prestataire a lieu dans des juridictions conformes. Cela inclut la vérification des sous-traitants — les prestataires qui traitent des données pour le compte du prestataire principal.
+
+Les exigences de résidence des données varient selon la réglementation et le contexte. Le RGPD s'applique largement aux données personnelles des résidents de l'UE. Les lois belges sur le secret professionnel ajoutent des contraintes pour les professionnels du droit et de la finance. Des réglementations sectorielles (par ex. services financiers) peuvent imposer des exigences supplémentaires. Les organisations doivent cartographier tous les flux de données et vérifier la conformité de la résidence à chaque point.
+
+## Questions fréquentes
+
+**Q : La résidence des données s'applique-t-elle aux données anonymisées ?**
+
+R : Si les données sont véritablement et irréversiblement anonymisées (et non pseudonymisées), le RGPD ne s'applique plus et les restrictions de résidence des données fondées sur le RGPD ne s'appliquent pas. Cependant, parvenir à une véritable anonymisation est difficile, et de nombreux jeux de données « anonymisés » peuvent être ré-identifiés. Les données pseudonymisées restent des données personnelles au sens du RGPD et sont soumises aux exigences de résidence.
+
+**Q : Peut-on utiliser des API d'IA basées aux États-Unis si l'on a des exigences de résidence des données dans l'UE ?**
+
+R : Uniquement si le fournisseur de l'API propose un traitement dans une région UE et des garanties adéquates de protection des données. De nombreux fournisseurs de LLM proposent désormais des points d'accès hébergés dans l'UE spécifiquement pour répondre à cette exigence. Sans traitement dans une région UE, envoyer des données personnelles ou confidentielles à une API basée aux États-Unis constituerait une violation des restrictions de transfert du RGPD.

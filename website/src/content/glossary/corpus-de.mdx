@@ -12,4 +12,31 @@ draft: false
 
 ## Definition
 
-Ein Korpus umfasst alle Texte, Dokumente oder Daten, die in einem System enthalten sind und über die gesucht, analysiert oder geschlossen wird.
+Ein Korpus ist die vollständige Sammlung von Dokumenten oder Texten, auf der ein Such-, Trainings- oder Evaluierungssystem arbeitet. Im Bereich Legal- und Steuer-KI kann ein Korpus sämtliche indexierten Gesetzestexte, Verwaltungsentscheidungen, Rechtsprechung oder parlamentarische Vorarbeiten einer Rechtsordnung umfassen. Qualität, Umfang und Aktualität des Korpus bestimmen unmittelbar, was das System beantworten kann und was nicht.
+
+## Warum es wichtig ist
+
+- **Abdeckung bestimmt Genauigkeit** — fehlt eine Entscheidung oder Gesetzesänderung im Korpus, kann das System sie nicht auffinden, was zu unvollständigen oder veralteten Auskünften führt
+- **Domänenspezifität** — ein allgemeiner Web-Korpus liefert bei spezialisierten Steuerfragen schlechte Ergebnisse; ein kuratierter juristischer Korpus auf Basis des belgischen WIB/CIR erzielt deutlich relevantere Treffer
+- **Evaluierungsgrundlage** — Benchmark-Datensätze sind selbst kleine Korpora, mit denen Retrieval-Präzision und Generierungsqualität gemessen werden
+- **Multijurisdiktionale Komplexität** — belgisches Steuerrecht erstreckt sich über föderale, regionale und EU-Quellen in drei Sprachen, was den Aufbau eines Korpus besonders anspruchsvoll macht
+
+## Wie es funktioniert
+
+Der Aufbau eines Retrieval-Korpus umfasst mehrere Phasen. Rohdokumente werden aus autoritativen Quellen gesammelt (Amtsblätter, Veröffentlichungen des FÖD Finanzen, Gerichtsdatenbanken). Jedes Dokument durchläuft eine Pipeline aus Parsing, Bereinigung und Normalisierung, um Formatierungsartefakte zu entfernen und die Struktur zu standardisieren. Der bereinigte Text wird dann in Chunks aufgeteilt, in Vektoren eingebettet und für das Retrieval indexiert.
+
+Ein Korpus ist nicht statisch. Neue Gesetze, Rundschreiben und Entscheidungen werden laufend veröffentlicht, sodass der Korpus regelmäßige Aktualisierungszyklen erfordert. Eine Versionskontrolle stellt sicher, dass temporale Abfragen („Wie hoch war der Satz im Jahr 2022?") den korrekten historischen Text liefern und nicht die aktuelle Fassung.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich ein Korpus von einer Knowledge Base?**
+
+A: Ein Korpus ist typischerweise eine flache Sammlung von Dokumenten für Suche oder Training. Eine Knowledge Base fügt Struktur hinzu — Entitäten, Beziehungen und Metadaten — über dem Rohtext und ermöglicht so präzisere Abfragen und Schlussfolgerungen.
+
+**F: Wie groß muss ein juristischer Korpus sein?**
+
+A: Die Größe hängt von den Abdeckungszielen ab. Ein umfassender belgischer Steuerkorpus kann Zehntausende von Dokumenten umfassen (Gesetzgebung, Entscheidungen, Rundschreiben, parlamentarische Arbeiten), während ein enger thematischer Korpus zu TOB-Sätzen nur wenige Hundert Dokumente enthalten könnte. Vollständigkeit ist wichtiger als bloße Menge.
+
+**F: Kann ein Korpus mehrere Sprachen enthalten?**
+
+A: Ja. Mehrsprachige Korpora sind in der belgischen Legal-KI üblich, da dieselbe Gesetzgebung auf Niederländisch, Französisch und Deutsch existiert. Mehrsprachige Embedding-Modelle ermöglichen das Retrieval über Sprachen hinweg aus einem einzigen Index.

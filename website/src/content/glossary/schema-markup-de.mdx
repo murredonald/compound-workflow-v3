@@ -12,4 +12,40 @@ draft: false
 
 ## Definition
 
-Schema Markup verwendet Standards wie Schema.org, um Entitäten – etwa Personen, Artikel oder Organisationen – im HTML zu kennzeichnen, damit Suchmaschinen und KI‑Systeme den Inhalt besser verstehen.
+Schema Markup ist ein standardisiertes Vokabular maschinenlesbarer Annotationen, die Webinhalten oder Dokumenten hinzugefügt werden und deren Struktur, Typ und Bedeutung beschreiben. Mithilfe von Formaten wie JSON-LD, Microdata oder RDFa teilt Schema Markup Suchmaschinen und anderen Systemen mit, was eine Seite enthält — nicht nur den Text, sondern die semantische Bedeutung: Dies ist ein Artikel über ein juristisches Konzept, das ist eine Definition, dies ist ein Veröffentlichungsdatum, das sind verwandte Begriffe. Schema Markup schließt die Lücke zwischen für Menschen lesbaren Inhalten und maschineninterpretierbaren strukturierten Daten.
+
+## Warum es wichtig ist
+
+- **Verständnis durch Suchmaschinen** — Schema Markup hilft Google und anderen Suchmaschinen, Seiteninhalte zu verstehen, und ermöglicht Rich Results (Featured Snippets, Knowledge Panels, FAQ-Karten), die Sichtbarkeit und Klickrate erhöhen
+- **SEO-Wert** — Seiten mit Schema Markup erscheinen häufiger in erweiterten Suchergebnissen, die bei der Klickrate konstant besser abschneiden als Standard-Blaulinks
+- **Verbesserung der internen Suche** — über externe Suchmaschinen hinaus hilft Schema Markup internen Retrievalsystemen, die Inhaltsstruktur zu verstehen, und ermöglicht präzisere Filterung und Kategorisierung
+- **Interoperabilität** — Schema Markup nutzt gemeinsame Vokabulare (primär Schema.org), die es verschiedenen Systemen ermöglichen, Inhaltsbeschreibungen konsistent zu verstehen und auszutauschen
+
+## So funktioniert es
+
+Schema Markup wird implementiert, indem strukturierte Datenannotationen zu Webseiten oder Dokumenten hinzugefügt werden:
+
+**JSON-LD** (JSON for Linking Data) ist das empfohlene Format. Ein JSON-LD-Block wird im `<head>` oder `<body>` des HTML eingebettet und beschreibt den Seiteninhalt in einem strukturierten Format. Für eine Glossarseite könnte dies umfassen: den definierten Begriff (name), die Definition (description), die Kategorie (about), verwandte Begriffe (relatedLink) und die Sprache der Seite (inLanguage).
+
+**Schema.org-Vokabular** stellt die standardisierten Typen und Eigenschaften bereit. Gängige Typen für eine juristische KI-Website umfassen:
+- **DefinedTerm** — für Glossareinträge (Begriffsname, Beschreibung, Kategorie)
+- **Article** — für Blogbeiträge (Überschrift, Autor, Veröffentlichungsdatum, Artikeltext)
+- **FAQPage** — für Seiten mit Frage-und-Antwort-Inhalten
+- **WebSite** — für die gesamte Website mit Suchfunktionalität
+- **Organization** — für das Unternehmen mit Kontaktinformationen
+
+**Implementierung** umfasst die Identifikation der Inhaltstypen jeder Seite, deren Zuordnung zu passenden Schema.org-Typen und die Generierung des JSON-LD-Markups. Für eine mehrsprachige Website wie eine belgische Rechtsplattform unterscheidet die Eigenschaft `inLanguage` zwischen niederländischen, französischen und deutschen Inhalten.
+
+**Validierung** nutzt Googles Rich-Results-Test oder den Validator von Schema.org, um zu prüfen, ob das Markup syntaktisch korrekt ist, gültige Typen und Eigenschaften verwendet und voraussichtlich erweiterte Suchergebnisse erzeugt.
+
+Schema Markup ändert den sichtbaren Seiteninhalt nicht — es sind Metadaten, die von Maschinen konsumiert werden, nicht von menschlichen Lesern. Die darin enthaltenen Informationen sollten jedoch den sichtbaren Inhalt korrekt widerspiegeln; irreführendes Markup verstößt gegen Suchmaschinenrichtlinien und kann zu Abstrafungen führen.
+
+## Häufige Fragen
+
+**F: Verbessert Schema Markup direkt das Suchranking?**
+
+A: Schema Markup ist kein direkter Ranking-Faktor, ermöglicht aber Rich Results, die die Klickrate erhöhen, was indirekt die SEO unterstützt. Wichtiger noch: Es hilft Suchmaschinen, die Semantik von Inhalten zu verstehen, was verbessern kann, wie und wann Seiten in den Suchergebnissen erscheinen.
+
+**F: Wie viel Schema Markup sollte eine Seite haben?**
+
+A: Genug, um den Hauptinhalt der Seite zu beschreiben. Eine Glossarseite sollte DefinedTerm-Markup haben. Ein Blogbeitrag sollte Article-Markup haben. Die übermäßige Auszeichnung nebensächlicher Inhalte (Navigation, Footer, Werbung) ist unnötig und kann Validatoren verwirren.

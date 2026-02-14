@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Een embeddingmodel is een [neuraal netwerk](/nl/glossary/neural-network/) dat invoer – zoals tekst, code of afbeeldingen – projecteert naar een continue [vectorruimte](/nl/glossary/embedding-space/) waarin semantisch gelijkaardige items dicht bij elkaar liggen.
+Een embeddingmodel is een neuraal netwerk dat is getraind om invoer — tekstpassages, zoekopdrachten, afbeeldingen of andere data — af te beelden naar een continue vectorruimte waarin geometrische nabijheid overeenkomt met semantische gelijkenis. Deze modellen vormen de ruggengraat van moderne retrievalsystemen: ze zetten zowel zoekopdrachten als documenten om in vectoren zodat relevante matches gevonden kunnen worden via afstandsberekeningen in plaats van trefwoordoverlap.
+
+## Waarom het belangrijk is
+
+- **Semantisch begrip** — embeddingmodellen vangen betekenis op voorbij exacte woordmatches en vinden relevante documenten zelfs wanneer andere terminologie wordt gebruikt (bijv. "vennootschapsbelasting" en "corporate tax")
+- **Meertalige retrieval** — cross-linguale embeddingmodellen brengen verschillende talen onder in dezelfde vectorruimte, waardoor een Nederlandse zoekopdracht Franse wetgeving kan ophalen
+- **Retrievalkwaliteit** — de keuze van embeddingmodel heeft een grotere impact op zoekkwaliteit dan vrijwel elk ander onderdeel in de pipeline
+- **Domeinaanpassing** — algemene modellen getraind op webtekst presteren vaak ondermaats op gespecialiseerde juridische of fiscale inhoud; domeinspecifiek aangepaste modellen kunnen de precisie aanzienlijk verbeteren
+
+## Hoe het werkt
+
+Een embeddingmodel neemt een tekstinvoer (een zin, paragraaf of documentchunk) en produceert een vector met een vast aantal dimensies, doorgaans 384 tot 1536. Tijdens de training leert het model om semantisch gelijkaardige teksten dicht bij elkaar te plaatsen en ongelijksoortige teksten ver uit elkaar.
+
+De training maakt doorgaans gebruik van contrastief leren: het model ziet paren van gerelateerde teksten (positieve paren) en ongerelateerde teksten (negatieve paren) en past zijn gewichten aan om de afstand voor positieven te minimaliseren en voor negatieven te maximaliseren. Populaire architecturen zijn onder meer BERT-gebaseerde bi-encoders (zoals Sentence-BERT), die query en document onafhankelijk coderen voor snelle retrieval.
+
+Bij inferentie worden alle documenten in het corpus vooraf gecodeerd en opgeslagen in een vectorindex. Wanneer een query binnenkomt, hoeft alleen de query te worden gecodeerd — het systeem vindt vervolgens de dichtstbijzijnde documentvectoren via approximate nearest-neighbour search.
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen een embeddingmodel en een taalmodel?**
+
+A: Een taalmodel (zoals GPT) genereert tekst token per token. Een embeddingmodel produceert één enkele vaste vector die de volledige betekenis van de invoer representeert. Sommige architecturen kunnen beide, maar ze dienen verschillende doelen: embeddingmodellen zijn geoptimaliseerd voor gelijkenisvergelijking, taalmodellen voor generatie.
+
+**V: Moet ik een algemeen of domeinspecifiek embeddingmodel gebruiken?**
+
+A: Voor gespecialiseerde domeinen zoals Belgisch fiscaal recht presteert een domeinspecifiek aangepast model over het algemeen beter dan een algemeen model. Het finetunen van een embeddingmodel op domeinspecifieke paren (bijv. fiscale zoekopdrachten gekoppeld aan relevante wetgeving) kan de retrievalprecisie aanzienlijk verbeteren.
+
+**V: Hoe werken meertalige embeddingmodellen?**
+
+A: Modellen zoals multilingual-e5 of mE5 worden getraind op parallelle tekst in vele talen. Ze leren om equivalente zinnen in verschillende talen naar nabijgelegen vectoren af te beelden, waardoor cross-linguale retrieval vanuit één enkele index mogelijk wordt.
 
 ## References
 

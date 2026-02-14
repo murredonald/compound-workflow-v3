@@ -12,7 +12,41 @@ draft: false
 
 ## Définition
 
-La fidélité mesure si l'explication d'un modèle correspond à la façon dont il arrive effectivement à sa [prédiction](/fr/glossary/inference/).
+La fidélité est la propriété selon laquelle la sortie d'un système d'IA reflète fidèlement les informations contenues dans ses documents sources — sans ajouter d'affirmations non étayées ni déformer ce que disent les sources. Dans la génération augmentée par la recherche, la fidélité signifie que chaque énoncé de la réponse générée peut être rattaché à un passage spécifique du contexte récupéré. Un système fidèle n'invente pas de faits, n'attribue pas d'affirmations à une mauvaise source et ne présente pas ses propres inférences comme s'il s'agissait de citations directes. La fidélité se distingue de l'exactitude factuelle : une réponse peut être fidèle à ses sources même si celles-ci sont obsolètes, et une réponse peut être factuellement correcte mais infidèle si elle énonce des faits absents du contexte fourni.
+
+## Pourquoi c'est important
+
+- **Vérifiabilité des sources** — les réponses fidèles peuvent être vérifiées par rapport à leurs sources ; les réponses infidèles ne le peuvent pas, car les affirmations qu'elles formulent n'apparaissent pas dans les documents cités
+- **Fiabilité professionnelle** — les conseillers fiscaux utilisent l'analyse générée par l'IA comme point de départ pour leur propre travail ; si l'IA déforme ses sources, l'analyse en aval du conseiller repose sur une base fausse
+- **Mesure des hallucinations** — la fidélité est la métrique principale pour détecter les hallucinations dans les systèmes RAG ; les énoncés infidèles sont, par définition, des hallucinations
+- **Confiance réglementaire** — démontrer la fidélité — que le système ne présente que des informations traçables jusqu'à des sources faisant autorité — est fondamental pour déployer l'IA dans des environnements professionnels réglementés
+
+## Comment ça fonctionne
+
+La fidélité s'évalue au niveau de chaque affirmation. Chaque énoncé de la réponse générée est extrait et vérifié par rapport aux documents sources récupérés :
+
+**La vérification par implication** utilise des modèles d'inférence en langage naturel (NLI) pour déterminer si chaque affirmation est impliquée par (découle logiquement de) les passages sources. Les affirmations classées comme « impliquées » sont fidèles ; les affirmations classées comme « contradiction » ou « neutre » (non étayées) sont infidèles.
+
+**L'approche LLM-comme-juge** utilise un second modèle de langage pour comparer la réponse générée aux documents sources et identifier les énoncés qui vont au-delà de ce que les sources soutiennent. Cette approche est plus flexible que le NLI mais introduit ses propres biais.
+
+**L'évaluation humaine** reste la référence. Des annotateurs lisent à la fois la réponse générée et les documents sources, signalant toute affirmation qui ne peut être vérifiée par rapport aux sources. C'est coûteux et lent, mais cela produit les évaluations de fidélité les plus fiables.
+
+**L'amélioration de la fidélité** implique des interventions à plusieurs points du pipeline :
+
+- **Les instructions du prompt système** qui dirigent explicitement le modèle à n'utiliser que le contexte fourni et à dire « je ne sais pas » lorsque le contexte est insuffisant
+- **Les techniques de décodage contraint** qui orientent la génération de jetons du modèle vers des mots et expressions présents dans les documents sources
+- **La vérification post-génération** utilisant un modèle séparé ou un système à base de règles pour vérifier chaque affirmation par rapport aux passages sources avant de renvoyer la réponse à l'utilisateur
+- **La mise en évidence des sources** qui présente la réponse aux côtés des passages spécifiques dont elle est tirée, rendant les ajouts infidèles visibles pour l'utilisateur
+
+## Questions fréquentes
+
+**Q : La fidélité est-elle la même chose que l'exactitude factuelle ?**
+
+R : Non. La fidélité mesure si la sortie correspond à ses sources. L'exactitude mesure si la sortie correspond à la réalité. Une réponse fidèle à des sources obsolètes peut être inexacte. Une réponse exacte qui ajoute des faits vrais absents des sources est infidèle. Les deux propriétés comptent, mais elles se mesurent différemment.
+
+**Q : Un système peut-il être trop fidèle ?**
+
+R : En principe, une fidélité extrême pourrait amener un système à refuser de synthétiser l'information à travers plusieurs sources ou de tirer des inférences évidentes. En pratique, le risque le plus important est une fidélité insuffisante (hallucination). Les systèmes doivent être fidèles à leurs sources tout en synthétisant et en reliant les informations à travers les passages.
 
 ## References
 

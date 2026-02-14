@@ -10,6 +10,48 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Regressionstests für KI-Systeme sind die Praxis, nach jeder Änderung — Modell-Update, Prompt-Überarbeitung, Wissensbasis-Erweiterung, Konfigurationsänderung — einen festen Satz von Evaluierungsabfragen gegen ein System auszuführen, um sicherzustellen, dass die Änderung bestehendes Verhalten nicht unbeabsichtigt verschlechtert hat. Anders als bei traditionellen Software-Regressionstests, die auf binäre Bestanden/Nicht-bestanden-Ergebnisse prüfen, müssen KI-Regressionstests subtile Qualitätsverschlechterungen erkennen: geringfügig schlechtere Relevanz-Rankings, leichte Einbußen bei der Zitiergenauigkeit oder Verschiebungen in der Konfidenzkalibrierung, die einzeln klein erscheinen, aber kumulativ die Systemqualität untergraben.
+
+## Warum es wichtig ist
+
+- **Änderungssicherheit** — jede Systemänderung birgt Risiken; Regressionstests fangen unbeabsichtigte Verschlechterungen ab, bevor sie Nutzer erreichen, und ermöglichen eine sichere Weiterentwicklung
+- **Qualitäts-Baseline** — die Pflege eines festen Evaluierungssets schafft einen stabilen Referenzpunkt, an dem alle Änderungen gemessen werden, und verhindert eine schleichende Qualitätserosion, die ohne systematische Messung unbemerkt bleiben könnte
+- **Wechselwirkungseffekte** — eine Prompt-Änderung, die Antworten in einem Themenbereich verbessert, kann unerwartet die Antworten in einem anderen verschlechtern; Regressionstests über das gesamte Evaluierungsset erkennen solche domänenübergreifenden Effekte
+- **Compliance-Nachweis** — der Nachweis, dass System-Updates das Qualitätsniveau halten, liefert regulatorische Evidenz für die Compliance mit der KI-Verordnung der EU, die eine fortlaufende Überwachung über den gesamten Systemlebenszyklus verlangt
+
+## Wie es funktioniert
+
+KI-Regressionstests folgen einem strukturierten Prozess:
+
+**Baseline-Erstellung** — die aktuelle Systemleistung wird über einen umfassenden Evaluierungsdatensatz gemessen, wobei Baseline-Werte für alle erfassten Metriken (Genauigkeit, Precision, Recall, Treue, Kalibrierung) erstellt werden. Diese Baselines stellen den Qualitätsstandard dar, der aufrechterhalten werden muss.
+
+**Änderungsanwendung** — eine Modifikation wird am System vorgenommen: eine neue Modellversion, ein aktualisierter Prompt, zusätzliche Dokumente in der Wissensbasis oder eine Konfigurationsänderung.
+
+**Neubewertung** — derselbe Evaluierungsdatensatz wird gegen das modifizierte System ausgeführt und liefert einen neuen Satz von Metrikwerten.
+
+**Vergleich** — die neuen Werte werden mit den Baselines verglichen, sowohl aggregiert (Gesamtgenauigkeit) als auch disaggregiert (Genauigkeit nach Thema, nach Abfragetyp, nach Schwierigkeitsgrad). Statistisch signifikante Verschlechterungen in einer Kategorie lösen eine Untersuchung aus.
+
+**Entscheidung** — werden keine Regressionen festgestellt, wird die Änderung für die Produktion freigegeben. Werden Regressionen entdeckt, werden sie untersucht: Ist die Verschlechterung erwartet und akzeptabel (ein Kompromiss zugunsten von Verbesserungen anderswo)? Handelt es sich um einen echten Fehler? Betrifft sie kritische Anwendungsfälle? Das Team entscheidet, ob deployt, repariert oder zurückgerollt wird.
+
+Wichtige Praktiken für wirksame KI-Regressionstests umfassen:
+
+- **Stratifizierte Evaluierungssets**, die alle wichtigen Dimensionen abdecken (Themen, Zuständigkeitsgebiete, Fragetypen, Schwierigkeitsgrade), um lokalisierte Regressionen zu erkennen
+- **Statistische Signifikanztests**, um echte Regressionen von normaler Varianz in den Modellausgaben zu unterscheiden
+- **Automatisierte Ausführung**, integriert in die Deployment-Pipeline, die Änderungen blockiert, welche die Regressionsschwellenwerte nicht bestehen
+- **Versionsverfolgung**, die jeden Testlauf mit dem spezifischen Systemzustand verknüpft, um bei erkannten Regressionen eine Ursachenanalyse zu ermöglichen
+
+## Häufige Fragen
+
+**F: Wie unterscheiden sich KI-Regressionstests von Software-Regressionstests?**
+
+A: Software-Regressionstests prüfen deterministische, binäre Ergebnisse (die Funktion gibt den korrekten Wert zurück oder nicht). KI-Regressionstests befassen sich mit probabilistischen, abgestuften Ergebnissen — ein etwas schlechteres Ranking oder eine geringfügig weniger präzise Antwort. Dies erfordert statistische Analyse und schwellenwertbasierte Entscheidungen anstelle einfacher Bestanden/Nicht-bestanden-Prüfungen.
+
+**F: Wie oft sollten Regressionstests durchgeführt werden?**
+
+A: Nach jeder Systemänderung, die die Ausgabequalität beeinflussen könnte. Bei aktiv entwickelten Systemen bedeutet dies täglich oder pro Deployment. Die automatisierte Integration in die CI/CD-Pipeline stellt sicher, dass keine Änderung ohne Regressionsüberprüfung deployt wird.
+
 ## References
 
 - Breck et al. (2017), "[The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction](https://research.google/pubs/pub46555/)", IEEE Big Data.

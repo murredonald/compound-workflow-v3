@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Data Preprocessing umfasst Schritte wie [Deduplizierung](/de/glossary/deduplication/), Filterung, Tokenisierung und Korrektur von Kodierung oder Zeichensätzen, damit nachgelagerte Modelle mit saubereren Eingaben arbeiten.
+Data Preprocessing bezeichnet die Gesamtheit der Reinigungs-, Transformations- und Anreicherungsschritte, die auf Rohdaten angewendet werden, bevor diese für Modelltraining, Indexierung oder Retrieval genutzt werden. Juristische Rohdokumente kommen in inkonsistenten Formaten an — PDFs mit unterschiedlichen Layouts, HTML-Seiten mit Navigations-Boilerplate, gescannte Bilder, die OCR erfordern — und Data Preprocessing wandelt sie in sauberen, standardisierten Text mit korrekten Metadaten um. Die Qualität der Vorverarbeitung bestimmt unmittelbar die Qualität aller nachgelagerten Prozesse: Embeddings, Suchergebnisse und generierte Antworten.
+
+## Warum es wichtig ist
+
+- **Garbage in, garbage out** — wenn Rohdokumente OCR-Fehler, Formatierungsartefakte oder fehlende Metadaten enthalten, pflanzen sich diese Probleme in Embeddings und Suchergebnisse fort; die Vorverarbeitung fängt sie an der Quelle ab und korrigiert sie
+- **Konsistenz** — belgische Rechtsquellen stammen von verschiedenen Verlagen in unterschiedlichen Formaten; die Vorverarbeitung normalisiert sie in eine einheitliche Struktur, die die Retrieval-Pipeline gleichförmig verarbeiten kann
+- **Metadaten-Anreicherung** — Rohdokumente kommen selten mit vollständigen Metadaten an; die Vorverarbeitung extrahiert und vergibt Veröffentlichungsdaten, Dokumenttypen, Zuständigkeitscodes und Artikelnummern aus dem Text selbst
+- **Effizienz** — das Entfernen von Boilerplate, Navigationselementen, Kopf- und Fußzeilen sowie doppelten Inhalten reduziert die Indexgröße und verbessert die Embedding-Qualität durch Eliminierung von Rauschen
+
+## Wie es funktioniert
+
+Eine typische Vorverarbeitungs-Pipeline für juristische Dokumente umfasst folgende Stufen:
+
+**Formatkonvertierung** — Dokumente in PDF-, HTML-, DOCX- oder gescannten Bildformaten werden in sauberen Text umgewandelt. Die PDF-Extraktion verarbeitet mehrspaltige Layouts und Tabellen. HTML-Parsing entfernt Navigation, Werbung und Boilerplate. OCR verarbeitet gescannte Dokumente mit Konfidenz-Scoring, um qualitativ minderwertige Extraktionen zu kennzeichnen.
+
+**Textbereinigung** — der extrahierte Text wird normalisiert: Kodierungsprobleme werden behoben, doppelte Leerzeichen entfernt, häufige OCR-Fehler korrigiert (z. B. „l" als „1" in Artikelnummern fehlgelesen) und Anführungszeichen sowie Bindestriche standardisiert. Bei juristischem Text schließt dies die Normalisierung von Zitierformaten ein, sodass Verweise auf dieselbe Bestimmung über verschiedene Dokumente hinweg konsistent sind.
+
+**[Deduplizierung](/de/glossary/deduplication/)** — doppelte und nahezu identische Dokumente werden identifiziert und entfernt oder zusammengeführt. Derselbe Gesetzestext kann im Belgischen Staatsblatt, in konsolidierten Datenbanken und in Kommentarquellen erscheinen; die Vorverarbeitung stellt sicher, dass er nur einmal indexiert wird, wobei die maßgeblichste Version beibehalten wird.
+
+**Metadaten-Extraktion** — strukturierte Felder werden aus dem Text extrahiert: Veröffentlichungsdatum, Dokumenttyp (Gesetz, Erlass, Rundschreiben, Urteil), Zuständigkeit, Artikelnummern und Querverweise. Diese Metadaten ermöglichen die Filterung während des Retrievals.
+
+**Qualitätsprüfung** — automatisierte Kontrollen überprüfen, ob die verarbeitete Ausgabe den erwarteten Standards entspricht: Textlänge im normalen Bereich, erforderliche Metadatenfelder vorhanden, keine offensichtliche Beschädigung oder Kürzung.
+
+## Häufige Fragen
+
+**F: Wie viel der Vorverarbeitung kann automatisiert werden?**
+
+A: Der größte Teil. Formatkonvertierung, Textbereinigung und Deduplizierung sind vollständig automatisiert. Metadaten-Extraktion kann weitgehend mithilfe von Entity-Extraction-Modellen automatisiert werden, mit manueller Prüfung bei mehrdeutigen Fällen. Qualitätsprüfung ist automatisiert mit menschlicher Überprüfung für gekennzeichnete Ausreißer.
+
+**F: Beeinflusst die Vorverarbeitung die Embedding-Qualität?**
+
+A: Erheblich. Embeddings, die aus sauberem, fokussiertem Text erzeugt werden, sind genauer als solche aus Text, der mit Boilerplate, OCR-Fehlern oder Formatierungsartefakten durchsetzt ist. Vorverarbeitung ist einer der wirkungsvollsten Schritte zur Verbesserung der Retrieval-Qualität.

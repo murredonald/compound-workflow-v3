@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Faktentreue bewertet, ob Aussagen im Modelloutput mit den zugrunde liegenden Dokumenten oder Daten übereinstimmen.
+Faktentreue ist das Maß, in dem jede Aussage in einer KI-generierten Antwort die Informationen aus den Quelldokumenten korrekt wiedergibt. Eine faktentreue Antwort fügt keine Informationen hinzu, die nicht in den Quellen enthalten sind, widerspricht nicht dem, was die Quellen aussagen, und verzerrt die Bedeutung des Quellmaterials nicht durch selektive Auslassung oder irreführende Paraphrasierung. In juristischer KI ist Faktentreue eine kritische Qualitätsmetrik, weil selbst geringfügige Abweichungen vom Quellmaterial — eine falsche Artikelnummer, ein fehlerhaft zugeordneter Steuersatz oder eine subtil veränderte Bedingung — zu fehlerhafter Steuerberatung mit realen finanziellen und rechtlichen Konsequenzen führen können.
+
+## Warum es wichtig ist
+
+- **Professionelle Zuverlässigkeit** — Steuerberater, die KI-generierte Analysen nutzen, müssen darauf vertrauen können, dass der Output die zugrunde liegende Gesetzgebung und Urteile getreu wiedergibt; fehlende Faktentreue zwingt sie, alles erneut zu überprüfen, was den Effizienzvorteil zunichtemacht
+- **[Halluzinationserkennung](/de/glossary/hallucination-rate/)** — die Messung der Faktentreue ist die primäre Methode zur Erkennung von Halluzinationen in RAG-Systemen; Aussagen, die nicht durch die abgerufenen Quellen gestützt werden, zeigen an, dass das Modell nicht belegten Inhalt generiert hat
+- **Juristische Präzision** — im belgischen Steuerrecht sind kleine Details von enormer Bedeutung: ein Schwellenwert von 250.000 € gegenüber 25.000 €, eine Bestimmung, die „ab" statt „bis" einem bestimmten Datum gilt, oder eine Regel, die für die Flämische Region, aber nicht für die Wallonische Region gilt; Faktentreue stellt sicher, dass diese Details korrekt erhalten bleiben
+- **Vertrauensaufbau** — konsistent faktentreue Outputs bauen das Benutzervertrauen im Laufe der Zeit auf, während bereits gelegentliche Inkonsistenzen das Vertrauen in die Zuverlässigkeit des Systems zerstören können
+
+## So funktioniert es
+
+Faktentreue ist sowohl ein Designziel als auch eine messbare Metrik:
+
+**Messung** — Faktentreue wird bewertet, indem jede Aussage im generierten Output mit den referenzierten Quelldokumenten verglichen wird. Dies kann durch Natural Language Inference (NLI)-Modelle erfolgen, die die Beziehung zwischen einer Aussage und ihrer Quelle als Entailment (konsistent), Widerspruch (inkonsistent) oder neutral (nicht adressiert) klassifizieren. Ein Faktentreue-Score wird typischerweise als Prozentsatz der Aussagen ausgedrückt, die durch ihre zitierten Quellen gestützt werden.
+
+**Automatisierte Bewertung** — NLI-basierte Metriken und LLM-as-Judge-Ansätze können Faktentreue im großen Maßstab bewerten. Die generierte Antwort wird in einzelne Aussagen zerlegt, und jede Aussage wird gegen die relevante Quellpassage geprüft. Systeme wie AlignScore und der TRUE-Benchmark bieten standardisierte Bewertungsrahmen. Für juristische KI sollten diese automatisierten Prüfungen durch domänenspezifische Verifikation ergänzt werden — beispielsweise die Überprüfung, ob zitierte Artikelnummern tatsächlich existieren und ob angegebene Steuersätze mit der Quelle übereinstimmen.
+
+**Verbesserungsstrategien** — Faktentreue wird durch mehrere Techniken verbessert: Einschränkung der Generierung durch explizite Anweisungen, nur das zu nennen, was die Quellen belegen, Bereitstellung hochwertigen Kontexts durch starkes Retrieval, Einsatz von Post-Generierungs-Verifikation zur Markierung und Korrektur von Inkonsistenzen sowie Training oder Fine-Tuning von Modellen für mehr Quellentreue. In der Praxis erzielt die Kombination aus gutem Retrieval, klaren System-Prompts und nachgelagerter Prüfung die besten Ergebnisse.
+
+**Granularität** — Faktentreue kann auf verschiedenen Ebenen gemessen werden: Dokumentebene (stimmt die Gesamtantwort mit den Quellen überein?), Aussagenebene (stimmt jede einzelne Aussage überein?) und Entitätsebene (sind spezifische Entitäten wie Daten, Beträge und Verweise korrekt?). Feinere Messung erkennt subtilere Fehler, erfordert aber eine anspruchsvollere Bewertungsmethodik.
+
+## Häufige Fragen
+
+**F: Ist Faktentreue dasselbe wie Korrektheit?**
+
+A: Nein. Faktentreue misst, ob der Output seine Quellen getreu wiedergibt. Korrektheit misst, ob die Quellen selbst genau und aktuell sind. Eine Antwort kann perfekt konsistent mit einer veralteten Quelle sein und trotzdem falsch. Sowohl Konsistenz als auch Quellenqualität sind wichtig.
+
+**F: Welcher Faktentreue-Score ist für juristische KI akzeptabel?**
+
+A: Für professionelle juristische Anwendungen sollte die Faktentreue auf Aussagenebene 95 % überschreiten. Niedrigere Werte deuten darauf hin, dass das System zu häufig nicht belegten Inhalt hinzufügt, um für den professionellen Einsatz vertrauenswürdig zu sein. Kritische Anwendungen (Steuerberechnungen, Compliance-Beratung) sollten noch höhere Schwellenwerte mit menschlicher Verifikation für alle markierten Inkonsistenzen anstreben.
 
 ## References
 

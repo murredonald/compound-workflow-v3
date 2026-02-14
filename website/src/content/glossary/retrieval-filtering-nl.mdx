@@ -10,9 +10,47 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Retrieval filtering beperkt de kandidaten met attributen zoals documenttype, datum, rechtsgebied of rechten, zodat alleen toegestane of relevante inhoud bij de zoekactie wordt meegenomen.
+Retrieval filtering is het toepassen van gestructureerde Beperkingen op het Retrievalproces die Documenten uitsluiten die niet voldoen aan bepaalde Criteria — zoals Rechtsgebied, Datumbereik, Documenttype, Autoriteitsniveau, Taal of Toegangsrechten. Filtering zorgt ervoor dat het Retrievalsysteem alleen contextueel passende Resultaten retourneert, als Aanvulling op semantische en lexicale Relevantie met harde Beperkingen. In het Belgische Belastingrecht is retrieval filtering essentieel omdat semantisch vergelijkbare Bepalingen uit verschillende Rechtsgebieden of Tijdsperioden volledig verschillende juridische Gevolgen kunnen hebben.
+
+## Waarom het belangrijk is
+
+- **Jurisdictionele Nauwkeurigheid** — zonder Filtering kan een Query over Vlaamse Registratierechten Waalse Wetgeving retourneren die semantisch vergelijkbaar maar juridisch irrelevant is; Filtering op Rechtsgebied voorkomt dit
+- **Temporele Correctheid** — Filtering op Datum zorgt ervoor dat het Systeem de Versie van een Bepaling retourneert die van kracht was op het relevante Tijdstip, niet een opgeheven of nog niet in werking getreden Versie
+- **Passend Autoriteitsniveau** — Filtering op Documenttype maakt het mogelijk om bindende Bronnen (Wetgeving, Rechterlijke uitspraken) voorrang te geven boven interpretatieve Richtlijnen (Circulaires, Parlementaire vragen) wanneer dat passend is
+- **Handhaving van Toegangscontrole** — Filtering op Rechten zorgt ervoor dat Gebruikers alleen Documenten zien waartoe ze bevoegd zijn, wat Vertrouwelijkheid en multi-tenancy Vereisten afdwingt
+
+## Hoe het werkt
+
+Retrieval filtering kan in verschillende Fases van de [retrieval pipeline](/nl/glossary/retrieval-pipeline/) worden toegepast:
+
+**Pre-filtering** vernauwt de Zoekruimte voordat de Gelijkenisberekening wordt uitgevoerd. De Vectordatabase ontvangt zowel de Query als de Filterbeperkingen, en alleen Vectoren die aan de Beperkingen voldoen worden meegenomen. Dit is efficiënt (minder Vectoren om te vergelijken) maar kan te restrictief zijn als Filters te nauw zijn.
+
+**Post-filtering** voert eerst de volledige Gelijkenisberekening uit en verwijdert daarna Resultaten die niet aan de Beperkingen voldoen. Dit zorgt ervoor dat er geen semantisch relevante Kandidaten worden gemist door te strakke Pre-filters, maar verspilt Rekenkracht aan Resultaten die worden verworpen.
+
+**Hybride Filtering** combineert beide: brede Pre-filters (bijv. Taal) om de Zoekruimte aanzienlijk te verkleinen, gevolgd door meer specifieke Post-filters (bijv. exact Datumbereik) op de geretourneerde Resultaten.
+
+Veelvoorkomende Filtertypes in juridische AI zijn:
+
+- **Rechtsgebiedfilters** — federaal, Vlaams Gewest, Waals Gewest, Brussels Hoofdstedelijk Gewest, Duitstalige Gemeenschap
+- **Datumfilters** — Documenten van kracht op een specifieke Datum, gepubliceerd binnen een Datumbereik, of gewijzigd na een specifieke Datum
+- **Documenttypefilters** — Wetgeving, Koninklijke besluiten, Ministeriële besluiten, Circulaires, Rulings, Rechtspraak, Parlementaire vragen
+- **Taalfilters** — Nederlands, Frans, Duits, of specifieke Taalversie
+- **Autoriteitsniveaufilters** — grondwettelijk, primaire Wetgeving, secundaire Wetgeving, administratieve Richtlijnen
+- **Toegangsfilters** — afdwinging van Gebruikersrechten en Tenantisolatie
+
+Filters kunnen expliciet door de Gebruiker worden opgegeven ("toon alleen Vlaamse Wetgeving") of impliciet door het Systeem worden toegepast op basis van Queryanalyse ("deze Query vermeldt 'Vlaamse erfbelasting', pas Vlaams Gewest-filter toe").
+
+## Veelgestelde vragen
+
+**V: Kan te veel Filtering de Resultaten schaden?**
+
+A: Ja. Overmatige Filtering kan relevante Resultaten uitsluiten — Filtering die strikt beperkt is tot "Vlaams" Rechtsgebied zou bijvoorbeeld federale Wetgeving missen die uniform in alle Gewesten geldt. Slimme Filterversoepeling (Filters verbreden wanneer te weinig Resultaten worden geretourneerd) beperkt dit Risico.
+
+**V: Hoe interageert Filtering met semantisch zoeken?**
+
+A: Ze zijn complementair. Semantisch zoeken bepaalt wat thematisch relevant is; Filtering bepaalt wat contextueel passend is. Aan beide moet worden voldaan om een Resultaat bruikbaar te maken.
 
 ## References
 

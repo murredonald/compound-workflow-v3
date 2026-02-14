@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Ein Evaluationsdatensatz besteht aus Eingaben mit bekannten Soll-Antworten, anhand derer Modelle objektiv bewertet werden.
+Ein Evaluationsdatensatz (Eval-Set) ist eine kuratierte Sammlung von Eingabe-Ausgabe-Paaren, bei denen die korrekte Antwort für jede Eingabe im Voraus bekannt ist. Er dient als Benchmark, an dem die Leistung eines KI-Systems gemessen wird: Das System verarbeitet jede Eingabe, und seine Ausgabe wird mit der bekannten korrekten Antwort verglichen, um Qualitätsmetriken zu berechnen. Im Bereich der juristischen KI enthalten Evaluationsdatensätze steuerrechtliche Fragen gepaart mit verifizierten korrekten Antworten, Quellenangaben und Relevanzurteilen, die eine systematische Messung der Retrieval- und Generierungsqualität ermöglichen.
+
+## Warum es wichtig ist
+
+- **Objektive Messung** — ohne einen Evaluationsdatensatz ist die Qualitätsbewertung subjektiv; mit einem können Teams präzise Metriken (Accuracy, Precision, Recall, Faithfulness) berechnen, die die Systemqualität über die Zeit verfolgen
+- **Regressionserkennung** — das Ausführen des Evaluationsdatensatzes nach jeder Systemänderung zeigt, ob die Änderung die Leistung verbessert oder verschlechtert hat, und erkennt Regressionen, bevor sie die Nutzer betreffen
+- **Modell- und Konfigurationsvergleich** — Evaluationsdatensätze ermöglichen einen fairen Vergleich zwischen verschiedenen Modellen, Retrieval-Strategien oder Prompt-Konfigurationen unter identischen Bedingungen
+- **Domänenabdeckung** — ein gut gestalteter Evaluationsdatensatz deckt die erwarteten Anwendungsfälle, Grenzfälle und bekannten Schwierigkeiten des Systems ab und stellt sicher, dass Qualitätsaussagen die reale Leistung widerspiegeln
+
+## Wie es funktioniert
+
+Der Aufbau eines Evaluationsdatensatzes für juristische KI umfasst mehrere Schritte:
+
+**Fragensammlung** — repräsentative Fragen werden aus mehreren Quellen zusammengetragen: echte Nutzeranfragen (anonymisiert), von Fachexperten entwickelte Fragen zum Testen bestimmter Fähigkeiten und Grenzfälle, die bekannte Fehlermodi untersuchen. Für ein belgisches Steuer-KI-System umfasst dies Anfragen über verschiedene Steuerarten (Einkommensteuer, Mehrwertsteuer, Registrierungsgebühren), Zuständigkeiten (föderaler, flämischer, wallonischer, Brüsseler Bereich) und Komplexitätsstufen.
+
+**Antwort-Annotation** — Fachexperten liefern die korrekte Antwort für jede Frage, einschließlich der spezifischen Quelldokumente und Artikel, die sie stützen. Annotationsrichtlinien sorgen für Konsistenz: was als „korrekt" gilt, wie mit mehrdeutigen Fragen umzugehen ist und wie teilweise korrekte Antworten bewertet werden.
+
+**Relevanzurteile** — für die Retrieval-Evaluation identifizieren Annotatoren alle Dokumente im Korpus, die für jede Anfrage relevant sind. Dies ermöglicht die Berechnung von Recall (hat das System alle relevanten Dokumente gefunden?) und Precision (waren die zurückgegebenen Dokumente tatsächlich relevant?).
+
+**Datensatzpflege** — da sich die Wissensbasis weiterentwickelt (neue Gesetze, geänderte Bestimmungen), muss der Evaluationsdatensatz aktualisiert werden, um aktuelle korrekte Antworten widerzuspiegeln. Eine Antwort, die 2024 korrekt war, kann 2025 nach einer Gesetzesänderung falsch sein.
+
+Qualitativ hochwertige Evaluationsdatensätze enthalten typischerweise 200–1000 Frage-Antwort-Paare, stratifiziert nach Themenbereichen, Schwierigkeitsgraden und Fragetypen (Faktenrecherche, mehrstufiges Schlussfolgern, Vergleich, temporale Fragen). Der Datensatz sollte groß genug für statistische Signifikanz sein, aber handhabbar genug für regelmäßige menschliche Überprüfung und Aktualisierung.
+
+## Häufige Fragen
+
+**F: Können Evaluationsdatensätze automatisch generiert werden?**
+
+A: Teilweise. LLMs können Kandidatenfragen generieren, und halbautomatisierte Pipelines können Antworten vorschlagen. Aber die Verifizierung durch Fachexperten bleibt unerlässlich — der Goldstandard muss tatsächlich korrekt sein, sonst liefert die Evaluation irreführende Metriken.
+
+**F: Wie oft sollte der Evaluationsdatensatz aktualisiert werden?**
+
+A: Nach jeder wesentlichen Änderung der Wissensbasis (neue Gesetze, bedeutende Novellen) und mindestens vierteljährlich. Veraltete Evaluationsdatensätze erzeugen künstlich niedrige Werte, weil das System möglicherweise korrekt auf Basis des aktuellen Rechts antwortet, während der Datensatz Antworten auf Basis des alten Rechts erwartet.
 
 ## References
 

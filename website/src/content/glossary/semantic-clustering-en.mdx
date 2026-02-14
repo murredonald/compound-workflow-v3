@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Semantic clustering applies clustering algorithms to [embeddings](/en/glossary/embeddings/) so that similar items are grouped together, supporting navigation, summarization, and [corpus](/en/glossary/corpus/) analysis.
+Semantic clustering is the process of grouping documents, passages, or other text items into clusters based on their semantic similarity in embedding space, such that items within each cluster share a coherent topic or concept. Unlike keyword-based categorisation, semantic clustering captures meaning — grouping documents about "corporate income tax" and "vennootschapsbelasting" together even though they share no keywords. This enables automatic topic discovery, content organisation, and gap analysis across large document collections.
+
+## Why it matters
+
+- **Corpus organisation** — clustering reveals the natural topic structure of a legal knowledge base, helping identify which areas of tax law are well covered and which have gaps
+- **Deduplication** — clusters of highly similar documents may contain duplicates or near-duplicates that should be consolidated
+- **Navigation** — presenting search results or glossary terms in semantic clusters helps users explore related concepts rather than navigating flat alphabetical lists
+- **Quality analysis** — examining clusters reveals whether the embedding model correctly groups related concepts; clusters that mix unrelated topics indicate embedding quality issues
+
+## How it works
+
+Semantic clustering operates on vector embeddings of the items to be clustered:
+
+**Embedding** — each document or passage is converted to a vector embedding using an embedding model. These vectors position each item in a high-dimensional space where proximity reflects semantic similarity.
+
+**Clustering algorithm** — a clustering algorithm groups the vectors into clusters. Common algorithms include:
+
+- **K-means** — partitions vectors into exactly k clusters by minimising within-cluster distance to the cluster centre. Requires specifying k in advance, which can be estimated using silhouette analysis or the elbow method.
+- **HDBSCAN** — a density-based algorithm that finds clusters of varying shapes and sizes without requiring k to be specified. It also identifies noise points (items that do not belong to any cluster), which is useful for flagging outlier documents.
+- **Agglomerative clustering** — builds a hierarchy of clusters by iteratively merging the most similar pairs, producing a dendrogram that can be cut at different levels to produce different granularities of clustering.
+
+**Interpretation** — each cluster is characterised by examining its members and identifying the common theme. Automated methods include extracting the most frequent terms, selecting the document closest to the cluster centre as representative, or using a language model to generate a cluster label.
+
+**Dimensionality reduction** — for visualisation, high-dimensional embeddings are projected to 2D using t-SNE or UMAP. The resulting scatter plot shows cluster structure and inter-cluster relationships, revealing how different areas of tax law relate to each other in the system's knowledge representation.
+
+## Common questions
+
+**Q: How many clusters should be used?**
+
+A: There is no universal answer — the right number depends on the corpus and the granularity desired. Too few clusters merge distinct topics; too many create fragmented groups with little semantic coherence. Algorithms like HDBSCAN determine the number automatically based on data density, while k-means requires an explicit choice guided by metrics.
+
+**Q: Can semantic clustering work across languages?**
+
+A: Yes, when using multilingual embedding models. Documents in Dutch, French, and German about the same tax topic will cluster together because their embeddings are close in the shared vector space. This is particularly useful for analysing Belgian multilingual legal corpora.
 
 ## References
 

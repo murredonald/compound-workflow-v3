@@ -10,6 +10,45 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Source hierarchy legt vast welke bronnen boven andere gaan – bijvoorbeeld wetgeving boven blogposts – zodat zoek‑ en AIsystemen betrouwbare documenten zwaarder kunnen laten wegen.
+Bronhiërarchie is de geordende rangschikking van juridische Bronnen naar hun gezag en bindende kracht, die aangeeft welke Bronnen voorrang hebben bij een conflict. In het Belgisch recht weegt de Grondwet zwaarder dan gewone Wetgeving, weegt Wetgeving zwaarder dan koninklijke Besluiten, wegen koninklijke Besluiten zwaarder dan ministeriële Circulaires, en weegt bindende Rechtspraak van hogere Rechtscolleges zwaarder dan uitspraken van lagere Rechtbanken. Een AI-systeem dat Bronhiërarchie begrijpt, kan gezaghebbende Bronnen voorrang geven bij het ophalen en genereren van Antwoorden, zodat die Antwoorden het recht weerspiegelen zoals het daadwerkelijk wordt toegepast — in plaats van een bindende Wet en een niet-bindende FAQ even zwaar te wegen.
+
+## Waarom het ertoe doet
+
+- **Correcte conflictbeslechting** — wanneer een Circulaire een Wet tegenspreekt, prevaleert de Wet; zonder Bronhiërarchie zou het Systeem de Circulaire kunnen citeren en een onjuist Antwoord produceren
+- **Gezagsgewogen retrieval** — Bronhiërarchie stelt de retrieval-pipeline in staat om gezaghebbende Bronnen hoger te scoren en zwakkere Bronnen lager te plaatsen, wat de relevantie van topresultaten verbetert
+- **Professionele geloofwaardigheid** — Belastingadviseurs verwachten van een AI-tool dat die begrijpt dat Wetgeving boven administratieve Richtlijnen staat; een Systeem dat alle Bronnen gelijk behandelt, ondermijnt het professionele vertrouwen
+- **Genuanceerde antwoorden** — Bronhiërarchie stelt het Systeem in staat om te onderscheiden tussen wat de Wet zegt (bindende Wetgeving), wat de Administratie denkt (Circulaire), en wat Rechtscolleges hebben beslist (Rechtspraak), wat leidt tot meer genuanceerde en bruikbare Antwoorden
+
+## Hoe het werkt
+
+Bronhiërarchie wordt geïmplementeerd via metadata-tagging en scoring:
+
+**Classificatie naar gezag** — elk Document in de kennisbank wordt bij inname getagd met zijn brontype en gezagsniveau. Een typische Hiërarchie voor Belgisch fiscaal recht, van hoogste naar laagste gezag:
+
+1. **Grondwettelijke bepalingen** — fundamentele Regels die alle andere Bronnen overstijgen
+2. **Recht van de Europese Unie** — Verordeningen en Richtlijnen met directe of indirecte werking
+3. **Federale wetgeving** — Wetboeken (WIB92, WBTW), Wetten en Programmawetten
+4. **Regionale wetgeving** — Vlaamse, Waalse, Brusselse en Duitstalige Gemeenschapscodes en -decreten
+5. **Koninklijke besluiten** — Uitvoeringsbesluiten uitgevaardigd door de uitvoerende macht
+6. **Ministeriële besluiten** — meer specifieke Uitvoeringsregels
+7. **Administratieve circulaires** — de Interpretatie van de Belastingadministratie (niet bindend voor Rechtbanken)
+8. **Administratieve rulings** — individuele voorafgaande Beslissingen over specifieke Situaties
+9. **Rechtspraak** — rechterlijke Uitspraken (bindende kracht hangt af van het niveau van het Rechtscollege)
+10. **Parlementaire vragen** — ministeriële Antwoorden (informatief, niet bindend)
+11. **Commentaar en doctrine** — academische en praktijkgerichte Analyse
+
+**Retrieval-boosting** — tijdens het ophalen worden gezagsscores verwerkt in de relevantiescore. Een Wet die met matige semantische gelijkenis overeenkomt met de Zoekopdracht kan hoger worden gerangschikt dan een Circulaire met hogere semantische gelijkenis, vanwege het grotere Gezag van die Wet.
+
+**Conflictsignalering** — wanneer het Systeem Bronnen op verschillende gezagsniveaus detecteert die tegenstrijdige Informatie bevatten, kan het dit aan de Gebruiker signaleren, met uitleg welke Bron voorrang heeft en waarom.
+
+## Veelgestelde vragen
+
+**V: Is Bronhiërarchie altijd eenduidig?**
+
+A: In de uitersten wel — de Grondwet gaat altijd boven een Circulaire. In het midden kan de rangorde genuanceerd zijn: hoe verhoudt een recente Circulaire die uitdrukkelijk de administratieve Praktijk wijzigt, zich tot oudere Rechtspraak? De Hiërarchie biedt het kader, maar bij grensgevallen is professioneel Oordeelsvermogen nog steeds nodig.
+
+**V: Hoe verschilt Bronhiërarchie van source provenance?**
+
+A: Source provenance traceert waar een Document vandaan komt en hoe het is verwerkt (Oorsprong en Verwerkingsgeschiedenis). Bronhiërarchie rangschikt Documenten naar hun juridisch Gezag. Een Circulaire heeft een duidelijke provenance (gepubliceerd door de FOD Financiën op een specifieke Datum) en een specifieke positie in de Hiërarchie (onder Wetgeving, boven Doctrine).

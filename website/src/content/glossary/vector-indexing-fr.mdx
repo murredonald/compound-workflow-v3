@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’indexation vectorielle organise des [embeddings](/fr/glossary/embeddings/) dans des structures de données comme IVF, [HNSW](/fr/glossary/hnsw/) ou des index plats pour retrouver efficacement des vecteurs similaires au moment de la [requête](/fr/glossary/prompt/).
+L'indexation vectorielle est le processus d'organisation des vecteurs d'embedding dans des structures de données spécialisées qui permettent une recherche rapide de plus proches voisins approximatifs (ANN) sans comparer la requête à chaque vecteur de la collection. Tout comme l'index d'un livre permet de trouver un sujet sans lire chaque page, un index vectoriel permet de trouver les vecteurs les plus similaires sans calculer les distances avec chaque vecteur stocké. Le choix du type d'index, ses paramètres de configuration et le matériel sur lequel il s'exécute déterminent ensemble la vitesse, la précision et les exigences en mémoire de la recherche sémantique.
+
+## Pourquoi c'est important
+
+- **Vitesse de recherche** — sans index, la recherche dans 10 millions de vecteurs nécessite 10 millions de calculs de distance par requête ; avec un index, la même recherche s'effectue en millisecondes en n'examinant qu'une fraction des vecteurs
+- **Scalabilité** — les index vectoriels permettent la recherche sémantique à grande échelle ; les bases de connaissances juridiques contenant des millions de chunks de documents restent interrogeables en temps réel
+- **Efficacité des coûts** — des index efficaces réduisent le matériel nécessaire pour un débit de requêtes donné, diminuant les coûts opérationnels
+- **Compromis rappel-vitesse** — la configuration de l'index contrôle l'équilibre entre la recherche de tous les résultats pertinents (rappel) et la rapidité de réponse (latence) ; ce compromis est une décision architecturale clé
+
+## Comment ça fonctionne
+
+Les types d'index vectoriels les plus courants sont :
+
+**HNSW (Hierarchical Navigable Small World graphs)** construit un graphe en couches où chaque vecteur est un noeud connecté à ses plus proches voisins. La recherche commence à la couche supérieure (éparse) et descend à travers des couches progressivement plus denses, se déplaçant de manière gloutonne vers le vecteur requête. HNSW offre un excellent rappel (95-99 %) avec des temps de recherche inférieurs à la milliseconde et constitue le choix le plus populaire pour les systèmes en production.
+
+**IVF (Inverted File Index)** partitionne l'espace vectoriel en clusters à l'aide de k-means. Chaque vecteur est assigné au centroïde de cluster le plus proche. Lors de la recherche, seuls les clusters les plus proches sont explorés au lieu de la collection entière. Le nombre de clusters sondés (nprobe) contrôle le compromis rappel-vitesse.
+
+**Quantification de produit (PQ)** compresse les vecteurs en les divisant en sous-vecteurs et en quantifiant chacun en un petit ensemble de centroïdes. Cela réduit considérablement l'utilisation mémoire (par exemple, des vecteurs flottants de 768 dimensions compressés à 48 octets) au prix d'une certaine perte de précision. La PQ est souvent combinée avec IVF pour une recherche efficace en mémoire sur de très grands ensembles de données.
+
+**Index plat** stocke les vecteurs sans structure d'index, effectuant une recherche exacte (par force brute) des plus proches voisins. Cela garantit un rappel parfait mais évolue linéairement avec la taille du jeu de données. Utile uniquement pour les petits ensembles de données (moins de 100 000 vecteurs) ou comme référence pour mesurer la qualité des index ANN.
+
+La construction de l'index a lieu au moment de l'ingestion — lorsqu'un document est converti en embedding et ajouté à la base de connaissances. La plupart des bases de données vectorielles (FAISS, Milvus, Qdrant, Pinecone) gèrent la construction et l'interrogation de l'index de manière transparente. Les paramètres de configuration clés incluent le nombre de voisins par noeud (HNSW), le nombre de clusters (IVF) et la résolution de quantification (PQ).
+
+## Questions fréquentes
+
+**Q : Quel type d'index choisir ?**
+
+R : HNSW est le choix par défaut pour la plupart des applications — il offre un rappel élevé, une recherche rapide et une configuration relativement simple. IVF+PQ est préféré lorsque la mémoire est limitée (très grands ensembles de données devant tenir en RAM). Les index plats sont appropriés pour les ensembles de données de moins de 100 000 vecteurs où la recherche exacte est réalisable.
+
+**Q : Un index vectoriel peut-il être mis à jour de manière incrémentale ?**
+
+R : La plupart des types d'index supportent l'ajout de nouveaux vecteurs sans reconstruire l'index entier. Cependant, certains (comme IVF) peuvent nécessiter un réentraînement périodique des centroïdes de clusters à mesure que la distribution des données évolue. HNSW supporte nativement l'insertion incrémentale de manière efficace.
 
 ## References
 

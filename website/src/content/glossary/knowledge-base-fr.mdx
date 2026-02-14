@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Une knowledge base rassemble des articles, textes de [référence](/fr/glossary/citation/) et parfois des enregistrements structurés qui servent de source fiable aux systèmes de recherche et de question‑réponse.
+Une base de connaissances est une collection structurée et organisée d'informations — documents, faits, règles ou relations entre entités — conçue pour permettre l'interrogation, la recherche et la réutilisation efficaces. Contrairement à un [corpus](/fr/glossary/corpus/) documentaire brut, une base de connaissances intègre généralement des métadonnées, des taxonomies ou une structure relationnelle qui permet une consultation et un raisonnement précis. En IA juridique et fiscale, les bases de connaissances stockent la législation, les décisions, les circulaires et leurs interconnexions.
+
+## Pourquoi c'est important
+
+- **Source unique de vérité** — centralise les informations faisant autorité afin que toutes les requêtes s'appuient sur les mêmes données vérifiées
+- **Recherche structurée** — les métadonnées et les relations permettent un filtrage par juridiction, date, sujet ou niveau d'autorité, bien au-delà de ce que la recherche par mots-clés offre
+- **Fondation du RAG** — les systèmes de génération augmentée par la recherche ([RAG](/fr/glossary/rag/)) dépendent de bases de connaissances de haute qualité pour ancrer leurs réponses dans les faits plutôt que dans la mémoire paramétrique
+- **Précision temporelle** — une base de connaissances bien maintenue suit quelle version d'une loi était en vigueur à une date donnée, empêchant le système de citer des dispositions abrogées
+
+## Comment ça fonctionne
+
+Une base de connaissances est construite à travers un pipeline d'ingestion, de structuration et d'indexation. Les documents bruts (textes législatifs, décisions de justice, décisions administratives) sont analysés et enrichis avec des métadonnées : date de publication, autorité, classification thématique, champ d'application juridictionnel et renvois vers d'autres dispositions.
+
+Le contenu enrichi est ensuite stocké dans un format qui prend en charge à la fois la recherche en texte intégral et les requêtes structurées. Les bases de connaissances juridiques modernes combinent souvent un magasin de documents (pour le texte intégral), un index vectoriel (pour la recherche sémantique) et une couche de graphe (pour les relations entre entités comme les articles, les amendements et les décisions).
+
+Maintenir une base de connaissances à jour nécessite une surveillance automatisée des publications officielles, une détection des changements et des pipelines de ré-indexation qui propagent les mises à jour sans casser les références existantes.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre une base de connaissances et une base de données ?**
+
+R : Une base de données traditionnelle stocke des données structurées dans des tables avec des schémas rigides. Une base de connaissances est plus large — elle peut inclure du texte non structuré, des métadonnées semi-structurées et des connaissances relationnelles. Les bases de connaissances juridiques combinent souvent les trois : le texte législatif complet, des champs de métadonnées structurés et des liens de relations entre les dispositions.
+
+**Q : Une base de connaissances peut-elle devenir obsolète ?**
+
+R : Oui, et c'est un risque critique dans le domaine juridique. Le droit fiscal change fréquemment avec de nouvelles législations, des amendements et des circulaires administratives. Une base de connaissances sans pipelines de mise à jour automatisés peut fournir des informations obsolètes, conduisant à des conseils incorrects. Le suivi des versions et la surveillance de la fraîcheur sont essentiels.
+
+**Q : Comment une base de connaissances supporte-t-elle le RAG ?**
+
+R : Dans un pipeline RAG, la base de connaissances sert de couche de recherche. Lorsqu'un utilisateur pose une question, le système recherche dans la base de connaissances les passages pertinents, puis transmet ces passages au modèle de langage comme contexte. Le modèle génère sa réponse en s'appuyant sur le contenu retrouvé plutôt que sur ses seules données d'entraînement.

@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Factual consistency evaluates whether statements in a model’s output faithfully match the referenced documents, data, or [ground truth](/en/glossary/ground-truth/) labels.
+Factual consistency is the degree to which every claim in an AI-generated response accurately reflects the information contained in its source documents. A factually consistent response does not add information that is not in the sources, does not contradict what the sources say, and does not distort the meaning of the source material through selective omission or misleading paraphrase. In legal AI, factual consistency is a critical quality metric because even minor deviations from source material — a wrong article number, a misattributed rate, or a subtly altered condition — can lead to incorrect tax advice with real financial and legal consequences.
+
+## Why it matters
+
+- **Professional reliability** — tax advisors using AI-generated analysis must be able to trust that the output faithfully represents the underlying legislation and rulings; factual inconsistency forces them to re-verify everything, negating the efficiency benefit
+- **Hallucination detection** — measuring factual consistency is the primary method for detecting hallucinations in RAG systems; claims that are not entailed by the retrieved sources indicate the model has generated unsupported content
+- **Legal precision** — in Belgian tax law, small details matter enormously: a threshold of €250,000 versus €25,000, a provision that applies "from" versus "until" a certain date, or a rule that applies to the Flemish Region but not the Walloon Region; factual consistency ensures these details are preserved accurately
+- **Trust building** — consistently factual outputs build user confidence over time, while even occasional inconsistencies can destroy trust in the system's reliability
+
+## How it works
+
+Factual consistency is both a design goal and a measurable metric:
+
+**Measurement** — factual consistency is evaluated by comparing each claim in the generated output against the source documents it references. This can be done through natural language inference (NLI) models that classify the relationship between a claim and its source as entailment (consistent), contradiction (inconsistent), or neutral (not addressed). A factual consistency score is typically expressed as the percentage of claims that are entailed by their cited sources.
+
+**Automated evaluation** — NLI-based metrics and LLM-as-judge approaches can evaluate factual consistency at scale. The generated response is decomposed into individual claims, and each claim is checked against the relevant source passage. Systems like AlignScore and TRUE benchmark provide standardised evaluation frameworks. For legal AI, these automated checks should be supplemented with domain-specific verification — for example, checking that cited article numbers actually exist and that quoted rates match the source.
+
+**Improvement strategies** — factual consistency is improved through multiple techniques: constraining generation with explicit instructions to only state what the sources support, providing high-quality context through strong retrieval, using post-generation verification to flag and correct inconsistencies, and training or fine-tuning models to be more faithful to their input context. In practice, the combination of good retrieval, clear system prompts, and post-generation checking achieves the best results.
+
+**Granularity** — factual consistency can be measured at different levels: document-level (does the overall response agree with the sources?), claim-level (does each individual statement agree?), and entity-level (are specific entities like dates, amounts, and references correct?). Finer-grained measurement catches more subtle errors but requires more sophisticated evaluation.
+
+## Common questions
+
+**Q: Is factual consistency the same as correctness?**
+
+A: No. Factual consistency measures whether the output faithfully represents its sources. Correctness measures whether the sources themselves are accurate and current. A response can be perfectly consistent with an outdated source and still be wrong. Both consistency and source quality matter.
+
+**Q: What factual consistency score is acceptable for legal AI?**
+
+A: For professional legal applications, factual consistency should exceed 95% at the claim level. Lower scores indicate the system is adding unsupported content too frequently to be trusted for professional use. Critical applications (tax calculations, compliance advice) should target even higher thresholds with human verification for any flagged inconsistencies.
 
 ## References
 

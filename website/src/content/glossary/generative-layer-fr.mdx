@@ -10,9 +10,38 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Dans un pipeline [RAG](/fr/glossary/rag/), la couche générative prend le contexte récupéré et la question de l’utilisateur, puis utilise un modèle de langage pour synthétiser une réponse finale, une explication ou un brouillon.
+La couche générative est le composant d'un système de génération augmentée par la recherche ([RAG](/fr/glossary/rag/)) dans lequel le modèle de langage prend les documents de contexte récupérés et la question de l'utilisateur pour produire une réponse synthétisée. Elle se situe après la couche de recherche dans le pipeline : la recherche trouve les sources pertinentes, et la génération les transforme en une réponse cohérente et précise. C'est dans la couche générative que les matériaux sources bruts deviennent une réponse exploitable — avec des citations, une mise en forme structurée et des nuances appropriées sur les points incertains.
+
+## Pourquoi c'est important
+
+- **Synthèse des réponses** — les documents récupérés sont des matériaux bruts ; la couche générative transforme plusieurs passages issus de différentes sources en une réponse unique et cohérente qui répond directement à la question de l'utilisateur
+- **Intégration des citations** — une couche générative bien conçue intègre les citations des sources dans la réponse, permettant à l'utilisateur de vérifier chaque affirmation par rapport à son origine
+- **Communication de l'incertitude** — la couche générative peut exprimer des niveaux de confiance, signaler des sources contradictoires et distinguer entre les dispositions juridiques claires et les zones d'incertitude interprétative
+- **Flexibilité de format** — le même contexte récupéré peut être mis en forme sous forme de réponse brève, d'analyse détaillée, de tableau comparatif ou de projet de note, selon les besoins de l'utilisateur
+
+## Comment ça fonctionne
+
+La couche générative reçoit deux entrées : la question originale de l'utilisateur et un ensemble trié de passages récupérés (généralement 5 à 20 fragments sélectionnés par la couche de recherche). Ceux-ci sont assemblés dans un prompt qui instruit le modèle de langage de répondre à la question sur la base du contexte fourni.
+
+**La construction du prompt** combine le prompt système (définissant le rôle, les règles de comportement et le format de sortie), les passages récupérés (généralement avec des métadonnées de source comme les numéros d'articles et les dates de publication) et la question de l'utilisateur. Le prompt instruit le modèle de fonder sa réponse uniquement sur le contexte fourni, de citer les sources pour chaque affirmation et de signaler quand le contexte ne répond pas entièrement à la question.
+
+**La génération** — le modèle de langage produit la réponse jeton par jeton, conditionné par l'ensemble du prompt. Durant la génération, le modèle doit synthétiser l'information à travers plusieurs passages, résoudre les conflits apparents entre les sources et structurer la réponse selon le format spécifié.
+
+**Le post-traitement** valide la sortie générée : vérification que les sources citées existent effectivement dans le contexte récupéré, vérification que les numéros d'articles et les dates sont corrects, et application des règles de mise en forme. Certains systèmes utilisent un second modèle, plus petit, pour vérifier la [fidélité](/fr/glossary/faithfulness/) de la réponse générée par rapport aux passages sources.
+
+La qualité de la couche générative dépend de la capacité du modèle de langage à suivre les instructions avec précision, à résister à la tentation d'ajouter des informations au-delà du contexte fourni (hallucination), et à gérer les nuances du langage juridique. Un fine-tuning spécifique au domaine ou des exemples few-shot dans le prompt peuvent améliorer les performances sur des contenus spécialisés.
+
+## Questions fréquentes
+
+**Q : La couche générative peut-elle halluciner même avec un contexte récupéré ?**
+
+R : Oui. Le modèle peut fabriquer des détails, attribuer des affirmations à de mauvaises sources ou extrapoler au-delà de ce que le contexte soutient. Les stratégies d'atténuation comprennent des instructions explicites de n'utiliser que le contexte fourni, la vérification de la fidélité et le scoring de confiance.
+
+**Q : Quelle est la différence entre la couche générative et le LLM ?**
+
+R : Le [LLM](/fr/glossary/llm/) est le modèle lui-même. La couche générative est le composant architectural qui inclut le LLM ainsi que la logique de construction du prompt, d'assemblage du contexte et de post-traitement qui l'entoure. La couche générative est le système ; le LLM en est une partie.
 
 ## References
 

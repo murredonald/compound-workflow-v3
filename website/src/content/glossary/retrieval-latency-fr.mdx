@@ -10,9 +10,44 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La latence de récupération est le temps écoulé entre l’émission d’une requête et la réception de résultats classés depuis un système de recherche ou de récupération, souvent mesuré en millisecondes.
+La latence de récupération est le temps écoulé entre la soumission d'une requête à un système de récupération et la réception des résultats classés, mesuré en millisecondes. Elle englobe toutes les étapes de traitement : analyse de la requête, calcul de l'embedding, consultation de l'index, scoring, filtrage, reranking et mise en forme des résultats. Dans un système RAG, la latence de récupération est une composante majeure du temps de réponse global — si la récupération prend trop de temps, l'expérience utilisateur en souffre, quelle que soit la qualité de la réponse générée.
+
+## Pourquoi c'est important
+
+- **Expérience utilisateur** — les professionnels attendent des résultats de recherche quasi instantanés ; une latence supérieure à 500 ms donne une impression de lenteur, et au-delà de 2 secondes, le système semble défaillant ; la latence de récupération doit être gérée dans des budgets stricts
+- **Temps de réponse de bout en bout** — les systèmes RAG ajoutent la latence de récupération à la latence de génération (inférence LLM) ; si la récupération prend 500 ms et la génération 2 secondes, le total est de 2,5 secondes ; chaque milliseconde économisée en récupération améliore l'expérience globale
+- **Indicateur de scalabilité** — une latence croissante sous charge croissante indique des goulots d'étranglement d'infrastructure qui s'aggraveront à mesure que la base d'utilisateurs augmentera
+- **Décisions d'architecture** — les budgets de latence contraignent les composants de récupération réalisables ; un reranking coûteux ou des passes de récupération multiples ne sont possibles que si le budget de latence le permet
+
+## Comment ça fonctionne
+
+La latence de récupération est la somme du temps passé dans chaque étape du pipeline :
+
+**Encodage de la requête** (5-50 ms) — conversion du texte de la requête en vecteur d'embedding à l'aide du modèle d'embedding. Cette opération est généralement effectuée sur GPU et évolue avec la taille du modèle.
+
+**Recherche dans l'index** (1-20 ms) — interrogation de l'index vectoriel et/ou de l'index lexical pour trouver des correspondances candidates. Les algorithmes ANN comme HNSW s'exécutent généralement en moins de 10 ms, même pour des millions de vecteurs. La recherche BM25 est tout aussi rapide avec des index inversés bien optimisés.
+
+**Filtrage par métadonnées** (1-10 ms) — application de contraintes structurées (date, juridiction, type de document) pour restreindre l'ensemble de candidats. Le pré-filtrage réduit le périmètre de recherche ; le post-filtrage élimine les résultats non éligibles.
+
+**Reranking** (50-200 ms) — passage des meilleurs candidats à travers un cross-encoder pour un scoring plus précis. C'est l'étape la plus coûteuse car le cross-encoder traite chaque paire requête-document indépendamment. Le nombre de candidats rerankés contrôle directement ce coût.
+
+**Post-traitement** (1-5 ms) — déduplication, regroupement et mise en forme des résultats finaux.
+
+La latence est généralement rapportée en percentiles : P50 (médiane), P95 (95e percentile) et P99 (99e percentile). Le P50 reflète la performance typique ; le P95 et le P99 révèlent le comportement dans le pire des cas. Un système avec un P50 de 50 ms mais un P99 de 2 secondes a un problème de latence de queue affectant 1 utilisateur sur 100.
+
+Les stratégies d'optimisation comprennent : la réduction du nombre de candidats passés au reranker, la mise en cache des requêtes fréquentes, l'utilisation de modèles d'embedding plus petits pour l'encodage des requêtes, et l'accélération matérielle (inférence GPU, index vectoriels optimisés).
+
+## Questions fréquentes
+
+**Q : Quelle est une latence de récupération acceptable ?**
+
+R : Pour les applications interactives, une latence de récupération totale inférieure à 200 ms est idéale. En dessous de 500 ms, c'est acceptable. Au-delà d'une seconde, les utilisateurs remarquent le délai. Ces objectifs doivent tenir compte de l'ensemble du pipeline de récupération, pas seulement du composant de recherche dans l'index.
+
+**Q : La taille du corpus affecte-t-elle significativement la latence ?**
+
+R : Avec les index ANN, la latence de récupération croît de façon logarithmique avec la taille du corpus — doubler le corpus n'ajoute que quelques millisecondes. L'étape de reranking est plus sensible au nombre de candidats qu'à la taille du corpus. Les index lexicaux (BM25) évoluent également bien avec les implémentations modernes.
 
 ## References
 

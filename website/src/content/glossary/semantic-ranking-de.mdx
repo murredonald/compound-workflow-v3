@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Semantic Ranking nutzt neuronale Modelle und [Embeddings](/de/glossary/embeddings/), um abzuschätzen, wie gut ein Dokument inhaltlich zu einer [Anfrage](/de/glossary/prompt/) passt, oft als Re‑Ranker oberhalb klassischer Suchergebnisse.
+Semantic Ranking ist der Prozess der Sortierung von Suchergebnissen nach ihrer bedeutungsbezogenen Relevanz für eine Anfrage, unter Verwendung neuronaler Modelle, die Kontext und Absicht verstehen, anstatt sich ausschließlich auf Schlüsselwortübereinstimmung zu verlassen. Während lexikalisches Ranking (BM25) Dokumente belohnt, die die exakten Wörter der Anfrage enthalten, belohnt Semantic Ranking Dokumente, die dieselben Konzepte ausdrücken — selbst wenn völlig andere Wörter verwendet werden. Eine Anfrage zu „Steuerabzüge für Homeoffice-Kosten" stimmt semantisch mit einem Dokument über „aftrek beroepsmatig gebruik woning" überein, weil die Bedeutung dieselbe ist, trotz keinerlei Wortübereinstimmung.
+
+## Warum es wichtig ist
+
+- **Sprachübergreifende Zuordnung** — im dreisprachigen belgischen Rechtssystem ermöglicht Semantic Ranking, dass eine niederländische Anfrage relevante französische Gesetzgebung findet, weil beide auf dieselbe Bedeutung im Embedding-Raum abgebildet werden
+- **Überbrückung von Vokabularunterschieden** — Juristen und Gesetzgebung verwenden oft unterschiedliche Terminologie für dasselbe Konzept; Semantic Ranking überbrückt diese Lücke ohne exakte Begriffsübereinstimmung
+- **Absichtserkennung** — semantische Modelle können verschiedene Bedeutungen desselben Wortes anhand des Kontexts unterscheiden: „Zinsen" im Kontext eines Steuerabzugs vs. einer finanziellen Beteiligung
+- **Verbesserte Nutzererfahrung** — Semantic Ranking zeigt relevante Ergebnisse an, die eine Schlüsselwortsuche komplett übersehen würde, und reduziert so den Aufwand, anwendbare Rechtsvorschriften zu finden
+
+## So funktioniert es
+
+Semantic Ranking arbeitet mit neuronalen Modellen, die Bedeutung kodieren:
+
+**Bi-Encoder (embedding-basiertes) Ranking** kodiert die Anfrage und jedes Dokument unabhängig voneinander in [Embedding](/de/glossary/embeddings/)-Vektoren und sortiert dann nach Vektorähnlichkeit (Kosinus, Skalarprodukt). Dies ist schnell, weil Dokument-Embeddings vorberechnet und im Vektorindex gespeichert werden — nur die Anfrage muss zur Suchzeit kodiert werden. Allerdings bedeutet die unabhängige Kodierung, dass das Modell keine Anfrage-Dokument-Interaktionen berücksichtigen kann.
+
+**Cross-Encoder Ranking** verarbeitet die Anfrage und jedes Kandidatendokument gemeinsam als einen einzigen Input, was eine tiefgreifende Token-für-Token-Interaktion ermöglicht. Das Modell kann darauf achten, wie bestimmte Anfragebegriffe sich auf bestimmte Dokumentpassagen beziehen, und erfasst Nuancen wie Negation, Bedingungen und implizite Anforderungen. Cross-Encoder sind genauer, aber deutlich langsamer, da jedes Anfrage-Dokument-Paar einen vollständigen Modelldurchlauf erfordert.
+
+**Hybridansatz** — Produktionssysteme verwenden typischerweise Bi-Encoder-Ranking für die anfängliche Kandidatengenerierung (schnell, breit), gefolgt von Cross-Encoder-[Reranking](/de/glossary/reranking/) der Top-Kandidaten (genau, fokussiert). Dieser zweistufige Ansatz kombiniert die Geschwindigkeit der Bi-Encoder mit der Genauigkeit der Cross-Encoder.
+
+**Domänenanpassung** — allgemeine semantische Modelle schneiden bei spezialisierten juristischen Texten schlechter ab. Das Feintuning des Ranking-Modells mit juristischen Anfrage-Dokument-Paaren — zum Beispiel Steuerfragen, die ihren relevanten Gesetzesartikeln zugeordnet sind — verbessert die Ranking-Qualität für domänenspezifische Inhalte erheblich.
+
+## Häufige Fragen
+
+**F: Ersetzt Semantic Ranking das Schlüsselwort-Ranking?**
+
+A: Nein. Die effektivsten Systeme kombinieren beide in einer hybriden Suche. Schlüsselwort-Ranking behandelt präzise Anfragen (bestimmte Artikelnummern, exakte Rechtsverweise), die semantische Modelle möglicherweise nicht korrekt einordnen. Semantic Ranking behandelt konzeptuelle Anfragen, die Schlüsselwortsuche nicht auflösen kann. Zusammen decken sie mehr Anfragetypen ab als jeder Ansatz allein.
+
+**F: Wie unterscheidet sich Semantic Ranking von semantischer Suche?**
+
+A: [Semantische Suche](/de/glossary/semantic-search/) ist das breitere Konzept des Findens von Dokumenten nach Bedeutung. Semantic Ranking ist der spezifische Bewertungsmechanismus innerhalb der semantischen Suche, der die Reihenfolge der Ergebnisse bestimmt. Semantische Suche umfasst Anfrageverarbeitung, Retrieval und Ranking; Semantic Ranking ist der Bewertungsschritt.

@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Les structured data suivent un schéma fixe avec noms de colonnes et types, ce qui permet aux langages de [requête](/fr/glossary/prompt/) ou moteurs de recherche de filtrer et d’agréger sans devoir d’abord analyser du texte libre.
+Les données structurées sont des informations organisées selon un schéma prédéfini avec des champs explicites, des types de données et des relations — comme les lignes et colonnes d'une table de base de données, les paires clé-valeur en JSON ou les champs d'un formulaire. Contrairement aux données non structurées (texte libre, PDF, images), les données structurées peuvent être directement interrogées, filtrées, triées et jointes sans nécessiter de traitement du langage naturel ni d'interprétation. Dans les systèmes d'IA juridique, les données structurées capturent les métadonnées qui rendent le texte juridique non structuré recherchable et filtrable : numéros d'articles, dates de publication, codes juridictionnels, niveaux d'autorité et tableaux de taux d'imposition.
+
+## Pourquoi c'est important
+
+- **Filtrage précis** — des champs structurés comme la juridiction, la date et le type de document permettent un filtrage par correspondance exacte que la recherche sémantique seule ne peut pas fournir ; une requête portant sur « les droits d'enregistrement flamands en 2025 » nécessite des champs structurés de date et de juridiction pour répondre avec précision
+- **Fondation du graphe de connaissances** — les données structurées fournissent les entités typées et les relations qui forment les nœuds et les arêtes du [graphe de connaissances](/fr/glossary/knowledge-graph/), permettant des requêtes relationnelles à travers le corpus juridique
+- **Intégration avec les systèmes métier** — les calculs fiscaux, les échéances de déclaration et les tableaux de taux sont intrinsèquement structurés ; le système d'IA doit consommer et produire des données structurées pour s'intégrer aux outils professionnels existants
+- **Validation et cohérence** — les schémas garantissent l'intégrité des données : un champ de date ne peut pas contenir un nom, un taux d'imposition doit être un nombre ; cela prévient les problèmes de qualité des données qui se propageraient dans les résultats de l'IA
+
+## Comment ça fonctionne
+
+Les données structurées dans un système d'IA juridique apparaissent sous plusieurs formes :
+
+**Métadonnées des documents** — chaque document ingéré est étiqueté avec des champs structurés : source de publication, date de publication, type de document (loi, décret, circulaire, décision), juridiction (fédéral, flamand, wallon, Bruxelles-Capitale), langue et niveau d'autorité. Ces champs sont stockés aux côtés des embeddings vectoriels du document et permettent le filtrage par métadonnées lors de la recherche.
+
+**Tables et taux fiscaux** — les tranches d'imposition, les taux, les seuils et les montants d'exonération sont intrinsèquement structurés. Ils sont stockés sous forme d'enregistrements typés pouvant être interrogés avec précision : « Quel est le taux d'impôt des sociétés pour les PME en 2025 ? » se résout par une recherche structurée, et non par une recherche sémantique.
+
+**Données entité-relation** — les graphes de connaissances stockent les relations structurées entre entités : quels articles citent quels autres articles, quelles décisions interprètent quelles dispositions, quels amendements ont modifié quels textes originaux. Ces relations sont stockées sous forme de triplets structurés (sujet, prédicat, objet) ou de graphes de propriétés.
+
+**La validation de schéma** garantit que toutes les données structurées sont conformes aux formats attendus. Une date de publication doit être une date valide. Un code de juridiction doit correspondre à l'une des valeurs définies. Un taux d'imposition doit être un nombre positif. La validation détecte les erreurs au moment de l'ingestion, avant qu'elles ne puissent affecter la recherche ou la génération en aval.
+
+Le défi de l'IA juridique est de relier données structurées et non structurées. La législation arrive sous forme de prose (non structurée) mais contient des informations structurées intégrées (numéros d'articles, dates, montants). L'extraction d'entités et l'analyse de documents convertissent le texte juridique non structuré en métadonnées structurées, tandis que le texte original est conservé pour la recherche sémantique.
+
+## Questions fréquentes
+
+**Q : Un système d'IA peut-il fonctionner uniquement avec des données structurées ?**
+
+R : Pour la recherche juridique, non. Le raisonnement, le contexte et les nuances du texte juridique sont non structurés. Les données structurées fournissent l'échafaudage — métadonnées, relations et valeurs précises — mais la substance de l'analyse juridique nécessite la compréhension de la prose. Les systèmes les plus efficaces combinent les deux.
+
+**Q : Quelle est la différence entre données structurées et graphe de connaissances ?**
+
+R : Les données structurées constituent la catégorie plus large — toute donnée avec un schéma défini. Un [graphe de connaissances](/fr/glossary/knowledge-graph/) est un type spécifique de données structurées qui représente des entités et leurs relations sous forme de graphe. Les graphes de connaissances sont construits à partir de données structurées (et de l'extraction d'entités sur des données non structurées).

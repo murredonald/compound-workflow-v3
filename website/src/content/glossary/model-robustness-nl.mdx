@@ -10,6 +10,41 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Modelrobuustheid is de mate waarin een AI-model betrouwbare prestaties behoudt wanneer het wordt geconfronteerd met invoer die afwijkt van de trainingsomstandigheden — waaronder ruisrijke data, distributieveranderingen, randgevallen en adversariële manipulatie. Een robuust model produceert consistente, nauwkeurige uitvoer, zelfs wanneer de invoer licht fout gespeld, ongebruikelijk geformuleerd of opzettelijk ontworpen is om het te verwarren. In juridische AI is Robuustheid essentieel omdat realistische zoekopdrachten rommelig zijn: gebruikers wisselen van taal, verkorten referenties en stellen ambigue vragen die een fragiel model slecht zou afhandelen.
+
+## Waarom het belangrijk is
+
+- **Betrouwbaarheid in de praktijk** — fiscale professionals formuleren vragen op veel verschillende manieren; een robuust model gaat om met natuurlijke variatie in terminologie, taal en querystructuur zonder kwaliteitsverlies
+- **Weerstand tegen aanvallen** — modellen die als publiek toegankelijke diensten worden ingezet, moeten bestand zijn tegen promptinjectie en andere aanvallen die proberen trainingsdata te extraheren, veiligheidsfilters te omzeilen of misleidende uitvoer te produceren
+- **Omgaan met distributieverschuivingen** — belastingwetgeving verandert regelmatig; een robuust model behoudt zijn prestaties wanneer nieuwe wetgeving concepten of terminologie introduceert die niet in de trainingsdata aanwezig waren
+- **Vertrouwen en adoptie** — professionals zullen niet vertrouwen op een tool die sterk verschillende antwoorden geeft op licht herformuleerde versies van dezelfde vraag
+
+## Hoe het werkt
+
+Robuustheid wordt beoordeeld en verbeterd langs meerdere dimensies:
+
+**Invoerperturbatietests** meten hoeveel de modeluitvoer verandert wanneer invoer licht wordt aangepast — door typfouten toe te voegen, te parafraseren of te vertalen tussen talen. Een robuust model produceert in wezen hetzelfde antwoord ongeacht oppervlakkige variatie.
+
+**Distributieverschuivingstests** evalueren de prestaties op data die systematisch verschilt van de trainingsset. Voor een juridisch AI-systeem kan dit betekenen dat er getest wordt op nieuw ingevoerde wetgeving, andere rechtsgebieden of documenttypen die niet tijdens training zijn gezien. Technieken zoals domeinadaptatie en continuerend leren helpen modellen om distributieverschuivingen soepel op te vangen.
+
+**Adversarieel testen** creëert opzettelijk invoer die ontworpen is om fouten te veroorzaken — prompts die proberen systeeminstructies te overschrijven, zoekopdrachten die ambiguïteiten in juridische terminologie uitbuiten, of invoer met verborgen instructies ingebed in ogenschijnlijk normale tekst. Adversariële training, waarbij het model wordt gefinetuned op voorbeelden van zulke aanvallen, verbetert de weerstand.
+
+**Ensemblemethoden** verbeteren de Robuustheid door voorspellingen van meerdere modellen of ophaalstrategieën te combineren. Als één component faalt bij een bepaalde invoer, kunnen andere dit compenseren. In [RAG](/nl/glossary/retrieval-augmented-generation/)-systemen vertaalt dit zich naar hybride ophaling (combinatie van sparse en dense search) en antwoordverificatie tegen meerdere bronnen.
+
+Robuustheid staat vaak op gespannen voet met prestaties op schone, goed geformuleerde invoer. Overoptimalisatie voor adversariële gevallen kan de nauwkeurigheid op normale zoekopdrachten verminderen. Het doel is een model dat het volledige spectrum van realistische invoer betrouwbaar afhandelt, niet een model dat perfect scoort op benchmarks maar fragiel is in de praktijk.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt Robuustheid van nauwkeurigheid?**
+
+A: Nauwkeurigheid meet prestaties op een standaard testset. Robuustheid meet hoeveel de nauwkeurigheid afneemt wanneer omstandigheden veranderen. Een model kan 95% nauwkeurigheid hebben op schone data maar zakken naar 60% op ruisrijke of adversariële invoer — dat model is nauwkeurig maar niet robuust.
+
+**V: Kan Robuustheid met één enkele metriek worden gemeten?**
+
+A: Nee. Robuustheid is multidimensionaal — een model kan robuust zijn tegen typfouten maar fragiel bij distributieverschuivingen. Evaluatie omvat doorgaans meerdere testsets die verschillende perturbatietypes bestrijken, waarbij prestaties per type worden bijgehouden.
+
 ## References
 
 > Yinpeng Dong et al. (2018), "[Boosting Adversarial Attacks with Momentum](https://doi.org/10.1109/cvpr.2018.00957)", .

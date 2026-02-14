@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-L’embedding drift apparaît lorsque le même texte produit, avec le temps, des vecteurs différents – par exemple après une mise à jour de modèle – ce qui rend plus difficile la comparaison entre anciens et nouveaux [embeddings](/fr/glossary/embeddings/).
+La dérive d'embeddings est le phénomène par lequel la relation entre les vecteurs d'embeddings et leur contenu sémantique sous-jacent se dégrade au fil du temps, rendant la recherche par similarité moins précise. Cela se produit lorsque la distribution du contenu à encoder change (nouvelle terminologie, nouveaux styles de documents, nouveaux sujets) alors que le modèle d'embedding reste fixe, ou lorsque le modèle d'embedding est mis à jour mais que les vecteurs stockés ne sont pas recalculés. La dérive d'embeddings est une forme de dérive de modèle spécifique aux représentations vectorielles qui alimentent la recherche sémantique.
+
+## Pourquoi c'est important
+
+- **Dégradation silencieuse de la récupération** — la dérive d'embeddings réduit progressivement la qualité de la recherche ; le système renvoie des résultats légèrement moins pertinents au fil du temps sans erreur manifeste, ce qui la rend difficile à détecter
+- **Mauvaise représentation des nouveaux contenus** — à mesure que la nouvelle législation introduit des concepts ou une terminologie absents des données d'entraînement du modèle d'embedding, les vecteurs de ces nouveaux documents peuvent ne pas représenter fidèlement leur signification
+- **Incohérence de l'index** — si le modèle d'embedding est mis à jour mais que les vecteurs existants ne sont pas recalculés, les anciens et nouveaux embeddings coexistent dans des espaces différents et ne sont pas comparables ; une requête peut préférentiellement correspondre à des documents anciens ou nouveaux en fonction des différences d'espace vectoriel plutôt que de la pertinence réelle
+- **Effets en cascade** — la dérive d'embeddings affecte la récupération, qui affecte la qualité de la génération, qui affecte la confiance des utilisateurs ; une faible dérive des embeddings peut avoir un impact disproportionné sur la qualité du système de bout en bout
+
+## Comment ça fonctionne
+
+La dérive d'embeddings se manifeste par plusieurs mécanismes :
+
+**Changement de distribution des données** — le contenu à encoder change au fil du temps. La nouvelle législation introduit une terminologie (« pilier deux de l'impôt minimum mondial », « déclaration DAC 8 ») qui n'était pas présente dans les données d'entraînement du modèle d'embedding. Le modèle produit tout de même des vecteurs pour ce texte, mais ces vecteurs peuvent ne pas capturer fidèlement le sens car le modèle n'a aucune expérience préalable de ces concepts.
+
+**Mise à jour du modèle sans réencodage** — lorsque le modèle d'embedding est mis à niveau vers une version plus récente, le nouveau modèle produit des vecteurs dans un espace différent de l'ancien. Si les documents existants ne sont pas réencodés avec le nouveau modèle, l'index contient des vecteurs provenant de deux espaces incompatibles. Les requêtes (encodées avec le nouveau modèle) peuvent ne pas bien correspondre aux anciens documents (encodés avec l'ancien modèle).
+
+**Évolution des concepts** — la signification des concepts juridiques change au fil du temps par le biais de nouvelles lois, de la jurisprudence et de la pratique administrative. Un modèle d'embedding entraîné sur des données de 2023 peut ne pas capturer le sens évolué de concepts qui ont changé d'ici 2025.
+
+**La détection** repose sur la surveillance des métriques de qualité de récupération au fil du temps. Une baisse de la précision, du rappel ou des scores de pertinence sur un jeu d'évaluation fixe peut indiquer une dérive d'embeddings. Une détection plus directe consiste à réencoder périodiquement un échantillon de documents et à comparer les nouveaux embeddings avec ceux stockés — une divergence significative indique une dérive.
+
+**Les stratégies d'atténuation** comprennent : le réencodage périodique de l'ensemble du corpus (coûteux mais complet), l'affinage continu du modèle d'embedding sur le contenu récent (traite le changement de distribution des données), et la surveillance des métriques de qualité de récupération pour une détection précoce.
+
+## Questions fréquentes
+
+**Q : À quelle vitesse la dérive d'embeddings se produit-elle ?**
+
+R : Cela dépend de la rapidité d'évolution du domaine de contenu. En droit fiscal, une nouvelle législation importante chaque année signifie une dérive perceptible dans les 12 à 18 mois. Dans des domaines plus stables, la dérive peut prendre des années avant de devenir significative.
+
+**Q : Le réencodage est-il la seule solution ?**
+
+R : C'est la solution la plus fiable. Les alternatives comprennent l'alignement des anciens et nouveaux espaces d'embeddings (si le modèle a été mis à jour) ou l'augmentation de l'index avec des embeddings supplémentaires pour la nouvelle terminologie. Mais le réencodage complet périodique reste la référence.
 
 ## References
 

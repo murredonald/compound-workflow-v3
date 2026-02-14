@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Document ingestion omvat het ophalen, valideren en opslaan van bronbestanden – zoals pdf’s of e‑mails – als eerste stap in de [contentpipeline](/nl/glossary/data-pipeline/) van een zoek‑ of AIsysteem.
+Document ingestion is het Proces van het verzamelen van ruwe Documenten uit hun Bronnen, het omzetten ervan naar een bruikbaar Formaat, het extraheren van Metadata en het registreren ervan in de Kennisbank. Het is de eerste Stap in de Datapipeline -- het Punt waar externe juridische Content het AI-systeem binnentreedt en doorzoekbaar wordt. De Kwaliteit van de Ingestie bepaalt de Kwaliteit van de Kennisbank: Documenten die incorrect worden geparseerd, verkeerde Metadata toegewezen krijgen of onvolledig worden geextraheerd, zullen stroomafwaarts leiden tot onnauwkeurige Retrieval en Generatie.
+
+## Waarom het belangrijk is
+
+- **Volledigheid van de Kennisbank** -- als de Ingestiepipeline een nieuwe Wet, Circulaire of Ruling niet opvangt, kan het AI-systeem er niet naar verwijzen in Antwoorden, wat een gevaarlijke Lacune creert
+- **Oorsprong van Datakwaliteit** -- de meeste Datakwaliteitsproblemen ontstaan tijdens de Ingestie: OCR-fouten, incorrecte Datumextractie, verkeerde jurisdictionele Tagging of ontbrekende Kruisverwijzingen; Fouten bij de Ingestie opvangen is veel goedkoper dan ze corrigeren na Indexering
+- **Brondiversiteit** -- het Belgisch Belastingrecht komt uit vele Bronnen (Belgisch Staatsblad, FOD Financien, Rechtbankdatabases, regionale Uitgevers) in vele Formaten (PDF, HTML, XML, gescande Afbeeldingen); de Ingestiepipeline moet deze Diversiteit betrouwbaar verwerken
+- **Actualiteit** -- geautomatiseerde Ingestie stelt het Systeem in staat om nieuwe juridische Bronnen binnen Uren na Publicatie op te nemen, waardoor de Actualiteit behouden blijft zonder handmatige Interventie
+
+## Hoe het werkt
+
+Een Document-ingestiepipeline verloopt doorgaans via deze Fasen:
+
+**Acquisitie** -- Documenten worden verzameld uit hun Bronnen. Dit kan Scraping van Staatsbladwebsites op Basis van een Schema inhouden, API-oproepen naar Aanbieders van juridische Databases, SFTP-overdrachten van Uitgevers, of handmatige Upload van ad hoc-bronnen. Elke Bron heeft zijn eigen Toegangsmethode, Formaat en Leveringsschema.
+
+**Formaatverwerking** -- ruwe Documenten worden omgezet van hun oorspronkelijke Formaat naar schone Tekst. PDF-extractie verwerkt Layouts met meerdere Kolommen, Tabellen en ingesloten Afbeeldingen. HTML-parsing verwijdert Navigatie, Styling en Boilerplate. Gescande Documenten ondergaan OCR met Betrouwbaarheidsscore om onbetrouwbare Extracties te markeren. XML-documenten (gebruikelijk voor officiele Publicaties) worden geparseerd volgens hun Schema.
+
+**Metadata-extractie** -- belangrijke gestructureerde Velden worden geidentificeerd en geextraheerd: Publicatiedatum, Documenttype (Wet, Besluit, Circulaire, Ruling), Jurisdictie (federaal, regionaal), Taalversie, Artikelnummers en Kruisverwijzingen naar andere Documenten. Sommige Metadata is expliciet (in Documentheaders of XML-tags); sommige moet worden afgeleid uit de Inhoud met behulp van Entity-extractie of Patroonherkenning.
+
+**Deduplicatiecontrole** -- het Document wordt vergeleken met bestaande Content om te bepalen of het nieuw is, een Update van een bestaand Document, of een Duplicaat. Content-hashing en bijna-duplicaatdetectie voorkomen dat hetzelfde Document meerdere malen wordt geindexeerd.
+
+**Registratie** -- het Document krijgt een unieke Identificator toegewezen, de Metadata wordt gevalideerd tegen het Schema, en het wordt in de Wachtrij geplaatst voor de volgende Pipelinefasen (Chunking, Embedding, Indexering). Mislukte Documenten worden in Quarantaine geplaatst met Foutdetails voor handmatige Beoordeling.
+
+## Veelgestelde vragen
+
+**V: Hoe vaak moet de Ingestie draaien?**
+
+A: Voor Bronnen met een regelmatig Publicatieschema (dagelijks Staatsblad, wekelijkse Circulaires) moet de Ingestie op overeenkomstige Frequentie draaien. Event-driven Ingestie (getriggerd door Publicatienotificaties) biedt snellere Dekking dan gepland pollen.
+
+**V: Wat gebeurt er wanneer de Ingestie mislukt voor een Document?**
+
+A: Mislukte Documenten moeten in Quarantaine worden geplaatst, gelogd met de specifieke Reden van Mislukking (OCR-fout, Formaatfout, Fout bij Metadata-extractie), en ofwel automatisch opnieuw geprobeerd ofwel gemarkeerd voor handmatige Beoordeling. Het Systeem moet doorgaan met het verwerken van andere Documenten in plaats van de gehele Pipeline te stoppen.

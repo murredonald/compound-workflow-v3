@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Confidence scoring produces numeric indicators of how likely a [prediction](/en/glossary/inference/) or result is to be correct, enabling thresholding, ranking, and human escalation.
+Confidence scoring is the practice of assigning a numeric indicator to each prediction, answer, or retrieval result that reflects how likely it is to be correct. A well-calibrated confidence score allows downstream systems and human users to set thresholds — accepting high-confidence results automatically while flagging low-confidence ones for manual review. In legal and tax AI, where incorrect answers can have material consequences, confidence scoring is a critical safety mechanism.
+
+## Why it matters
+
+- **Risk management** — low-confidence answers can be escalated to human experts rather than served directly, reducing the chance of errors reaching end users
+- **Transparency** — showing confidence levels alongside answers helps professionals assess how much to rely on AI output
+- **Regulatory compliance** — the EU AI Act expects high-risk systems to communicate uncertainty; confidence scores are a natural mechanism for this
+- **Efficiency** — by automating high-confidence responses and routing only uncertain cases to humans, confidence scoring optimises the balance between speed and accuracy
+
+## How it works
+
+Confidence scores can be derived from multiple signals in the retrieval and generation pipeline:
+
+- **Retrieval scores** — the similarity distance between query and document embeddings provides a raw relevance signal; documents far from the query receive low scores
+- **Reranker scores** — cross-encoder rerankers produce calibrated relevance scores for query-document pairs
+- **Generation probabilities** — token-level log-probabilities from the language model indicate how certain it was about each generated word
+- **Source agreement** — when multiple retrieved sources agree on an answer, confidence is higher; conflicting sources lower it
+- **Consistency checks** — asking the same question multiple ways and comparing answers (self-consistency) provides an additional confidence signal
+
+These signals can be combined into a single composite score through learned weighting or rule-based aggregation. Calibration ensures that a score of 0.9 actually corresponds to being correct roughly 90% of the time.
+
+## Common questions
+
+**Q: What makes a confidence score "well-calibrated"?**
+
+A: A score is well-calibrated when its predicted probability matches observed accuracy. If the system assigns 80% confidence to a set of answers, approximately 80% of those answers should actually be correct. Calibration is measured using reliability diagrams and metrics like Expected Calibration Error (ECE).
+
+**Q: Can confidence scoring eliminate hallucinations?**
+
+A: Not entirely, but it can flag them. Hallucinated content often has lower retrieval scores (no strong source match) and may show inconsistency across rephrased queries. Confidence scoring helps surface these signals so that users or automated systems can catch potential fabrications.
+
+**Q: How is confidence scoring different from relevance ranking?**
+
+A: Relevance ranking orders results from most to least relevant. Confidence scoring assigns an absolute score reflecting the probability of correctness. A system might rank result A above result B but still flag both as low-confidence if neither closely matches the query.

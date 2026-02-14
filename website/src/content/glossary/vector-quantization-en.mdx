@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Vector [quantization](/en/glossary/quantization/) replaces full-precision embeddings with compact codes that [reference](/en/glossary/citation/) a limited set of prototype vectors, trading some accuracy for efficiency in memory and computation.
+Vector quantisation is a compression technique that approximates high-precision embedding vectors using a small set of representative prototype vectors (a codebook). Instead of storing each embedding as hundreds of full-precision floating-point numbers, the vector is mapped to its nearest prototype in each subspace, and only the prototype index is stored. This dramatically reduces memory usage and speeds up distance computations, enabling semantic search at scales where full-precision storage would be prohibitively expensive.
+
+## Why it matters
+
+- **Memory reduction** — a 768-dimensional float32 embedding requires 3,072 bytes; with product quantisation, the same embedding can be compressed to 48-96 bytes — a 30-60x reduction that makes billion-scale indexes feasible in RAM
+- **Search acceleration** — distance computations on quantised vectors are faster because they operate on smaller data structures and can use precomputed lookup tables instead of full vector arithmetic
+- **Cost efficiency** — smaller indexes require less memory and fewer servers, reducing infrastructure costs for large-scale retrieval systems
+- **Scalability** — quantisation is what makes billion-vector indexes practical on commodity hardware; without it, large-scale semantic search would require impractical amounts of RAM
+
+## How it works
+
+Vector quantisation operates by learning a set of prototype vectors (centroids) from the data and then encoding each vector as a reference to its nearest prototype:
+
+**Scalar quantisation** reduces the precision of each dimension independently — for example, converting 32-bit floats to 8-bit integers. This is the simplest form: each dimension is linearly mapped from its observed range to 256 integer values. Storage is reduced 4x with modest accuracy loss.
+
+**Product quantisation (PQ)** splits each vector into subvectors (e.g., a 768-dimensional vector into 48 subvectors of 16 dimensions each) and quantises each subvector independently using its own codebook of 256 centroids. The full vector is then represented as 48 one-byte codes — just 48 bytes instead of 3,072. Distance computation uses precomputed distance tables between the query subvectors and the codebook entries, making it very fast.
+
+**Optimised Product Quantisation (OPQ)** applies a rotation to the vectors before splitting them into subvectors, minimising the information loss caused by independent quantisation of each subvector.
+
+The codebook is learned during index construction using k-means clustering on the training vectors. The quality of quantisation depends on how well the codebook represents the data distribution — codebooks trained on the actual corpus perform better than generic ones.
+
+Quantisation is typically combined with an index structure (IVF+PQ, HNSW+PQ) to get both fast candidate selection and memory-efficient storage.
+
+## Common questions
+
+**Q: How much accuracy is lost with quantisation?**
+
+A: For product quantisation with reasonable parameters, recall typically drops 2-5% compared to full-precision search. The exact loss depends on the data, codebook size, and number of subvectors. This is usually acceptable given the dramatic memory and speed improvements.
+
+**Q: Can quantised indexes be updated incrementally?**
+
+A: Yes, new vectors can be quantised using the existing codebook and added to the index. However, if the data distribution changes significantly, the codebook may become suboptimal and should be retrained.
 
 ## References
 

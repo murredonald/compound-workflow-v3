@@ -12,7 +12,37 @@ draft: false
 
 ## Definition
 
-Een distance metric definieert hoe ver twee vectoren van elkaar liggen of hoe sterk ze op elkaar lijken, en stuurt daarmee rangschikking in [similarity search](/nl/glossary/similarity-search/) en clustering.
+Een distance metric is een wiskundige functie die de afstand tussen twee punten in een ruimte meet. Om als echte metriek te gelden, moet de functie aan vier eigenschappen voldoen: niet-negativiteit, identiteit van ononderscheidbaren (nulafstand alleen bij identieke punten), symmetrie en de driehoeksongelijkheid. In AI- en retrievalsystemen bepalen distance metrics hoe "dicht bij" of "ver van" elkaar twee embeddings liggen, wat zich rechtstreeks vertaalt naar hoe gelijkaardig of verschillend hun betekenissen worden beschouwd.
+
+## Waarom het belangrijk is
+
+- **Retrievalkwaliteit** — de keuze van distance metric bepaalt welke documenten als meest relevant worden beschouwd; een slechte keuze kan irrelevante resultaten hoger rangschikken
+- **Consistentie** — metrische eigenschappen zoals de driehoeksongelijkheid zorgen ervoor dat gelijkenisrelaties zich voorspelbaar gedragen over de gehele embeddingspace
+- **Indexprestatie** — approximate nearest-neighbour-algoritmen (HNSW, IVF) zijn geoptimaliseerd voor specifieke metrieken; een mismatch verslechtert zowel snelheid als recall
+- **Juridische precisie** — in fiscaal onderzoek kunnen kleine semantische verschillen tussen bepalingen grote praktische gevolgen hebben, waardoor de keuze van metriek cruciaal is
+
+## Hoe het werkt
+
+Wanneer een query wordt omgezet in een vector, berekent het retrievalsysteem de afstanden tussen de queryvector en alle documentvectoren in de index. De documenten met de kleinste afstanden (of hoogste gelijkenisscores) worden als resultaten geretourneerd.
+
+Veelgebruikte distance metrics zijn onder meer:
+
+- **Euclidische afstand** — rechte-lijnafstand in de vectorruimte; gevoelig voor vectorgrootte
+- **Cosinusgelijkenis** — meet de hoek tussen vectoren, ongeacht hun grootte; veel gebruikt voor tekstembeddings waarbij richting belangrijker is dan lengte
+- **Dotproduct** — equivalent aan cosinusgelijkenis wanneer vectoren zijn genormaliseerd; sneller te berekenen
+- **Manhattan-afstand** — som van de absolute verschillen langs elke dimensie; soms gebruikt voor spaarse representaties
+
+De meeste moderne embeddingmodellen worden getraind met cosinusgelijkenis als doel, dus retrievalsystemen normaliseren vectoren doorgaans en gebruiken het dotproduct voor efficiënte berekening.
+
+## Veelgestelde vragen
+
+**V: Moet de distance metric overeenkomen met hoe het model is getraind?**
+
+A: Ja. Als een embeddingmodel is getraind met cosinusgelijkenis als doelfunctie, gebruik dan cosinusgelijkenis (of dotproduct op genormaliseerde vectoren) bij retrieval. Het gebruik van Euclidische afstand met een op cosinus getraind model kan de resultaten verslechteren.
+
+**V: Wat is het verschil tussen een afstand en een gelijkenis?**
+
+A: Ze zijn omgekeerd gerelateerd. Een kleine afstand betekent hoge gelijkenis. Cosinusgelijkenis varieert van -1 tot 1 (hoger is meer gelijkend), terwijl Euclidische afstand varieert van 0 tot oneindig (lager is meer gelijkend). De meeste systemen converteren tussen beide waar nodig.
 
 ## References
 

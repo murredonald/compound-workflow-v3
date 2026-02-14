@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Structured Data folgen einem festen Schema mit Spaltennamen und Typen, sodass Abfragesprachen oder Suchmaschinen gezielt filtern und aggregieren können, ohne zunächst Fließtext zu zerlegen.
+Strukturierte Daten sind Informationen, die in einem vordefinierten Schema mit expliziten Feldern, Datentypen und Beziehungen organisiert sind — etwa Zeilen und Spalten in einer Datenbanktabelle, Schlüssel-Wert-Paare in JSON oder Felder in einem Formular. Anders als unstrukturierte Daten (Fließtext, PDFs, Bilder) können strukturierte Daten direkt abgefragt, gefiltert, sortiert und verknüpft werden, ohne dass eine natürliche Sprachverarbeitung oder Interpretation erforderlich ist. In juristischen KI-Systemen erfassen strukturierte Daten die Metadaten, die unstrukturierten Rechtstext durchsuchbar und filterbar machen: Artikelnummern, Veröffentlichungsdaten, Zuständigkeitscodes, Autoritätsstufen und Steuertariftabellen.
+
+## Warum es wichtig ist
+
+- **Präzises Filtern** — strukturierte Felder wie Zuständigkeit, Datum und Dokumenttyp ermöglichen eine exakte Filterung, die semantische Suche allein nicht leisten kann; eine Anfrage nach „flämischen Registrierungsgebühren im Jahr 2025" erfordert strukturierte Datums- und Zuständigkeitsfelder, um präzise beantwortet zu werden
+- **Grundlage für Knowledge Graphs** — strukturierte Daten liefern die typisierten Entitäten und Beziehungen, die die Knoten und Kanten eines Knowledge Graphs bilden und relationale Abfragen über den gesamten Rechtskorpus ermöglichen
+- **Integration mit Geschäftssystemen** — Steuerberechnungen, Fristen und Tariftabellen sind von Natur aus strukturiert; das KI-System muss strukturierte Daten konsumieren und produzieren können, um sich in bestehende professionelle Tools zu integrieren
+- **Validierung und Konsistenz** — Schemata erzwingen Datenintegrität: ein Datumsfeld kann keinen Namen enthalten, ein Steuersatz muss eine Zahl sein; das verhindert Datenqualitätsprobleme, die sich in die KI-Ausgaben fortpflanzen würden
+
+## Wie es funktioniert
+
+Strukturierte Daten treten in einem juristischen KI-System in verschiedenen Formen auf:
+
+**Dokumentmetadaten** — jedes aufgenommene Dokument wird mit strukturierten Feldern versehen: Veröffentlichungsquelle, Veröffentlichungsdatum, Dokumenttyp (Gesetz, Erlass, Rundschreiben, Urteil), Zuständigkeit (föderal, Flandern, Wallonien, Brüssel-Hauptstadt), Sprache und Autoritätsstufe. Diese Felder werden zusammen mit den Vektoreinbettungen des Dokuments gespeichert und ermöglichen Metadatenfilterung während des Retrievals.
+
+**Steuertabellen und -sätze** — Steuerstufen, Sätze, Schwellenwerte und Freibeträge sind von Natur aus strukturiert. Sie werden als typisierte Datensätze gespeichert, die präzise abgefragt werden können: „Wie hoch ist der Körperschaftsteuersatz für KMU im Jahr 2025?" wird über ein strukturiertes Lookup aufgelöst, nicht über eine semantische Suche.
+
+**Entitäts-Beziehungsdaten** — Knowledge Graphs speichern strukturierte Beziehungen zwischen Entitäten: welche Artikel auf welche anderen Artikel verweisen, welche Urteile welche Bestimmungen auslegen, welche Änderungen welche Originaltexte modifiziert haben. Diese Beziehungen werden als strukturierte Tripel (Subjekt, Prädikat, Objekt) oder Eigenschaftsgraphen gespeichert.
+
+**Schema-Validierung** stellt sicher, dass alle strukturierten Daten den erwarteten Formaten entsprechen. Ein Veröffentlichungsdatum muss ein gültiges Datum sein. Ein Zuständigkeitscode muss einer der definierten Werte sein. Ein Steuersatz muss eine positive Zahl sein. Die Validierung erkennt Fehler zum Zeitpunkt der Aufnahme, bevor sie nachgelagerte Retrieval- oder Generierungsprozesse beeinflussen können.
+
+Die Herausforderung in der juristischen KI besteht darin, strukturierte und unstrukturierte Daten zu verbinden. Gesetzgebung kommt als Prosatext (unstrukturiert), enthält aber eingebettete strukturierte Informationen (Artikelnummern, Daten, Beträge). Entitätsextraktion und Dokumentenparsing wandeln unstrukturierten Rechtstext in strukturierte Metadaten um, während der Originaltext für die semantische Suche erhalten bleibt.
+
+## Häufige Fragen
+
+**F: Kann ein KI-System nur mit strukturierten Daten arbeiten?**
+
+A: Für juristische Recherche nein. Die Argumentation, der Kontext und die Nuancen in Rechtstexten sind unstrukturiert. Strukturierte Daten liefern das Gerüst — Metadaten, Beziehungen und präzise Werte — aber die Substanz der juristischen Analyse erfordert das Verstehen von Prosatext. Die effektivsten Systeme kombinieren beides.
+
+**F: Worin unterscheiden sich strukturierte Daten von einem Knowledge Graph?**
+
+A: Strukturierte Daten sind die übergeordnete Kategorie — alle Daten mit einem definierten Schema. Ein Knowledge Graph ist eine spezifische Art strukturierter Daten, die Entitäten und ihre Beziehungen als Graph darstellt. Knowledge Graphs werden aus strukturierten Daten aufgebaut (sowie aus Entitätsextraktion auf unstrukturierten Daten).

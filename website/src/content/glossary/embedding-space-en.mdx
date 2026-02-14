@@ -12,7 +12,34 @@ draft: false
 
 ## Definition
 
-The embedding space is the mathematical space defined by an [embedding model](/en/glossary/embedding-model/) where distance and direction between vectors correspond to semantic relationships between the underlying items.
+The embedding space is the high-dimensional mathematical space in which vector embeddings exist. Each dimension of this space captures some learned aspect of meaning, and the geometric relationships between points — their distances and angles — encode semantic similarity and conceptual relationships. Texts with similar meanings are mapped to nearby points; unrelated texts are mapped far apart. The embedding space is what makes semantic search possible: finding relevant documents becomes a matter of finding nearby points in this space.
+
+## Why it matters
+
+- **Semantic organisation** — the embedding space organises all knowledge base content by meaning rather than alphabetical order or file location, enabling retrieval based on conceptual relevance
+- **Cross-lingual mapping** — multilingual embedding models map text from different languages into a shared space, so a Dutch query can find relevant French legislation because both occupy nearby regions
+- **Clustering and exploration** — the geometric structure of the embedding space reveals natural groupings in the data — clusters of documents about the same tax topic, for instance — which supports exploratory research and topic discovery
+- **Quality diagnosis** — visualising the embedding space reveals problems like collapsed regions (where different concepts are mapped too close together) or gaps (where important topics lack coverage)
+
+## How it works
+
+An embedding model defines the embedding space through its training process. During training, the model learns to assign vectors such that semantically similar inputs are close together and dissimilar inputs are far apart. The number of dimensions (typically 384 to 1536) determines the space's capacity to capture fine-grained distinctions.
+
+**Distance metrics** define how "closeness" is measured in the space. Cosine similarity measures the angle between two vectors (ignoring magnitude), making it the most common choice for text embeddings. Dot product considers both angle and magnitude. Euclidean distance measures the straight-line distance between points. The choice of metric should match the embedding model's training objective.
+
+**Geometric properties** of the space encode meaningful relationships. In well-trained spaces, analogical relationships can appear as consistent vector offsets — the direction from "belasting" to "tarief" might be similar to the direction from "tax" to "rate". Clusters form naturally around topics: tax law provisions cluster separately from procedural law, which clusters separately from case law.
+
+**Limitations** are inherent to any fixed-dimensional space. The embedding space captures the relationships the model learned during training; concepts absent from the training data will be poorly positioned. Domain-specific fine-tuning reshapes the space to better represent specialised content — for example, ensuring that different types of Belgian tax legislation occupy distinct, well-separated regions rather than being compressed into a generic "law" cluster.
+
+## Common questions
+
+**Q: Can you visualise an embedding space?**
+
+A: Not directly — embedding spaces typically have hundreds of dimensions. Dimensionality reduction techniques like t-SNE or UMAP project the space down to 2 or 3 dimensions for visualisation. These projections preserve local neighbourhood structure (nearby points stay nearby) but distort global distances, so they are useful for spotting clusters and outliers but not for measuring absolute distances.
+
+**Q: Do different embedding models create different spaces?**
+
+A: Yes. Each model defines its own embedding space with its own geometric structure. Vectors from different models are not comparable — a 768-dimensional vector from one model cannot be meaningfully compared with a 768-dimensional vector from another. Switching models requires re-embedding all documents.
 
 ## References
 

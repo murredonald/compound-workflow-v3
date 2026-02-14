@@ -12,7 +12,40 @@ draft: false
 
 ## Definitie
 
-Bij adversarial testing worden modellen blootgesteld aan lastige of vijandige [prompts](/nl/glossary/prompt/) om kwetsbaarheden vroegtijdig te ontdekken.
+Adversarial testing (ook wel red teaming genoemd) is de systematische Praktijk waarbij een AI-systeem wordt geconfronteerd met opzettelijk moeilijke, misleidende of kwaadaardige Invoer om Kwetsbaarheden, Faalpatronen en Veiligheidslacunes te ontdekken voordat ze zich in Productie voordoen. In tegenstelling tot standaard Evaluatie die de normale Prestaties test, probeert adversarial testing het Systeem specifiek te laten falen — door de Invoer te vinden die leidt tot onjuiste Antwoorden, Veiligheidsovertredingen of onverwacht Gedrag. In juridische AI controleert adversarial testing of het Systeem kan worden misleid tot het citeren van niet-bestaande Wetgeving, het verstrekken van onjuiste Belastingtarieven of het omzeilen van Waarborgen tegen het geven van bindend juridisch Advies.
+
+## Waarom het belangrijk is
+
+- **Veiligheid vóór Deployment** — het ontdekken van Kwetsbaarheden via adversarial testing is sterk te verkiezen boven het ontdekken ervan via Klachten van Gebruikers of handhavend Optreden van Toezichthouders na Deployment
+- **Robuustheidsvalidatie** — adversarial testing legt bloot hoe het Systeem omgaat met Randgevallen die normale Evaluatie niet dekt: dubbelzinnige Zoekopdrachten, tegenstrijdige Prompts en Invoer die bedoeld is om te verwarren
+- **Verificatie van Veiligheidswaarborgen** — het Testen bevestigt dat de Veiligheidsmechanismen van het Systeem (weigeren om bindend Advies te geven, Onzekerheid signaleren, Vragen buiten Scope afwijzen) daadwerkelijk werken onder vijandige Druk
+- **Naleving van Regelgeving** — de EU AI Act vereist Risicobeoordeling en Testen voor AI-systemen met hoog Risico; adversarial testing is een primaire Methode om aan deze Vereiste te voldoen
+
+## Hoe het werkt
+
+Adversarial testing wordt uitgevoerd door gespecialiseerde Testers (het red team) die proberen het Systeem te laten falen:
+
+**Prompt injection-testen** — het opstellen van Invoer die probeert de Instructies van het Systeem te overschrijven, de Systeemprompt te extraheren of het Systeem zijn Veiligheidsrichtlijnen te laten negeren. In juridische AI kan dit Zoekopdrachten omvatten die proberen het Systeem niet-bindende Richtlijnen als bindend Recht te laten presenteren.
+
+**Aanvallen op feitelijke Nauwkeurigheid** — Zoekopdrachten die bedoeld zijn om [Hallucinaties](/nl/glossary/hallucination/) uit te lokken: vragen over obscure Bepalingen, het gebruik van plausibele maar onjuiste juridische Terminologie, of het presenteren van valse Premissen ("gegeven dat het btw-tarief in 2024 is verlaagd naar 15%...") om te testen of het Systeem deze corrigeert of accepteert.
+
+**Grensverkenning** — het testen van de Scopegrenzen van het Systeem: Vragen over buitenlands Recht wanneer het Systeem alleen Belgisch Recht dekt, medisch of financieel Advies dat buiten het juridische Domein valt, en dubbelzinnige Vragen die zowel binnen als buiten Scope kunnen worden geïnterpreteerd.
+
+**Consistentieaanvallen** — dezelfde Vraag op meerdere manieren stellen om te controleren of het Systeem tegenstrijdige Antwoorden geeft, of dezelfde Feiten vanuit verschillende Invalshoeken presenteren om de Consistentie van de Redenering te testen.
+
+**Informatie-extractie** — proberen de Systeemprompt, Details over Trainingsdata of vertrouwelijke Informatie over de Architectuur van het Systeem te extraheren via zorgvuldig opgestelde Zoekopdrachten.
+
+Adversarial testing levert een Catalogus op van ontdekte Kwetsbaarheden, geclassificeerd naar Ernst en Exploiteerbaarheid. Elke Kwetsbaarheid wordt aangepakt via Systeemverbeteringen (betere Waarborgen, verbeterde Prompts, aanvullende Trainingsdata) en opnieuw getest om de Oplossing te bevestigen.
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen adversarial testing en stresstesten?**
+
+A: Stresstesten evalueren het Gedrag van een Systeem onder extreme Belasting of verslechterde Omstandigheden. Adversarial testing evalueert het Gedrag van een Systeem onder opzettelijk geconstrueerde kwaadaardige Invoer. Stresstesten duwen het Systeem voorbij zijn Capaciteit; adversarial testing probeert het Systeem onjuiste of gevaarlijke Uitvoer te laten produceren.
+
+**V: Wie moet adversarial testing uitvoeren?**
+
+A: Bij voorkeur Personen die niet betrokken waren bij het bouwen van het Systeem — zij benaderen het zonder Aannames over hoe het moet worden gebruikt en ontdekken eerder onverwachte Faalpatronen. Domeinexperts (Belastingprofessionals) en Beveiligingsspecialisten brengen elk verschillende vijandige Perspectieven mee.
 
 ## References
 

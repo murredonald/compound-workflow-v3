@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Beim Passage-Retrieval werden feingranulare Textsegmente indexiert und abgerufen, damit [RAG](/de/glossary/rag/)-Systeme Antworten auf die relevantesten Passagen statt auf ganze Dokumente stützen können.
+Passage-Retrieval ist die Praxis, kleine Textsegmente (Passagen oder Chunks) statt ganzer Dokumente zu indexieren und abzurufen, um der Generierungsschicht einen präziseren und fokussierteren Kontext zu liefern. Anstatt ein 50-seitiges Gesetz zurückzugeben und das Sprachmodell den relevanten Artikel suchen zu lassen, gibt Passage-Retrieval den spezifischen Absatz oder Artikel zurück, der die Abfrage beantwortet. Diese Granularität ist für [RAG](/de/glossary/rag/)-Systeme unerlässlich, bei denen das Kontextfenster begrenzt ist und jedes Token zählt.
+
+## Warum es wichtig ist
+
+- **Präzision** — die Rückgabe eines bestimmten Artikels statt eines gesamten Gesetzes stellt sicher, dass das Sprachmodell fokussierten, relevanten Kontext erhält, anstatt sich durch Seiten irrelevanten Texts zu arbeiten
+- **Effizienz des Kontextfensters** — Sprachmodelle haben begrenzte Kontextfenster; Passage-Retrieval maximiert den Anteil relevanter Inhalte innerhalb dieses Fensters
+- **Genauigkeit der Quellenangaben** — wenn die abgerufene Einheit ein einzelner Artikel oder Absatz ist, kann das System die genaue Bestimmung zitieren, anstatt auf ein mehrseitiges Dokument zu verweisen
+- **Genauigkeit des Relevanz-Scorings** — das Einbetten einer fokussierten Passage erzeugt eine genauere Vektorrepräsentation als das Einbetten eines gesamten Dokuments, was die Retrievalqualität verbessert
+
+## So funktioniert es
+
+Passage-Retrieval beinhaltet zwei zentrale Designentscheidungen: wie Passagen erstellt und wie sie abgerufen werden.
+
+**Passagenerstellung** erfolgt während der Dokumentenaufnahme. Dokumente werden mit einer von mehreren Strategien in Passagen aufgeteilt: Chunking mit fester Größe (Segmente mit einer festgelegten Token-Anzahl), strukturbewusstes Chunking (eine Passage pro Artikel oder Abschnitt) oder Sliding-Window-Chunking (überlappende Segmente). Die Wahl hängt vom Dokumenttyp ab — strukturierte Gesetzgebung eignet sich für Passagen auf Artikelebene, während Fließtext feste oder Sliding-Window-Ansätze erfordern kann.
+
+**Passagenindexierung** — jede Passage wird unabhängig eingebettet und zusammen mit ihren Metadaten (Elterndokument, Position, Artikelnummer, Inkrafttretungsdatum) im Vektorindex gespeichert. Die Metadaten verknüpfen jede Passage mit ihrem breiteren Kontext und ermöglichen es dem System, benachbarte Passagen abzurufen, wenn zusätzlicher Kontext benötigt wird.
+
+**Passagenabruf** — zur Abfragezeit durchsucht das System den Passagenindex (nicht einen Dokumentenindex) und gibt die Top-k relevantesten Passagen zurück. Diese Passagen können aus verschiedenen Dokumenten stammen und so die vielfältige Evidenzbasis liefern, die für umfassende Antworten benötigt wird.
+
+**Kontexterweiterung** — wenn eine abgerufene Passage zu eng ist (z. B. ein einzelner Satz, der auf den vorhergehenden Absatz verweist), kann das System erweitern, indem es benachbarte Passagen aus demselben Dokument abruft. Dies liefert den lokalen Kontext, der zum Verständnis der Passage benötigt wird, ohne das gesamte Dokument einzubeziehen.
+
+Die Granularität der Passagen beinhaltet einen Kompromiss: Kleinere Passagen sind präziser ausgerichtet, können aber Kontext vermissen lassen; größere Passagen bewahren den Kontext, verringern aber die Präzision. Die meisten juristischen Retrievalsysteme verwenden Passagen von 200–500 Tokens, was ungefähr einem oder zwei Absätzen oder einem einzelnen Gesetzesartikel entspricht.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Passage-Retrieval von Dokumentenretrieval?**
+
+A: Dokumentenretrieval gibt ganze Dokumente zurück, die nach Relevanz gerankt sind. Passage-Retrieval gibt kleine Textsegmente innerhalb von Dokumenten zurück. Passage-Retrieval liefert präzisere Ergebnisse und eine bessere Einbettungsqualität, kann aber den breiteren Kontext verlieren, den Dokumentenretrieval bewahrt.
+
+**F: Können Passage- und Dokumentenretrieval kombiniert werden?**
+
+A: Ja. Einige Systeme rufen auf Passagenebene ab, um Präzision zu erzielen, und erweitern dann das Elterndokument oder benachbarte Passagen für den Kontext. Dieser hybride Ansatz kombiniert die Präzision des Passage-Retrievals mit dem Kontext des Dokumentenretrievals.
 
 ## References
 

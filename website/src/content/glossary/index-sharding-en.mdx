@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Index sharding partitions an index into smaller pieces that can be distributed across nodes, enabling larger-scale retrieval and parallel query processing.
+Index sharding is the practice of splitting a search index into multiple smaller partitions (shards) that can be distributed across different servers or storage devices. Each shard contains a subset of the total document collection and can be searched independently. At query time, the search is executed across all shards in parallel, and the results are merged into a single ranked list. Sharding enables retrieval systems to scale beyond the memory and processing capacity of a single machine, handling collections of billions of documents while maintaining low latency.
+
+## Why it matters
+
+- **Horizontal scalability** — when an index outgrows a single machine's memory or processing capacity, sharding distributes the load across multiple machines, enabling growth without hardware limits
+- **Parallel query processing** — searching multiple shards simultaneously reduces latency compared to searching a single large index sequentially; with N shards, each shard handles 1/N of the data
+- **Fault tolerance** — if one shard's host fails, other shards continue serving queries (with reduced coverage); replicated shards provide full fault tolerance
+- **Incremental growth** — new data can be added to new shards without rebuilding existing ones, simplifying knowledge base expansion
+
+## How it works
+
+Sharding strategies determine how documents are distributed across shards:
+
+**Random or hash-based sharding** distributes documents evenly across shards using a hash of the document ID. This ensures balanced shard sizes and query load. Every query must search every shard because any document could be in any shard.
+
+**Content-based sharding** groups related documents together — for example, one shard per jurisdiction or one shard per document type. This enables selective search: a query filtered to Flemish legislation only needs to search the Flemish shard. This reduces per-query computation but creates uneven shard sizes and risks missing cross-shard results.
+
+**Temporal sharding** assigns documents to shards by time period — one shard per year, for example. Queries for current law only search the most recent shard; historical queries search older shards. This aligns well with legal content that has clear temporal boundaries.
+
+At query time, a **coordinator** routes the query to all relevant shards, each shard searches independently and returns its top-k results, and the coordinator merges these partial results into a final ranked list. The merge step must reconcile different score distributions across shards.
+
+## Common questions
+
+**Q: How many shards should an index have?**
+
+A: Enough to distribute the data across available hardware, but not so many that the coordination overhead becomes significant. A common rule of thumb is one shard per 1-10 million documents, adjusted based on document size, query latency requirements, and hardware specifications.
+
+**Q: Does sharding affect search quality?**
+
+A: With random sharding and exhaustive search (querying all shards), quality is identical to a single-index search. With selective sharding (only querying relevant shards), quality depends on how well the sharding strategy matches query patterns.
 
 ## References
 

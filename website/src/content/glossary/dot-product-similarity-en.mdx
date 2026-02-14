@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Dot product similarity multiplies and sums corresponding dimensions of two vectors, yielding higher scores when they point in similar directions and have larger magnitudes.
+Dot product similarity is a measure of similarity between two vectors computed by multiplying their corresponding dimensions and summing the results. The dot product reflects both the angle between the vectors (directional similarity) and their magnitudes (lengths). Higher values indicate greater similarity — vectors pointing in the same direction with larger magnitudes produce larger dot products. It is one of the three standard distance metrics used in vector search alongside cosine similarity and Euclidean distance.
+
+## Why it matters
+
+- **Efficient computation** — the dot product is one of the fastest similarity operations, requiring only element-wise multiplication and summation; hardware-accelerated SIMD instructions can compute it over hundreds of dimensions in microseconds
+- **Magnitude sensitivity** — unlike cosine similarity, the dot product considers vector magnitude, which can be meaningful if the embedding model encodes importance or confidence in the vector length
+- **Equivalence to cosine on normalised vectors** — when vectors are L2-normalised (as many embedding models produce), dot product and cosine similarity produce identical rankings, allowing the simpler dot product to be used
+- **Foundation for attention** — the dot product is the core computation in the transformer attention mechanism (query-key dot product), making it fundamental to how language models process text
+
+## How it works
+
+For two vectors **a** and **b** of dimension *d*, the dot product is:
+
+**a · b = Σ(aᵢ × bᵢ)** for i from 1 to d
+
+Each dimension contributes independently: if both vectors have large positive values in the same dimension, that dimension adds a large positive contribution. If they disagree in sign, the contribution is negative.
+
+**Relationship to cosine similarity**: cosine similarity is defined as the dot product divided by the product of the vector magnitudes: cos(θ) = (a · b) / (‖a‖ × ‖b‖). When both vectors are normalised to unit length (‖a‖ = ‖b‖ = 1), the dot product equals cosine similarity. Many embedding models normalise their output vectors, making the two metrics interchangeable.
+
+**When magnitude matters**: if vectors are not normalised, dot product favours vectors with larger magnitude. In some embedding models, vector magnitude correlates with the embedding model's confidence or the document's informativeness. In such cases, dot product captures this information while cosine similarity discards it.
+
+**In vector databases**: most vector databases support dot product as a built-in similarity metric. When configuring an index, the choice between dot product and cosine similarity should match the embedding model's design — models that produce normalised vectors can use either; models that produce unnormalised vectors should use whichever metric their training objective optimised for.
+
+## Common questions
+
+**Q: Should I use dot product or cosine similarity?**
+
+A: Check the embedding model's documentation. If the model produces L2-normalised vectors (most modern text embedding models do), the two are equivalent and dot product is slightly faster. If vectors are not normalised and magnitude carries meaning, dot product may be more appropriate.
+
+**Q: Can the dot product be negative?**
+
+A: Yes. A negative dot product indicates that the vectors point in roughly opposite directions in the embedding space, suggesting dissimilarity. Zero indicates orthogonality (no relationship).
 
 ## References
 

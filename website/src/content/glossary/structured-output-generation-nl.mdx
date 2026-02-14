@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Gestructureerde outputgeneratie is de techniek waarbij je een taalmodel zo [prompt](/nl/glossary/prompt/) of configureert dat de antwoorden aan een strikt formaat of schema voldoen, zodat ze eenvoudiger te parsen, valideren en koppelen aan downstream-systemen zijn.
+Gestructureerde outputgeneratie is de Praktijk waarbij de Uitvoer van een Taalmodel wordt beperkt tot een vooraf gedefinieerd Formaat of Schema — zoals JSON, XML, getypeerde Velden of een specifieke Documentsjabloon — in plaats van vrije Tekst te produceren. Dit zorgt ervoor dat de Uitvoer van het Model betrouwbaar kan worden geparseerd door downstream Systemen, gevalideerd tegen een Schema, en geïntegreerd in geautomatiseerde Workflows. In juridische AI maakt gestructureerde Outputgeneratie het mogelijk dat het Systeem machineleesbare Resultaten produceert met afzonderlijk adresseerbare Velden voor de Antwoordtekst, geciteerde Bronnen, Betrouwbaarheidsscore, toepasselijke Jurisdictie en relevante Datums.
+
+## Waarom het belangrijk is
+
+- **Betrouwbare Parsing** — vrije Tekst is onvoorspelbaar en moeilijk programmatisch te parseren; gestructureerde Uitvoer garandeert consistente Veldnamen, Types en Opmaak die downstream Systemen kunnen consumeren zonder aangepaste Parsinglogica
+- **Validatie** — gestructureerde Uitvoer kan onmiddellijk na Generatie worden gevalideerd tegen een Schema, waardoor Formaatfouten, ontbrekende Velden of Type-mismatches worden opgemerkt voordat het Resultaat de Gebruiker bereikt
+- **Integratie** — gestructureerde Uitvoer maakt directe Integratie met externe Systemen mogelijk: Citatiedatabases vullen, Belastingberekeningsengines voeden, Aangiftedocumenten genereren of Dossiermanagementsystemen bijwerken
+- **Scheiding van Verantwoordelijkheden** — door de Uitvoer in afzonderlijke Velden te structureren (Antwoord, Bronnen, Betrouwbaarheid, Voorbehouden), kan de UI elk Onderdeel anders weergeven — Onzekerheid benadrukken, Citaties klikbaar maken en Antwoordtekst passend opmaken
+
+## Hoe het werkt
+
+Verschillende Technieken produceren gestructureerde Uitvoer uit Taalmodellen:
+
+**Promptgebaseerde Structurering** — de Systeemprompt bevat Instructies en Voorbeelden van het gewenste Uitvoerformaat. Het Model wordt gevraagd JSON met specifieke Velden te produceren, en few-shot-Voorbeelden demonstreren de verwachte Structuur. Dit werkt met elk Model maar biedt geen Garantie — het Model kan af en toe van het Formaat afwijken.
+
+**Schemabeperkte Decodering** — het Generatieproces wordt op Tokenniveau beperkt zodat alleen Uitvoer wordt geproduceerd die conform een opgegeven Grammatica of JSON-schema is. Bij elke Generatiestap zijn alleen Tokens toegestaan die geldig zijn volgens het Schema. Dit garandeert Formaatcompliance maar vereist gespecialiseerde Inferentie-infrastructuur (Bibliotheken zoals Outlines, Guidance of ingebouwde API-functies).
+
+**Function calling / tool use** — moderne LLM-API's ondersteunen gestructureerde Uitvoer via function calling-interfaces. Het Model krijgt een Functiehandtekening met getypeerde Parameters, en de Uitvoer wordt automatisch geformateerd als een gestructureerde Functieaanroep. Dit is de meest gangbare Productieaanpak.
+
+**Nabewerking** — het Model genereert vrije Tekst, en een Nabewerkingsstap extraheert gestructureerde Velden met behulp van Patroonherkenning, Entiteitsextractie of een tweede Modelaanroep. Dit is een Terugvalbenadering — minder betrouwbaar maar werkt met elk Model.
+
+In de praktijk gebruiken de meeste Productiesystemen een Combinatie: prompt engineering voor de algemene Structuur, met schemabeperkte Decodering of function calling voor kritieke Velden die exact geformatteerd moeten zijn (Datums, Artikelverwijzingen, Betrouwbaarheidsscores).
+
+## Veelgestelde vragen
+
+**V: Beïnvloedt gestructureerde Outputgeneratie de Antwoordkwaliteit?**
+
+A: Minimaal, als het goed wordt geïmplementeerd. Schemabeperkingen en Formaatinstructies voegen enige Overhead toe aan de Prompt maar verminderen het Redeneervermogen van het Model niet significant. Overmatig complexe Schema's met veel verplichte Velden kunnen de Antwoordkwaliteit verlagen doordat de Aandacht van het Model wordt afgeleid naar Formaatcompliance.
+
+**V: Kunnen alle LLM's gestructureerde Uitvoer produceren?**
+
+A: De meeste moderne LLM's kunnen gestructureerde Uitvoer produceren via prompt engineering, met wisselende Betrouwbaarheid. Schemabeperkte Decodering en function calling zijn betrouwbaarder maar vereisen API- of Infrastructuurondersteuning. Nieuwere Modellen zijn specifiek getraind voor gestructureerde Uitvoer en produceren deze consistenter.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-[Passage](/en/glossary/document-chunk/) retrieval focuses on indexing and retrieving fine-grained text segments so that [RAG](/en/glossary/rag/) systems can ground answers in the most relevant spans instead of entire documents.
+Passage retrieval is the practice of indexing and retrieving small text segments (passages or chunks) rather than entire documents, enabling more precise and focused context delivery to the generation layer. Instead of returning a 50-page law and asking the language model to find the relevant article, passage retrieval returns the specific paragraph or article that answers the query. This granularity is essential for RAG systems, where the context window is limited and every token counts.
+
+## Why it matters
+
+- **Precision** — returning a specific article rather than an entire law ensures the language model receives focused, relevant context instead of wading through pages of irrelevant text
+- **Context window efficiency** — language models have limited context windows; passage retrieval maximises the proportion of relevant content within that window
+- **Citation accuracy** — when the retrieved unit is a single article or paragraph, the system can cite the exact provision rather than pointing to a multi-page document
+- **Relevance scoring accuracy** — embedding a focused passage produces a more accurate vector representation than embedding an entire document, improving retrieval quality
+
+## How it works
+
+Passage retrieval involves two key design decisions: how to create passages and how to retrieve them.
+
+**Passage creation** happens during document ingestion. Documents are split into passages using one of several strategies: fixed-size chunking (segments of a set token count), structure-aware chunking (one passage per article or section), or sliding window chunking (overlapping segments). The choice depends on the document type — structured legislation lends itself to article-level passages, while free-form commentary may require fixed-size or sliding window approaches.
+
+**Passage indexing** — each passage is embedded independently and stored in the vector index alongside its metadata (parent document, position, article number, effective date). The metadata links each passage back to its broader context, enabling the system to retrieve neighbouring passages when additional context is needed.
+
+**Passage retrieval** — at query time, the system searches the passage index (not a document index) and returns the top-k most relevant passages. These passages may come from different documents, providing the diverse evidence base needed for comprehensive answers.
+
+**Context expansion** — when a retrieved passage is too narrow (e.g., a single sentence that references the preceding paragraph), the system can expand by retrieving neighbouring passages from the same document. This provides the local context needed to understand the passage without pulling in the entire document.
+
+The granularity of passages involves a trade-off: smaller passages are more precisely targeted but may lack context; larger passages preserve context but reduce precision. Most legal retrieval systems use passages of 200-500 tokens, roughly corresponding to one or two paragraphs or a single legislative article.
+
+## Common questions
+
+**Q: How is passage retrieval different from document retrieval?**
+
+A: Document retrieval returns entire documents ranked by relevance. Passage retrieval returns small text segments from within documents. Passage retrieval provides more precise results and better embedding quality, but may lose broader context that document retrieval preserves.
+
+**Q: Can passage and document retrieval be combined?**
+
+A: Yes. Some systems retrieve at the passage level for precision, then expand to include the parent document or neighbouring passages for context. This hybrid approach combines the precision of passage retrieval with the context of document retrieval.
 
 ## References
 

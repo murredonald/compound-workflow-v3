@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Entity Extraction findet strukturierte Elemente wie Personen, Unternehmen, Gesetze oder Orte in unstrukturiertem Text und stellt sie als Felder für Such‑ und Analysezwecke bereit.
+Entity Extraction ist der Prozess der automatischen Identifizierung und Klassifizierung benannter Entitäten — wie Personen, Organisationen, Daten, Geldbeträge, Gesetzesverweise und Rechtsordnungen — in unstrukturiertem Text. Es handelt sich um eine zentrale Aufgabe der natürlichen Sprachverarbeitung (NLP), die Rohdokumente in strukturierte Daten transformiert, indem jede Entitätserwähnung mit einem Typenlabel versehen wird. In der juristischen KI bildet Entity Extraction die Grundlage für nachgelagerte Funktionen wie den Aufbau von [Wissensgraphen](/de/glossary/knowledge-graph/), Metadatenanreicherung, Querverweise zwischen Dokumenten und strukturierte Suchfilterung.
+
+## Warum es wichtig ist
+
+- **Strukturierte Metadaten aus unstrukturiertem Text** — Gesetzgebung und Urteile liegen als Fließtext vor; Entity Extraction identifiziert die darin eingebetteten Artikelnummern, Daten, Parteien und Schwellenwerte und macht sie durchsuchbar und filterbar
+- **Aufbau von Wissensgraphen** — extrahierte Entitäten und ihre Beziehungen bilden die Knoten und Kanten eines Wissensgraphen und ermöglichen relationale Anfragen wie „welche Urteile verweisen auf Artikel 215 WIB92?"
+- **Querverweise** — wenn ein Rundschreiben ein Königliches Dekret namentlich erwähnt, identifiziert Entity Extraction den Verweis und verknüpft ihn mit dem entsprechenden Dokument in der Wissensbasis
+- **Suchanreicherung** — extrahierte Entitäten werden zu Metadaten, die eine facettierte Suche unterstützen, sodass Nutzer Ergebnisse nach Rechtsordnung, Steuerart, Zeitraum oder Autoritätsstufe filtern können
+
+## So funktioniert es
+
+Entity Extraction arbeitet typischerweise in zwei Phasen:
+
+**Erkennung** identifiziert die Grenzen von Entitätserwähnungen im Text — also die Feststellung, dass „Grondwettelijk Hof" in einem Satz eine einzelne Entität ist und nicht zwei getrennte Wörter. Dies ist anspruchsvoll, da Entitätsnamen mehrere Wörter umfassen, gewöhnliche Wörter enthalten oder mit dem umgebenden Text überlappen können.
+
+**Klassifizierung** weist jeder erkannten Entität einen Typ zu. Standardtypen umfassen Person, Organisation, Ort und Datum, aber juristisches NLP erweitert diese um fachspezifische Typen: Gesetzesverweise (Artikelnummern, Gesetzeskodizes), Gerichtskennungen, Steuerkategorien, Zuständigkeitsmarker und Geldbeträge mit Währung.
+
+Moderne Entity Extraction verwendet transformerbasierte Modelle, die auf annotierten juristischen Texten feinabgestimmt sind. Das Modell verarbeitet jeden Token im Kontext und sagt vorher, ob er Teil einer Entität ist und welchem Typ er angehört (mittels BIO-Tagging: Begin, Inside, Outside). Vortrainierte juristische Sprachmodelle schneiden deutlich besser ab als allgemeine Modelle, weil sie juristische Namenskonventionen, Zitierformate und Fachterminologie verstehen.
+
+Für belgisches Steuerrecht muss Entity Extraction mehrsprachige Dokumente (Niederländisch, Französisch, Deutsch) verarbeiten, Verweise auf spezifische belgische Rechtsinstrumente (WIB92, BWHI, KB/AR) erkennen und zwischen föderalen und regionalen Gesetzesverweisen unterscheiden.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Entity Extraction von Keyword-Extraktion?**
+
+A: Keyword-Extraktion identifiziert die wichtigsten Begriffe in einem Dokument unabhängig vom Typ. Entity Extraction identifiziert spezifische benannte Elemente und klassifiziert sie nach Kategorie. „Vennootschapsbelasting" könnte als Schlüsselwort extrahiert werden; „Artikel 185 WIB92" würde als Gesetzesverweissentität mit strukturierten Metadaten extrahiert (Artikelnummer: 185, Gesetzeskodex: WIB92).
+
+**F: Wie genau ist Entity Extraction bei juristischen Texten?**
+
+A: Allgemeine NER-Modelle erreichen bei juristischen Texten typischerweise 85–90 % F1 ohne weitere Anpassung. Feinabstimmung auf fachspezifisch annotierte Daten steigert dies auf 93–97 % F1, je nach Entitätstyp. Daten und Geldbeträge sind am einfachsten; Gesetzesquerverweise und Zuständigkeitsmarker sind aufgrund ihrer variierenden Formatierung schwieriger.

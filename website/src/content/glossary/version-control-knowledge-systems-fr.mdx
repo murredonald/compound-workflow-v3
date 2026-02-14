@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le version control for knowledge systems suit les modifications des documents, des configurations d’index et des [ontologies](/fr/glossary/knowledge-graph/) afin de permettre le rollback, la comparaison et les audits.
+Le contrôle de version dans les systèmes de connaissances est la pratique consistant à suivre, stocker et gérer les différentes versions de documents, de configurations et d'artefacts de données à mesure qu'ils évoluent dans le temps. Chaque modification est enregistrée avec des métadonnées indiquant ce qui a changé, quand et pourquoi, permettant au système de récupérer n'importe quelle version historique, de comparer les versions et de revenir à des états précédents. Dans l'IA juridique, le contrôle de version est essentiel car la législation change par le biais d'amendements, les configurations de la base de connaissances évoluent, et la capacité de reproduire un état passé du système — pour expliquer quelle réponse le système aurait donnée à une date précise — est à la fois une exigence professionnelle et réglementaire.
+
+## Pourquoi c'est important
+
+- **Requêtes temporelles** — les conseillers fiscaux ont souvent besoin de savoir ce que disait la loi à une date passée précise ; le contrôle de version permet au système de récupérer la version exacte d'une disposition qui était en vigueur à tout moment
+- **Auditabilité** — lorsqu'une réponse passée générée par l'IA est remise en question, le contrôle de version permet de reconstituer l'état exact du système (contenu de la base de connaissances, version du modèle, configuration des prompts) qui a produit cette réponse
+- **Mises à jour sûres** — le contrôle de version permet un retour en arrière lorsqu'une mise à jour de la base de connaissances introduit des erreurs ou qu'une nouvelle configuration dégrade la qualité du système
+- **Conformité réglementaire** — le règlement européen sur l'IA (AI Act) exige la documentation des modifications du système tout au long de son cycle de vie ; le contrôle de version fournit cette documentation automatiquement
+
+## Comment ça fonctionne
+
+Le contrôle de version opère à plusieurs niveaux dans un système d'IA juridique :
+
+**Versionnage des documents** — chaque document juridique est stocké avec l'intégralité de son historique de versions. Lorsqu'un article du CIR92 est modifié, la nouvelle version est ajoutée à côté de l'ancienne, avec des dates d'effet indiquant quelle version s'appliquait pendant quelle période. Le système peut récupérer la version en vigueur à n'importe quelle date.
+
+**Versionnage de la base de connaissances** — l'état de l'ensemble de la base de connaissances (tous les documents, métadonnées et configurations d'index) est suivi dans le temps. Chaque opération d'ingestion, correction de métadonnées ou modification structurelle crée une nouvelle version. Cela permet au système de répondre à la question « que m'auriez-vous dit le mois dernier ? » en rejouant une requête sur l'état historique de la base de connaissances.
+
+**Versionnage des configurations** — les modèles de prompts, les instructions système, les sélections de modèles et les paramètres de recherche sont versionnés en même temps que le contenu. Lorsque le comportement du système change, la modification de configuration qui en est la cause peut être identifiée en comparant les versions.
+
+**Versionnage des index** — les index vectoriels peuvent être sauvegardés ou versionnés afin qu'un état spécifique de l'index puisse être restauré. Cela permet les tests A/B (comparaison de deux versions d'index), le retour en arrière (annulation d'une mise à jour problématique) et le rejeu historique.
+
+L'implémentation utilise généralement une combinaison d'outils : des systèmes de gestion documentaire pour le versionnage des textes juridiques, git ou des systèmes similaires pour le versionnage des configurations, et des mécanismes au niveau de la base de données (tables en ajout seul, suppressions logiques, tables temporelles) pour le versionnage de la base de connaissances et des index.
+
+## Questions fréquentes
+
+**Q : Quel est le lien entre le contrôle de version et l'indexation temporelle ?**
+
+R : Le contrôle de version stocke les différentes versions des documents. L'[indexation temporelle](/fr/glossary/temporal-indexing/) rend ces versions recherchables par leurs dates d'effet. Ensemble, ils permettent une recherche tenant compte du temps : le système peut trouver la version d'une disposition qui était en vigueur à une date précise et l'utiliser pour répondre aux requêtes temporelles.
+
+**Q : Combien d'espace de stockage le contrôle de version nécessite-t-il ?**
+
+R : Pour les documents textuels, la surcharge du contrôle de version est modeste — les documents juridiques sont de petite taille, et stocker les versions historiques n'ajoute qu'un espace limité. Pour les index vectoriels, stocker plusieurs versions peut être significatif, c'est pourquoi les systèmes ne conservent généralement que les instantanés clés plutôt que chaque état intermédiaire.

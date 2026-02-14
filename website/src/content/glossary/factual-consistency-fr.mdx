@@ -12,7 +12,36 @@ draft: false
 
 ## Définition
 
-La consistance factuelle mesure si les affirmations produites par le modèle correspondent bien aux documents ou données de [référence](/fr/glossary/citation/).
+La consistance factuelle est le degré auquel chaque affirmation d'une réponse générée par l'IA reflète fidèlement l'information contenue dans ses documents sources. Une réponse factuellement consistante n'ajoute pas d'information absente des sources, ne contredit pas ce que les sources disent, et ne déforme pas le sens du matériel source par une omission sélective ou une paraphrase trompeuse. Dans l'IA juridique, la consistance factuelle est une métrique de qualité critique car même des écarts mineurs par rapport au matériel source — un mauvais numéro d'article, un taux mal attribué, ou une condition subtilement altérée — peuvent mener à des conseils fiscaux incorrects avec des conséquences financières et juridiques réelles.
+
+## Pourquoi c'est important
+
+- **Fiabilité professionnelle** — les conseillers fiscaux utilisant une analyse générée par l'IA doivent pouvoir faire confiance au fait que la sortie représente fidèlement la législation et les décisions sous-jacentes ; l'inconsistance factuelle les oblige à tout revérifier, annulant le gain d'efficacité
+- **Détection des hallucinations** — mesurer la consistance factuelle est la méthode principale pour détecter les [hallucinations](/fr/glossary/hallucination-rate/) dans les systèmes RAG ; les affirmations qui ne sont pas impliquées par les sources récupérées indiquent que le modèle a généré du contenu non étayé
+- **Précision juridique** — en droit fiscal belge, les petits détails comptent énormément : un seuil de 250 000 EUR contre 25 000 EUR, une disposition qui s'applique « à partir de » contre « jusqu'à » une certaine date, ou une règle qui s'applique à la Région flamande mais pas à la Région wallonne ; la consistance factuelle garantit que ces détails sont préservés avec exactitude
+- **Construction de la confiance** — des sorties constamment factuelles renforcent la confiance des utilisateurs au fil du temps, tandis que même des inconsistances occasionnelles peuvent détruire la confiance dans la fiabilité du système
+
+## Comment ça fonctionne
+
+La consistance factuelle est à la fois un objectif de conception et une métrique mesurable :
+
+**Mesure** — la consistance factuelle est évaluée en comparant chaque affirmation de la sortie générée aux documents sources qu'elle référence. Cela peut se faire via des modèles d'inférence en langage naturel (NLI) qui classifient la relation entre une affirmation et sa source comme implication (consistant), contradiction (inconsistant), ou neutre (non traité). Un score de consistance factuelle est typiquement exprimé en pourcentage d'affirmations impliquées par leurs sources citées.
+
+**Évaluation automatisée** — les métriques basées sur le NLI et les approches LLM-as-judge peuvent évaluer la consistance factuelle à grande échelle. La réponse générée est décomposée en affirmations individuelles, et chaque affirmation est vérifiée par rapport au passage source pertinent. Des systèmes comme AlignScore et TRUE benchmark fournissent des cadres d'évaluation standardisés. Pour l'IA juridique, ces vérifications automatisées doivent être complétées par une vérification spécifique au domaine — par exemple, vérifier que les numéros d'articles cités existent réellement et que les taux cités correspondent à la source.
+
+**Stratégies d'amélioration** — la consistance factuelle est améliorée par de multiples techniques : contraindre la génération avec des instructions explicites de ne déclarer que ce que les sources soutiennent, fournir un contexte de haute qualité via une récupération solide, utiliser une vérification post-génération pour signaler et corriger les inconsistances, et entraîner ou affiner les modèles pour être plus fidèles à leur contexte d'entrée. En pratique, la combinaison d'une bonne récupération, de prompts système clairs et d'une vérification post-génération obtient les meilleurs résultats.
+
+**Granularité** — la consistance factuelle peut être mesurée à différents niveaux : au niveau du document (la réponse globale est-elle en accord avec les sources ?), au niveau de l'affirmation (chaque déclaration individuelle est-elle en accord ?) et au niveau de l'entité (les entités spécifiques comme les dates, les montants et les références sont-elles correctes ?). Une mesure plus fine détecte des erreurs plus subtiles mais nécessite une évaluation plus sophistiquée.
+
+## Questions fréquentes
+
+**Q : La consistance factuelle est-elle la même chose que l'exactitude ?**
+
+R : Non. La consistance factuelle mesure si la sortie représente fidèlement ses sources. L'exactitude mesure si les sources elles-mêmes sont précises et à jour. Une réponse peut être parfaitement consistante avec une source obsolète et être néanmoins erronée. La consistance et la qualité des sources importent toutes deux.
+
+**Q : Quel score de consistance factuelle est acceptable pour l'IA juridique ?**
+
+R : Pour les applications juridiques professionnelles, la consistance factuelle devrait dépasser 95 % au niveau de l'affirmation. Des scores plus bas indiquent que le système ajoute trop fréquemment du contenu non étayé pour être digne de confiance dans un usage professionnel. Les applications critiques (calculs fiscaux, conseils de conformité) devraient viser des seuils encore plus élevés avec une vérification humaine pour toute inconsistance signalée.
 
 ## References
 

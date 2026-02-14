@@ -12,7 +12,44 @@ draft: false
 
 ## Definition
 
-Hybrid indexing maintains both traditional lexical indices and vector indices so that a search or [RAG](/en/glossary/rag/) system can blend sparse and dense signals during retrieval.
+Hybrid indexing is the practice of building and maintaining both sparse (lexical) and dense (vector) indexes over the same document collection, enabling the retrieval system to combine keyword matching and semantic matching in a single query. Rather than choosing between BM25 and vector search, hybrid indexing supports both simultaneously, allowing the system to exploit the strengths of each approach. In legal AI, this is particularly valuable because some queries require exact term matching (specific article numbers, legal references) while others require semantic understanding (conceptual questions expressed in different terminology).
+
+## Why it matters
+
+- **Best of both approaches** — lexical indexes excel at exact term matching; vector indexes excel at semantic matching; hybrid indexing enables both in every query
+- **Robustness** — queries that would fail with one approach alone succeed with the other; hybrid indexing reduces the number of queries with zero relevant results
+- **Legal search requirements** — tax professionals issue both precise queries ("article 215 WIB92") and conceptual queries ("deductibility of home office expenses"); a single index type cannot serve both optimally
+- **Proven effectiveness** — hybrid retrieval consistently outperforms either sparse-only or dense-only retrieval in benchmarks, including legal domain benchmarks
+
+## How it works
+
+Hybrid indexing maintains two parallel index structures:
+
+**Lexical index** — an inverted index (typically BM25-based) that maps terms to the documents containing them. Built during ingestion by tokenising, stemming, and indexing the text of each document chunk. Supports exact term matching, phrase queries, and Boolean filters.
+
+**Vector index** — an ANN index (typically HNSW) that stores embedding vectors for each document chunk. Built during ingestion by running each chunk through an embedding model and adding the resulting vector to the index. Supports semantic similarity search.
+
+At query time, the system searches both indexes:
+1. The user's query is processed by both the lexical search engine (BM25 scoring) and the vector search engine (embedding + nearest neighbour lookup)
+2. Each engine returns its top-k results with scores
+3. The results are merged using a fusion algorithm
+
+**Score fusion** combines the two ranked lists. Common approaches include:
+- **Reciprocal Rank Fusion (RRF)** — converts ranks to scores using 1/(k + rank) and sums across methods; simple and effective
+- **Weighted linear combination** — normalises scores from each method and combines with learned or tuned weights
+- **Learned fusion** — a trained model that takes features from both retrieval methods and produces a unified relevance score
+
+The merged results are then passed to the reranking stage and ultimately to the generation layer.
+
+## Common questions
+
+**Q: Does hybrid indexing double the storage requirements?**
+
+A: Approximately, yes. The lexical index and vector index each consume storage independently. However, the storage cost is justified by the significant retrieval quality improvement. Vector indexes can be compressed with quantisation to reduce this overhead.
+
+**Q: Which fusion method works best?**
+
+A: Reciprocal Rank Fusion (RRF) is the most popular choice because it is simple, requires no training, and performs competitively with more complex methods. It is the default fusion method in most production systems.
 
 ## References
 

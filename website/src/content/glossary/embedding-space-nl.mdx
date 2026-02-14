@@ -10,9 +10,36 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Embedding space is de hoge‑dimensionale ruimte die door een [embeddingmodel](/nl/glossary/embedding-model/) wordt gedefinieerd, waarin semantisch vergelijkbare items in elkaars buurt liggen en clusteren.
+De Embeddingspace is de hoogdimensionale wiskundige ruimte waarin vectorembeddings zich bevinden. Elke dimensie van deze ruimte legt een geleerd aspect van betekenis vast, en de geometrische relaties tussen punten — hun afstanden en hoeken — coderen semantische gelijkenis en conceptuele verbanden. Teksten met vergelijkbare betekenissen worden op nabijgelegen punten geplaatst; niet-gerelateerde teksten worden ver uit elkaar geplaatst. De Embeddingspace is wat [semantisch zoeken](/nl/glossary/semantic-search/) mogelijk maakt: relevante documenten vinden wordt een kwestie van nabijgelegen punten vinden in deze ruimte.
+
+## Waarom het belangrijk is
+
+- **Semantische organisatie** — de Embeddingspace organiseert alle inhoud van de kennisbank op betekenis in plaats van op alfabetische volgorde of bestandslocatie, wat ophaling op basis van conceptuele relevantie mogelijk maakt
+- **Meertalige mapping** — meertalige [embeddingmodellen](/nl/glossary/embedding-model/) brengen tekst uit verschillende talen onder in een gedeelde ruimte, zodat een Nederlandstalige zoekopdracht relevante Franstalige wetgeving kan vinden omdat beide nabijgelegen regio's bezetten
+- **Clustering en verkenning** — de geometrische structuur van de Embeddingspace onthult natuurlijke groeperingen in de data — clusters van documenten over hetzelfde fiscale onderwerp, bijvoorbeeld — wat verkennend onderzoek en thema-ontdekking ondersteunt
+- **Kwaliteitsdiagnose** — het visualiseren van de Embeddingspace brengt problemen aan het licht zoals ineengevallen regio's (waar verschillende concepten te dicht bij elkaar zijn geplaatst) of hiaten (waar belangrijke onderwerpen onvoldoende vertegenwoordigd zijn)
+
+## Hoe het werkt
+
+Een embeddingmodel definieert de Embeddingspace via zijn trainingsproces. Tijdens de training leert het model vectoren toe te wijzen zodat semantisch vergelijkbare invoer dicht bij elkaar staat en ongelijksoortige invoer ver uit elkaar. Het aantal dimensies (doorgaans 384 tot 1536) bepaalt het vermogen van de ruimte om fijnmazige onderscheidingen vast te leggen.
+
+**Afstandsmetrieken** bepalen hoe "nabijheid" in de ruimte wordt gemeten. Cosinusgelijkenis meet de hoek tussen twee vectoren (de grootte wordt genegeerd), wat het de meest gebruikte keuze maakt voor tekstembeddings. Het inproduct houdt rekening met zowel hoek als grootte. Euclidische afstand meet de rechte-lijnafstand tussen punten. De keuze van metriek moet overeenkomen met het trainingsdoel van het embeddingmodel.
+
+**Geometrische eigenschappen** van de ruimte coderen betekenisvolle relaties. In goed getrainde ruimtes kunnen analogische relaties verschijnen als consistente vectorverschuivingen — de richting van "belasting" naar "tarief" kan vergelijkbaar zijn met de richting van "tax" naar "rate". Clusters vormen zich natuurlijk rond onderwerpen: fiscaalrechtelijke bepalingen clusteren apart van procedurerecht, dat apart clustert van rechtspraak.
+
+**Beperkingen** zijn inherent aan elke ruimte met een vast aantal dimensies. De Embeddingspace legt de relaties vast die het model tijdens de training heeft geleerd; concepten die afwezig zijn uit de trainingsdata worden slecht gepositioneerd. Domeinspecifieke finetuning hervormt de ruimte om gespecialiseerde inhoud beter te representeren — bijvoorbeeld door ervoor te zorgen dat verschillende typen Belgische belastingwetgeving duidelijk gescheiden regio's bezetten in plaats van te worden samengeperst in een generiek "wet"-cluster.
+
+## Veelgestelde vragen
+
+**V: Kun je een Embeddingspace visualiseren?**
+
+A: Niet rechtstreeks — embeddingspaces hebben doorgaans honderden dimensies. [Dimensionaliteitsreductie](/nl/glossary/dimensionality-reduction/)-technieken zoals t-SNE of UMAP projecteren de ruimte naar 2 of 3 dimensies voor visualisatie. Deze projecties behouden de lokale buurtstructuur (nabije punten blijven nabij) maar vervormen globale afstanden, waardoor ze nuttig zijn voor het opsporen van clusters en uitbijters maar niet voor het meten van absolute afstanden.
+
+**V: Creëren verschillende embeddingmodellen verschillende ruimtes?**
+
+A: Ja. Elk model definieert zijn eigen Embeddingspace met zijn eigen geometrische structuur. Vectoren van verschillende modellen zijn niet vergelijkbaar — een 768-dimensionale vector van het ene model kan niet zinvol worden vergeleken met een 768-dimensionale vector van een ander model. Wisselen van model vereist het opnieuw embedden van alle documenten.
 
 ## References
 

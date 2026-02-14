@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La [réécriture de requête](/fr/glossary/query-expansion/) modifie la requête initiale – souvent avec des règles ou des [LLM](/fr/glossary/llm/) – pour clarifier l’intention, élargir les synonymes ou corriger la structure afin d’améliorer la recherche et la récupération.
+La réécriture de requête est le processus de transformation de la requête originale d'un utilisateur en une ou plusieurs requêtes reformulées qui sont plus efficaces pour la récupération. La requête originale peut être ambiguë, utiliser un langage informel, manquer de terminologie technique, ou être structurée d'une manière qui ne correspond pas à la façon dont l'information est stockée dans la base de connaissances. La réécriture de requête comble cet écart en générant des formulations alternatives qui s'alignent mieux sur le contenu indexé tout en préservant l'intention de l'utilisateur. En droit fiscal belge, la réécriture de requête est particulièrement importante car les utilisateurs peuvent formuler leurs questions en langage courant alors que la législation sous-jacente utilise une terminologie juridique précise, et le même concept peut être exprimé différemment dans les textes juridiques néerlandais, français et allemands.
+
+## Pourquoi c'est important
+
+- **Décalage de vocabulaire** — un utilisateur qui pose une question sur les « droits de succession en Flandre » a besoin que le système recherche aussi « erfbelasting » (néerlandais), « Vlaamse Codex Fiscaliteit », et les références d'articles spécifiques contenant les dispositions pertinentes ; sans réécriture, la recherche lexicale manquerait ces correspondances
+- **Clarification de l'intention** — des requêtes ambiguës comme « taxe sur les actions » pourraient se référer à la TOB (taxe sur les opérations de bourse), au précompte mobilier sur les dividendes, ou à l'imposition des plus-values ; la réécriture peut décomposer ces requêtes en variantes plus spécifiques
+- **Passerelle multilingue** — le droit belge existe en néerlandais et en français (et parfois en allemand) ; la réécriture de requête peut générer des variantes interlinguistiques afin que les dispositions pertinentes soient trouvées quelle que soit la langue dans laquelle l'utilisateur formule sa requête
+- **Qualité de la récupération** — des requêtes bien réécrites améliorent de manière constante la précision et le rappel par rapport à l'utilisation de l'entrée brute de l'utilisateur, car elles s'alignent plus étroitement sur la terminologie et la structure des documents indexés
+
+## Comment ça fonctionne
+
+La réécriture de requête peut être mise en oeuvre par plusieurs approches, souvent combinées :
+
+**Réécriture basée sur des règles** — applique des transformations déterministes : expansion des abréviations connues (WIB -> Wetboek van de Inkomstenbelastingen), ajout de références juridiques standard lorsque des termes spécifiques sont détectés, ou normalisation des formats de date. Ces règles sont rapides et prévisibles mais limitées aux schémas anticipés.
+
+**Réécriture par [LLM](/fr/glossary/llm/)** — utilise un modèle de langage pour comprendre l'intention de l'utilisateur et générer des requêtes reformulées. Le modèle peut décomposer une question complexe en sous-requêtes, ajouter des termes techniques pertinents, générer des variantes interlinguistiques et supprimer les mots inutiles. C'est plus flexible que les règles mais ajoute de la latence et nécessite un prompting soigné pour éviter de modifier le sens de la requête.
+
+**Génération de documents hypothétiques** (HyDE) — pousse la réécriture plus loin : au lieu de reformuler la requête, le système génère une réponse idéale hypothétique et utilise l'embedding de cette réponse pour la récupération. Cela peut être efficace lorsque la question de l'utilisateur est très différente en style des documents recherchés — la réponse hypothétique fait le pont en étant rédigée dans un langage similaire aux documents.
+
+**Génération multi-requêtes** — produit plusieurs formulations alternatives à partir d'une seule requête utilisateur. Chaque variante met l'accent sur un aspect différent ou utilise une terminologie différente. Les résultats de récupération de toutes les variantes sont fusionnés et dédupliqués, augmentant les chances de trouver tous les documents pertinents.
+
+En pratique, la réécriture de requête est appliquée avant l'étape de récupération dans le pipeline. La requête originale est conservée aux côtés des variantes réécrites afin que le système puisse attribuer les résultats à l'intention originale et expliquer pourquoi des documents particuliers ont été récupérés.
+
+## Questions fréquentes
+
+**Q : La réécriture de requête peut-elle modifier le sens de la question ?**
+
+R : Elle ne devrait pas, mais elle le peut si elle est mal implémentée. Une réécriture de requête efficace préserve l'intention de l'utilisateur tout en améliorant l'efficacité de la récupération. Les garde-fous incluent le fait de toujours inclure la requête originale comme l'une des entrées de récupération, et l'utilisation de prompts contraints qui instruisent le modèle de réécriture de reformuler sans changer le sens.
+
+**Q : En quoi la réécriture de requête diffère-t-elle de l'expansion de requête ?**
+
+R : L'[expansion de requête](/fr/glossary/query-expansion/) ajoute spécifiquement des termes (synonymes, concepts associés) pour élargir la recherche. La réécriture de requête est plus large — elle inclut l'expansion mais aussi la restructuration, la décomposition, la traduction interlinguistique et la clarification de l'intention. L'expansion est un sous-ensemble de la réécriture.
 
 ## References
 

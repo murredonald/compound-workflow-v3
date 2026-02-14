@@ -12,7 +12,36 @@ draft: false
 
 ## Definitie
 
-Byte Pair Encoding (BPE) is een data-gedreven tokenisatiemethode die start met losse tekens en herhaaldelijk de meest frequente aangrenzende symboolparen samenvoegt om een compact subwoord-vocabulaire voor taalmodellen te bouwen.
+Byte Pair Encoding (BPE) is een subwoord-tokenisatie-algoritme dat een vocabulaire opbouwt door iteratief de meest voorkomende paren van aangrenzende symbolen in een trainingscorpus samen te voegen. Beginnend bij individuele tekens vindt BPE herhaaldelijk het paar dat het vaakst voorkomt, voegt het samen tot een nieuw token en herhaalt dit tot het vocabulaire een doelgrootte bereikt. Het resultaat is een vocabulaire van subwoord-eenheden dat een balans biedt tussen granulariteit op tekenniveau (elk woord kunnen verwerken, ook onbekende) en efficiëntie op woordniveau (veelvoorkomende woorden worden enkele tokens). BPE vormt de basis van tokenisatie in de meeste moderne taalmodellen.
+
+## Waarom het belangrijk is
+
+- **Open-vocabulaire verwerking** — BPE kan elk woord representeren, inclusief zeldzame juridische termen, vreemde namen en nieuw bedachte terminologie, door het op te splitsen in bekende subwoord-onderdelen; het model komt nooit een werkelijk "onbekend" woord tegen
+- **Meertalige efficiëntie** — in het drietalige Belgische rechtssysteem deelt BPE op natuurlijke wijze subwoord-eenheden over het Nederlands, Frans en Duits (bijv. gemeenschappelijke Latijnse wortels), wat efficiënte meertalige verwerking mogelijk maakt zonder afzonderlijke vocabulaires
+- **Compressie** — veelvoorkomende woorden en zinsdelen worden als enkele tokens gecodeerd, terwijl zeldzame woorden in meerdere tokens worden gesplitst, wat het contextvenster optimaliseert voor veelgebruikte taal
+- **Basis van modelinvoer** — elke tekst die door een taalmodel of embeddingmodel wordt verwerkt, wordt eerst getokeniseerd; de tokenisatie van BPE bepaalt direct hoe tekst wordt gesegmenteerd en dus hoe het model deze interpreteert
+
+## Hoe het werkt
+
+BPE werkt in twee fasen:
+
+**Training** — het algoritme verwerkt een groot tekstcorpus om het vocabulaire op te bouwen. Het begint met een basisvocabulaire van individuele tekens (of bytes). Vervolgens scant het het corpus naar het meest frequente paar van aangrenzende tokens, voegt dat paar samen tot een nieuw enkel token, voegt het toe aan het vocabulaire en herhaalt dit. Bijvoorbeeld: het paar "t" + "h" kan worden samengevoegd tot "th", vervolgens "th" + "e" tot "the". Elke samenvoegstap wordt vastgelegd als een samenvoegregel. Training gaat door tot het vocabulaire een vooraf bepaalde grootte bereikt (doorgaans 30.000 tot 100.000 tokens).
+
+**Codering** — om een nieuwe tekst te tokeniseren past het algoritme de geleerde samenvoegregels toe in dezelfde volgorde als waarin ze tijdens de training zijn geleerd. Beginnend bij tekens voegt het paren samen volgens de prioriteit die door de trainingsfrequentie is vastgesteld. Veelvoorkomende woorden zoals "the" of "belasting" worden als enkele tokens gecodeerd; zeldzame woorden zoals "dubbelbelastingverdrag" worden opgesplitst in vertrouwde subwoord-onderdelen.
+
+De vocabulairegrootte is een ontwerpkeuze die concurrerende belangen afweegt. Grotere vocabulaires produceren kortere tokenreeksen (meer woorden worden enkele tokens) maar vergroten de geheugenvereisten van het model. Kleinere vocabulaires produceren langere reeksen (meer woorden worden in stukken gesplitst) maar houden het model compact. De meeste moderne LLM's gebruiken vocabulaires van 32.000 tot 128.000 tokens.
+
+Varianten van BPE zijn onder andere byte-level BPE (dat werkt op ruwe bytes in plaats van Unicode-tekens, waardoor coderingsproblemen worden vermeden) en SentencePiece (dat de invoer behandelt als een ruwe tekenstroom en witruimte als een gewoon teken opneemt in plaats van als woordgrens).
+
+## Veelgestelde vragen
+
+**V: Waarom niet gewoon hele woorden als tokens gebruiken?**
+
+A: Een vocabulaire op woordniveau kan geen woorden verwerken die niet tijdens de training zijn gezien — ze worden "onbekende" tokens, waardoor alle informatie verloren gaat. Juridische teksten bevatten regelmatig zeldzame samenstellingen, verwijzingen naar rechtspraak en technische termen. BPE behandelt deze door ze op te splitsen in bekende subwoord-onderdelen, waardoor gedeeltelijke betekenis behouden blijft.
+
+**V: Beïnvloedt BPE-tokenisatie meertalige modellen?**
+
+A: Ja. Als BPE voornamelijk op Engelse tekst is getraind, kan het Nederlandse of Franse woorden in meer tokens splitsen dan Engelse woorden van vergelijkbare lengte, waardoor deze talen minder efficiënt te verwerken zijn. Meertalige modellen gebruiken BPE dat is getraind op gebalanceerde meertalige corpora om een ruwweg gelijke efficiëntie over talen heen te waarborgen.
 
 ## References
 

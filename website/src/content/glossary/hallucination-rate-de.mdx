@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Die Halluzinationsrate gibt an, wie oft ein [LLM](/de/glossary/llm/) Aussagen produziert, die nicht auf Quellen oder Fakten beruhen.
+Die Halluzinationsrate ist der Anteil der Ausgaben eines KI-Systems, der Aussagen enthält, die nicht durch die bereitgestellten Quellen, die Faktenlage oder beides gestützt werden. Sie ist die primäre Sicherheitskennzahl für juristische KI: Ein System mit einer Halluzinationsrate von 5 % bedeutet, dass etwa 1 von 20 Antworten erfundene, falsch zugeordnete oder sachlich inkorrekte Informationen enthält. In Bereichen wie dem Steuerrecht, wo fehlerhafte Informationen zu finanziellen Strafen oder regulatorischen Risiken führen können, erfordern selbst niedrige Halluzinationsraten Gegenmaßnahmen.
+
+## Warum es wichtig ist
+
+- **Berufsrisiko** — ein Steuerberater, der sich auf eine KI-generierte Antwort verlässt, die einen nicht existierenden Artikel zitiert oder einen Satz falsch wiedergibt, könnte Mandanten fehlerhafte Beratung erteilen, mit Haftungskonsequenzen
+- **Vertrauenskalibrierung** — die Kenntnis der Halluzinationsrate des Systems ermöglicht es Fachleuten, den Umfang der unabhängigen Überprüfung pro Antwort zu kalibrieren; eine Rate von 1 % erfordert Stichproben, eine Rate von 10 % erfordert die Überprüfung jeder Antwort
+- **Systemvergleich** — die Halluzinationsrate bietet eine standardisierte Kennzahl zum Vergleich verschiedener KI-Systeme, Modelle oder Konfigurationen bei derselben Aufgabe
+- **Regulatorische Erwartung** — der EU AI Act verlangt von KI-Systemen mit hohem Risiko die Einhaltung angemessener Genauigkeitsniveaus; veröffentlichte Halluzinationsraten belegen die Einhaltung dieser Verpflichtung
+
+## Wie es funktioniert
+
+Die Halluzinationsrate wird durch Evaluation auf einem Testdatensatz gemessen, bei dem die korrekten Antworten bekannt sind:
+
+**Menschliche Evaluation** — Annotatoren vergleichen jede KI-generierte Antwort mit den Quelldokumenten und markieren Aussagen, die erfunden sind (Zitierung nicht existierender Quellen), falsch zugeordnet sind (Zuschreibung einer Behauptung an die falsche Quelle) oder sachlich inkorrekt sind (falsche Angabe eines Steuersatzes oder Schwellenwerts). Die Halluzinationsrate ist der Prozentsatz der Antworten, die mindestens eine halluzinierte Aussage enthalten.
+
+**Automatisierte Evaluation** verwendet Natural Language Inference (NLI)-Modelle oder LLM-as-Judge-Ansätze, um zu prüfen, ob jede Behauptung in der generierten Antwort durch die Quelldokumente gestützt wird. Behauptungen, die sich nicht auf eine Quelle zurückführen lassen, werden als Halluzinationen markiert. Automatisierte Methoden sind schneller und kostengünstiger als menschliche Evaluation, aber weniger zuverlässig, insbesondere bei nuancierten juristischen Inhalten.
+
+**Granularität** ist bei der Messung entscheidend. Eine Halluzinationsrate auf Antwortebene zählt jede Antwort mit mindestens einer Halluzination. Eine Rate auf Aussagenebene zählt einzelne falsche Aussagen als Anteil aller gemachten Behauptungen. Die Metrik auf Aussagenebene ist informativer, aber schwieriger zu berechnen.
+
+Halluzinationsraten werden durch die gesamte RAG-Pipeline beeinflusst. Schlechtes Retrieval (fehlende relevante Quellen) zwingt das Modell, auf sein Trainingswissen zurückzugreifen, das veraltet oder falsch sein kann. Schlechtes Prompting (vage Systemanweisungen) gibt dem Modell Spielraum zum Spekulieren. Effektive Gegenmaßnahmen setzen an beiden Stellen an: Verbesserung der Retrieval-Abdeckung und Hinzufügen von System-Prompt-Anweisungen, die das Modell anweisen, Unsicherheit einzugestehen statt Antworten zu erfinden.
+
+## Häufige Fragen
+
+**F: Was ist eine akzeptable Halluzinationsrate für juristische KI?**
+
+A: Es gibt keinen allgemein vereinbarten Schwellenwert, aber Raten unter 2–3 % gelten im professionellen Einsatz allgemein als akzeptabel, wenn sie mit Quellenangaben kombiniert werden, die eine Überprüfung ermöglichen. Entscheidend ist, dass jede Antwort anhand der zitierten Quellen unabhängig überprüfbar sein sollte, wodurch die Abhängigkeit von der faktischen Genauigkeit des Modells allein reduziert wird.
+
+**F: Kann die Halluzinationsrate null sein?**
+
+A: In der Praxis erreicht kein aktuelles System eine Halluzinationsrate von null bei offenen Abfragen. Halluzinationen können durch besseres Retrieval, eingeschränkte Generierung und Verifikationsschichten minimiert werden, aber ihre vollständige Beseitigung bleibt eine offene Forschungsfrage.
 
 ## References
 

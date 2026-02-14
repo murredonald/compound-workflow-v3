@@ -12,4 +12,39 @@ draft: false
 
 ## Definitie
 
-Rolgebaseerd toegangsbeheer verleent of weigert toegang op basis van de rol van een gebruiker — zoals beheerder, reviewer of viewer — wat het beheer van machtigingen in complexe AI-systemen vereenvoudigt.
+Rolgebaseerd toegangsbeheer (RBAC) is een beveiligingsmodel waarbij machtigingen aan rollen worden toegekend in plaats van aan individuele gebruikers, waarna gebruikers aan een of meer rollen worden toegewezen. In plaats van toegang per persoon te configureren, definieert een beheerder rollen (bijv. senior adviseur, junior analist, beheerder, alleen-lezen auditor) met specifieke machtigingen, en gebruikers erven de machtigingen van hun toegewezen rol. RBAC vereenvoudigt machtigingenbeheer, vermindert fouten en maakt het eenvoudiger om te auditen wie toegang heeft tot wat — allemaal essentieel voor AI-systemen die vertrouwelijke fiscale gegevens verwerken.
+
+## Waarom het belangrijk is
+
+- **Schaalbaarheid** — naarmate het aantal gebruikers groeit, wordt het beheer van individuele machtigingen onwerkbaar; RBAC schaalt door gebruikers aan bestaande rollen toe te voegen in plaats van elke gebruiker apart te configureren
+- **Least privilege** — RBAC maakt het eenvoudig om het principe van minimale rechten toe te passen: elke rol heeft alleen de machtigingen die nodig zijn voor de functie, waardoor het aanvalsoppervlak wordt verkleind
+- **Compliance** — de AVG en Belgische wetten inzake beroepsgeheim vereisen dat persoonlijke en vertrouwelijke gegevens alleen toegankelijk zijn voor bevoegde personen; RBAC biedt het mechanisme en de documentatie om dit aan te tonen
+- **Eenvoudige audit** — auditors kunnen roldefinities en roltoewijzingen beoordelen in plaats van individuele gebruikersmachtigingen, waardoor compliance-audits sneller en betrouwbaarder verlopen
+
+## Hoe het werkt
+
+RBAC werkt via drie kernconcepten:
+
+**Rollen** definiëren een set machtigingen die relevant zijn voor een specifieke functie. In een juridisch AI-systeem kunnen typische rollen zijn:
+- **Beheerder** — beheert gebruikers, rollen, systeemconfiguratie en kennisbankupdates
+- **Senior adviseur** — volledige toegang tot alle zoekopdrachten, bronnen en klantgegevens binnen het eigen vakgebied
+- **Junior analist** — toegang tot zoekopdrachten en bronnen maar niet tot klantvertrouwelijke bestanden of beheerfuncties
+- **Auditor** — alleen-lezen toegang tot systeemlogboeken, gebruiksstatistieken en compliancerapporten
+
+**Machtigingen** definiëren specifieke acties op specifieke resources: een document lezen, een zoekopdracht uitvoeren, auditlogs bekijken, systeemconfiguratie wijzigen, toegang tot klantgegevens. Machtigingen zijn gedetailleerd genoeg om zinvolle toegangsgrenzen af te dwingen, maar niet zo gedetailleerd dat rollenbeheer even complex wordt als individueel machtigingenbeheer.
+
+**Toewijzing** koppelt gebruikers aan rollen. Een gebruiker kan meerdere rollen hebben (bijv. senior adviseur en beheerder), in welk geval de effectieve machtigingen de samenvoeging zijn van alle machtigingen van de toegewezen rollen. Roltoewijzingen worden beheerd door beheerders en gelogd voor auditdoeleinden.
+
+In multi-tenant AI-systemen (waarbij meerdere kantoren hetzelfde platform delen) wordt RBAC gecombineerd met tenant-isolatie om ervoor te zorgen dat rollen alleen toegang verlenen binnen de gegevens van één organisatie. Een beheerder bij Kantoor A kan de gegevens van Kantoor B niet zien, ongeacht de rol.
+
+RBAC wordt vaak uitgebreid met aanvullende beperkingen: tijdgebonden rollen (tijdelijke toegang die verloopt), contextuele rollen (machtigingen die afhangen van locatie of apparaat) en hiërarchische rollen (senior rollen erven alle machtigingen van junior rollen).
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt RBAC van attribute-based access control (ABAC)?**
+
+A: RBAC kent machtigingen toe op basis van de rol van een gebruiker. ABAC kent machtigingen toe op basis van een combinatie van attributen — gebruikersattributen (afdeling, senioriteit), resource-attributen (classificatie, eigenaar) en omgevingsattributen (tijd, locatie). ABAC is flexibeler maar complexer om te beheren. Veel systemen gebruiken RBAC als primair model met ABAC voor specifieke fijnmazige regels.
+
+**V: Hoeveel rollen moet een systeem hebben?**
+
+A: Zo weinig als nodig om zinvolle toegangsonderscheidingen uit te drukken. Het overmatig aanmaken van rollen (een unieke rol per gebruiker) ondermijnt het doel van RBAC. De meeste juridische AI-systemen hebben 4-8 rollen nodig om de relevante toegangsniveaus te dekken.

@@ -12,4 +12,36 @@ draft: false
 
 ## Définition
 
-Une piste d'audit est un journal chronologique qui montre qui a fait quoi et quand dans un système d'IA, facilitant les enquêtes, la conformité et la responsabilité.
+Une piste d'audit est un enregistrement chronologique et infalsifiable de toutes les actions, décisions et événements au sein d'un système. Dans les systèmes d'IA, les pistes d'audit capturent qui a interrogé le système, quelles données ont été récupérées, comment le modèle a généré sa réponse et quels scores de confiance ont été attribués. Cet enregistrement permet des investigations a posteriori, la conformité réglementaire et la responsabilité lorsque des décisions assistées par l'IA sont remises en question.
+
+## Pourquoi c'est important
+
+- **Conformité réglementaire** — l'AI Act européen exige que les systèmes d'IA à haut risque maintiennent des journaux permettant la traçabilité des décisions ; les pistes d'audit sont le mécanisme principal pour satisfaire cette obligation
+- **Responsabilité professionnelle** — lorsqu'un conseiller fiscal s'appuie sur une analyse générée par l'IA, la piste d'audit documente exactement quelles sources ont été consultées et ce que le système a produit, protégeant à la fois le conseiller et le client
+- **Investigation des erreurs** — lorsqu'une réponse incorrecte est découverte, la piste d'audit permet de remonter à travers le [retrieval pipeline](/fr/glossary/retrieval-pipeline/), identifiant si l'erreur provient de données manquantes, d'une mauvaise recherche ou d'un échec de génération
+- **Amélioration continue** — les données d'audit agrégées révèlent des tendances dans les types de requêtes, les modes de défaillance et le comportement des utilisateurs, ce qui alimente les améliorations du système
+
+## Comment ça fonctionne
+
+Une piste d'audit dans un système d'IA juridique capture généralement des événements à plusieurs niveaux :
+
+- **Niveau requête** — la question originale de l'utilisateur, les transformations de requête éventuelles (expansion, reformulation) et la requête de recherche finale envoyée à l'index
+- **Niveau recherche** — les documents et passages récupérés, leurs scores de pertinence et les filtres appliqués (juridiction, plage de dates, autorité)
+- **Niveau génération** — le prompt envoyé au modèle de langage, la réponse générée, les scores de confiance au niveau des tokens et les citations produites
+- **Niveau utilisateur** — qui a accédé au système, quand, et quelles actions ont été effectuées (acceptation, modification ou rejet de la sortie de l'IA)
+
+Ces événements sont stockés avec des horodatages, des identifiants d'utilisateur et des informations de version du système. L'infalsifiabilité est assurée par un stockage en ajout seul, un hachage cryptographique ou des backends de stockage en écriture unique et lecture multiple (WORM). Les durées de conservation sont régies par des politiques de rétention des données qui équilibrent les exigences de conformité et les coûts de stockage.
+
+## Questions fréquentes
+
+**Q : En quoi une piste d'audit diffère-t-elle d'un journal d'application classique ?**
+
+R : Les journaux d'application servent principalement au débogage et à la surveillance — ils peuvent faire l'objet de rotation, être écrasés ou partiellement capturés. Les pistes d'audit sont conçues pour la conformité et la responsabilité — elles doivent être complètes, infalsifiables et conservées pendant des périodes définies. Elles capturent également des événements de niveau métier (décisions des utilisateurs, recommandations du système) plutôt que de simples opérations techniques.
+
+**Q : Que requiert l'AI Act européen en matière de pistes d'audit ?**
+
+R : L'AI Act européen exige que les systèmes d'IA à haut risque génèrent des journaux permettant la traçabilité du fonctionnement du système tout au long de son cycle de vie. Cela inclut l'enregistrement des entrées, des sorties et des conditions dans lesquelles le système a fonctionné. La durée de conservation spécifique et le format dépendent de la classification des risques et des réglementations sectorielles applicables.
+
+**Q : Combien de temps les données de la piste d'audit doivent-elles être conservées ?**
+
+R : La durée de conservation dépend du domaine et de la juridiction. Les dossiers fiscaux en Belgique sont généralement conservés pendant 7 à 10 ans pour s'aligner sur les délais de prescription de l'administration fiscale. La politique de conservation doit également respecter les principes de minimisation des données du RGPD — les données personnelles dans les pistes d'audit ne doivent pas être conservées plus longtemps que nécessaire.

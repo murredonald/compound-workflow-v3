@@ -10,6 +10,41 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Kalibrierung ist der Grad, in dem die vorhergesagten Konfidenzwerte eines Modells die tatsächlichen Korrektheitswahrscheinlichkeiten widerspiegeln. Ein perfekt kalibriertes System bedeutet, dass es in etwa 80 % der Fälle korrekt ist, wenn es 80 % Konfidenz angibt. In der juristischen KI ist die Kalibrierung entscheidend, weil Fachleute sich auf Konfidenzsignale verlassen, um zu entscheiden, ob sie der Ausgabe eines Systems vertrauen oder sie unabhängig überprüfen. Ein überkonfidentes System, das unsichere Antworten als hochzuverlässig kennzeichnet, ist gefährlicher als eines, das seine Unsicherheit ehrlich meldet.
+
+## Warum es wichtig ist
+
+- **Vertrauenssignale** — Steuerberater verwenden Konfidenzwerte, um zu entscheiden, wie viel unabhängige Überprüfung eine KI-generierte Antwort erfordert; fehlkalibrierte Werte untergraben diesen Arbeitsablauf
+- **Risikomanagement** — überkonfidente Vorhersagen bei mehrdeutigen Steuerfragen können zu fehlerhaften Erklärungen oder versäumten Einsprüchen führen; Kalibrierung stellt sicher, dass Unsicherheit sichtbar wird
+- **Regulatorische Konformität** — der EU AI Act erwartet von Hochrisiko-KI-Systemen, dass sie ihre Einschränkungen klar kommunizieren; kalibrierte Konfidenzwerte sind ein konkreter Mechanismus, um diese Anforderung zu erfüllen
+- **Systemvergleich** — Kalibrierungsmetriken ermöglichen einen objektiven Vergleich zwischen verschiedenen Modellen oder Systemversionen, über die reine Genauigkeit hinaus
+
+## Wie es funktioniert
+
+Kalibrierung wird gemessen, indem vorhergesagte Wahrscheinlichkeiten mit beobachteten Ergebnissen über einen Testdatensatz verglichen werden. Der Standardansatz besteht darin, Vorhersagen nach Konfidenzniveau in Klassen zu gruppieren (z. B. 0–10 %, 10–20 %, …, 90–100 %) und zu prüfen, ob der Anteil korrekter Vorhersagen in jeder Klasse dem Konfidenzbereich der Klasse entspricht. Die Abweichung zwischen vorhergesagter und beobachteter Genauigkeit ist der **Kalibrierungsfehler**.
+
+Die gebräuchlichste Metrik ist der **Expected Calibration Error (ECE)**: der gewichtete Durchschnitt der absoluten Differenz zwischen Konfidenz und Genauigkeit über alle Klassen. Ein perfekt kalibriertes Modell hat einen ECE von null.
+
+Moderne neuronale Netze, einschließlich großer Sprachmodelle, sind von Haus aus oft schlecht kalibriert — sie sind häufig überkonfident und weisen hohe Wahrscheinlichkeiten zu, selbst wenn sie falsch liegen. Mehrere Techniken adressieren dies:
+
+- **Temperature Scaling** — eine einfache Post-hoc-Methode, die die Softmax-Temperatur auf den Ausgangs-Logits des Modells anpasst, um die Wahrscheinlichkeitsverteilung zu spreizen oder zu schärfen. Ein einzelner Temperaturparameter wird auf einem Validierungsdatensatz gelernt.
+- **Platt Scaling** — passt eine logistische Regression auf die Rohwerte des Modells an, um kalibrierte Wahrscheinlichkeiten zu erzeugen.
+- **Ensemble-Methoden** — die Mittelung von Vorhersagen über mehrere Modelle oder mehrere Durchläufe verbessert die Kalibrierung auf natürliche Weise, da individuelle überkonfidente Fehler gedämpft werden.
+
+In retrieval-augmentierten Generierungssystemen gilt die Kalibrierung nicht nur für die Token-Level-Wahrscheinlichkeiten des Sprachmodells, sondern auch für den systemweiten Konfidenzwert, der Retrieval-Qualität, Quellenautorität und Generierungssicherheit zu einem einzigen benutzerorientierten Signal zusammenfasst.
+
+## Häufige Fragen
+
+**F: Kann ein Modell genau, aber schlecht kalibriert sein?**
+
+A: Ja. Ein Modell könnte 95 % der Fragen richtig beantworten, aber jeder Antwort 99 % Konfidenz zuweisen. Seine Genauigkeit ist hoch, aber seine Konfidenzwerte sind bedeutungslos — der Benutzer kann die 5 % der Fälle, in denen das Modell falsch liegt, nicht erkennen.
+
+**F: Wie unterscheidet sich Kalibrierung von Genauigkeit?**
+
+A: Genauigkeit misst, wie oft das Modell korrekt ist. Kalibrierung misst, ob das Modell weiß, wie oft es korrekt ist. Ein gut kalibriertes Modell mit 70 % Genauigkeit ist nützlicher als ein fehlkalibriertes Modell mit 80 % Genauigkeit, weil es seine unsicheren Fälle ehrlich kennzeichnet.
+
 ## References
 
 - Guo et al. (2017), "[On Calibration of Modern Neural Networks](https://arxiv.org/abs/1706.04599)", ICML.

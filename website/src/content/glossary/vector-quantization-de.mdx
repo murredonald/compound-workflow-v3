@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Vector [Quantization](/de/glossary/quantization/) teilt den Embedding‑Raum in Zellen und ersetzt jeden Vektor durch einen nahegelegenen Repräsentanten aus einem Codebook, was Speicher- und Suchkosten deutlich senken kann.
+Vector Quantization ist eine Kompressionstechnik, die hochpräzise Embedding-Vektoren durch eine kleine Menge repräsentativer Prototyp-Vektoren (ein Codebook) approximiert. Anstatt jedes Embedding als Hunderte von Gleitkommazahlen in voller Präzision zu speichern, wird der Vektor auf seinen nächstgelegenen Prototyp in jedem Unterraum abgebildet, und nur der Prototyp-Index wird gespeichert. Dies reduziert den Speicherbedarf drastisch und beschleunigt Distanzberechnungen, was semantische Suche in Größenordnungen ermöglicht, bei denen Speicherung in voller Präzision unerschwinglich teuer wäre.
+
+## Warum es wichtig ist
+
+- **Speicherreduktion** — ein 768-dimensionales float32-Embedding benötigt 3.072 Bytes; mit Product Quantization kann dasselbe Embedding auf 48–96 Bytes komprimiert werden — eine 30- bis 60-fache Reduktion, die milliardenskalige Indizes im RAM ermöglicht
+- **Suchbeschleunigung** — Distanzberechnungen auf quantisierten Vektoren sind schneller, da sie auf kleineren Datenstrukturen operieren und vorberechnete Lookup-Tabellen statt vollständiger Vektorarithmetik nutzen können
+- **Kosteneffizienz** — kleinere Indizes erfordern weniger Arbeitsspeicher und weniger Server, was die Infrastrukturkosten für großskalige Retrieval-Systeme senkt
+- **Skalierbarkeit** — Quantisierung ist es, die milliardenskalige Vektorindizes auf Standardhardware praktikabel macht; ohne sie würde großskalige semantische Suche unpraktisch viel RAM erfordern
+
+## Wie es funktioniert
+
+Vector Quantization funktioniert, indem eine Menge von Prototyp-Vektoren (Zentroiden) aus den Daten gelernt und dann jeder Vektor als Verweis auf seinen nächstgelegenen Prototyp kodiert wird:
+
+**Skalare Quantisierung** reduziert die Präzision jeder Dimension unabhängig — beispielsweise die Umwandlung von 32-Bit-Floats in 8-Bit-Integer. Dies ist die einfachste Variante: jede Dimension wird linear aus ihrem beobachteten Wertebereich auf 256 Ganzzahlwerte abgebildet. Der Speicherbedarf sinkt um das Vierfache bei moderatem Genauigkeitsverlust.
+
+**Product Quantization (PQ)** teilt jeden Vektor in Teilvektoren auf (z. B. einen 768-dimensionalen Vektor in 48 Teilvektoren mit je 16 Dimensionen) und quantisiert jeden Teilvektor unabhängig mit einem eigenen Codebook von 256 Zentroiden. Der vollständige Vektor wird dann als 48 Ein-Byte-Codes dargestellt — nur 48 Bytes statt 3.072. Die Distanzberechnung nutzt vorberechnete Distanztabellen zwischen den Abfrage-Teilvektoren und den Codebook-Einträgen, was sie sehr schnell macht.
+
+**Optimierte Product Quantization (OPQ)** wendet eine Rotation auf die Vektoren an, bevor sie in Teilvektoren aufgeteilt werden, um den Informationsverlust durch die unabhängige Quantisierung jedes Teilvektors zu minimieren.
+
+Das Codebook wird während der Indexerstellung mittels k-Means-Clustering auf den Trainingsvektoren gelernt. Die Qualität der Quantisierung hängt davon ab, wie gut das Codebook die Datenverteilung repräsentiert — Codebooks, die auf dem tatsächlichen Korpus trainiert wurden, funktionieren besser als generische.
+
+Quantisierung wird typischerweise mit einer Indexstruktur (IVF+PQ, HNSW+PQ) kombiniert, um sowohl schnelle Kandidatenselektion als auch speichereffiziente Speicherung zu erreichen.
+
+## Häufige Fragen
+
+**F: Wie viel Genauigkeit geht durch Quantisierung verloren?**
+
+A: Bei Product Quantization mit vernünftigen Parametern sinkt der Recall typischerweise um 2–5 % im Vergleich zur Suche in voller Präzision. Der genaue Verlust hängt von den Daten, der Codebook-Größe und der Anzahl der Teilvektoren ab. Dies ist angesichts der drastischen Speicher- und Geschwindigkeitsverbesserungen in der Regel akzeptabel.
+
+**F: Können quantisierte Indizes inkrementell aktualisiert werden?**
+
+A: Ja, neue Vektoren können mit dem bestehenden Codebook quantisiert und dem Index hinzugefügt werden. Wenn sich die Datenverteilung jedoch erheblich ändert, kann das Codebook suboptimal werden und sollte neu trainiert werden.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Retrieval coverage describes whether the indexed [corpus](/en/glossary/corpus/) and retrieval configuration are broad and deep enough to provide the evidence required to answer the questions the system is supposed to handle.
+Retrieval coverage is the extent to which a retrieval system's indexed corpus contains the information needed to answer the full range of questions it is expected to handle. High coverage means that for any in-scope query, the relevant source documents exist in the index. Low coverage means there are gaps — topics, document types, time periods, or jurisdictions where the system lacks source material and therefore cannot produce reliable answers. Coverage is a measure of the knowledge base's completeness, not the retrieval algorithm's effectiveness.
+
+## Why it matters
+
+- **Answer reliability ceiling** — a system cannot cite sources it does not have; coverage gaps directly translate into questions the system cannot answer correctly, regardless of how sophisticated its retrieval and generation are
+- **User trust** — if users discover the system cannot answer questions in areas they expect it to cover, trust erodes quickly; coverage must match the system's stated scope
+- **Gap prioritisation** — measuring coverage across topics and source types reveals where investment in data ingestion will have the most impact on system quality
+- **Honest capability communication** — knowing coverage boundaries allows the system to acknowledge when a question falls outside its scope rather than attempting an answer with insufficient evidence
+
+## How it works
+
+Retrieval coverage is assessed through several approaches:
+
+**Source inventory analysis** — cataloguing which legal sources have been ingested and comparing against the complete universe of relevant sources. For Belgian tax law, this means checking coverage of: federal legislation (WIB92, WBTW, etc.), regional legislation (VCF, CIR wallonne, etc.), royal and ministerial decrees, administrative circulars, court decisions (Constitutional Court, Court of Cassation, appeal courts), administrative rulings, parliamentary questions, and official commentaries. Gaps in any category reduce coverage.
+
+**Topic coverage mapping** — testing the system with queries across all expected topic areas and measuring whether relevant sources are returned. Topics without adequate source material are flagged as coverage gaps. For a Belgian tax system, this means verifying coverage across income tax, VAT, registration duties, inheritance tax, corporate tax, international tax, and procedural tax law — for each jurisdiction.
+
+**Temporal coverage** — verifying that the knowledge base includes source material from all relevant time periods. Tax law queries often involve historical provisions (what rate applied in a specific year?), so coverage must extend back to the oldest relevant legislation.
+
+**Cross-lingual coverage** — in Belgium, verifying that Dutch, French, and German versions of relevant sources are all indexed, as legal provisions may differ between language versions in nuanced ways.
+
+Coverage gaps are addressed by expanding the data pipeline to ingest missing source types, adding new data sources, or partnering with legal publishers to access previously unavailable content.
+
+## Common questions
+
+**Q: Is 100% coverage achievable?**
+
+A: For a defined scope (e.g., Belgian federal tax legislation), near-complete coverage is achievable. For broader scopes that include informal sources, practitioner commentary, or foreign law, complete coverage is impractical. The goal is to cover all authoritative sources within the system's stated scope.
+
+**Q: How does coverage differ from recall?**
+
+A: Coverage measures whether the relevant documents exist in the corpus at all. Recall measures whether the retrieval algorithm finds them when queried. A system can have perfect coverage (all relevant documents are indexed) but poor recall (the retrieval algorithm fails to surface them). Both must be high for the system to work well.
 
 ## References
 

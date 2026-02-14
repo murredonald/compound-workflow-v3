@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Eine Datenaufbewahrungsrichtlinie legt Mindest- und Höchstaufbewahrungsfristen für Protokolle, Trainingsdaten und Benutzerinhalte gemäß rechtlicher und geschäftlicher Anforderungen fest.
+Eine Datenaufbewahrungsrichtlinie ist ein formales Regelwerk, das festlegt, wie lange verschiedene Datenkategorien gespeichert werden, wann sie überprüft werden müssen und wann sie gelöscht oder anonymisiert werden müssen. Die Richtlinie wägt konkurrierende Anforderungen ab: gesetzliche Pflichten, die Mindestaufbewahrungsfristen vorschreiben, Datenschutzvorschriften, die Datenminimierung und maximale Aufbewahrungsfristen verlangen, geschäftliche Bedürfnisse nach historischen Daten sowie technische Einschränkungen der Speichersysteme. Für KI-Systeme, die in regulierten Bereichen wie dem belgischen Steuerrecht arbeiten, muss eine Datenaufbewahrungsrichtlinie nicht nur Benutzerdaten und Abfrageprotokolle adressieren, sondern auch die KI-spezifischen Datenkategorien — Trainingsdaten, Embedding-Indizes, Modellausgaben und Audit-Trails —, die jeweils eigene Aufbewahrungsanforderungen haben.
+
+## Warum es wichtig ist
+
+- **DSGVO-Konformität** — die DSGVO verlangt Datenminimierung (Artikel 5 Absatz 1 Buchstabe e), d. h. personenbezogene Daten dürfen nicht länger als für ihren Zweck erforderlich aufbewahrt werden; eine Datenaufbewahrungsrichtlinie operationalisiert diesen Grundsatz, indem sie spezifische Aufbewahrungsfristen für jede Datenkategorie definiert
+- **Belgische gesetzliche Pflichten** — das belgische Steuerrecht verlangt die Aufbewahrung bestimmter Unterlagen für festgelegte Zeiträume (7 Jahre für Buchhaltungsunterlagen gemäß dem Gesetzbuch der Gesellschaften und Vereinigungen, 10 Jahre für bestimmte Steuerunterlagen); die Aufbewahrungsrichtlinie muss sicherstellen, dass diese Mindestfristen eingehalten werden
+- **Integrität des [Audit-Trails](/de/glossary/audit-trail/)** — KI-Systeme in professionellen Umgebungen benötigen Audit-Trails, die zeigen, welche Quellen konsultiert und welche Antworten generiert wurden; Aufbewahrungsrichtlinien müssen diese Trails lang genug für die Berufshaftung aufbewahren, aber nicht unbegrenzt
+- **Speicher- und Kostenmanagement** — ohne Aufbewahrungslimits akkumulieren sich Daten unbegrenzt, was die Speicherkosten erhöht, Abfragen verlangsamt und die Angriffsfläche vergrößert; systematische Löschung abgelaufener Daten hält Systeme effizient und sicher
+
+## So funktioniert es
+
+Eine Datenaufbewahrungsrichtlinie definiert typischerweise Aufbewahrungsregeln für jede Datenkategorie:
+
+**Datenklassifizierung** — der erste Schritt ist die Identifizierung und Kategorisierung aller Daten, die das System verarbeitet. Für ein juristisches KI-System umfassen die Kategorien typischerweise: Benutzerkontodaten, Abfrageprotokolle, abgerufene Quelldokumente, generierte Antworten, Embedding-Indizes, Modelltrainingsdaten, Systemprotokolle und Abrechnungsdaten. Jede Kategorie hat unterschiedliche Aufbewahrungstreiber.
+
+**Zuweisung der Aufbewahrungsfrist** — jeder Kategorie wird eine Aufbewahrungsfrist zugewiesen, die auf der längsten anwendbaren Anforderung basiert. Abfrageprotokolle könnten 12 Monate zur Dienstverbesserung aufbewahrt und dann anonymisiert werden. Generierte Antworten mit Audit-Trails könnten 7 Jahre aufbewahrt werden, um den belgischen Anforderungen an Buchhaltungsunterlagen zu entsprechen. Embedding-Indizes für aufgehobene Gesetzgebung könnten archiviert statt gelöscht werden, da historische Recherchen sie erfordern können.
+
+**Löschung und Anonymisierung** — wenn die Aufbewahrungsfrist abläuft, werden die Daten entweder dauerhaft gelöscht oder anonymisiert (von personenbezogenen Kennungen bereinigt, wobei aggregierte Muster erhalten bleiben). Die Richtlinie legt fest, welcher Ansatz für jede Kategorie gilt. Gemäß der DSGVO ist Anonymisierung eine akzeptable Alternative zur Löschung, sofern die Daten nicht mehr mit Einzelpersonen verknüpft werden können.
+
+**Implementierung** — Aufbewahrungsrichtlinien werden durch automatisierte Systeme durchgesetzt, die das Datenalter verfolgen und Lösch-Workflows auslösen. Manuelle Löschung ist im großen Maßstab unzuverlässig. Die Implementierung muss Abhängigkeiten berücksichtigen — beispielsweise kann ein Benutzerkonto nicht gelöscht werden, solange zugehörige Abrechnungsdaten noch innerhalb ihrer Aufbewahrungsfrist liegen.
+
+**Überprüfung und Aktualisierung** — Aufbewahrungsfristen müssen regelmäßig überprüft werden (typischerweise jährlich), um Änderungen in der Gesetzgebung, den geschäftlichen Anforderungen oder regulatorischen Leitlinien zu berücksichtigen. Die belgische Datenschutzbehörde (GBA/APD) kann sektorspezifische Leitlinien herausgeben, die sich auf Aufbewahrungsfristen auswirken.
+
+Speziell für KI-Systeme muss die Richtlinie modellspezifische Fragen adressieren: Können Trainingsdaten gelöscht werden, wenn sie bereits die Modellgewichte beeinflusst haben? Wie lange sollten Prompt-Antwort-Paare zu Evaluierungszwecken aufbewahrt werden? Was passiert mit Embeddings, wenn das zugrunde liegende Quelldokument aktualisiert oder gelöscht wird?
+
+## Häufige Fragen
+
+**F: Können Aufbewahrungsfristen für dieselben Daten je nach Zweck unterschiedlich sein?**
+
+A: Ja. Dieselben Daten können für verschiedene Zwecke unterschiedlichen Aufbewahrungsfristen unterliegen. Beispielsweise könnte ein Abfrageprotokoll 30 Tage für Debugging aufbewahrt werden, 12 Monate für Analyse zur Dienstverbesserung (nach 30 Tagen anonymisiert) und 7 Jahre, wenn es Teil eines Audit-Trails für professionelle Beratung ist. Die längste anwendbare Frist bestimmt die tatsächliche Löschung, aber Zugriffsbeschränkungen können die Zweckbindung vorher durchsetzen.
+
+**F: Was passiert, wenn ein Benutzer die Datenlöschung gemäß DSGVO verlangt?**
+
+A: Das Recht auf Löschung des Betroffenen (Artikel 17 DSGVO) verlangt die Löschung personenbezogener Daten, sofern keine gesetzliche Ausnahme greift. Gesetzliche Pflichten (steuerliche Aufbewahrungspflichten), berechtigte Interessen (Betrugsprävention) oder Rechtsansprüche (Berufshaftung) können eine fortgesetzte Aufbewahrung rechtfertigen. Die Aufbewahrungsrichtlinie sollte vorab festlegen, welche Ausnahmen für jede Datenkategorie gelten, damit Löschanfragen einheitlich bearbeitet werden können.

@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Euclidean distance measures how far apart two vectors are by taking the square root of the sum of squared coordinate differences, and is a common [metric](/en/glossary/distance-metric/) in [similarity search](/en/glossary/similarity-search/).
+Euclidean distance (also called L2 distance) is the straight-line distance between two points in a vector space, calculated as the square root of the sum of squared differences across all dimensions. It is one of the three standard distance metrics used in similarity search alongside cosine similarity and dot product. In information retrieval, Euclidean distance measures how far apart two embeddings are in absolute geometric terms — smaller distances indicate more similar content.
+
+## Why it matters
+
+- **Intuitive geometry** — Euclidean distance corresponds to the everyday notion of "straight-line distance", making it conceptually accessible for understanding embedding relationships
+- **Metric space properties** — Euclidean distance satisfies the triangle inequality, meaning the distance from A to C is never greater than the distance from A to B plus B to C; this property enables efficient index structures
+- **Complementary to cosine** — while cosine similarity measures angular similarity (direction), Euclidean distance considers both direction and magnitude, which can be meaningful when vector norms carry information
+- **Standardised measurement** — as a well-defined mathematical quantity, Euclidean distance provides a consistent, comparable measure of similarity across different experiments and systems
+
+## How it works
+
+For two vectors **a** and **b** of dimension *d*, Euclidean distance is computed as:
+
+**d(a, b) = √(Σ(aᵢ - bᵢ)²)** for i from 1 to d.
+
+Each dimension contributes independently to the total distance. Dimensions where the two vectors differ substantially contribute more than dimensions where they are similar.
+
+In practice, the squared Euclidean distance (without the square root) is often used instead because it preserves the ordering of results — if d(a,b) < d(a,c), then d²(a,b) < d²(a,c) — while avoiding the computational cost of the square root operation.
+
+**Relationship to cosine similarity**: when vectors are normalised to unit length (L2-normalised), Euclidean distance and cosine similarity are monotonically related. Minimising Euclidean distance is equivalent to maximising cosine similarity. Many embedding models produce normalised vectors, in which case the choice between the two metrics does not affect result ranking.
+
+**Sensitivity to magnitude**: unlike cosine similarity, Euclidean distance is affected by vector magnitude. Two vectors pointing in the same direction but with different lengths will have zero cosine distance but non-zero Euclidean distance. Whether this matters depends on the embedding model — if vector magnitude encodes meaningful information (like document length or confidence), Euclidean distance captures it; if magnitude is arbitrary noise, cosine similarity is preferred.
+
+Most vector databases support Euclidean distance as a built-in metric. ANN algorithms like HNSW work efficiently with Euclidean distance because it satisfies the triangle inequality, enabling effective pruning during graph traversal.
+
+## Common questions
+
+**Q: Should I use Euclidean distance or cosine similarity for text embeddings?**
+
+A: For most text embedding models, cosine similarity is preferred because it measures directional similarity regardless of magnitude. However, if the model produces L2-normalised vectors (as many do), the two metrics produce identical rankings. Check the embedding model's documentation for the recommended metric.
+
+**Q: Does Euclidean distance work well in high dimensions?**
+
+A: In very high dimensions, all pairwise distances tend to converge (the "curse of dimensionality"), making it harder to distinguish near from far neighbours. This affects all distance metrics, not just Euclidean. Dimensionality reduction and ANN algorithms mitigate this effect.
 
 ## References
 

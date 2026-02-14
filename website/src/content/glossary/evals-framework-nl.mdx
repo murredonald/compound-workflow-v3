@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Een evals-framework biedt tooling en configuratie om vaste evaluatiescenario's herhaalbaar uit te voeren en te loggen.
+Een evals-framework is een gestructureerd systeem van Tools, Testsets, Metriek en rapportage-infrastructuur om de Prestaties van een AI-systeem systematisch te evalueren. Het automatiseert het proces van het uitvoeren van testvragen, het vergelijken van uitvoer met verwachte antwoorden, het berekenen van Kwaliteitsmetrieken en het bijhouden van Resultaten over tijd. Zonder evals-framework is Kwaliteitsbeoordeling ad hoc en niet herhaalbaar; met een framework kunnen teams de impact van elke wijziging — nieuwe Modellen, promptaanpassingen, updates van de Kennisbank — afmeten tegen een consistente Basislijn.
+
+## Waarom het ertoe doet
+
+- **Meetbare kwaliteit** — een evals-framework zet subjectieve beoordelingen ("het systeem lijkt beter") om in kwantificeerbare Metriek (Precisie verbeterd van 82% naar 87%) die datagedreven Beslissingen ondersteunen
+- **Regressiepreventie** — geautomatiseerde Evaluaties vangen Kwaliteitsdaling op voordat die de Gebruikers bereikt; als een promptwijziging één gebied verbetert maar een ander breekt, brengt het Framework dit aan het licht
+- **Vergelijking en selectie** — bij het evalueren van verschillende Modellen, Embeddingstrategieën of Retrievalconfiguraties maakt een gestandaardiseerd Framework eerlijke vergelijking mogelijk onder identieke omstandigheden
+- **Regulatoir bewijs** — de EU AI Act vereist dat wordt aangetoond dat AI-systemen met een hoog Risico aan nauwkeurigheids- en Prestatienormen voldoen; een evals-framework levert hiervoor de Documentatie en het Bewijs
+
+## Hoe het werkt
+
+Een evals-framework bestaat doorgaans uit vier Componenten:
+
+**Testdatasets** — samengestelde Sets van Vragen met bekende correcte Antwoorden, die de verwachte Gebruiksscenario's van het Systeem dekken. Voor een juridisch AI-systeem omvat dit Vragen over specifieke Belastingbepalingen, jurisdictie-overschrijdende Vragen, temporele Vragen (welke Wet geldt op een bepaalde Datum) en Randgevallen (ambigue Vragen, tegenstrijdige Bepalingen). Testsets worden geversioneerd en in de loop van de tijd uitgebreid.
+
+**Evaluatiemetrieken** — de specifieke Maatstaven die worden gebruikt om Kwaliteit te beoordelen. Veelgebruikte Metriek omvat retrieval-precisie en -recall (heeft het Systeem de juiste Bronnen gevonden?), Getrouwheid (komt het Antwoord overeen met de Bronnen?), feitelijke Nauwkeurigheid (is het Antwoord correct?) en Latentie (hoe snel is het Antwoord?). Domeinspecifieke Metriek kan Citatenauwkeurigheid omvatten (zijn Artikelnummers correct?) en temporele Correctheid (weerspiegelt het Antwoord de op het relevante Tijdstip geldende Wet?).
+
+**Uitvoeringsengine** — de Automatisering die Testvragen door het Systeem stuurt, Uitvoer vastlegt, Metriek berekent en Resultaten opslaat. Dit draait op een Schema (dagelijks, wekelijks) of wordt getriggerd door Wijzigingen (nieuwe Modeluitrol, update van de Kennisbank).
+
+**Rapportage en waarschuwingen** — Dashboards die Metriektrends over tijd visualiseren en Waarschuwingen die het Team informeren wanneer Metriek onder gedefinieerde Drempelwaarden zakt. Historische Gegevens stellen het Team in staat Prestatiewijzigingen te correleren met specifieke Systeemaanpassingen.
+
+Het Framework moet meerdere Evaluatiemodi ondersteunen: offline Evaluatie (draaien tegen een vaste Testset), online Evaluatie (sampling en beoordelen van Productievragen) en A/B-testing (twee Systeemversies vergelijken op dezelfde Vragen).
+
+## Veelgestelde vragen
+
+**V: Hoe groot moet de evaluatietestset zijn?**
+
+A: Groot genoeg om de belangrijkste Gebruiksscenario's en Randgevallen van het Systeem met statistische Significantie te dekken. Voor juridische AI is 200-500 Testvragen over verschillende Onderwerpen, Rechtsgebieden en Vraagtypes een redelijk Startpunt. De Set moet groeien naarmate nieuwe Gebruiksscenario's worden geïdentificeerd.
+
+**V: Kan Evaluatie volledig geautomatiseerd worden?**
+
+A: Gedeeltelijk. Metriek zoals retrieval-precisie, Latentie en Formaatcompliance kan geautomatiseerd worden. Getrouwheid kan benaderd worden met NLI-modellen. Maar genuanceerde juridische Correctheid vereist vaak periodieke menselijke Beoordeling, vooral bij complexe of ambigue Vragen.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Retrieval-Coverage beschreibt, ob der indexierte [Korpus](/de/glossary/corpus/) und die Retrievalkonfiguration breit und tief genug sind, um die Belege zu liefern, die zur Beantwortung der vom System zu lösenden Fragen nötig sind.
+Retrieval-Coverage bezeichnet das Ausmaß, in dem der indexierte [Korpus](/de/glossary/corpus/) eines Retrievalsystems die Informationen enthält, die zur Beantwortung des gesamten Spektrums an Fragen benötigt werden, die es beantworten soll. Hohe Coverage bedeutet, dass für jede Anfrage innerhalb des definierten Bereichs die relevanten Quelldokumente im Index vorhanden sind. Niedrige Coverage bedeutet, dass es Lücken gibt — Themen, Dokumenttypen, Zeiträume oder Rechtsgebiete, in denen das System über kein Quellmaterial verfügt und daher keine verlässlichen Antworten geben kann. Coverage ist ein Maß für die Vollständigkeit der Wissensbasis, nicht für die Effektivität des Retrieval-Algorithmus.
+
+## Warum es wichtig ist
+
+- **Obergrenze der Antwortqualität** — ein System kann keine Quellen zitieren, die es nicht besitzt; Coverage-Lücken übersetzen sich direkt in Fragen, die das System nicht korrekt beantworten kann, unabhängig davon, wie ausgefeilt sein Retrieval und seine Generierung sind
+- **Nutzervertrauen** — wenn Nutzer entdecken, dass das System Fragen in Bereichen nicht beantworten kann, die sie erwarten, erodiert das Vertrauen schnell; die Coverage muss dem erklärten Anwendungsbereich des Systems entsprechen
+- **Priorisierung von Lücken** — die Messung der Coverage über Themen und Quellentypen hinweg zeigt, wo Investitionen in die Datenaufnahme den größten Einfluss auf die Systemqualität haben
+- **Ehrliche Kommunikation der Fähigkeiten** — die Kenntnis der Coverage-Grenzen ermöglicht es dem System, anzuerkennen, wenn eine Frage außerhalb seines Bereichs liegt, anstatt eine Antwort mit unzureichenden Belegen zu versuchen
+
+## Wie es funktioniert
+
+Retrieval-Coverage wird durch verschiedene Ansätze bewertet:
+
+**Quelleninventuranalyse** — Katalogisierung der aufgenommenen Rechtsquellen und Abgleich mit dem vollständigen Universum relevanter Quellen. Für belgisches Steuerrecht bedeutet dies die Prüfung der Abdeckung von: Bundesgesetzgebung (WIB92, WBTW usw.), regionaler Gesetzgebung (VCF, CIR wallonne usw.), königlichen und ministeriellen Erlassen, Verwaltungsrundschreiben, Gerichtsentscheidungen (Verfassungsgericht, Kassationshof, Berufungsgerichte), Verwaltungsurteilen, parlamentarischen Anfragen und offiziellen Kommentaren. Lücken in jeder Kategorie verringern die Coverage.
+
+**Thematische Coverage-Kartierung** — Testen des Systems mit Anfragen über alle erwarteten Themenbereiche und Messung, ob relevante Quellen zurückgegeben werden. Themen ohne ausreichendes Quellmaterial werden als Coverage-Lücken markiert. Für ein belgisches Steuersystem bedeutet dies die Überprüfung der Abdeckung von Einkommensteuer, Mehrwertsteuer, Registrierungsgebühren, Erbschaftsteuer, Körperschaftsteuer, internationalem Steuerrecht und Verfahrenssteuerrecht — für jedes Rechtsgebiet.
+
+**Zeitliche Coverage** — Überprüfung, ob die Wissensbasis Quellmaterial aus allen relevanten Zeiträumen enthält. Steuerrechtliche Anfragen betreffen häufig historische Bestimmungen (welcher Satz galt in einem bestimmten Jahr?), sodass die Coverage bis zur ältesten relevanten Gesetzgebung zurückreichen muss.
+
+**Mehrsprachige Coverage** — in Belgien wird überprüft, ob die niederländische, französische und deutsche Fassung der relevanten Quellen alle indexiert sind, da sich gesetzliche Bestimmungen in den Sprachversionen auf nuancierte Weise unterscheiden können.
+
+Coverage-Lücken werden behoben, indem die [Data Pipeline](/de/glossary/data-pipeline/) um die Aufnahme fehlender Quellentypen erweitert wird, neue Datenquellen hinzugefügt werden oder Partnerschaften mit juristischen Verlagen geschlossen werden, um Zugang zu zuvor nicht verfügbaren Inhalten zu erhalten.
+
+## Häufige Fragen
+
+**F: Ist eine 100-prozentige Coverage erreichbar?**
+
+A: Für einen definierten Bereich (z. B. belgische Bundessteuergesetzgebung) ist eine nahezu vollständige Coverage erreichbar. Für breitere Bereiche, die informelle Quellen, Praktikerkommentare oder ausländisches Recht umfassen, ist vollständige Coverage unpraktikabel. Das Ziel ist die Abdeckung aller maßgeblichen Quellen innerhalb des erklärten Anwendungsbereichs des Systems.
+
+**F: Wie unterscheidet sich Coverage von Recall?**
+
+A: Coverage misst, ob die relevanten Dokumente überhaupt im Korpus vorhanden sind. [Recall](/de/glossary/retrieval-recall/) misst, ob der Retrieval-Algorithmus sie bei einer Anfrage findet. Ein System kann perfekte Coverage haben (alle relevanten Dokumente sind indexiert), aber schlechten Recall (der Retrieval-Algorithmus findet sie nicht). Beide müssen hoch sein, damit das System gut funktioniert.
 
 ## References
 

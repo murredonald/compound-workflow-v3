@@ -12,7 +12,41 @@ draft: false
 
 ## Definition
 
-Beim Sliding-Window-Chunking werden lange Dokumente in sich überlappende Segmente aufgeteilt, sodass jeder [Chunk](/de/glossary/document-chunk/) Kontext mit seinen Nachbarn teilt und Randeffekte bei Retrieval und Generierung reduziert werden.
+Sliding-Window-Chunking ist eine Dokumentsegmentierungsstrategie, die überlappende Chunks erzeugt, indem ein Fenster fester Größe in regelmäßigen Abständen über den Text bewegt wird. Im Gegensatz zu nicht-überlappendem Chunking, das Text an harten Grenzen aufteilt und Gefahr läuft, Kontext zu verlieren, der zwei Chunks übergreift, stellt Sliding-Window-Chunking sicher, dass jeder Satz in mindestens einem Chunk mit seinem vollständigen umgebenden Kontext vorkommt. Die Überlappung zwischen aufeinanderfolgenden Chunks dient als Sicherheitsmarge und verhindert Informationsverlust an Chunk-Grenzen.
+
+## Warum es wichtig ist
+
+- **Kontexterhaltung an Grenzen** — in juristischen Texten hängt ein Satz oft vom vorhergehenden Satz für seine Bedeutung ab („unbeschadet des Vorstehenden …"); die Überlappung stellt sicher, dass diese Abhängigkeiten in mindestens einem Chunk erfasst werden
+- **Robustheit beim Retrieval** — wenn eine relevante Passage bei nicht-überlappendem Chunking genau an einer Chunk-Grenze liegt, erzielt möglicherweise keiner der beiden Chunks einen ausreichend hohen Score für das Retrieval; die Überlappung beseitigt diesen Fehlermodus
+- **Konsistente Embedding-Qualität** — Chunks, die mitten im Satz beginnen oder enden, erzeugen Embeddings niedrigerer Qualität; die Überlappung stellt sicher, dass der zentrale Inhalt in einem Chunk mit angemessenem umgebenden Kontext vorkommt
+- **Einfache Implementierung** — Sliding-Window-Chunking erfordert nur zwei Parameter (Fenstergröße und Schrittweite) und keine Dokumentstrukturanalyse, was die Implementierung und Reproduzierbarkeit erleichtert
+
+## Wie es funktioniert
+
+Sliding-Window-Chunking wird durch zwei Parameter definiert:
+
+**Fenstergröße** — die Länge jedes Chunks, gemessen in Tokens (z. B. 512 Tokens). Diese bestimmt, wie viel Text jeder Chunk enthält, und muss zwischen Embedding-Qualität (kürzer ist fokussierter) und Kontextvollständigkeit (länger bewahrt mehr Kontext) abwägen.
+
+**Schrittweite** (Stride) — wie weit das Fenster zwischen Chunks verschoben wird. Eine Schrittweite kleiner als die Fenstergröße erzeugt Überlappung. Beispiel: Bei einem 512-Token-Fenster und einer 256-Token-Schrittweite überlappt jeder Chunk mit dem vorhergehenden um 256 Tokens (50 % Überlappung). Kleinere Schrittweiten erzeugen mehr Überlappung und mehr Chunks; größere Schrittweiten weniger Überlappung und weniger Chunks.
+
+**Überlappungsverhältnis** = (Fenstergröße - Schrittweite) / Fenstergröße. Übliche Überlappungsverhältnisse liegen bei 10–50 %. Höhere Überlappung verringert das Risiko, grenzübergreifende Inhalte zu verpassen, erhöht aber die Anzahl der Chunks (und damit die Speicher- und Embedding-Kosten).
+
+Der Algorithmus schreitet durch das Dokument:
+1. Tokens von Position 0 bis Position Fenstergröße extrahieren → Chunk 1
+2. Tokens von Position Schrittweite bis Position Schrittweite + Fenstergröße extrahieren → Chunk 2
+3. Fortfahren bis zum Ende des Dokuments
+
+**Abwägungen**: Sliding-Window-Chunking ist einfach und robust, respektiert aber keine Dokumentstruktur — es kann eine Artikelüberschrift von ihrem Inhalt trennen oder einen Absatz mitten im Satz unterbrechen. Strukturbewusstes Chunking (basierend auf Überschriften, Artikelgrenzen) vermeidet dies, erfordert aber eine Erkennung der Dokumentstruktur. In der Praxis kombinieren viele Systeme beides: strukturbewusste Grenzen nutzen, wenn verfügbar, ansonsten auf Sliding-Window-Chunking zurückfallen.
+
+## Häufige Fragen
+
+**F: Wie hoch ist der optimale Überlappungsanteil?**
+
+A: 10–25 % Überlappung ist der Standard für die meisten Retrieval-Anwendungen. Höhere Überlappung (50 %+) wird manchmal für kritische Inhalte verwendet, bei denen das Verpassen jeglichen Kontexts inakzeptabel ist, aber sie verdoppelt Speicher- und Embedding-Kosten. Die richtige Wahl hängt davon ab, wie strukturiert die Quelldokumente sind — gut strukturierter Gesetzestext mit klaren Artikelgrenzen benötigt weniger Überlappung als Freitextkommentare.
+
+**F: Erhöht die Überlappung die Speicheranforderungen?**
+
+A: Ja, proportional zum Überlappungsverhältnis. Bei 50 % Überlappung ist die Anzahl der Chunks ungefähr doppelt so hoch wie bei nicht-überlappendem Chunking. Jeder Chunk muss eingebettet und gespeichert werden, sodass die Überlappung direkt sowohl die Speicher- als auch die Embedding-Berechnungskosten erhöht.
 
 ## References
 

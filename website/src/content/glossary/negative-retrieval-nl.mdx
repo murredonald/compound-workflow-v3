@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Negative retrieval focust op het vinden van documenten die een bewering tegenspreken, uitdagen of niet onderbouwen en helpt zo [RAG](/nl/glossary/rag/)-systemen conflicten zichtbaar te maken en overmatig zelfvertrouwen te verminderen.
+Negative retrieval is een retrievalstrategie die doelbewust zoekt naar documenten die een bepaalde bewering of voorlopig antwoord tegenspreken, nuanceren of niet ondersteunen. Terwijl standaard retrieval bevestigend bewijs zoekt, zoekt negative retrieval naar ontkrachtend bewijs — bronnen die een tegengesteld standpunt presenteren, een conflicterende regel, een uitzondering of een recentere wijziging die een eerdere bepaling vervangt. In juridische AI is negative retrieval essentieel omdat het fiscale recht vol uitzonderingen, bijzondere regelingen, antimisbruikbepalingen en tegenstrijdige interpretaties zit die standaard retrieval mogelijk mist.
+
+## Waarom het belangrijk is
+
+- **Detectie van uitzonderingen** — een algemene regel kan uitzonderingen hebben die het antwoord volledig veranderen; negative retrieval brengt deze uitzonderingen aan het licht voordat het systeem een onvolledig antwoord presenteert
+- **Identificatie van conflicten** — het Belgische fiscale recht bevat soms tegenstrijdige bepalingen tussen het federale en het gewestelijke niveau, of tussen oudere en nieuwere teksten; negative retrieval legt deze conflicten bloot in plaats van ze te verbergen
+- **Vermindering van overmatig zelfvertrouwen** — wanneer het systeem sterk bevestigend bewijs vindt maar ook tegenstrijdige bronnen ontdekt, kan het zijn betrouwbaarheidsscore verlagen en de onzekerheid aan de gebruiker signaleren
+- **Professionele volledigheid** — een grondige fiscale analyse beschouwt zowel ondersteunende als tegenargumenten; negative retrieval helpt het AI-systeem deze professionele standaard te evenaren
+
+## Hoe het werkt
+
+Negative retrieval breidt de standaard retrievalpipeline uit met aanvullende querystrategieën:
+
+**Negatievragen** herformuleren de oorspronkelijke query om te zoeken naar tegengestelde inhoud. Als de oorspronkelijke vraag gaat over de aftrekbaarheid van een specifieke uitgave, kan de negatievraag zoeken naar "niet-aftrekbaar", "uitsluiting", "uitzondering" of specifieke antimisbruikbepalingen die verband houden met die uitgavecategorie.
+
+**Contradictiedetectie** gebruikt natural language inference (NLI)-modellen om passages in het corpus te identificeren die de initiële set opgehaalde documenten tegenspreken. Nadat standaard retrieval ondersteunend bewijs heeft geretourneerd, zoekt een tweede doorgang naar passages waarvan de semantische relatie met de initiële resultaten wordt geclassificeerd als "contradictie" in plaats van "implicatie".
+
+**Temporele negative retrieval** zoekt specifiek naar wijzigingen, opheffingen of aanpassingen die dateren van na de aanvankelijk opgehaalde bepalingen. Dit vangt gevallen op waarin een wet is gewijzigd sinds deze werd geïndexeerd, of waarin een nieuwere ruling een oudere vervangt.
+
+**Uitzonderingsmining** richt zich op structurele patronen in wetgeving — artikelen die beginnen met "niettegenstaande", "behalve wanneer" of "in afwijking van" — die uitzonderingen op algemene regels signaleren. Deze patronen komen bijzonder vaak voor in het Belgische fiscale recht, waar algemene principes vaak meerdere uitzonderingen per gewest of belastingplichtigencategorie hebben.
+
+De resultaten van negative retrieval worden niet gepresenteerd als het "antwoord" maar als voorbehouden, tegenargumenten of aanvullende context. Het systeem kan zijn antwoord presenteren op basis van de primaire retrieval en vervolgens opmerken: "Er werden echter de volgende uitzonderingen of tegenstrijdige bepalingen gevonden..."
+
+## Veelgestelde vragen
+
+**V: Vindt negative retrieval altijd tegenstrijdigheden?**
+
+A: Nee. Wanneer de wet duidelijk en ondubbelzinnig is, bevestigt negative retrieval eenvoudigweg dat er geen tegenstrijdigheden bestaan, wat het vertrouwen in het antwoord juist vergroot. De waarde zit in de gevallen waarin tegenstrijdigheden wél bestaan en anders zouden worden gemist.
+
+**V: Hoe verschilt negative retrieval van uitgebreide retrieval?**
+
+A: Uitgebreide retrieval probeert alle relevante documenten te vinden. Negative retrieval richt zich specifiek op documenten die de initiële bevindingen tegenspreken of nuanceren. De intentie verschilt — uitgebreide retrieval streeft naar dekking; negative retrieval streeft naar balans en volledigheid van de juridische analyse.
 
 ## References
 

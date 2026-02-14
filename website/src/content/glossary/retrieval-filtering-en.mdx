@@ -12,7 +12,45 @@ draft: false
 
 ## Definition
 
-Retrieval filtering limits the candidate set using attributes like document type, date, jurisdiction, or permissions so that only allowed or relevant content is considered during search.
+Retrieval filtering is the application of structured constraints to the retrieval process that exclude documents not meeting specified criteria — such as jurisdiction, date range, document type, authority level, language, or access permissions. Filtering ensures that the retrieval system returns only contextually appropriate results, complementing semantic and lexical relevance with hard constraints. In Belgian tax law, retrieval filtering is essential because semantically similar provisions from different jurisdictions or time periods may have completely different legal effects.
+
+## Why it matters
+
+- **Jurisdictional accuracy** — without filtering, a Flemish registration duty query might return Walloon legislation that is semantically similar but legally irrelevant; filtering by jurisdiction prevents this
+- **Temporal correctness** — filtering by date ensures the system returns the version of a provision that was in force at the relevant time, not a repealed or not-yet-effective version
+- **Authority appropriateness** — filtering by document type allows prioritising binding sources (legislation, court decisions) over interpretive guidance (circulars, parliamentary questions) when appropriate
+- **Access control enforcement** — filtering by permissions ensures users only see documents they are authorised to access, enforcing confidentiality and multi-tenancy requirements
+
+## How it works
+
+Retrieval filtering can be applied at different stages of the retrieval pipeline:
+
+**Pre-filtering** narrows the search space before the similarity search executes. The vector database receives both the query and filter constraints, and only vectors matching the constraints are considered. This is efficient (fewer vectors to compare) but may be too restrictive if filters are overly narrow.
+
+**Post-filtering** runs the full similarity search first, then removes results that do not match the constraints. This ensures no semantically relevant candidates are missed by tight pre-filters, but wastes computation on results that will be discarded.
+
+**Hybrid filtering** combines both: broad pre-filters (e.g., language) to reduce the search space significantly, followed by more specific post-filters (e.g., exact date range) on the returned results.
+
+Common filter types in legal AI include:
+
+- **Jurisdiction filters** — federal, Flemish Region, Walloon Region, Brussels-Capital Region, German-speaking Community
+- **Date filters** — documents in force on a specific date, published within a date range, or amended after a specific date
+- **Document type filters** — legislation, royal decrees, ministerial decrees, circulars, rulings, case law, parliamentary questions
+- **Language filters** — Dutch, French, German, or specific language version
+- **Authority level filters** — constitutional, primary legislation, secondary legislation, administrative guidance
+- **Access filters** — enforcing user permissions and tenant isolation
+
+Filters can be explicitly specified by the user ("show only Flemish legislation") or implicitly applied by the system based on query analysis ("this query mentions 'Vlaamse erfbelasting', apply Flemish Region filter").
+
+## Common questions
+
+**Q: Can too much filtering hurt results?**
+
+A: Yes. Over-filtering can exclude relevant results — for example, filtering strictly to "Flemish" jurisdiction would miss federal legislation that applies uniformly across all regions. Smart filter relaxation (broadening filters when too few results are returned) mitigates this risk.
+
+**Q: How does filtering interact with semantic search?**
+
+A: They are complementary. Semantic search determines what is topically relevant; filtering determines what is contextually appropriate. Both must be satisfied for a result to be useful.
 
 ## References
 

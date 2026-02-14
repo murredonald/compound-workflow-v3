@@ -12,7 +12,36 @@ draft: false
 
 ## Définition
 
-Un réseau feed-forward est une architecture de [réseau de neurones](/fr/glossary/neural-network/) dans laquelle les signaux se propagent uniquement vers l'avant, des entrées vers les couches cachées puis vers la sortie, sans boucles ni rétroactions.
+Un réseau feed-forward (FFN) est une architecture de [réseau de neurones](/fr/glossary/neural-network/) dans laquelle les données circulent dans une seule direction — de l'entrée à travers une ou plusieurs couches cachées jusqu'à la sortie — sans boucles, cycles ni connexions de rétroaction. Chaque couche applique une transformation linéaire suivie d'une fonction d'activation non linéaire, transformant progressivement l'entrée en une représentation utile. Les réseaux feed-forward sont le type le plus simple de réseau de neurones et servent de briques de base au sein d'architectures plus complexes, y compris les modèles de type transformeur qui alimentent les modèles de langage et les systèmes d'embedding modernes.
+
+## Pourquoi c'est important
+
+- **Brique de base des transformeurs** — chaque couche de transformeur contient un réseau feed-forward qui traite chaque token indépendamment après que le mécanisme d'attention a mélangé les informations entre les tokens ; le FFN est l'endroit où une grande partie des « connaissances » du modèle est stockée
+- **Approximation universelle** — les réseaux feed-forward avec une largeur suffisante peuvent approximer n'importe quelle fonction continue, ce qui les rend théoriquement capables d'apprendre n'importe quelle correspondance entrée-sortie
+- **Simplicité computationnelle** — parce que les données circulent dans une seule direction sans récurrence, les réseaux feed-forward sont simples à paralléliser sur du matériel moderne (GPU, TPU), permettant un entraînement et une inférence efficaces
+- **Fondement pour la compréhension** — comprendre les réseaux feed-forward est essentiel pour comprendre le fonctionnement interne des modèles de langage et des modèles d'embedding basés sur les transformeurs
+
+## Comment ça fonctionne
+
+Un réseau feed-forward est composé de couches de neurones artificiels. Chaque neurone reçoit des entrées, les multiplie par des poids appris, ajoute un terme de biais et applique une fonction d'activation non linéaire (comme ReLU ou GELU) :
+
+**La couche d'entrée** reçoit les données — dans le contexte d'un transformeur, il s'agit de la sortie du mécanisme d'attention pour une position de token donnée. L'entrée est un vecteur de dimensionnalité fixe.
+
+**Les couches cachées** appliquent des transformations successives. Chaque couche multiplie l'entrée par une matrice de poids, ajoute un vecteur de biais et applique une fonction d'activation. Dans les FFN des transformeurs, il y a généralement deux transformations linéaires avec une fonction d'activation entre les deux : la première projette de la dimension du modèle vers une dimension intermédiaire plus grande (souvent 4 fois la dimension du modèle), et la seconde projette de nouveau vers la dimension d'origine. Ce schéma expansion-contraction permet au réseau d'opérer dans un espace de dimension supérieure où les transformations complexes sont plus faciles.
+
+**La couche de sortie** produit le résultat final — dans un transformeur, il s'agit de la représentation mise à jour pour le token, qui est ensuite transmise à la couche de transformeur suivante.
+
+Le terme « feed-forward » distingue cette architecture des réseaux de neurones récurrents (où les sorties rebouclent en entrées) et des réseaux convolutifs (où des motifs spatiaux locaux sont exploités). Dans l'usage moderne, le terme désigne le plus souvent le FFN par position au sein d'une couche de transformeur.
+
+## Questions fréquentes
+
+**Q : Quel rôle joue le FFN dans un transformeur ?**
+
+R : Le mécanisme d'attention combine les informations entre les positions de tokens (ce qui est pertinent par rapport à quoi). Le FFN traite ensuite chaque position indépendamment, appliquant des transformations apprises qui encodent des connaissances factuelles et des motifs linguistiques. La recherche suggère que les couches FFN stockent une grande partie des connaissances du monde du modèle.
+
+**Q : Quelle est la différence entre un réseau feed-forward et un modèle de deep learning ?**
+
+R : Un réseau feed-forward est un type de modèle de deep learning (plus précisément, lorsqu'il possède plusieurs couches cachées). Le deep learning inclut également les réseaux récurrents, les réseaux convolutifs, les transformeurs et d'autres architectures. Un transformeur est un modèle de deep learning qui utilise des réseaux feed-forward comme composants.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-De systeemprompt is de onderliggende instructietekst die aan een taalmodel wordt meegegeven om rol, toon en veiligheidskaders te definiëren, en die eindgebruikers doorgaans niet kunnen zien of aanpassen.
+De systeemprompt is het fundamentele instructieblok dat aan het begin van elke interactie aan een groot taalmodel wordt meegegeven en dat de rol, het gedrag, de beperkingen en het uitvoerformaat definieert. Anders dan gebruikersprompts, die per query variëren, wordt de systeemprompt vastgelegd door de applicatieontwikkelaar en is doorgaans verborgen voor de eindgebruiker. Het fungeert als de "persoonlijkheid en regelboek"-laag — het vertelt het model wat het is (bijv. een Belgische fiscale onderzoeksassistent), wat het moet doen (bronnen citeren, onzekerheid signaleren) en wat het nooit mag doen (wetgeving verzinnen, bindend advies geven).
+
+## Waarom het belangrijk is
+
+- **Gedragsconsistentie** — de systeemprompt zorgt ervoor dat het model consistent reageert op alle gebruikersvragen, met hetzelfde niveau van formaliteit, broncitatie-discipline en domeingerichtheid
+- **Veiligheid en compliance** — veiligheidsmaatregelen die in de systeemprompt zijn opgenomen, voorkomen dat het model schadelijke, misleidende of buiten het bereik vallende uitvoer produceert; in een juridische AI-context omvat dit disclaimers over professioneel advies en jurisdictionele beperkingen
+- **Uitvoerformattering** — de systeemprompt kan gestructureerde uitvoervereisten specificeren: altijd broncitaties opnemen, altijd betrouwbaarheidsniveaus aangeven, antwoorden altijd in een specifiek formaat presenteren
+- **Domeinverankering** — door het model te instrueren alleen te antwoorden op basis van opgehaalde context en onzekerheid te erkennen wanneer bronnen onvoldoende zijn, is de systeemprompt een essentieel mechanisme om [hallucinaties](/nl/glossary/hallucination/) te verminderen
+
+## Hoe het werkt
+
+De systeemprompt wordt aan elk gesprek met het taalmodel voorafgegaan, doorgaans in een speciale "system"-berichtrol die het model getraind is met hoge prioriteit op te volgen. De inhoud omvat meestal:
+
+**Roldefinitie** — een beschrijving van wat het model is en in welk domein het opereert. Bijvoorbeeld: "Je bent een Belgische fiscale onderzoeksassistent gespecialiseerd in inkomstenbelasting, btw en registratierechten."
+
+**Gedragsregels** — specifieke instructies over hoe diverse scenario's te behandelen: altijd het bronartikel citeren, nooit wetgeving verzinnen, signaleren wanneer meerdere tegenstrijdige bronnen bestaan, vragen buiten het fiscale domein afwijzen.
+
+**Uitvoerformaat** — gestructureerde vereisten voor het antwoord: gebruik opsommingstekens voor meerdelige antwoorden, neem een betrouwbaarheidsindicator op, citeer bronnen met artikelnummers en publicatiedata.
+
+**Contextinstructies** — hoe om te gaan met de opgehaalde documenten die elke query vergezellen: behandel ze als de gezaghebbende bron van waarheid, vertrouw niet op trainingskennis voor juridische feiten, vermeld expliciet wanneer de opgehaalde context de vraag niet beantwoordt.
+
+Systeemprompt-engineering is een iteratief proces. De prompt wordt verfijnd door te testen: onderzoeken waar het model faalt (een niet-bestaand artikel hallucineren, te zelfverzekerd antwoorden op dubbelzinnige vragen) en instructies toevoegen of aanpassen om die fouten te voorkomen. Promptrobuustheid tegen injectieaanvallen — waarbij kwaadwillige gebruikersinvoer probeert de systeeminstructies te overschrijven — is een actief aandachtsgebied.
+
+## Veelgestelde vragen
+
+**V: Kunnen gebruikers de systeemprompt overschrijven?**
+
+A: In een goed ontworpen systeem niet. Prompt-injectieaanvallen proberen echter instructies in de gebruikersinvoer op te nemen die de regels van de systeemprompt overschrijven of wijzigen. Verdedigingsmechanismen omvatten invoersanering, instructiehiërarchie-afdwinging in het model en monitoring op afwijkende uitvoer.
+
+**V: Hoe lang moet een systeemprompt zijn?**
+
+A: Lang genoeg om de noodzakelijke regels en beperkingen te dekken, maar niet zo lang dat het een aanzienlijk deel van het contextvenster van het model inneemt. De meeste productie-systeemprompts zijn 500-2000 tokens. Buitensporig lange prompts kunnen er ook toe leiden dat het model de focus verliest op specifieke instructies die in het midden begraven liggen.
 
 ## References
 

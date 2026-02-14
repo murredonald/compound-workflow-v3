@@ -10,6 +10,44 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Een Betrouwbaarheidsinterval is een statistisch Bereik waarbinnen een gemeten Metriek (zoals Nauwkeurigheid, Hallucinatiegraad of Precisie) naar verwachting valt met een bepaalde Waarschijnlijkheid, gegeven de steekproefvariabiliteit van de Evaluatiedata. Wanneer een Systeem rapporteert "92% Nauwkeurigheid met een 95% Betrouwbaarheidsinterval van 89-95%", betekent dit dat als de Evaluatie herhaald zou worden met verschillende representatieve Steekproeven, de werkelijke Nauwkeurigheid in 95% van de Gevallen tussen 89% en 95% zou liggen. Betrouwbaarheidsintervallen communiceren de inherente Onzekerheid in elke Metriek die berekend wordt op basis van een eindige Testset, en voorkomen zo Overinterpretatie van Puntschattingen.
+
+## Waarom het belangrijk is
+
+- **Zinvolle vergelijkingen** -- zonder Betrouwbaarheidsintervallen is het onmogelijk om te bepalen of een Nauwkeurigheidsverbetering van 2% statistisch significant is of slechts Steekproefruis; Betrouwbaarheidsintervallen maken dit Onderscheid duidelijk
+- **Eerlijke rapportage** -- het publiceren van een Puntmetriek zoals "94% Nauwkeurigheid" zonder Betrouwbaarheidsinterval overdrijft de Zekerheid; de werkelijke Prestatie kan redelijkerwijs 91% of 97% zijn, afhankelijk van de Testset
+- **Ondersteuning bij besluitvorming** -- bij het vergelijken van twee Systeemconfiguraties geven overlappende Betrouwbaarheidsintervallen aan dat het Verschil mogelijk niet betekenisvol is; niet-overlappende Intervallen bieden sterker Bewijs om voor de ene of de andere te kiezen
+- **Planning van Steekproefgrootte** -- Betrouwbaarheidsintervallen onthullen hoe precies de Evaluatie is; brede Intervallen geven aan dat de Testset te klein is voor betrouwbare Conclusies, wat richting geeft aan Investeringen in grotere Evaluatiedatasets
+
+## Hoe het werkt
+
+Betrouwbaarheidsintervallen worden berekend op basis van de Metriekwaarde, de Steekproefgrootte en het gewenste Betrouwbaarheidsniveau (doorgaans 95%):
+
+**Voor Verhoudingen** (Nauwkeurigheid, Hallucinatiegraad): een veelgebruikte Benadering maakt gebruik van de Normaalverdeling-benadering of het Wilson-score-interval. Voor een Nauwkeurigheid van 92% op 500 Testvragen is het 95% Betrouwbaarheidsinterval ongeveer 89,5% tot 94,1%. Op 50 Testvragen levert dezelfde 92% Nauwkeurigheid een veel breder Interval op: 81% tot 97%.
+
+**Voor Gemiddelden** (gemiddelde Latentie, gemiddelde Betrouwbaarheidsscore): het Interval wordt berekend uit het Steekproefgemiddelde, de Standaardafwijking en de Steekproefgrootte met behulp van de t-Verdeling.
+
+**Bootstrap-betrouwbaarheidsintervallen** bieden een algemenere Aanpak: hertrek de Testset vele malen met Teruglegging, bereken de Metriek op elke Hersteekproef, en gebruik de Verdeling van Resultaten om het Interval vast te stellen. Dit werkt voor elke Metriek, inclusief complexe zoals nDCG of F1-score.
+
+De Breedte van een Betrouwbaarheidsinterval hangt af van drie Factoren:
+- **Steekproefgrootte** -- grotere Evaluatiesets produceren smallere Intervallen (meer Precisie)
+- **Variantie** -- Metrieken met hoge Variabiliteit over Testgevallen produceren bredere Intervallen
+- **Betrouwbaarheidsniveau** -- een 99% Betrouwbaarheidsinterval is breder dan een 95% Interval voor dezelfde Data
+
+Bij AI-evaluatie zijn Betrouwbaarheidsintervallen bijzonder belangrijk omdat Testsets vaak klein zijn (200-500 Queries). Op zulke Datasets zijn Metriekfluctuaties van 2-3% gebruikelijk door Steekproefvariabiliteit alleen.
+
+## Veelgestelde vragen
+
+**V: Betekent een 95% Betrouwbaarheidsinterval dat er een 95% Kans is dat de werkelijke Waarde in het Interval ligt?**
+
+A: Technisch gezien niet -- de frequentistische Interpretatie is dat als de Evaluatie vele malen herhaald zou worden, 95% van de berekende Intervallen de werkelijke Waarde zou bevatten. Maar in de Praktijk biedt het Interval een redelijk Bereik van plausibele Waarden voor de Metriek.
+
+**V: Hoe groot moet de Evaluatieset zijn voor smalle Betrouwbaarheidsintervallen?**
+
+A: Voor Verhoudingen rond 90% geeft een Testset van 500 Queries een 95% Betrouwbaarheidsinterval-breedte van ongeveer ±3%. Voor ±1% Precisie heb je ongeveer 3.500 Queries nodig. De vereiste Grootte hangt af van de Metriekwaarde en de gewenste Precisie.
+
 ## References
 
 > Darius Roman et al. (2021), "[Machine learning pipeline for battery state-of-health estimation](https://doi.org/10.1038/s42256-021-00312-3)", Nature Machine Intelligence.

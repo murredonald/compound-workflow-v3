@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Semantic Clustering setzt Algorithmen wie k‑means oder hierarchisches Clustering auf [Embeddings](/de/glossary/embeddings/) an, um verwandte Dokumente oder Konzepte in sinnvolle Segmente zu gruppieren.
+Semantic Clustering ist der Prozess, Dokumente, Passagen oder andere Textelemente auf Basis ihrer semantischen Ähnlichkeit im Embedding-Raum in Cluster zu gruppieren, sodass Elemente innerhalb jedes Clusters ein kohärentes Thema oder Konzept teilen. Anders als schlüsselwortbasierte Kategorisierung erfasst Semantic Clustering die Bedeutung — es gruppiert Dokumente über „Körperschaftsteuer" und „vennootschapsbelasting" zusammen, auch wenn sie keine gemeinsamen Schlüsselwörter haben. Dies ermöglicht automatische Themenerkennung, Inhaltsorganisation und Lückenanalyse über große Dokumentensammlungen hinweg.
+
+## Warum es wichtig ist
+
+- **Korpusorganisation** — Clustering legt die natürliche Themenstruktur einer juristischen Wissensbasis offen und hilft zu erkennen, welche Bereiche des Steuerrechts gut abgedeckt sind und wo Lücken bestehen
+- **Deduplizierung** — Cluster mit stark ähnlichen Dokumenten können Duplikate oder Beinahe-Duplikate enthalten, die konsolidiert werden sollten
+- **Navigation** — die Darstellung von Suchergebnissen oder Glossarbegriffen in semantischen Clustern hilft Nutzern, verwandte Konzepte zu erkunden, anstatt flache alphabetische Listen zu durchsuchen
+- **Qualitätsanalyse** — die Untersuchung von Clustern zeigt, ob das Embedding-Modell verwandte Konzepte korrekt gruppiert; Cluster, die nicht zusammengehörende Themen mischen, deuten auf Qualitätsprobleme beim Embedding hin
+
+## So funktioniert es
+
+Semantic Clustering arbeitet mit Vektor-Embeddings der zu clusternden Elemente:
+
+**Embedding** — jedes Dokument oder jede Passage wird mithilfe eines Embedding-Modells in einen Vektor umgewandelt. Diese Vektoren positionieren jedes Element in einem hochdimensionalen Raum, in dem Nähe semantische Ähnlichkeit widerspiegelt.
+
+**Clustering-Algorithmus** — ein Clustering-Algorithmus gruppiert die Vektoren in Cluster. Gängige Algorithmen sind:
+
+- **K-means** — unterteilt Vektoren in genau k Cluster, indem der Abstand innerhalb des Clusters zum Clusterzentrum minimiert wird. Erfordert die vorherige Festlegung von k, das mittels Silhouetten-Analyse oder Ellenbogen-Methode geschätzt werden kann.
+- **HDBSCAN** — ein dichtebasierter Algorithmus, der Cluster unterschiedlicher Formen und Größen findet, ohne dass k vorab angegeben werden muss. Er identifiziert auch Rauschpunkte (Elemente, die zu keinem Cluster gehören), was nützlich ist, um Ausreißerdokumente zu markieren.
+- **Agglomeratives Clustering** — baut eine Hierarchie von Clustern auf, indem iterativ die ähnlichsten Paare zusammengeführt werden, und erzeugt ein Dendrogramm, das auf verschiedenen Ebenen geschnitten werden kann, um unterschiedliche Granularitäten der Clusterbildung zu erhalten.
+
+**Interpretation** — jeder Cluster wird durch Untersuchung seiner Mitglieder und Identifikation des gemeinsamen Themas charakterisiert. Automatisierte Methoden umfassen die Extraktion der häufigsten Begriffe, die Auswahl des dem Clusterzentrum nächstgelegenen Dokuments als Repräsentant oder die Verwendung eines Sprachmodells zur Generierung eines Cluster-Labels.
+
+**Dimensionsreduktion** — zur Visualisierung werden hochdimensionale Embeddings mittels t-SNE oder UMAP auf 2D projiziert. Das resultierende Streudiagramm zeigt die Clusterstruktur und die Beziehungen zwischen den Clustern und offenbart, wie verschiedene Bereiche des Steuerrechts in der Wissensrepräsentation des Systems zueinander stehen.
+
+## Häufige Fragen
+
+**F: Wie viele Cluster sollten verwendet werden?**
+
+A: Es gibt keine universelle Antwort — die richtige Anzahl hängt vom Korpus und der gewünschten Granularität ab. Zu wenige Cluster verschmelzen unterschiedliche Themen; zu viele erzeugen fragmentierte Gruppen mit geringer semantischer Kohärenz. Algorithmen wie HDBSCAN bestimmen die Anzahl automatisch basierend auf der Datendichte, während k-means eine explizite Wahl erfordert, die durch Metriken geleitet wird.
+
+**F: Funktioniert Semantic Clustering sprachübergreifend?**
+
+A: Ja, bei Verwendung multilingualer Embedding-Modelle. Dokumente auf Niederländisch, Französisch und Deutsch zum selben Steuerthema werden zusammen geclustert, da ihre Embeddings im gemeinsamen Vektorraum nahe beieinander liegen. Dies ist besonders nützlich für die Analyse mehrsprachiger belgischer Rechtskorpora.
 
 ## References
 

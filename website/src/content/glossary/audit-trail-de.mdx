@@ -12,4 +12,36 @@ draft: false
 
 ## Definition
 
-Ein Audit-Trail ist ein chronologisches Protokoll, das zeigt, wer was und wann in einem KI-System getan hat, und Untersuchungen, Compliance und Rechenschaftspflicht unterstützt.
+Ein Audit-Trail ist ein chronologisches, manipulationssicheres Protokoll aller Aktionen, Entscheidungen und Ereignisse innerhalb eines Systems. In KI-Systemen erfassen Audit-Trails, wer das System abgefragt hat, welche Daten abgerufen wurden, wie das Modell seine Antwort generiert hat und welche Konfidenzwerte zugewiesen wurden. Dieses Protokoll ermöglicht nachträgliche Untersuchungen, regulatorische Compliance und Rechenschaftspflicht, wenn KI-gestützte Entscheidungen in Frage gestellt werden.
+
+## Warum es wichtig ist
+
+- **Regulatorische Compliance** -- der EU AI Act verlangt von Hochrisiko-KI-Systemen, Protokolle zu führen, die die Nachvollziehbarkeit von Entscheidungen ermöglichen; Audit-Trails sind der primäre Mechanismus zur Erfüllung dieser Pflicht
+- **Berufliche Haftung** -- wenn ein Steuerberater sich auf KI-generierte Analysen stützt, dokumentiert der Audit-Trail genau, welche Quellen konsultiert wurden und was das System produziert hat, und schützt damit sowohl den Berater als auch den Mandanten
+- **Fehleruntersuchung** -- wenn eine fehlerhafte Antwort entdeckt wird, ermöglicht der Audit-Trail die Rückverfolgung durch die Retrieval-Pipeline und die Identifizierung, ob der Fehler von fehlenden Daten, schlechtem Retrieval oder einem Generierungsfehler stammt
+- **Kontinuierliche Verbesserung** -- aggregierte Audit-Daten zeigen Muster bei Anfragetypen, Fehlermodi und Nutzerverhalten auf, die Systemverbesserungen informieren
+
+## Wie es funktioniert
+
+Ein Audit-Trail in einem juristischen KI-System erfasst typischerweise Ereignisse auf mehreren Ebenen:
+
+- **Abfrage-Ebene** -- die ursprüngliche Frage des Nutzers, etwaige Abfragetransformationen (Erweiterung, Umschreibung) und die endgültige Suchanfrage, die an den Index gesendet wird
+- **Retrieval-Ebene** -- welche Dokumente und Passagen abgerufen wurden, ihre Relevanzwerte und angewandte Filter (Rechtsgebiet, Zeitraum, Autorität)
+- **Generierungs-Ebene** -- der an das Sprachmodell gesendete Prompt, die generierte Antwort, Token-Level-Konfidenzwerte und produzierte Zitate
+- **Nutzer-Ebene** -- wer auf das System zugegriffen hat, wann, und welche Aktionen durchgeführt wurden (Ausgabe des KI-Systems akzeptiert, bearbeitet oder abgelehnt)
+
+Diese Ereignisse werden mit Zeitstempeln, Nutzerkennungen und Systemversionsinformationen gespeichert. Manipulationssicherheit wird durch Append-Only-Speicher, kryptographisches Hashing oder WORM-Speicher-Backends (Write-Once-Read-Many) gewährleistet. Aufbewahrungsfristen werden durch Datenaufbewahrungsrichtlinien geregelt, die Compliance-Anforderungen gegen Speicherkosten abwägen.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich ein Audit-Trail von einem normalen Anwendungsprotokoll?**
+
+A: Anwendungsprotokolle dienen primär der Fehlersuche und Überwachung -- sie können rotiert, überschrieben oder nur teilweise erfasst werden. Audit-Trails sind für Compliance und Rechenschaftspflicht konzipiert -- sie müssen vollständig, manipulationssicher und für definierte Zeiträume aufbewahrt werden. Sie erfassen zudem Geschäftsereignisse (Nutzerentscheidungen, Systemempfehlungen) statt nur technischer Operationen.
+
+**F: Was verlangt der EU AI Act für Audit-Trails?**
+
+A: Der EU AI Act verlangt von Hochrisiko-KI-Systemen, Protokolle zu erzeugen, die die Nachvollziehbarkeit des Systembetriebs über den gesamten Lebenszyklus ermöglichen. Dies umfasst die Aufzeichnung von Eingaben, Ausgaben und den Bedingungen, unter denen das System betrieben wurde. Der konkrete Aufbewahrungszeitraum und das Format hängen von der Risikoklassifizierung und den anwendbaren sektorspezifischen Vorschriften ab.
+
+**F: Wie lange sollten Audit-Trail-Daten aufbewahrt werden?**
+
+A: Die Aufbewahrungsdauer hängt von der Domäne und dem Rechtsgebiet ab. Steuerbezogene Aufzeichnungen in Belgien werden typischerweise 7-10 Jahre aufbewahrt, um den Verjährungsfristen der Steuerverwaltung zu entsprechen. Die Aufbewahrungsrichtlinie muss auch die DSGVO-Grundsätze der Datenminimierung einhalten -- personenbezogene Daten in Audit-Trails sollten nicht länger als nötig aufbewahrt werden.

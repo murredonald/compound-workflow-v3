@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Retrieval scoring is the process of assigning numerical scores that estimate how relevant each candidate document or chunk is to a given [query](/en/glossary/prompt/), using models such as BM25, dense encoders, or rerankers.
+Retrieval scoring is the process of computing a numerical relevance score for each candidate document or passage given a user query, enabling the system to rank results from most to least relevant. Every retrieval system must decide which documents to return and in what order — scoring is the mechanism that makes this decision. Different scoring methods capture different aspects of relevance: lexical overlap, semantic similarity, or fine-grained cross-attention between query and document tokens.
+
+## Why it matters
+
+- **Result ordering** — users rely on the top results being the most relevant; scoring determines this ordering, directly affecting whether the right provision appears first or is buried on page three
+- **RAG context selection** — in retrieval-augmented generation, scoring determines which passages enter the language model's context window; poor scoring means the model receives less relevant context and produces worse answers
+- **Multi-signal fusion** — modern systems combine multiple scoring signals (BM25, dense similarity, metadata, authority level); the scoring architecture determines how these signals are weighted and merged
+- **Threshold decisions** — scoring enables cut-off decisions: only passages above a minimum relevance score are returned, preventing low-quality results from reaching the user or the generation layer
+
+## How it works
+
+Retrieval scoring operates at different stages of the pipeline, with increasingly expensive but more accurate methods at each stage:
+
+**Sparse scoring** (BM25 and variants) computes relevance based on term overlap between the query and document. BM25 considers term frequency (how often the query term appears in the document), inverse document frequency (how rare the term is across the corpus), and document length normalisation. It is fast, interpretable, and effective for queries with specific terminology.
+
+**Dense scoring** computes cosine similarity or dot product between the query's embedding vector and each document's embedding vector. This captures semantic relevance — a query about "vennootschapsbelasting" scores highly against a document about "corporate income tax" even without shared terms. Dense scoring relies on the quality of the embedding model.
+
+**Cross-encoder scoring** (reranking) processes the query and each candidate document together through a transformer model, allowing deep token-level interaction. This produces the most accurate relevance scores but is too expensive to apply to millions of documents — so it is used only on the top candidates from earlier stages. Cross-encoders can capture nuances that bi-encoder (dense) scoring misses, such as negation, conditional statements, and complex query-document relationships.
+
+**Score fusion** combines scores from multiple methods. Reciprocal Rank Fusion (RRF) is a common approach: it converts each scoring method's ranked list into a unified score based on rank position, then sums across methods. This simple technique often outperforms more complex learned fusion methods.
+
+## Common questions
+
+**Q: Which scoring method is best?**
+
+A: No single method is best for all queries. BM25 excels at exact term matching (article numbers, specific references). Dense scoring excels at semantic matching (conceptual queries). Cross-encoder reranking provides the highest accuracy but only on a small candidate set. The best systems combine all three in a pipeline.
+
+**Q: Do relevance scores have absolute meaning?**
+
+A: Generally no. Scores are relative — useful for ranking documents against each other for a specific query, but not directly comparable across different queries or scoring methods. A BM25 score of 15 on one query is not comparable to a score of 15 on a different query.
 
 ## References
 

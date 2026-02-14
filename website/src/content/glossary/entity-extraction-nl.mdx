@@ -10,6 +10,35 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Entity extraction vindt gestructureerde elementen zoals personen, bedrijven, wetten of locaties in ongestructureerde tekst en maakt ze beschikbaar als velden voor zoek- en analysetoepassingen.
+Entity extraction is het proces van het automatisch identificeren en classificeren van benoemde entiteiten — zoals personen, organisaties, datums, geldbedragen, juridische referenties en rechtsgebieden — in ongestructureerde tekst. Het is een kerntaak in natural language processing (NLP) die ruwe documenten transformeert naar gestructureerde data door elke entiteitsvermelding te voorzien van een typelabel. In juridische AI ondersteunt entity extraction downstream-mogelijkheden zoals de constructie van [kennisgrafen](/nl/glossary/knowledge-graph/), metadataverrijking, kruisverwijzingen tussen documenten en gestructureerde zoekfilters.
+
+## Waarom het belangrijk is
+
+- **Gestructureerde metadata uit ongestructureerde tekst** — wetgeving en uitspraken komen binnen als proza; entity extraction identificeert de artikelnummers, datums, partijen en monetaire drempels die erin verwerkt zijn, en maakt ze doorzoekbaar en filterbaar
+- **Constructie van kennisgrafen** — geëxtraheerde entiteiten en hun relaties vormen de knopen en verbindingen van een kennisgraaf, waardoor het systeem relationele vragen kan beantwoorden zoals "welke rulings verwijzen naar artikel 215 WIB92?"
+- **Kruisverwijzingen** — wanneer een circulaire een koninklijk besluit bij naam vermeldt, identificeert entity extraction de referentie en koppelt die aan het bijbehorende document in de kennisbank
+- **Zoekverrijking** — geëxtraheerde entiteiten worden metadata die gefacetteerd zoeken ondersteunt, waardoor gebruikers resultaten kunnen filteren op rechtsgebied, belastingtype, datumbereik of autoriteitsniveau
+
+## Hoe het werkt
+
+Entity extraction verloopt doorgaans in twee fasen:
+
+**Detectie** identificeert de grenzen van entiteitsvermeldingen in de tekst — het bepalen dat "Grondwettelijk Hof" in een zin één enkele entiteit is en niet twee losse woorden. Dit is uitdagend omdat entiteitsnamen meerdere woorden kunnen beslaan, veelvoorkomende woorden kunnen bevatten of kunnen overlappen met omringende tekst.
+
+**Classificatie** kent een type toe aan elke gedetecteerde entiteit. Standaardtypes omvatten persoon, organisatie, locatie en datum, maar juridische NLP breidt dit uit met domeinspecifieke types: wettelijke referenties (artikelnummers, wetboeken), rechtbankidentificatoren, belastingcategorieën, jurisdictiemarkeringen en geldbedragen met valuta.
+
+Moderne entity extraction maakt gebruik van transformergebaseerde modellen die zijn gefinetuned op gelabelde juridische tekst. Het model verwerkt elke token in context en voorspelt of deze deel uitmaakt van een entiteit en welk type die heeft (met BIO-tagging: Begin, Inside, Outside). Voorgetrainde juridische taalmodellen presteren aanzienlijk beter dan algemene modellen, omdat ze juridische naamconventies, citatieformaten en domeinspecifieke terminologie begrijpen.
+
+Voor Belgisch fiscaal recht moet entity extraction meertalige documenten aankunnen (Nederlands, Frans, Duits), referenties naar specifieke Belgische wettelijke instrumenten herkennen (WIB92, BWHI, KB/AR) en onderscheid maken tussen federale en regionale wettelijke referenties.
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen entity extraction en keyword extraction?**
+
+A: Keyword extraction identificeert de belangrijkste termen in een document, ongeacht type. Entity extraction identificeert specifieke benoemde items en classificeert ze per categorie. "Vennootschapsbelasting" kan als trefwoord worden geëxtraheerd; "artikel 185 WIB92" zou worden geëxtraheerd als een entiteit van het type wettelijke referentie met gestructureerde metadata (artikelnummer: 185, wetboek: WIB92).
+
+**V: Hoe nauwkeurig is entity extraction op juridische tekst?**
+
+A: Algemene NER-modellen behalen doorgaans 85-90% F1 op juridische tekst out-of-the-box. Finetuning op domeinspecifieke geannoteerde data brengt dit naar 93-97% F1, afhankelijk van het entiteitstype. Datums en geldbedragen zijn het eenvoudigst; wettelijke kruisverwijzingen en jurisdictiemarkeringen zijn lastiger vanwege hun variërende opmaak.

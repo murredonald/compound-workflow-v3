@@ -12,7 +12,39 @@ draft: false
 
 ## Definition
 
-SentencePiece is an open-source tokenizer that treats input as a raw byte or Unicode stream and learns a subword vocabulary (e.g., [BPE](/en/glossary/byte-pair-encoding/) or unigram) without relying on language-specific pre-[tokenization](/en/glossary/tokenization/) rules.
+SentencePiece is an open-source, language-agnostic tokenisation library that learns a subword vocabulary directly from raw text without requiring pre-tokenisation rules like word boundary detection or language-specific splitting. Unlike traditional tokenisers that first split text into words and then into subwords, SentencePiece treats the entire input as a sequence of Unicode characters (or bytes) and learns to segment it using either Byte Pair Encoding (BPE) or a unigram language model. This design makes it particularly effective for multilingual applications where language-specific pre-processing rules are impractical.
+
+## Why it matters
+
+- **Language independence** — SentencePiece works identically on Dutch, French, German, and any other language without needing language-specific rules, making it ideal for multilingual legal AI systems
+- **Whitespace handling** — by treating whitespace as a regular character (represented as ▁), SentencePiece can reconstruct the original text from tokens without any information loss, which is important for preserving legal text formatting
+- **Reproducibility** — the same SentencePiece model produces identical tokenisation regardless of platform or environment, ensuring consistent processing across training and inference
+- **Foundation for modern models** — SentencePiece is the tokeniser behind many widely used language models, including T5, ALBERT, and various multilingual models; understanding it helps in understanding model behaviour
+
+## How it works
+
+SentencePiece operates in two phases:
+
+**Training** — given a text corpus, SentencePiece learns a vocabulary of subword units. It supports two algorithms:
+
+- **BPE mode** starts with individual characters and iteratively merges the most frequent pair of adjacent tokens, building up a vocabulary of progressively longer units. The merge operations are saved as the model.
+- **Unigram mode** starts with a large initial vocabulary of all possible substrings (up to a length limit) and iteratively removes tokens whose loss has the least impact on the corpus likelihood, pruning down to the target vocabulary size. This approach tends to produce more linguistically meaningful segmentations.
+
+Both modes operate directly on the raw character stream, with whitespace treated as a regular character prefixed by a special symbol (▁). This eliminates the need for language-specific word boundary rules — crucial for languages like German and Dutch where compound words are common ("vennootschapsbelasting" is a single word that traditional tokenisers might struggle with).
+
+**Encoding** — at inference time, the trained model segments any input text into subword tokens. Common words become single tokens; rare or unseen words are decomposed into smaller units. The encoding is deterministic — the same input always produces the same tokens.
+
+SentencePiece also supports byte-level fallback: any character not covered by the learned vocabulary is represented as its raw byte sequence, guaranteeing that no input is ever unrepresentable. This is essential for handling special characters, mathematical symbols, or unusual Unicode in legal documents.
+
+## Common questions
+
+**Q: How is SentencePiece different from the standard BPE tokeniser?**
+
+A: Traditional BPE tokenisers require pre-tokenisation — first splitting text into words using language-specific rules (whitespace, punctuation), then applying BPE within each word. SentencePiece skips pre-tokenisation entirely, operating on the raw text stream. This makes it language-agnostic and avoids errors from incorrect word boundary detection.
+
+**Q: Does the choice of tokeniser affect model quality?**
+
+A: Yes. The tokeniser determines how text is segmented, which directly affects how the model processes it. A tokeniser trained on predominantly English text will split Dutch legal terms into more tokens than necessary, reducing efficiency and potentially hurting performance. Training SentencePiece on a multilingual legal corpus produces a vocabulary better suited to the domain.
 
 ## References
 

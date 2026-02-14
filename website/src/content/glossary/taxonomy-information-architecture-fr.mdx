@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La taxonomie et l’information architecture définissent comment le contenu est groupé, nommé et parcouru – par exemple en catégories et menus – afin que la recherche et la navigation restent logiques et prévisibles.
+Une taxonomie en architecture de l'information est un schéma de classification hiérarchique qui organise le contenu en catégories et sous-catégories, fournissant un cadre structuré pour la navigation, la découverte et le filtrage. Contrairement aux étiquettes libres ou aux tags non structurés, une taxonomie impose un vocabulaire contrôlé et cohérent avec des relations parent-enfant explicites. Dans un système d'IA juridique, la taxonomie définit comment le contenu juridique est catégorisé — par type d'impôt (impôt sur le revenu, TVA, droits d'enregistrement), par juridiction (fédéral, flamand, wallon), par type de document (législation, jurisprudence, directives administratives) et par domaine thématique (charges déductibles, fiscalité internationale, obligations procédurales).
+
+## Pourquoi c'est important
+
+- **Catégorisation cohérente** — une taxonomie garantit qu'un même sujet est toujours étiqueté de la même manière, évitant les incohérences comme « impôt des sociétés », « vennootschapsbelasting » et « corporate tax » traités comme des catégories distinctes
+- **Structure de navigation** — les taxonomies fournissent l'ossature d'une navigation par exploration : les utilisateurs peuvent naviguer de « Types d'impôts » → « Impôt sur le revenu » → « Impôt des sociétés » → « Charges déductibles » pour trouver le contenu pertinent
+- **Filtrage par facettes** — les taxonomies permettent des filtres structurés dans les résultats de recherche : filtrer par type d'impôt, juridiction, type de document ou période temporelle pour affiner les résultats sans modifier la requête
+- **Identification des lacunes de contenu** — une taxonomie bien entretenue révèle où le contenu est clairsemé (catégories avec peu de documents) ou où de nouvelles catégories sont nécessaires (sujets émergents pas encore classés)
+
+## Comment ça fonctionne
+
+Une taxonomie se compose de trois éléments :
+
+**Termes** — le vocabulaire contrôlé des noms de catégories. Chaque terme a un libellé préféré (le nom canonique), des libellés alternatifs (synonymes dans différentes langues ou variantes courantes) et une définition. Les termes tiennent compte des langues : un même concept a des libellés en néerlandais, en français et en allemand.
+
+**Hiérarchie** — les relations parent-enfant entre les termes. « Impôt sur le revenu » est un enfant de « Types d'impôts ». « Impôt des sociétés » est un enfant de « Impôt sur le revenu ». La hiérarchie peut avoir plusieurs niveaux de profondeur, bien que les taxonomies pratiques dépassent rarement 4 à 5 niveaux.
+
+**Relations** — au-delà de la hiérarchie, les taxonomies peuvent inclure des relations associatives (« en lien avec »), des relations d'équivalence (« identique à ») et des notes d'application (expliquant ce qu'un terme inclut et exclut). Celles-ci aident les utilisateurs à naviguer entre des sujets connexes mais non hiérarchiques.
+
+Les taxonomies sont maintenues par des experts du domaine qui ajoutent de nouveaux termes à mesure que le paysage juridique évolue (par exemple, ajout d'une catégorie pour de nouveaux types d'impôts introduits par la législation), fusionnent ou divisent les catégories selon les besoins, et assurent la cohérence interlinguistique.
+
+Dans un système d'IA juridique, la taxonomie remplit un double objectif : elle organise la navigation côté utilisateur et fournit des catégories de métadonnées pour l'étiquetage des documents lors de l'ingestion. La classification automatisée attribue des catégories taxonomiques aux nouveaux documents à l'aide de classificateurs de texte entraînés sur la structure de la taxonomie.
+
+## Questions fréquentes
+
+**Q : En quoi une taxonomie diffère-t-elle d'une ontologie ?**
+
+R : Une taxonomie est une classification hiérarchique — elle organise les concepts en relations parent-enfant. Une [ontologie](/fr/glossary/ontology/) est plus riche — elle définit les types d'entités, leurs propriétés et les relations entre elles, permettant un raisonnement logique. Une taxonomie dit « l'impôt des sociétés est un type d'impôt sur le revenu ». Une ontologie définit en plus que l'impôt des sociétés a un taux, s'applique à des entités spécifiques et interagit avec des déductions spécifiques.
+
+**Q : Combien de catégories une taxonomie devrait-elle avoir ?**
+
+R : Suffisamment pour être utile à la navigation et au filtrage, mais pas tant que les catégories deviennent fragmentées ou se chevauchent. Pour un système d'IA fiscale belge, 50 à 200 catégories finales (regroupées sous 10 à 20 catégories de premier niveau) offrent généralement une granularité suffisante sans submerger les utilisateurs.

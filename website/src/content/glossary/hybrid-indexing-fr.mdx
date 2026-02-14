@@ -10,9 +10,46 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’hybrid indexing stocke les documents dans plusieurs index – par exemple un index [BM25](/fr/glossary/bm25/) et un index vectoriel – afin que les requêtes puissent être évaluées à la fois sur les mots‑clés et sur la [similarité sémantique](/fr/glossary/semantic-similarity/).
+L'hybrid indexing consiste à construire et maintenir à la fois des index creux (lexicaux) et denses (vectoriels) sur la même collection de documents, permettant au système de recherche de combiner la correspondance par mots-clés et la correspondance sémantique dans une seule requête. Plutôt que de choisir entre [BM25](/fr/glossary/bm25/) et la recherche vectorielle, l'indexation hybride supporte les deux simultanément, exploitant les forces de chaque approche. En IA juridique, cela est particulièrement précieux car certaines requêtes nécessitent une correspondance exacte de termes (numéros d'articles spécifiques, références légales) tandis que d'autres requièrent une compréhension sémantique (questions conceptuelles exprimées dans une terminologie différente).
+
+## Pourquoi c'est important
+
+- **Le meilleur des deux approches** — les index lexicaux excellent dans la correspondance exacte de termes ; les index vectoriels excellent dans la correspondance sémantique ; l'indexation hybride permet les deux pour chaque requête
+- **Robustesse** — les requêtes qui échoueraient avec une seule approche réussissent avec l'autre ; l'indexation hybride réduit le nombre de requêtes sans résultats pertinents
+- **Exigences de la recherche juridique** — les professionnels de la fiscalité émettent à la fois des requêtes précises (« article 215 WIB92 ») et des requêtes conceptuelles (« déductibilité des frais de bureau à domicile ») ; un seul type d'index ne peut pas servir les deux de manière optimale
+- **Efficacité prouvée** — la recherche hybride surpasse systématiquement la recherche uniquement creuse ou uniquement dense dans les benchmarks, y compris les benchmarks du domaine juridique
+
+## Comment ça fonctionne
+
+L'indexation hybride maintient deux structures d'index parallèles :
+
+**Index lexical** — un index inversé (généralement basé sur BM25) qui associe les termes aux documents qui les contiennent. Construit lors de l'ingestion en tokenisant, racinisant et indexant le texte de chaque fragment de document. Supporte la correspondance exacte de termes, les requêtes par phrase et les filtres booléens.
+
+**Index vectoriel** — un index ANN (généralement HNSW) qui stocke les vecteurs d'embeddings pour chaque fragment de document. Construit lors de l'ingestion en passant chaque fragment dans un modèle d'embeddings et en ajoutant le vecteur résultant à l'index. Supporte la recherche par [similarité sémantique](/fr/glossary/semantic-similarity/).
+
+Au moment de la requête, le système interroge les deux index :
+1. La requête de l'utilisateur est traitée à la fois par le moteur de recherche lexical (scoring BM25) et par le moteur de recherche vectoriel (embedding + recherche du plus proche voisin)
+2. Chaque moteur renvoie ses top-k résultats avec des scores
+3. Les résultats sont fusionnés à l'aide d'un algorithme de fusion
+
+**La fusion des scores** combine les deux listes classées. Les approches courantes incluent :
+- **Reciprocal Rank Fusion (RRF)** — convertit les rangs en scores en utilisant 1/(k + rang) et additionne les résultats des deux méthodes ; simple et efficace
+- **Combinaison linéaire pondérée** — normalise les scores de chaque méthode et les combine avec des poids appris ou ajustés
+- **Fusion apprise** — un modèle entraîné qui prend des caractéristiques des deux méthodes de recherche et produit un score de pertinence unifié
+
+Les résultats fusionnés sont ensuite transmis à l'étape de reclassement puis à la couche de génération.
+
+## Questions fréquentes
+
+**Q : L'indexation hybride double-t-elle les besoins en stockage ?**
+
+R : Approximativement, oui. L'index lexical et l'index vectoriel consomment chacun du stockage indépendamment. Cependant, le coût de stockage est justifié par l'amélioration significative de la qualité de recherche. Les index vectoriels peuvent être compressés par quantification pour réduire cette surcharge.
+
+**Q : Quelle méthode de fusion fonctionne le mieux ?**
+
+R : La Reciprocal Rank Fusion (RRF) est le choix le plus populaire car elle est simple, ne nécessite aucun entraînement et offre des performances compétitives par rapport aux méthodes plus complexes. C'est la méthode de fusion par défaut dans la plupart des systèmes en production.
 
 ## References
 

@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La similarité par produit scalaire évalue la similarité entre deux [embeddings](/fr/glossary/embeddings/) en calculant leur produit scalaire, ce qui donne des scores élevés lorsque les vecteurs pointent dans une direction proche.
+La similarité par produit scalaire est une mesure de similarité entre deux vecteurs calculée en multipliant leurs dimensions correspondantes et en sommant les résultats. Le produit scalaire reflète à la fois l'angle entre les vecteurs (similarité directionnelle) et leurs magnitudes (longueurs). Des valeurs plus élevées indiquent une plus grande similarité — des vecteurs pointant dans la même direction avec des magnitudes plus importantes produisent des produits scalaires plus grands. C'est l'une des trois métriques de distance standard utilisées dans la [recherche vectorielle](/fr/glossary/vector-database/), aux côtés de la [similarité cosinus](/fr/glossary/cosine-similarity/) et de la distance euclidienne.
+
+## Pourquoi c'est important
+
+- **Calcul efficace** — le produit scalaire est l'une des opérations de similarité les plus rapides, ne nécessitant qu'une multiplication élément par élément et une sommation ; les instructions SIMD accélérées matériellement peuvent le calculer sur des centaines de dimensions en microsecondes
+- **Sensibilité à la magnitude** — contrairement à la similarité cosinus, le produit scalaire tient compte de la magnitude du vecteur, ce qui peut être significatif si le modèle d'[embedding](/fr/glossary/embeddings/) encode l'importance ou la confiance dans la longueur du vecteur
+- **Équivalence avec le cosinus sur des vecteurs normalisés** — lorsque les vecteurs sont normalisés en L2 (comme le produisent de nombreux modèles d'embedding), le produit scalaire et la similarité cosinus produisent des classements identiques, permettant d'utiliser le produit scalaire, plus simple
+- **Fondement de l'attention** — le produit scalaire est le calcul central du mécanisme d'attention des transformers (produit scalaire requête-clé), ce qui en fait un élément fondamental de la façon dont les modèles de langage traitent le texte
+
+## Comment ça fonctionne
+
+Pour deux vecteurs **a** et **b** de dimension *d*, le produit scalaire est :
+
+**a · b = Σ(aᵢ × bᵢ)** pour i de 1 à d
+
+Chaque dimension contribue indépendamment : si les deux vecteurs ont de grandes valeurs positives dans la même dimension, celle-ci apporte une contribution positive importante. S'ils sont de signe opposé, la contribution est négative.
+
+**Relation avec la similarité cosinus** : la similarité cosinus est définie comme le produit scalaire divisé par le produit des magnitudes des vecteurs : cos(θ) = (a · b) / (‖a‖ × ‖b‖). Lorsque les deux vecteurs sont normalisés à une longueur unitaire (‖a‖ = ‖b‖ = 1), le produit scalaire est égal à la similarité cosinus. De nombreux modèles d'embedding normalisent leurs vecteurs de sortie, rendant les deux métriques interchangeables.
+
+**Quand la magnitude compte** : si les vecteurs ne sont pas normalisés, le produit scalaire favorise les vecteurs de plus grande magnitude. Dans certains modèles d'embedding, la magnitude du vecteur est corrélée avec la confiance du modèle ou le caractère informatif du document. Dans ces cas, le produit scalaire capture cette information tandis que la similarité cosinus la rejette.
+
+**Dans les bases de données vectorielles** : la plupart des [bases de données vectorielles](/fr/glossary/vector-database/) prennent en charge le produit scalaire comme métrique de similarité intégrée. Lors de la configuration d'un index, le choix entre le produit scalaire et la similarité cosinus doit correspondre à la conception du modèle d'embedding — les modèles qui produisent des vecteurs normalisés peuvent utiliser l'un ou l'autre ; les modèles qui produisent des vecteurs non normalisés doivent utiliser la métrique pour laquelle leur objectif d'entraînement a été optimisé.
+
+## Questions fréquentes
+
+**Q : Dois-je utiliser le produit scalaire ou la similarité cosinus ?**
+
+R : Consultez la documentation du modèle d'embedding. Si le modèle produit des vecteurs normalisés en L2 (c'est le cas de la plupart des modèles modernes d'embedding de texte), les deux sont équivalents et le produit scalaire est légèrement plus rapide. Si les vecteurs ne sont pas normalisés et que la magnitude a un sens, le produit scalaire peut être plus approprié.
+
+**Q : Le produit scalaire peut-il être négatif ?**
+
+R : Oui. Un produit scalaire négatif indique que les vecteurs pointent dans des directions à peu près opposées dans l'espace d'embedding, ce qui suggère une dissimilarité. Zéro indique l'orthogonalité (absence de relation).
 
 ## References
 

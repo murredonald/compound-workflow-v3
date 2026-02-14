@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Retrieval precision meet welk aandeel van de documenten die door een zoek- of [RAG](/nl/glossary/rag/)-systeem worden teruggegeven echt relevant is voor de vraag, vaak berekend met een afkapwaarde zoals Precision@k.
+Retrieval precision is het aandeel van de documenten die door een zoeksysteem worden geretourneerd dat daadwerkelijk relevant is voor de vraag van de gebruiker. Als een systeem 10 documenten retourneert en er 7 relevant zijn, is de precision 70%. Het wordt doorgaans gemeten op een specifiek afkappunt — Precision@5 (van de top 5 resultaten, hoeveel zijn relevant) of Precision@10 — omdat gebruikers zelden verder kijken dan de eerste pagina met resultaten. In juridische AI is precision belangrijk omdat elk irrelevant resultaat de tijd van een professional verspilt en, in [RAG](/nl/glossary/rag/)-systemen, de context die aan het taalmodel wordt aangeboden verwatert.
+
+## Waarom het belangrijk is
+
+- **Gebruikersefficiëntie** — belastingadviseurs hebben beperkte tijd; hoge precision betekent dat ze minder tijd besteden aan het doorzoeken van irrelevante resultaten en meer tijd aan de relevante bepalingen
+- **RAG-contextkwaliteit** — bij retrieval-augmented generation worden opgehaalde documenten het contextvenster van het taalmodel; lage precision betekent dat het model ruis en irrelevante passages ontvangt die de antwoordkwaliteit kunnen verminderen of hallucinatie kunnen uitlokken
+- **Vertrouwen** — een systeem dat consequent irrelevante resultaten retourneert ondermijnt het vertrouwen van de gebruiker, zelfs als het relevante resultaat ergens in de lijst staat; precision beïnvloedt direct de waargenomen systeemkwaliteit
+- **Complementair aan recall** — precision en recall meten verschillende aspecten van retrievalkwaliteit; een systeem heeft beide nodig om effectief te zijn
+
+## Hoe het werkt
+
+Precision wordt berekend door het aantal relevante opgehaalde documenten te delen door het totale aantal opgehaalde documenten:
+
+**Precision@k = (relevante documenten in top k) / k**
+
+Evaluatie vereist een gelabelde testset waarin menselijke annotatoren hebben geïdentificeerd welke documenten relevant zijn voor elke query. De gerangschikte output van het systeem wordt vervolgens vergeleken met deze relevantieoordelen.
+
+**Precision-recall-afweging**: precision en recall zijn omgekeerd evenredig. Het retourneren van meer documenten (hogere recall — minder relevante documenten worden gemist) verlaagt doorgaans de precision (meer irrelevante documenten worden opgenomen). De architectuur van de retrievalpipeline — met name de rerankingfase — streeft ernaar beide te maximaliseren door de meest relevante documenten bovenaan te plaatsen.
+
+**Mean Average Precision (MAP)** breidt precision uit door rekening te houden met de rangschikking van relevante documenten, niet alleen hun aantal. Het beloont systemen die relevante documenten hoger in de gerangschikte lijst plaatsen. Dit is bijzonder belangrijk voor juridisch zoeken, waar de eerste resultaten de meeste aandacht krijgen.
+
+**Precision in RAG specifiek**: in een RAG-systeem worden de top-k opgehaalde passages samengevoegd in het contextvenster van het taalmodel. Lage precision betekent dat irrelevante passages contextvensterplaatsen innemen die voor relevante bronnen hadden kunnen worden gebruikt, waardoor het model mogelijk belangrijke informatie negeert of door ruis wordt afgeleid.
+
+Het verbeteren van precision omvat doorgaans beter querybegrip (de intentie van de gebruiker correct interpreteren), effectievere reranking (kandidaten scoren met een dieper semantisch model) en metadata filtering (documenten uitsluiten die thematisch gerelateerd maar contextueel onjuist zijn — bijvoorbeeld wetgeving uit het verkeerde rechtsgebied of de verkeerde periode).
+
+## Veelgestelde vragen
+
+**V: Wat is een goede precisionscore voor juridisch zoeken?**
+
+A: Precision@5 boven 80% wordt over het algemeen als sterk beschouwd voor juridische retrieval. Dit betekent dat 4 van de top 5 resultaten relevant zijn. In de praktijk hangt de aanvaardbare drempel af van het gebruiksscenario — verkennend onderzoek tolereert lagere precision, terwijl specifieke vraagbeantwoording hogere precision vereist.
+
+**V: Hoe verschilt precision van nauwkeurigheid (accuracy)?**
+
+A: Nauwkeurigheid meet de algehele correctheid over alle voorspellingen (inclusief documenten die terecht niet zijn opgehaald). Precision meet specifiek de kwaliteit van wat is geretourneerd. Een systeem dat niets retourneert heeft een ongedefinieerde precision maar kan een hoge nauwkeurigheid hebben als de meeste documenten inderdaad irrelevant zijn.
 
 ## References
 

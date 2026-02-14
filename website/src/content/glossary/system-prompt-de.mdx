@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Der System-[Prompt](/de/glossary/prompt/) ist der zugrunde liegende Anweisungstext, der einem Sprachmodell seine Rolle, seinen Ton und Sicherheitsgrenzen vorgibt und den Endnutzer in der Regel weder sehen noch direkt verändern können.
+Der System-Prompt ist der grundlegende Anweisungsblock, der einem Large Language Model zu Beginn jeder Interaktion bereitgestellt wird und dessen Rolle, Verhalten, Einschränkungen und Ausgabeformat definiert. Im Gegensatz zu Nutzer-Prompts, die bei jeder Abfrage variieren, wird der System-Prompt vom Anwendungsentwickler festgelegt und ist für den Endnutzer in der Regel nicht sichtbar. Er fungiert als „Persönlichkeits- und Regelwerk"-Schicht — er teilt dem Modell mit, was es ist (z. B. ein belgischer Steuerrecht-Recherche-Assistent), was es tun soll (Quellen zitieren, Unsicherheit kennzeichnen) und was es niemals tun darf (Gesetzgebung erfinden, verbindliche Beratung erteilen).
+
+## Warum es wichtig ist
+
+- **Verhaltenskonsistenz** — der System-Prompt stellt sicher, dass das Modell über alle Nutzeranfragen hinweg konsistent antwortet und dabei dasselbe Maß an Formalität, Zitierdisziplin und Domänenfokus beibehält
+- **Sicherheit und Compliance** — im System-Prompt kodierte Leitplanken verhindern, dass das Modell schädliche, irreführende oder themenfremd Ausgaben produziert; im Kontext juristischer KI umfasst dies Haftungsausschlüsse bezüglich professioneller Beratung und jurisdiktioneller Einschränkungen
+- **Ausgabeformatierung** — der System-Prompt kann strukturierte Ausgabeanforderungen festlegen: immer Quellenangaben einschließen, immer Konfidenzniveaus kennzeichnen, Antworten stets in einem bestimmten Format präsentieren
+- **Domänenverankerung** — indem das Modell angewiesen wird, nur auf Basis des abgerufenen Kontexts zu antworten und Unsicherheit einzugestehen, wenn die Quellen unzureichend sind, ist der System-Prompt ein zentraler Mechanismus zur Reduzierung von Halluzinationen
+
+## Wie es funktioniert
+
+Der System-Prompt wird jeder Konversation mit dem Sprachmodell vorangestellt, typischerweise in einer dedizierten „System"-Nachrichtenrolle, der das Modell mit hoher Priorität folgt. Sein Inhalt umfasst in der Regel:
+
+**Rollendefinition** — eine Beschreibung dessen, was das Modell ist und in welcher Domäne es agiert. Zum Beispiel: „Du bist ein belgischer Steuerrecht-Recherche-Assistent mit Spezialisierung auf Einkommensteuer, Mehrwertsteuer und Registrierungsgebühren."
+
+**Verhaltensregeln** — konkrete Anweisungen zum Umgang mit verschiedenen Szenarien: immer den Quellartikel zitieren, niemals Gesetzgebung erfinden, kennzeichnen wenn mehrere widersprüchliche Quellen existieren, Fragen außerhalb der Steuerdomäne ablehnen.
+
+**Ausgabeformat** — strukturierte Anforderungen an die Antwort: Aufzählungszeichen für mehrteilige Antworten verwenden, einen Konfidenzindikator einschließen, Quellen mit Artikelnummern und Veröffentlichungsdaten zitieren.
+
+**Kontextanweisungen** — wie mit den abgerufenen Dokumenten umzugehen ist, die jede Anfrage begleiten: sie als maßgebliche Wahrheitsquelle behandeln, sich nicht auf Trainingswissen für juristische Fakten verlassen, explizit angeben, wenn der abgerufene Kontext die Frage nicht beantwortet.
+
+System-Prompt-Engineering ist ein iterativer Prozess. Der Prompt wird durch Tests verfeinert: Es wird untersucht, wo das Modell versagt (einen nicht existierenden Artikel halluziniert, übermäßig selbstsichere Antworten auf mehrdeutige Fragen gibt), und Anweisungen werden hinzugefügt oder angepasst, um diese Fehler zu verhindern. Die Robustheit des Prompts gegen Injection-Angriffe — bei denen bösartige Nutzereingaben versuchen, die Systemanweisungen zu überschreiben — ist ein aktives Forschungsgebiet.
+
+## Häufige Fragen
+
+**F: Können Nutzer den System-Prompt überschreiben?**
+
+A: In einem gut konzipierten System nicht. Allerdings versuchen Prompt-Injection-Angriffe, in der Nutzereingabe Anweisungen einzufügen, die die Regeln des System-Prompts überschreiben oder verändern. Abwehrmaßnahmen umfassen Eingabebereinigung, Durchsetzung der Anweisungshierarchie im Modell und Überwachung auf anomale Ausgaben.
+
+**F: Wie lang sollte ein System-Prompt sein?**
+
+A: Lang genug, um die notwendigen Regeln und Einschränkungen abzudecken, aber nicht so lang, dass er einen erheblichen Teil des Kontextfensters des Modells verbraucht. Die meisten produktiven System-Prompts umfassen 500–2000 Token. Übermäßig lange Prompts können auch dazu führen, dass das Modell den Fokus auf spezifische Anweisungen verliert, die in der Mitte vergraben sind.
 
 ## References
 

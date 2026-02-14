@@ -10,6 +10,35 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Lexical search vergelijkt de tekst van een [query](/nl/glossary/prompt/) met documenten via trefwoorden, operatoren en eenvoudige scoringsfuncties zoals [BM25](/nl/glossary/bm25/), zonder de diepere betekenis van de tekst te modelleren.
+Lexical search is een ophaalmethode die documenten vindt door de exacte woorden (of hun gestamde vormen) in een zoekopdracht te matchen met de woorden in een documentencollectie. De techniek steunt op geïnverteerde indexen — datastructuren die elk woord koppelen aan de lijst documenten die het bevatten — en scoringsfuncties zoals [BM25](/nl/glossary/bm25/) die resultaten rangschikken op basis van woordfrequentie, documentlengte en zeldzaamheid binnen het corpus. Lexical search is de oudste en meest beproefde benadering van informatieophaling en blijft een cruciaal onderdeel van moderne zoeksystemen, inclusief die voor juridisch onderzoek.
+
+## Waarom het belangrijk is
+
+- **Precisie op exacte termen** — wanneer een fiscaal adviseur zoekt naar "artikel 215 WIB92" of een specifiek rulingreferentienummer, vindt lexical search exacte matches die [semantisch zoeken](/nl/glossary/semantic-search/) mogelijk mist of laag rangschikt
+- **Snelheid en schaalbaarheid** — geïnverteerde indexen zijn sterk geoptimaliseerd en kunnen miljoenen documenten doorzoeken in enkele milliseconden met minimale hardware
+- **Transparantie** — resultaten zijn uitlegbaar door te tonen welke zoektermen overeenkwamen met welke documenttermen, wat de rangschikking interpreteerbaar maakt voor gebruikers
+- **Complementair aan semantisch zoeken** — lexicale en semantische zoekmethodes hebben verschillende zwakke punten; ze combineren in hybride zoeken compenseert voor de tekortkomingen van elke methode
+
+## Hoe het werkt
+
+Lexical search werkt via een pipeline van tekstverwerking en matching:
+
+**Indexering** — wanneer documenten aan het systeem worden toegevoegd, wordt de tekst getokeniseerd (opgesplitst in woorden), genormaliseerd (kleine letters, accenten verwijderd) en optioneel gestamd (woorden teruggebracht tot hun stam, bv. "belasting" en "belastingen" worden beide "belasting"). Elk woord wordt vastgelegd in een geïnverteerde index die termen koppelt aan de documenten en posities waar ze voorkomen.
+
+**Queryverwerking** — de zoekopdracht van de gebruiker ondergaat dezelfde tokenisatie en stamming als de documenten, wat consistente matching garandeert. Sommige systemen breiden de query uit met synoniemen of verwante termen om de recall te verbeteren.
+
+**Scoring** — kandidaatdocumenten worden gescoord met algoritmen zoals BM25, dat drie factoren beschouwt: hoe vaak de zoekterm voorkomt in het document (termfrequentie), hoe zeldzaam de term is in de volledige collectie (inverse documentfrequentie) en de lengte van het document (langere documenten worden licht benadeeld om bias richting uitgebreide bronnen te voorkomen). De resulterende score weerspiegelt hoe goed het document overeenkomt met de specifieke termen van de zoekopdracht.
+
+De belangrijkste beperking van lexical search is het **vocabulairemismatchprobleem**: het kan geen concepten matchen die met andere woorden zijn uitgedrukt. Een zoekopdracht naar "corporate income tax" zal geen documenten vinden die alleen "vennootschapsbelasting" gebruiken, omdat de termen lexicaal verschillend zijn. Daarom combineren moderne systemen lexical search met dense semantische ophaling in een hybride aanpak.
+
+## Veelgestelde vragen
+
+**V: Is BM25 het enige lexicale scoringsalgoritme?**
+
+A: Nee, maar het is het meest gebruikte. Alternatieven zijn TF-IDF (eenvoudiger, minder effectief), BM25+ (een variant die een bias tegen lange documenten corrigeert) en op taalmodellen gebaseerde scoring. BM25 is dominant gebleven omdat het eenvoudig, snel en verrassend effectief is.
+
+**V: Waarom niet gewoon semantisch zoeken gebruiken in plaats van lexical search?**
+
+A: Semantisch zoeken is sterk in het matchen van betekenis, maar kan moeite hebben met precieze identificatoren, referentienummers en domeinspecifieke termen. Een hybride combinatie van beide presteert consequent beter dan elk afzonderlijk — lexical search handelt precisiezoekopdrachten af, terwijl semantisch zoeken conceptuele zoekopdrachten afhandelt.

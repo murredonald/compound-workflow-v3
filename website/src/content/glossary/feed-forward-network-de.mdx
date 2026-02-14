@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Ein Feedforward-Netzwerk ist eine Architektur neuronaler Netze, bei der Signale nur von der Eingabeschicht über versteckte Schichten zur Ausgabeschicht laufen, ohne Zyklen oder Rückkopplungsschleifen.
+Ein Feedforward-Netzwerk (FFN) ist eine Architektur neuronaler Netze, bei der Daten in einer Richtung fließen — von der Eingabe über eine oder mehrere versteckte Schichten zur Ausgabe — ohne Schleifen, Zyklen oder Rückkopplungsverbindungen. Jede Schicht wendet eine lineare Transformation gefolgt von einer nichtlinearen Aktivierungsfunktion an und transformiert die Eingabe schrittweise in eine nützliche Repräsentation. Feedforward-Netzwerke sind die einfachste Art neuronaler Netze und dienen als Bausteine innerhalb komplexerer Architekturen, einschließlich der [Transformer](/de/glossary/transformer-architecture/)-Modelle, die moderne Sprachmodelle und Embedding-Systeme antreiben.
+
+## Warum es wichtig ist
+
+- **Baustein des Transformers** — jede Transformer-Schicht enthält ein Feedforward-Netzwerk, das jedes Token unabhängig verarbeitet, nachdem der Attention-Mechanismus Informationen über Tokens hinweg gemischt hat; das FFN ist der Ort, an dem ein Großteil des „Wissens" des Modells gespeichert wird
+- **Universelle Approximation** — Feedforward-Netzwerke mit ausreichender Breite können jede stetige Funktion approximieren, was sie theoretisch befähigt, jede Eingabe-Ausgabe-Zuordnung zu erlernen
+- **Rechnerische Einfachheit** — da Daten nur in einer Richtung ohne Rekurrenz fließen, lassen sich Feedforward-Netzwerke auf moderner Hardware (GPUs, TPUs) einfach parallelisieren, was effizientes Training und Inferenz ermöglicht
+- **Grundlage für das Verständnis** — das Verständnis von Feedforward-Netzwerken ist essenziell, um zu verstehen, wie transformerbasierte Sprachmodelle und [Embedding](/de/glossary/embeddings/)-Modelle intern funktionieren
+
+## Wie es funktioniert
+
+Ein Feedforward-Netzwerk besteht aus Schichten künstlicher Neuronen. Jedes Neuron empfängt Eingaben, multipliziert sie mit gelernten Gewichten, addiert einen Bias-Term und wendet eine nichtlineare Aktivierungsfunktion (wie ReLU oder GELU) an:
+
+**Eingabeschicht** — empfängt die Daten; im Transformer-Kontext ist dies die Ausgabe des Attention-Mechanismus für eine bestimmte Token-Position. Die Eingabe ist ein Vektor fester Dimensionalität.
+
+**Versteckte Schichten** — wenden aufeinanderfolgende Transformationen an. Jede Schicht multipliziert die Eingabe mit einer Gewichtsmatrix, addiert einen Bias-Vektor und wendet eine Aktivierungsfunktion an. In Transformer-FFNs gibt es typischerweise zwei lineare Transformationen mit einer Aktivierungsfunktion dazwischen: Die erste projiziert von der Modelldimension auf eine größere Zwischendimension (oft das 4-fache der Modelldimension), die zweite projiziert zurück. Dieses Expansions-Kontraktions-Muster ermöglicht es dem Netzwerk, in einem höherdimensionalen Raum zu operieren, in dem komplexe Transformationen einfacher sind.
+
+**Ausgabeschicht** — erzeugt das Endergebnis; im Transformer ist dies die aktualisierte Repräsentation des Tokens, die dann an die nächste Transformer-Schicht weitergegeben wird.
+
+Der Name „Feedforward" unterscheidet diese Architektur von rekurrenten neuronalen Netzen (bei denen Ausgaben als Eingaben zurückgeführt werden) und von Faltungsnetzwerken (die lokale räumliche Muster nutzen). Im modernen Sprachgebrauch bezieht sich der Begriff meist auf das positionsweise FFN innerhalb einer Transformer-Schicht.
+
+## Häufige Fragen
+
+**F: Welche Rolle spielt das FFN in einem Transformer?**
+
+A: Der Attention-Mechanismus kombiniert Informationen über Token-Positionen hinweg (was mit was zusammenhängt). Das FFN verarbeitet dann jede Position unabhängig und wendet gelernte Transformationen an, die faktisches Wissen und sprachliche Muster kodieren. Forschungsergebnisse deuten darauf hin, dass die FFN-Schichten einen Großteil des Weltwissens des Modells speichern.
+
+**F: Wie unterscheidet sich ein Feedforward-Netzwerk von einem Deep-Learning-Modell?**
+
+A: Ein Feedforward-Netzwerk ist eine Art von Deep-Learning-Modell (insbesondere, wenn es mehrere versteckte Schichten hat). Deep Learning umfasst auch rekurrente Netzwerke, Faltungsnetzwerke, Transformer und andere Architekturen. Ein Transformer ist ein Deep-Learning-Modell, das Feedforward-Netzwerke als Komponenten verwendet.
 
 ## References
 

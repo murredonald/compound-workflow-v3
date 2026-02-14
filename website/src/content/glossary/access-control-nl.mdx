@@ -12,4 +12,33 @@ draft: false
 
 ## Definitie
 
-Toegangsbeheer dwingt machtigingen af voor gebruikers, diensten en processen, zodat alleen geautoriseerde partijen bepaalde bronnen kunnen lezen of wijzigen.
+Toegangscontrole is het geheel van beleidsregels, mechanismen en technische implementaties dat bepaalt wie toegang heeft tot welke data, systemen of acties binnen een softwareomgeving. Het omvat authenticatie (identiteit verifiëren), autorisatie (rechten controleren) en handhaving (ongeautoriseerde bewerkingen blokkeren). In juridische AI-systemen die gevoelige belastingdata verwerken, zorgt toegangscontrole ervoor dat cliëntinformatie alleen zichtbaar is voor geautoriseerde adviseurs, dat beheerfuncties beperkt zijn tot de juiste rollen, en dat het systeem de vertrouwelijkheidsverplichtingen van de beroepspraktijk naleeft.
+
+## Waarom het belangrijk is
+
+- **Cliëntvertrouwelijkheid** — belastingadviseurs hebben beroepsgeheimverplichtingen; toegangscontrole zorgt ervoor dat de gegevens van de ene cliënt nooit worden blootgesteld aan een andere cliënt of onbevoegd personeel
+- **Naleving van regelgeving** — de AVG vereist passende technische maatregelen om persoonsgegevens te beschermen; de EU AI Act voegt transparantie- en toegangsvereisten toe voor AI-systemen met hoog risico; toegangscontrole is fundamenteel voor beide
+- **Multi-tenancy** — wanneer meerdere kantoren of beoefenaars hetzelfde AI-platform gebruiken, isoleert toegangscontrole hun data, zoekvragen en resultaten van elkaar
+- **Auditgereedheid** — toegangscontrolelogboeken documenteren wie wat heeft geopend en wanneer, ter ondersteuning van zowel intern bestuur als externe regelgevende audits
+
+## Hoe het werkt
+
+Toegangscontrole werkt op meerdere lagen in een AI-systeem:
+
+**Authenticatie** verifieert de identiteit — bevestigen dat een gebruiker is wie hij beweert te zijn. Dit omvat doorgaans inloggegevens (gebruikersnaam en wachtwoord), multifactorauthenticatie (een tweede verificatiestap zoals een code of biometrisch gegeven) of single sign-on (SSO) integratie met de identiteitsprovider van een organisatie.
+
+**Autorisatie** bepaalt wat een geauthenticeerde gebruiker mag doen. Het meest voorkomende model is **role-based access control (RBAC)**, waarbij rechten worden toegekend aan rollen (beheerder, adviseur, junior analist, alleen-lezen auditor) en gebruikers aan rollen worden toegewezen. Meer gedetailleerde systemen gebruiken **attribute-based access control (ABAC)**, waarbij rechten afhangen van een combinatie van gebruikersattributen, bronattributen en omgevingsvoorwaarden (bijv. tijdstip, locatie).
+
+**Handhaving** vindt plaats bij elke systeemgrens: API-eindpunten controleren autorisatie voordat verzoeken worden verwerkt, databasequery's worden gefilterd per tenant, en de retrievallaag past op rechten gebaseerde filters toe zodat zoekresultaten alleen documenten bevatten die de gebruiker mag inzien.
+
+In een juridische AI-context strekt toegangscontrole zich uit tot de kennisbank zelf. Sommige documenten kunnen beperkt zijn tot specifieke vakgebieden of senioriteitsniveaus. Geprivilegieerde juridische adviezen of interne kantoormemo's vereisen strengere controles dan openbaar beschikbare wetgeving.
+
+## Veelgestelde vragen
+
+**V: Hoe werkt toegangscontrole samen met AI-gegenereerde antwoorden?**
+
+A: De retrievallaag moet brondocumenten filteren op basis van de rechten van de gebruiker voordat context aan het taalmodel wordt doorgegeven. Dit voorkomt dat het model documenten ziet — en mogelijk citeert — waartoe de gebruiker geen toegang heeft. De toegangscontrole vindt plaats op het moment van retrieval, niet na de generatie.
+
+**V: Wat is het verschil tussen authenticatie en autorisatie?**
+
+A: Authenticatie beantwoordt "wie ben je?" — het verifieert de identiteit. Autorisatie beantwoordt "wat mag je doen?" — het controleert rechten. Beide zijn vereist: authenticatie zonder autorisatie laat iedereen binnen met volledige toegang; autorisatie zonder authenticatie kan niet verifiëren wie toegang aanvraagt.

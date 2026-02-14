@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Embedding Compression setzt etwa geringere Präzision, Product‑[Quantization](/de/glossary/quantization/) oder Hashing ein, um den Speicher pro Embedding zu verringern und damit größere Korpora kostengünstig zu indexieren.
+Embedding Compression bezeichnet die Anwendung von Verfahren, die den Speicherbedarf und die Rechenkosten von Embedding-Vektoren reduzieren und gleichzeitig deren Nutzen für die Ähnlichkeitssuche erhalten. Embeddings in voller Präzision (768 Dimensionen bei 32-Bit-Gleitkomma = 3.072 Byte pro Vektor) werden im großen Maßstab teuer — eine Wissensbasis mit 10 Millionen Chunks benötigt allein für Embeddings ca. 30 GB. Kompressionsverfahren reduzieren dies um den Faktor 4 bis 30 durch Dimensionsreduktion, [Quantization](/de/glossary/quantization/) oder beides und machen so semantische Suche im großen Maßstab auf handelsüblicher Hardware realisierbar.
+
+## Warum es wichtig ist
+
+- **Speichereinsparung** — komprimierte Embeddings benötigen weniger RAM, sodass größere Indizes auf weniger Maschinen passen und Infrastrukturkosten sinken
+- **Schnellere Suche** — kleinere Vektoren bedeuten schnellere Distanzberechnungen; komprimierte Darstellungen ermöglichen zudem spezialisierte Schnellverfahren wie Lookup-Table-basierte Distanzberechnung
+- **Geringere Embedding-Kosten** — manche Kompressionsverfahren (wie Matryoshka-Embeddings) erlauben die Nutzung kürzerer Vektoren desselben Modells und reduzieren so sowohl Speicher als auch initiale Berechnung
+- **Flexibilität beim Deployment** — komprimierte Embeddings ermöglichen den Einsatz auf Endgeräten oder an Edge-Standorten, wo Speicher und Rechenleistung eingeschränkt sind
+
+## So funktioniert es
+
+Techniken zur Embedding Compression setzen auf verschiedenen Ebenen an:
+
+**Dimensionsreduktion** (PCA, Random Projection) verringert die Anzahl der Dimensionen — beispielsweise von 768 auf 256. Dabei werden die am wenigsten informativen Dimensionen entfernt, während die wesentliche Struktur erhalten bleibt. Die Retrieval-Qualität sinkt typischerweise um 2–5 % bei einer Größenreduktion von 60–70 %.
+
+**Skalare Quantisierung** reduziert die Präzision jeder Dimension — etwa durch Umwandlung von 32-Bit-Gleitkommazahlen in 8-Bit-Ganzzahlen oder sogar Binärwerte. Jede Dimension wird linear von ihrem beobachteten Bereich auf einen kleineren Ganzzahlbereich abgebildet. 8-Bit-Quantisierung bietet 4-fache Kompression bei minimalem Qualitätsverlust; binäre Quantisierung (1 Bit pro Dimension) bietet 32-fache Kompression, allerdings mit deutlichem Qualitätseinbruch.
+
+**Product Quantization (PQ)** teilt den Vektor in Teilvektoren auf und ersetzt jeden durch einen Index in ein erlerntes Codebook. Damit lässt sich eine 20- bis 60-fache Kompression erreichen und gleichzeitig 95 %+ der Retrieval-Qualität erhalten, was es zum beliebtesten Verfahren für große Indizes macht.
+
+**Matryoshka Representation Learning** trainiert Embedding-Modelle so, dass die ersten N Dimensionen ein gültiges niedrigdimensionales Embedding bilden. Das ermöglicht die Wahl des Kompressionsgrades zur Abfragezeit — volle 768-dimensionale Vektoren für hochpräzise Abfragen und gekürzte 256-dimensionale Vektoren für schnelle approximative Abfragen — ohne einen separaten Kompressionsschritt.
+
+Diese Verfahren lassen sich kombinieren: beispielsweise PCA zur Reduktion von 768 auf 256 Dimensionen, gefolgt von skalarer Quantisierung der reduzierten Vektoren. Die optimale Kombination hängt vom Datensatz, dem erforderlichen Qualitätsniveau und den Hardware-Einschränkungen ab.
+
+## Häufige Fragen
+
+**F: Wie viel Qualität geht bei der Kompression verloren?**
+
+A: Das hängt vom Verfahren und der Aggressivität ab. PCA von 768 auf 384 Dimensionen erhält typischerweise 97 %+ der Retrieval-Qualität. 8-Bit-skalare Quantisierung erhält 99 %+. Product Quantization mit üblichen Parametern erhält 95–98 %. Binäre Quantisierung fällt auf 85–90 %, bietet dafür aber extreme Kompression.
+
+**F: Wann sollte man Embeddings komprimieren?**
+
+A: Wenn der Index in voller Präzision den verfügbaren Speicher übersteigt, wenn die Suchlatenz reduziert werden muss oder wenn Infrastrukturkosten gesenkt werden sollen. Bei kleinen Sammlungen (unter 1 Million Vektoren) ist die Speicherung in voller Präzision in der Regel erschwinglich und eine Kompression unnötig.
 
 ## References
 

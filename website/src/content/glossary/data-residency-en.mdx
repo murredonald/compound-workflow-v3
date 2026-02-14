@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Data residency requirements specify in which jurisdictions data must be stored or processed, influencing cloud, hosting, and vendor choices for AI systems.
+Data residency refers to the geographic and legal requirements governing where data is physically stored and processed. Regulations, contracts, and organisational policies may mandate that certain categories of data — particularly personal data, financial records, or client-confidential information — remain within specific jurisdictions. For AI systems handling sensitive tax data in Belgium, data residency determines which cloud providers, hosting regions, and processing architectures are permissible, and directly affects vendor selection and system design.
+
+## Why it matters
+
+- **GDPR compliance** — the GDPR restricts transfers of personal data outside the European Economic Area (EEA) unless adequate safeguards are in place; AI systems processing Belgian taxpayer data must ensure that data stays within permitted jurisdictions
+- **Professional obligations** — tax advisors and accountants are bound by professional secrecy laws that may impose additional geographic constraints on where client data can be stored or processed
+- **Client requirements** — enterprise clients often include data residency clauses in their contracts, requiring that their data never leaves specific countries or regions
+- **Sovereignty and control** — keeping data within the EU ensures it is subject to EU law and regulatory oversight, providing stronger legal protections than storage in jurisdictions with weaker data protection frameworks
+
+## How it works
+
+Data residency operates at multiple system layers:
+
+**Storage layer** — databases, object stores, and file systems must be provisioned in approved geographic regions. Major cloud providers (AWS, Azure, GCP) offer region-specific deployment, allowing organisations to select EU data centres. The specific region (e.g., eu-west-1 in Ireland vs. eu-central-1 in Frankfurt) may matter depending on the applicable requirements.
+
+**Processing layer** — data residency is not only about where data is stored at rest but also where it is processed. If an AI model runs in a US data centre and receives Belgian client data for inference, the data has left the EU even if it is stored in Europe. This means that LLM API calls, embedding computations, and retrieval operations must all occur within approved regions.
+
+**Transit layer** — data in transit (being transferred between services) must be encrypted and routed through approved network paths. Some organisations require that even encrypted data does not transit through non-approved jurisdictions.
+
+**Vendor assessment** — when using third-party AI services (embedding APIs, LLM providers, vector databases), organisations must verify that the vendor's data processing occurs in compliant jurisdictions. This includes checking sub-processors — vendors who process data on behalf of the primary vendor.
+
+Data residency requirements vary by regulation and context. GDPR applies broadly to personal data of EU residents. Belgium's professional secrecy laws add constraints for legal and financial professionals. Sector-specific regulations (e.g., financial services) may impose additional requirements. Organisations must map all data flows and verify residency compliance at each point.
+
+## Common questions
+
+**Q: Does data residency apply to anonymised data?**
+
+A: If data is truly and irreversibly anonymised (not pseudonymised), GDPR no longer applies and data residency restrictions based on GDPR do not apply. However, achieving true anonymisation is difficult, and many "anonymised" datasets can be re-identified. Pseudonymised data remains personal data under GDPR and is subject to residency requirements.
+
+**Q: Can we use US-based AI APIs if we have EU data residency requirements?**
+
+A: Only if the API provider offers EU-region processing and adequate data protection safeguards. Many LLM providers now offer EU-hosted endpoints specifically to address this. Without EU-region processing, sending personal or client-confidential data to a US-based API would violate GDPR transfer restrictions.

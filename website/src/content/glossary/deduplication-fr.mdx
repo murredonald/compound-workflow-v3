@@ -10,6 +10,35 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La deduplication compare les documents sur le contenu ou des empreintes pour détecter les copies et quasi‑copies, afin que l’indexation et l’évaluation ne soient pas biaisées par la répétition.
+La déduplication est le processus d'identification et de suppression de documents, passages ou enregistrements dupliqués ou quasi-dupliqués dans un jeu de données. Dans les systèmes de recherche d'information et d'IA, la déduplication empêche le même contenu d'apparaître plusieurs fois dans les résultats de recherche, de consommer un stockage inutile ou de fausser les analyses. En droit fiscal belge, la déduplication est particulièrement importante car le même texte législatif peut apparaître dans plusieurs sources officielles, les versions consolidées peuvent coexister avec les publications originales, et les décisions de justice peuvent être rapportées dans plusieurs bases de données.
+
+## Pourquoi c'est important
+
+- **Qualité des résultats de recherche** — retourner la même disposition trois fois depuis différentes sources fait perdre du temps à l'utilisateur et réduit le nombre de résultats distincts visibles ; la déduplication garantit des résultats diversifiés et utiles
+- **Efficacité de l'embedding et de l'index** — les documents dupliqués produisent des embeddings dupliqués qui occupent du stockage et ralentissent la recherche de plus proches voisins sans ajouter de valeur informationnelle
+- **Qualité des données d'entraînement** — les modèles d'IA entraînés sur des jeux de données fortement dupliqués peuvent sur-apprendre le contenu répété, faussant leurs sorties ; la déduplication est une étape de prétraitement standard
+- **Analyses précises** — si le même document apparaît cinq fois, les analyses basées sur la fréquence le surcomptent ; la déduplication garantit que les métriques comme la distribution thématique et le comptage de citations sont exactes
+
+## Comment ça fonctionne
+
+La déduplication opère à plusieurs niveaux de similarité :
+
+**La déduplication exacte** identifie les documents qui sont identiques octet par octet ou caractère par caractère. C'est le cas le plus simple, généralement traité en comparant les hachages cryptographiques (SHA-256) du contenu des documents. Si deux documents produisent le même hachage, ils sont identiques.
+
+**La détection de quasi-doublons** identifie les documents qui sont substantiellement similaires mais pas identiques — par exemple, deux versions de la même loi avec des différences mineures de formatage, ou le même arrêt publié avec des métadonnées différentes. Les techniques comprennent MinHash (générant des « empreintes » compactes à partir des shingles de documents et en les comparant), SimHash (hachage sensible à la localité qui projette des documents similaires vers des valeurs de hachage similaires) et la similarité basée sur les embeddings (signalant les documents dont les embeddings vectoriels sont plus proches qu'un seuil défini).
+
+**La déduplication sémantique** identifie les documents qui expriment la même information avec des mots différents. Cela nécessite une comparaison basée sur les embeddings et est plus agressive — elle pourrait fusionner une version néerlandaise et française de la même loi. Ce niveau est généralement utilisé avec prudence, car les textes juridiques dans différentes langues peuvent présenter des différences subtiles qui ont leur importance.
+
+La décision de déduplication implique aussi de choisir quelle copie conserver. Dans les contextes juridiques, la source la plus faisant autorité (le Moniteur belge plutôt qu'une base de données tierce), la version la plus récente (un texte consolidé plutôt qu'une publication originale), ou la version avec les métadonnées les plus riches est préférée.
+
+## Questions fréquentes
+
+**Q : La déduplication doit-elle avoir lieu avant ou après l'indexation ?**
+
+R : Idéalement avant l'indexation, pendant le pipeline d'ingestion des documents. Cela empêche la création d'embeddings dupliqués. Cependant, certains systèmes appliquent aussi une déduplication au niveau des résultats au moment de la requête, regroupant les résultats quasi-dupliqués avant de les présenter à l'utilisateur.
+
+**Q : La déduplication peut-elle supprimer accidentellement du contenu important ?**
+
+R : Oui, si le seuil de similarité est trop agressif. Deux articles avec une formulation similaire mais des effets juridiques différents (par exemple, des versions fédérale et régionale d'une disposition similaire) doivent être conservés comme des entrées distinctes. Des seuils conservateurs et des règles de déduplication tenant compte des métadonnées préviennent les fusions erronées.

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-An evaluation dataset is a collection of examples with known correct answers or [labels](/en/glossary/ground-truth/) against which models and systems are scored to quantify performance.
+An evaluation dataset (eval set) is a curated collection of input-output pairs where the correct answer for each input is known in advance. It serves as the benchmark against which an AI system's performance is measured: the system processes each input, and its output is compared against the known correct answer to compute quality metrics. In legal AI, evaluation datasets contain tax law questions paired with verified correct answers, source citations, and relevance judgements that enable systematic measurement of retrieval and generation quality.
+
+## Why it matters
+
+- **Objective measurement** — without an evaluation dataset, quality assessment is subjective; with one, teams can compute precise metrics (accuracy, precision, recall, faithfulness) that track system quality over time
+- **Regression detection** — running the evaluation dataset after every system change reveals whether the change improved or degraded performance, catching regressions before they affect users
+- **Model and configuration comparison** — evaluation datasets enable fair comparison between different models, retrieval strategies, or prompt configurations under identical conditions
+- **Domain coverage** — a well-designed evaluation dataset covers the system's expected use cases, edge cases, and known difficulties, ensuring that quality claims reflect real-world performance
+
+## How it works
+
+Building an evaluation dataset for legal AI involves several steps:
+
+**Query collection** — representative questions are gathered from multiple sources: real user queries (anonymised), questions designed by domain experts to test specific capabilities, and edge cases that probe known failure modes. For a Belgian tax AI system, this includes queries across different tax types (income tax, VAT, registration duties), jurisdictions (federal, Flemish, Walloon, Brussels), and complexity levels.
+
+**Answer annotation** — domain experts provide the correct answer for each query, including the specific source documents and articles that support it. Annotation guidelines ensure consistency: what counts as "correct", how to handle ambiguous questions, and how to score partially correct answers.
+
+**Relevance judgements** — for retrieval evaluation, annotators identify all documents in the corpus that are relevant to each query. This enables computation of recall (did the system find all relevant documents?) and precision (were the returned documents actually relevant?).
+
+**Dataset maintenance** — as the knowledge base evolves (new legislation, amended provisions), the evaluation dataset must be updated to reflect current correct answers. An answer that was correct in 2024 may be wrong in 2025 after a legislative change.
+
+Quality evaluation datasets typically contain 200-1000 query-answer pairs, stratified across topic areas, difficulty levels, and question types (factual lookup, multi-step reasoning, comparison, temporal). The dataset should be large enough for statistical significance but manageable enough for regular human review and updating.
+
+## Common questions
+
+**Q: Can evaluation datasets be generated automatically?**
+
+A: Partially. LLMs can generate candidate questions, and semi-automated pipelines can propose answers. But verification by domain experts remains essential — the gold standard must actually be correct, or the evaluation produces misleading metrics.
+
+**Q: How often should the evaluation dataset be updated?**
+
+A: After every significant knowledge base change (new legislation, major amendments) and at least quarterly otherwise. Outdated evaluation datasets produce artificially low scores because the system may be correctly answering based on current law while the dataset expects answers based on old law.
 
 ## References
 

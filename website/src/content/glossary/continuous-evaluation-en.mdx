@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Continuous evaluation automates running tests and checks on live or recent data so that changes in behaviour or quality are detected quickly.
+Continuous evaluation is the practice of regularly and automatically running quality assessments on an AI system's outputs using live or recent production data, rather than relying solely on one-time evaluations at deployment. It detects performance degradation, regressions, and drift as they happen — before users notice or are affected. In legal AI, continuous evaluation is particularly important because the knowledge base changes constantly as new legislation, rulings, and circulars are added, and any of these changes can affect answer quality.
+
+## Why it matters
+
+- **Early regression detection** — a new document ingestion, model update, or prompt change can subtly degrade answer quality; continuous evaluation catches these regressions within hours rather than weeks
+- **Knowledge base health** — as new legal sources are added, they may conflict with existing provisions or introduce edge cases; continuous evaluation surfaces these issues before they affect user-facing answers
+- **Regulatory compliance** — the EU AI Act requires ongoing monitoring of high-risk AI systems throughout their lifecycle, not just at deployment; continuous evaluation provides the evidence for this ongoing compliance
+- **Confidence in updates** — teams can deploy improvements with confidence knowing that automated evaluations will flag any unexpected degradation
+
+## How it works
+
+Continuous evaluation operates as an automated pipeline that runs on a regular schedule or is triggered by system changes:
+
+**Test set evaluation** — a curated set of representative questions with known correct answers is run against the system periodically (daily or weekly). Results are compared against baseline scores. Drops in accuracy, faithfulness, or retrieval precision trigger alerts.
+
+**Production sampling** — a random sample of real user queries and system responses is captured and evaluated automatically. Automated metrics assess faithfulness (does the answer match the cited sources?), completeness (did the retrieval layer find the relevant provisions?), and format compliance (does the output follow the expected structure?).
+
+**Regression testing** — when the knowledge base is updated (new legislation ingested, existing documents amended), a targeted set of queries related to the changed content is automatically run to verify that answers are updated correctly and that unrelated answers are not affected.
+
+**Drift monitoring** tracks statistical properties of the system's inputs and outputs over time. Changes in query distribution (users asking about new topics), retrieval score distributions (lower average relevance scores), or confidence distributions (more uncertain answers) may indicate underlying problems.
+
+Results are aggregated into dashboards that show trends over time: accuracy curves, retrieval quality metrics, hallucination rates, and latency. Thresholds define when automated alerts are triggered versus when the change is within normal variance.
+
+## Common questions
+
+**Q: How is continuous evaluation different from unit testing?**
+
+A: Unit tests verify that individual code components work correctly in isolation. Continuous evaluation assesses the end-to-end system's output quality on realistic data. Unit tests catch code bugs; continuous evaluation catches quality degradation that may not be caused by code changes at all (e.g., a newly ingested document that conflicts with existing content).
+
+**Q: How often should continuous evaluation run?**
+
+A: It depends on the system's update frequency and risk tolerance. Daily evaluation is common for production systems. Trigger-based evaluation (running after every knowledge base update or model change) is more responsive but more resource-intensive.
 
 ## References
 

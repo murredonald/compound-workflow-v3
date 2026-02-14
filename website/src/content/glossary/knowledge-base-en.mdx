@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-A knowledge base is a curated collection of documents, facts, or triples that can be searched or queried to support question answering, support, and analysis.
+A knowledge base is a curated, structured collection of information — documents, facts, rules, or entity relationships — organised for efficient querying, retrieval, and reuse. Unlike a raw document corpus, a knowledge base typically incorporates metadata, taxonomies, or relational structure that enables precise lookup and reasoning. In legal and tax AI, knowledge bases store legislation, rulings, circulars, and their interconnections.
+
+## Why it matters
+
+- **Single source of truth** — centralises authoritative information so that all queries draw from the same verified data
+- **Structured retrieval** — metadata and relationships allow filtering by jurisdiction, date, topic, or authority level, far beyond what keyword search provides
+- **RAG foundation** — retrieval-augmented generation systems depend on high-quality knowledge bases to ground their answers in facts rather than parametric memory
+- **Temporal accuracy** — a well-maintained knowledge base tracks which version of a law was in force at a given date, preventing the system from citing repealed provisions
+
+## How it works
+
+A knowledge base is built through a pipeline of ingestion, structuring, and indexing. Raw documents (legislation texts, court decisions, administrative rulings) are parsed and enriched with metadata: publication date, authority, topic classification, jurisdictional scope, and cross-references to other provisions.
+
+The enriched content is then stored in a format that supports both full-text search and structured queries. Modern legal knowledge bases often combine a document store (for full text), a vector index (for semantic search), and a graph layer (for relationships between entities like articles, amendments, and rulings).
+
+Keeping a knowledge base current requires automated monitoring of official publications, change detection, and re-indexing pipelines that propagate updates without breaking existing references.
+
+## Common questions
+
+**Q: How is a knowledge base different from a database?**
+
+A: A traditional database stores structured data in tables with rigid schemas. A knowledge base is broader — it can include unstructured text, semi-structured metadata, and relational knowledge. Legal knowledge bases often combine all three: full legislative text, structured metadata fields, and relationship links between provisions.
+
+**Q: Can a knowledge base become outdated?**
+
+A: Yes, and this is a critical risk in legal domains. Tax law changes frequently through new legislation, amendments, and administrative circulars. A knowledge base without automated refresh pipelines can serve outdated information, leading to incorrect advice. Version tracking and freshness monitoring are essential.
+
+**Q: How does a knowledge base support RAG?**
+
+A: In a RAG pipeline, the knowledge base serves as the retrieval layer. When a user asks a question, the system searches the knowledge base for relevant passages, then feeds those passages to the language model as context. The model generates its answer grounded in the retrieved content rather than relying on its training data alone.

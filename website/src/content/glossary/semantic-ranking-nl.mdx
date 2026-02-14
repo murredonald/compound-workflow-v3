@@ -10,6 +10,35 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Semantic ranking gebruikt neurale modellen en [embeddings](/nl/glossary/embeddings/) om in te schatten hoe goed een document inhoudelijk bij een vraag past, vaak als her‑ranker bovenop klassieke zoekresultaten.
+Semantic ranking is het proces van het rangschikken van zoekresultaten op basis van hun betekenisniveau-relevantie voor een zoekopdracht, met behulp van neurale modellen die context en intentie begrijpen in plaats van uitsluitend te vertrouwen op overeenkomsten in trefwoorden. Waar lexicale rangschikking (BM25) documenten beloont die de exacte woorden van de zoekopdracht bevatten, beloont semantische rangschikking documenten die dezelfde concepten uitdrukken — zelfs wanneer er totaal andere woorden worden gebruikt. Een zoekopdracht over "belastingaftrekken voor thuiskantoorkosten" matcht semantisch met een document over "déduction des frais de bureau à domicile" omdat de betekenis dezelfde is, ondanks nul woordoverlap.
+
+## Waarom het belangrijk is
+
+- **Meertalige matching** — in het drietalige Belgische rechtssysteem maakt semantic ranking het mogelijk dat een Nederlandstalige zoekopdracht relevante Franstalige wetgeving vindt, omdat beide dezelfde betekenis hebben in de [embeddingsruimte](/nl/glossary/embeddings/)
+- **Oplossen van woordenschatverschillen** — juridische professionals en wetgeving gebruiken vaak verschillende terminologie voor hetzelfde concept; semantic ranking overbrugt dit verschil zonder exacte termovereenkomsten te vereisen
+- **Begrijpen van intentie** — semantische modellen kunnen op basis van context onderscheid maken tussen verschillende betekenissen van hetzelfde woord: "interest" in een belastingaftrekcontext vs. een financieel belang-context
+- **Verbeterde gebruikerservaring** — semantic ranking toont relevante resultaten die zoeken op trefwoorden volledig zou missen, waardoor de inspanning om toepasselijke wettelijke bepalingen te vinden afneemt
+
+## Hoe het werkt
+
+Semantic ranking werkt via neurale modellen die betekenis coderen:
+
+**Bi-encoder (embedding-gebaseerde) rangschikking** codeert de zoekopdracht en elk document onafhankelijk van elkaar in embeddingvectoren, en rangschikt vervolgens op vectorgelijkenis (cosine, inwendig product). Dit is snel omdat documentembeddings vooraf worden berekend en opgeslagen in de vectorindex — alleen de zoekopdracht moet op het moment van zoeken worden gecodeerd. De onafhankelijke codering betekent echter dat het model geen aandacht kan besteden aan interacties tussen zoekopdracht en document.
+
+**Cross-encoder rangschikking** verwerkt de zoekopdracht en elk kandidaatdocument samen als één invoer, waardoor diepgaande tokeninteractie mogelijk wordt. Het model kan aandacht besteden aan hoe specifieke zoektermen zich verhouden tot specifieke documentpassages, en vangt nuances op zoals negatie, voorwaarden en impliciete vereisten. Cross-encoders zijn nauwkeuriger maar veel trager, omdat elk zoekopdracht-documentpaar een volledige model-forward-pass vereist.
+
+**Hybride aanpak** — productiesystemen gebruiken doorgaans bi-encoder-rangschikking voor initiële kandidaatgeneratie (snel, breed), gevolgd door cross-encoder [herrangschikking](/nl/glossary/reranking/) van de topkandidaten (nauwkeurig, gericht). Deze tweefasenaanpak combineert de snelheid van bi-encoders met de nauwkeurigheid van cross-encoders.
+
+**Domeinaanpassing** — algemene semantische modellen presteren ondermaats op gespecialiseerde juridische tekst. Het fine-tunen van het rangschikkingsmodel op juridische zoekopdracht-documentparen — bijvoorbeeld belastingvragen gekoppeld aan hun relevante wetsartikelen — verbetert de rangschikkingskwaliteit voor domeinspecifieke inhoud aanzienlijk.
+
+## Veelgestelde vragen
+
+**V: Vervangt semantic ranking zoeken op trefwoorden?**
+
+A: Nee. De meest effectieve systemen combineren beide in hybride zoekopdrachten. Zoeken op trefwoorden behandelt precieze zoekopdrachten (specifieke artikelnummers, exacte juridische verwijzingen) die semantische modellen mogelijk niet correct rangschikken. Semantic ranking behandelt conceptuele zoekopdrachten die zoeken op trefwoorden niet kan oplossen. Samen dekken ze meer zoektypen dan elk afzonderlijk.
+
+**V: Hoe verschilt semantic ranking van semantisch zoeken?**
+
+A: Semantisch zoeken is het bredere concept van documenten vinden op basis van betekenis. Semantic ranking is het specifieke scoringsmechanisme binnen semantisch zoeken dat de volgorde van resultaten bepaalt. Semantisch zoeken omvat zoekopdrachtverwerking, retrieval en rangschikking; semantic ranking is de scoringsstap.

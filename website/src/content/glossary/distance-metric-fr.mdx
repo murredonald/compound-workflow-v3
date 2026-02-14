@@ -12,7 +12,37 @@ draft: false
 
 ## Definition
 
-Une distance metric définit à quel point deux vecteurs sont éloignés ou similaires et pilote ainsi le classement en [recherche par similarité](/fr/glossary/similarity-search/) et en clustering.
+Une métrique de distance est une fonction mathématique qui mesure la séparation entre deux points dans un espace. Pour être qualifiée de véritable métrique, elle doit satisfaire quatre propriétés : la non-négativité, l'identité des indiscernables (distance nulle uniquement pour des points identiques), la symétrie et l'inégalité triangulaire. En IA et dans les systèmes de recherche, les métriques de distance déterminent à quel point deux embeddings sont « proches » ou « éloignés », ce qui se traduit directement par leur degré de similarité ou de différence sémantique.
+
+## Pourquoi c'est important
+
+- **Qualité de la recherche** — le choix de la métrique de distance détermine quels documents sont considérés comme les plus pertinents pour une requête ; un mauvais choix peut classer des résultats non pertinents plus haut
+- **Cohérence** — les propriétés métriques comme l'inégalité triangulaire garantissent que les relations de similarité se comportent de manière prévisible dans l'espace d'embeddings
+- **Performance de l'index** — les algorithmes de recherche de plus proches voisins approchés (HNSW, IVF) sont optimisés pour des métriques spécifiques ; une incompatibilité dégrade à la fois la vitesse et le rappel
+- **Précision juridique** — en recherche fiscale, de petites différences sémantiques entre des dispositions peuvent avoir de grandes conséquences pratiques, ce qui rend le choix de la métrique critique
+
+## Comment ça fonctionne
+
+Lorsqu'une requête est convertie en vecteur, le système de recherche calcule les distances entre le vecteur de la requête et tous les vecteurs de documents dans l'index. Les documents ayant les distances les plus faibles (ou les scores de similarité les plus élevés) sont renvoyés comme résultats.
+
+Les métriques de distance courantes comprennent :
+
+- **Distance euclidienne** — distance en ligne droite dans l'espace vectoriel ; sensible à la magnitude des vecteurs
+- **Similarité cosinus** — mesure l'angle entre les vecteurs, en ignorant la magnitude ; largement utilisée pour les embeddings textuels où la direction compte plus que la longueur
+- **Produit scalaire** — équivalent à la similarité cosinus lorsque les vecteurs sont normalisés ; plus rapide à calculer
+- **Distance de Manhattan** — somme des différences absolues le long de chaque dimension ; parfois utilisée pour les représentations creuses
+
+La plupart des modèles d'embedding modernes sont entraînés avec la similarité cosinus comme objectif, de sorte que les systèmes de recherche normalisent généralement les vecteurs et utilisent le produit scalaire pour un calcul efficace.
+
+## Questions fréquentes
+
+**Q : La métrique de distance doit-elle correspondre à la façon dont le modèle a été entraîné ?**
+
+R : Oui. Si un [modèle d'embedding](/fr/glossary/embedding-model/) a été entraîné avec la similarité cosinus comme objectif, vous devez utiliser la similarité cosinus (ou le produit scalaire sur des vecteurs normalisés) lors de la recherche. Utiliser la distance euclidienne avec un modèle entraîné en cosinus peut dégrader les résultats.
+
+**Q : Quelle est la différence entre une distance et une similarité ?**
+
+R : Elles sont inversement liées. Une petite distance signifie une grande similarité. La similarité cosinus va de -1 à 1 (plus élevé = plus similaire), tandis que la distance euclidienne va de 0 à l'infini (plus faible = plus similaire). La plupart des systèmes convertissent entre les deux selon les besoins.
 
 ## References
 

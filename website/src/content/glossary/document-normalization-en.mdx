@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Document normalization cleans and standardises parsed content—such as normalising dates, headings, and metadata—so that downstream indexing and retrieval behave predictably.
+Document normalisation is the process of standardising the structure, encoding, formatting, and metadata of documents from diverse sources so that they can be processed consistently by downstream systems. Legal documents arrive from different publishers in different formats, with different conventions for dates, references, headings, and character encoding. Normalisation transforms this heterogeneous input into a uniform representation that the indexing, chunking, and retrieval components can handle reliably.
+
+## Why it matters
+
+- **Consistent processing** — without normalisation, the same date might appear as "15/03/2025", "March 15, 2025", "15 maart 2025", and "2025-03-15" across different sources; normalisation converts all to a single format
+- **Accurate deduplication** — documents with different formatting but identical content should be recognised as duplicates; normalisation removes superficial differences that would prevent matching
+- **Embedding quality** — embedding models produce better vectors from clean, consistently formatted text; formatting artefacts, inconsistent whitespace, and encoding errors degrade embedding quality
+- **Cross-source comparability** — normalised documents from different publishers can be searched and compared as if they came from a single source
+
+## How it works
+
+Document normalisation typically addresses several dimensions:
+
+**Character encoding** — all text is converted to a consistent encoding (UTF-8). Special characters, ligatures, and typographic variants are normalised: curly quotes to straight quotes, em dashes to standard dashes, non-breaking spaces to regular spaces.
+
+**Date normalisation** — dates in all formats are converted to a standard representation (ISO 8601: YYYY-MM-DD). This is critical for legal text where dates determine which version of a provision was in force.
+
+**Reference normalisation** — citations and cross-references are standardised. "Art. 215 WIB92", "article 215 du CIR92", and "Artikel 215 WIB92" all reference the same provision and should be normalised to a canonical form that the system recognises as identical.
+
+**Heading and structure normalisation** — section headings, article numbers, and paragraph markers are mapped to a consistent structural schema. This ensures that structure-aware chunking produces consistent results regardless of the source document's formatting conventions.
+
+**Whitespace and formatting** — multiple consecutive spaces, tabs, and blank lines are collapsed. HTML entities are decoded. Markdown or other markup is either stripped or standardised depending on the downstream use.
+
+**Language detection** — each document or section is tagged with its language (Dutch, French, German) based on automated detection, enabling language-aware processing and routing.
+
+Normalisation is idempotent — applying it twice produces the same result as applying it once. This property is important for pipeline reliability: re-processing a document should not change its normalised form.
+
+## Common questions
+
+**Q: Can normalisation change the meaning of legal text?**
+
+A: It should not. Normalisation targets formatting and encoding, not content. However, aggressive normalisation (e.g., removing all special characters) could inadvertently affect meaning in edge cases. Legal text normalisation should be conservative, preserving all substantive content while standardising only formatting.
+
+**Q: Should normalisation happen before or after parsing?**
+
+A: After parsing. Parsing converts raw formats (PDF, HTML) to text; normalisation then standardises that text. Some normalisation steps (like encoding fixes) may be needed during parsing to handle corrupt input.

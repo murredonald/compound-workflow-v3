@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Data preprocessing omvat stappen zoals ontdubbelen, filteren, tokeniseren en het corrigeren van encodering of tekensets, zodat downstream modellen met schonere input werken.
+Data preprocessing is het geheel van schoonmaak-, transformatie- en verrijkingsstappen die op ruwe data worden toegepast voordat deze wordt gebruikt voor modeltraining, indexering of retrieval. Ruwe juridische documenten komen in inconsistente formaten aan — PDF's met uiteenlopende lay-outs, HTML-pagina's met navigatieboilerplate, gescande afbeeldingen die OCR vereisen — en data preprocessing zet ze om in schone, gestandaardiseerde tekst met nauwkeurige metadata. De kwaliteit van de voorbewerking bepaalt rechtstreeks de kwaliteit van alles wat erop volgt: Embeddings, zoekresultaten en gegenereerde antwoorden.
+
+## Waarom het belangrijk is
+
+- **Garbage in, garbage out** — als ruwe documenten OCR-fouten, opmaakresiduen of ontbrekende metadata bevatten, planten deze problemen zich voort in Embeddings en zoekresultaten; preprocessing vangt en corrigeert ze bij de bron
+- **Consistentie** — Belgische juridische bronnen komen van meerdere uitgevers in verschillende formaten; preprocessing normaliseert ze naar een consistente structuur die de retrieval-pipeline uniform kan verwerken
+- **Metadataverrijking** — ruwe documenten bevatten zelden volledige metadata; preprocessing extraheert en kent publicatiedata, documenttypes, jurisdictiecodes en artikelnummers toe uit de tekst zelf
+- **Efficiëntie** — het verwijderen van boilerplate, navigatie-elementen, kop- en voetteksten en dubbele inhoud verkleint de indexgrootte en verbetert de kwaliteit van Embeddings door ruis te elimineren
+
+## Hoe het werkt
+
+Een typische preprocessing-pipeline voor juridische documenten omvat de volgende stappen:
+
+**Formaatconversie** — documenten in PDF-, HTML-, DOCX- of gescand beeldformaat worden omgezet naar schone tekst. PDF-extractie verwerkt meerkolomlay-outs en tabellen. HTML-parsing verwijdert navigatie, advertenties en boilerplate. OCR verwerkt gescande documenten met een betrouwbaarheidsscore om extracties van lage kwaliteit te markeren.
+
+**Tekstopschoning** — de geëxtraheerde tekst wordt genormaliseerd: het oplossen van coderingsproblemen, het verwijderen van dubbele witruimte, het corrigeren van veelvoorkomende OCR-fouten (bijv. "l" verkeerd gelezen als "1" in artikelnummers) en het standaardiseren van aanhalingstekens en streepjes. Voor juridische tekst omvat dit het normaliseren van citaatformaten, zodat verwijzingen naar dezelfde bepaling consistent zijn over documenten heen.
+
+**Ontdubbeling** — dubbele en bijna-dubbele documenten worden geïdentificeerd en verwijderd of geconsolideerd. Dezelfde wettekst kan voorkomen in het Belgisch Staatsblad, geconsolideerde databanken en commentaarbronnen; preprocessing zorgt ervoor dat deze slechts één keer wordt geïndexeerd met behoud van de meest gezaghebbende versie.
+
+**Metadata-extractie** — gestructureerde velden worden uit de tekst geëxtraheerd: publicatiedatum, documenttype (wet, decreet, circulaire, uitspraak), jurisdictie, artikelnummers en kruisverwijzingen. Deze metadata maakt filteren tijdens retrieval mogelijk.
+
+**Kwaliteitsvalidatie** — geautomatiseerde controles verifiëren dat de verwerkte output aan de verwachte standaarden voldoet: tekstlengte binnen normale marges, vereiste metadatavelden aanwezig, geen evidente corruptie of truncatie.
+
+## Veelgestelde vragen
+
+**V: Hoeveel van de preprocessing kan worden geautomatiseerd?**
+
+A: Het grootste deel. Formaatconversie, tekstopschoning en ontdubbeling zijn volledig geautomatiseerd. Metadata-extractie kan grotendeels worden geautomatiseerd met behulp van entity-extractiemodellen, met handmatige review voor ambigue gevallen. Kwaliteitsvalidatie is geautomatiseerd met menselijke controle voor gemarkeerde uitschieters.
+
+**V: Heeft preprocessing invloed op de kwaliteit van Embeddings?**
+
+A: Aanzienlijk. Embeddings gegenereerd uit schone, gerichte tekst zijn nauwkeuriger dan die uit tekst vol boilerplate, OCR-fouten of opmaakresiduen. Preprocessing is een van de stappen met de grootste impact op de verbetering van retrievalkwaliteit.

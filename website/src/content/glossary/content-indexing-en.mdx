@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Content indexing builds the inverted, vector, or hybrid indices that allow fast lookup of documents given search queries or [embeddings](/en/glossary/embeddings/).
+Content indexing is the process of creating searchable data structures over a document collection so that queries can be answered in milliseconds rather than requiring a full scan of every document. It encompasses building inverted indexes for keyword search, vector indexes for semantic search, and metadata indexes for structured filtering. Content indexing transforms a passive document store into an active search system — without it, every query would require reading every document, making search impractical at any meaningful scale.
+
+## Why it matters
+
+- **Search speed** — indexes enable sub-second search over millions of documents; without them, a simple query against a large legal corpus would take minutes
+- **Multi-modal search** — content indexing supports different search paradigms (keyword, semantic, structured) by building appropriate index structures for each
+- **Freshness** — efficient incremental indexing allows new documents to become searchable within minutes of ingestion, keeping the knowledge base current
+- **Query flexibility** — well-designed indexes support complex queries combining text search, metadata filters, and semantic similarity without performance degradation
+
+## How it works
+
+Content indexing creates several parallel data structures during document ingestion:
+
+**Inverted index** — for each term in the vocabulary, the index stores a list of documents containing that term, along with term frequency and position information. This supports keyword search (BM25), phrase search, and Boolean queries. Building an inverted index involves tokenising, stemming, and cataloguing every term in every document.
+
+**Vector index** — each document chunk is processed through an embedding model to produce a dense vector, which is then added to an approximate nearest neighbour (ANN) index structure (HNSW, IVF, or similar). This supports semantic search — finding documents by meaning rather than exact terms.
+
+**Metadata index** — structured fields (date, jurisdiction, document type, authority level) are stored in a form that supports fast filtering. This may use database indexes, inverted indexes over metadata values, or specialised columnar storage.
+
+**Full-text storage** — the original document text is stored alongside the indexes so that matched passages can be returned to the user and passed to the generation layer.
+
+Indexing is typically an offline or batch process that runs as part of the data pipeline. When a new document is ingested, it is parsed, cleaned, chunked, and then indexed into all relevant index structures. The indexing process must handle updates (re-indexing modified documents) and deletions (removing repealed provisions) as well as additions.
+
+Index maintenance includes monitoring index health (fragmentation, staleness), periodic rebuilds (to optimise performance), and capacity management (adding index shards as the collection grows).
+
+## Common questions
+
+**Q: How long does content indexing take?**
+
+A: For text indexing, thousands of documents can be indexed per second on modern hardware. Embedding computation is the bottleneck — generating embeddings for document chunks typically runs at 100-1000 chunks per second depending on the embedding model and hardware. A full re-index of a large legal corpus (millions of chunks) may take hours.
+
+**Q: Can the search system serve queries during re-indexing?**
+
+A: Yes, with proper architecture. Blue-green indexing (building a new index while the old one serves queries, then switching) or incremental updates allow uninterrupted service during indexing.

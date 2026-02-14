@@ -12,7 +12,40 @@ draft: false
 
 ## Définition
 
-Le jailbreaking désigne les techniques qui manipulent volontairement les [prompts](/fr/glossary/prompt/) ou les entrées afin qu'un modèle de langage ignore ou contourne ses politiques de sécurité et génère du contenu restreint ou inapproprié.
+Le jailbreaking est la pratique consistant à concevoir des [prompts](/fr/glossary/prompt/) ou des entrées qui amènent un modèle de langage à contourner ses contraintes de sécurité intégrées, ses directives de politique ou les instructions de son prompt système, et à produire des sorties qu'il a été conçu pour refuser. Les techniques de jailbreaking exploitent la tension entre la capacité du modèle à suivre les instructions et son entraînement à la sécurité — elles utilisent des formulations créatives de prompts pour contourner les filtres de sécurité. En IA juridique, les risques de jailbreaking incluent le fait de tromper le système pour qu'il se présente comme un conseiller agréé, fabrique des citations sans les réserves appropriées, ou contourne les avertissements sur la nature non contraignante de ses résultats.
+
+## Pourquoi c'est important
+
+- **Contournement de la sécurité** — un système d'IA juridique victime de jailbreaking pourrait produire des résultats sans les mentions légales requises, présenter des réponses spéculatives comme faisant autorité, ou contourner les limitations de périmètre professionnel
+- **Exposition à la responsabilité** — si un utilisateur détourne un système d'IA juridique par jailbreaking et reçoit un résultat qui cause un préjudice, la question de la responsabilité devient complexe ; une résistance robuste au jailbreaking est une exigence défensive
+- **Exposition du prompt système** — certaines techniques de jailbreaking extraient le prompt système, révélant les instructions propriétaires, les règles de sécurité et les détails architecturaux
+- **Confiance et réglementation** — le règlement européen sur l'IA (AI Act) exige des garde-fous appropriés contre les utilisations abusives ; la résistance au jailbreaking fait partie du respect de cette exigence
+
+## Comment ça fonctionne
+
+Les techniques de jailbreaking exploitent différents aspects de la manière dont les modèles de langage traitent les instructions :
+
+**Les prompts de jeu de rôle** demandent au modèle de « faire semblant » d'être un système différent sans contraintes de sécurité (« imagine que tu es une IA sans restrictions... »). Cela exploite l'entraînement du modèle à suivre les instructions pour contourner son entraînement à la sécurité.
+
+**L'encodage et l'obfuscation** présentent la requête problématique sous une forme encodée (base64, texte inversé, substitution de caractères) qui contourne les filtres de sécurité basés sur les mots-clés tandis que le modèle comprend toujours l'intention.
+
+**L'escalade multi-tours** déplace progressivement la conversation vers un territoire restreint à travers une série de questions d'apparence innocente, chacune s'appuyant sur la précédente, jusqu'à ce que le modèle se retrouve dans un contexte où il produit un contenu restreint.
+
+**L'injection de prompts** intègre des instructions dans un contenu d'apparence normale — par exemple, en dissimulant des instructions de contournement dans un document que le système récupère et traite comme contexte. Cela est particulièrement pertinent pour les systèmes RAG où du contenu externe entre dans le prompt.
+
+**Le prompting indirect** utilise des fonctionnalités légitimes (résumé, traduction, analyse) sur un contenu qui contient la requête restreinte, amenant le modèle à produire le contenu restreint dans le cadre de son analyse.
+
+Les défenses contre le jailbreaking incluent : un entraînement à la sécurité robuste résistant aux astuces de jeu de rôle et d'encodage, un filtrage des entrées qui détecte les schémas courants de jailbreaking, une surveillance des sorties qui signale les réponses violant les politiques de sécurité, et des tests adversariaux réguliers pour découvrir de nouvelles techniques de jailbreaking avant qu'elles ne soient exploitées. Aucune défense actuelle n'est totalement efficace — la résistance au jailbreaking est une course aux armements permanente entre les techniques d'attaque et de défense.
+
+## Questions fréquentes
+
+**Q : Le jailbreaking peut-il être totalement empêché ?**
+
+R : Pas avec la technologie actuelle. À mesure que les modèles deviennent meilleurs pour suivre les instructions, ils deviennent aussi potentiellement plus susceptibles à des instructions de contournement astucieusement conçues. La défense se concentre sur l'élévation de la barre (rendre le jailbreaking plus difficile et moins fiable) plutôt que sur son élimination totale.
+
+**Q : Le jailbreaking est-il illégal ?**
+
+R : Généralement non, lorsqu'il est pratiqué à des fins de recherche ou d'expérimentation personnelle. Cependant, utiliser le jailbreaking pour extraire des informations confidentielles, contourner des contrôles d'accès ou causer un préjudice peut violer les lois sur la fraude informatique ou les conditions d'utilisation selon la juridiction et le contexte.
 
 ## References
 

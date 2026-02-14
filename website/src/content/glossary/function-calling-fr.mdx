@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-Le function calling est un schéma où le modèle de langage renvoie une sortie structurée qui précise quelle fonction ou quel outil externe appeler, ainsi que les arguments, ce qui permet de se connecter à des API, bases de données ou autres systèmes.
+Le function calling est une capacité des modèles de langage modernes par laquelle le modèle sélectionne une fonction externe appropriée parmi un ensemble prédéfini, génère les arguments requis dans un format structuré (généralement JSON), puis le système exécute la fonction et renvoie le résultat au modèle. Cela permet aux LLM d'interagir avec des API externes, des bases de données, des calculateurs et d'autres outils via une interface structurée, plutôt que de générer du texte libre. En IA juridique, le function calling permet au modèle d'interroger des bases de données législatives, d'effectuer des calculs fiscaux, de vérifier des délais de déclaration et de contrôler l'exactitude des citations — autant de tâches qui nécessitent des interactions structurées et précises avec des systèmes externes.
+
+## Pourquoi c'est important
+
+- **Interactions externes précises** — le function calling fournit une interface typée et validée entre le modèle et les systèmes externes, réduisant le risque de requêtes mal formées que la génération de texte libre produirait
+- **Sélection d'outils fiable** — le modèle choisit parmi un ensemble défini de fonctions avec des paramètres documentés, rendant l'utilisation des outils prévisible et auditable
+- **Délégation de calculs** — les tâches que les LLM exécutent mal (arithmétique, requêtes de base de données, calculs de dates) sont déléguées à des outils spécialisés qui produisent des résultats exacts
+- **Flux de travail agentiques** — le function calling est le mécanisme qui permet aux agents IA d'agir dans le monde réel : rechercher, calculer, écrire et coordonner à travers plusieurs systèmes
+
+## Comment ça fonctionne
+
+Le function calling opère selon un protocole défini :
+
+**Définitions des fonctions** — le développeur fournit au modèle les descriptions des fonctions disponibles, incluant leur nom, leur objectif, leurs paramètres (avec types et descriptions) et leurs valeurs de retour. Pour un système d'IA juridique, les fonctions peuvent inclure `search_legislation(query, jurisdiction, date)`, `calculate_tax(income, deductions, year)` et `verify_citation(article, law_code)`.
+
+**Décision du modèle** — lors de la génération de la réponse, le modèle détermine qu'il doit appeler une fonction pour répondre à la question de l'utilisateur. Il génère un appel de fonction structuré spécifiant le nom de la fonction et les valeurs des arguments. Par exemple : `{"function": "calculate_tax", "arguments": {"income": 75000, "deductions": 12500, "year": 2025}}`.
+
+**Exécution** — la couche applicative valide l'appel de fonction, l'exécute sur le backend approprié et renvoie le résultat au modèle. Le modèle n'exécute jamais les fonctions directement — le système joue le rôle d'intermédiaire, appliquant la sécurité, les contrôles d'accès et la validation des entrées.
+
+**Intégration de la réponse** — le modèle reçoit le résultat de la fonction et l'intègre dans sa réponse à l'utilisateur, combinant généralement le résultat structuré avec un texte explicatif.
+
+Plusieurs appels de fonctions peuvent avoir lieu dans une seule réponse (appels parallèles), ou les appels peuvent être chaînés (le résultat de l'un alimentant les arguments du suivant). Les API LLM modernes d'Anthropic, OpenAI et d'autres fournissent un support intégré du function calling avec génération automatique de sorties structurées.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre function calling et tool use ?**
+
+R : Le function calling est le mécanisme spécifique — le modèle produit du JSON structuré correspondant à la signature d'une fonction. Le tool use est le concept plus large — tout schéma dans lequel le modèle interagit avec des capacités externes. Le function calling est l'implémentation la plus courante du tool use dans les systèmes en production.
+
+**Q : Le modèle peut-il appeler la mauvaise fonction ?**
+
+R : Oui. Les modèles peuvent sélectionner une fonction inappropriée ou générer des arguments incorrects, en particulier pour les requêtes ambiguës. Des descriptions claires des fonctions, la validation des paramètres et des étapes de confirmation pour les actions à enjeux élevés atténuent ce risque.
 
 ## References
 

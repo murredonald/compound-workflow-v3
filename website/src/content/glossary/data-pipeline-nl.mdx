@@ -10,6 +10,41 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Een data pipeline voor search omvat typisch ingestie, parsing, normalisatie, verrijking, chunking en indexering, met bewaakte jobs en logging tussen elke stap.
+Een Datapijplijn is de geautomatiseerde reeks stappen die Gegevens van hun oorspronkelijke bronnen door verwerkings-, transformatie- en verrijkingsfasen leidt naar een vorm die geschikt is voor indexering, analyse of modeltraining. In juridische AI neemt de Datapijplijn ruwe juridische documenten op uit publicaties, officiële staatsbladen, rechtspraakdatabases en regelgevende bronnen, om ze vervolgens te reinigen, structureren, chunken, embedden en indexeren in de kennisbank. De betrouwbaarheid en correctheid van de Pijplijn bepalen rechtstreeks de kwaliteit en volledigheid van de kennis van het AI-systeem.
+
+## Waarom het belangrijk is
+
+- **Actualiteit van de kennisbank** — een goed ontworpen Pijplijn neemt automatisch nieuwe wetgeving, uitspraken en circulaires op zodra ze gepubliceerd worden, zodat het systeem actueel blijft zonder handmatige tussenkomst
+- **Gegevenskwaliteit** — elke Pijplijnfase bevat validatie- en kwaliteitscontroles die fouten opvangen (OCR-fouten, ontbrekende metadata, corrupte bestanden) voordat ze in de index terechtkomen en de retrievalkwaliteit beïnvloeden
+- **Reproduceerbaarheid** — een geautomatiseerde Pijplijn levert consistente resultaten op, ongeacht wie hem uitvoert of wanneer; handmatige processen zijn foutgevoelig en niet herhaalbaar
+- **Schaalbaarheid** — naarmate het volume juridische bronnen groeit, verwerkt de Pijplijn een toenemende doorvoer zonder dat er evenredig meer handmatig werk nodig is
+
+## Hoe het werkt
+
+Een juridische AI-datapijplijn bestaat doorgaans uit de volgende fasen:
+
+**Extractie** — ruwe documenten worden verzameld uit hun bronnen. Dit kan het scrapen van websites van het Belgisch Staatsblad omvatten, het ontvangen van datafeeds van juridische uitgevers, het downloaden uit rechtspraakdatabases, of het verwerken van per e-mail bezorgde circulaires. Elke bron heeft een eigen formaat en leveringsmechanisme.
+
+**Parsing** — geëxtraheerde documenten worden omgezet van hun oorspronkelijke formaten (PDF, HTML, DOCX, XML) naar schone tekst. Deze fase omvat lay-outextractie, tabeldetectie, OCR voor gescande documenten en verwijdering van standaardtekst. Parsingkwaliteit is vaak het grootste knelpunt in de Pijplijn.
+
+**Transformatie** — de opgeschoonde tekst wordt verrijkt met metadata (publicatiedatum, documenttype, rechtsgebied, artikelnummers), ontdubbeld tegen bestaande inhoud en genormaliseerd naar een consistent formaat. Kruisverwijzingen tussen documenten worden geïdentificeerd en gekoppeld.
+
+**Chunking** — documenten worden opgesplitst in retrievalgeschikte segmenten (paragrafen, artikelen, secties) met overlap om context aan de grenzen te behouden. Chunkgrenzen worden zo gekozen dat de semantische samenhang maximaal is.
+
+**Embedding** — elk Chunk wordt verwerkt door een [embeddingmodel](/nl/glossary/embeddings/) om een vectorrepresentatie te produceren voor semantisch zoeken. Embeddings worden in batches berekend en samen met de chunktekst en metadata opgeslagen in de vectorindex.
+
+**Laden** — verwerkte Chunks, Embeddings en Metadata worden geladen in de productie-index (vectordatabase, lexicale index en metadataopslag). Deze fase omvat vaak atomaire swaps of incrementele updates om te voorkomen dat onvolledige Gegevens worden aangeboden.
+
+**Monitoring** — de Pijplijn houdt bij elke fase metrics bij: verwerkte documenten, opgetreden fouten, verwerkingstijd en outputkwaliteit. Alerts waarschuwen het team bij storingen of afwijkingen.
+
+## Veelgestelde vragen
+
+**V: Hoe vaak moet de Datapijplijn draaien?**
+
+A: Dat hangt af van de publicatiefrequentie van de bronnen. Het Belgisch Staatsblad publiceert dagelijks, dus dagelijkse Pijplijnruns zorgen ervoor dat nieuwe wetgeving binnen 24 uur beschikbaar is. Rechterlijke uitspraken en administratieve circulaires kunnen minder frequent binnenkomen. De meeste juridische AI-systemen draaien hun Pijplijn dagelijks, met runs op aanvraag voor urgente updates.
+
+**V: Wat gebeurt er als de Pijplijn halverwege faalt?**
+
+A: Een goed ontworpen Pijplijn is idempotent (opnieuw uitvoeren levert hetzelfde resultaat) en ondersteunt gedeeltelijk herstel (hervatten vanaf de mislukte fase in plaats van helemaal opnieuw beginnen). Mislukte documenten worden gelogd, in quarantaine geplaatst en opnieuw geprobeerd of geëscaleerd voor handmatige beoordeling.

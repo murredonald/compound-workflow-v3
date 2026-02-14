@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Positional encoding is an additional vector added to or concatenated with token [embeddings](/en/glossary/embeddings/) so that a [transformer model](/en/glossary/transformer-architecture/) can distinguish the order and relative positions of tokens in a sequence.
+Positional encoding is a technique that injects information about the position of each token within a sequence into the token's representation, enabling transformer models to understand word order. Transformers process all tokens in parallel rather than sequentially, which makes them fast but means they have no inherent sense of position — without positional encoding, the sentence "the tax applies to income" and "income applies to the tax" would produce identical representations. Positional encoding solves this by adding a position-dependent signal to each token's embedding.
+
+## Why it matters
+
+- **Order sensitivity** — in legal text, word order changes meaning dramatically; "the exception does not apply" means the opposite of "the exception does apply"; positional encoding ensures the model distinguishes these
+- **Long-context handling** — modern legal AI systems process long documents (entire statutes, multi-page rulings); the choice of positional encoding method determines how well the model handles positions beyond its training length
+- **Cross-reference resolution** — understanding relative position helps the model determine what "the preceding paragraph" or "the above-mentioned article" refers to in legal text
+- **Architecture foundation** — positional encoding is a fundamental component of every transformer-based model, including the language models and embedding models used in RAG systems
+
+## How it works
+
+Several approaches to positional encoding exist, each with different trade-offs:
+
+**Sinusoidal encoding** (used in the original Transformer paper) generates position vectors using sine and cosine functions at different frequencies. Each position gets a unique pattern, and the smooth mathematical relationship between positions allows the model to learn relative distance. This approach is fixed and deterministic — no additional parameters are learned.
+
+**Learned positional embeddings** assign a trainable embedding vector to each position (position 1, position 2, ..., up to the maximum sequence length). The model learns these embeddings during training. This is simple and effective but limits the model to sequences no longer than the maximum position seen during training.
+
+**Rotary Position Embedding (RoPE)** encodes position by rotating the embedding vector in two-dimensional subspaces. The angle of rotation is proportional to the position, so relative positions are captured through the angle between rotated vectors. RoPE has become the dominant approach in modern LLMs because it handles relative positions naturally and can extrapolate to sequence lengths beyond those seen in training.
+
+**ALiBi (Attention with Linear Biases)** takes a different approach: instead of modifying embeddings, it adds a linear bias to attention scores based on the distance between tokens. Tokens that are far apart receive a penalty, biasing the model toward attending to nearby context. ALiBi extrapolates well to longer sequences and requires no additional parameters.
+
+The choice of positional encoding directly affects the model's context window — the maximum sequence length it can process effectively. Methods like RoPE and ALiBi enable longer context windows than fixed learned embeddings, which is important for processing lengthy legal documents.
+
+## Common questions
+
+**Q: What happens if the input is longer than the positions the model was trained on?**
+
+A: With learned positional embeddings, the model cannot process longer sequences at all. With sinusoidal, RoPE, or ALiBi encodings, the model can extrapolate to some extent, though performance typically degrades for positions far beyond the training range. Techniques like position interpolation or NTK-aware scaling help extend effective context length.
+
+**Q: Does positional encoding affect embedding quality for retrieval?**
+
+A: Yes. Embedding models for retrieval use positional encoding internally, and it affects how well they represent long passages. Models with better positional encoding produce more accurate embeddings for long documents, improving retrieval quality.
 
 ## References
 

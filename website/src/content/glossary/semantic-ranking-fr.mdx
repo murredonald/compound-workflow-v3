@@ -10,6 +10,35 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le semantic ranking s’appuie sur des modèles neuronaux et des [embeddings](/fr/glossary/embeddings/) pour estimer à quel point un document correspond, sur le fond, à une requête, souvent comme re‑ranker au‑dessus des résultats classiques.
+Le classement sémantique est le processus d'ordonnancement des résultats de recherche en fonction de leur pertinence au niveau du sens par rapport à une requête, en utilisant des modèles neuronaux qui comprennent le contexte et l'intention plutôt que de se baser uniquement sur la correspondance de mots-clés. Alors que le classement lexical (BM25) récompense les documents contenant les mots exacts de la requête, le classement sémantique récompense les documents qui expriment les mêmes concepts — même lorsque des mots complètement différents sont utilisés. Une requête sur les « déductions fiscales pour frais de bureau à domicile » correspond sémantiquement à un document sur « aftrek beroepsmatig gebruik woning » car le sens est identique, malgré l'absence totale de correspondance de mots.
+
+## Pourquoi c'est important
+
+- **Correspondance multilingue** — dans le système juridique trilingue belge, le classement sémantique permet à une requête en néerlandais de trouver une législation pertinente en français, car les deux correspondent au même sens dans l'espace des [embeddings](/fr/glossary/embeddings/)
+- **Résolution du décalage de vocabulaire** — les professionnels du droit et la législation utilisent souvent une terminologie différente pour le même concept ; le classement sémantique comble cet écart sans exiger de correspondances exactes des termes
+- **Compréhension de l'intention** — les modèles sémantiques peuvent distinguer différentes significations d'un même mot en fonction du contexte : « intérêt » dans le contexte d'une déduction fiscale vs. un intérêt financier
+- **Meilleure expérience utilisateur** — le classement sémantique fait remonter des résultats pertinents que la recherche par mots-clés manquerait totalement, réduisant l'effort nécessaire pour trouver les dispositions légales applicables
+
+## Comment ça fonctionne
+
+Le classement sémantique opère via des modèles neuronaux qui encodent le sens :
+
+**Le classement par bi-encodeur (basé sur les embeddings)** encode la requête et chaque document indépendamment en vecteurs d'embedding, puis classe par similarité vectorielle (cosinus, [produit scalaire](/fr/glossary/dot-product-similarity/)). C'est rapide car les embeddings des documents sont précalculés et stockés dans l'index vectoriel — seule la requête doit être encodée au moment de la recherche. Cependant, l'encodage indépendant signifie que le modèle ne peut pas gérer les interactions requête-document.
+
+**Le classement par cross-encodeur** traite la requête et chaque document candidat ensemble comme une seule entrée, permettant une interaction profonde au niveau des tokens. Le modèle peut examiner comment des termes spécifiques de la requête se rapportent à des passages spécifiques du document, capturant des nuances comme la négation, les conditions et les exigences implicites. Les cross-encodeurs sont plus précis mais beaucoup plus lents car chaque paire requête-document nécessite une passe complète du modèle.
+
+**L'approche hybride** — les systèmes en production utilisent généralement le classement par bi-encodeur pour la génération initiale de candidats (rapide, large) suivi d'un [reclassement](/fr/glossary/reranking/) par cross-encodeur des meilleurs candidats (précis, ciblé). Cette approche en deux étapes combine la vitesse des bi-encodeurs avec la précision des cross-encodeurs.
+
+**L'adaptation au domaine** — les modèles sémantiques généralistes sous-performent sur le texte juridique spécialisé. L'ajustement fin du modèle de classement sur des paires requête-document juridiques — par exemple, des questions fiscales associées à leurs articles législatifs pertinents — améliore significativement la qualité du classement pour le contenu spécifique au domaine.
+
+## Questions fréquentes
+
+**Q : Le classement sémantique remplace-t-il le classement par mots-clés ?**
+
+R : Non. Les systèmes les plus efficaces combinent les deux dans une [recherche hybride](/fr/glossary/hybrid-search/). Le classement par mots-clés gère les requêtes précises (numéros d'articles spécifiques, références juridiques exactes) que les modèles sémantiques peuvent ne pas classer correctement. Le classement sémantique gère les requêtes conceptuelles que la correspondance de mots-clés ne peut pas résoudre. Ensemble, ils couvrent plus de types de requêtes que chacun séparément.
+
+**Q : En quoi le classement sémantique diffère-t-il de la recherche sémantique ?**
+
+R : La [recherche sémantique](/fr/glossary/semantic-search/) est le concept plus large de recherche de documents par le sens. Le classement sémantique est le mécanisme de scoring spécifique au sein de la recherche sémantique qui détermine l'ordre des résultats. La recherche sémantique inclut le traitement de la requête, la récupération et le classement ; le classement sémantique est l'étape de scoring.

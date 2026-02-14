@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Version Control for Knowledge Systems protokolliert Änderungen an Dokumenten, Indexkonfigurationen und Ontologien, sodass Rollback, Vergleich und Audits unterstützt werden.
+Versionskontrolle in Wissenssystemen ist die Praxis, verschiedene Versionen von Dokumenten, Konfigurationen und Datenartefakten im Laufe der Zeit zu verfolgen, zu speichern und zu verwalten. Jede Änderung wird mit Metadaten darüber erfasst, was sich geändert hat, wann und warum — so kann das System jede historische Version abrufen, Versionen vergleichen und auf frühere Zustände zurücksetzen. In der juristischen KI ist Versionskontrolle unverzichtbar, da Gesetzgebung durch Änderungen fortgeschrieben wird, Wissensbasis-Konfigurationen sich weiterentwickeln und die Fähigkeit, einen vergangenen Systemzustand zu reproduzieren — um zu erklären, welche Antwort das System an einem bestimmten Datum gegeben hätte — sowohl eine professionelle als auch eine regulatorische Anforderung ist.
+
+## Warum das wichtig ist
+
+- **Temporale Abfragen** — Steuerberater müssen oft wissen, was das Gesetz an einem bestimmten vergangenen Datum besagte; Versionskontrolle ermöglicht es dem System, die exakte Version einer Bestimmung abzurufen, die zu einem beliebigen Zeitpunkt in Kraft war
+- **Überprüfbarkeit** — wenn eine frühere KI-generierte Antwort in Frage gestellt wird, ermöglicht Versionskontrolle die Rekonstruktion des exakten Systemzustands (Wissensbasis-Inhalt, Modellversion, Prompt-Konfiguration), der diese Antwort erzeugt hat
+- **Sichere Aktualisierungen** — Versionskontrolle ermöglicht Rollbacks, wenn eine Wissensbasis-Aktualisierung Fehler einführt oder eine neue Konfiguration die Systemqualität verschlechtert
+- **Regulatorische Konformität** — der EU AI Act verlangt die Dokumentation von Systemänderungen über den gesamten Lebenszyklus; Versionskontrolle liefert diese Dokumentation automatisch
+
+## So funktioniert es
+
+Versionskontrolle operiert auf mehreren Ebenen in einem juristischen KI-System:
+
+**Dokumentenversionierung** — jedes juristische Dokument wird mit seiner vollständigen Versionshistorie gespeichert. Wenn ein Artikel des WIB92 geändert wird, wird die neue Version neben der alten hinzugefügt, wobei Gültigkeitsdaten markieren, welche Version in welchem Zeitraum galt. Das System kann die an einem beliebigen Datum gültige Version abrufen.
+
+**Wissensbasis-Versionierung** — der Zustand der gesamten Wissensbasis (alle Dokumente, Metadaten und Indexkonfigurationen) wird über die Zeit verfolgt. Jeder Aufnahmelauf, jede Metadatenkorrektur oder strukturelle Änderung erzeugt eine neue Version. Dies ermöglicht es dem System, die Frage „Was hätten Sie mir letzten Monat gesagt?" zu beantworten, indem eine Abfrage gegen den historischen Zustand der Wissensbasis ausgeführt wird.
+
+**Konfigurationsversionierung** — Prompt-Vorlagen, Systemanweisungen, Modellauswahl und Retrieval-Parameter werden zusammen mit dem Inhalt versioniert. Wenn sich das Systemverhalten ändert, kann die verursachende Konfigurationsänderung durch Versionsvergleich identifiziert werden.
+
+**Indexversionierung** — Vektor-Indizes können als Snapshots erstellt oder versioniert werden, sodass ein bestimmter Indexzustand wiederhergestellt werden kann. Dies unterstützt A/B-Tests (Vergleich zweier Indexversionen), Rollback (Rückgängigmachen einer problematischen Aktualisierung) und historische Wiedergabe.
+
+Die Implementierung nutzt typischerweise eine Kombination von Werkzeugen: Dokumentenmanagementsysteme für die Versionierung juristischer Texte, Git oder ähnliche Systeme für die Konfigurationsversionierung und Mechanismen auf Datenbankebene (Append-Only-Tabellen, Soft Deletes, temporale Tabellen) für die Wissensbasis- und Indexversionierung.
+
+## Häufige Fragen
+
+**F: Wie hängt Versionskontrolle mit temporaler Indexierung zusammen?**
+
+A: Versionskontrolle speichert die verschiedenen Versionen von Dokumenten. [Temporale Indexierung](/de/glossary/temporal-indexing/) macht diese Versionen nach ihren Gültigkeitsdaten durchsuchbar. Gemeinsam ermöglichen sie zeitbewussten Abruf: Das System kann die Version einer Bestimmung finden, die an einem bestimmten Datum in Kraft war, und sie zur Beantwortung temporaler Anfragen verwenden.
+
+**F: Wie viel Speicherplatz benötigt Versionskontrolle?**
+
+A: Für Textdokumente ist der Speicheraufwand der Versionskontrolle gering — juristische Dokumente sind klein, und die Speicherung historischer Versionen erfordert nur begrenzten Speicherplatz. Bei Vektor-Indizes kann die Speicherung mehrerer Versionen erheblich sein, weshalb Systeme in der Regel nur wichtige Snapshots statt jeden Zwischenzustand aufbewahren.

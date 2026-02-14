@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Log probabilities are the natural logarithms of the probabilities that a language model assigns to each possible next token, commonly exposed through APIs for debugging, [calibration](/en/glossary/calibration/), and custom decoding strategies.
+Log probabilities (logprobs) are the natural logarithms of the probability values that a language model assigns to each possible next token at every generation step. When a model produces text, it internally computes a probability distribution over its entire vocabulary — logprobs are the log-transformed version of these probabilities. They provide a window into the model's confidence at the token level: high logprobs (close to 0) indicate the model is confident about that token; low logprobs (large negative numbers) indicate uncertainty. In legal AI, logprobs can be used to detect when the model is guessing rather than confidently generating from its context.
+
+## Why it matters
+
+- **Confidence signals** — logprobs reveal whether the model was confident when generating critical parts of an answer (article numbers, tax rates, dates) or was effectively guessing among alternatives
+- **Hallucination detection** — tokens generated with unusually low probabilities may indicate the model is fabricating content rather than drawing from its context; monitoring logprobs can flag potential hallucinations
+- **Calibration analysis** — logprobs are the raw material for calibration: by comparing predicted probabilities against actual correctness, developers can assess whether the model's confidence is well-calibrated
+- **Custom decoding** — logprobs enable advanced generation strategies: beam search, nucleus sampling, and constrained decoding all operate on the logprob distribution to control output quality
+
+## How it works
+
+At each generation step, the language model produces a vector of scores (logits) over its vocabulary. These logits are converted to probabilities via the softmax function, and logprobs are the logarithm of these probabilities.
+
+**Interpreting logprobs**: a logprob of -0.01 means the model assigns approximately 99% probability to that token. A logprob of -2.3 means roughly 10% probability. A logprob of -6.9 means roughly 0.1%. In practice, most tokens in fluent text have logprobs between -0.001 and -1.0.
+
+**Token-level analysis** — by examining logprobs for each token in a generated answer, developers can identify exactly where the model's confidence drops. If the model generates "article" with high confidence but "215" with low confidence, it may be uncertain about the specific article number — a critical distinction in legal text.
+
+**Sequence-level scoring** — the total logprob of a sequence (sum of all token logprobs) indicates the model's overall confidence in the complete output. This can be used to compare different generated answers and select the most confident one, or to set thresholds below which answers are flagged for review.
+
+**API access** — most LLM APIs (OpenAI, Anthropic, etc.) offer logprob output as an optional parameter. When enabled, the API returns logprobs alongside the generated text, typically for the top-k most likely tokens at each position.
+
+Logprobs are in log space (negative numbers) because probabilities can be extremely small, and multiplying many small probabilities causes numerical underflow. Working in log space converts multiplication to addition, maintaining numerical stability.
+
+## Common questions
+
+**Q: Can logprobs reliably detect hallucinations?**
+
+A: They provide useful signals but are not a complete solution. Models can hallucinate with high confidence (high logprobs for fabricated content) because the hallucinated text is linguistically fluent. Logprobs are most useful for detecting surface-level uncertainty (wrong numbers, unfamiliar terms) rather than deep factual errors.
+
+**Q: Why use logarithms instead of raw probabilities?**
+
+A: Raw probabilities for individual tokens can be extremely small (e.g., 0.000001), making them difficult to work with computationally. Log probabilities convert these to manageable negative numbers and allow sequence probabilities to be computed by addition rather than multiplication.
 
 ## References
 

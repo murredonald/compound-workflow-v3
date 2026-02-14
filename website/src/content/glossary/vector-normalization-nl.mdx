@@ -10,9 +10,44 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Vector normalization past een norm toe – bijvoorbeeld L2‑normalisatie – zodat alle [embeddings](/nl/glossary/embeddings/) dezelfde lengte hebben en vergelijkingen via cosine‑ of dot‑product‑similarity consistenter worden.
+Vectornormalisatie (L2-normalisatie) is het Proces waarbij een Vector wordt geschaald zodat zijn Lengte (L2-norm) precies één bedraagt, zonder de Richting te veranderen. Dit gebeurt door elke Dimensie van de Vector te delen door de totale Grootte van de Vector. Genormaliseerde Vectoren liggen op het Oppervlak van een eenheidshypersfeer, en de hoekrelaties ertussen blijven behouden terwijl Grootteverschillen worden verwijderd. In de Context van op embeddings gebaseerd zoeken zorgt Normalisatie ervoor dat Gelijkenisberekeningen puur gebaseerd zijn op directionele Afstemming (Betekenisgelijkenis) in plaats van beïnvloed te worden door willekeurige Verschillen in Vectorgrootte.
+
+## Waarom het belangrijk is
+
+- **Metriekequivalentie** — wanneer Vectoren genormaliseerd zijn, produceren [cosine similarity](/nl/glossary/cosine-similarity/), het Inproduct en gekwadrateerde Euclidische Afstand allemaal equivalente Rankings; dit vereenvoudigt de Implementatie en maakt het gebruik van de snelst beschikbare Metriek mogelijk
+- **Eerlijke Vergelijking** — zonder Normalisatie kunnen Documenten met langere of informatiedichtere Embeddings grotere Vectoren hebben en kunstmatig hogere Gelijkenisscores ontvangen; Normalisatie schept gelijke Voorwaarden
+- **Indexcompatibiliteit** — veel vectorindex-implementaties (HNSW, IVF) zijn geoptimaliseerd voor genormaliseerde Vectoren; het gebruik van genormaliseerde Vectoren zorgt voor optimale Indexprestaties
+- **Numerieke Stabiliteit** — genormaliseerde Vectoren hebben begrensde Waarden (elke Dimensie tussen -1 en 1), wat numerieke Overloopproblemen bij Afstandsberekeningen voorkomt
+
+## Hoe het werkt
+
+Voor een Vector **v** met Dimensies (v₁, v₂, ..., vd) is de L2-norm:
+
+**‖v‖ = √(v₁² + v₂² + ... + vd²)**
+
+De genormaliseerde Vector **v̂** is:
+
+**v̂ = v / ‖v‖**
+
+Na Normalisatie geldt ‖v̂‖ = 1 per Constructie. De Richting blijft behouden — genormaliseerde Vectoren wijzen in dezelfde Richting als de originelen — maar de Grootte wordt uniform over alle Vectoren.
+
+**Wanneer normaliseren**: de meeste tekst-embeddingmodellen (E5, BGE, Cohere Embed) produceren van nature genormaliseerde of bijna-genormaliseerde Vectoren. Sommige Modellen (zoals eerdere OpenAI-embeddings) produceren ongenormaliseerde Vectoren waarbij de Grootte Informatie kan bevatten. Controleer de Documentatie van het Model om te bepalen of Normalisatie passend is.
+
+**Wanneer niet normaliseren**: als het embeddingmodel bewust Informatie codeert in de Vectorgrootte (bijv. Grootte gebruiken om Betrouwbaarheid of Documentbelang weer te geven), zou Normalisatie deze Informatie verwijderen. Dit komt zelden voor maar bestaat bij sommige gespecialiseerde Modellen.
+
+**Implementatie**: Normalisatie is een eenvoudige, snelle Bewerking — één Doorgang door de Vector om de L2-norm te berekenen, gevolgd door één elementgewijze Deling. De meeste embeddingbibliotheken en vectordatabases handelen Normalisatie automatisch af wanneer ze geconfigureerd zijn om cosine similarity te gebruiken.
+
+## Veelgestelde vragen
+
+**V: Moet ik normaliseren voor of na het opslaan in de Vectordatabase?**
+
+A: Normaliseer vóór het opslaan. Dit zorgt ervoor dat alle opgeslagen Vectoren Eenheidslengte hebben, waardoor de Database de snellere dot-productmetriek kan gebruiken (die equivalent is aan cosine similarity op genormaliseerde Vectoren) in plaats van cosine similarity expliciet te berekenen.
+
+**V: Kan Normalisatie ongedaan worden gemaakt?**
+
+A: Alleen als de oorspronkelijke Grootte apart is opgeslagen. Zodra een Vector is genormaliseerd, gaat de oorspronkelijke Grootte verloren. Als de Grootte betekenisvolle Informatie bevat, sla deze dan op als apart Metadataveld voordat u normaliseert.
 
 ## References
 

@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Multi-Hop-Retrieval führt mehrere abhängige Retrievalschritte aus, bei denen die Ergebnisse eines Schritts den nächsten beeinflussen, um über mehrere Dokumente verteilte Belege zusammenzuführen.
+Multi-Hop-Retrieval ist eine Retrievalstrategie, die mehrere Suchschritte verkettet, wobei die Ergebnisse jedes Schritts die Abfrage für den nächsten informieren, um Belege zu sammeln, die über mehrere Dokumente verteilt sind. Im Gegensatz zum Single-Hop-Retrieval (eine Abfrage, ein Ergebnissatz) erkennt Multi-Hop-Retrieval, dass komplexe Fragen oft nicht aus einem einzigen Dokument beantwortet werden können — die Antwort erfordert die Verknüpfung von Informationen aus mehreren Quellen. Im Steuerrecht ist das häufig der Fall: Die Bestimmung der steuerlichen Behandlung einer Transaktion kann die allgemeine Regel (ein Artikel), ihre Ausnahmen (ein anderer Artikel), Durchführungsverordnungen (ein Erlass) und relevante Rechtsprechung (eine Gerichtsentscheidung) erfordern.
+
+## Warum es wichtig ist
+
+- **Beantwortung komplexer Fragen** — viele reale Steuerfragen erfordern Informationen aus mehreren Quellen, die keine einzelne Abfrage abrufen würde; Multi-Hop-Retrieval sammelt die vollständige Beweiskette
+- **Auflösung von Querverweisen** — Gesetzestexte verweisen häufig auf andere Bestimmungen („unbeschadet des Artikels 215"); Multi-Hop-Retrieval folgt diesen Verweisen und ruft die referenzierten Bestimmungen ab
+- **Vollständigkeit** — ein einzelner Retrievaldurchlauf kann wichtigen Kontext übersehen (Ausnahmen, Änderungen, Bedingungen), den ein nachfolgender Retrievalschritt auf der Grundlage der Ergebnisse des ersten Schritts finden würde
+- **Unterstützung des Schlussfolgerns** — das Sprachmodell kann effektiver schlussfolgern, wenn ihm die vollständige Kette relevanter Bestimmungen statt eines einzelnen isolierten Artikels zur Verfügung steht
+
+## So funktioniert es
+
+Multi-Hop-Retrieval erweitert die Standard-Retrieval-Pipeline um iterative Abfragegenerierung:
+
+**Schritt 1: Initiales Retrieval** — die Frage des Nutzers wird verwendet, um den ersten Satz relevanter Dokumente abzurufen. Dieser initiale Satz liefert die Ausgangsbelege.
+
+**Schritt 2: Abfragegenerierung** — basierend auf den initialen Ergebnissen generiert das System Folgeanfragen, um Lücken zu füllen. Wenn die initialen Ergebnisse „Artikel 215 WIB92" als Ausnahme erwähnen, ruft eine Folgeanfrage diesen Artikel ab. Wenn die Ergebnisse auf einen Durchführungserlass verweisen, ruft eine Folgeanfrage diesen ab. Die Abfragegenerierung kann regelbasiert (Verfolgen erkannter Querverweise) oder modellbasiert (Verwendung eines LLM zur Identifikation benötigter Zusatzinformationen) sein.
+
+**Schritt 3: Nachfolgendes Retrieval** — Folgeanfragen werden ausgeführt und rufen zusätzliche Dokumente ab, die die initialen Ergebnisse ergänzen.
+
+**Schritt 4: Evidenzaggregation** — alle abgerufenen Dokumente über alle Hops hinweg werden kombiniert, dedupliziert und der Generierungsschicht als umfassender Belegsatz präsentiert.
+
+Die Anzahl der Hops ist typischerweise begrenzt (2–3), um die Latenz zu kontrollieren und zu verhindern, dass das Retrieval in irrelevantes Gebiet abschweift. Jeder Hop fügt Latenz hinzu (ein Abfragegenerierungsschritt plus ein Retrievalschritt), sodass die Gesamtantwortzeit mit der Anzahl der Hops steigt.
+
+Multi-Hop-Retrieval ist besonders wertvoll für Fragen, die Folgendes betreffen: bedingte Regeln („ist dies abzugsfähig, WENN …"), Querverweise zwischen Bestimmungen, Vergleiche über Zuständigkeitsbereiche hinweg und Fragen dazu, wie allgemeine Regeln mit spezifischen Ausnahmen zusammenwirken.
+
+## Häufige Fragen
+
+**F: Wie viele Hops werden typischerweise benötigt?**
+
+A: Die meisten Fragen lassen sich in 1–2 Hops beantworten. Drei Hops sind gelegentlich bei hochkomplexen querverweisreichen Fragen erforderlich. Über drei Hops hinaus steigt das Risiko, irrelevante Inhalte abzurufen, und die Latenzkosten werden erheblich.
+
+**F: Kann Multi-Hop-Retrieval falsche Belege abrufen?**
+
+A: Ja. Jeder Hop birgt das Risiko, einem irrelevanten Verweis zu folgen oder eine schlechte Folgeanfrage zu generieren. Deshalb werden die Belege aus allen Hops gerankt und gefiltert, bevor sie an die Generierungsschicht übergeben werden.
 
 ## References
 

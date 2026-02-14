@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-An [ontology](/en/glossary/knowledge-graph/) defines the key entities, relationships, and rules in a domain so that both humans and machines can reason about and [query](/en/glossary/prompt/) knowledge consistently.
+An ontology is a formal, explicit specification of the concepts, entities, properties, and relationships within a domain, structured in a way that enables both humans and machines to reason about knowledge consistently. Unlike a simple glossary (which defines terms) or a taxonomy (which classifies them hierarchically), an ontology defines the types of things that exist, their attributes, and how they relate to each other. In legal AI, a tax law ontology might define that a "taxpayer" is an entity that has a "fiscal residence", is subject to "tax obligations", and can claim "deductions" — with precise definitions for each concept and formal rules governing their interactions.
+
+## Why it matters
+
+- **Consistent reasoning** — an ontology provides a shared, unambiguous vocabulary that prevents the AI system from confusing related but distinct concepts (e.g., "tax exemption" vs. "tax deduction" vs. "tax reduction")
+- **Structured queries** — ontologies enable relational queries that go beyond text search: "which deductions are available to non-resident taxpayers in the Walloon Region?" requires understanding entity types and their relationships
+- **Knowledge graph foundation** — ontologies define the schema for knowledge graphs, specifying what types of nodes and edges are valid and what properties they can have
+- **Cross-system interoperability** — a shared ontology allows different systems (document management, retrieval, case management) to exchange data with consistent semantics
+
+## How it works
+
+An ontology consists of several components:
+
+**Classes** define the types of entities in the domain: Legislation, Article, CourtDecision, Taxpayer, TaxType, Jurisdiction. Classes can have subclasses: CourtDecision may have subclasses ConstitutionalCourtDecision, CassationCourtDecision, AppealCourtDecision.
+
+**Properties** define attributes of and relationships between entities. An Article has properties like articleNumber, effectiveDate, and legislationCode. A CourtDecision has properties like decisionDate, court, and cashedArticles (linking to the articles it interprets).
+
+**Constraints** define rules about valid combinations: every Article must belong to exactly one Legislation; a TaxRate must have both a value and an effectiveDate; a CourtDecision must reference at least one legal provision.
+
+**Instances** are the actual entities in the knowledge base: Article 215 of WIB92, the Constitutional Court decision of 15 March 2024, the Flemish Region as a Jurisdiction.
+
+Ontologies are typically expressed in formal languages like OWL (Web Ontology Language) or RDF Schema, which enable automated reasoning — inferring new facts from existing ones based on the ontology's rules. For example, if the ontology defines that federal legislation applies to all regions, and a specific deduction is defined in federal legislation, the system can infer that the deduction applies in all three regions without this being explicitly stated.
+
+## Common questions
+
+**Q: How is an ontology different from a database schema?**
+
+A: A database schema defines table structures and column types for storage. An ontology defines conceptual entities, their properties, and their relationships for reasoning. A database schema says "this table has a date column"; an ontology says "an Article has an effectiveDate, which is a temporal property that determines when the article is in force."
+
+**Q: Is building an ontology worth the effort?**
+
+A: For complex domains like tax law with many interrelated concepts, yes. The upfront investment in ontology design pays off through more accurate retrieval, better reasoning, and consistent knowledge organisation. For simpler domains, a taxonomy may be sufficient.

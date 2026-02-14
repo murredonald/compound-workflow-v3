@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le metadata enrichment s’appuie sur des règles, des modèles ou de l’annotation manuelle pour ajouter des [labels](/fr/glossary/ground-truth/) comme le sujet, la juridiction ou des entités, rendant les filtres et la [recherche sémantique](/fr/glossary/semantic-search/) plus riches.
+L'enrichissement de métadonnées est le processus d'ajout, d'affinage ou de dérivation de champs de métadonnées structurées pour des documents qui arrivent avec des métadonnées incomplètes ou manquantes. Les documents juridiques bruts manquent souvent des annotations structurées nécessaires à une recherche efficace — un PDF du Moniteur belge contient le texte d'une loi mais ne balise pas forcément explicitement sa juridiction, sa date d'entrée en vigueur, son type de document ou ses renvois dans un format lisible par machine. L'enrichissement de métadonnées utilise des modèles de NLP, des règles et de la correspondance de motifs pour extraire ces informations et les attacher sous forme de champs structurés, rendant le contenu recherchable, filtrable et gouvernable.
+
+## Pourquoi c'est important
+
+- **Qualité de recherche** — des métadonnées enrichies permettent un filtrage structuré (par juridiction, date, type de document) que la recherche en texte intégral ne peut pas offrir ; sans cela, les utilisateurs ne peuvent pas restreindre les résultats au contexte spécifique dont ils ont besoin
+- **Classement par autorité** — les métadonnées de type de document (législation vs. circulaire vs. décision) permettent au système de classer les sources par autorité ; sans ces métadonnées, toutes les sources sont traitées de manière égale
+- **Précision temporelle** — les dates d'entrée en vigueur extraites permettent un filtrage temporel, garantissant que seules les dispositions en vigueur au moment pertinent sont renvoyées
+- **Construction du graphe de connaissances** — les métadonnées enrichies fournissent les entités et relations structurées qui alimentent le [graphe de connaissances](/fr/glossary/knowledge-graph/), permettant des requêtes relationnelles
+
+## Comment ça fonctionne
+
+L'enrichissement de métadonnées s'opère pendant ou après l'ingestion des documents :
+
+**L'extraction par règles** utilise des motifs et des expressions régulières pour extraire des informations structurées à partir de formats prévisibles. Les documents juridiques belges suivent des conventions : les numéros d'articles apparaissent dans un format standard, les dates sont écrites selon des motifs spécifiques, et les indicateurs de type de document (wet/loi, KB/AR, omzendbrief/circulaire) apparaissent dans les en-têtes ou les titres.
+
+**L'extraction par NLP** utilise des modèles entraînés pour extraire des métadonnées à partir de contenus moins structurés. La reconnaissance d'entités nommées identifie les dates, les noms d'organisations et les références juridiques. La classification de texte attribue le type de document et les catégories thématiques. L'extraction de relations identifie les renvois entre documents.
+
+**Les métadonnées dérivées** sont calculées à partir d'autres champs ou du contenu du document : nombre de mots, détection de la langue, niveau de lecture, classification thématique et affectation à un cluster sémantique. Ces champs dérivés soutiennent l'analyse, le suivi de la qualité et la découverte de contenu.
+
+**La validation** garantit que les métadonnées enrichies sont cohérentes et correctes. Les dates sont vérifiées pour leur plausibilité (pas dans le futur pour les documents historiques). Les juridictions sont validées par rapport à un vocabulaire contrôlé. Les renvois sont vérifiés par rapport aux documents existants dans la base de connaissances.
+
+**La revue humaine** traite les cas où l'enrichissement automatisé est incertain. Les extractions à faible confiance sont signalées pour vérification manuelle, en particulier pour les champs de métadonnées ayant un impact élevé en aval (juridiction, date d'entrée en vigueur, type de document).
+
+## Questions fréquentes
+
+**Q : L'enrichissement de métadonnées peut-il être entièrement automatisé ?**
+
+R : Pour les sources bien structurées (XML du Moniteur belge, bases de données structurées de décisions de justice), oui — l'automatisation peut gérer plus de 95 % de l'extraction de métadonnées. Pour les sources moins structurées (circulaires numérisées, documents historiques), l'enrichissement automatisé fournit une première passe qui nécessite une revue humaine pour 10 à 20 % des documents.
+
+**Q : Que se passe-t-il lorsque les métadonnées sont erronées ?**
+
+R : Des métadonnées incorrectes sont pires que des métadonnées manquantes. Un document balisé avec la mauvaise juridiction apparaîtra dans les résultats de recherche de la mauvaise juridiction et sera absent des bons résultats. C'est pourquoi la validation et les contrôles de qualité sont des éléments essentiels du processus d'enrichissement.

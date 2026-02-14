@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Un modèle d’embedding est un [réseau de neurones](/fr/glossary/neural-network/) qui projette des entrées – texte, code ou images – dans un [espace vectoriel](/fr/glossary/embedding-space/) continu où les éléments sémantiquement proches sont situés à proximité.
+Un modèle d'embedding est un réseau de neurones entraîné pour projeter des entrées — passages de texte, requêtes, images ou autres données — dans un espace vectoriel continu où la proximité géométrique correspond à la similarité sémantique. Ces modèles constituent l'épine dorsale des systèmes de recherche modernes : ils convertissent à la fois les requêtes et les documents en vecteurs afin que les correspondances pertinentes puissent être trouvées par des calculs de distance plutôt que par la correspondance de mots-clés.
+
+## Pourquoi c'est important
+
+- **Compréhension sémantique** — les modèles d'embedding capturent le sens au-delà de la correspondance exacte de mots, retrouvant des documents pertinents même lorsqu'une terminologie différente est utilisée (par ex. « vennootschapsbelasting » et « impôt des sociétés »)
+- **Recherche multilingue** — les modèles d'embedding multilingues projettent différentes langues dans le même espace vectoriel, permettant à une requête en néerlandais de retrouver de la législation en français
+- **Qualité de la recherche** — le choix du modèle d'embedding a un impact plus important sur la qualité de la recherche que presque tout autre composant du pipeline
+- **Adaptation au domaine** — les modèles généralistes entraînés sur du texte web sont souvent moins performants sur du contenu juridique ou fiscal spécialisé ; des modèles adaptés au domaine peuvent améliorer significativement la précision
+
+## Comment ça fonctionne
+
+Un modèle d'embedding prend une entrée textuelle (une phrase, un paragraphe ou un chunk de document) et produit un vecteur de dimension fixe, généralement de 384 à 1536 dimensions. Pendant l'entraînement, le modèle apprend à placer les textes sémantiquement similaires proches les uns des autres et les textes dissimilaires loin les uns des autres.
+
+L'entraînement utilise typiquement l'apprentissage contrastif : le modèle voit des paires de textes liés (paires positives) et de textes non liés (paires négatives) et ajuste ses poids pour minimiser la distance pour les paires positives et maximiser la distance pour les paires négatives. Les architectures populaires incluent les bi-encodeurs basés sur BERT (comme Sentence-BERT), qui encodent la requête et le document indépendamment pour une recherche rapide.
+
+Au moment de l'inférence, tous les documents du [corpus](/fr/glossary/corpus/) sont pré-encodés et stockés dans un index vectoriel. Lorsqu'une requête arrive, seule la requête nécessite un encodage — le système trouve ensuite les vecteurs de documents les plus proches par recherche approchée de plus proches voisins.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre un modèle d'embedding et un modèle de langage ?**
+
+R : Un modèle de langage (comme GPT) génère du texte token par token. Un modèle d'embedding produit un seul vecteur fixe qui représente le sens global de l'entrée. Certaines architectures peuvent faire les deux, mais elles servent des objectifs différents : les modèles d'embedding sont optimisés pour la comparaison de similarité, les modèles de langage pour la génération.
+
+**Q : Faut-il utiliser un modèle d'embedding général ou spécifique au domaine ?**
+
+R : Pour des domaines spécialisés comme le droit fiscal belge, un modèle adapté au domaine surpasse généralement un modèle généraliste. Le fine-tuning d'un modèle d'embedding sur des paires spécifiques au domaine (par ex. des requêtes fiscales associées à la législation pertinente) peut améliorer substantiellement la précision de la recherche.
+
+**Q : Comment fonctionnent les modèles d'embedding multilingues ?**
+
+R : Des modèles comme multilingual-e5 ou mE5 sont entraînés sur du texte parallèle dans de nombreuses langues. Ils apprennent à projeter des phrases équivalentes dans différentes langues vers des vecteurs proches, permettant la recherche multilingue à partir d'un seul index.
 
 ## References
 

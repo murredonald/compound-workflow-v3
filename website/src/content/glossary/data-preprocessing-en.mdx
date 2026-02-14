@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Data preprocessing includes steps like [deduplication](/en/glossary/deduplication/), normalisation, feature engineering, and quality checks that make raw data suitable for learning or retrieval.
+Data preprocessing is the set of cleaning, transformation, and enrichment steps applied to raw data before it is used for model training, indexing, or retrieval. Raw legal documents arrive in inconsistent formats — PDFs with varying layouts, HTML pages with navigation boilerplate, scanned images requiring OCR — and data preprocessing converts them into clean, standardised text with accurate metadata. The quality of preprocessing directly determines the quality of everything downstream: embeddings, search results, and generated answers.
+
+## Why it matters
+
+- **Garbage in, garbage out** — if raw documents contain OCR errors, formatting artefacts, or missing metadata, these problems propagate into embeddings and retrieval results; preprocessing catches and corrects them at the source
+- **Consistency** — Belgian legal sources arrive from multiple publishers in different formats; preprocessing normalises them into a consistent structure that the retrieval pipeline can handle uniformly
+- **Metadata enrichment** — raw documents rarely arrive with complete metadata; preprocessing extracts and assigns publication dates, document types, jurisdictional codes, and article numbers from the text itself
+- **Efficiency** — removing boilerplate, navigation elements, headers, footers, and duplicate content reduces index size and improves embedding quality by eliminating noise
+
+## How it works
+
+A typical preprocessing pipeline for legal documents includes these stages:
+
+**Format conversion** — documents in PDF, HTML, DOCX, or scanned image formats are converted to clean text. PDF extraction handles multi-column layouts and tables. HTML parsing strips navigation, advertisements, and boilerplate. OCR processes scanned documents with confidence scoring to flag low-quality extractions.
+
+**Text cleaning** — the extracted text is normalised: fixing encoding issues, removing duplicate whitespace, correcting common OCR errors (e.g., "l" misread as "1" in article numbers), and standardising quotation marks and dashes. For legal text, this includes normalising citation formats so that references to the same provision are consistent across documents.
+
+**Deduplication** — duplicate and near-duplicate documents are identified and removed or consolidated. The same legislative text may appear in the Official Gazette, consolidated databases, and commentary sources; preprocessing ensures it is indexed once with the most authoritative version retained.
+
+**Metadata extraction** — structured fields are extracted from the text: publication date, document type (law, decree, circular, ruling), jurisdiction, article numbers, and cross-references. This metadata enables filtering during retrieval.
+
+**Quality validation** — automated checks verify that the processed output meets expected standards: text length within normal ranges, required metadata fields present, no obvious corruption or truncation.
+
+## Common questions
+
+**Q: How much of the preprocessing can be automated?**
+
+A: Most of it. Format conversion, text cleaning, and deduplication are fully automated. Metadata extraction can be largely automated using entity extraction models, with manual review for ambiguous cases. Quality validation is automated with human review for flagged outliers.
+
+**Q: Does preprocessing affect embedding quality?**
+
+A: Significantly. Embeddings generated from clean, focused text are more accurate than those from text cluttered with boilerplate, OCR errors, or formatting artefacts. Preprocessing is one of the highest-impact steps for improving retrieval quality.

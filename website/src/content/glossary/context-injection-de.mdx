@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Kontextinjektion bedeutet, relevante Dokumente, Snippets oder Metadaten in einen [LLM](/de/glossary/llm/)-[Prompt](/de/glossary/prompt/) einzufügen, damit das Modell seine Antwort auf diese externen Informationen stützt.
+Kontextinjektion ist die Praxis, abgerufene Dokumente, Textpassagen, Metadaten oder andere externe Informationen in den [Prompt](/de/glossary/prompt/) eines Sprachmodells einzufügen, damit das Modell seine Antwort auf diese spezifischen Inhalte stützt, anstatt sich ausschließlich auf sein Trainingswissen zu verlassen. Es ist der Mechanismus, der die Retrieval-Schicht mit der generativen Schicht in einem [RAG](/de/glossary/rag/)-System verbindet: Nachdem relevante Dokumente gefunden wurden, werden sie zusammen mit der Frage des Nutzers in den Prompt „injiziert". Die Qualität der Kontextinjektion — welche Inhalte eingefügt werden, wie sie formatiert sind und wo sie platziert werden — beeinflusst die Antwortqualität erheblich.
+
+## Warum es wichtig ist
+
+- **Fundierte Generierung** — durch die Bereitstellung spezifischer Quelldokumente stellt die Kontextinjektion sicher, dass Antworten auf maßgeblichen Rechtstexten basieren und nicht auf den potenziell veralteten oder ungenauen Trainingsdaten des Modells
+- **Zitierfähigkeit** — injizierter Kontext enthält Metadaten (Artikelnummern, Veröffentlichungsdaten, Quellenidentifikatoren), die das Modell nutzen kann, um in seiner Antwort überprüfbare Quellenangaben zu liefern
+- **Geltungsbereichskontrolle** — die Kontextinjektion definiert die Grenzen dessen, was das Modell berücksichtigen soll; der System-Prompt kann das Modell anweisen, ausschließlich den injizierten Kontext zu verwenden und so unbegründete Behauptungen zu verhindern
+- **Dynamisches Wissen** — im Gegensatz zum Fine-Tuning, das Wissen in die Modellgewichte einbrennt, liefert die Kontextinjektion aktuelle Informationen zum Zeitpunkt der Abfrage, sodass das System sofort auf neue Gesetzgebung oder Urteile reagieren kann
+
+## Wie es funktioniert
+
+Die Kontextinjektion folgt auf die Retrieval-Phase und geht der Generierung voraus:
+
+**Auswahl** — die Retrieval-Pipeline erzeugt eine nach Relevanz sortierte Liste von Textpassagen. Die besten k Passagen (typischerweise 5–20) werden für die Injektion ausgewählt. Zu wenige Passagen bergen das Risiko, wichtigen Kontext zu übersehen; zu viele können das Kontextfenster des Modells überschreiten oder die Relevanz verwässern.
+
+**Formatierung** — die ausgewählten Passagen werden übersichtlich aufbereitet. Jede Passage wird typischerweise mit ihren Quellmetadaten präsentiert (Dokumenttitel, Artikelnummer, Veröffentlichungsdatum, Zuständigkeitsgebiet) und deutlich von anderen Passagen abgegrenzt. Eine konsistente Formatierung hilft dem Modell, verschiedene Quellen zu unterscheiden und korrekt zu zitieren.
+
+**Platzierung** — der injizierte Kontext wird innerhalb des Prompts platziert, üblicherweise zwischen den Systemanweisungen und der Frage des Nutzers. Der System-Prompt enthält Anweisungen zur Verwendung des Kontexts: „Antworten Sie ausschließlich auf Basis der folgenden Quellen", „Zitieren Sie den konkreten Artikel für jede Aussage", „Falls die bereitgestellten Quellen die Frage nicht beantworten, geben Sie dies an."
+
+**Kontextfenster-Management** — der gesamte Prompt (Systemanweisungen + injizierter Kontext + Nutzerfrage) muss in das Kontextfenster des Modells passen. Ist der abgerufene Kontext zu umfangreich, gehören zu den Strategien: das Kürzen niedriger gerankter Passagen, das Zusammenfassen von Passagen vor der Injektion oder das Aufteilen der Anfrage in Teilabfragen mit jeweils kleinerem Kontextumfang.
+
+Das Hauptrisiko der Kontextinjektion ist die **Kontextvergiftung** — wenn irrelevante oder fehlerhafte Passagen injiziert werden (aufgrund von Retrieval-Fehlern), kann das Modell Antworten auf Grundlage dieses falschen Kontexts erzeugen. Deshalb ist die Retrieval-Qualität die vorgelagerte Abhängigkeit für eine wirksame Kontextinjektion.
+
+## Häufige Fragen
+
+**F: Ist Kontextinjektion dasselbe wie RAG?**
+
+A: Kontextinjektion ist ein Schritt innerhalb des RAG-Prozesses. RAG umfasst das Retrieval (Auffinden relevanter Dokumente), die Kontextinjektion (Einfügen in den Prompt) und die Generierung (Erzeugen der Antwort). Die Kontextinjektion ist die Brücke zwischen Retrieval und Generierung.
+
+**F: Worin unterscheidet sich Kontextinjektion von Prompt-Injection?**
+
+A: Kontextinjektion ist ein legitimes Systemdesign-Pattern — die Anwendung stellt dem Modell absichtlich Kontext zur Verfügung. Prompt-Injection ist ein Sicherheitsangriff, bei dem bösartige Inhalte in Nutzereingaben oder externen Daten versuchen, die Anweisungen des Modells zu überschreiben. Beide nutzen einen ähnlichen Mechanismus (Hinzufügen von Text zum Prompt), jedoch mit entgegengesetzter Absicht.
 
 ## References
 

@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Source provenance records the origin, ownership, and transformation history of data or content so that its reliability and compliance can be assessed.
+Source provenance is the documented chain of origin, ownership, and transformation history for any piece of data or content used in an AI system. It answers the questions: where did this information come from, who published it, when was it last updated, and what processing has it undergone? In legal AI, provenance is essential because the authority and reliability of a source directly affect the trustworthiness of any answer derived from it.
+
+## Why it matters
+
+- **Authority verification** — in tax law, a ruling from the Constitutional Court carries more weight than a parliamentary question; provenance metadata enables the system to distinguish between source authority levels
+- **Freshness tracking** — knowing when a source was published and whether it has been amended or repealed prevents the system from citing outdated provisions
+- **Compliance** — the EU AI Act and GDPR both impose requirements around data transparency and traceability that provenance metadata helps satisfy
+- **Reproducibility** — when an AI system produces an answer, provenance records allow anyone to trace the answer back to its original sources and verify correctness
+
+## How it works
+
+Provenance tracking operates across the data lifecycle:
+
+1. **Ingestion** — when a document enters the system, it is tagged with metadata: publication source (Belgian Official Gazette, FPS Finance, court database), publication date, authority level, document type (law, royal decree, circular, ruling), and jurisdictional scope
+
+2. **Transformation** — as the document is processed (parsed, chunked, cleaned, embedded), each transformation step is recorded. If text was extracted from a PDF, OCR confidence is logged. If a chunk boundary was adjusted, the original and modified versions are linked.
+
+3. **Storage** — provenance metadata is stored alongside the document content in the knowledge base, making it available at query time for filtering, ranking, and citation generation
+
+4. **Citation** — when the system generates an answer, it includes provenance information in its citations: the specific source document, its publication date, the relevant article or section, and a link to the authoritative text. This allows the user to verify the answer against the original source.
+
+## Common questions
+
+**Q: How is source provenance different from citation?**
+
+A: Citation tells you which source was used in an answer. Source provenance is broader — it includes the full lifecycle of the data: where it was collected, how it was processed, and every transformation it underwent before being used. Citation is what the user sees; provenance is the full chain behind it.
+
+**Q: Why does source authority matter for AI answers?**
+
+A: Not all legal sources carry equal weight. Legislation overrides administrative circulars; Supreme Court decisions override lower court rulings. A system without provenance-based authority ranking might give equal weight to a ministerial FAQ and a binding law, producing misleading results.
+
+**Q: How does provenance support GDPR compliance?**
+
+A: GDPR requires organisations to know where personal data came from and how it is processed (Articles 13-14 on transparency, Article 30 on records of processing). Source provenance provides this documentation, showing the data's origin, processing history, and current use within the AI system.

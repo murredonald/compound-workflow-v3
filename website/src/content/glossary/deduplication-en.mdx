@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Deduplication uses hashing, similarity, or rules to collapse duplicate and near-duplicate content so that retrieval and analytics are not skewed by repeated documents.
+Deduplication is the process of identifying and removing duplicate or near-duplicate documents, passages, or records from a dataset. In information retrieval and AI systems, deduplication prevents the same content from appearing multiple times in search results, consuming unnecessary storage, or skewing analytics. In Belgian tax law, deduplication is particularly important because the same legislative text may appear in multiple official sources, consolidated versions may coexist with original publications, and court decisions may be reported in several databases.
+
+## Why it matters
+
+- **Search result quality** — returning the same provision three times from different sources wastes the user's time and reduces the number of distinct results visible; deduplication ensures diverse, useful results
+- **Embedding and index efficiency** — duplicate documents produce duplicate embeddings that occupy storage and slow down nearest neighbour search without adding informational value
+- **Training data quality** — AI models trained on datasets with heavy duplication may overfit to repeated content, skewing their outputs; deduplication is a standard preprocessing step
+- **Accurate analytics** — if the same document appears five times, frequency-based analyses will overcount it; deduplication ensures that metrics like topic distribution and citation counts are accurate
+
+## How it works
+
+Deduplication operates at several levels of similarity:
+
+**Exact deduplication** identifies documents that are byte-for-byte or character-for-character identical. This is the simplest case, typically handled by comparing cryptographic hashes (SHA-256) of document content. If two documents produce the same hash, they are identical.
+
+**Near-duplicate detection** identifies documents that are substantially similar but not identical — for example, two versions of the same law with minor formatting differences, or the same ruling published with different metadata. Techniques include MinHash (generating compact "fingerprints" from document shingles and comparing them), SimHash (locality-sensitive hashing that maps similar documents to similar hash values), and embedding-based similarity (flagging documents whose vector embeddings are closer than a defined threshold).
+
+**Semantic deduplication** identifies documents that express the same information in different words. This requires embedding-based comparison and is more aggressive — it might merge a Dutch and French version of the same law. This level is typically used cautiously, as legal texts in different languages may have subtle differences that matter.
+
+The deduplication decision also involves choosing which copy to keep. In legal contexts, the most authoritative source (the Official Gazette over a third-party database), the most recent version (a consolidated text over an original publication), or the version with the richest metadata is preferred.
+
+## Common questions
+
+**Q: Should deduplication happen before or after indexing?**
+
+A: Ideally before indexing, during the document ingestion pipeline. This prevents duplicate embeddings from ever being created. However, some systems also apply result-level deduplication at query time, collapsing near-duplicate results before presenting them to the user.
+
+**Q: Can deduplication accidentally remove important content?**
+
+A: Yes, if the similarity threshold is too aggressive. Two articles with similar wording but different legal effects (e.g., federal vs. regional versions of a similar provision) should be kept as separate entries. Conservative thresholds and metadata-aware deduplication rules prevent false merges.

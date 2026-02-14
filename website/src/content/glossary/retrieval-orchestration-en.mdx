@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Retrieval orchestration is the logic that decides which retrieval actions to take in which order—possibly across several indices or tools—to assemble the best context for an AI system to use.
+Retrieval orchestration is the coordination layer that decides which retrieval actions to execute, in what order, and how to combine their results to assemble the optimal context for a given query. For complex questions, a single search query against a single index is rarely sufficient. Retrieval orchestration manages multiple retrieval steps — querying different indexes, applying different strategies, following cross-references, and integrating structured lookups — into a coherent process that delivers comprehensive, well-organised context to the generation layer.
+
+## Why it matters
+
+- **Complex query handling** — many legal questions require information from multiple source types (legislation, case law, administrative guidance) that may be stored in different indexes or databases; orchestration coordinates across these sources
+- **Strategy selection** — different query types benefit from different retrieval strategies; orchestration routes each query to the most appropriate strategy (exact lookup for article references, semantic search for conceptual questions, structured query for rate tables)
+- **Efficiency** — orchestration can parallelise independent retrieval steps, cache frequently accessed results, and terminate early when sufficient context has been gathered, optimising both latency and resource use
+- **Quality control** — orchestration evaluates intermediate results and decides whether additional retrieval steps are needed, preventing both insufficient context (too few sources) and context pollution (too many irrelevant sources)
+
+## How it works
+
+Retrieval orchestration operates through a decision loop:
+
+**Query analysis** — the orchestrator examines the incoming query to determine its type, complexity, and likely information needs. A simple factual question ("What is the current VAT rate?") requires a different retrieval strategy than a complex analytical question ("How does the new minimum tax interact with existing deduction rules?").
+
+**Strategy selection** — based on the query analysis, the orchestrator selects one or more retrieval strategies: keyword search for precise references, semantic search for conceptual matching, structured database queries for rates and thresholds, or multi-hop retrieval for cross-referential questions.
+
+**Execution** — the selected strategies are executed, potentially in parallel. Each returns a set of candidate results with relevance scores. The orchestrator may issue additional queries based on the initial results (following cross-references, expanding on identified topics, searching for contradicting evidence).
+
+**Result assembly** — results from all retrieval steps are merged, deduplicated, ranked by relevance, and assembled into a coherent context package. The orchestrator ensures diversity (different source types represented), completeness (key aspects of the question covered), and quality (low-relevance results filtered out).
+
+**Sufficiency check** — the orchestrator evaluates whether the assembled context is sufficient to answer the question. If key aspects are not covered, additional targeted retrieval may be triggered. If context is sufficient, it is passed to the generation layer.
+
+In advanced systems, orchestration is model-driven: an LLM decides what to search for next based on what has been found so far (agentic retrieval). In simpler systems, orchestration follows predefined rules based on query classification.
+
+## Common questions
+
+**Q: How is orchestration different from the retrieval pipeline?**
+
+A: The retrieval pipeline is the sequence of stages (retrieval → filtering → reranking) for a single query. Orchestration operates above the pipeline, deciding when to invoke the pipeline, with what queries, and how to combine results across multiple pipeline invocations.
+
+**Q: Does orchestration add latency?**
+
+A: Yes — additional retrieval steps take additional time. Orchestration manages this through parallelisation, early termination, and caching. The latency cost is justified when it produces significantly better context than a single retrieval pass.
 
 ## References
 

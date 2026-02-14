@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-[Hallucination](/en/glossary/hallucination/) rate measures how often an LLM produces content that is not grounded in sources or reality, typically estimated via human or automated evaluation.
+Hallucination rate is the proportion of an AI system's outputs that contain statements not supported by the provided sources, the factual record, or both. It is the primary safety metric for legal AI: a system with a 5% hallucination rate means that roughly 1 in 20 responses contains fabricated, misattributed, or factually incorrect information. In domains like tax law where incorrect information can lead to financial penalties or regulatory exposure, even low hallucination rates demand mitigation strategies.
+
+## Why it matters
+
+- **Professional risk** — a tax advisor relying on an AI-generated answer that cites a non-existent article or misquotes a rate could provide incorrect advice to clients, with liability consequences
+- **Trust calibration** — knowing the system's hallucination rate allows professionals to calibrate how much independent verification each answer requires; a 1% rate requires spot checks, a 10% rate requires verifying every answer
+- **System comparison** — hallucination rate provides a standardised metric for comparing different AI systems, models, or configurations on the same task
+- **Regulatory expectation** — the EU AI Act requires high-risk AI systems to maintain appropriate accuracy levels; published hallucination rates demonstrate compliance with this obligation
+
+## How it works
+
+Hallucination rate is measured through evaluation on a test set where correct answers are known:
+
+**Human evaluation** — annotators compare each AI-generated response against the source documents and flag statements that are fabricated (citing non-existent sources), misattributed (assigning a claim to the wrong source), or factually incorrect (misstating a tax rate or threshold). The hallucination rate is the percentage of responses containing at least one hallucinated statement.
+
+**Automated evaluation** uses natural language inference (NLI) models or LLM-as-judge approaches to check whether each claim in the generated response is entailed by the source documents. Claims that cannot be traced back to any source are flagged as hallucinations. Automated methods are faster and cheaper but less reliable than human evaluation, particularly on nuanced legal content.
+
+**Granularity** matters in measurement. A response-level hallucination rate counts any response with at least one hallucination. A claim-level rate counts individual false statements as a proportion of all claims made. The claim-level metric is more informative but harder to compute.
+
+Hallucination rates are influenced by the entire RAG pipeline. Poor retrieval (missing relevant sources) forces the model to rely on its training knowledge, which may be outdated or wrong. Poor prompting (vague system instructions) gives the model latitude to speculate. Effective mitigation targets both: improving retrieval coverage and adding system prompt instructions that direct the model to acknowledge uncertainty rather than fabricate answers.
+
+## Common questions
+
+**Q: What is an acceptable hallucination rate for legal AI?**
+
+A: There is no universally agreed threshold, but rates below 2-3% are generally considered acceptable for professional use when combined with source citations that allow verification. The key is that every answer should be independently verifiable through the cited sources, reducing reliance on the model's factual accuracy alone.
+
+**Q: Can hallucination rate be zero?**
+
+A: In practice, no current system achieves a zero hallucination rate on open-ended queries. Hallucinations can be minimised through better retrieval, constrained generation, and verification layers, but eliminating them entirely remains an open research challenge.
 
 ## References
 

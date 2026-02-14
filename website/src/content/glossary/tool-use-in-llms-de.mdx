@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Tool-Nutzung in [LLMs](/de/glossary/llm/) beschreibt Architekturen, in denen das Modell externe Werkzeuge—etwa Suche, Datenbanken oder Rechner—aufrufen darf oder soll, um Informationen zu beschaffen oder Aktionen auszuführen, statt sich nur auf seine internen Gewichte zu stützen.
+Tool-Nutzung in [LLMs](/de/glossary/llm/) ist das Architekturpattern, bei dem ein Sprachmodell externe Werkzeuge aufrufen kann — etwa Suchmaschinen, Datenbanken, Taschenrechner, APIs oder Code-Interpreter —, um Informationen zu beschaffen oder Aktionen auszuführen, die seine eigenen Fähigkeiten ergänzen. Anstatt sich ausschließlich auf in seinen Gewichten gespeichertes Wissen zu verlassen, erkennt das Modell, wann es externe Daten oder Berechnungen benötigt, generiert einen strukturierten Tool-Aufruf, empfängt die Ausgabe des Tools und integriert sie in seine Antwort. In der juristischen KI ermöglicht die Tool-Nutzung Modellen, präzise Steuerberechnungen durchzuführen, aktuelle Gesetzesdatenbanken abzufragen und Zitate gegen maßgebliche Quellen zu verifizieren.
+
+## Warum es wichtig ist
+
+- **Präzision bei Berechnungen** — Sprachmodelle sind bei Arithmetik unzuverlässig; die Tool-Nutzung ermöglicht es ihnen, Steuerberechnungen, Zinsberechnungen und Schwellenwertvergleiche an einen Taschenrechner oder Code-Interpreter zu delegieren, der exakte Ergebnisse liefert
+- **Aktuelle Informationen** — die Trainingsdaten von Modellen haben einen Stichtag; die Tool-Nutzung ermöglicht die Abfrage von Live-Datenbanken für aktuelle Steuersätze, aktuelle Urteile oder die neuesten Gesetzesänderungen
+- **Zugriff auf strukturierte Daten** — Rechtsdatenbanken, Steuersatztabellen und Abgabefristenkalender sind strukturierte Daten, auf die Modelle nicht aus ihren Gewichten zugreifen können; Tools überbrücken diese Lücke
+- **Handlungsfähigkeit** — über die Informationsbeschaffung hinaus ermöglicht die Tool-Nutzung Modellen, Aktionen auszuführen: Dokumente generieren, Formulare einreichen oder Aufgaben planen als Teil eines agentischen Workflows
+
+## Wie es funktioniert
+
+Die Tool-Nutzung funktioniert über eine strukturierte Interaktionsschleife:
+
+**Tool-Definition** — das System stellt dem Modell Beschreibungen der verfügbaren Tools bereit: ihre Namen, ihre Funktion, welche Parameter sie akzeptieren und was sie zurückgeben. Für ein juristisches KI-System könnten die Tools eine Gesetzgebungs-Such-API, eine Steuersatz-Nachschlagetabelle, einen Zinsrechner und einen Zitierungsverifizierer umfassen.
+
+**Tool-Auswahl** — während der Antwortgenerierung stellt das Modell fest, dass es Informationen oder Berechnungen benötigt, die über seine eigenen Fähigkeiten hinausgehen. Es generiert einen strukturierten Tool-Aufruf, der angibt, welches Tool verwendet und welche Parameter übergeben werden sollen. Zum Beispiel: `search_legislation(query="article 215 WIB92", jurisdiction="federal", date="2025-01-01")`.
+
+**Tool-Ausführung** — das System führt den Tool-Aufruf aus, ruft das Ergebnis ab und gibt es an das Modell zurück. Das Modell führt Tools nie direkt aus — die Systemschicht vermittelt, setzt Zugriffskontrollen durch und validiert Eingaben.
+
+**Antwortintegration** — das Modell integriert die Ausgabe des Tools in seine laufende Antwortgenerierung und nutzt die abgerufenen Daten, um eine präzise, fundierte Antwort zu erzeugen.
+
+Innerhalb einer einzigen Antwort können mehrere Tool-Aufrufe stattfinden. Das Modell könnte zunächst nach relevanter Gesetzgebung suchen, dann einen bestimmten Steuersatz aus einer strukturierten Tabelle nachschlagen und anschließend einen Taschenrechner verwenden, um die fällige Steuer zu berechnen — alles innerhalb eines einzigen Antwortgenerierungsflusses.
+
+**Sicherheitsaspekte** umfassen: Validierung der Tool-Aufruf-Parameter zur Verhinderung von Injection-Angriffen, Einschränkung, welche Tools in welchen Kontexten verfügbar sind, Protokollierung aller Tool-Aufrufe für Audit-Trails und Sicherstellung, dass Tool-Ausgaben aus maßgeblichen Quellen stammen.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Tool-Nutzung von RAG?**
+
+A: [RAG](/de/glossary/rag/) ist ein spezieller Fall der Tool-Nutzung, bei dem das Tool ein Such-/Retrieval-System ist. Tool-Nutzung ist das breitere Muster — es umfasst jedes externe Tool, nicht nur Retrieval. Ein Modell, das sowohl eine Suchmaschine als auch einen Taschenrechner nutzt, verwendet zwei Tools, von denen eines RAG-artiges Retrieval ist.
+
+**F: Können Modelle Tools verwenden, auf denen sie nicht trainiert wurden?**
+
+A: Ja, bis zu einem gewissen Grad. Moderne LLMs, die mit Tool-Nutzungsfähigkeiten trainiert wurden, können auf neue, im Prompt beschriebene Tools generalisieren, solange die Tool-Beschreibungen klar sind. Fine-Tuning auf spezifische Tools verbessert jedoch die Zuverlässigkeit.
 
 ## References
 

@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La vector [quantization](/fr/glossary/quantization/) partitionne l’[espace d’embeddings](/fr/glossary/embedding-space/) en cellules et remplace chaque vecteur par un représentant proche issu d’un codebook, ce qui peut réduire fortement les coûts de stockage et de recherche.
+La quantification vectorielle est une technique de compression qui approxime des vecteurs d'embedding de haute précision à l'aide d'un petit ensemble de vecteurs prototypes représentatifs (un codebook). Au lieu de stocker chaque embedding sous forme de centaines de nombres à virgule flottante en pleine précision, le vecteur est projeté sur son prototype le plus proche dans chaque sous-espace, et seul l'indice du prototype est stocké. Cela réduit considérablement l'utilisation de la mémoire et accélère les calculs de distance, permettant la recherche sémantique à des échelles où le stockage en pleine précision serait prohibitivement coûteux.
+
+## Pourquoi c'est important
+
+- **Réduction de la mémoire** — un embedding de 768 dimensions en float32 nécessite 3 072 octets ; avec la quantification par produit, le même embedding peut être compressé à 48-96 octets — une réduction de 30 à 60x qui rend les index à l'échelle du milliard réalisables en RAM
+- **Accélération de la recherche** — les calculs de distance sur des vecteurs quantifiés sont plus rapides car ils opèrent sur des structures de données plus petites et peuvent utiliser des tables de correspondance précalculées au lieu de l'arithmétique vectorielle complète
+- **Efficacité des coûts** — des index plus petits nécessitent moins de mémoire et moins de serveurs, réduisant les coûts d'infrastructure pour les systèmes de récupération à grande échelle
+- **Scalabilité** — la quantification est ce qui rend les index à l'échelle du milliard de vecteurs praticables sur du matériel standard ; sans elle, la recherche sémantique à grande échelle nécessiterait des quantités irréalistes de RAM
+
+## Comment ça fonctionne
+
+La quantification vectorielle opère en apprenant un ensemble de vecteurs prototypes (centroïdes) à partir des données, puis en encodant chaque vecteur comme une référence à son prototype le plus proche :
+
+**Quantification scalaire** — réduit la précision de chaque dimension indépendamment — par exemple, en convertissant des floats 32 bits en entiers 8 bits. C'est la forme la plus simple : chaque dimension est linéairement projetée de sa plage observée vers 256 valeurs entières. Le stockage est réduit de 4x avec une perte de précision modeste.
+
+**Quantification par produit (PQ)** — découpe chaque vecteur en sous-vecteurs (par exemple, un vecteur de 768 dimensions en 48 sous-vecteurs de 16 dimensions chacun) et quantifie chaque sous-vecteur indépendamment à l'aide de son propre codebook de 256 centroïdes. Le vecteur complet est alors représenté par 48 codes d'un octet — seulement 48 octets au lieu de 3 072. Le calcul de distance utilise des tables de distance précalculées entre les sous-vecteurs de la requête et les entrées du codebook, ce qui le rend très rapide.
+
+**Quantification par produit optimisée (OPQ)** — applique une rotation aux vecteurs avant de les découper en sous-vecteurs, minimisant la perte d'information causée par la quantification indépendante de chaque sous-vecteur.
+
+Le codebook est appris lors de la construction de l'index en utilisant le clustering k-means sur les vecteurs d'entraînement. La qualité de la quantification dépend de la capacité du codebook à représenter la distribution des données — les codebooks entraînés sur le corpus réel sont plus performants que les codebooks génériques.
+
+La quantification est généralement combinée avec une structure d'index (IVF+PQ, HNSW+PQ) pour obtenir à la fois une sélection rapide des candidats et un stockage économe en mémoire.
+
+## Questions fréquentes
+
+**Q : Quelle perte de précision entraîne la quantification ?**
+
+R : Pour la quantification par produit avec des paramètres raisonnables, le rappel diminue généralement de 2 à 5 % par rapport à la recherche en pleine précision. La perte exacte dépend des données, de la taille du codebook et du nombre de sous-vecteurs. C'est généralement acceptable compte tenu des améliorations considérables en mémoire et en vitesse.
+
+**Q : Les index quantifiés peuvent-ils être mis à jour de manière incrémentale ?**
+
+R : Oui, de nouveaux vecteurs peuvent être quantifiés à l'aide du codebook existant et ajoutés à l'index. Cependant, si la distribution des données change significativement, le codebook peut devenir sous-optimal et devrait être réentraîné.
 
 ## References
 

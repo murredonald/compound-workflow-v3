@@ -12,7 +12,41 @@ draft: false
 
 ## Definition
 
-Faithfulness fragt, ob eine Modell-Erklärung wirklich dem inneren Entscheidungsprozess entspricht statt nur plausibel zu klingen.
+Faithfulness ist die Eigenschaft, dass die Ausgabe eines KI-Systems die Informationen in seinen Quelldokumenten korrekt wiedergibt — ohne unbelegte Aussagen hinzuzufügen und ohne die Quellen falsch darzustellen. In der Retrieval-Augmented Generation bedeutet Faithfulness, dass jede Aussage in der generierten Antwort auf eine bestimmte Passage im abgerufenen Kontext zurückgeführt werden kann. Ein faithfulles System erfindet keine Fakten, ordnet Aussagen nicht der falschen Quelle zu und stellt eigene Schlussfolgerungen nicht als direkte Zitate dar. Faithfulness unterscheidet sich von faktischer Korrektheit: eine Antwort kann faithful gegenüber ihren Quellen sein, auch wenn die Quellen selbst veraltet sind, und eine Antwort kann faktisch korrekt, aber unfaithful sein, wenn sie korrekte Fakten nennt, die nicht im bereitgestellten Kontext zu finden sind.
+
+## Warum es wichtig ist
+
+- **Quellenverifizierbarkeit** — faithfulle Antworten können anhand ihrer Quellen überprüft werden; unfaithfulle Antworten nicht, da die Aussagen, die sie machen, in den zitierten Dokumenten nicht vorkommen
+- **Professionelle Verlässlichkeit** — Steuerberater verwenden KI-generierte Analysen als Ausgangspunkt für ihre eigene Arbeit; wenn die KI ihre Quellen falsch darstellt, baut die nachfolgende Analyse des Beraters auf einer falschen Grundlage auf
+- **Halluzinationsmessung** — Faithfulness ist die primäre Metrik zur Erkennung von Halluzinationen in RAG-Systemen; unfaithfulle Aussagen sind per Definition Halluzinationen
+- **Regulatorisches Vertrauen** — den Nachweis von Faithfulness zu erbringen — dass das System nur Informationen präsentiert, die es auf autoritative Quellen zurückführen kann — ist grundlegend für den Einsatz von KI in regulierten professionellen Umgebungen
+
+## Wie es funktioniert
+
+Faithfulness wird auf Aussagenebene evaluiert. Jede Aussage in der generierten Antwort wird extrahiert und gegen die abgerufenen Quelldokumente geprüft:
+
+**Entailment-Prüfung** verwendet Natural-Language-Inference-Modelle (NLI), um festzustellen, ob jede Aussage von den Quellpassagen gestützt wird (logisch aus ihnen folgt). Als „entailed" klassifizierte Aussagen sind faithful; als „Widerspruch" oder „neutral" (nicht gestützt) klassifizierte Aussagen sind unfaithful.
+
+**LLM-als-Richter**-Ansätze verwenden ein zweites Sprachmodell, um die generierte Antwort mit den Quelldokumenten zu vergleichen und Aussagen zu identifizieren, die über das hinausgehen, was die Quellen stützen. Dies ist flexibler als NLI, bringt aber eigene Verzerrungen mit sich.
+
+**Menschliche Bewertung** bleibt der Goldstandard. Annotatoren lesen sowohl die generierte Antwort als auch die Quelldokumente und markieren jede Aussage, die nicht anhand der Quellen verifiziert werden kann. Dies ist teuer und langsam, liefert aber die zuverlässigsten Faithfulness-Bewertungen.
+
+**Verbesserung der Faithfulness** umfasst Eingriffe an mehreren Stellen der Pipeline:
+
+- **System-Prompt-Anweisungen**, die das Modell explizit anweisen, nur den bereitgestellten Kontext zu verwenden und „Ich weiß es nicht" zu sagen, wenn der Kontext unzureichend ist
+- **Constrained Decoding**-Techniken, die die Token-Generierung des Modells in Richtung Wörter und Formulierungen lenken, die in den Quelldokumenten vorkommen
+- **Nachträgliche Verifizierung** durch ein separates Modell oder regelbasiertes System, das jede Aussage gegen die Quellpassagen prüft, bevor die Antwort an den Benutzer zurückgegeben wird
+- **Quellenhervorhebung**, die die Antwort zusammen mit den spezifischen Passagen präsentiert, auf die sie sich stützt, sodass unfaithfulle Ergänzungen für den Benutzer sichtbar werden
+
+## Häufige Fragen
+
+**F: Ist Faithfulness dasselbe wie faktische Korrektheit?**
+
+A: Nein. Faithfulness misst, ob die Ausgabe mit ihren Quellen übereinstimmt. Korrektheit misst, ob die Ausgabe mit der Realität übereinstimmt. Eine faithfulle Antwort auf veraltete Quellen kann unkorrekt sein. Eine korrekte Antwort, die wahre Fakten hinzufügt, die nicht in den Quellen stehen, ist unfaithful. Beide Eigenschaften sind wichtig, werden aber unterschiedlich gemessen.
+
+**F: Kann ein System zu faithful sein?**
+
+A: Prinzipiell könnte extreme Faithfulness dazu führen, dass ein System sich weigert, Informationen über mehrere Quellen hinweg zu synthetisieren oder offensichtliche Schlussfolgerungen zu ziehen. In der Praxis ist das größere Risiko unzureichende Faithfulness (Halluzination). Systeme sollten ihren Quellen gegenüber faithful sein und gleichzeitig Informationen über Passagen hinweg synthetisieren und verknüpfen können.
 
 ## References
 

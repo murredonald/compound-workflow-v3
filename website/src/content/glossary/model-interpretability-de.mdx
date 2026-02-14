@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Modellinterpretierbarkeit betrifft, wie leicht das Verhalten eines Modells erklärt und überprüft werden kann, was für regulatorische und ethische Prüfungen wichtig ist.
+Modellinterpretierbarkeit ist der Grad, in dem ein Mensch verstehen kann, wie und warum ein KI-Modell eine bestimmte Ausgabe erzeugt. Ein interpretierbares Modell erlaubt es seinen Nutzern, Entwicklern und Regulierungsbehörden, den Weg von der Eingabe zur Ausgabe nachzuvollziehen — zu verstehen, welche Merkmale, Datenpunkte oder Schlussfolgerungsschritte das Ergebnis beeinflusst haben. In der juristischen KI ist Interpretierbarkeit nicht nur eine technische Präferenz, sondern eine regulatorische Anforderung: Der EU AI Act schreibt vor, dass KI-Systeme mit hohem Risiko ausreichend Transparenz bieten müssen, damit Nutzer die Ausgabe des Systems interpretieren und angemessen nutzen können.
+
+## Warum es wichtig ist
+
+- **Berufliche Verantwortung** — wenn ein Steuerberater sich auf eine KI-generierte Analyse verlässt, muss er verstehen, warum das System zu seiner Schlussfolgerung gelangt ist, um seiner eigenen beruflichen Sorgfaltspflicht nachzukommen; eine Black-Box-Antwort reicht nicht aus
+- **Regulatorische Konformität** — der EU AI Act verlangt, dass KI-Systeme mit hohem Risiko „ausreichend transparent sind, um es den Nutzern zu ermöglichen, die Ausgabe des Systems zu interpretieren und angemessen zu nutzen" (Artikel 13); Interpretierbarkeits-Mechanismen sind das primäre Mittel zur Erfüllung dieser Anforderung
+- **Fehlererkennung** — interpretierbare Ausgaben ermöglichen es Nutzern, Fehler zu erkennen: Wenn das System eine irrelevante Quelle zitiert oder eine wichtige Bestimmung ignoriert, macht eine transparente Argumentationskette dies sichtbar
+- **Vertrauen und Akzeptanz** — Fachleute übernehmen eher KI-Tools, die sie verstehen und überprüfen können; intransparente Systeme stoßen auf Widerstand, unabhängig von ihrer Genauigkeit
+
+## Wie es funktioniert
+
+Interpretierbarkeit wirkt auf mehreren Ebenen in einem KI-System:
+
+**Quellenattribution** ist die direkteste Form der Interpretierbarkeit in Retrieval-Augmented Generation. Das System zeigt, welche Dokumente abgerufen wurden, welche Passagen die Antwort beeinflusst haben und wie jede Quelle beigetragen hat. Dies ermöglicht es dem Nutzer, die Antwort anhand der zitierten Quellen zu überprüfen, anstatt dem Modell blind zu vertrauen.
+
+**Konfidenzkommunikation** liefert ein kalibriertes Signal darüber, wie sicher das System sich bei seiner Antwort ist. Wenn das System auf widersprüchliche Quellen, unzureichende Belege oder mehrdeutige Anfragen stößt, kommuniziert es diese Unsicherheit explizit, anstatt eine definitiv klingende, aber unsichere Antwort zu präsentieren.
+
+**Schlussfolgerungsketten** zeigen die Zwischenschritte in der Argumentation des Systems: welche Suchanfragen generiert wurden, wie Ergebnisse gefiltert und gerankt wurden und wie die endgültige Antwort aus mehreren Quellen synthetisiert wurde. Diese sind detaillierter als die Quellenattribution und vor allem für Entwickler und fortgeschrittene Nutzer nützlich, die das Systemverhalten diagnostizieren.
+
+**Feature-Importance-Methoden** (wie Aufmerksamkeitsvisualisierung oder SHAP-Werte) identifizieren, welche Teile der Eingabe den größten Einfluss auf die Ausgabe hatten. Bei Textmodellen könnte dies hervorheben, welche Wörter in der Anfrage oder welche Passagen im abgerufenen Kontext am einflussreichsten für die Generierung der Antwort waren.
+
+Die grundlegende Spannung bei der Interpretierbarkeit besteht zwischen Modellkomplexität und Erklärbarkeit. Einfachere Modelle (Entscheidungsbäume, lineare Klassifikatoren) sind von Natur aus interpretierbar, aber weniger leistungsfähig. Komplexe Modelle (Transformer, tiefe Netzwerke) erzielen höhere Leistung, sind aber schwerer zu erklären. RAG-Systeme mildern diese Spannung ab, indem sie die Retrieval-Komponente transparent machen — selbst wenn das Generierungsmodell intransparent ist, kann der Nutzer sehen, aus welchen Quellen es geschöpft hat.
+
+## Häufige Fragen
+
+**F: Ist Interpretierbarkeit dasselbe wie Erklärbarkeit?**
+
+A: Die Begriffe werden oft synonym verwendet. Wenn eine Unterscheidung getroffen wird, bezieht sich Interpretierbarkeit auf die inhärente Verständlichkeit des Mechanismus eines Modells, während Erklärbarkeit sich auf Post-hoc-Methoden bezieht, die die Ausgaben eines Modells erklären. In der Praxis tragen beide zum selben Ziel bei: Menschen in die Lage zu versetzen, KI-Entscheidungen zu verstehen.
+
+**F: Reduziert Interpretierbarkeit die Modellleistung?**
+
+A: Nicht unbedingt. Quellenattribution und Konfidenzwerte können einem RAG-System hinzugefügt werden, ohne die zugrunde liegenden Modelle zu verändern. Allerdings kann die Einschränkung eines Modells auf inhärente Interpretierbarkeit (z. B. Verwendung eines regelbasierten Systems anstelle eines neuronalen Netzwerks) seine Fähigkeiten begrenzen.

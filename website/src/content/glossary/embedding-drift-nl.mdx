@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Embedding drift treedt op wanneer dezelfde tekst na verloop van tijd andere vectoren oplevert, bijvoorbeeld na een modelupdate, waardoor oude en nieuwe [embeddings](/nl/glossary/embeddings/) minder goed vergelijkbaar worden.
+Embedding drift is het fenomeen waarbij de relatie tussen [embeddingvectoren](/nl/glossary/embeddings/) en hun onderliggende semantische inhoud na verloop van tijd verslechtert, waardoor gelijkeniszoekopdrachten minder nauwkeurig worden. Dit treedt op wanneer de distributie van de te embedden inhoud verandert (nieuwe terminologie, nieuwe documentstijlen, nieuwe onderwerpen) terwijl het embeddingmodel ongewijzigd blijft, of wanneer het embeddingmodel wordt bijgewerkt maar de opgeslagen vectoren niet opnieuw worden berekend. Embedding drift is een vorm van modeldrift die specifiek is voor de vectorrepresentaties die semantische zoekopdrachten aandrijven.
+
+## Waarom het ertoe doet
+
+- **Stille verslechtering van zoekresultaten** — embedding drift vermindert de zoekwaliteit geleidelijk; het systeem retourneert na verloop van tijd iets minder relevante resultaten zonder duidelijke fout, waardoor het moeilijk te detecteren is
+- **Onjuiste representatie van nieuwe inhoud** — naarmate nieuwe wetgeving concepten of terminologie introduceert die niet voorkwamen in de trainingsdata van het embeddingmodel, representeren de vectoren voor deze nieuwe documenten mogelijk niet nauwkeurig hun betekenis
+- **Indexinconsistentie** — als het embeddingmodel wordt bijgewerkt maar bestaande vectoren niet opnieuw worden berekend, bestaan oude en nieuwe embeddings in verschillende ruimtes en zijn ze niet vergelijkbaar; een query kan bij voorkeur oude of nieuwe documenten matchen op basis van verschillen in de embeddingsruimte in plaats van op werkelijke relevantie
+- **Cumulatieve effecten** — embedding drift beïnvloedt retrieval, wat de generatiekwaliteit beïnvloedt, wat het gebruikersvertrouwen beïnvloedt; kleine drift in embeddings kan een buitenproportioneel effect hebben op de end-to-end systeemkwaliteit
+
+## Hoe het werkt
+
+Embedding drift manifesteert zich via verschillende mechanismen:
+
+**Verschuiving in datadistributie** — de inhoud die wordt geëmbed verandert na verloop van tijd. Nieuwe wetgeving introduceert terminologie ("pillar two global minimum tax", "DAC 8-rapportage") die niet voorkwam in de trainingsdata van het embeddingmodel. Het model produceert nog steeds vectoren voor deze tekst, maar die vectoren vangen mogelijk niet nauwkeurig de betekenis op, omdat het model geen eerdere ervaring heeft met deze concepten.
+
+**Modelupdate zonder her-embedding** — wanneer het embeddingmodel wordt geüpgraded naar een nieuwere versie, produceert het nieuwe model vectoren in een andere ruimte dan het oude. Als bestaande documenten niet opnieuw worden geëmbed met het nieuwe model, bevat de index vectoren uit twee incompatibele ruimtes. Zoekopdrachten (geëmbed met het nieuwe model) matchen mogelijk niet goed met oude documenten (geëmbed met het oude model).
+
+**Conceptevolutie** — de betekenis van juridische concepten verandert na verloop van tijd door nieuwe wetgeving, jurisprudentie en administratieve praktijk. Een embeddingmodel getraind op data van 2023 vangt mogelijk niet de geëvolueerde betekenis van concepten die tegen 2025 verschoven zijn.
+
+**Detectie** berust op het monitoren van retrievalkwaliteitsmetrieken over tijd. Dalende precisie, recall of relevantiescore op een vaste evaluatieset kunnen wijzen op embedding drift. Meer directe detectie omvat het periodiek opnieuw embedden van een steekproef documenten en het vergelijken van de nieuwe embeddings met de opgeslagen — significante afwijking wijst op drift.
+
+**Mitigatie** strategieën omvatten: periodiek opnieuw embedden van het gehele corpus (duur maar grondig), continu fine-tunen van het embeddingmodel op recente inhoud (richt zich op verschuiving in datadistributie), en het monitoren van retrievalkwaliteitsmetrieken voor vroegtijdige detectie.
+
+## Veelgestelde vragen
+
+**V: Hoe snel treedt embedding drift op?**
+
+A: Dat hangt af van hoe snel het inhoudsdomein evolueert. In het fiscaal recht, met jaarlijks significante nieuwe wetgeving, is merkbare drift binnen 12-18 maanden mogelijk. In meer statische domeinen kan het jaren duren voordat drift significant wordt.
+
+**V: Is her-embedding de enige oplossing?**
+
+A: Het is de meest betrouwbare oplossing. Alternatieven zijn het uitlijnen van oude en nieuwe embeddingsruimtes (als het model is bijgewerkt) of het aanvullen van de index met supplementaire embeddings voor nieuwe terminologie. Maar periodiek volledig opnieuw embedden blijft de gouden standaard.
 
 ## References
 

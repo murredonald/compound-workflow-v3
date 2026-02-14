@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Function calling is een patroon waarbij een taalmodel een gestructureerde payload produceert die aangeeft welke externe functie of tool moet worden aangeroepen en met welke argumenten, zodat integratie met API's of databronnen mogelijk wordt.
+Function calling is een mogelijkheid van moderne Taalmodellen waarbij het Model een geschikte externe Functie selecteert uit een vooraf gedefinieerde set, de vereiste Argumenten genereert in een gestructureerd formaat (doorgaans JSON), waarna het Systeem de Functie uitvoert en het Resultaat teruggeeft aan het Model. Dit stelt LLM's in staat om via een gestructureerde Interface te communiceren met externe API's, Databases, Rekenmachines en andere Tools — in plaats van vrije Tekst te genereren. In juridische AI maakt function calling het mogelijk om Wetgevingsdatabanken te doorzoeken, Belastingberekeningen uit te voeren, Indieningsdeadlines op te zoeken en de Nauwkeurigheid van Citaten te verifiëren — Taken die precieze gestructureerde Interacties met externe Systemen vereisen.
+
+## Waarom het belangrijk is
+
+- **Precieze externe Interacties** — function calling biedt een getypeerde, gevalideerde Interface tussen het Model en externe Systemen, waardoor het Risico op verkeerd geformatteerde Verzoeken afneemt die bij vrije Tekstgeneratie zouden optreden
+- **Betrouwbare Toolselectie** — het Model kiest uit een gedefinieerde set Functies met gedocumenteerde Parameters, waardoor Toolgebruik voorspelbaar en controleerbaar wordt
+- **Uitbesteding van Berekeningen** — Taken waar LLM's slecht in zijn (Rekenkunde, Databasequery's, Datumberekeningen) worden gedelegeerd aan gespecialiseerde Tools die exacte Resultaten opleveren
+- **Agentische Workflows** — function calling is het Mechanisme dat AI-agents in staat stelt om Acties uit te voeren in de echte Wereld: zoeken, berekenen, schrijven en coördineren over meerdere Systemen
+
+## Hoe het werkt
+
+Function calling werkt via een gedefinieerd Protocol:
+
+**Functiedefinities** — de Ontwikkelaar voorziet het Model van Beschrijvingen van beschikbare Functies, inclusief hun Naam, Doel, Parameters (met Types en Beschrijvingen) en Retourwaarden. Voor een juridisch AI-systeem kunnen Functies bijvoorbeeld `search_legislation(query, jurisdiction, date)`, `calculate_tax(income, deductions, year)` en `verify_citation(article, law_code)` omvatten.
+
+**Modelbeslissing** — tijdens het genereren van een Antwoord bepaalt het Model dat het een Functie moet aanroepen om de Vraag van de Gebruiker te beantwoorden. Het genereert een gestructureerde Functieaanroep met de Functienaam en Argumentwaarden. Bijvoorbeeld: `{"function": "calculate_tax", "arguments": {"income": 75000, "deductions": 12500, "year": 2025}}`.
+
+**Uitvoering** — de Applicatielaag valideert de Functieaanroep, voert deze uit tegen de juiste Backend en geeft het Resultaat terug aan het Model. Het Model voert Functies nooit zelf uit — het Systeem fungeert als Tussenpersoon en handhaaft Beveiliging, Toegangscontroles en Invoervalidatie.
+
+**Integratie van het Antwoord** — het Model ontvangt het Functieresultaat en verwerkt dit in zijn Antwoord aan de Gebruiker, doorgaans door het gestructureerde Resultaat te combineren met verklarende Tekst.
+
+Er kunnen meerdere Functieaanroepen in één Antwoord plaatsvinden (parallelle Aanroepen), of Aanroepen kunnen worden geketend (waarbij het Resultaat van de ene de Argumenten van de volgende bepaalt). Moderne LLM-API's van Anthropic, OpenAI en anderen bieden ingebouwde Ondersteuning voor function calling met automatische gestructureerde Outputgeneratie.
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen function calling en tool use?**
+
+A: Function calling is het specifieke Mechanisme — het Model produceert gestructureerde JSON die overeenkomt met een Functiesignatuur. Tool use is het bredere Concept — elk Patroon waarbij het Model communiceert met externe Mogelijkheden. Function calling is de meest voorkomende Implementatie van tool use in Productiesystemen.
+
+**V: Kan een Model de verkeerde Functie aanroepen?**
+
+A: Ja. Modellen kunnen een ongeschikte Functie selecteren of onjuiste Argumenten genereren, vooral bij dubbelzinnige Zoekopdrachten. Duidelijke Functiebeschrijvingen, Parametervalidatie en Bevestigingsstappen voor Acties met hoge Impact beperken dit Risico.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Positional encoding is een extra vector die aan token-[embeddings](/nl/glossary/embeddings/) wordt toegevoegd of ermee wordt geconcateneerd zodat een [transformer](/nl/glossary/transformer-architecture/) het verschil tussen posities en volgorde van tokens in een sequentie kan leren.
+Positional encoding is een techniek die informatie over de positie van elk token binnen een sequentie toevoegt aan de representatie van dat token, zodat [transformer](/nl/glossary/transformer-architecture/)-modellen woordvolgorde kunnen begrijpen. Transformers verwerken alle tokens parallel in plaats van sequentieel, wat ze snel maakt maar betekent dat ze geen inherent besef van positie hebben — zonder positional encoding zouden de zinnen "de Belasting geldt op Inkomen" en "Inkomen geldt op de Belasting" identieke representaties opleveren. Positional encoding lost dit op door een positieafhankelijk signaal toe te voegen aan de [embedding](/nl/glossary/embeddings/) van elk token.
+
+## Waarom het belangrijk is
+
+- **Gevoeligheid voor volgorde** — in juridische tekst verandert woordvolgorde de betekenis drastisch; "de Uitzondering is niet van toepassing" betekent het tegenovergestelde van "de Uitzondering is wel van toepassing"; positional encoding zorgt ervoor dat het model dit onderscheid maakt
+- **Verwerking van lange contexten** — moderne juridische AI-systemen verwerken lange documenten (volledige wetteksten, uitspraken van meerdere pagina's); de keuze van positional encoding-methode bepaalt hoe goed het model omgaat met posities die verder reiken dan de trainingslengte
+- **Oplossing van kruisverwijzingen** — begrip van relatieve positie helpt het model bepalen waarnaar "het voorgaande lid" of "het hierboven vermelde artikel" verwijst in juridische tekst
+- **Architecturale basis** — positional encoding is een fundamenteel onderdeel van elk op transformers gebaseerd model, inclusief de taalmodellen en embeddingmodellen die in [RAG](/nl/glossary/retrieval-augmented-generation/)-systemen worden gebruikt
+
+## Hoe het werkt
+
+Er bestaan verschillende benaderingen van positional encoding, elk met eigen afwegingen:
+
+**Sinusoïdale codering** (gebruikt in het originele Transformer-artikel) genereert positievectoren met sinus- en cosinusfuncties op verschillende frequenties. Elke positie krijgt een uniek patroon, en de vloeiende wiskundige relatie tussen posities stelt het model in staat om relatieve afstand te leren. Deze aanpak is vast en deterministisch — er worden geen extra parameters geleerd.
+
+**Geleerde positionele embeddings** wijzen aan elke positie een trainbare embeddingvector toe (positie 1, positie 2, ..., tot aan de maximale sequentielengte). Het model leert deze embeddings tijdens de training. Dit is eenvoudig en effectief, maar beperkt het model tot sequenties die niet langer zijn dan de maximale positie die tijdens de training is gezien.
+
+**Rotary Position Embedding (RoPE)** codeert positie door de embeddingvector te roteren in tweedimensionale deelruimtes. De rotatiehoek is evenredig met de positie, zodat relatieve posities worden vastgelegd via de hoek tussen geroteerde vectoren. RoPE is de dominante aanpak geworden in moderne LLM's omdat het relatieve posities op natuurlijke wijze vastlegt en kan extrapoleren naar sequentielengtes die verder gaan dan wat tijdens de training is gezien.
+
+**ALiBi (Attention with Linear Biases)** kiest een andere aanpak: in plaats van embeddings aan te passen, voegt het een lineaire bias toe aan [attention](/nl/glossary/attention-mechanism/)-scores op basis van de afstand tussen tokens. Tokens die ver uit elkaar liggen krijgen een straf, waardoor het model geneigd is aandacht te besteden aan nabije context. ALiBi extrapoleert goed naar langere sequenties en vereist geen extra parameters.
+
+De keuze van positional encoding heeft directe invloed op het [contextvenster](/nl/glossary/context-window/) van het model — de maximale sequentielengte die het effectief kan verwerken. Methoden zoals RoPE en ALiBi maken langere contextvensters mogelijk dan vaste geleerde embeddings, wat belangrijk is voor het verwerken van lange juridische documenten.
+
+## Veelgestelde vragen
+
+**V: Wat gebeurt er als de invoer langer is dan de posities waarop het model is getraind?**
+
+A: Met geleerde positionele embeddings kan het model langere sequenties helemaal niet verwerken. Met sinusoïdale, RoPE- of ALiBi-coderingen kan het model tot op zekere hoogte extrapoleren, hoewel de prestaties doorgaans afnemen voor posities die ver voorbij het trainingsbereik liggen. Technieken zoals positie-interpolatie of NTK-aware scaling helpen de effectieve contextlengte te verlengen.
+
+**V: Heeft positional encoding invloed op de kwaliteit van embeddings voor retrieval?**
+
+A: Ja. Embeddingmodellen voor retrieval gebruiken intern positional encoding, en dit beïnvloedt hoe goed ze lange passages representeren. Modellen met betere positional encoding produceren nauwkeurigere embeddings voor lange documenten, wat de retrievalkwaliteit verbetert.
 
 ## References
 

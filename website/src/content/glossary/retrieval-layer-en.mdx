@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-The retrieval layer in a [RAG](/en/glossary/rag/) architecture is responsible for searching over an index and returning the most relevant documents or chunks given a user [query](/en/glossary/prompt/) or model-generated subquery.
+The retrieval layer is the component within a retrieval-augmented generation (RAG) architecture responsible for finding and ranking relevant documents or passages from a knowledge base in response to a query. It sits between the user's question and the language model's generation step, determining what context the model will see. The quality of the retrieval layer sets an upper bound on answer quality — the language model cannot reason over documents it never received.
+
+## Why it matters
+
+- **Answer accuracy ceiling** — if the retrieval layer misses a relevant statute or returns an outdated provision, the generated answer will be wrong regardless of how capable the language model is
+- **Latency budget** — the retrieval layer must return results in tens of milliseconds to keep overall response times acceptable; its architecture directly affects user experience
+- **Domain adaptability** — a well-designed retrieval layer can be tuned for legal-specific requirements (temporal filtering, authority ranking, jurisdictional scoping) without modifying the generation model
+- **Modularity** — separating retrieval from generation allows each component to be improved, tested, and scaled independently
+
+## How it works
+
+The retrieval layer typically combines multiple retrieval strategies in a pipeline:
+
+**Sparse retrieval** uses traditional keyword-matching algorithms like BM25 to find documents containing the query's exact terms. This is fast and effective for precise legal terminology — when a user searches for "article 215 WIB92", sparse retrieval finds exact matches efficiently.
+
+**Dense retrieval** converts both the query and all documents into vector embeddings, then finds the closest vectors by similarity. This captures semantic meaning, allowing a query about "corporate tax deductions" to match documents that use different terminology like "aftrekbare beroepskosten".
+
+Most production systems combine both approaches in **hybrid retrieval**, merging sparse and dense results to get the precision of keyword matching and the recall of semantic search.
+
+After initial candidate generation, the retrieval layer applies **metadata filters** (jurisdiction, date range, document type, authority level) to remove irrelevant results. A **reranker** — typically a cross-encoder model — then rescores the remaining candidates with deeper analysis, producing the final ranked list that is passed to the generation layer.
+
+The retrieval layer also handles query preprocessing: expanding abbreviations, adding legal synonyms, decomposing complex multi-part questions into sub-queries, and routing queries to the appropriate index based on detected intent.
+
+## Common questions
+
+**Q: How many documents should the retrieval layer return?**
+
+A: Typically 5-20 passages, depending on the language model's context window and the complexity of the question. Too few risks missing relevant sources; too many dilutes the context with marginally relevant material and increases cost. The reranker's role is to ensure the top-k results are the most relevant.
+
+**Q: What is the difference between the retrieval layer and the retrieval pipeline?**
+
+A: The terms are often used interchangeably. Strictly, the retrieval layer refers to the architectural component within a RAG system, while the retrieval pipeline emphasises the sequential stages (query processing, candidate retrieval, filtering, reranking) that make up that component.
 
 ## References
 

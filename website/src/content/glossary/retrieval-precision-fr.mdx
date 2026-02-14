@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La précision de récupération mesure la proportion de documents renvoyés par un système de recherche ou de [RAG](/fr/glossary/rag/) qui sont réellement pertinents pour la requête, souvent calculée avec un seuil comme Precision@k.
+La précision de récupération est la fraction des documents renvoyés par un système de recherche qui sont réellement pertinents pour la requête de l'utilisateur. Si un système renvoie 10 documents et que 7 sont pertinents, la précision est de 70 %. Elle est généralement mesurée à un seuil spécifique — Precision@5 (parmi les 5 premiers résultats, combien sont pertinents) ou Precision@10 — car les utilisateurs regardent rarement au-delà de la première page de résultats. En IA juridique, la précision est importante car chaque résultat non pertinent fait perdre du temps au professionnel et, dans les systèmes RAG, dilue le contexte fourni au modèle de langage.
+
+## Pourquoi c'est important
+
+- **Efficacité de l'utilisateur** — les conseillers fiscaux ont un temps limité ; une précision élevée signifie qu'ils passent moins de temps à trier des résultats non pertinents et plus de temps sur les dispositions pertinentes
+- **Qualité du contexte RAG** — dans la génération augmentée par récupération, les documents récupérés deviennent la fenêtre de contexte du modèle de langage ; une faible précision signifie que le modèle reçoit des passages bruités et non pertinents qui peuvent dégrader la qualité de la réponse ou déclencher des hallucinations
+- **Confiance** — un système qui renvoie régulièrement des résultats non pertinents érode la confiance de l'utilisateur, même si le résultat pertinent se trouve quelque part dans la liste ; la précision affecte directement la qualité perçue du système
+- **Complémentaire au rappel** — la précision et le rappel mesurent des aspects différents de la qualité de la récupération ; un système a besoin des deux pour être efficace
+
+## Comment ça fonctionne
+
+La précision est calculée en divisant le nombre de documents pertinents récupérés par le nombre total de documents récupérés :
+
+**Precision@k = (documents pertinents dans le top k) / k**
+
+L'évaluation nécessite un jeu de test annoté où des annotateurs humains ont identifié quels documents sont pertinents pour chaque requête. La sortie classée du système est ensuite comparée à ces jugements de pertinence.
+
+**Compromis précision-rappel** : la précision et le rappel sont inversement liés. Renvoyer plus de documents (rappel plus élevé — moins de documents pertinents sont manqués) réduit généralement la précision (plus de documents non pertinents sont inclus). L'architecture du pipeline de récupération — en particulier l'étape de reclassement — vise à maximiser les deux en plaçant les documents les plus pertinents en tête.
+
+**La précision moyenne (MAP)** étend la précision en tenant compte du classement des documents pertinents, pas seulement de leur nombre. Elle récompense les systèmes qui placent les documents pertinents plus haut dans la liste classée. C'est particulièrement important pour la recherche juridique, où les premiers résultats reçoivent le plus d'attention.
+
+**La précision dans le RAG spécifiquement** : dans un système RAG, les k passages les mieux classés sont concaténés dans le contexte du modèle de langage. Une faible précision signifie que des passages non pertinents occupent des emplacements de la fenêtre de contexte qui auraient pu être utilisés pour des sources pertinentes, ce qui peut amener le modèle à ignorer des informations importantes ou à être distrait par du bruit.
+
+L'amélioration de la précision passe généralement par une meilleure compréhension des requêtes (interprétation correcte de l'intention de l'utilisateur), un reclassement plus efficace (scoring des candidats avec un modèle sémantique plus profond) et un filtrage par métadonnées (exclusion des documents thématiquement liés mais contextuellement erronés — par exemple, de la législation provenant de la mauvaise juridiction ou de la mauvaise période).
+
+## Questions fréquentes
+
+**Q : qu'est-ce qu'un bon score de précision pour la recherche juridique ?**
+
+R : une Precision@5 supérieure à 80 % est généralement considérée comme solide pour la récupération juridique. Cela signifie que 4 des 5 premiers résultats sont pertinents. En pratique, le seuil acceptable dépend du cas d'usage — la recherche exploratoire tolère une précision plus faible, tandis que la réponse à des questions spécifiques exige une précision plus élevée.
+
+**Q : en quoi la précision diffère-t-elle de l'exactitude (accuracy) ?**
+
+R : l'exactitude mesure la correction globale sur l'ensemble des prédictions (y compris les documents correctement non récupérés). La précision mesure spécifiquement la qualité de ce qui a été renvoyé. Un système qui ne renvoie rien a une précision indéfinie mais pourrait avoir une exactitude élevée si la plupart des documents sont effectivement non pertinents.
 
 ## References
 

@@ -10,6 +10,45 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Fehleranalyse ist die systematische Untersuchung der Fehler eines KI-Systems, um deren Muster, Grundursachen und Auswirkungen zu verstehen. Anstatt Fehler als einzelne Vorfälle zu behandeln, kategorisiert die Fehleranalyse sie nach Typ (Retrievalfehler, Generierungshalluzination, Zitierfehler), identifiziert, welche Anfragetypen oder Themen am stärksten betroffen sind, und verfolgt jeden Fehler bis zu seiner Grundursache in der Pipeline zurück. Dieses strukturierte Verständnis von Fehlern leitet gezielte Verbesserungen, die systemische Probleme adressieren, anstatt individuelle Symptome zu behandeln.
+
+## Warum es wichtig ist
+
+- **Gezielte Verbesserung** — Fehleranalyse zeigt, welche Komponente (Retrieval, Generierung oder Quelldaten) die meisten Fehler verursacht, und lenkt den Entwicklungsaufwand dorthin, wo er die größte Wirkung erzielt
+- **Mustererkennung** — einzelne Fehler mögen zufällig erscheinen, doch die Analyse offenbart häufig Muster: Das System versagt konsistent bei temporalen Anfragen oder halluziniert immer dann, wenn die Wissensbasis ein Thema nicht abdeckt
+- **Priorisierung** — die Kategorisierung von Fehlern nach Häufigkeit und Schwere ermöglicht die Priorisierung: Ein seltener, aber gefährlicher Fehlertyp (Zitieren erfundener Gesetzgebung) kann dringendere Aufmerksamkeit erfordern als ein häufiges, aber geringfügiges Problem (unpräzise Zitate)
+- **Fortschrittsverfolgung** — laufende Fehleranalyse verfolgt, ob Verbesserungen die Fehlerquoten tatsächlich senken, und liefert evidenzbasiertes Feedback zur Systementwicklung
+
+## Wie es funktioniert
+
+Fehleranalyse folgt einem strukturierten Prozess:
+
+**Fehlererfassung** — Fehler werden aus mehreren Quellen gesammelt: automatisierte Evaluierung anhand von Testdatensätzen, Nutzerfeedback und -korrekturen, manuelle Überprüfung von Stichprobenausgaben und Ergebnisse aus Adversarial Testing. Jeder Fehlerdatensatz enthält die Anfrage, die Systemantwort, die erwartete korrekte Antwort sowie verfügbaren Kontext (abgerufene Quellen, Konfidenzwert).
+
+**Kategorisierung** — Fehler werden nach Typ klassifiziert:
+- **Retrievalfehler** — die relevante Quelle wurde nicht gefunden (Recall-Problem) oder irrelevante Quellen wurden zurückgegeben (Precision-Problem)
+- **Generierungshalluzinationen** — das Modell hat Informationen erfunden, die im abgerufenen Kontext nicht vorhanden sind
+- **Zitierfehler** — die Antwort ist korrekt, zitiert aber die falsche Quelle, oder Zitate sind unpräzise (Zitieren eines ganzen Gesetzes statt des spezifischen Artikels)
+- **Umfangsfehler** — das System hat eine Frage außerhalb seines Zuständigkeitsbereichs beantwortet, anstatt abzulehnen
+- **Temporale Fehler** — das System hat veraltete oder noch nicht in Kraft getretene Bestimmungen zitiert
+- **Vollständigkeitsfehler** — die Antwort hat einen Teil der Frage behandelt, aber wichtige Aspekte ausgelassen
+
+**Ursachenanalyse** — für jede Kategorie wird die zugrunde liegende Ursache zurückverfolgt. Retrievalfehler können auf Vokabularunterschiede, unzureichende Metadatenfilterung oder Lücken in der Wissensbasis zurückzuführen sein. Halluzinationen können aus mehrdeutigen System-Prompts oder unzureichendem Kontext resultieren.
+
+**Maßnahmenplanung** — jede Grundursache wird einer spezifischen Verbesserung zugeordnet: bessere Query-Expansion für Vokabularunterschiede, strengere temporale Filterung für zeitliche Fehler, zusätzliche Inhalte in der Wissensbasis für Abdeckungslücken oder Prompt-Verfeinerung für Halluzinationsmuster.
+
+## Häufige Fragen
+
+**F: Wie viele Fehler müssen analysiert werden, um nützliche Erkenntnisse zu gewinnen?**
+
+A: Aussagekräftige Muster zeigen sich typischerweise ab 50–100 Fehlern. Für statistisch belastbare Schlussfolgerungen über Fehlerquoten nach Kategorie werden 200–500 Fehler benötigt. Die Analyse sollte periodisch fortgesetzt werden, während sich das System weiterentwickelt.
+
+**F: Sollte die Fehleranalyse automatisiert werden?**
+
+A: Teilweise. Die Fehlerkategorisierung kann mit Klassifikatoren teilautomatisiert werden, aber die Ursachenanalyse und Maßnahmenplanung erfordern menschliches Urteilsvermögen. Automatisches Monitoring markiert Fehler; menschliche Analyse identifiziert deren Ursachen und Lösungen.
+
 ## References
 
 > Alice S. Horning et al. (1981), "[Principles of Language Learning and Teaching](https://doi.org/10.2307/327392)", Modern Language Journal.

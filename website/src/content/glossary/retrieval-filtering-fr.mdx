@@ -10,9 +10,47 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le retrieval filtering limite l’ensemble des candidats à l’aide d’attributs comme le type de document, la date, la juridiction ou les permissions, de sorte que seule une partie autorisée ou pertinente soit considérée lors de la recherche.
+Le filtrage de récupération est l'application de contraintes structurées au processus de récupération qui excluent les documents ne répondant pas à des critères spécifiés — tels que la juridiction, la plage de dates, le type de document, le niveau d'autorité, la langue ou les autorisations d'accès. Le filtrage garantit que le système de récupération ne renvoie que des résultats contextuellement appropriés, complétant la pertinence sémantique et lexicale par des contraintes strictes. En droit fiscal belge, le filtrage de récupération est essentiel car des dispositions sémantiquement similaires provenant de juridictions ou périodes différentes peuvent avoir des effets juridiques complètement différents.
+
+## Pourquoi c'est important
+
+- **Exactitude juridictionnelle** — sans filtrage, une requête sur les droits d'enregistrement flamands pourrait renvoyer de la législation wallonne sémantiquement similaire mais juridiquement non pertinente ; le filtrage par juridiction empêche cela
+- **Exactitude temporelle** — le filtrage par date garantit que le système renvoie la version d'une disposition qui était en vigueur à la date pertinente, et non une version abrogée ou pas encore en vigueur
+- **Adéquation de l'autorité** — le filtrage par type de document permet de prioriser les sources contraignantes (législation, décisions de justice) par rapport aux orientations interprétatives (circulaires, questions parlementaires) lorsque c'est approprié
+- **Application du contrôle d'accès** — le filtrage par autorisations garantit que les utilisateurs ne voient que les documents auxquels ils ont accès, assurant la confidentialité et les exigences de multi-location
+
+## Comment ça fonctionne
+
+Le filtrage de récupération peut être appliqué à différentes étapes du pipeline de récupération :
+
+**Le pré-filtrage** restreint l'espace de recherche avant l'exécution de la recherche de similarité. La base de données vectorielle reçoit à la fois la requête et les contraintes de filtrage, et seuls les vecteurs correspondant aux contraintes sont pris en compte. C'est efficace (moins de vecteurs à comparer) mais peut être trop restrictif si les filtres sont trop étroits.
+
+**Le post-filtrage** exécute d'abord la recherche de similarité complète, puis supprime les résultats qui ne correspondent pas aux contraintes. Cela garantit qu'aucun candidat sémantiquement pertinent n'est manqué par des pré-filtres trop stricts, mais gaspille du calcul sur des résultats qui seront écartés.
+
+**Le filtrage hybride** combine les deux : des pré-filtres larges (par exemple, la langue) pour réduire significativement l'espace de recherche, suivis de post-filtres plus spécifiques (par exemple, plage de dates exacte) sur les résultats renvoyés.
+
+Les types de filtres courants en IA juridique comprennent :
+
+- **Filtres juridictionnels** — fédéral, Région flamande, Région wallonne, Région de Bruxelles-Capitale, Communauté germanophone
+- **Filtres de date** — documents en vigueur à une date spécifique, publiés dans une plage de dates, ou modifiés après une date spécifique
+- **Filtres de type de document** — législation, arrêtés royaux, arrêtés ministériels, circulaires, rulings, jurisprudence, questions parlementaires
+- **Filtres de langue** — néerlandais, français, allemand, ou version linguistique spécifique
+- **Filtres de niveau d'autorité** — constitutionnel, législation primaire, législation secondaire, orientations administratives
+- **Filtres d'accès** — application des autorisations utilisateur et isolation des locataires
+
+Les filtres peuvent être spécifiés explicitement par l'utilisateur (« montrer uniquement la législation flamande ») ou appliqués implicitement par le système sur la base de l'analyse de la requête (« cette requête mentionne "Vlaamse erfbelasting", appliquer le filtre Région flamande »).
+
+## Questions fréquentes
+
+**Q : Un filtrage excessif peut-il nuire aux résultats ?**
+
+R : Oui. Un filtrage trop strict peut exclure des résultats pertinents — par exemple, filtrer strictement par juridiction « flamande » manquerait la législation fédérale qui s'applique uniformément dans toutes les régions. Un assouplissement intelligent des filtres (élargissement des filtres lorsque trop peu de résultats sont renvoyés) atténue ce risque.
+
+**Q : Comment le filtrage interagit-il avec la recherche sémantique ?**
+
+R : Ils sont complémentaires. La recherche sémantique détermine ce qui est thématiquement pertinent ; le filtrage détermine ce qui est contextuellement approprié. Les deux doivent être satisfaits pour qu'un résultat soit utile.
 
 ## References
 

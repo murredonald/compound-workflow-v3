@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Een knowledge base bevat gecureerde artikelen, referentieteksten en soms gestructureerde records die dienen als betrouwbare bron voor zoek‑ en vraag‑antwoord‑systemen.
+Een knowledge base is een gecureerde, gestructureerde verzameling van informatie — documenten, feiten, regels of entiteitsrelaties — georganiseerd voor efficiënte bevraging, retrieval en hergebruik. In tegenstelling tot een ruw documentcorpus bevat een knowledge base doorgaans metadata, taxonomieën of relationele structuur die precieze opzoeking en redenering mogelijk maken. In juridische en fiscale AI slaan knowledge bases wetgeving, rulings, circulaires en hun onderlinge verbanden op.
+
+## Waarom het belangrijk is
+
+- **Eén bron van waarheid** — centraliseert gezaghebbende informatie zodat alle zoekopdrachten uit dezelfde geverifieerde data putten
+- **Gestructureerde retrieval** — metadata en relaties maken filteren op jurisdictie, datum, onderwerp of gezagsniveau mogelijk, veel verder dan wat zoeken op trefwoorden biedt
+- **RAG-fundament** — retrieval-augmented generation-systemen zijn afhankelijk van kwalitatieve knowledge bases om hun antwoorden te gronden in feiten in plaats van parametrisch geheugen
+- **Temporele nauwkeurigheid** — een goed onderhouden knowledge base houdt bij welke versie van een wet op een bepaald moment van kracht was, en voorkomt zo dat het systeem opgeheven bepalingen citeert
+
+## Hoe het werkt
+
+Een knowledge base wordt opgebouwd via een pipeline van ingestie, structurering en indexering. Ruwe documenten (wetteksten, rechterlijke uitspraken, administratieve beslissingen) worden geparsed en verrijkt met metadata: publicatiedatum, autoriteit, onderwerpclassificatie, jurisdictionele reikwijdte en kruisverwijzingen naar andere bepalingen.
+
+De verrijkte inhoud wordt vervolgens opgeslagen in een formaat dat zowel full-text search als gestructureerde queries ondersteunt. Moderne juridische knowledge bases combineren vaak een documentopslag (voor volledige tekst), een vectorindex (voor semantisch zoeken) en een grafenlaag (voor relaties tussen entiteiten zoals artikelen, amendementen en rulings).
+
+Het actueel houden van een knowledge base vereist geautomatiseerde monitoring van officiële publicaties, detectie van wijzigingen en herindexeringspipelines die updates doorvoeren zonder bestaande verwijzingen te breken.
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen een knowledge base en een database?**
+
+A: Een traditionele database slaat gestructureerde data op in tabellen met rigide schema's. Een knowledge base is breder — ze kan ongestructureerde tekst, semi-gestructureerde metadata en relationele kennis bevatten. Juridische knowledge bases combineren vaak alle drie: volledige wetteksten, gestructureerde metadatavelden en relatiekoppelingen tussen bepalingen.
+
+**V: Kan een knowledge base verouderen?**
+
+A: Ja, en dit is een kritiek risico in juridische domeinen. Fiscaal recht verandert frequent door nieuwe wetgeving, amendementen en administratieve circulaires. Een knowledge base zonder geautomatiseerde verversingspipelines kan verouderde informatie serveren, wat tot onjuist advies leidt. Versiebeheer en actualiteitsmonitoring zijn essentieel.
+
+**V: Hoe ondersteunt een knowledge base RAG?**
+
+A: In een RAG-pipeline fungeert de knowledge base als de retrievallaag. Wanneer een gebruiker een vraag stelt, doorzoekt het systeem de knowledge base naar relevante passages en voert die passages vervolgens als context aan het taalmodel. Het model genereert zijn antwoord op basis van de opgehaalde inhoud in plaats van uitsluitend op zijn trainingsdata te vertrouwen.

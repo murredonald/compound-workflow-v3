@@ -10,6 +10,41 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+La calibration est le degré auquel les scores de confiance prédits par un modèle reflètent les probabilités réelles de justesse. Un système parfaitement calibré signifie que lorsqu'il indique 80 % de confiance, il est correct environ 80 % du temps. Dans l'IA juridique, la calibration est essentielle parce que les professionnels se fient aux signaux de confiance pour décider s'ils doivent faire confiance à la sortie d'un système ou la vérifier de manière indépendante. Un système trop confiant qui signale des réponses incertaines comme hautement fiables est plus dangereux qu'un système qui rapporte honnêtement son incertitude.
+
+## Pourquoi c'est important
+
+- **Signaux de confiance** — les conseillers fiscaux utilisent les scores de confiance pour décider du degré de vérification indépendante qu'une réponse générée par l'IA nécessite ; des scores mal calibrés compromettent ce flux de travail
+- **Gestion des risques** — des prédictions trop confiantes sur des questions fiscales ambiguës peuvent entraîner des déclarations incorrectes ou des objections manquées ; la calibration garantit que l'incertitude est mise en évidence
+- **Conformité réglementaire** — le règlement européen sur l'IA (AI Act) attend des systèmes d'IA à haut risque qu'ils communiquent clairement leurs limites ; des scores de confiance calibrés sont un mécanisme concret pour répondre à cette exigence
+- **Comparaison de systèmes** — les métriques de calibration permettent une comparaison objective entre différents modèles ou versions du système, au-delà de la simple précision brute
+
+## Comment ça fonctionne
+
+La calibration se mesure en comparant les probabilités prédites aux résultats observés sur un jeu de test. L'approche standard consiste à regrouper les prédictions par tranches de niveau de confiance (par exemple 0-10 %, 10-20 %, ..., 90-100 %) et à vérifier si la proportion de prédictions correctes dans chaque tranche correspond à la plage de confiance de celle-ci. L'écart entre la précision prédite et observée constitue l'**erreur de calibration**.
+
+La métrique la plus courante est l'**Expected Calibration Error (ECE)** : la moyenne pondérée de la différence absolue entre la confiance et la précision dans toutes les tranches. Un modèle parfaitement calibré a un ECE de zéro.
+
+Les réseaux neuronaux modernes, y compris les grands modèles de langage, tendent à être mal calibrés par défaut — ils sont souvent trop confiants, attribuant des probabilités élevées même lorsqu'ils se trompent. Plusieurs techniques permettent d'y remédier :
+
+- **Temperature scaling** — une méthode post-hoc simple qui ajuste la température softmax sur les logits de sortie du modèle pour élargir ou resserrer la distribution de probabilité. Un seul paramètre de température est appris sur un jeu de validation.
+- **Platt scaling** — ajuste une régression logistique sur les scores bruts du modèle pour produire des probabilités calibrées.
+- **Méthodes d'ensemble** — la moyenne des prédictions sur plusieurs modèles ou plusieurs exécutions améliore naturellement la calibration parce que les erreurs individuelles de surconfiance sont atténuées.
+
+Dans les systèmes de génération augmentée par la récupération, la calibration s'applique non seulement aux probabilités au niveau des tokens du modèle de langage, mais aussi au score de confiance au niveau du système qui combine qualité de la récupération, autorité de la source et certitude de la génération en un signal unique présenté à l'utilisateur.
+
+## Questions fréquentes
+
+**Q : Un modèle peut-il être précis mais mal calibré ?**
+
+R : Oui. Un modèle peut répondre correctement à 95 % des questions mais attribuer 99 % de confiance à chaque réponse. Sa précision est élevée, mais ses scores de confiance sont dénués de sens — l'utilisateur ne peut pas distinguer les 5 % de cas où le modèle se trompe.
+
+**Q : En quoi la calibration diffère-t-elle de la précision ?**
+
+R : La précision mesure à quelle fréquence le modèle est correct. La calibration mesure si le modèle sait à quelle fréquence il est correct. Un modèle bien calibré avec 70 % de précision est plus utile qu'un modèle mal calibré avec 80 % de précision, car il signale honnêtement ses cas incertains.
+
 ## References
 
 - Guo et al. (2017), "[On Calibration of Modern Neural Networks](https://arxiv.org/abs/1706.04599)", ICML.

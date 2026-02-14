@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Multi-hop retrieval voert meerdere afhankelijke retrievalstappen uit, waarbij de resultaten van de ene stap de volgende sturen, om bewijsmateriaal dat over meerdere documenten verspreid is samen te brengen.
+Multi-hop retrieval is een retrievalstrategie die meerdere zoekstappen aan elkaar koppelt, waarbij de resultaten van elke stap de zoekopdracht voor de volgende stap informeren, om bewijsmateriaal te verzamelen dat over meerdere documenten verspreid is. In tegenstelling tot single-hop retrieval (één zoekopdracht, één set resultaten) erkent multi-hop retrieval dat complexe vragen vaak niet vanuit één enkel document beantwoord kunnen worden — het antwoord vereist het verbinden van informatie uit verschillende bronnen. In het fiscaal recht komt dit vaak voor: het bepalen van de fiscale behandeling van een transactie kan de algemene regel vereisen (één artikel), de uitzonderingen erop (een ander artikel), uitvoeringsbesluiten (een koninklijk besluit) en relevante rechtspraak (een rechterlijke uitspraak).
+
+## Waarom het belangrijk is
+
+- **Beantwoording van complexe vragen** — veel echte fiscale vragen vereisen informatie uit meerdere bronnen die geen enkele zoekopdracht zou ophalen; multi-hop retrieval verzamelt de volledige bewijsketen
+- **Kruisverwijzingsresolutie** — wetteksten verwijzen regelmatig naar andere bepalingen ("onverminderd artikel 215"); multi-hop retrieval volgt deze verwijzingen om de gerefereerde bepalingen op te halen
+- **Volledigheid** — een enkele retrievalstap kan belangrijke context missen (uitzonderingen, wijzigingen, voorwaarden) die een volgende retrievalstap wel zou vinden op basis van wat de eerste stap heeft opgeleverd
+- **Ondersteuning van redenering** — het taalmodel kan effectiever redeneren wanneer het de volledige keten van relevante bepalingen ontvangt in plaats van een enkel geïsoleerd artikel
+
+## Hoe het werkt
+
+Multi-hop retrieval breidt de standaard retrievalpipeline uit met iteratieve querygeneratie:
+
+**Stap 1: Initiële retrieval** — de vraag van de gebruiker wordt gebruikt om de eerste set relevante documenten op te halen. Deze initiële set levert het startbewijsmateriaal.
+
+**Stap 2: Querygeneratie** — op basis van de initiële resultaten genereert het systeem vervolgzoekopdrachten om hiaten op te vullen. Als de initiële resultaten "artikel 215 WIB92" als uitzondering noemen, haalt een vervolgzoekopdracht dat artikel op. Als de resultaten naar een uitvoeringsbesluit verwijzen, haalt een vervolgzoekopdracht dat op. Querygeneratie kan regelgebaseerd zijn (het volgen van gedetecteerde kruisverwijzingen) of modelgebaseerd (een LLM gebruiken om te identificeren welke aanvullende informatie nodig is).
+
+**Stap 3: Volgende retrieval** — vervolgzoekopdrachten worden uitgevoerd, waardoor aanvullende documenten worden opgehaald die de initiële resultaten aanvullen.
+
+**Stap 4: Bewijsaggregatie** — alle opgehaalde documenten over alle stappen worden gecombineerd, ontdubbeld en gepresenteerd aan de generatielaag als een uitgebreide bewijsset.
+
+Het aantal stappen wordt doorgaans beperkt (2-3) om de latentie te beheersen en te voorkomen dat de retrieval afdwaalt naar irrelevant terrein. Elke stap voegt latentie toe (een querygeneratiestap plus een retrievalstap), waardoor de totale responstijd toeneemt met het aantal stappen.
+
+Multi-hop retrieval is bijzonder waardevol voor vragen met: voorwaardelijke regels ("is dit aftrekbaar ALS..."), kruisverwijzingen tussen bepalingen, vergelijkingen tussen jurisdicties, en vragen over hoe algemene regels samenhangen met specifieke uitzonderingen.
+
+## Veelgestelde vragen
+
+**V: Hoeveel stappen zijn er doorgaans nodig?**
+
+A: De meeste vragen kunnen in 1-2 stappen worden beantwoord. Drie stappen zijn soms nodig voor zeer complexe kruisverwijzingsvragen. Boven de drie stappen neemt het risico op het ophalen van irrelevante inhoud toe en worden de latentiekosten aanzienlijk.
+
+**V: Kan multi-hop retrieval verkeerd bewijsmateriaal ophalen?**
+
+A: Ja. Elke stap introduceert het risico dat een irrelevante verwijzing wordt gevolgd of een slechte vervolgzoekopdracht wordt gegenereerd. Daarom wordt bewijsmateriaal uit alle stappen gerangschikt en gefilterd voordat het aan de generatielaag wordt doorgegeven.
 
 ## References
 

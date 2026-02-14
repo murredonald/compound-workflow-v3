@@ -12,4 +12,39 @@ draft: false
 
 ## Définition
 
-La protection de la vie privée dès la conception consiste à intégrer des mesures de protection — telles que la minimisation, le contrôle d'accès et la transparence — dans les architectures et les processus plutôt que de les traiter après coup.
+Le privacy by design est le principe selon lequel la protection des données et les garanties de confidentialité doivent être intégrées dans l'architecture, la conception et le fonctionnement d'un système dès le départ — et non ajoutées après coup. Consacré à l'article 25 du RGPD sous le terme « protection des données dès la conception et par défaut », il exige des organisations qu'elles prennent en compte les implications en matière de vie privée à chaque étape du développement du système : du choix des données à collecter, à la manière dont elles sont stockées et traitées, jusqu'au moment et à la façon dont elles sont supprimées. Pour les systèmes d'IA traitant des données fiscales sensibles, le privacy by design détermine des décisions architecturales fondamentales concernant les flux de données, le stockage, l'accès et la conservation.
+
+## Pourquoi c'est important
+
+- **Obligation légale** — l'article 25 du RGPD fait du privacy by design une exigence légale, et non une simple bonne pratique ; le non-respect peut entraîner des amendes significatives
+- **Secret professionnel** — les conseillers fiscaux et les comptables sont liés par des obligations de secret professionnel ; le système d'IA doit être conçu pour respecter ces obligations au niveau architectural
+- **Fondement de la confiance** — les clients partagent des informations financières sensibles avec l'attente qu'elles soient protégées ; le privacy by design offre une assurance structurelle plutôt que de reposer sur des promesses procédurales
+- **Efficacité des coûts** — adapter la protection de la vie privée à un système existant est coûteux et source d'erreurs ; l'intégrer dès le départ est moins cher, plus fiable et produit une architecture plus cohérente
+
+## Comment ça fonctionne
+
+Le privacy by design est mis en œuvre à travers sept principes fondamentaux appliqués à l'architecture du système d'IA :
+
+**Minimisation des données** — ne collecter et ne traiter que les données strictement nécessaires à l'objectif du système. Si le système d'IA n'a pas besoin de stocker les requêtes des utilisateurs après avoir généré une réponse, il ne devrait pas le faire. Si des statistiques d'utilisation agrégées suffisent pour améliorer le système, les journaux de requêtes individuels doivent être anonymisés ou supprimés.
+
+**Limitation des finalités** — les données collectées à une fin ne doivent pas être réutilisées sans base juridique distincte. Les requêtes des utilisateurs collectées pour générer des réponses ne doivent pas être utilisées à des fins marketing sans consentement explicite.
+
+**Contrôle d'accès** — mettre en place des contrôles techniques (accès basé sur les rôles, chiffrement, isolation des locataires) qui appliquent les politiques de confidentialité au niveau du système, pas seulement au niveau des règles. Les données des utilisateurs doivent être inaccessibles à quiconque n'en a pas un besoin légitime, y compris les administrateurs système dans la mesure du possible.
+
+**Chiffrement** — protéger les données au repos et en transit par un chiffrement approprié. Les données des clients stockées dans les bases de données doivent être chiffrées. Les données transmises entre les composants du système doivent utiliser TLS. Les clés de chiffrement doivent être gérées selon les pratiques établies de gestion des clés.
+
+**Limites de conservation** — définir et appliquer des périodes de conservation pour tous les types de données. Les données de session utilisateur, les journaux de requêtes et les artefacts de traitement temporaires doivent être automatiquement supprimés après l'expiration de leur période de conservation. La suppression automatique empêche l'accumulation de données personnelles inutiles.
+
+**Transparence** — fournir une documentation claire sur les données collectées, la manière dont elles sont traitées, où elles sont stockées et pendant combien de temps. Les avis de confidentialité doivent être spécifiques et compréhensibles, pas du jargon juridique générique.
+
+**Confidentialité par défaut** — la configuration par défaut du système doit être l'option la plus protectrice de la vie privée. Les fonctionnalités impliquant une collecte ou un partage de données supplémentaires doivent nécessiter un opt-in explicite plutôt qu'un opt-out.
+
+## Questions fréquentes
+
+**Q : Comment le privacy by design s'applique-t-il à l'entraînement des modèles d'IA ?**
+
+R : Si les données d'interaction des utilisateurs sont utilisées pour améliorer le modèle, le privacy by design exige un consentement éclairé, une anonymisation dans la mesure du possible, une limitation des finalités et la possibilité pour les utilisateurs de se désinscrire. Certaines organisations évitent entièrement d'utiliser les données des clients pour l'entraînement, en s'appuyant plutôt sur des données synthétiques ou publiques.
+
+**Q : Le privacy by design est-il en conflit avec l'amélioration des systèmes d'IA ?**
+
+R : Pas nécessairement, mais il encadre la manière dont l'amélioration se produit. Des modèles d'utilisation agrégés et anonymisés peuvent éclairer les améliorations du système sans exposer les données individuelles. L'essentiel est de concevoir des pipelines de collecte et de traitement des données qui séparent les signaux d'amélioration du système des données personnelles.

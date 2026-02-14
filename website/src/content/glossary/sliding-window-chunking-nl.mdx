@@ -10,9 +10,43 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Sliding window chunking splitst lange documenten op in overlappende segmenten zodat elke [chunk](/nl/glossary/document-chunk/) context deelt met zijn buren en rand­effecten in retrieval en generatie verminderen.
+Sliding window chunking is een Documentsegmentatiestrategie die overlappende Chunks creëert door een Venster van vaste Grootte met regelmatige Intervallen over de Tekst te schuiven. In tegenstelling tot niet-overlappende Chunking, die Tekst opsplitst bij harde Grenzen en het Risico loopt Context te verliezen die twee Chunks overspant, zorgt sliding window chunking ervoor dat elke Zin in minstens één Chunk verschijnt met zijn volledige omringende Context. De Overlap tussen opeenvolgende Chunks fungeert als een Veiligheidsmarge die Informatieverlies aan Chunkgrenzen voorkomt.
+
+## Waarom het belangrijk is
+
+- **Grenscontextbehoud** — in juridische Tekst is een Zin vaak afhankelijk van de voorgaande Zin voor zijn Betekenis ("onverminderd het bovenstaande..."); Overlap zorgt ervoor dat deze Afhankelijkheden in minstens één Chunk worden vastgelegd
+- **Robuustheid van retrieval** — als een relevante Passage precies op een Chunkgrens valt bij niet-overlappende Chunking, scoort geen van beide Chunks mogelijk hoog genoeg om opgehaald te worden; Overlap elimineert deze Faalwijze
+- **Consistente Embeddingkwaliteit** — Chunks die midden in een Zin beginnen of eindigen produceren Embeddings van lagere Kwaliteit; Overlap zorgt ervoor dat de cruciale Inhoud in een Chunk verschijnt met correcte omringende Context
+- **Eenvoudige Implementatie** — sliding window chunking vereist slechts twee Parameters (Venstergrootte en Stapgrootte) en geen Documentstructuuranalyse, wat het eenvoudig te implementeren en te reproduceren maakt
+
+## Hoe het werkt
+
+Sliding window chunking wordt bepaald door twee Parameters:
+
+**Venstergrootte** — de Lengte van elke Chunk, gemeten in Tokens (bv. 512 Tokens). Dit bepaalt hoeveel Tekst elke Chunk bevat en moet een Balans vinden tussen Embeddingkwaliteit (korter is gerichter) en Contextvolledigheid (langer behoudt meer Context).
+
+**Stapgrootte** (of Stride) — hoe ver het Venster verschuift tussen Chunks. Een Stapgrootte kleiner dan de Venstergrootte creëert Overlap. Bijvoorbeeld, met een Venster van 512 Tokens en een Stapgrootte van 256 Tokens overlapt elke Chunk met de vorige met 256 Tokens (50% Overlap). Kleinere Stapgroottes creëren meer Overlap en meer Chunks; grotere Stapgroottes creëren minder Overlap en minder Chunks.
+
+**Overlapratio** = (Venstergrootte - Stapgrootte) / Venstergrootte. Gangbare Overlapratio's zijn 10-50%. Hogere Overlap vermindert het Risico op het missen van grensoverschrijdende Inhoud maar verhoogt het Aantal Chunks (en daarmee de Opslag- en Embeddingkosten).
+
+Het Algoritme doorloopt het Document stapsgewijs:
+1. Extraheer Tokens van Positie 0 tot Positie venstergrootte → Chunk 1
+2. Extraheer Tokens van Positie stapgrootte tot Positie stapgrootte + venstergrootte → Chunk 2
+3. Ga door tot het Einde van het Document
+
+**Afwegingen**: sliding window chunking is eenvoudig en robuust maar respecteert de Documentstructuur niet — het kan een Artikelkop van zijn Inhoud scheiden of een Alinea midden in een Zin afsnijden. Structuurbewuste Chunking (op basis van Koppen, Artikelgrenzen) vermijdt dit maar vereist Documentstructuurdetectie. In de praktijk combineren veel Systemen beide Benaderingen: structuurbewuste Grenzen wanneer beschikbaar, terugvallen op sliding window in andere gevallen.
+
+## Veelgestelde vragen
+
+**V: Wat is het optimale Overlappercentage?**
+
+A: 10-25% Overlap is standaard voor de meeste Retrieval-toepassingen. Hogere Overlap (50%+) wordt soms gebruikt voor kritieke Inhoud waar het missen van welke Context dan ook onaanvaardbaar is, maar het verdubbelt de Opslag- en Embeddingkosten. De juiste Keuze hangt af van hoe gestructureerd de Brondocumenten zijn — goed gestructureerde juridische Tekst met duidelijke Artikelgrenzen heeft minder Overlap nodig dan vrije Commentaartekst.
+
+**V: Verhoogt Overlap de Opslagvereisten?**
+
+A: Ja, evenredig met de Overlapratio. Bij 50% Overlap is het Aantal Chunks ongeveer het dubbele van niet-overlappende Chunking. Elke Chunk moet worden geëmbed en opgeslagen, dus Overlap verhoogt rechtstreeks zowel de Opslag- als de Embeddingberekeningskosten.
 
 ## References
 

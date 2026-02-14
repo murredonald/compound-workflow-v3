@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Metadata Enrichment nutzt Regeln, Modelle oder manuelle Annotation, um [Labels](/de/glossary/ground-truth/) wie Thema, Jurisdiktion oder Entitäten hinzuzufügen und so Filter sowie [semantische Suche](/de/glossary/semantic-search/) zu verbessern.
+Metadata Enrichment ist der Prozess des Hinzufügens, Verfeinerns oder Ableitens strukturierter Metadatenfelder für Dokumente, die mit unvollständigen oder fehlenden Metadaten eintreffen. Juristische Rohdokumente verfügen oft nicht über die strukturierten Annotationen, die für eine effektive Suche nötig sind — ein PDF aus dem Belgischen Staatsblatt enthält den Gesetzestext, markiert aber möglicherweise nicht explizit die Zuständigkeit, das Inkrafttreten, den Dokumenttyp oder Querverweise in einem maschinenlesbaren Format. Metadata Enrichment nutzt NLP-Modelle, Regeln und Mustererkennung, um diese Informationen zu extrahieren und als strukturierte Felder anzuhängen, wodurch der Inhalt such-, filter- und verwaltbar wird.
+
+## Warum es wichtig ist
+
+- **Suchqualität** — angereicherte Metadaten ermöglichen strukturierte Filterung (nach Zuständigkeit, Datum, Dokumenttyp), die eine reine Textsuche nicht bieten kann; ohne sie können Nutzer Ergebnisse nicht auf den spezifischen Kontext eingrenzen, den sie benötigen
+- **Authority-Ranking** — Dokumenttyp-Metadaten (Gesetzgebung vs. Rundschreiben vs. Urteil) ermöglichen es dem System, Quellen nach Autorität zu ordnen; ohne diese Metadaten werden alle Quellen gleichbehandelt
+- **Zeitliche Genauigkeit** — extrahierte Inkrafttretensdaten ermöglichen zeitliche Filterung und stellen sicher, dass nur zum relevanten Zeitpunkt gültige Bestimmungen zurückgegeben werden
+- **Aufbau des Knowledge Graph** — angereicherte Metadaten liefern die strukturierten Entitäten und Beziehungen, die den [Knowledge Graph](/de/glossary/knowledge-graph/) füllen und relationale Abfragen ermöglichen
+
+## So funktioniert es
+
+Metadata Enrichment wird während oder nach der Dokumentenaufnahme durchgeführt:
+
+**Regelbasierte Extraktion** verwendet Muster und reguläre Ausdrücke, um strukturierte Informationen aus vorhersehbaren Formaten zu extrahieren. Belgische Rechtsdokumente folgen Konventionen: Artikelnummern erscheinen in einem Standardformat, Daten werden in bestimmten Mustern geschrieben und Dokumenttypindikatoren (wet/loi, KB/AR, omzendbrief/circulaire) erscheinen in Kopfzeilen oder Titeln.
+
+**NLP-basierte Extraktion** verwendet trainierte Modelle, um Metadaten aus weniger strukturierten Inhalten zu extrahieren. Named Entity Recognition identifiziert Daten, Organisationsnamen und Rechtsverweise. Textklassifikation weist Dokumenttyp- und Themenkategorien zu. Relationsextraktion identifiziert Querverweise zwischen Dokumenten.
+
+**Abgeleitete Metadaten** werden aus anderen Feldern oder aus dem Dokumentinhalt berechnet: Wortzahl, Spracherkennung, Lesestufe, thematische Klassifikation und Zuordnung zu semantischen Clustern. Diese abgeleiteten Felder unterstützen Analysen, Qualitätsüberwachung und Content Discovery.
+
+**Validierung** stellt sicher, dass angereicherte Metadaten konsistent und korrekt sind. Daten werden auf Plausibilität geprüft (nicht in der Zukunft bei historischen Dokumenten). Zuständigkeiten werden anhand eines kontrollierten Vokabulars validiert. Querverweise werden gegen vorhandene Dokumente in der Wissensbasis verifiziert.
+
+**Manuelle Überprüfung** behandelt Fälle, in denen die automatisierte Anreicherung unsicher ist. Extraktionen mit niedriger Konfidenz werden zur manuellen Verifizierung markiert, insbesondere bei Metadatenfeldern mit hoher nachgelagerter Auswirkung (Zuständigkeit, Inkrafttreten, Dokumenttyp).
+
+## Häufige Fragen
+
+**F: Kann Metadata Enrichment vollständig automatisiert werden?**
+
+A: Bei gut strukturierten Quellen (XML des Belgischen Staatsblatts, strukturierte Gerichtsentscheidungsdatenbanken) ja — die Automatisierung kann über 95 % der Metadatenextraktion bewältigen. Bei weniger strukturierten Quellen (gescannte Rundschreiben, historische Dokumente) liefert die automatisierte Anreicherung einen ersten Durchlauf, der bei 10–20 % der Dokumente eine manuelle Überprüfung erfordert.
+
+**F: Was passiert, wenn Metadaten falsch sind?**
+
+A: Fehlerhafte Metadaten sind schlimmer als fehlende Metadaten. Ein Dokument, das mit der falschen Zuständigkeit markiert ist, erscheint in den Suchergebnissen der falschen Zuständigkeit und fehlt in den korrekten. Deshalb sind Validierung und Qualitätsprüfungen wesentliche Bestandteile des Anreicherungsprozesses.

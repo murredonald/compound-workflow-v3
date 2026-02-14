@@ -10,6 +10,39 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La temporal indexing conserve des informations sur la période de validité, la publication ou le remplacement d’un document, afin que les requêtes puissent cibler un état à une date donnée.
+L'indexation temporelle est la pratique consistant à stocker et indexer le contenu avec des métadonnées temporelles — dates d'entrée en vigueur, dates de fin de validité, dates de publication et dates d'amendement — afin que le système de recherche puisse filtrer et classer les résultats en fonction de leur pertinence temporelle. En droit fiscal, l'indexation temporelle n'est pas un luxe mais une nécessité : le taux d'imposition applicable à une transaction dépend de la date de cette transaction, et le système doit récupérer la version de la loi qui était en vigueur à ce moment précis, et non la version actuelle ou une version historique de la mauvaise période.
+
+## Pourquoi c'est important
+
+- **Réponses temporellement correctes** — une question sur le taux de l'impôt des sociétés en 2020 doit renvoyer le taux applicable en 2020, et non le taux actuel ; l'indexation temporelle rend cela possible
+- **Suivi des amendements** — le droit fiscal belge est fréquemment modifié ; l'indexation temporelle garantit que le système sait quand chaque version d'une disposition était en vigueur, évitant de citer des dispositions abrogées ou pas encore en vigueur
+- **Analyse multi-périodes** — les conseillers fiscaux doivent souvent comparer des dispositions sur différentes périodes (comment le taux a-t-il évolué ? quand cette déduction a-t-elle été introduite ?) ; l'indexation temporelle prend en charge ces requêtes comparatives
+- **Conscience des délais** — les délais de déclaration, les délais de prescription et les dispositions transitoires ont tous des dimensions temporelles que le système doit comprendre
+
+## Comment ça fonctionne
+
+L'indexation temporelle étend les métadonnées standard des documents avec des champs spécifiques au temps :
+
+**Plage de dates d'effet** — chaque version de document est étiquetée avec une date d'entrée en vigueur (quand elle est entrée en application) et une date de fin de validité (quand elle a été remplacée ou abrogée). Les dispositions sans date de fin ont une valeur nulle pour la date de fin, indiquant qu'elles sont toujours en vigueur.
+
+**Date de publication** — la date à laquelle le document a été officiellement publié (par exemple, au Moniteur belge). Celle-ci est distincte de la date d'effet — une loi peut être publiée le 1er décembre mais entrer en vigueur le 1er janvier.
+
+**Chaîne d'amendements** — les liens entre les versions successives d'une même disposition, formant un historique de versions. Chaque version pointe vers la loi modificative et vers la version précédente, permettant de parcourir l'évolution de la disposition.
+
+**Filtrage au moment de la requête** — lorsqu'un utilisateur interroge le système, le pipeline de recherche utilise les métadonnées temporelles pour filtrer les résultats. Si la requête spécifie une date (explicitement ou implicitement), seules les dispositions en vigueur à cette date sont renvoyées. Si aucune date n'est spécifiée, le système prend par défaut la date du jour.
+
+**Classement temporel** — parmi les dispositions qui correspondent à la requête et sont temporellement valides, les dispositions plus récentes peuvent être classées plus haut, en partant du principe que l'utilisateur souhaite connaître l'état actuel du droit. Cependant, ce comportement par défaut est remplacé lorsque la requête fait explicitement référence à une période historique.
+
+L'implémentation nécessite un traitement soigneux des cas particuliers : les dispositions à effet rétroactif, les dispositions à entrée en vigueur différée, les régimes transitoires où anciennes et nouvelles règles s'appliquent simultanément, et les dispositions qui ne s'appliquent qu'à des exercices d'imposition spécifiques.
+
+## Questions fréquentes
+
+**Q : Comment l'indexation temporelle gère-t-elle la législation rétroactive ?**
+
+R : Les dispositions rétroactives sont indexées avec une date d'entrée en vigueur antérieure à leur date de publication. Le système doit les faire apparaître pour les requêtes portant sur la période historique concernée, même si elles ont été adoptées ultérieurement. Cela exige que la date d'entrée en vigueur soit fixée en fonction de l'effet juridique de la disposition, et non de sa publication.
+
+**Q : Que se passe-t-il lorsqu'aucune date n'est spécifiée dans une requête ?**
+
+R : Le système prend généralement par défaut la date du jour, renvoyant les dispositions actuellement en vigueur. Certains systèmes incluent également les dispositions récemment abrogées (avec un indicateur) pour gérer les situations transitoires où l'utilisateur pourrait ne pas savoir qu'une disposition a changé.

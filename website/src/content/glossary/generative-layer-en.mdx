@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-The generative layer in a [RAG](/en/glossary/rag/) pipeline takes the retrieved context plus the user question and uses a language model to synthesize a final answer, explanation, or draft.
+The generative layer is the component within a retrieval-augmented generation (RAG) system where the language model takes the retrieved context documents and the user's question and produces a synthesised answer. It sits after the retrieval layer in the pipeline: retrieval finds the relevant sources, and generation transforms them into a coherent, accurate response. The generative layer is where raw source material becomes a usable answer — with citations, structured formatting, and appropriate hedging on uncertain points.
+
+## Why it matters
+
+- **Answer synthesis** — retrieved documents are raw material; the generative layer transforms multiple passages from different sources into a single coherent answer that directly addresses the user's question
+- **Citation integration** — a well-designed generative layer weaves source citations into the answer, allowing the user to verify each claim against its origin
+- **Uncertainty communication** — the generative layer can express confidence levels, flag conflicting sources, and distinguish between clear legal provisions and areas of interpretive uncertainty
+- **Format flexibility** — the same retrieved context can be formatted as a brief answer, a detailed analysis, a comparison table, or a draft memo, depending on the user's needs
+
+## How it works
+
+The generative layer receives two inputs: the user's original question and a curated set of retrieved passages (typically 5-20 chunks selected by the retrieval layer). These are assembled into a prompt that instructs the language model to answer the question based on the provided context.
+
+**Prompt construction** combines the system prompt (defining role, behaviour rules, and output format), the retrieved passages (typically with source metadata like article numbers and publication dates), and the user's question. The prompt instructs the model to base its answer solely on the provided context, cite sources for each claim, and flag when the context does not fully answer the question.
+
+**Generation** — the language model produces the response token by token, conditioned on the entire prompt. During generation, the model must synthesise information across multiple passages, resolve apparent conflicts between sources, and structure the answer according to the specified format.
+
+**Post-processing** validates the generated output: checking that cited sources actually exist in the retrieved context, verifying that article numbers and dates are correct, and applying formatting rules. Some systems use a second, smaller model to verify the faithfulness of the generated answer against the source passages.
+
+The quality of the generative layer depends on the language model's ability to follow instructions precisely, resist the urge to add information beyond the provided context (hallucination), and handle the nuances of legal language. Domain-specific fine-tuning or few-shot examples in the prompt can improve performance on specialised content.
+
+## Common questions
+
+**Q: Can the generative layer hallucinate even with retrieved context?**
+
+A: Yes. The model may fabricate details, misattribute claims to wrong sources, or extrapolate beyond what the context supports. Mitigation strategies include explicit instructions to only use provided context, faithfulness verification, and confidence scoring.
+
+**Q: What is the difference between the generative layer and the LLM?**
+
+A: The LLM is the model itself. The generative layer is the architectural component that includes the LLM plus the prompt construction, context assembly, and post-processing logic that surround it. The generative layer is the system; the LLM is one part of it.
 
 ## References
 

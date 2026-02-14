@@ -10,6 +10,39 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Temporal indexing bewaart informatie over wanneer een document gold, gepubliceerd of vervangen werd, zodat queries kunnen vragen naar de toestand op een bepaalde datum.
+Temporele Indexering is de praktijk van het opslaan en indexeren van Inhoud met tijdgebaseerde Metadata — ingangsdata, einddatums, publicatiedatums en wijzigingsdatums — zodat het retrievalsysteem Resultaten kan filteren en rangschikken op basis van hun temporele Relevantie. In het Belastingrecht is temporele Indexering geen luxe maar een noodzaak: het Belastingtarief dat van toepassing is op een Transactie hangt af van de Datum van die Transactie, en het Systeem moet de Versie van de Wet ophalen die op dat specifieke Moment van kracht was — niet de huidige Versie of een historische Versie uit de verkeerde Periode.
+
+## Waarom het ertoe doet
+
+- **Correcte temporele antwoorden** — een Vraag over het tarief van de Vennootschapsbelasting in 2020 moet het Tarief opleveren dat in 2020 gold, niet het huidige Tarief; temporele Indexering maakt dit mogelijk
+- **Bijhouden van wijzigingen** — Belgisch Belastingrecht wordt frequent gewijzigd; temporele Indexering zorgt ervoor dat het Systeem weet wanneer elke Versie van een Bepaling van kracht was, waardoor het citeren van opgeheven of nog niet in werking getreden Bepalingen wordt voorkomen
+- **Analyse over meerdere periodes** — Belastingadviseurs moeten vaak Bepalingen vergelijken over verschillende Tijdsperioden (hoe is het Tarief veranderd? wanneer werd deze Aftrek ingevoerd?); temporele Indexering ondersteunt deze vergelijkende Zoekopdrachten
+- **Bewustzijn van termijnen** — indieningstermijnen, Verjaringstermijnen en Overgangsbepalingen hebben allemaal temporele Dimensies die het Systeem moet begrijpen
+
+## Hoe het werkt
+
+Temporele Indexering breidt de standaard Documentmetadata uit met tijdspecifieke Velden:
+
+**Bereik van de ingangsdatum** — elke Documentversie wordt getagd met een ingangsdatum (wanneer deze in werking trad) en een einddatum (wanneer deze werd vervangen of opgeheven). Openeindebepalingen hebben een lege Einddatum, wat aangeeft dat ze nog steeds van kracht zijn.
+
+**Publicatiedatum** — wanneer het Document officieel werd gepubliceerd (bijv. in het Belgisch Staatsblad). Dit verschilt van de Ingangsdatum — een Wet kan op 1 december worden gepubliceerd maar op 1 januari in werking treden.
+
+**Wijzigingsketen** — Koppelingen tussen opeenvolgende Versies van dezelfde Bepaling, die een Versiegeschiedenis vormen. Elke Versie verwijst naar de wijzigende Wet en naar de vorige Versie, waardoor de Evolutie van de Bepaling kan worden gevolgd.
+
+**Filtering op het moment van de zoekopdracht** — wanneer een Gebruiker het Systeem bevraagt, gebruikt de retrieval-pipeline de temporele Metadata om Resultaten te filteren. Als de Zoekopdracht een Datum specificeert (expliciet of impliciet), worden alleen Bepalingen die op die Datum van kracht waren geretourneerd. Als er geen Datum wordt opgegeven, neemt het Systeem standaard de huidige Datum.
+
+**Temporele rangschikking** — onder Bepalingen die overeenkomen met de Zoekopdracht en temporeel geldig zijn, kunnen recentere Bepalingen hoger worden gerangschikt in de veronderstelling dat de Gebruiker de huidige Stand van de Wet wil weten. Deze Standaardinstelling wordt echter overschreven wanneer de Zoekopdracht expliciet naar een historische Periode verwijst.
+
+De Implementatie vereist zorgvuldige afhandeling van Randgevallen: Bepalingen die retroactief in werking treden, Bepalingen met uitgestelde Inwerkingtreding, Overgangsregelingen waarbij oude en nieuwe Regels gelijktijdig van toepassing zijn, en Bepalingen die alleen voor specifieke Aanslagjaren gelden.
+
+## Veelgestelde vragen
+
+**V: Hoe gaat temporele Indexering om met retroactieve Wetgeving?**
+
+A: Retroactieve Bepalingen worden geïndexeerd met een Ingangsdatum die voorafgaat aan hun Publicatiedatum. Het Systeem moet ze tonen bij Zoekopdrachten over de betreffende historische Periode, ook al werden ze later vastgesteld. Dit vereist dat de Ingangsdatum wordt ingesteld op basis van het juridische Effect van de Bepaling, niet op basis van de Publicatie ervan.
+
+**V: Wat gebeurt er wanneer er geen Datum wordt opgegeven in een Zoekopdracht?**
+
+A: Het Systeem neemt doorgaans standaard de huidige Datum en retourneert Bepalingen die momenteel van kracht zijn. Sommige Systemen nemen ook recent opgeheven Bepalingen op (met een markering) om Overgangssituaties af te dekken waarin de Gebruiker mogelijk niet beseft dat een Bepaling is gewijzigd.

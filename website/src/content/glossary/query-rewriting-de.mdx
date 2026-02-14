@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Query Rewriting verändert die ursprüngliche Benutzeranfrage – oft mit Regeln oder [LLMs](/de/glossary/llm/) –, um die Intention zu klären, Synonyme zu ergänzen oder die Struktur zu verbessern, damit Suche und Retrieval besser funktionieren.
+Query Rewriting ist der Prozess, bei dem die ursprüngliche Anfrage eines Benutzers in eine oder mehrere umformulierte Anfragen transformiert wird, die für das Retrieval effektiver sind. Die Originalanfrage kann mehrdeutig sein, umgangssprachliche Formulierungen verwenden, Fachterminologie vermissen lassen oder so strukturiert sein, dass sie nicht zur Ablagestruktur der Informationen in der Wissensbasis passt. Query Rewriting überbrückt diese Lücke, indem es alternative Formulierungen generiert, die besser zum indexierten Inhalt passen und gleichzeitig die Intention des Benutzers bewahren. Im belgischen Steuerrecht ist Query Rewriting besonders wichtig, weil Benutzer Fragen in Alltagssprache formulieren können, während die zugrunde liegende Gesetzgebung präzise juristische Terminologie verwendet und dasselbe Konzept in niederländischen, französischen und deutschen Rechtstexten unterschiedlich ausgedrückt werden kann.
+
+## Warum es wichtig ist
+
+- **Vokabular-Mismatch** — ein Benutzer, der nach „Erbschaftssteuer in Flandern" fragt, benötigt ein System, das auch nach „erfbelasting" (Niederländisch), „Vlaamse Codex Fiscaliteit" und den spezifischen Artikelverweisen sucht, die die relevanten Bestimmungen enthalten; ohne Rewriting würde die lexikalische Suche diese Treffer verfehlen
+- **Intentionsklärung** — mehrdeutige Anfragen wie „Steuer auf Aktien" könnten sich auf die TOB (Steuer auf Börsentransaktionen), die Quellensteuer auf Dividenden oder die Kapitalertragsbesteuerung beziehen; Rewriting kann solche Anfragen in spezifischere Varianten zerlegen
+- **Mehrsprachige Überbrückung** — belgisches Recht existiert auf Niederländisch und Französisch (und teilweise auf Deutsch); Query Rewriting kann sprachübergreifende Varianten generieren, sodass relevante Bestimmungen unabhängig davon gefunden werden, in welcher Sprache der Benutzer sucht
+- **Retrievalqualität** — gut umformulierte Anfragen verbessern durchgehend sowohl Precision als auch Recall im Vergleich zur Verwendung der unbearbeiteten Benutzereingabe, weil sie besser zur Terminologie und Struktur der indexierten Dokumente passen
+
+## So funktioniert es
+
+Query Rewriting kann durch verschiedene Ansätze implementiert werden, die oft kombiniert werden:
+
+**Regelbasiertes Rewriting** wendet deterministische Transformationen an: Erweiterung bekannter Abkürzungen (WIB → Wetboek van de Inkomstenbelastingen), Hinzufügen standardmäßiger Gesetzesverweise bei erkannten Fachbegriffen oder Normalisierung von Datumsformaten. Diese Regeln sind schnell und vorhersagbar, aber auf vorhergesehene Muster beschränkt.
+
+**[LLM](/de/glossary/llm/)-basiertes Rewriting** nutzt ein Sprachmodell, um die Intention des Benutzers zu verstehen und umformulierte Anfragen zu generieren. Das Modell kann eine komplexe Frage in Teilanfragen zerlegen, relevante Fachbegriffe ergänzen, sprachübergreifende Varianten erzeugen und überflüssige Wörter entfernen. Dies ist flexibler als Regeln, erhöht aber die Latenz und erfordert sorgfältiges Prompting, um die Bedeutung der Anfrage nicht zu verändern.
+
+**Hypothetische Dokumentgenerierung** (HyDE) geht über klassisches Rewriting hinaus: Statt die Anfrage umzuformulieren, generiert das System eine hypothetische ideale Antwort und verwendet deren Embedding für das Retrieval. Dies kann effektiv sein, wenn die Benutzerfrage stilistisch stark von den durchsuchten Dokumenten abweicht — die hypothetische Antwort überbrückt die Lücke, indem sie in dokumentähnlicher Sprache verfasst ist.
+
+**Multi-Query-Generierung** erzeugt mehrere alternative Formulierungen aus einer einzelnen Benutzeranfrage. Jede Variante betont einen anderen Aspekt oder verwendet andere Terminologie. Die Retrievalergebnisse aller Varianten werden zusammengeführt und dedupliziert, was die Chance erhöht, alle relevanten Dokumente zu finden.
+
+In der Praxis wird Query Rewriting vor dem Retrievalschritt in der Pipeline angewendet. Die Originalanfrage wird zusammen mit den umgeschriebenen Varianten aufbewahrt, damit das System Ergebnisse auf die ursprüngliche Intention zurückführen und erklären kann, warum bestimmte Dokumente abgerufen wurden.
+
+## Häufige Fragen
+
+**F: Kann Query Rewriting die Bedeutung der Frage verändern?**
+
+A: Das sollte es nicht, kann aber bei schlechter Implementierung passieren. Effektives Query Rewriting bewahrt die Intention des Benutzers und verbessert gleichzeitig die Retrievaleffektivität. Schutzmaßnahmen umfassen, die Originalanfrage stets als eine der Retrievaleingaben beizubehalten und eingeschränkte Prompts zu verwenden, die das Rewriting-Modell anweisen, umzuformulieren, ohne die Bedeutung zu ändern.
+
+**F: Wie unterscheidet sich Query Rewriting von Query Expansion?**
+
+A: [Query Expansion](/de/glossary/query-expansion/) fügt spezifisch Begriffe hinzu (Synonyme, verwandte Konzepte), um die Suche zu erweitern. Query Rewriting ist breiter gefasst — es umfasst Expansion, aber auch Umstrukturierung, Zerlegung, sprachübergreifende Übersetzung und Intentionsklärung. Expansion ist eine Teilmenge von Rewriting.
 
 ## References
 

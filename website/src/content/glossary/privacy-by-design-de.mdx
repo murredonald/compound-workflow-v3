@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Privacy by Design bedeutet, Datenschutzmaßnahmen — wie Minimierung, [Zugriffskontrolle](/de/glossary/access-control/) und Transparenz — in Architekturen und Prozesse einzubetten, anstatt sie als nachträgliche Ergänzung zu behandeln.
+Privacy by Design ist das Prinzip, dass Datenschutz und Privatsphäre-Schutzmaßnahmen von Anfang an in die Architektur, das Design und den Betrieb eines Systems eingebaut werden sollten — und nicht nachträglich hinzugefügt werden. In Artikel 25 der DSGVO als „Datenschutz durch Technikgestaltung und durch datenschutzfreundliche Voreinstellungen" verankert, verlangt es von Organisationen, Datenschutzauswirkungen in jeder Phase der Systementwicklung zu berücksichtigen: von der Entscheidung, welche Daten erhoben werden, über deren Speicherung und Verarbeitung bis hin zu Zeitpunkt und Art der Löschung. Für KI-Systeme, die sensible Steuerdaten verarbeiten, bestimmt Privacy by Design grundlegende architektonische Entscheidungen über Datenflüsse, Speicherung, Zugriff und Aufbewahrung.
+
+## Warum es wichtig ist
+
+- **Gesetzliche Verpflichtung** — Artikel 25 DSGVO macht Privacy by Design zu einer rechtlichen Anforderung, nicht nur zu einer Best Practice; Nichteinhaltung kann zu erheblichen Bußgeldern führen
+- **Berufsgeheimnis** — Steuerberater und Buchhalter unterliegen der Schweigepflicht; das KI-System muss so konzipiert sein, dass es diese Verpflichtungen auf architektonischer Ebene einhält
+- **Vertrauensgrundlage** — Mandanten teilen sensible Finanzinformationen in der Erwartung, dass diese geschützt werden; Privacy by Design bietet strukturelle Absicherung statt sich auf Verfahrensversprechen zu verlassen
+- **Kosteneffizienz** — Datenschutz nachträglich in ein bestehendes System einzubauen ist teuer und fehleranfällig; von Anfang an einzubauen ist günstiger, zuverlässiger und erzeugt eine kohärentere Architektur
+
+## So funktioniert es
+
+Privacy by Design wird durch sieben grundlegende Prinzipien umgesetzt, die auf die Architektur des KI-Systems angewandt werden:
+
+**Datenminimierung** — nur die für den Systemzweck unbedingt notwendigen Daten erheben und verarbeiten. Wenn das KI-System Nutzeranfragen nach dem Generieren einer Antwort nicht speichern muss, sollte es das nicht tun. Wenn aggregierte Nutzungsstatistiken für die Systemverbesserung ausreichen, sollten individuelle Abfrageprotokolle anonymisiert oder gelöscht werden.
+
+**Zweckbindung** — Daten, die für einen Zweck erhoben wurden, sollten nicht ohne eine separate Rechtsgrundlage zweckentfremdet werden. Nutzeranfragen, die zur Antwortgenerierung erhoben werden, sollten nicht ohne ausdrückliche Einwilligung für Marketing verwendet werden.
+
+**Zugriffskontrolle** — technische Kontrollen implementieren (rollenbasierter Zugriff, Verschlüsselung, Mandantenisolierung), die Datenschutzrichtlinien auf Systemebene durchsetzen, nicht nur auf Richtlinienebene. Nutzerdaten sollten für niemanden ohne berechtigtes Interesse zugänglich sein, einschließlich Systemadministratoren, wo dies machbar ist.
+
+**Verschlüsselung** — Daten im Ruhezustand und bei der Übertragung durch angemessene Verschlüsselung schützen. In Datenbanken gespeicherte Mandantendaten sollten verschlüsselt sein. Zwischen Systemkomponenten übertragene Daten sollten TLS verwenden. Verschlüsselungsschlüssel sollten nach etablierten Schlüsselverwaltungspraktiken verwaltet werden.
+
+**Aufbewahrungsfristen** — Aufbewahrungszeiträume für alle Datentypen definieren und durchsetzen. Nutzersitzungsdaten, Abfrageprotokolle und temporäre Verarbeitungsartefakte sollten nach Ablauf ihrer Aufbewahrungsfrist automatisch gelöscht werden. Automatische Löschung verhindert die Ansammlung unnötiger personenbezogener Daten.
+
+**Transparenz** — klare Dokumentation darüber bereitstellen, welche Daten erhoben werden, wie sie verarbeitet werden, wo sie gespeichert werden und wie lange sie aufbewahrt werden. Datenschutzhinweise sollten spezifisch und verständlich sein, kein generischer juristischer Textbaustein.
+
+**Datenschutzfreundliche Voreinstellungen** — die Standardkonfiguration des Systems sollte die datenschutzfreundlichste Option sein. Funktionen, die zusätzliche Datenerhebung oder -weitergabe beinhalten, sollten eine ausdrückliche Einwilligung (Opt-in) erfordern statt einer Abmeldung (Opt-out).
+
+## Häufige Fragen
+
+**F: Wie gilt Privacy by Design für das Training von KI-Modellen?**
+
+A: Wenn Nutzerinteraktionsdaten zur Verbesserung des Modells verwendet werden, erfordert Privacy by Design informierte Einwilligung, Anonymisierung wo möglich, Zweckbindung und die Möglichkeit für Nutzer, sich abzumelden. Manche Organisationen verzichten ganz auf die Verwendung von Mandantendaten für das Training und setzen stattdessen auf synthetische oder öffentliche Daten.
+
+**F: Steht Privacy by Design im Widerspruch zur Verbesserung von KI-Systemen?**
+
+A: Nicht unbedingt, aber es schränkt ein, wie Verbesserungen stattfinden. Aggregierte, anonymisierte Nutzungsmuster können Systemverbesserungen informieren, ohne individuelle Daten offenzulegen. Der Schlüssel liegt in der Gestaltung von Datenerhebungs- und Verarbeitungspipelines, die Signale zur Systemverbesserung von personenbezogenen Daten trennen.

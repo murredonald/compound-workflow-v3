@@ -12,4 +12,31 @@ draft: false
 
 ## Definition
 
-A corpus is the set of documents or texts that a search, training, or evaluation setup operates on, such as all indexed contracts or all case-law decisions.
+A corpus is the complete set of documents or texts that a search, training, or evaluation system operates on. In legal and tax AI, a corpus might consist of all indexed legislation, administrative rulings, case-law decisions, or parliamentary preparatory works within a jurisdiction. The quality, scope, and freshness of the corpus directly determine what the system can and cannot answer.
+
+## Why it matters
+
+- **Coverage determines accuracy** — if a ruling or amendment is missing from the corpus, the system cannot surface it, leading to incomplete or outdated advice
+- **Domain specificity** — a general-purpose web corpus performs poorly on specialised tax questions; a curated legal corpus trained on Belgian WIB/CIR yields far more relevant results
+- **Evaluation baseline** — benchmark datasets are themselves small corpora used to measure retrieval precision and generation quality
+- **Multi-jurisdictional complexity** — Belgian tax law spans federal, regional, and EU sources in three languages, making corpus construction particularly challenging
+
+## How it works
+
+Building a retrieval corpus involves several stages. Raw documents are collected from authoritative sources (official gazettes, FPS Finance publications, court databases). Each document passes through a pipeline of parsing, cleaning, and normalisation to strip formatting artefacts and standardise structure. The cleaned text is then split into chunks, embedded into vectors, and indexed for retrieval.
+
+A corpus is not static. New legislation, circulars, and rulings are published continuously, so the corpus requires regular refresh cycles. Version control ensures that temporal queries ("What was the rate in 2022?") return the correct historical text rather than the current version.
+
+## Common questions
+
+**Q: How is a corpus different from a knowledge base?**
+
+A: A corpus is typically a flat collection of documents used for search or training. A knowledge base adds structure — entities, relationships, and metadata — on top of the raw text, enabling more precise querying and reasoning.
+
+**Q: How large does a legal corpus need to be?**
+
+A: Size depends on coverage goals. A comprehensive Belgian tax corpus might include tens of thousands of documents (legislation, rulings, circulars, parliamentary works), while a narrow topical corpus on TOB rates could be just a few hundred documents. Completeness matters more than raw size.
+
+**Q: Can a corpus contain multiple languages?**
+
+A: Yes. Multilingual corpora are common in Belgian legal AI, where the same legislation exists in Dutch, French, and German. Cross-lingual embedding models allow retrieval across languages from a single index.

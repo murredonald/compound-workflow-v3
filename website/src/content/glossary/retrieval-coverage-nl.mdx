@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Retrieval coverage beschrijft of het geïndexeerde [corpus](/nl/glossary/corpus/) en de configuratie van retrieval breed en diep genoeg zijn om het bewijs te leveren dat nodig is om de vragen te beantwoorden die het systeem moet aankunnen.
+Retrieval coverage is de mate waarin het geïndexeerde [corpus](/nl/glossary/corpus/) van een retrievalsysteem de informatie bevat die nodig is om het volledige scala aan vragen te beantwoorden dat het systeem geacht wordt te behandelen. Hoge dekking betekent dat voor elke relevante zoekvraag de benodigde brondocumenten in de index aanwezig zijn. Lage dekking betekent dat er lacunes bestaan — onderwerpen, documenttypes, tijdsperiodes of rechtsgebieden waarvoor het systeem bronmateriaal mist en dus geen betrouwbare antwoorden kan geven. Coverage is een maatstaf voor de volledigheid van de kennisbank, niet voor de effectiviteit van het retrievalalgoritme.
+
+## Waarom het belangrijk is
+
+- **Plafond voor betrouwbaarheid van antwoorden** — een systeem kan geen bronnen citeren die het niet heeft; lacunes in dekking vertalen zich rechtstreeks in vragen die het systeem niet correct kan beantwoorden, ongeacht hoe geavanceerd de retrieval en generatie zijn
+- **Gebruikersvertrouwen** — als gebruikers ontdekken dat het systeem vragen niet kan beantwoorden op gebieden waarvan ze verwachten dat ze gedekt zijn, erodeert het vertrouwen snel; de dekking moet overeenkomen met het opgegeven toepassingsgebied van het systeem
+- **Prioritering van lacunes** — het meten van dekking over onderwerpen en brontypes onthult waar investering in data-ingestie de meeste impact heeft op de systeemkwaliteit
+- **Eerlijke communicatie over mogelijkheden** — kennis van dekkingsgrenzen stelt het systeem in staat te erkennen wanneer een vraag buiten het bereik valt, in plaats van een antwoord te proberen met onvoldoende bewijs
+
+## Hoe het werkt
+
+Retrieval coverage wordt op verschillende manieren beoordeeld:
+
+**Analyse van de broninventaris** — catalogiseren welke juridische bronnen zijn opgenomen en vergelijken met het volledige universum van relevante bronnen. Voor Belgisch fiscaal recht betekent dit het controleren van dekking van: federale wetgeving (WIB92, WBTW, enz.), regionale wetgeving (VCF, CIR wallonne, enz.), koninklijke en ministeriële besluiten, administratieve circulaires, rechterlijke uitspraken (Grondwettelijk Hof, Hof van Cassatie, hoven van beroep), administratieve beslissingen, parlementaire vragen en officiële commentaren. Lacunes in welke categorie dan ook verminderen de dekking.
+
+**Mapping van onderwerpdekking** — het systeem testen met zoekvragen over alle verwachte onderwerpen en meten of relevante bronnen worden teruggegeven. Onderwerpen zonder adequaat bronmateriaal worden gemarkeerd als dekkingslacunes. Voor een Belgisch fiscaal systeem betekent dit het verifiëren van dekking over inkomstenbelasting, btw, registratierechten, erfbelasting, vennootschapsbelasting, internationaal belastingrecht en procedureel fiscaal recht — voor elk rechtsgebied.
+
+**Temporele dekking** — verifiëren dat de kennisbank bronmateriaal bevat uit alle relevante tijdsperiodes. Fiscaalrechtelijke vragen betreffen vaak historische bepalingen (welk tarief gold in een bepaald jaar?), dus de dekking moet teruggaan tot de oudste relevante wetgeving.
+
+**Meertalige dekking** — in België verifiëren dat de Nederlandse, Franse en Duitse versies van relevante bronnen allemaal geïndexeerd zijn, aangezien juridische bepalingen op genuanceerde wijze kunnen verschillen tussen taalversies.
+
+Dekkingslacunes worden aangepakt door de [datapijplijn](/nl/glossary/data-pipeline/) uit te breiden om ontbrekende brontypes op te nemen, nieuwe gegevensbronnen toe te voegen, of samen te werken met juridische uitgevers om toegang te krijgen tot voorheen onbeschikbare inhoud.
+
+## Veelgestelde vragen
+
+**V: Is 100% dekking haalbaar?**
+
+A: Voor een afgebakend bereik (bijv. Belgische federale belastingwetgeving) is vrijwel volledige dekking haalbaar. Voor bredere bereiken die informele bronnen, commentaren van practici of buitenlands recht omvatten, is volledige dekking niet realistisch. Het doel is alle gezaghebbende bronnen binnen het opgegeven bereik van het systeem te dekken.
+
+**V: Hoe verschilt coverage van recall?**
+
+A: Coverage meet of de relevante documenten überhaupt in het corpus aanwezig zijn. [Recall](/nl/glossary/retrieval-recall/) meet of het retrievalalgoritme ze vindt wanneer erop wordt gezocht. Een systeem kan perfecte coverage hebben (alle relevante documenten zijn geïndexeerd) maar slechte recall (het retrievalalgoritme slaagt er niet in ze boven te halen). Beide moeten hoog zijn om het systeem goed te laten werken.
 
 ## References
 

@@ -12,4 +12,31 @@ draft: false
 
 ## Definition
 
-Een corpus omvat alle teksten, documenten of stukken data die in een bepaald systeem zijn opgenomen en waarover wordt gezocht, geanalyseerd of geredeneerd.
+Een corpus is de volledige verzameling documenten of teksten waarover een zoek-, trainings- of evaluatiesysteem beschikt. In juridische en fiscale AI kan een corpus bestaan uit alle geïndexeerde wetgeving, administratieve beslissingen, rechtspraak of parlementaire voorbereidende werken binnen een rechtsgebied. De kwaliteit, reikwijdte en actualiteit van het corpus bepalen rechtstreeks wat het systeem wel en niet kan beantwoorden.
+
+## Waarom het belangrijk is
+
+- **Dekking bepaalt nauwkeurigheid** — als een ruling of wetswijziging ontbreekt in het corpus, kan het systeem die niet opvragen, wat leidt tot onvolledig of verouderd advies
+- **Domeinspecificiteit** — een algemeen webcorpus presteert slecht bij gespecialiseerde fiscale vragen; een gecureerd juridisch corpus gebaseerd op het Belgische WIB/CIR levert veel relevantere resultaten
+- **Evaluatiebasis** — benchmarkdatasets zijn zelf kleine corpora die worden gebruikt om retrievalprecisie en generatiekwaliteit te meten
+- **Multijurisdictionele complexiteit** — Belgisch fiscaal recht omvat federale, gewestelijke en Europese bronnen in drie talen, wat corpusopbouw bijzonder uitdagend maakt
+
+## Hoe het werkt
+
+Het opbouwen van een retrievalcorpus verloopt in meerdere stappen. Ruwe documenten worden verzameld uit gezaghebbende bronnen (Belgisch Staatsblad, publicaties van FOD Financiën, rechtspraakdatabanken). Elk document doorloopt een pipeline van parsing, opschoning en normalisatie om opmaakfouten te verwijderen en de structuur te standaardiseren. De opgeschoonde tekst wordt vervolgens opgesplitst in chunks, omgezet in vectoren en geïndexeerd voor retrieval.
+
+Een corpus is niet statisch. Nieuwe wetgeving, circulaires en rulings worden voortdurend gepubliceerd, dus het corpus vereist regelmatige verversingsycli. Versiebeheer zorgt ervoor dat temporele vragen ("Wat was het tarief in 2022?") de juiste historische tekst opleveren in plaats van de huidige versie.
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen een corpus en een knowledge base?**
+
+A: Een corpus is doorgaans een platte verzameling documenten die wordt gebruikt voor zoeken of training. Een knowledge base voegt structuur toe — entiteiten, relaties en metadata — bovenop de ruwe tekst, waardoor preciezere bevraging en redenering mogelijk worden.
+
+**V: Hoe groot moet een juridisch corpus zijn?**
+
+A: De omvang hangt af van de dekkingsdoelen. Een uitgebreid Belgisch fiscaal corpus kan tienduizenden documenten bevatten (wetgeving, rulings, circulaires, parlementaire werken), terwijl een beperkt thematisch corpus over TOB-tarieven slechts enkele honderden documenten kan omvatten. Volledigheid is belangrijker dan ruw volume.
+
+**V: Kan een corpus meerdere talen bevatten?**
+
+A: Ja. Meertalige corpora zijn gebruikelijk in Belgische juridische AI, waar dezelfde wetgeving in het Nederlands, Frans en Duits bestaat. Cross-linguale embeddingmodellen maken retrieval over talen heen mogelijk vanuit één enkele index.

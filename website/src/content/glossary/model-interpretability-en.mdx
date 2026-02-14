@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Model [interpretability](/en/glossary/explainability/) concerns how easily a model’s behaviour can be explained and inspected, which is important for regulatory and ethical scrutiny.
+Model interpretability is the degree to which a human can understand how and why an AI model produces a particular output. An interpretable model allows its users, developers, and regulators to trace the path from input to output — understanding which features, data points, or reasoning steps influenced the result. In legal AI, interpretability is not merely a technical preference but a regulatory requirement: the EU AI Act mandates that high-risk AI systems provide sufficient transparency for users to interpret and appropriately use the system's output.
+
+## Why it matters
+
+- **Professional accountability** — when a tax advisor relies on an AI-generated analysis, they need to understand why the system reached its conclusion to fulfil their own professional duty of care; a black-box answer is not sufficient
+- **Regulatory compliance** — the EU AI Act requires high-risk AI systems to be "sufficiently transparent to enable users to interpret the system's output and use it appropriately" (Article 13); interpretability mechanisms are the primary means of meeting this requirement
+- **Error detection** — interpretable outputs allow users to spot errors: if the system cites an irrelevant source or ignores a key provision, a transparent reasoning chain makes this visible
+- **Trust and adoption** — professionals are more likely to adopt AI tools they can understand and verify; opaque systems face resistance regardless of their accuracy
+
+## How it works
+
+Interpretability operates at multiple levels in an AI system:
+
+**Source attribution** is the most direct form of interpretability in retrieval-augmented generation. The system shows which documents were retrieved, which passages informed the answer, and how each source contributed. This allows the user to verify the answer against the cited sources rather than trusting the model blindly.
+
+**Confidence communication** provides a calibrated signal of how certain the system is about its answer. When the system encounters conflicting sources, insufficient evidence, or ambiguous queries, it communicates this uncertainty explicitly rather than presenting a definitive-sounding but uncertain answer.
+
+**Reasoning traces** show the intermediate steps in the system's reasoning: which search queries were generated, how results were filtered and ranked, and how the final answer was synthesised from multiple sources. These are more detailed than source attribution and are primarily useful for developers and advanced users diagnosing system behaviour.
+
+**Feature importance** methods (like attention visualisation or SHAP values) identify which parts of the input had the greatest influence on the output. In text models, this might highlight which words in the query or which passages in the retrieved context were most influential in generating the answer.
+
+The fundamental tension in interpretability is between model complexity and explainability. Simpler models (decision trees, linear classifiers) are inherently interpretable but less capable. Complex models (transformers, deep networks) achieve higher performance but are harder to explain. RAG systems mitigate this tension by making the retrieval component transparent — even if the generation model is opaque, the user can see which sources it drew from.
+
+## Common questions
+
+**Q: Is interpretability the same as explainability?**
+
+A: The terms are often used interchangeably. When a distinction is made, interpretability refers to the inherent understandability of a model's mechanism, while explainability refers to post-hoc methods that explain a model's outputs. In practice, both contribute to the same goal: enabling humans to understand AI decisions.
+
+**Q: Does interpretability reduce model performance?**
+
+A: Not necessarily. Source attribution and confidence scores can be added to a RAG system without modifying the underlying models. However, constraining a model to be inherently interpretable (e.g., using a rule-based system instead of a neural network) may limit its capabilities.

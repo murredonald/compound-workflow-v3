@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Ein Document Chunk umfasst typischerweise eine logische Inhaltseinheit – etwa einen Absatz oder Abschnitt –, sodass Retrieval und Generierung auf dieser Ebene statt auf dem gesamten Dokument arbeiten.
+Ein Document Chunk ist ein Segment eines größeren Dokuments — typischerweise ein Absatz, ein Abschnitt oder eine Passage fester Länge —, das als atomare Einheit für die Indexierung und das Retrieval dient. Anstatt ein gesamtes 50-seitiges Gesetz als einzelnes Element zu indexieren, teilt das System es in Chunks auf, die einzeln eingebettet, gespeichert und als Kontext zurückgegeben werden können. Das Chunk-Design ist eine der folgenreichsten architektonischen Entscheidungen in jedem retrieval-augmentierten Generierungssystem, da es direkt bestimmt, was das Sprachmodell bei der Antwortgenerierung sieht.
+
+## Warum es wichtig ist
+
+- **Retrieval-Granularität** — die Einbettung eines ganzen Gesetzes erzeugt einen einzelnen Vektor, der über alle Themen mittelt; Chunking ermöglicht es, einzelne Artikel oder Abschnitte präzise abzurufen, wenn sie relevant sind
+- **Effizienz des Kontextfensters** — Sprachmodelle haben begrenzte Kontextfenster; gut dimensionierte Chunks liefern fokussierten, relevanten Kontext, ohne Token für umgebenden irrelevanten Text zu verschwenden
+- **Relevanzbewertung** — kleinere, thematisch kohärente Chunks erhalten genauere Relevanzbewertungen, weil ihre Embeddings ein einzelnes Konzept repräsentieren statt einer Mischung aus vielen
+- **Zitierpräzision** — wenn ein Chunk einem bestimmten Artikel oder Absatz zugeordnet ist, kann das System die exakte Bestimmung zitieren, anstatt auf ein ganzes Dokument zu verweisen
+
+## Wie es funktioniert
+
+Chunking erfolgt während der Dokumentenaufnahme. Der einfachste Ansatz ist **Fixed-Size-Chunking**: der Text wird in Segmente einer festgelegten Token-Anzahl aufgeteilt (z. B. 256 oder 512 Token) mit Überlappung zwischen aufeinanderfolgenden Chunks, um Kontextverlust an den Grenzen zu vermeiden. Dies ist schnell und vorhersehbar, ignoriert aber die Dokumentenstruktur.
+
+**Strukturbewusstes Chunking** nutzt die eigene Organisation des Dokuments — Überschriften, Artikelnummern, Absatzumbrüche —, um Chunk-Grenzen zu definieren. In der Gesetzgebung bedeutet dies oft ein Chunk pro Artikel oder pro nummeriertem Absatz. Dies bewahrt die semantische Kohärenz und erzeugt Chunks, die sich an der Art und Weise orientieren, wie Juristen über den Text denken.
+
+**Sliding-Window-Chunking** erzeugt überlappende Segmente, die in regelmäßigen Abständen durch das Dokument gleiten. Die Überlappung stellt sicher, dass Sätze, die über Chunk-Grenzen hinweg geteilt werden, in mindestens einem Chunk vollständig erscheinen, wodurch der Informationsverlust reduziert wird.
+
+Die Wahl der Chunk-Größe beinhaltet einen Kompromiss. Kleinere Chunks verbessern die Retrieval-Präzision (jeder Chunk ist thematisch fokussiert), können aber Kontext verlieren, der sich über mehrere Absätze erstreckt. Größere Chunks bewahren den Kontext, verwässern aber die Embedding-Qualität und verbrauchen mehr vom Kontextfenster des Sprachmodells. Die meisten juristischen Retrieval-Systeme verwenden Chunks von 200–500 Token, angepasst nach Dokumenttyp.
+
+Nach dem Chunking wird jedes Segment eingebettet und mit Metadaten gespeichert, die es mit seinem übergeordneten Dokument, seiner Position und seinem strukturellen Kontext (Artikelnummer, Abschnittsüberschrift) verknüpfen. Diese Metadaten ermöglichen es dem System, bei Bedarf den breiteren Kontext zu rekonstruieren.
+
+## Häufige Fragen
+
+**F: Was passiert, wenn wichtiger Kontext zwei Chunks umfasst?**
+
+A: Die Überlappung zwischen Chunks ist die primäre Gegenmaßnahme — aufeinanderfolgende Chunks teilen einen Teil des Textes, sodass Informationen, die über Grenzen hinweg reichen, in mindestens einem Chunk erscheinen. Einige Systeme rufen auch benachbarte Chunks ab, wenn ein Treffer gefunden wird, und stellen so den lokalen Kontext wieder her, bevor er an das Modell übergeben wird.
+
+**F: Beeinflusst die Chunk-Größe die Embedding-Qualität?**
+
+A: Ja. Sehr kurze Chunks (unter 50 Token) enthalten möglicherweise nicht genug Kontext, damit das Embedding-Modell die Bedeutung erfassen kann. Sehr lange Chunks (über 1000 Token) mitteln über zu viele Themen und erzeugen vage Embeddings. Die optimale Größe hängt vom Embedding-Modell und der Art des Inhalts ab.

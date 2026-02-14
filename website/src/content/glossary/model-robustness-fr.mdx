@@ -10,6 +10,41 @@ locale: "fr"
 draft: false
 ---
 
+## Definition
+
+La robustesse d'un modèle désigne le degré auquel un modèle d'IA maintient des performances fiables lorsqu'il est confronté à des entrées qui diffèrent de ses conditions d'entraînement — notamment des données bruitées, des changements de distribution, des cas limites et des manipulations adversariales. Un modèle robuste produit des résultats cohérents et précis même lorsque l'entrée est légèrement mal orthographiée, formulée de manière inhabituelle ou délibérément conçue pour le tromper. Dans l'IA juridique, la robustesse est essentielle car les requêtes du monde réel sont désordonnées : les utilisateurs mélangent les langues, abrègent les références et posent des questions ambiguës qu'un modèle fragile traiterait mal.
+
+## Pourquoi c'est important
+
+- **Fiabilité en conditions réelles** — les professionnels de la fiscalité formulent leurs questions de nombreuses manières différentes ; un modèle robuste gère la variation naturelle de terminologie, de langue et de structure de requête sans se dégrader
+- **Résistance adversariale** — les modèles déployés comme services publics doivent résister à l'injection de prompts et à d'autres attaques qui tentent d'extraire les données d'entraînement, de contourner les filtres de sécurité ou de produire des résultats trompeurs
+- **Gestion des changements de distribution** — la législation fiscale change régulièrement ; un modèle robuste maintient ses performances lorsque de nouvelles législations introduisent des concepts ou une terminologie absents de ses données d'entraînement
+- **Confiance et adoption** — les professionnels ne s'appuieront pas sur un outil qui donne des réponses radicalement différentes à des versions légèrement reformulées de la même question
+
+## Comment ça fonctionne
+
+La robustesse est évaluée et améliorée selon plusieurs dimensions :
+
+**Les tests de perturbation des entrées** mesurent dans quelle mesure la sortie du modèle change lorsque les entrées sont légèrement modifiées — ajout de fautes de frappe, paraphrase ou traduction entre langues. Un modèle robuste produit substantiellement la même réponse indépendamment des variations superficielles.
+
+**Les tests de changement de distribution** évaluent les performances sur des données qui diffèrent systématiquement de l'ensemble d'entraînement. Pour un système d'IA juridique, cela peut signifier tester sur des législations nouvellement adoptées, des juridictions différentes ou des types de documents non vus pendant l'entraînement. Des techniques comme l'adaptation de domaine et l'apprentissage continu aident les modèles à gérer les changements de distribution avec élégance.
+
+**Les tests adversariaux** conçoivent délibérément des entrées destinées à provoquer des défaillances — des prompts qui tentent de contourner les instructions système, des requêtes qui exploitent les ambiguïtés de la terminologie juridique ou des entrées contenant des instructions cachées dans un texte apparemment normal. L'entraînement adversarial, où le modèle est affiné sur des exemples de ces attaques, améliore la résistance.
+
+**Les méthodes d'ensemble** améliorent la robustesse en combinant les prédictions de plusieurs modèles ou stratégies de recherche. Si un composant échoue sur une entrée particulière, d'autres peuvent compenser. Dans les systèmes RAG, cela se traduit par une recherche hybride (combinant recherche sparse et dense) et une vérification des réponses par rapport à plusieurs sources.
+
+La robustesse est souvent en tension avec les performances sur des entrées propres et bien formulées. Sur-optimiser pour les cas adversariaux peut réduire la précision sur les requêtes normales. L'objectif est un modèle qui gère l'ensemble du spectre des entrées du monde réel de manière fiable, pas un modèle parfait sur les benchmarks mais fragile en pratique.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre robustesse et précision ?**
+
+R : La précision mesure les performances sur un jeu de test standard. La robustesse mesure dans quelle mesure la précision se dégrade lorsque les conditions changent. Un modèle peut avoir 95 % de précision sur des données propres mais chuter à 60 % sur des entrées bruitées ou adversariales — ce modèle est précis mais pas robuste.
+
+**Q : Peut-on mesurer la robustesse avec une seule métrique ?**
+
+R : Non. La robustesse est multidimensionnelle — un modèle peut être robuste face aux fautes de frappe mais fragile face aux changements de distribution. L'évaluation implique généralement plusieurs jeux de test couvrant différents types de perturbations, avec un suivi des performances pour chacun.
+
 ## References
 
 > Yinpeng Dong et al. (2018), "[Boosting Adversarial Attacks with Momentum](https://doi.org/10.1109/cvpr.2018.00957)", .

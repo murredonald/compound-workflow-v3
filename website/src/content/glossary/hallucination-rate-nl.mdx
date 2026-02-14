@@ -12,7 +12,36 @@ draft: false
 
 ## Definitie
 
-De hallucinatiegraad drukt uit hoe vaak een [LLM](/nl/glossary/llm/) uitspraken doet die niet gesteund worden door bronnen of feiten.
+De hallucinatiegraad is het aandeel van de uitvoer van een AI-systeem dat uitspraken bevat die niet worden ondersteund door de aangeleverde bronnen, het feitelijke dossier, of beide. Het is de primaire veiligheidsmaat voor juridische AI: een systeem met een hallucinatiegraad van 5% betekent dat ruwweg 1 op de 20 antwoorden verzonnen, fout toegeschreven of feitelijk onjuiste informatie bevat. In domeinen als fiscaal recht, waar onjuiste informatie kan leiden tot financiële boetes of regelgevende blootstelling, vereisen zelfs lage hallucinatiepercentages mitigatiestrategieën.
+
+## Waarom het belangrijk is
+
+- **Professioneel risico** — een belastingadviseur die vertrouwt op een AI-gegenereerd antwoord dat een niet-bestaand artikel citeert of een tarief verkeerd weergeeft, zou onjuist advies aan cliënten kunnen geven, met aansprakelijkheidsgevolgen
+- **Vertrouwenskalibratie** — kennis van de hallucinatiegraad van het systeem stelt professionals in staat te bepalen hoeveel onafhankelijke verificatie elk antwoord vereist; een percentage van 1% vereist steekproeven, een percentage van 10% vereist verificatie van elk antwoord
+- **Systeemvergelijking** — de hallucinatiegraad biedt een gestandaardiseerde maat om verschillende AI-systemen, modellen of configuraties op dezelfde taak te vergelijken
+- **Regelgevende verwachting** — de EU AI Act vereist dat AI-systemen met een hoog risico passende nauwkeurigheidsniveaus handhaven; gepubliceerde hallucinatiepercentages tonen naleving van deze verplichting aan
+
+## Hoe het werkt
+
+De hallucinatiegraad wordt gemeten door evaluatie op een testset waarvan de juiste antwoorden bekend zijn:
+
+**Menselijke evaluatie** — beoordelaars vergelijken elk AI-gegenereerd antwoord met de brondocumenten en markeren uitspraken die verzonnen zijn (niet-bestaande bronnen citeren), fout toegeschreven (een bewering aan de verkeerde bron toewijzen) of feitelijk onjuist (een belastingtarief of drempel verkeerd weergeven). De hallucinatiegraad is het percentage antwoorden dat ten minste één gehallucineerde uitspraak bevat.
+
+**Geautomatiseerde evaluatie** maakt gebruik van Natural Language Inference (NLI)-modellen of LLM-als-beoordelaar-benaderingen om te controleren of elke bewering in het gegenereerde antwoord wordt onderbouwd door de brondocumenten. Beweringen die niet naar een bron te herleiden zijn, worden als hallucinaties gemarkeerd. Geautomatiseerde methoden zijn sneller en goedkoper maar minder betrouwbaar dan menselijke evaluatie, met name bij genuanceerde juridische inhoud.
+
+**Granulariteit** is belangrijk bij de meting. Een antwoordniveau-hallucinatiegraad telt elk antwoord met ten minste één hallucinatie. Een beweringsniveau-graad telt individuele onjuiste uitspraken als aandeel van alle gedane beweringen. De beweringsniveau-maat is informatiever maar moeilijker te berekenen.
+
+Hallucinatiepercentages worden beïnvloed door de gehele [RAG](/nl/glossary/rag/)-pipeline. Slechte retrieval (ontbrekende relevante bronnen) dwingt het model terug te vallen op trainingskennis, die verouderd of onjuist kan zijn. Slechte prompting (vage systeeminstructies) geeft het model ruimte om te speculeren. Effectieve mitigatie richt zich op beide: verbetering van de retrieval-dekking en toevoeging van [systeemprompt](/nl/glossary/system-prompt/)-instructies die het model sturen om onzekerheid te erkennen in plaats van antwoorden te verzinnen.
+
+## Veelgestelde vragen
+
+**V: Wat is een acceptabele hallucinatiegraad voor juridische AI?**
+
+A: Er is geen universeel afgesproken drempel, maar percentages onder de 2-3% worden over het algemeen als aanvaardbaar beschouwd voor professioneel gebruik wanneer ze gecombineerd worden met broncitaties die verificatie mogelijk maken. Het belangrijkste is dat elk antwoord onafhankelijk verifieerbaar moet zijn via de geciteerde bronnen, waardoor de afhankelijkheid van de feitelijke nauwkeurigheid van het model alleen wordt verminderd.
+
+**V: Kan de hallucinatiegraad nul zijn?**
+
+A: In de praktijk bereikt geen enkel huidig systeem een hallucinatiegraad van nul bij open vragen. Hallucinaties kunnen worden geminimaliseerd door betere retrieval, beperkte generatie en verificatielagen, maar ze volledig elimineren blijft een open onderzoeksuitdaging.
 
 ## References
 

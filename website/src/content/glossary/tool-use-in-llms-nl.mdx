@@ -12,7 +12,40 @@ draft: false
 
 ## Definitie
 
-Toolgebruik in [LLM](/nl/glossary/llm/)'s beschrijft architecturen waarin het model externe tools—zoals zoekmachines, databases of rekenhulpen—mag of moet oproepen om informatie op te halen of acties uit te voeren in plaats van alleen op interne gewichten te vertrouwen.
+Toolgebruik in [LLM](/nl/glossary/llm/)'s is het ontwerppatroon waarbij een taalmodel externe tools kan aanroepen — zoals zoekmachines, databases, rekenmachines, API's of code-interpreters — om informatie te verzamelen of acties uit te voeren die zijn eigen capaciteiten aanvullen. In plaats van uitsluitend te vertrouwen op kennis die in zijn gewichten is opgeslagen, herkent het model wanneer het externe data of berekeningen nodig heeft, genereert het een gestructureerde tool-aanroep, ontvangt het de uitvoer van de tool en verwerkt het deze in zijn antwoord. In juridische AI maakt toolgebruik het mogelijk dat modellen precieze belastingberekeningen uitvoeren, actuele wetgevingsdatabases bevragen en bronvermeldingen verifiëren tegen gezaghebbende bronnen.
+
+## Waarom het ertoe doet
+
+- **Precisie bij berekeningen** — taalmodellen zijn onbetrouwbaar bij rekenen; toolgebruik stelt ze in staat belastingberekeningen, renteberekeningen en drempelvergelijkingen te delegeren aan een rekenmachine of code-interpreter die exacte resultaten produceert
+- **Actuele informatie** — de trainingsdata van modellen heeft een afsluiddatum; toolgebruik stelt ze in staat live databases te bevragen voor actuele belastingtarieven, recente uitspraken of de laatste wetswijzigingen
+- **Toegang tot gestructureerde data** — juridische databases, belastingtarieftabellen en aangiftedeadlinekalenders zijn gestructureerde data waartoe modellen geen toegang hebben vanuit hun gewichten; tools overbruggen deze kloof
+- **Handelingsvermogen** — naast het ophalen van informatie maakt toolgebruik het mogelijk dat modellen acties ondernemen: documenten genereren, formulieren indienen of taken plannen als onderdeel van een agentische workflow
+
+## Hoe het werkt
+
+Toolgebruik werkt via een gestructureerde interactielus:
+
+**Tooldefinitie** — het systeem voorziet het model van beschrijvingen van beschikbare tools: hun namen, wat ze doen, welke parameters ze accepteren en wat ze retourneren. Voor een juridisch AI-systeem kunnen tools bestaan uit een wetgevingszoek-API, een opzoektabel voor belastingtarieven, een rentecalculator en een bronverificatietool.
+
+**Toolselectie** — tijdens het genereren van een antwoord bepaalt het model dat het informatie of berekeningen nodig heeft die buiten zijn eigen capaciteiten vallen. Het genereert een gestructureerde tool-aanroep die specificeert welke tool moet worden gebruikt en welke parameters moeten worden meegegeven. Bijvoorbeeld: `search_legislation(query="artikel 215 WIB92", jurisdiction="federaal", date="2025-01-01")`.
+
+**Tooluitvoering** — het systeem voert de tool-aanroep uit, haalt het resultaat op en geeft het terug aan het model. Het model voert tools nooit rechtstreeks uit — de systeemlaag bemiddelt, dwingt toegangscontroles af en valideert invoer.
+
+**Antwoordintegratie** — het model verwerkt de uitvoer van de tool in zijn lopende antwoordgeneratie en gebruikt de opgehaalde data om een nauwkeurig, gegrond antwoord te produceren.
+
+Meerdere tool-aanroepen kunnen plaatsvinden binnen één antwoord. Het model kan eerst zoeken naar relevante wetgeving, vervolgens een specifiek belastingtarief opzoeken in een gestructureerde tabel en daarna een rekenmachine gebruiken om de verschuldigde belasting te berekenen, allemaal binnen één antwoordgeneratiestroom.
+
+**Veiligheidsoverwegingen** omvatten: validatie van tool-aanroepparameters om injectie-aanvallen te voorkomen, beperking van welke tools beschikbaar zijn in welke contexten, logging van alle tool-aanroepen voor audittrails en het waarborgen dat tooluitvoer afkomstig is van gezaghebbende bronnen.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt toolgebruik van RAG?**
+
+A: [RAG](/nl/glossary/rag/) is een specifiek geval van toolgebruik waarbij de tool een zoek-/ophaalsysteem is. Toolgebruik is het bredere patroon — het omvat elke externe tool, niet alleen ophalen. Een model dat zowel een zoekmachine als een rekenmachine gebruikt, maakt gebruik van twee tools, waarvan er één RAG-achtig ophalen is.
+
+**V: Kunnen modellen tools gebruiken waarop ze niet zijn getraind?**
+
+A: Ja, tot op zekere hoogte. Moderne LLM's die zijn getraind met toolgebruikcapaciteiten kunnen generaliseren naar nieuwe tools die in de prompt worden beschreven, zolang de toolbeschrijvingen duidelijk zijn. Fine-tuning op specifieke tools verbetert echter wel de betrouwbaarheid.
 
 ## References
 

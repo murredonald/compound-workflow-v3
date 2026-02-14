@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Retrieval recall measures how many of the relevant items in a [corpus](/en/glossary/corpus/) are retrieved by the system for a given query or test set, often computed at a cut-off like Recall@k.
+Retrieval recall is the fraction of all truly relevant documents in a collection that the system successfully retrieves for a given query. If there are 10 relevant documents in the corpus and the system retrieves 7 of them, recall is 70%. Recall is typically measured at a cut-off point — Recall@10 (of the 10 relevant documents, how many appear in the top 10 results?) or Recall@100 (for initial candidate generation). In legal AI, high recall is critical because a missing relevant provision — an exception, an amendment, or a conflicting ruling — can fundamentally change the correct answer.
+
+## Why it matters
+
+- **Completeness of legal analysis** — tax law is full of exceptions, special regimes, and conflicting provisions across jurisdictions; missing even one relevant source can lead to an incomplete or incorrect answer
+- **RAG answer quality ceiling** — the language model can only reason over what the retrieval layer provides; if a relevant document is not retrieved, it cannot be included in the generated answer
+- **Risk management** — in professional tax advice, failing to consider a relevant provision is a liability risk; high recall reduces the chance of overlooking critical sources
+- **Complementary to precision** — precision measures result quality (how many returned documents are relevant); recall measures coverage (how many relevant documents were found); both are needed for effective retrieval
+
+## How it works
+
+Recall is computed by dividing the number of relevant documents retrieved by the total number of relevant documents in the corpus:
+
+**Recall@k = (relevant documents in top k) / (total relevant documents)**
+
+Computing recall requires knowing the complete set of relevant documents for each query, which is established through human annotation of a test set. Annotators review the corpus and identify all documents relevant to each test query, creating the ground truth against which the system is measured.
+
+**Recall-precision trade-off** — increasing recall (finding more relevant documents) typically requires returning more results overall, which may include more irrelevant ones (reducing precision). The retrieval pipeline manages this trade-off through its staged architecture: early stages (BM25, dense retrieval) cast a wide net for high recall, while later stages (reranking, filtering) refine for precision.
+
+**Recall at different pipeline stages** — recall is often measured at each stage to identify bottlenecks. If initial candidate retrieval achieves 95% Recall@100 but reranking drops to 70% Recall@10, the reranker is the bottleneck. If initial retrieval only achieves 60% Recall@100, the fundamental retrieval strategy needs improvement.
+
+**Improving recall** involves multiple strategies:
+- Hybrid search (combining lexical and semantic retrieval) covers more matching strategies
+- Query expansion (adding synonyms and related terms) broadens the search
+- Cross-lingual retrieval (searching across language boundaries) finds sources in all three Belgian languages
+- Reducing chunk size can improve recall by allowing more fine-grained matching
+
+## Common questions
+
+**Q: What is a good recall score for legal search?**
+
+A: Recall@100 above 90% is generally expected for initial candidate retrieval. Recall@10 (after reranking) above 80% is considered strong. The acceptable threshold depends on the risk profile — higher-stakes applications demand higher recall.
+
+**Q: Why is recall harder to measure than precision?**
+
+A: Measuring recall requires knowing all relevant documents in the corpus for each query, which is expensive and labour-intensive to annotate. Precision only requires judging the returned results. This is why recall evaluation relies on carefully curated test sets rather than ad hoc testing.
 
 ## References
 

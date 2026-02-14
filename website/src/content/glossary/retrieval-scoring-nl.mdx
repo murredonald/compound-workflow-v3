@@ -12,7 +12,36 @@ draft: false
 
 ## Definitie
 
-Retrieval scoring is het proces van het toekennen van numerieke scores die schatten hoe relevant elk kandidaatdocument of [chunk](/nl/glossary/document-chunk/) is voor een gegeven query, met behulp van modellen zoals [BM25](/nl/glossary/bm25/), dense encoders of rerankers.
+Retrieval scoring is het proces waarbij een numerieke relevantiescore wordt berekend voor elk kandidaatdocument of elke passage bij een gebruikersquery, waardoor het systeem resultaten kan rangschikken van meest naar minst relevant. Elk retrievalsysteem moet beslissen welke documenten worden geretourneerd en in welke volgorde — scoring is het mechanisme dat deze beslissing maakt. Verschillende scoringsmethoden vangen verschillende aspecten van relevantie op: lexicale overlap, semantische gelijkenis of fijnmazige cross-attention tussen query- en documenttokens.
+
+## Waarom het belangrijk is
+
+- **Resultaatvolgorde** — gebruikers vertrouwen erop dat de bovenste resultaten het meest relevant zijn; scoring bepaalt deze volgorde en beïnvloedt rechtstreeks of de juiste bepaling bovenaan verschijnt of begraven ligt op pagina drie
+- **RAG-contextselectie** — in retrieval-augmented generation bepaalt scoring welke passages in het contextvenster van het taalmodel terechtkomen; slechte scoring betekent dat het model minder relevante context ontvangt en slechtere antwoorden produceert
+- **Multisignalfusie** — moderne systemen combineren meerdere scoringssignalen ([BM25](/nl/glossary/bm25/), dense gelijkenis, metadata, autoriteitsniveau); de scoringsarchitectuur bepaalt hoe deze signalen worden gewogen en samengevoegd
+- **Drempelbeslissingen** — scoring maakt afkapbeslissingen mogelijk: alleen passages boven een minimale relevantiescore worden geretourneerd, waardoor resultaten van lage kwaliteit de gebruiker of de generatielaag niet bereiken
+
+## Hoe het werkt
+
+Retrieval scoring werkt in verschillende stadia van de pipeline, met steeds duurdere maar nauwkeurigere methoden in elk stadium:
+
+**Sparse scoring** (BM25 en varianten) berekent relevantie op basis van termoverlap tussen de query en het document. BM25 houdt rekening met termfrequentie (hoe vaak de queryterm voorkomt in het document), inverse documentfrequentie (hoe zeldzaam de term is in het hele corpus) en documentlengte-normalisatie. Het is snel, interpreteerbaar en effectief voor queries met specifieke terminologie.
+
+**Dense scoring** berekent de cosinusgelijkenis of het inwendig product tussen de embeddingvector van de query en die van elk document. Dit vangt semantische relevantie op — een query over "vennootschapsbelasting" scoort hoog tegen een document over "corporate income tax" zelfs zonder gedeelde termen. Dense scoring is afhankelijk van de kwaliteit van het embeddingmodel.
+
+**Cross-encoder scoring** (reranking) verwerkt de query en elk kandidaatdocument samen door een transformermodel, waardoor diepe token-niveauinteractie mogelijk is. Dit levert de meest nauwkeurige relevantiescores op, maar is te duur om toe te passen op miljoenen documenten — daarom wordt het alleen gebruikt op de topkandidaten uit eerdere stadia. Cross-encoders kunnen nuances oppikken die bi-encoder (dense) scoring mist, zoals negatie, voorwaardelijke uitspraken en complexe query-documentrelaties.
+
+**Scorefusie** combineert scores van meerdere methoden. Reciprocal Rank Fusion (RRF) is een veelgebruikte aanpak: het zet de gerangschikte lijst van elke scoringsmethode om in een uniforme score op basis van rangpositie en sommeert vervolgens over methoden. Deze eenvoudige techniek presteert vaak beter dan complexere aangeleerde fusiemethoden.
+
+## Veelgestelde vragen
+
+**V: Welke scoringsmethode is het beste?**
+
+A: Geen enkele methode is het beste voor alle queries. BM25 blinkt uit bij exacte termmatching (artikelnummers, specifieke referenties). Dense scoring blinkt uit bij semantische matching (conceptuele queries). Cross-encoder reranking biedt de hoogste nauwkeurigheid, maar alleen op een kleine kandidatenset. De beste systemen combineren alle drie in een pipeline.
+
+**V: Hebben relevantiescores een absolute betekenis?**
+
+A: Over het algemeen niet. Scores zijn relatief — nuttig om documenten ten opzichte van elkaar te rangschikken voor een specifieke query, maar niet direct vergelijkbaar tussen verschillende queries of scoringsmethoden. Een BM25-score van 15 op de ene query is niet vergelijkbaar met een score van 15 op een andere query.
 
 ## References
 

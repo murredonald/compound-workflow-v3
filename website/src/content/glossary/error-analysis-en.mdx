@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Error analysis groups and inspects model failures—by category, input type, or segment—to identify systemic issues and guide data or model changes.
+Error analysis is the systematic examination of an AI system's failures to understand their patterns, root causes, and implications. Rather than treating errors as individual incidents, error analysis categorises them by type (retrieval failure, generation hallucination, citation error), identifies which query types or topics are most affected, and traces each error back to its root cause in the pipeline. This structured understanding of failures guides targeted improvements that address systemic issues rather than individual symptoms.
+
+## Why it matters
+
+- **Targeted improvement** — error analysis reveals which component (retrieval, generation, or source data) causes the most failures, directing engineering effort where it will have the greatest impact
+- **Pattern detection** — individual errors may seem random, but analysis often reveals patterns: the system consistently fails on temporal queries, or always hallucinates when the knowledge base lacks coverage on a topic
+- **Priority setting** — categorising errors by frequency and severity allows the team to prioritise: a rare but dangerous error type (citing fabricated legislation) may warrant more urgent attention than a common but minor issue (imprecise citations)
+- **Progress tracking** — ongoing error analysis tracks whether improvements actually reduce error rates, providing evidence-based feedback on system development
+
+## How it works
+
+Error analysis follows a structured process:
+
+**Error collection** — errors are gathered from multiple sources: automated evaluation against test sets, user feedback and corrections, manual review of sampled outputs, and adversarial testing results. Each error record includes the query, the system's response, the expected correct response, and any available context (retrieved sources, confidence score).
+
+**Categorisation** — errors are classified by type:
+- **Retrieval failures** — the relevant source was not found (recall issue) or irrelevant sources were returned (precision issue)
+- **Generation hallucinations** — the model fabricated information not present in the retrieved context
+- **Citation errors** — the answer is correct but cites the wrong source, or citations are imprecise (citing a whole law instead of the specific article)
+- **Scope errors** — the system answered a question outside its scope instead of declining
+- **Temporal errors** — the system cited outdated or not-yet-effective provisions
+- **Completeness errors** — the answer addressed part of the question but missed important aspects
+
+**Root cause analysis** — for each category, the analysis traces back to the underlying cause. Retrieval failures might stem from vocabulary mismatch, insufficient metadata filtering, or knowledge base gaps. Hallucinations might result from ambiguous system prompts or insufficient context.
+
+**Action planning** — each root cause maps to a specific improvement: better query expansion for vocabulary mismatch, stricter temporal filtering for temporal errors, additional knowledge base content for coverage gaps, or prompt refinement for hallucination patterns.
+
+## Common questions
+
+**Q: How many errors need to be analysed for useful insights?**
+
+A: Meaningful patterns typically emerge from 50-100 errors. For statistically robust conclusions about error rates by category, 200-500 errors are needed. The analysis should continue periodically as the system evolves.
+
+**Q: Should error analysis be automated?**
+
+A: Partially. Error categorisation can be semi-automated using classifiers, but root cause analysis and action planning require human judgement. Automated monitoring flags errors; human analysis identifies their causes and solutions.
 
 ## References
 

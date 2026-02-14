@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-[Entity extraction](/en/glossary/ner/) is the process of detecting mentions of entities in unstructured text and assigning them types or identifiers useful for search and [knowledge graphs](/en/glossary/knowledge-graph/).
+Entity extraction is the process of automatically identifying and classifying named entities — such as people, organisations, dates, monetary amounts, legal references, and jurisdictions — within unstructured text. It is a core natural language processing (NLP) task that transforms raw documents into structured data by tagging each entity mention with a type label. In legal AI, entity extraction powers downstream capabilities like knowledge graph construction, metadata enrichment, cross-referencing between documents, and structured search filtering.
+
+## Why it matters
+
+- **Structured metadata from unstructured text** — legislation and rulings arrive as prose; entity extraction identifies the article numbers, dates, parties, and monetary thresholds embedded within, making them searchable and filterable
+- **Knowledge graph construction** — extracted entities and their relationships form the nodes and edges of a knowledge graph, enabling the system to answer relational queries like "which rulings cite article 215 WIB92?"
+- **Cross-referencing** — when a circular mentions a royal decree by name, entity extraction identifies the reference and links it to the corresponding document in the knowledge base
+- **Search enrichment** — extracted entities become metadata that supports faceted search, allowing users to filter results by jurisdiction, tax type, date range, or authority level
+
+## How it works
+
+Entity extraction typically operates in two stages:
+
+**Detection** identifies the boundaries of entity mentions in the text — determining that "Grondwettelijk Hof" in a sentence is a single entity, not two separate words. This is challenging because entity names can span multiple words, contain common words, or overlap with surrounding text.
+
+**Classification** assigns a type to each detected entity. Standard types include person, organisation, location, and date, but legal NLP extends this with domain-specific types: legislative references (article numbers, law codes), court identifiers, tax categories, jurisdictional markers, and monetary amounts with currency.
+
+Modern entity extraction uses transformer-based models fine-tuned on labelled legal text. The model processes each token in context and predicts whether it is part of an entity and what type it belongs to (using BIO tagging: Begin, Inside, Outside). Pre-trained legal language models perform significantly better than general-purpose models because they understand legal naming conventions, citation formats, and domain terminology.
+
+For Belgian tax law, entity extraction must handle multilingual documents (Dutch, French, German), recognise references to specific Belgian legal instruments (WIB92, BWHI, KB/AR), and distinguish between federal and regional legislative references.
+
+## Common questions
+
+**Q: How is entity extraction different from keyword extraction?**
+
+A: Keyword extraction identifies the most important terms in a document regardless of type. Entity extraction identifies specific named items and classifies them by category. "Vennootschapsbelasting" might be extracted as a keyword; "article 185 WIB92" would be extracted as a legislative reference entity with structured metadata (article number: 185, law code: WIB92).
+
+**Q: How accurate is entity extraction on legal text?**
+
+A: General-purpose NER models typically achieve 85-90% F1 on legal text out of the box. Fine-tuning on domain-specific annotated data pushes this to 93-97% F1, depending on entity type. Dates and monetary amounts are easiest; legislative cross-references and jurisdictional markers are harder due to their varied formatting.

@@ -10,6 +10,35 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Deduplication vergelijkt documenten op inhoud of hashes om kopieën en bijna‑kopieën te vinden, zodat indexering en evaluatie niet door herhaling worden vertekend.
+Deduplication is het proces van het identificeren en verwijderen van dubbele of bijna-dubbele documenten, passages of records uit een dataset. In informatieretrieval- en AI-systemen voorkomt deduplicatie dat dezelfde inhoud meerdere keren in zoekresultaten verschijnt, onnodige opslagruimte inneemt of analyses vertekent. In het Belgisch fiscaal recht is deduplicatie bijzonder belangrijk omdat dezelfde wettekst in meerdere officiële bronnen kan voorkomen, geconsolideerde versies naast originele publicaties kunnen bestaan, en rechterlijke beslissingen in meerdere databanken kunnen worden gerapporteerd.
+
+## Waarom het belangrijk is
+
+- **Kwaliteit van zoekresultaten** — dezelfde bepaling drie keer uit verschillende bronnen retourneren verspilt de tijd van de gebruiker en vermindert het aantal afzonderlijke zichtbare resultaten; deduplicatie zorgt voor diverse, bruikbare resultaten
+- **Efficiëntie van embeddings en index** — dubbele documenten produceren dubbele embeddings die opslagruimte innemen en [nearest-neighbor search](/nl/glossary/nearest-neighbor-search/) vertragen zonder informatieve waarde toe te voegen
+- **Kwaliteit van trainingsdata** — AI-modellen die getraind zijn op datasets met veel duplicatie kunnen overfitting vertonen op herhaalde inhoud, waardoor hun uitvoer vertekend raakt; deduplicatie is een standaard voorbewerkingsstap
+- **Nauwkeurige analyses** — als hetzelfde document vijf keer voorkomt, zullen frequentiegebaseerde analyses het overtellen; deduplicatie zorgt ervoor dat maten zoals onderverdeling per onderwerp en citatieaantallen nauwkeurig zijn
+
+## Hoe het werkt
+
+Deduplicatie werkt op verschillende niveaus van gelijkenis:
+
+**Exacte deduplicatie** identificeert documenten die byte voor byte of teken voor teken identiek zijn. Dit is het eenvoudigste geval, doorgaans afgehandeld door cryptografische hashes (SHA-256) van documentinhoud te vergelijken. Als twee documenten dezelfde hash opleveren, zijn ze identiek.
+
+**Near-duplicate detectie** identificeert documenten die grotendeels gelijk zijn maar niet identiek — bijvoorbeeld twee versies van dezelfde wet met kleine opmakverschillen, of dezelfde uitspraak gepubliceerd met verschillende metadata. Technieken omvatten MinHash (compacte "vingerafdrukken" genereren uit documentshingles en deze vergelijken), SimHash (locality-sensitive hashing die gelijkaardige documenten op gelijkaardige hashwaarden afbeeldt) en embedding-gebaseerde gelijkenis (documenten markeren waarvan de vectorembeddings dichter bij elkaar liggen dan een gedefinieerde drempel).
+
+**Semantische deduplicatie** identificeert documenten die dezelfde informatie in andere woorden uitdrukken. Dit vereist embedding-gebaseerde vergelijking en is agressiever — het zou een Nederlandse en Franse versie van dezelfde wet kunnen samenvoegen. Dit niveau wordt doorgaans voorzichtig toegepast, omdat juridische teksten in verschillende talen subtiele verschillen kunnen bevatten die van belang zijn.
+
+De deduplicatiebeslissing omvat ook de keuze welk exemplaar te behouden. In juridische contexten heeft de meest gezaghebbende bron de voorkeur (het Belgisch Staatsblad boven een database van derden), de meest recente versie (een geconsolideerde tekst boven een oorspronkelijke publicatie), of de versie met de rijkste metadata.
+
+## Veelgestelde vragen
+
+**V: Moet deduplicatie plaatsvinden voor of na indexering?**
+
+A: Bij voorkeur voor indexering, tijdens de documentingestiepipeline. Dit voorkomt dat dubbele embeddings überhaupt worden aangemaakt. Sommige systemen passen echter ook deduplicatie op resultaatniveau toe bij het opvragen, waarbij bijna-dubbele resultaten worden samengevoegd voordat ze aan de gebruiker worden gepresenteerd.
+
+**V: Kan deduplicatie per ongeluk belangrijke inhoud verwijderen?**
+
+A: Ja, als de gelijkheidsdrempel te agressief is. Twee artikelen met vergelijkbare bewoording maar verschillende juridische gevolgen (bijv. federale versus regionale versies van een vergelijkbare bepaling) moeten als afzonderlijke vermeldingen worden behouden. Conservatieve drempels en metadata-bewuste deduplicatieregels voorkomen onterechte samenvoeging.

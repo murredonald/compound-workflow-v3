@@ -12,4 +12,40 @@ draft: false
 
 ## Definition
 
-Schema markup adds tags or JSON-LD to content so that search engines and internal systems can understand entities, relationships, and page types more precisely.
+Schema markup is a standardised vocabulary of machine-readable annotations added to web content or documents that describes their structure, type, and meaning. Using formats like JSON-LD, microdata, or RDFa, schema markup tells search engines and other systems what a page contains — not just the text, but the semantic meaning: this is an article about a legal concept, that is a definition, this is a publication date, those are related terms. Schema markup bridges the gap between human-readable content and machine-interpretable structured data.
+
+## Why it matters
+
+- **Search engine understanding** — schema markup helps Google and other search engines understand page content, enabling rich results (featured snippets, knowledge panels, FAQ cards) that increase visibility and click-through rates
+- **SEO value** — pages with schema markup are more likely to appear in enhanced search results, which consistently outperform standard blue links in click-through rates
+- **Internal search improvement** — beyond external search engines, schema markup helps internal retrieval systems understand content structure, enabling more precise filtering and categorisation
+- **Interoperability** — schema markup uses shared vocabularies (primarily Schema.org) that enable different systems to understand and exchange content descriptions consistently
+
+## How it works
+
+Schema markup is implemented by adding structured data annotations to web pages or documents:
+
+**JSON-LD** (JSON for Linking Data) is the recommended format. A JSON-LD block is embedded in the page's HTML `<head>` or `<body>`, describing the page's content in a structured format. For a glossary page, this might specify: the term being defined (name), the definition (description), the category (about), related terms (relatedLink), and the page's language (inLanguage).
+
+**Schema.org vocabulary** provides the standardised types and properties. Common types for a legal AI website include:
+- **DefinedTerm** — for glossary entries (term name, description, category)
+- **Article** — for blog posts (headline, author, datePublished, articleBody)
+- **FAQPage** — for pages with question-and-answer content
+- **WebSite** — for the overall site with search functionality
+- **Organization** — for the company with contact information
+
+**Implementation** involves identifying what content types each page contains, mapping them to appropriate Schema.org types, and generating the JSON-LD markup. For a multi-language site like a Belgian legal platform, the `inLanguage` property distinguishes between Dutch, French, and German content.
+
+**Validation** uses Google's Rich Results Test or Schema.org's validator to verify that markup is syntactically correct, uses valid types and properties, and is likely to generate enhanced search results.
+
+Schema markup does not change the visible page content — it is metadata consumed by machines, not by human readers. However, the information it conveys should accurately reflect the visible content; misleading markup violates search engine guidelines and may result in penalties.
+
+## Common questions
+
+**Q: Does schema markup directly improve search rankings?**
+
+A: Schema markup is not a direct ranking factor, but it enables rich results that increase click-through rates, which indirectly supports SEO. More importantly, it helps search engines understand content semantics, which can improve how and when pages appear in search results.
+
+**Q: How much schema markup should a page have?**
+
+A: Enough to describe the primary content of the page. A glossary page should have DefinedTerm markup. A blog post should have Article markup. Over-marking incidental content (navigation, footers, advertisements) is unnecessary and can confuse validators.

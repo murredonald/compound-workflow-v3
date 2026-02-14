@@ -57,7 +57,7 @@ Si vous faites de la recherche vectorielle, vous utilisez probablement FAISS dir
 │  │  • IndexFlatIP - Produit Scalaire (cosine sim)    │   │
 │  │  • Force brute - compare avec TOUS les vecteurs   │   │
 │  │  • 100% précis mais O(n×d) par requête           │   │
-│  │  • Utiliser pour: <100K vecteurs ou ground truth │   │
+│  │  • Utiliser pour: &lt;100K vecteurs ou ground truth │   │
 │  │                                                     │   │
 │  │  IVF (Inverted File Index)                         │   │
 │  │  ═════════════════════════                         │   │
@@ -166,7 +166,7 @@ R: Utilisez FAISS directement pour recherche/prototypage, applications single-no
 
 **Q: Comment choisir le bon index FAISS?**
 
-R: Commencez avec IndexFlatL2/IP pour <100K vecteurs (exact, simple). Pour 100K-10M, utilisez IndexIVFFlat ou IndexHNSWFlat. Pour 10M-1B, utilisez IndexIVFPQ. Pour >1B, considérez solutions distribuées. Benchmarkez toujours sur vos données réelles.
+R: Commencez avec IndexFlatL2/IP pour &lt;100K vecteurs (exact, simple). Pour 100K-10M, utilisez IndexIVFFlat ou IndexHNSWFlat. Pour 10M-1B, utilisez IndexIVFPQ. Pour >1B, considérez solutions distribuées. Benchmarkez toujours sur vos données réelles.
 
 **Q: Quelle différence entre IndexFlatIP et IndexFlatL2?**
 

@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Een [ontologie](/nl/glossary/knowledge-graph/) beschrijft entiteiten, hun eigenschappen en relaties in een domein, zodat mens en machine een gedeeld, expliciet kennismodel kunnen gebruiken voor zoeken en redeneren.
+Een Ontologie is een formele, expliciete specificatie van de concepten, entiteiten, eigenschappen en relaties binnen een domein, gestructureerd op een manier die zowel mensen als machines in staat stelt consistent te redeneren over kennis. In tegenstelling tot een eenvoudige woordenlijst (die termen definieert) of een [taxonomie](/nl/glossary/taxonomy-information-architecture/) (die ze hiërarchisch classificeert), definieert een ontologie de soorten dingen die bestaan, hun attributen en hoe ze zich tot elkaar verhouden. In juridische AI zou een fiscaalrechtelijke ontologie bijvoorbeeld kunnen definiëren dat een "belastingplichtige" een entiteit is die een "fiscale woonplaats" heeft, onderworpen is aan "belastingverplichtingen" en "aftrekken" kan claimen — met nauwkeurige definities voor elk concept en formele regels die hun interacties bepalen.
+
+## Waarom het belangrijk is
+
+- **Consistente redenering** — een ontologie biedt een gedeeld, ondubbelzinnig vocabulaire dat voorkomt dat het AI-systeem verwante maar afzonderlijke concepten verwart (bijv. "belastingvrijstelling" vs. "belastingaftrek" vs. "belastingvermindering")
+- **Gestructureerde zoekopdrachten** — ontologieën maken relationele zoekopdrachten mogelijk die verder gaan dan tekstueel zoeken: "welke aftrekken zijn beschikbaar voor niet-inwonende belastingplichtigen in het Waalse Gewest?" vereist begrip van entiteitstypes en hun relaties
+- **Kennisgraaf als fundament** — ontologieën definiëren het schema voor [kennisgrafen](/nl/glossary/knowledge-graph/), met specificatie van welke typen nodes en edges geldig zijn en welke eigenschappen ze kunnen hebben
+- **Interoperabiliteit tussen systemen** — een gedeelde ontologie stelt verschillende systemen (documentbeheer, retrieval, dossierbeheer) in staat om data uit te wisselen met consistente semantiek
+
+## Hoe het werkt
+
+Een ontologie bestaat uit verschillende componenten:
+
+**Klassen** definiëren de soorten entiteiten in het domein: Wetgeving, Artikel, Rechterlijke uitspraak, Belastingplichtige, Belastingtype, Jurisdictie. Klassen kunnen subklassen hebben: Rechterlijke uitspraak kan subklassen hebben zoals Grondwettelijk Hof-uitspraak, Cassatie-uitspraak en Uitspraak in beroep.
+
+**Eigenschappen** definiëren attributen van en relaties tussen entiteiten. Een Artikel heeft eigenschappen zoals artikelnummer, ingangsdatum en wetgevingscode. Een Rechterlijke uitspraak heeft eigenschappen zoals uitspraakdatum, rechtbank en geciteerde artikelen (die verwijzen naar de artikelen die het interpreteert).
+
+**Beperkingen** definiëren regels over geldige combinaties: elk Artikel moet tot precies één Wetgeving behoren; een Belastingtarief moet zowel een waarde als een ingangsdatum hebben; een Rechterlijke uitspraak moet verwijzen naar ten minste één wettelijke bepaling.
+
+**Instanties** zijn de werkelijke entiteiten in de kennisbank: artikel 215 van het WIB92, het arrest van het Grondwettelijk Hof van 15 maart 2024, het Vlaamse Gewest als Jurisdictie.
+
+Ontologieën worden doorgaans uitgedrukt in formele talen zoals OWL (Web Ontology Language) of RDF Schema, die geautomatiseerd redeneren mogelijk maken — het afleiden van nieuwe feiten uit bestaande feiten op basis van de regels van de ontologie. Als de ontologie bijvoorbeeld definieert dat federale wetgeving van toepassing is op alle gewesten, en een specifieke aftrek in federale wetgeving is vastgelegd, dan kan het systeem afleiden dat de aftrek in alle drie de gewesten van toepassing is zonder dat dit expliciet is vermeld.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt een ontologie van een databaseschema?**
+
+A: Een databaseschema definieert tabelstructuren en kolomtypes voor opslag. Een ontologie definieert conceptuele entiteiten, hun eigenschappen en hun relaties voor redenering. Een databaseschema zegt "deze tabel heeft een datumkolom"; een ontologie zegt "een Artikel heeft een ingangsdatum, wat een temporele eigenschap is die bepaalt wanneer het artikel van kracht is."
+
+**V: Is het bouwen van een ontologie de moeite waard?**
+
+A: Voor complexe domeinen zoals fiscaal recht met veel onderling gerelateerde concepten, ja. De initiële investering in ontologieontwerp betaalt zich terug door nauwkeurigere retrieval, betere redenering en consistente kennisorganisatie. Voor eenvoudigere domeinen kan een taxonomie volstaan.

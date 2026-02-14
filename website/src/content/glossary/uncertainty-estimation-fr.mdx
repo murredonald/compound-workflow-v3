@@ -10,6 +10,44 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+L'estimation de l'incertitude est le processus de quantification du degré de confiance d'un système d'IA dans ses prédictions ou réponses, en distinguant les cas où le système est fiable de ceux où il pourrait se tromper. Plutôt que de présenter chaque réponse avec la même conviction, un système doté d'une estimation de l'incertitude communique son niveau de certitude — permettant aux utilisateurs de décider quand faire confiance directement au résultat et quand vérifier de manière indépendante. Dans le domaine de l'IA juridique, l'estimation de l'incertitude est essentielle car les conséquences d'une réponse incorrecte (déclaration fiscale erronée, échéance manquée, sanction réglementaire) exigent que les professionnels sachent quand une vérification supplémentaire s'impose.
+
+## Pourquoi c'est important
+
+- **Prise de décision éclairée** — les conseillers fiscaux peuvent prioriser leurs efforts de vérification : les réponses à haute confiance peuvent être utilisées avec une vérification rapide, tandis que les réponses à faible confiance nécessitent une recherche indépendante approfondie
+- **Comportement honnête du système** — un système qui reconnaît son incertitude est plus fiable qu'un système qui présente chaque réponse avec une fausse assurance ; les professionnels perdent rapidement confiance dans les systèmes qui se trompent avec assurance
+- **Renvoi vers l'humain** — l'estimation de l'incertitude permet une escalade automatique : lorsque la confiance du système tombe en dessous d'un seuil, il peut signaler la question pour une revue humaine plutôt que de fournir une réponse potentiellement incorrecte
+- **Suivi de la qualité** — le suivi des distributions d'incertitude dans le temps révèle l'état de santé du système ; une augmentation soudaine de l'incertitude moyenne peut indiquer des lacunes dans la base de connaissances, une dégradation du modèle ou de nouveaux types de requêtes que le système ne gère pas bien
+
+## Comment ça fonctionne
+
+L'incertitude dans les systèmes d'IA provient de deux sources :
+
+**L'incertitude épistémique** (incertitude du modèle) reflète ce que le modèle ne sait pas — lacunes dans les données d'entraînement, concepts inédits ou entrées ambiguës. Ce type d'incertitude peut, en principe, être réduit en fournissant plus de données ou un meilleur entraînement. Dans un système RAG, l'incertitude épistémique est élevée lorsque la couche de récupération ne trouve pas de sources pertinentes ou lorsque les sources disponibles ne répondent pas clairement à la question.
+
+**L'incertitude aléatoire** (incertitude des données) reflète l'ambiguïté inhérente à l'entrée ou à la tâche. Certaines questions juridiques ont véritablement plusieurs interprétations valides, des sources faisant autorité contradictoires, ou dépendent de faits non mentionnés dans la requête. Cette incertitude ne peut pas être réduite en améliorant le modèle — elle nécessite une clarification de la part de l'utilisateur ou la reconnaissance que la question est intrinsèquement ambiguë.
+
+Les techniques d'estimation courantes incluent :
+
+- **Méthodes d'ensemble** — exécuter la même requête à travers plusieurs modèles ou plusieurs configurations de récupération et mesurer le degré d'accord ; un fort désaccord indique une forte incertitude
+- **Dropout de Monte Carlo** — exécuter le modèle plusieurs fois avec un dropout aléatoire au moment de l'inférence et mesurer la variance des résultats
+- **Probabilités au niveau des tokens** — utiliser les logits de sortie du modèle de langue pour évaluer sa confiance dans chaque token généré ; des tokens à faible probabilité dans des positions critiques suggèrent une incertitude
+- **Signaux de qualité de récupération** — mesurer les scores de pertinence des documents récupérés ; si les documents les mieux classés ont des scores de pertinence faibles, le système devrait exprimer une confiance plus basse
+
+Dans les systèmes RAG en production, ces signaux sont généralement combinés en un score de confiance composite qui reflète à la fois la qualité de la récupération et la certitude de la génération.
+
+## Questions fréquentes
+
+**Q : L'estimation de l'incertitude est-elle la même chose que le score de confiance ?**
+
+R : Les deux notions sont étroitement liées. L'estimation de l'incertitude est la discipline plus large de quantification de ce que le modèle ne sait pas. Le score de confiance est un résultat spécifique — un score présenté à l'utilisateur — qui est dérivé des estimations d'incertitude. Un score de confiance bien calibré est le produit visible de l'estimation de l'incertitude.
+
+**Q : Un système peut-il être incertain mais correct ?**
+
+R : Oui. Le système peut produire la bonne réponse tout en signalant honnêtement qu'il n'est pas pleinement confiant — par exemple, lorsqu'une seule source marginalement pertinente a été trouvée. C'est un comportement souhaitable : cela alerte l'utilisateur qu'il devrait vérifier, même si la vérification confirmerait la réponse.
+
 ## References
 
 - Gal & Ghahramani (2016), "[Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning](https://arxiv.org/abs/1506.02142)", ICML.

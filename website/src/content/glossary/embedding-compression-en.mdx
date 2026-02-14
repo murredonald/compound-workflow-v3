@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Embedding compression uses techniques like lower dimensional projections or reduced precision storage to shrink embedding size while trying to preserve retrieval quality.
+Embedding compression is the application of techniques that reduce the storage size and computational cost of embedding vectors while preserving their usefulness for similarity search. Full-precision embeddings (768 dimensions at 32-bit float = 3,072 bytes each) become expensive at scale — a knowledge base of 10 million chunks requires ~30 GB for embeddings alone. Compression techniques reduce this by 4-30x through dimensionality reduction, quantisation, or both, making large-scale semantic search feasible on commodity hardware.
+
+## Why it matters
+
+- **Memory savings** — compressed embeddings require less RAM, enabling larger indexes to fit on fewer machines and reducing infrastructure costs
+- **Faster search** — smaller vectors mean faster distance computations; compressed representations can also enable specialised fast-path computations like lookup-table-based distance
+- **Reduced embedding cost** — some compression techniques (like Matryoshka embeddings) allow using shorter vectors from the same model, reducing both storage and initial computation
+- **Deployment flexibility** — compressed embeddings enable on-device or edge deployment scenarios where memory and compute are constrained
+
+## How it works
+
+Embedding compression techniques operate at different levels:
+
+**Dimensionality reduction** (PCA, random projection) reduces the number of dimensions — from 768 to 256, for example. This removes the least informative dimensions while preserving the major structure. Retrieval quality typically drops 2-5% for a 60-70% size reduction.
+
+**Scalar quantisation** reduces the precision of each dimension — converting 32-bit floats to 8-bit integers or even binary values. Each dimension is linearly mapped from its observed range to a smaller integer range. 8-bit quantisation provides 4x compression with minimal quality loss; binary quantisation (1 bit per dimension) provides 32x compression but with significant quality degradation.
+
+**Product quantisation (PQ)** splits the vector into subvectors and replaces each with an index into a learned codebook. This can achieve 20-60x compression while maintaining 95%+ of retrieval quality, making it the most popular technique for large-scale indexes.
+
+**Matryoshka representation learning** trains embedding models to produce vectors where the first N dimensions are a valid lower-dimensional embedding. This allows choosing the compression level at query time — using full 768-dimensional vectors for high-precision queries and truncated 256-dimensional vectors for fast approximate queries — without needing a separate compression step.
+
+These techniques can be combined: for example, PCA to reduce from 768 to 256 dimensions, followed by scalar quantisation of the reduced vectors. The optimal combination depends on the dataset, the required quality level, and the hardware constraints.
+
+## Common questions
+
+**Q: How much quality is lost with compression?**
+
+A: It depends on the technique and aggressiveness. PCA from 768 to 384 dimensions typically preserves 97%+ of retrieval quality. 8-bit scalar quantisation preserves 99%+. Product quantisation with typical parameters preserves 95-98%. Binary quantisation drops to 85-90% but with dramatic compression.
+
+**Q: When should I compress embeddings?**
+
+A: When the full-precision index exceeds available memory, when search latency needs to be reduced, or when infrastructure costs need to be lowered. For small collections (under 1 million vectors), full-precision storage is usually affordable and compression is unnecessary.
 
 ## References
 

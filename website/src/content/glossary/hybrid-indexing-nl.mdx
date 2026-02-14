@@ -10,9 +10,46 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Hybrid indexing bewaart documenten in meerdere indexen – bijvoorbeeld een [BM25](/nl/glossary/bm25/)‑index en een vectorindex – zodat queries zowel op trefwoorden als op [semantische gelijkenis](/nl/glossary/semantic-similarity/) kunnen worden beoordeeld.
+Hybrid indexing is de Praktijk van het opbouwen en onderhouden van zowel sparse (lexicale) als dense (vector-) Indexen over dezelfde Documentcollectie, waardoor het Retrievalsysteem Trefwoordmatching en semantische Matching in één enkele Zoekopdracht kan combineren. In plaats van te kiezen tussen [BM25](/nl/glossary/bm25/) en Vectorzoekopdrachten ondersteunt hybride Indexering beide gelijktijdig, zodat het Systeem de Sterke punten van elke Benadering kan benutten. In juridische AI is dit bijzonder waardevol omdat sommige Zoekopdrachten exacte Trefwoordmatching vereisen (specifieke Artikelnummers, juridische Verwijzingen), terwijl andere semantisch Begrip vereisen (conceptuele Vragen uitgedrukt in verschillende Terminologie).
+
+## Waarom het belangrijk is
+
+- **Het beste van beide Benaderingen** — lexicale Indexen blinken uit in exacte Trefwoordmatching; Vectorindexen blinken uit in [semantische Matching](/nl/glossary/semantic-similarity/); hybride Indexering maakt beide mogelijk bij elke Zoekopdracht
+- **Robuustheid** — Zoekopdrachten die met één Benadering alleen zouden falen, slagen met de andere; hybride Indexering vermindert het aantal Zoekopdrachten zonder relevante Resultaten
+- **Vereisten voor juridisch Zoeken** — Belastingprofessionals stellen zowel precieze Zoekopdrachten ("artikel 215 WIB92") als conceptuele Zoekopdrachten ("aftrekbaarheid van Kosten voor een Thuiskantoor"); één enkel Indextype kan niet beide optimaal bedienen
+- **Bewezen Effectiviteit** — hybride Retrieval presteert consequent beter dan uitsluitend sparse of uitsluitend dense Retrieval in Benchmarks, inclusief Benchmarks voor het juridische Domein
+
+## Hoe het werkt
+
+Hybride Indexering onderhoudt twee parallelle Indexstructuren:
+
+**Lexicale Index** — een geïnverteerde Index (doorgaans gebaseerd op BM25) die Termen koppelt aan de Documenten die ze bevatten. Opgebouwd tijdens Ingestie door de Tekst van elke Documentchunk te tokeniseren, te stemmen en te indexeren. Ondersteunt exacte Trefwoordmatching, Zinsdeelquery's en Booleaanse Filters.
+
+**Vectorindex** — een ANN-index (doorgaans HNSW) die Embeddingvectoren opslaat voor elke Documentchunk. Opgebouwd tijdens Ingestie door elke Chunk door een Embeddingmodel te halen en de resulterende Vector aan de Index toe te voegen. Ondersteunt semantische Gelijkeniszoekopdrachten.
+
+Op het Moment van de Zoekopdracht doorzoekt het Systeem beide Indexen:
+1. De Zoekopdracht van de Gebruiker wordt verwerkt door zowel de lexicale Zoekmachine (BM25-scoring) als de Vectorzoekmachine (Embedding + nearest neighbour-lookup)
+2. Elke Zoekmachine retourneert zijn top-k Resultaten met Scores
+3. De Resultaten worden samengevoegd met behulp van een Fusiealgoritme
+
+**Score-fusie** combineert de twee gerangschikte Lijsten. Gangbare Benaderingen zijn:
+- **Reciprocal Rank Fusion (RRF)** — converteert Rangschikkingen naar Scores via 1/(k + rang) en sommeert over Methoden; eenvoudig en effectief
+- **Gewogen lineaire Combinatie** — normaliseert Scores van elke Methode en combineert deze met aangeleerde of afgestemde Gewichten
+- **Aangeleerde Fusie** — een getraind Model dat Kenmerken van beide Retrievalmethoden neemt en een uniforme Relevantiescore produceert
+
+De samengevoegde Resultaten worden vervolgens doorgegeven aan de Herrangschikkingsfase en uiteindelijk aan de Generatielaag.
+
+## Veelgestelde vragen
+
+**V: Verdubbelt hybride Indexering de Opslagvereisten?**
+
+A: Bij benadering wel, ja. De lexicale Index en de Vectorindex verbruiken elk onafhankelijk Opslag. De Opslagkosten worden echter gerechtvaardigd door de significante Verbetering van de Retrievalkwaliteit. Vectorindexen kunnen worden gecomprimeerd met Kwantisatie om deze Overhead te verminderen.
+
+**V: Welke Fusiemethode werkt het beste?**
+
+A: Reciprocal Rank Fusion (RRF) is de populairste Keuze omdat deze eenvoudig is, geen Training vereist en competitief presteert ten opzichte van complexere Methoden. Het is de standaard Fusiemethode in de meeste Productiesystemen.
 
 ## References
 

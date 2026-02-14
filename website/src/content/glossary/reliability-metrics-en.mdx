@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Reliability [metrics](/en/glossary/distance-metric/) summarise aspects like error rates under shift, [calibration](/en/glossary/calibration/) quality, outage frequency, and safety violations rather than only raw accuracy.
+Reliability metrics are quantitative measures that capture how consistently, predictably, and safely an AI system performs over time and across varying conditions — going beyond simple accuracy to assess whether the system can be depended upon in production. While accuracy measures how often the system is correct on a test set, reliability metrics measure whether it stays correct under distribution shift, communicates uncertainty honestly, avoids catastrophic failures, and maintains consistent behaviour. For legal AI systems where professionals depend on outputs for client advice, reliability is as important as raw accuracy.
+
+## Why it matters
+
+- **Professional dependability** — tax advisors need to know not just that the system is usually right, but that it fails gracefully when it is wrong — flagging uncertainty rather than presenting incorrect answers confidently
+- **Regulatory compliance** — the EU AI Act requires high-risk AI systems to maintain "appropriate levels of accuracy, robustness and cybersecurity" throughout their lifecycle; reliability metrics provide the evidence for this ongoing compliance
+- **Operational stability** — metrics like uptime, latency consistency, and error rates track whether the system is operationally reliable, not just intellectually accurate
+- **Trust over time** — a system that is 90% accurate but unpredictable (sometimes brilliant, sometimes catastrophically wrong) is less useful than one that is 85% accurate but consistently reliable
+
+## How it works
+
+Reliability metrics span several dimensions:
+
+**Calibration metrics** — Expected Calibration Error (ECE) and Brier score measure whether the system's confidence scores match actual correctness rates. A well-calibrated system with 80% confidence is correct about 80% of the time.
+
+**Robustness metrics** — accuracy under perturbation (how much does performance drop when inputs are noisy or adversarial?), performance across distribution shifts (does the system maintain quality on new legislation?), and consistency (does the same question produce the same answer when asked multiple times?).
+
+**Coverage metrics** — abstention rate (how often does the system decline to answer?), coverage-at-accuracy (what percentage of queries can the system answer while maintaining a target accuracy level?), and gap detection rate (how often does the system correctly identify that its knowledge base lacks the needed information?).
+
+**Operational metrics** — uptime (what percentage of time is the system available?), latency percentiles (P50, P95, P99 response times), error rate (what percentage of requests fail?), and throughput (how many queries per second can the system handle?).
+
+**Safety metrics** — hallucination rate (how often does the system fabricate information?), harmful output rate (how often does the system produce misleading or dangerous content?), and guardrail violation rate (how often does the system break its own rules, such as providing binding legal advice when instructed not to?).
+
+These metrics are tracked over time through dashboards, with alerts when any metric crosses a predefined threshold. The combination provides a multi-dimensional view of system reliability that no single metric can capture.
+
+## Common questions
+
+**Q: Is a reliable system always accurate?**
+
+A: Not necessarily, but reliability includes knowing when it is not accurate. A reliable system with 80% accuracy that flags the uncertain 20% is more dependable than an unreliable system with 90% accuracy that gives no indication of when it might be wrong.
+
+**Q: Which reliability metrics matter most?**
+
+A: It depends on the use case. For legal AI, calibration quality and hallucination rate are typically the most critical — they determine whether professionals can trust the system's confidence signals and whether its outputs are grounded in real sources.
 
 ## References
 

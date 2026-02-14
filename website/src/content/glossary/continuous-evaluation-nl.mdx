@@ -10,6 +10,41 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Continue evaluatie is de praktijk van het regelmatig en automatisch uitvoeren van kwaliteitsbeoordelingen op de output van een AI-systeem met behulp van live of recente productiedata, in plaats van uitsluitend te vertrouwen op eenmalige evaluaties bij de uitrol. Het detecteert prestatievermindering, regressies en drift zodra ze optreden — voordat gebruikers het merken of erdoor worden getroffen. In juridische AI is continue evaluatie bijzonder belangrijk omdat de kennisbasis voortdurend verandert naarmate nieuwe wetgeving, arresten en circulaires worden toegevoegd, en elk van deze wijzigingen de antwoordkwaliteit kan beïnvloeden.
+
+## Waarom het belangrijk is
+
+- **Vroege regressiedetectie** — een nieuwe documentinname, modelupdate of promptwijziging kan de antwoordkwaliteit subtiel verslechteren; continue evaluatie vangt deze regressies binnen uren op in plaats van weken
+- **Gezondheid van de kennisbasis** — naarmate nieuwe juridische bronnen worden toegevoegd, kunnen ze in conflict zijn met bestaande bepalingen of randgevallen introduceren; continue evaluatie brengt deze problemen aan het licht voordat ze gebruikersgerichte antwoorden beïnvloeden
+- **Regulatoire naleving** — de EU AI Act vereist doorlopende monitoring van hoog-risico AI-systemen gedurende hun hele levenscyclus, niet alleen bij de uitrol; continue evaluatie levert het bewijs voor deze voortdurende compliance
+- **Vertrouwen in updates** — teams kunnen verbeteringen uitrollen met het vertrouwen dat geautomatiseerde evaluaties onverwachte verslechtering zullen signaleren
+
+## Hoe het werkt
+
+Continue evaluatie werkt als een geautomatiseerde pijplijn die op een vast schema draait of wordt getriggerd door systeemwijzigingen:
+
+**Testset-evaluatie** — een samengestelde set representatieve vragen met bekende correcte antwoorden wordt periodiek (dagelijks of wekelijks) tegen het systeem gedraaid. Resultaten worden vergeleken met baselinesscores. Dalingen in nauwkeurigheid, faithfulness of retrievalprecisie triggeren waarschuwingen.
+
+**Productiesampling** — een willekeurige steekproef van echte gebruikersquery's en systeemantwoorden wordt vastgelegd en automatisch geëvalueerd. Geautomatiseerde metrieken beoordelen faithfulness (komt het antwoord overeen met de geciteerde bronnen?), volledigheid (heeft de ophaallaag de relevante bepalingen gevonden?) en formaatcompliance (volgt de output de verwachte structuur?).
+
+**Regressietesten** — wanneer de kennisbasis wordt bijgewerkt (nieuwe wetgeving opgenomen, bestaande documenten gewijzigd), wordt automatisch een gerichte set query's met betrekking tot de gewijzigde inhoud gedraaid om te verifiëren dat antwoorden correct zijn bijgewerkt en dat niet-gerelateerde antwoorden niet zijn beïnvloed.
+
+**Driftmonitoring** volgt statistische eigenschappen van de inputs en outputs van het systeem in de tijd. Veranderingen in de querydistributie (gebruikers die over nieuwe onderwerpen vragen), retrievalscoredistributies (lagere gemiddelde relevantiescores) of betrouwbaarheidsdistributies (meer onzekere antwoorden) kunnen wijzen op onderliggende problemen.
+
+Resultaten worden geaggregeerd in dashboards die trends in de tijd tonen: nauwkeurigheidscurves, retrievalkwaliteitsmetrieken, hallucinatiepercentages en latentie. Drempelwaarden bepalen wanneer geautomatiseerde waarschuwingen worden getriggerd versus wanneer de verandering binnen de normale variantie valt.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt continue evaluatie van unittesten?**
+
+A: Unittests verifiëren of individuele codeonderdelen correct werken in isolatie. Continue evaluatie beoordeelt de outputkwaliteit van het end-to-end-systeem op realistische data. Unittests vangen codefouten; continue evaluatie vangt kwaliteitsverslechtering op die mogelijk helemaal niet door codewijzigingen is veroorzaakt (bijv. een nieuw opgenomen document dat in conflict is met bestaande inhoud).
+
+**V: Hoe vaak moet continue evaluatie draaien?**
+
+A: Dat hangt af van de updatefrequentie en risicotolerantie van het systeem. Dagelijkse evaluatie is gebruikelijk voor productiesystemen. Trigger-gebaseerde evaluatie (draaien na elke kennisbasis-update of modelwijziging) is responsiever maar ook intensiever qua middelen.
+
 ## References
 
 > Baifan Zhou et al. (2022), "[Machine learning with domain knowledge for predictive quality monitoring in resistance spot welding](https://doi.org/10.1007/s10845-021-01892-y)", Journal of Intelligent Manufacturing.

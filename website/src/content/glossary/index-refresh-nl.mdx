@@ -10,9 +10,44 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Index refresh omvat het opnieuw embedden van content, heropbouwen van de index of het toevoegen van nieuwe segmenten zodat retrieval in lijn blijft met de huidige data en embeddingmodellen.
+Index refresh is het proces waarbij de zoek- en vectorindexen worden bijgewerkt om Wijzigingen in de onderliggende Kennisbank weer te geven — nieuwe Documenten toevoegen, gewijzigde Documenten bijwerken en verwijderde of achterhaalde Content verwijderen. Zonder regelmatige index refreshes geeft het Retrievalsysteem verouderde Resultaten terug die mogelijk verwijzen naar opgeheven Wetgeving, achterhaalde Belastingtarieven of vervangen administratieve Richtlijnen. In juridische AI bepaalt de Verversingsfrequentie van de Index rechtstreeks hoe snel nieuwe Wetgeving en Rechtspraak vindbaar worden in het Systeem.
+
+## Waarom het belangrijk is
+
+- **Juridische actualiteit** — het Belgisch Fiscaal Recht wijzigt doorlopend via Programmawetten, koninklijke Besluiten en Circulaires; een Index die achterloopt op deze Wijzigingen retourneert verouderde Bepalingen alsof ze nog van kracht zijn
+- **Correctheid** — als een Bepaling wordt gewijzigd maar de Index nog de oude Versie bevat, kan het Systeem Antwoorden genereren op basis van opgeheven Wetgeving, wat ernstige professionele Risico's creëert
+- **Volledigheid** — nieuwe Rechterlijke uitspraken en administratieve Rulings moeten snel worden geïndexeerd om beschikbaar te zijn voor Retrieval; Vertragingen creëren Dekkingslacunes
+- **Consistentie** — de Index moet dezelfde Toestand weerspiegelen als de onderliggende Documentopslag; Inconsistenties tussen beide veroorzaken verwarrende Resultaten (bv. een Document verschijnt in de Zoekresultaten maar ontbreekt bij het openen)
+
+## Hoe het werkt
+
+Index refresh kan in verschillende Modi werken:
+
+**Incrementele Verversing** verwerkt alleen nieuwe of gewijzigde Documenten sinds de laatste Verversing. Wanneer een nieuwe Circulaire wordt opgenomen, worden alleen de Chunks van die Circulaire geëmbed en aan de Index toegevoegd. Dit is efficiënt maar vereist betrouwbare Wijzigingsdetectie — het Systeem moet weten welke Documenten nieuw of gewijzigd zijn.
+
+**Volledige Heropbouw** reconstrueert de gehele Index vanaf nul. Dit garandeert Consistentie maar is kostbaar voor grote Kennisbanken (miljoenen Chunks opnieuw embedden). Volledige Heropbouwen worden doorgaans periodiek gepland (wekelijks of maandelijks) als Consistentiecontrole, terwijl incrementele Verversingen de dagelijkse Updates afhandelen.
+
+**Real-time Indexering** voegt Documenten onmiddellijk na Inname toe aan de Index, zonder Vertraging. Dit biedt de snelste Updatelatentie maar vereist dat de Indexstructuur gelijktijdig Lezen en Schrijven ondersteunt zonder Degradatie.
+
+**Geversioneerde Verversing** houdt meerdere Indexversies bij en bouwt een nieuwe Index op de Achtergrond op terwijl de oude Versie Zoekopdrachten blijft beantwoorden. Zodra de nieuwe Index klaar en gevalideerd is, wordt het Verkeer atomair omgeschakeld. Dit vermijdt elke Periode waarin de Index slechts gedeeltelijk is bijgewerkt.
+
+Belangrijke operationele Overwegingen zijn:
+
+- **Embeddingconsistentie** — als het Embeddingmodel wordt bijgewerkt, moeten alle Documenten opnieuw worden geëmbed; een gedeeltelijke Herembedding creëert een inconsistente Index waarin oude en nieuwe Embeddings niet vergelijkbaar zijn
+- **Verwijderingsafhandeling** — wanneer een Document wordt opgeheven of vervangen, moeten de Chunks ervan uit de Index worden verwijderd, niet alleen als inactief worden gemarkeerd in de Documentopslag
+- **Validatie** — na elke Verversing controleren geautomatiseerde Controles of de Index het verwachte Aantal Documenten bevat, of Sleuteldocumenten vindbaar zijn en of er geen Corruptie is opgetreden tijdens de Update
+
+## Veelgestelde vragen
+
+**V: Hoe snel moet nieuwe Wetgeving in de Index verschijnen?**
+
+A: Voor een professionele juridische AI-tool is Indexering op dezelfde Dag als Publicatie in het Belgisch Staatsblad de Verwachting. Dit betekent doorgaans dagelijkse Inname- en Indexverversingscycli, met de Mogelijkheid om ad-hocverversingen te starten voor dringende Updates.
+
+**V: Kan het Systeem Zoekopdrachten verwerken tijdens een index refresh?**
+
+A: Ja, met de juiste Architectuur. Incrementele Updates en geversioneerde Verversingen stellen het Systeem in staat om Zoekopdrachten te blijven beantwoorden vanuit de huidige Index terwijl de Update plaatsvindt. Alleen volledige Heropbouwen zonder Versionering vereisen tijdelijke Degradatie.
 
 ## References
 

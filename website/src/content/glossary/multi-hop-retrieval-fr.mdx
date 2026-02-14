@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le multi-hop retrieval réalise plusieurs étapes de récupération dépendantes, où les résultats d’une étape alimentent la suivante, afin de rassembler des preuves réparties sur plusieurs documents.
+Le multi-hop retrieval est une stratégie de recherche qui enchaîne plusieurs étapes de récupération, où les résultats de chaque étape orientent la requête de l'étape suivante, afin de rassembler des preuves réparties sur plusieurs documents. Contrairement à la récupération en une seule étape (une requête, un ensemble de résultats), le multi-hop retrieval reconnaît que les questions complexes ne peuvent souvent pas être résolues à partir d'un seul document — la réponse nécessite de connecter des informations provenant de plusieurs sources. En droit fiscal, c'est fréquent : déterminer le traitement fiscal d'une opération peut nécessiter la règle générale (un article), ses exceptions (un autre article), les arrêtés d'exécution (un décret) et la jurisprudence pertinente (une décision de justice).
+
+## Pourquoi c'est important
+
+- **Réponse aux questions complexes** — de nombreuses vraies questions fiscales nécessitent des informations provenant de plusieurs sources qu'aucune requête unique ne permettrait de retrouver ; le multi-hop retrieval rassemble la chaîne complète de preuves
+- **Résolution des renvois** — les textes juridiques font fréquemment référence à d'autres dispositions (« nonobstant l'article 215 ») ; le multi-hop retrieval suit ces renvois pour récupérer les dispositions référencées
+- **Exhaustivité** — une seule passe de récupération peut manquer un contexte important (exceptions, amendements, conditions) qu'une étape ultérieure trouverait en se basant sur ce que la première a renvoyé
+- **Support au raisonnement** — le modèle de langage peut raisonner plus efficacement lorsqu'il dispose de la chaîne complète des dispositions pertinentes plutôt que d'un seul article isolé
+
+## Comment ça fonctionne
+
+Le multi-hop retrieval étend le pipeline de recherche standard avec une génération itérative de requêtes :
+
+**Étape 1 : récupération initiale** — la question de l'utilisateur est utilisée pour récupérer le premier ensemble de documents pertinents. Cet ensemble initial fournit les premières preuves.
+
+**Étape 2 : génération de requêtes** — en se basant sur les résultats initiaux, le système génère des requêtes de suivi pour combler les lacunes. Si les résultats initiaux mentionnent « l'article 215 CIR92 » comme exception, une requête de suivi récupère cet article. Si les résultats font référence à un arrêté d'exécution, une requête de suivi le récupère. La génération de requêtes peut être basée sur des règles (en suivant les renvois détectés) ou sur un modèle (en utilisant un LLM pour identifier quelles informations complémentaires sont nécessaires).
+
+**Étape 3 : récupération ultérieure** — les requêtes de suivi sont exécutées, récupérant des documents supplémentaires qui complètent les résultats initiaux.
+
+**Étape 4 : agrégation des preuves** — tous les documents récupérés à travers toutes les étapes sont combinés, dédupliqués et présentés à la couche de génération comme un ensemble de preuves complet.
+
+Le nombre d'étapes est généralement limité (2-3) pour contrôler la latence et empêcher la recherche de dériver vers du contenu non pertinent. Chaque étape ajoute de la latence (une étape de génération de requête plus une étape de récupération), de sorte que le temps de réponse total augmente avec le nombre d'étapes.
+
+Le multi-hop retrieval est particulièrement précieux pour les questions impliquant : des règles conditionnelles (« est-ce déductible SI... »), des renvois entre dispositions, des comparaisons entre juridictions, et des questions sur l'interaction entre règles générales et exceptions spécifiques.
+
+## Questions fréquentes
+
+**Q : combien d'étapes sont généralement nécessaires ?**
+
+R : la plupart des questions peuvent être résolues en 1 à 2 étapes. Trois étapes sont parfois nécessaires pour des questions très complexes impliquant de nombreux renvois. Au-delà de trois étapes, le risque de récupérer du contenu non pertinent augmente et le coût en latence devient significatif.
+
+**Q : le multi-hop retrieval peut-il récupérer de mauvaises preuves ?**
+
+R : oui. Chaque étape introduit le risque de suivre une référence non pertinente ou de générer une requête de suivi de mauvaise qualité. C'est pourquoi les preuves de toutes les étapes sont classées et filtrées avant d'être transmises à la couche de génération.
 
 ## References
 

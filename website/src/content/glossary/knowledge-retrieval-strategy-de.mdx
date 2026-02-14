@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Eine Knowledge-Retrieval-Strategie legt fest, wie Inhalte gechunkt, indiziert, gefiltert und kombiniert werden, damit nachgelagerte KI-Systeme zur richtigen Zeit auf die richtige Information zugreifen können.
+Eine Knowledge-Retrieval-Strategie ist der übergeordnete Designentwurf dafür, wie ein KI-System Wissen organisiert, indiziert, durchsucht und dem Sprachmodell zur Antwortgenerierung bereitstellt. Sie umfasst sämtliche Designentscheidungen: wie Dokumente in Chunks aufgeteilt werden, welche Embedding-Modelle eingesetzt werden, ob die Suche lexikalisch, semantisch oder hybrid erfolgt, wie Ergebnisse gefiltert und rerankt werden und wie der Kontext für die Generierungsschicht zusammengestellt wird. Die Retrieval-Strategie ist eine architektonische Grundsatzentscheidung, die jeden Aspekt der Systemleistung beeinflusst — Genauigkeit, Latenz, Abdeckung und Erklärbarkeit.
+
+## Warum es wichtig ist
+
+- **Genauigkeitsgrundlage** — die Retrieval-Strategie bestimmt, was das Sprachmodell sieht; eine Strategie, die relevante Dokumente übersieht oder irrelevante einschließt, verschlechtert direkt die Antwortqualität
+- **Domäneneignung** — generische Retrieval-Strategien berücksichtigen keine rechtsspezifischen Anforderungen wie temporale Versionierung, Autoritätshierarchien und Zuständigkeitsfilterung; eine domänengerechte Strategie adressiert diese Bedürfnisse
+- **Performanzarchitektur** — die Strategie definiert das Latenzbudget: wie viele Stufen die Pipeline hat, wie aufwändig jede Stufe ist und welche Abwägungen zwischen Gründlichkeit und Geschwindigkeit akzeptabel sind
+- **Weiterentwickelbarkeit** — eine gut konzipierte Strategie ist modular und erlaubt es, einzelne Komponenten (Embedding-Modell, Reranker, Filterregeln) aufzurüsten, ohne das gesamte System neu zu entwerfen
+
+## Wie es funktioniert
+
+Eine Knowledge-Retrieval-Strategie adressiert mehrere miteinander verbundene Designdimensionen:
+
+**Chunking-Strategie** — wie Dokumente in Retrieval-Einheiten aufgeteilt werden. Die Optionen reichen von Sliding Windows fester Größe über strukturbewusstes Chunking (ein Chunk pro Artikel oder Abschnitt) bis hin zu hierarchischem Chunking (unterschiedliche Granularitäten für unterschiedliche Zwecke). Die Wahl beeinflusst Embedding-Qualität, Retrieval-Granularität und Zitierpräzision.
+
+**Indizierungsstrategie** — welche Indextypen gepflegt werden und wie sie konfiguriert sind. Die meisten Systeme nutzen einen hybriden Ansatz: einen lexikalischen Index (BM25) für exakte Begriffsübereinstimmung und einen Vektorindex (HNSW) für semantisches Matching. Die Indizes können durch einen Metadatenspeicher für strukturierte Filterung und einen Knowledge Graph für relationale Abfragen ergänzt werden.
+
+**Suchstrategie** — wie Abfragen verarbeitet und mit den Indizes abgeglichen werden. Dies umfasst Query-Understanding (Erweiterung, Umformulierung, Zerlegung), den Retrieval-Modus (sparse, dense oder hybrid) und die Parameter für die Kandidatengenerierung (wie viele Kandidaten aus jedem Index abgerufen werden).
+
+**Ranking-Strategie** — wie Kandidaten bewertet, gefiltert und rerankt werden. Dies beinhaltet Metadatenfilterung (Zuständigkeit, Datum, Autorität), Cross-Encoder-Reranking und Score-Fusion über mehrere Retrieval-Methoden hinweg.
+
+**Kontextzusammenstellung** — wie die endgültige Auswahl an Passagen formatiert und in den Sprachmodell-Prompt eingefügt wird. Dies umfasst die Auswahl der Passagenanzahl, ihre Anordnung nach Relevanz oder Quellentyp und die Einbeziehung von Metadaten für die Zitierungsgenerierung.
+
+Die Strategie muss auch Randfälle adressieren: was passiert, wenn keine relevanten Dokumente gefunden werden (Enthaltung vs. Antwort aus dem Trainingswissen), wie Widersprüche zwischen Quellen gehandhabt werden und wie das System sich verhält, wenn die Frage außerhalb seines Geltungsbereichs liegt.
+
+## Häufige Fragen
+
+**F: Kann die Retrieval-Strategie nach dem Deployment geändert werden?**
+
+A: Ja, wenn das System modular aufgebaut ist. Einzelne Komponenten (Embedding-Modell, Reranker, Filterregeln) können unabhängig voneinander aktualisiert werden. Grundlegende Entscheidungen zu ändern (Chunking-Granularität, Indextyp) kann jedoch eine erneute Verarbeitung der gesamten Wissensbasis erfordern.
+
+**F: Was ist die wichtigste Komponente einer Retrieval-Strategie?**
+
+A: Das Embedding-Modell und die Chunking-Strategie haben typischerweise den größten Einfluss auf die Retrieval-Qualität. Das Embedding-Modell bestimmt, ob semantisches Matching gut funktioniert; die Chunking-Strategie bestimmt die Granularität und Kohärenz dessen, was abgerufen wird.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Context injection means taking relevant documents, snippets, or metadata and inserting them into an [LLM](/en/glossary/llm/) [prompt](/en/glossary/prompt/) so that the model can condition its answer on that external information.
+Context injection is the practice of inserting retrieved documents, passages, metadata, or other external information into a language model's prompt so that the model can base its answer on that specific content rather than relying solely on its training knowledge. It is the mechanism that connects the retrieval layer to the generative layer in a RAG system: after relevant documents are found, they are "injected" into the prompt alongside the user's question. The quality of context injection — what is included, how it is formatted, and where it is placed — significantly affects answer quality.
+
+## Why it matters
+
+- **Grounded generation** — by providing the model with specific source documents, context injection ensures answers are based on authoritative legal texts rather than the model's potentially outdated or inaccurate training data
+- **Citation enablement** — injected context comes with metadata (article numbers, publication dates, source identifiers) that the model can use to produce verifiable citations in its answer
+- **Scope control** — context injection defines the boundaries of what the model should consider; the system prompt can instruct the model to only use the injected context, preventing it from generating ungrounded claims
+- **Dynamic knowledge** — unlike fine-tuning, which bakes knowledge into model weights, context injection provides fresh information at query time, making the system immediately responsive to new legislation or rulings
+
+## How it works
+
+Context injection follows the retrieval stage and precedes generation:
+
+**Selection** — the retrieval pipeline produces a ranked list of relevant passages. The top-k passages (typically 5-20) are selected for injection. Too few passages risk missing important context; too many risk exceeding the model's context window or diluting relevance.
+
+**Formatting** — selected passages are formatted for clarity. Each passage is typically presented with its source metadata (document title, article number, publication date, jurisdiction) and clearly delineated from other passages. Consistent formatting helps the model distinguish between different sources and cite them accurately.
+
+**Placement** — the injected context is placed within the prompt, usually between the system instructions and the user's question. The system prompt includes instructions about how to use the context: "Answer based only on the following sources", "Cite the specific article for each claim", "If the provided sources do not address the question, say so."
+
+**Context window management** — the total prompt (system instructions + injected context + user question) must fit within the model's context window. When the retrieved context is too large, strategies include truncating lower-ranked passages, summarising passages before injection, or splitting the query into sub-queries each with a smaller context payload.
+
+The main risk of context injection is **context poisoning** — if irrelevant or incorrect passages are injected (due to retrieval errors), the model may produce answers based on that incorrect context. This is why retrieval quality is the upstream dependency for effective context injection.
+
+## Common questions
+
+**Q: Is context injection the same as RAG?**
+
+A: Context injection is one step within the RAG process. RAG includes retrieval (finding relevant documents), context injection (inserting them into the prompt), and generation (producing the answer). Context injection is the bridge between retrieval and generation.
+
+**Q: How is context injection different from prompt injection?**
+
+A: Context injection is a legitimate system design pattern — the application intentionally provides context to the model. Prompt injection is a security attack where malicious content in user input or external data attempts to override the model's instructions. They use a similar mechanism (adding text to the prompt) but with opposite intent.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-Un jeu de données d'évaluation regroupe des entrées avec des sorties attendues servant de [référence](/fr/glossary/citation/) pour quantifier la qualité d'un système.
+Un jeu de données d'évaluation (eval set) est une collection structurée de paires entrée-sortie dont la réponse correcte pour chaque entrée est connue à l'avance. Il sert de référence à partir de laquelle les performances d'un système d'IA sont mesurées : le système traite chaque entrée, et sa sortie est comparée à la réponse correcte connue pour calculer des métriques de qualité. En IA juridique, les jeux de données d'évaluation contiennent des questions de droit fiscal associées à des réponses vérifiées, des citations de sources et des jugements de pertinence qui permettent une mesure systématique de la qualité de la recherche et de la génération.
+
+## Pourquoi c'est important
+
+- **Mesure objective** — sans jeu de données d'évaluation, l'appréciation de la qualité est subjective ; avec un tel jeu, les équipes peuvent calculer des métriques précises (exactitude, précision, rappel, fidélité) qui suivent la qualité du système au fil du temps
+- **Détection de régressions** — l'exécution du jeu de données d'évaluation après chaque modification du système révèle si le changement a amélioré ou dégradé les performances, détectant les régressions avant qu'elles n'affectent les utilisateurs
+- **Comparaison de modèles et de configurations** — les jeux de données d'évaluation permettent une comparaison équitable entre différents modèles, stratégies de recherche ou configurations de prompts dans des conditions identiques
+- **Couverture du domaine** — un jeu de données d'évaluation bien conçu couvre les cas d'utilisation attendus du système, les cas limites et les difficultés connues, garantissant que les affirmations de qualité reflètent les performances réelles
+
+## Comment ça fonctionne
+
+La construction d'un jeu de données d'évaluation pour l'IA juridique comprend plusieurs étapes :
+
+**Collecte de requêtes** — des questions représentatives sont rassemblées à partir de multiples sources : requêtes réelles d'utilisateurs (anonymisées), questions conçues par des experts du domaine pour tester des capacités spécifiques, et cas limites qui sondent les modes de défaillance connus. Pour un système d'IA fiscale belge, cela inclut des requêtes couvrant différents types d'impôts (impôt sur le revenu, TVA, droits d'enregistrement), juridictions (fédéral, flamand, wallon, bruxellois) et niveaux de complexité.
+
+**Annotation des réponses** — des experts du domaine fournissent la réponse correcte pour chaque requête, y compris les documents sources spécifiques et les articles qui la soutiennent. Des directives d'annotation garantissent la cohérence : ce qui constitue une réponse « correcte », comment traiter les questions ambiguës et comment noter les réponses partiellement correctes.
+
+**Jugements de pertinence** — pour l'évaluation de la recherche, les annotateurs identifient tous les documents du corpus pertinents pour chaque requête. Cela permet le calcul du rappel (le système a-t-il trouvé tous les documents pertinents ?) et de la précision (les documents retournés étaient-ils réellement pertinents ?).
+
+**Maintenance du jeu de données** — à mesure que la base de connaissances évolue (nouvelle législation, dispositions modifiées), le jeu de données d'évaluation doit être mis à jour pour refléter les réponses correctes actuelles. Une réponse correcte en 2024 peut être erronée en 2025 après une modification législative.
+
+Les jeux de données d'évaluation de qualité contiennent généralement 200 à 1 000 paires question-réponse, stratifiées par domaine, niveau de difficulté et type de question (recherche factuelle, raisonnement en plusieurs étapes, comparaison, temporel). Le jeu de données doit être suffisamment grand pour la significativité statistique, mais suffisamment gérable pour une revue humaine régulière et des mises à jour.
+
+## Questions fréquentes
+
+**Q : Les jeux de données d'évaluation peuvent-ils être générés automatiquement ?**
+
+R : Partiellement. Les LLM peuvent générer des questions candidates, et des pipelines semi-automatisés peuvent proposer des réponses. Mais la vérification par des experts du domaine reste essentielle — la référence doit effectivement être correcte, sinon l'évaluation produit des métriques trompeuses.
+
+**Q : À quelle fréquence le jeu de données d'évaluation doit-il être mis à jour ?**
+
+R : Après chaque modification significative de la base de connaissances (nouvelle législation, modifications majeures) et au moins trimestriellement autrement. Des jeux de données d'évaluation obsolètes produisent des scores artificiellement bas, car le système peut répondre correctement en se basant sur le droit actuel alors que le jeu de données attend des réponses basées sur l'ancien droit.
 
 ## References
 

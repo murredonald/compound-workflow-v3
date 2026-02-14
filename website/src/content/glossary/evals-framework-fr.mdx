@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-Un framework d'évaluation fournit les outils et configurations pour lancer et tracer des tests reproductibles sur modèles et pipelines.
+Un framework d'évaluation est un système structuré d'outils, de jeux de tests, de métriques et d'infrastructure de reporting permettant d'évaluer systématiquement les performances d'un système d'IA. Il automatise le processus d'exécution de requêtes de test, de comparaison des résultats avec les réponses attendues, de calcul de métriques de qualité et de suivi des résultats dans le temps. Sans framework d'évaluation, l'évaluation de la qualité est ponctuelle et non reproductible ; avec un tel cadre, les équipes peuvent mesurer l'impact de chaque modification — nouveaux modèles, révisions de prompts, mises à jour de la base de connaissances — par rapport à une référence constante.
+
+## Pourquoi c'est important
+
+- **Qualité mesurable** — un framework d'évaluation transforme des appréciations subjectives (« le système semble meilleur ») en métriques quantifiables (la précision est passée de 82 % à 87 %), ce qui permet des décisions fondées sur les données
+- **Prévention des régressions** — les évaluations automatisées détectent les dégradations de qualité avant qu'elles n'atteignent les utilisateurs ; si un changement de prompt améliore un domaine mais en dégrade un autre, le framework le met en évidence
+- **Comparaison et sélection** — lors de l'évaluation de différents modèles, stratégies d'embedding ou configurations de récupération, un framework standardisé permet une comparaison équitable dans des conditions identiques
+- **Preuves réglementaires** — l'AI Act européen exige de démontrer que les systèmes d'IA à haut risque respectent des normes de précision et de performance ; un framework d'évaluation produit la documentation et les preuves nécessaires
+
+## Comment ça fonctionne
+
+Un framework d'évaluation se compose généralement de quatre éléments :
+
+**Jeux de données de test** — des ensembles de questions soigneusement élaborés avec des réponses correctes connues, couvrant les cas d'utilisation prévus du système. Pour un système d'IA juridique, cela inclut des requêtes sur des dispositions fiscales spécifiques, des questions transjuridictionnelles, des requêtes temporelles (législation en vigueur à une date précise) et des cas limites (questions ambiguës, dispositions contradictoires). Les jeux de tests sont versionnés et enrichis au fil du temps.
+
+**Métriques d'évaluation** — les mesures spécifiques utilisées pour évaluer la qualité. Les métriques courantes incluent la précision et le recall de récupération (le système a-t-il trouvé les bonnes sources ?), la fidélité (la réponse correspond-elle aux sources ?), l'exactitude factuelle (la réponse est-elle correcte ?) et la latence (quelle est la rapidité de la réponse ?). Des métriques spécifiques au domaine peuvent inclure l'exactitude des citations (les numéros d'articles sont-ils corrects ?) et la correction temporelle (la réponse reflète-t-elle la législation en vigueur au moment pertinent ?).
+
+**Moteur d'exécution** — l'automatisation qui exécute les requêtes de test à travers le système, capture les résultats, calcule les métriques et stocke les résultats. Il s'exécute selon un calendrier (quotidien, hebdomadaire) ou est déclenché par des changements (déploiement d'un nouveau modèle, mise à jour de la base de connaissances).
+
+**Reporting et alertes** — des tableaux de bord qui visualisent les tendances des métriques dans le temps et des alertes qui notifient l'équipe lorsque les métriques descendent en dessous de seuils définis. Les données historiques permettent à l'équipe de corréler les variations de performance avec des modifications spécifiques du système.
+
+Le framework doit prendre en charge plusieurs modes d'évaluation : l'évaluation hors ligne (exécution sur un jeu de tests fixe), l'évaluation en ligne (échantillonnage et évaluation de requêtes en production) et les tests A/B (comparaison de deux versions du système sur les mêmes requêtes).
+
+## Questions fréquentes
+
+**Q : Quelle taille doit avoir le jeu de tests d'évaluation ?**
+
+R : Suffisamment grande pour couvrir les principaux cas d'utilisation et les cas limites du système avec une significativité statistique. Pour une IA juridique, 200 à 500 requêtes de test couvrant différents sujets, juridictions et types de questions constituent un bon point de départ. L'ensemble doit s'enrichir à mesure que de nouveaux cas d'utilisation sont identifiés.
+
+**Q : L'évaluation peut-elle être entièrement automatisée ?**
+
+R : Partiellement. Des métriques comme la précision de récupération, la latence et la conformité de format peuvent être automatisées. La fidélité peut être approximée avec des modèles NLI. Mais l'exactitude juridique nuancée nécessite souvent une revue humaine périodique, en particulier pour les requêtes complexes ou ambiguës.
 
 ## References
 

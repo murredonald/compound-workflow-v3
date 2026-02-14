@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La similarity search compare un embedding de requête à un grand ensemble de vecteurs et classe les éléments selon une métrique de distance ou de similarité choisie pour trouver le contexte le plus pertinent.
+La similarity search est le processus qui consiste à trouver dans un ensemble de données les éléments dont les représentations vectorielles sont les plus proches d'un vecteur de requête donné selon une métrique de distance choisie. Plutôt que de chercher des correspondances exactes de mots-clés, la similarity search opère dans l'espace des [embeddings](/fr/glossary/embeddings/) — renvoyant des résultats sémantiquement liés à la requête même lorsqu'ils utilisent une formulation entièrement différente. Cette capacité sous-tend la recherche sémantique moderne, les systèmes de recommandation et les workflows de déduplication.
+
+## Pourquoi c'est important
+
+- **Correspondance sémantique** — les professionnels du droit peuvent formuler leurs requêtes différemment de la rédaction de la législation ; la similarity search comble cet écart en faisant correspondre le sens plutôt que les termes exacts
+- **Découverte cross-lingue** — dans les systèmes juridiques multilingues comme celui de la Belgique, la similarity search sur des embeddings cross-lingues peut faire remonter une législation en français à partir d'une requête en néerlandais
+- **Mise à l'échelle** — les algorithmes de recherche par similarité approximative traitent des milliards de vecteurs en millisecondes, rendant la recherche sémantique à grande échelle réalisable
+- **Déduplication** — l'identification de documents ou de dispositions quasi-identiques provenant de différentes sources évite les résultats redondants
+
+## Comment ça fonctionne
+
+La similarity search fonctionne en trois phases :
+
+1. **Encodage** — la requête et tous les éléments de l'ensemble de données sont convertis en [vector embeddings](/fr/glossary/vector-embeddings/) à l'aide d'un modèle d'embedding. Pour un corpus de documents, cet encodage est effectué une seule fois au moment de l'indexation ; seule la requête est encodée au moment de la recherche.
+
+2. **Consultation de l'index** — le vecteur de requête est comparé aux vecteurs stockés à l'aide d'une métrique de distance (similarité cosinus, produit scalaire ou distance euclidienne). La comparaison exacte avec chaque vecteur serait trop lente pour de grands ensembles de données, c'est pourquoi des algorithmes de plus proches voisins approximatifs (ANN) comme HNSW ou IVF sont utilisés. Ceux-ci construisent des structures de graphe ou de clustering sur les vecteurs pour permettre un temps de recherche sous-linéaire.
+
+3. **Classement** — les k vecteurs les plus proches sont renvoyés, classés par score de similarité. Ils peuvent ensuite être affinés par [reranking](/fr/glossary/reranking/) ou filtrage par métadonnées avant d'être présentés à l'utilisateur.
+
+Le compromis dans la similarity search est entre le rappel (trouver tous les éléments véritablement pertinents) et la vitesse. La recherche exacte garantit un rappel parfait mais est lente à grande échelle. Les algorithmes ANN échangent une petite perte de rappel contre une recherche considérablement plus rapide, ce qui est acceptable pour la plupart des applications.
+
+## Questions fréquentes
+
+**Q : En quoi la similarity search diffère-t-elle de la recherche par mots-clés ?**
+
+R : La recherche par mots-clés (recherche lexicale) retrouve les documents contenant les mots exacts de la requête. La similarity search fait correspondre le sens — elle peut trouver des documents sur l'« impôt des sociétés » lorsque la requête dit « vennootschapsbelasting » parce que leurs embeddings sont proches dans l'espace vectoriel. La plupart des systèmes modernes combinent les deux approches dans une recherche hybride.
+
+**Q : Quelle est la vitesse de la similarity search sur de grands ensembles de données ?**
+
+R : Avec des index ANN, la similarity search sur 100 millions de vecteurs prend généralement de 1 à 10 millisecondes. La vitesse exacte dépend du type d'index, de la dimensionnalité des vecteurs et du matériel. Les [bases de données vectorielles](/fr/glossary/vector-database/) comme FAISS, Pinecone et Milvus sont optimisées pour cette charge de travail.
+
+**Q : Qu'est-ce qui détermine la qualité des résultats de la similarity search ?**
+
+R : Trois facteurs : le modèle d'embedding (sa capacité à capturer le sens sémantique), la métrique de distance (si elle correspond à l'objectif d'entraînement du modèle) et la configuration de l'index (l'agressivité avec laquelle il échange le rappel contre la vitesse). De ces trois facteurs, le modèle d'embedding a le plus grand impact.
 
 ## References
 

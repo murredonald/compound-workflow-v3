@@ -10,6 +10,41 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Une data pipeline pour la recherche comprend généralement l’ingestion, le parsing, la normalisation, l’enrichissement, le découpage et l’indexation, avec des tâches surveillées et du logging entre chaque étape.
+Une data pipeline est la séquence automatisée d'étapes qui déplace les données depuis leurs sources d'origine à travers des étapes de traitement, de transformation et d'enrichissement vers une forme adaptée à l'indexation, l'analyse ou l'entraînement de modèles. Dans le domaine de l'IA juridique, la data pipeline ingère des documents juridiques bruts provenant d'éditeurs, de journaux officiels, de bases de données judiciaires et de sources réglementaires, puis les nettoie, les structure, les découpe, les transforme en embeddings et les indexe dans la base de connaissances. La fiabilité et l'exactitude du pipeline déterminent directement la qualité et l'exhaustivité des connaissances du système d'IA.
+
+## Pourquoi c'est important
+
+- **Fraîcheur de la base de connaissances** — un pipeline bien conçu ingère automatiquement les nouvelles législations, décisions et circulaires dès leur publication, garantissant que le système reste à jour sans intervention manuelle
+- **Qualité des données** — chaque étape du pipeline comprend des validations et des contrôles de qualité qui détectent les erreurs (échecs d'OCR, métadonnées manquantes, fichiers corrompus) avant qu'elles n'entrent dans l'index et n'affectent la qualité de la récupération
+- **Reproductibilité** — un pipeline automatisé produit des résultats cohérents quel que soit l'opérateur ou le moment d'exécution ; les processus manuels sont sujets aux erreurs et non reproductibles
+- **Scalabilité** — à mesure que le volume de sources juridiques augmente, le pipeline gère un débit croissant sans nécessiter une augmentation proportionnelle de l'effort manuel
+
+## Comment ça fonctionne
+
+Une data pipeline d'IA juridique comprend généralement les étapes suivantes :
+
+**Extraction** — les documents bruts sont collectés depuis leurs sources. Cela peut impliquer le scraping de sites de journaux officiels, la réception de flux de données d'éditeurs juridiques, le téléchargement depuis des bases de données judiciaires ou le traitement de circulaires reçues par e-mail. Chaque source a son propre format et mécanisme de livraison.
+
+**Parsing** — les documents extraits sont convertis depuis leurs formats natifs (PDF, HTML, DOCX, XML) en texte propre. Cette étape gère l'extraction de mise en page, la détection de tableaux, l'OCR pour les documents scannés et la suppression du contenu standard. La qualité du parsing est souvent le principal goulot d'étranglement du pipeline.
+
+**Transformation** — le texte nettoyé est enrichi de métadonnées (date de publication, type de document, juridiction, numéros d'articles), dédupliqué par rapport au contenu existant et normalisé vers un format cohérent. Les renvois entre documents sont identifiés et liés.
+
+**Découpage** — les documents sont divisés en segments adaptés à la récupération (paragraphes, articles, sections) avec un chevauchement pour préserver le contexte aux frontières. Les limites des segments sont choisies pour maximiser la cohérence sémantique.
+
+**Embedding** — chaque segment est traité par un modèle d'embedding pour produire une représentation vectorielle destinée à la recherche sémantique. Les embeddings sont calculés par lots et stockés dans l'index vectoriel aux côtés du texte et des métadonnées du segment.
+
+**Chargement** — les segments traités, les embeddings et les métadonnées sont chargés dans l'index de production (base de données vectorielle, index lexical et magasin de métadonnées). Cette étape implique souvent des échanges atomiques ou des mises à jour incrémentales pour éviter de servir des données partielles.
+
+**Surveillance** — le pipeline suit des métriques à chaque étape : documents traités, erreurs rencontrées, temps de traitement et qualité des résultats. Des alertes notifient l'équipe en cas de défaillances ou d'anomalies.
+
+## Questions fréquentes
+
+**Q : À quelle fréquence la data pipeline doit-elle s'exécuter ?**
+
+R : Cela dépend de la fréquence de publication des sources. Le Moniteur belge publie quotidiennement, donc des exécutions quotidiennes du pipeline garantissent que la nouvelle législation est disponible dans les 24 heures. Les décisions de justice et les circulaires administratives peuvent arriver moins fréquemment. La plupart des systèmes d'IA juridique exécutent leur pipeline quotidiennement avec des exécutions à la demande pour les mises à jour urgentes.
+
+**Q : Que se passe-t-il lorsque le pipeline échoue en cours de route ?**
+
+R : Un pipeline bien conçu est idempotent (le relancer produit le même résultat) et prend en charge la reprise partielle (reprendre à partir de l'étape en échec plutôt que de tout recommencer). Les documents en échec sont journalisés, mis en quarantaine, puis retentés ou escaladés pour révision manuelle.

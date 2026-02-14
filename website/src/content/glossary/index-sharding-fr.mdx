@@ -10,9 +10,38 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’index sharding découpe un index vectoriel ou documentaire en plusieurs segments afin de répartir la charge de recherche et le stockage horizontalement sur des serveurs.
+L'index sharding consiste à diviser un index de recherche en plusieurs partitions plus petites (shards) pouvant être réparties sur différents serveurs ou dispositifs de stockage. Chaque shard contient un sous-ensemble de la collection totale de documents et peut être interrogé indépendamment. Au moment de la requête, la recherche est exécutée en parallèle sur tous les shards, puis les résultats sont fusionnés en une seule liste ordonnée. Le sharding permet aux systèmes de recherche de dépasser les limites de mémoire et de traitement d'une seule machine, en gérant des collections de milliards de documents tout en maintenant une faible latence.
+
+## Pourquoi c'est important
+
+- **Scalabilité horizontale** — lorsqu'un index dépasse la capacité mémoire ou de traitement d'une seule machine, le sharding répartit la charge sur plusieurs machines, permettant une croissance sans limites matérielles
+- **Traitement parallèle des requêtes** — interroger plusieurs shards simultanément réduit la latence par rapport à une recherche séquentielle dans un seul grand index ; avec N shards, chacun traite 1/N des données
+- **Tolérance aux pannes** — si l'hôte d'un shard tombe en panne, les autres shards continuent de répondre aux requêtes (avec une couverture réduite) ; les shards répliqués offrent une tolérance aux pannes complète
+- **Croissance incrémentale** — de nouvelles données peuvent être ajoutées dans de nouveaux shards sans reconstruire ceux existants, ce qui simplifie l'expansion de la base de connaissances
+
+## Comment ça fonctionne
+
+Les stratégies de sharding déterminent comment les documents sont répartis entre les shards :
+
+**Le sharding aléatoire ou basé sur le hachage** distribue les documents uniformément entre les shards en utilisant un hash de l'identifiant du document. Cela garantit des tailles de shards et une charge de requêtes équilibrées. Chaque requête doit interroger tous les shards, car n'importe quel document peut se trouver dans n'importe quel shard.
+
+**Le sharding basé sur le contenu** regroupe les documents liés entre eux — par exemple, un shard par juridiction ou un shard par type de document. Cela permet une recherche sélective : une requête filtrée sur la législation flamande n'a besoin d'interroger que le shard flamand. Cela réduit le calcul par requête mais crée des tailles de shards inégales et risque de manquer des résultats inter-shards.
+
+**Le sharding temporel** attribue les documents aux shards par période — un shard par année, par exemple. Les requêtes portant sur le droit actuel n'interrogent que le shard le plus récent ; les requêtes historiques interrogent les shards plus anciens. Cette approche convient bien au contenu juridique qui présente des frontières temporelles claires.
+
+Au moment de la requête, un **coordinateur** achemine la requête vers tous les shards pertinents, chaque shard effectue sa recherche indépendamment et renvoie ses top-k résultats, puis le coordinateur fusionne ces résultats partiels en une liste ordonnée finale. L'étape de fusion doit réconcilier les différentes distributions de scores entre les shards.
+
+## Questions fréquentes
+
+**Q : combien de shards un index devrait-il avoir ?**
+
+R : suffisamment pour répartir les données sur le matériel disponible, mais pas tellement que la surcharge de coordination devienne significative. Une règle empirique courante est d'un shard pour 1 à 10 millions de documents, ajusté en fonction de la taille des documents, des exigences de latence et des spécifications matérielles.
+
+**Q : le sharding affecte-t-il la qualité de la recherche ?**
+
+R : avec un sharding aléatoire et une recherche exhaustive (interrogation de tous les shards), la qualité est identique à celle d'une recherche sur un index unique. Avec un sharding sélectif (interrogation des seuls shards pertinents), la qualité dépend de l'adéquation entre la stratégie de sharding et les schémas de requêtes.
 
 ## References
 

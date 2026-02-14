@@ -10,9 +10,38 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-De generatieve laag in een [RAG](/nl/glossary/rag/)-pijplijn neemt de opgehaalde context en de gebruikersvraag en gebruikt een taalmodel om een uiteindelijke antwoord, uitleg of ontwerptekst te synthese.
+De generatieve laag is het onderdeel binnen een retrieval-augmented generation ([RAG](/nl/glossary/rag/))-systeem waar het taalmodel de opgehaalde contextdocumenten en de vraag van de gebruiker verwerkt en een gesynthetiseerd antwoord produceert. Het bevindt zich na de ophaallaag in de pijplijn: het ophalen vindt de relevante bronnen, en de generatie zet deze om in een coherent, nauwkeurig antwoord. De generatieve laag is waar ruw bronmateriaal een bruikbaar antwoord wordt — met bronvermeldingen, gestructureerde opmaak en passende nuancering bij onzekere punten.
+
+## Waarom het belangrijk is
+
+- **Antwoordsynthese** — opgehaalde documenten zijn ruw materiaal; de generatieve laag transformeert meerdere passages uit verschillende bronnen tot één samenhangend antwoord dat rechtstreeks ingaat op de vraag van de gebruiker
+- **Bronvermelding** — een goed ontworpen generatieve laag verweeft bronverwijzingen in het antwoord, zodat de gebruiker elke bewering kan verifiëren aan de hand van de oorsprong
+- **Communicatie van onzekerheid** — de generatieve laag kan betrouwbaarheidsniveaus uitdrukken, tegenstrijdige bronnen signaleren en onderscheid maken tussen duidelijke wettelijke bepalingen en gebieden van interpretatieve onzekerheid
+- **Flexibiliteit in opmaak** — dezelfde opgehaalde context kan worden opgemaakt als een kort antwoord, een uitgebreide analyse, een vergelijkingstabel of een conceptmemo, afhankelijk van de behoefte van de gebruiker
+
+## Hoe het werkt
+
+De generatieve laag ontvangt twee inputs: de oorspronkelijke vraag van de gebruiker en een samengestelde set opgehaalde passages (doorgaans 5-20 chunks geselecteerd door de ophaallaag). Deze worden samengevoegd tot een prompt die het taalmodel instrueert om de vraag te beantwoorden op basis van de verstrekte context.
+
+**Promptconstructie** combineert de systeemprompt (die rol, gedragsregels en outputformaat definieert), de opgehaalde passages (doorgaans met bronmetadata zoals artikelnummers en publicatiedata) en de vraag van de gebruiker. De prompt instrueert het model om zijn antwoord uitsluitend te baseren op de verstrekte context, bronnen te vermelden bij elke bewering en te signaleren wanneer de context de vraag niet volledig beantwoordt.
+
+**Generatie** — het taalmodel produceert het antwoord token voor token, geconditioneerd op de volledige prompt. Tijdens de generatie moet het model informatie uit meerdere passages synthetiseren, schijnbare tegenstrijdigheden tussen bronnen oplossen en het antwoord structureren volgens het opgegeven formaat.
+
+**Naverwerking** valideert de gegenereerde output: controleren of geciteerde bronnen daadwerkelijk in de opgehaalde context bestaan, verifiëren of artikelnummers en data correct zijn en opmaakrege1s toepassen. Sommige systemen gebruiken een tweede, kleiner model om de faithfulness van het gegenereerde antwoord te verifiëren aan de hand van de bronpassages.
+
+De kwaliteit van de generatieve laag hangt af van het vermogen van het taalmodel om instructies nauwkeurig op te volgen, de neiging te weerstaan om informatie buiten de verstrekte context toe te voegen (hallucinatie), en de nuances van juridische taal te hanteren. Domeinspecifieke fine-tuning of few-shot-voorbeelden in de prompt kunnen de prestaties op gespecialiseerde inhoud verbeteren.
+
+## Veelgestelde vragen
+
+**V: Kan de generatieve laag hallucineren zelfs met opgehaalde context?**
+
+A: Ja. Het model kan details verzinnen, beweringen aan de verkeerde bronnen toeschrijven of extrapoleren buiten wat de context ondersteunt. Mitigatiestrategieën omvatten expliciete instructies om alleen de verstrekte context te gebruiken, faithfulness-verificatie en betrouwbaarheidsscoring.
+
+**V: Wat is het verschil tussen de generatieve laag en het LLM?**
+
+A: Het LLM is het model zelf. De generatieve laag is het architecturale onderdeel dat het LLM omvat plus de promptconstructie, contextsamenstelling en naverwerkingslogica eromheen. De generatieve laag is het systeem; het LLM is één onderdeel ervan.
 
 ## References
 

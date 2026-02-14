@@ -12,7 +12,41 @@ draft: false
 
 ## Definition
 
-Faithfulness is an evaluation criterion asking whether an explanation or [chain-of-thought](/en/glossary/chain-of-thought/) truly corresponds to how the model arrived at its [prediction](/en/glossary/inference/), rather than being a plausible but disconnected story.
+Faithfulness is the property that an AI system's output accurately reflects the information in its source documents — neither adding unsupported claims nor misrepresenting what the sources say. In retrieval-augmented generation, faithfulness means every statement in the generated answer can be traced back to a specific passage in the retrieved context. A faithful system does not invent facts, does not attribute claims to the wrong source, and does not present its own inference as if it were a direct quote. Faithfulness is distinct from factual accuracy: a response can be faithful to its sources even if the sources themselves are outdated, and a response can be factually correct but unfaithful if it states facts not found in the provided context.
+
+## Why it matters
+
+- **Source verifiability** — faithful answers can be checked against their sources; unfaithful answers cannot, because the claims they make do not appear in the cited documents
+- **Professional reliance** — tax advisors use AI-generated analysis as a starting point for their own work; if the AI misrepresents its sources, the advisor's downstream analysis is built on a false foundation
+- **Hallucination measurement** — faithfulness is the primary metric for detecting hallucination in RAG systems; unfaithful statements are, by definition, hallucinations
+- **Regulatory trust** — demonstrating faithfulness — that the system only presents information it can trace to authoritative sources — is fundamental to deploying AI in regulated professional environments
+
+## How it works
+
+Faithfulness is evaluated at the claim level. Each statement in the generated answer is extracted and checked against the retrieved source documents:
+
+**Entailment checking** uses natural language inference (NLI) models to determine whether each claim is entailed by (logically follows from) the source passages. Claims classified as "entailed" are faithful; claims classified as "contradiction" or "neutral" (not supported) are unfaithful.
+
+**LLM-as-judge** approaches use a second language model to compare the generated answer against the source documents and identify any statements that go beyond what the sources support. This is more flexible than NLI but introduces its own biases.
+
+**Human evaluation** remains the gold standard. Annotators read both the generated answer and the source documents, marking any claim that cannot be verified against the sources. This is expensive and slow but produces the most reliable faithfulness assessments.
+
+**Improving faithfulness** involves interventions at multiple points in the pipeline:
+
+- **System prompt instructions** that explicitly direct the model to only use provided context and to say "I don't know" when the context is insufficient
+- **Constrained decoding** techniques that bias the model's token generation toward words and phrases that appear in the source documents
+- **Post-generation verification** using a separate model or rule-based system to check each claim against the source passages before returning the answer to the user
+- **Source highlighting** that presents the answer alongside the specific passages it draws from, making unfaithful additions visible to the user
+
+## Common questions
+
+**Q: Is faithfulness the same as factual accuracy?**
+
+A: No. Faithfulness measures whether the output matches its sources. Accuracy measures whether the output matches reality. A faithful answer to outdated sources may be inaccurate. An accurate answer that adds true facts not in the sources is unfaithful. Both properties matter, but they are measured differently.
+
+**Q: Can a system be too faithful?**
+
+A: In principle, extreme faithfulness could make a system refuse to synthesise information across multiple sources or draw obvious inferences. In practice, the bigger risk is insufficient faithfulness (hallucination). Systems should be faithful to their sources while still synthesising and connecting information across passages.
 
 ## References
 

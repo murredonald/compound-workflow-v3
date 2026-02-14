@@ -10,6 +10,44 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+Un intervalle de confiance est une plage statistique dans laquelle une métrique mesurée (comme la précision, le taux d'hallucination ou le rappel) devrait se situer avec une probabilité donnée, compte tenu de la variabilité d'échantillonnage des données d'évaluation. Lorsqu'un système indique « 92 % de précision avec un intervalle de confiance à 95 % de 89-95 % », cela signifie que si l'évaluation était répétée avec différents échantillons représentatifs, la vraie précision se situerait entre 89 % et 95 % dans 95 % des cas. Les intervalles de confiance communiquent l'incertitude inhérente à toute métrique calculée à partir d'un jeu de test fini, empêchant la surinterpretation des estimations ponctuelles.
+
+## Pourquoi c'est important
+
+- **Comparaisons significatives** — sans intervalles de confiance, il est impossible de déterminer si une amélioration de 2 % de la précision est statistiquement significative ou simplement du bruit d'échantillonnage ; les intervalles de confiance rendent cette distinction claire
+- **Rapports honnêtes** — publier une métrique ponctuelle comme « 94 % de précision » sans intervalle de confiance surestime la certitude ; la vraie performance pourrait raisonnablement être de 91 % ou 97 % selon le jeu de test
+- **Aide à la décision** — lors de la comparaison de deux configurations système, des intervalles de confiance qui se chevauchent indiquent que la différence peut ne pas être significative ; des intervalles qui ne se chevauchent pas fournissent une preuve plus solide pour choisir l'un plutôt que l'autre
+- **Planification de la taille d'échantillon** — les intervalles de confiance révèlent la précision de l'évaluation ; des intervalles larges indiquent que le jeu de test est trop petit pour des conclusions fiables, orientant l'investissement vers des jeux de données d'évaluation plus grands
+
+## Comment ça fonctionne
+
+Les intervalles de confiance sont calculés à partir de la valeur de la métrique, de la taille de l'échantillon et du niveau de confiance souhaité (généralement 95 %) :
+
+**Pour les proportions** (précision, taux d'hallucination) : une approche courante utilise l'approximation normale ou l'intervalle de score de Wilson. Pour une précision de 92 % sur 500 requêtes de test, l'intervalle de confiance à 95 % est d'environ 89,5 % à 94,1 %. Sur 50 requêtes de test, la même précision de 92 % produit un intervalle beaucoup plus large : 81 % à 97 %.
+
+**Pour les moyennes** (latence moyenne, score de confiance moyen) : l'intervalle est calculé à partir de la moyenne de l'échantillon, de l'écart-type et de la taille de l'échantillon en utilisant la distribution t de Student.
+
+**Les intervalles de confiance par bootstrap** offrent une approche plus générale : rééchantillonner le jeu de test avec remplacement de nombreuses fois, calculer la métrique sur chaque rééchantillon, et utiliser la distribution des résultats pour établir l'intervalle. Cette méthode fonctionne pour n'importe quelle métrique, y compris les métriques complexes comme le nDCG ou le score F1.
+
+La largeur d'un intervalle de confiance dépend de trois facteurs :
+- **Taille de l'échantillon** — des jeux d'évaluation plus grands produisent des intervalles plus étroits (plus de précision)
+- **Variance** — des métriques avec une forte variabilité entre les cas de test produisent des intervalles plus larges
+- **Niveau de confiance** — un intervalle de confiance à 99 % est plus large qu'un intervalle à 95 % pour les mêmes données
+
+En évaluation d'IA, les intervalles de confiance sont particulièrement importants car les jeux de test sont souvent petits (200 à 500 requêtes). Sur de tels ensembles de données, des fluctuations de métriques de 2 à 3 % sont courantes en raison du seul échantillonnage.
+
+## Questions fréquentes
+
+**Q : Un intervalle de confiance à 95 % signifie-t-il qu'il y a 95 % de chances que la vraie valeur se trouve dans l'intervalle ?**
+
+R : Techniquement, non — l'interprétation fréquentiste est que si l'évaluation était répétée de nombreuses fois, 95 % des intervalles calculés contiendraient la vraie valeur. Mais en pratique, l'intervalle fournit une plage raisonnable de valeurs plausibles pour la métrique.
+
+**Q : Quelle taille doit avoir le jeu d'évaluation pour obtenir des intervalles de confiance étroits ?**
+
+R : Pour des proportions proches de 90 %, un jeu de test de 500 requêtes donne un intervalle de confiance à 95 % d'une largeur d'environ ±3 %. Pour une précision de ±1 %, il faut environ 3 500 requêtes. La taille requise dépend de la valeur de la métrique et de la précision souhaitée.
+
 ## References
 
 > Darius Roman et al. (2021), "[Machine learning pipeline for battery state-of-health estimation](https://doi.org/10.1038/s42256-021-00312-3)", Nature Machine Intelligence.

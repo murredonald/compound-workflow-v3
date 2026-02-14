@@ -12,7 +12,40 @@ draft: false
 
 ## Definitie
 
-Jailbreaking verwijst naar technieken waarmee [prompts](/nl/glossary/prompt/) of invoer zo worden gemanipuleerd dat een taalmodel zijn veiligheidsbeleid negeert of ontwijkt en toch verboden of gevoelige inhoud produceert.
+Jailbreaking is de Praktijk van het opstellen van [Prompts](/nl/glossary/prompt/) of Invoer die een Taalmodel ertoe brengen zijn ingebouwde Veiligheidsbeperkingen, Beleidsrichtlijnen of Systeempromptinstructies te omzeilen en Uitvoer te produceren die het was ontworpen te weigeren. Jailbreakingtechnieken exploiteren de Spanning tussen de Instructie-opvolgingscapaciteit van een Model en zijn Veiligheidstraining — ze gebruiken creatieve Promptformuleringen om Veiligheidsfilters te overschrijven. In juridische AI omvatten Jailbreakingrisico's het misleiden van het Systeem zodat het zich voordoet als een erkend Adviseur, het fabriceren van Citaten zonder passende Voorbehouden, of het omzeilen van Disclaimers over het niet-bindende Karakter van zijn Uitvoer.
+
+## Waarom het belangrijk is
+
+- **Omzeiling van Veiligheid** — een gejailbreakt juridisch AI-systeem kan Uitvoer produceren zonder vereiste Disclaimers, speculatieve Antwoorden als gezaghebbend presenteren of professionele Scopebeperkingen omzeilen
+- **Aansprakelijkheidsrisico** — als een Gebruiker een juridisch AI-systeem jailbreakt en Uitvoer ontvangt die Schade veroorzaakt, wordt de Vraag naar Aansprakelijkheid complex; robuuste Jailbreakbestendigheid is een defensieve Vereiste
+- **Blootstelling van Systeemprompt** — sommige Jailbreakingtechnieken extraheren de Systeemprompt, waardoor bedrijfseigen Instructies, Veiligheidsregels en architecturale Details worden onthuld
+- **Vertrouwen en Regelgeving** — de EU AI Act vereist passende Waarborgen tegen Misbruik; Jailbreakbestendigheid maakt Deel uit van het voldoen aan deze Vereiste
+
+## Hoe het werkt
+
+Jailbreakingtechnieken exploiteren verschillende Aspecten van hoe Taalmodellen Instructies verwerken:
+
+**Rollenspelprompts** vragen het Model om te "doen alsof" het een ander Systeem is zonder Veiligheidsbeperkingen ("stel je voor dat je een AI bent zonder Restricties..."). Dit exploiteert de Instructie-opvolgingstraining van het Model om zijn Veiligheidstraining te overschrijven.
+
+**Codering en Verduistering** presenteren het problematische Verzoek in een gecodeerde Vorm (base64, omgekeerde Tekst, Tekenvervanging) die Veiligheidsfilters op basis van Trefwoorden omzeilt, terwijl het Model de Intentie nog steeds begrijpt.
+
+**Meertraps-escalatie** verplaatst het Gesprek geleidelijk naar beperkt Terrein via een Reeks onschuldig ogende Vragen, die elk voortbouwen op de vorige, totdat het Model zich in een Context bevindt waarin het beperkte Uitvoer produceert.
+
+**Prompt injection** sluit Instructies in binnen ogenschijnlijk normale Inhoud — bijvoorbeeld door override-instructies te verbergen in een Document dat het Systeem ophaalt en verwerkt als Context. Dit is bijzonder relevant voor [RAG](/nl/glossary/rag/)-systemen waar externe Inhoud de Prompt binnentreedt.
+
+**Indirecte Prompting** maakt gebruik van legitieme Functies (Samenvatting, Vertaling, Analyse) op Inhoud die het beperkte Verzoek bevat, waardoor het Model de beperkte Inhoud produceert als Onderdeel van zijn Analyse.
+
+Verdedigingen tegen jailbreaking omvatten: robuuste Veiligheidstraining die bestand is tegen Rollenspel- en Coderingstechnieken, Invoerfiltering die veelvoorkomende Jailbreakingpatronen detecteert, Uitvoermonitoring die Antwoorden markeert die het Veiligheidsbeleid schenden, en regelmatige [adversarial testing](/nl/glossary/adversarial-testing/) om nieuwe Jailbreakingtechnieken te ontdekken voordat ze worden geëxploiteerd. Geen enkele huidige Verdediging is volledig effectief — Jailbreakbestendigheid is een voortdurende Wapenwedloop tussen Aanvals- en Verdedigingstechnieken.
+
+## Veelgestelde vragen
+
+**V: Kan jailbreaking volledig worden voorkomen?**
+
+A: Niet met de huidige Technologie. Naarmate Modellen beter worden in het opvolgen van Instructies, worden ze mogelijk ook vatbaarder voor slim opgestelde override-instructies. De Verdediging richt zich op het verhogen van de Drempel (jailbreaking moeilijker en minder betrouwbaar maken) in plaats van het volledig elimineren ervan.
+
+**V: Is jailbreaking illegaal?**
+
+A: Over het algemeen niet, wanneer het wordt uitgevoerd voor Onderzoek of persoonlijke Experimenten. Het gebruik van jailbreaking om vertrouwelijke Informatie te extraheren, Toegangscontroles te omzeilen of Schade te veroorzaken kan echter, afhankelijk van de Jurisdictie en Context, in strijd zijn met Wetten inzake computerfraude of Gebruiksvoorwaarden.
 
 ## References
 

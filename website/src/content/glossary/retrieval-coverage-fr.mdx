@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le retrieval coverage décrit si le [corpus](/fr/glossary/corpus/) indexé et la configuration de récupération sont suffisamment larges et profonds pour fournir les preuves nécessaires aux questions que le système doit traiter.
+Le retrieval coverage (couverture de récupération) mesure dans quelle mesure le [corpus](/fr/glossary/corpus/) indexé d'un système de récupération contient les informations nécessaires pour répondre à l'ensemble des questions qu'il est censé traiter. Une couverture élevée signifie que, pour toute requête dans le périmètre, les documents sources pertinents existent dans l'index. Une couverture faible signifie qu'il y a des lacunes — des sujets, types de documents, périodes ou juridictions pour lesquels le système manque de matériel source et ne peut donc pas produire de réponses fiables. La couverture est une mesure de l'exhaustivité de la base de connaissances, et non de l'efficacité de l'algorithme de récupération.
+
+## Pourquoi c'est important
+
+- **Plafond de fiabilité des réponses** — un système ne peut pas citer des sources qu'il ne possède pas ; les lacunes de couverture se traduisent directement en questions auxquelles le système ne peut pas répondre correctement, quelle que soit la sophistication de sa récupération et de sa génération
+- **Confiance des utilisateurs** — si les utilisateurs découvrent que le système ne peut pas répondre à des questions dans des domaines qu'ils s'attendent à voir couverts, la confiance s'érode rapidement ; la couverture doit correspondre au périmètre annoncé du système
+- **Priorisation des lacunes** — mesurer la couverture par sujets et types de sources révèle où l'investissement dans l'ingestion de données aura le plus d'impact sur la qualité du système
+- **Communication honnête des capacités** — connaître les limites de couverture permet au système de reconnaître quand une question sort de son périmètre plutôt que de tenter une réponse avec des preuves insuffisantes
+
+## Comment ça fonctionne
+
+La couverture de récupération est évaluée selon plusieurs approches :
+
+**Analyse de l'inventaire des sources** — cataloguer les sources juridiques qui ont été ingérées et les comparer à l'univers complet des sources pertinentes. Pour le droit fiscal belge, cela signifie vérifier la couverture de : la législation fédérale (CIR92, CTVA, etc.), la législation régionale (VCF, CIR wallonne, etc.), les arrêtés royaux et ministériels, les circulaires administratives, les décisions de justice (Cour constitutionnelle, Cour de cassation, cours d'appel), les décisions administratives, les questions parlementaires et les commentaires officiels. Des lacunes dans n'importe quelle catégorie réduisent la couverture.
+
+**Cartographie de la couverture thématique** — tester le système avec des requêtes couvrant tous les domaines thématiques attendus et mesurer si des sources pertinentes sont retournées. Les sujets sans matériel source adéquat sont signalés comme des lacunes de couverture. Pour un système fiscal belge, cela signifie vérifier la couverture de l'impôt sur les revenus, la TVA, les droits d'enregistrement, les droits de succession, l'impôt des sociétés, la fiscalité internationale et le droit fiscal procédural — pour chaque juridiction.
+
+**Couverture temporelle** — vérifier que la base de connaissances inclut du matériel source de toutes les périodes pertinentes. Les questions de droit fiscal portent souvent sur des dispositions historiques (quel taux s'appliquait au cours d'une année donnée ?), la couverture doit donc remonter à la législation pertinente la plus ancienne.
+
+**Couverture multilingue** — en Belgique, vérifier que les versions néerlandaise, française et allemande des sources pertinentes sont toutes indexées, car les dispositions légales peuvent différer entre les versions linguistiques de manière nuancée.
+
+Les lacunes de couverture sont comblées en élargissant la data pipeline pour ingérer les types de sources manquants, en ajoutant de nouvelles sources de données ou en s'associant à des éditeurs juridiques pour accéder à du contenu auparavant indisponible.
+
+## Questions fréquentes
+
+**Q : Une couverture de 100 % est-elle atteignable ?**
+
+R : Pour un périmètre défini (par exemple, la législation fiscale fédérale belge), une couverture quasi complète est atteignable. Pour des périmètres plus larges incluant des sources informelles, des commentaires de praticiens ou du droit étranger, une couverture complète est irréaliste. L'objectif est de couvrir toutes les sources faisant autorité dans le périmètre annoncé du système.
+
+**Q : Quelle est la différence entre couverture et rappel (recall) ?**
+
+R : La couverture mesure si les documents pertinents existent dans le corpus. Le rappel mesure si l'algorithme de récupération les retrouve lorsqu'il est interrogé. Un système peut avoir une couverture parfaite (tous les documents pertinents sont indexés) mais un rappel faible (l'algorithme de récupération ne parvient pas à les faire remonter). Les deux doivent être élevés pour que le système fonctionne bien.
 
 ## References
 

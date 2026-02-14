@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Structured output generation is the technique of prompting or configuring language models so that their responses conform to a strict format or schema, making them easier to parse, validate, and connect to downstream systems.
+Structured output generation is the practice of constraining a language model's output to conform to a predefined format or schema — such as JSON, XML, typed fields, or a specific document template — rather than producing free-form text. This ensures that the model's output can be reliably parsed by downstream systems, validated against a schema, and integrated into automated workflows. In legal AI, structured output generation enables the system to produce machine-readable results with separately addressable fields for the answer text, cited sources, confidence score, applicable jurisdiction, and relevant dates.
+
+## Why it matters
+
+- **Reliable parsing** — free-form text is unpredictable and difficult to parse programmatically; structured output guarantees consistent field names, types, and formatting that downstream systems can consume without custom parsing logic
+- **Validation** — structured output can be validated against a schema immediately after generation, catching format errors, missing fields, or type mismatches before the result reaches the user
+- **Integration** — structured output enables direct integration with external systems: populating citation databases, feeding tax calculation engines, generating filing documents, or updating case management systems
+- **Separation of concerns** — by structuring the output into distinct fields (answer, sources, confidence, caveats), the UI can render each component differently — highlighting uncertainty, making citations clickable, and formatting answer text appropriately
+
+## How it works
+
+Several techniques produce structured output from language models:
+
+**Prompt-based structuring** — the system prompt includes instructions and examples of the desired output format. The model is told to produce JSON with specific fields, and few-shot examples demonstrate the expected structure. This works with any model but is not guaranteed — the model may occasionally deviate from the format.
+
+**Schema-constrained decoding** — the generation process is constrained at the token level to only produce outputs that conform to a specified grammar or JSON schema. At each generation step, only tokens that are valid according to the schema are allowed. This guarantees format compliance but requires specialised inference infrastructure (libraries like Outlines, Guidance, or built-in API features).
+
+**Function calling / tool use** — modern LLM APIs support structured output through function calling interfaces. The model is given a function signature with typed parameters, and its output is automatically formatted as a structured function call. This is the most common production approach.
+
+**Post-processing** — the model generates free-form text, and a post-processor extracts structured fields using pattern matching, entity extraction, or a second model call. This is a fallback approach — less reliable but works with any model.
+
+In practice, most production systems use a combination: prompt engineering for the overall structure, with schema-constrained decoding or function calling for critical fields that must be precisely formatted (dates, article references, confidence scores).
+
+## Common questions
+
+**Q: Does structured output generation affect answer quality?**
+
+A: Minimally, if implemented well. Schema constraints and format instructions add some overhead to the prompt but do not significantly reduce the model's reasoning capability. Overly complex schemas with many required fields may reduce answer quality by diverting the model's attention to format compliance.
+
+**Q: Can all LLMs produce structured output?**
+
+A: Most modern LLMs can produce structured output via prompt engineering, with varying reliability. Schema-constrained decoding and function calling are more reliable but require API or infrastructure support. Newer models are specifically trained for structured output and produce it more consistently.
 
 ## References
 

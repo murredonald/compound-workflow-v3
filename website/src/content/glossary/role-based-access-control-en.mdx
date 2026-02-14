@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Role-based [access control](/en/glossary/access-control/) grants or denies access based on a user’s role—such as admin, reviewer, or viewer—simplifying permission management in complex AI systems.
+Role-based access control (RBAC) is a security model in which permissions are assigned to roles rather than to individual users, and users are then assigned to one or more roles. Instead of configuring access for each person individually, an administrator defines roles (e.g., senior advisor, junior analyst, administrator, read-only auditor) with specific permissions, and users inherit the permissions of their assigned role. RBAC simplifies permission management, reduces errors, and makes it easier to audit who has access to what — all critical for AI systems handling confidential tax data.
+
+## Why it matters
+
+- **Scalability** — as the number of users grows, managing individual permissions becomes unworkable; RBAC scales by adding users to existing roles rather than configuring each one separately
+- **Least privilege** — RBAC makes it straightforward to implement the principle of least privilege: each role has only the permissions necessary for its function, reducing the attack surface
+- **Compliance** — GDPR and Belgian professional secrecy laws require that personal and confidential data is only accessible to authorised individuals; RBAC provides the mechanism and documentation for demonstrating this
+- **Audit simplicity** — auditors can review role definitions and role assignments rather than individual user permissions, making compliance audits faster and more reliable
+
+## How it works
+
+RBAC operates through three core concepts:
+
+**Roles** define a set of permissions relevant to a specific job function. In a legal AI system, typical roles might include:
+- **Administrator** — manages users, roles, system configuration, and knowledge base updates
+- **Senior advisor** — full access to all queries, sources, and client data within their practice area
+- **Junior analyst** — access to queries and sources but not to client-confidential files or administrative functions
+- **Auditor** — read-only access to system logs, usage statistics, and compliance reports
+
+**Permissions** define specific actions on specific resources: read a document, execute a query, view audit logs, modify system configuration, access a client's data. Permissions are granular enough to enforce meaningful access boundaries but not so granular that role management becomes as complex as individual permission management.
+
+**Assignment** maps users to roles. A user may hold multiple roles (e.g., senior advisor and administrator), in which case their effective permissions are the union of all assigned roles' permissions. Role assignments are managed by administrators and logged for audit purposes.
+
+In multi-tenant AI systems (where multiple firms share the same platform), RBAC is combined with tenant isolation to ensure that roles only grant access within a single organisation's data. An administrator at Firm A cannot see Firm B's data, regardless of their role.
+
+RBAC is often extended with additional constraints: time-limited roles (temporary access that expires), contextual roles (permissions that depend on location or device), and hierarchical roles (senior roles inherit all permissions of junior roles).
+
+## Common questions
+
+**Q: How is RBAC different from attribute-based access control (ABAC)?**
+
+A: RBAC assigns permissions based on a user's role. ABAC assigns permissions based on a combination of attributes — user attributes (department, seniority), resource attributes (classification, owner), and environmental attributes (time, location). ABAC is more flexible but more complex to manage. Many systems use RBAC as the primary model with ABAC for specific fine-grained rules.
+
+**Q: How many roles should a system have?**
+
+A: As few as necessary to express meaningful access distinctions. Over-proliferating roles (creating a unique role for each user) defeats the purpose of RBAC. Most legal AI systems need 4-8 roles to cover the relevant access levels.

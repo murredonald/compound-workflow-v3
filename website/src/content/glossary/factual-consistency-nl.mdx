@@ -12,7 +12,36 @@ draft: false
 
 ## Definitie
 
-Feitelijke consistentie beoordeelt of uitspraken in de modeluitvoer kloppen met de onderliggende documenten of data.
+Feitelijke consistentie is de mate waarin elke bewering in een AI-gegenereerd antwoord nauwkeurig de informatie weergeeft die in de brondocumenten is opgenomen. Een feitelijk consistent antwoord voegt geen informatie toe die niet in de bronnen staat, spreekt niet tegen wat de bronnen zeggen, en vervormt de betekenis van het bronmateriaal niet door selectieve weglating of misleidende parafrase. In juridische AI is feitelijke consistentie een cruciale kwaliteitsmetriek omdat zelfs kleine afwijkingen van het bronmateriaal — een verkeerd artikelnummer, een foutief toegewezen tarief, of een subtiel gewijzigde voorwaarde — kunnen leiden tot onjuist fiscaal advies met reële financiële en juridische gevolgen.
+
+## Waarom het belangrijk is
+
+- **Professionele betrouwbaarheid** — belastingadviseurs die AI-gegenereerde analyses gebruiken, moeten erop kunnen vertrouwen dat de output de onderliggende wetgeving en rulings getrouw weergeeft; feitelijke inconsistentie dwingt hen alles opnieuw te verifiëren, waardoor het efficiëntievoordeel teniet wordt gedaan
+- **Hallucinatiedetectie** — het meten van feitelijke consistentie is de voornaamste methode om [hallucinaties](/nl/glossary/hallucination-rate/) in RAG-systemen te detecteren; beweringen die niet worden ondersteund door de opgehaalde bronnen wijzen erop dat het model ongestaafde inhoud heeft gegenereerd
+- **Juridische precisie** — in het Belgisch fiscaal recht zijn kleine details enorm belangrijk: een drempel van €250.000 versus €25.000, een bepaling die geldt "vanaf" versus "tot" een bepaalde datum, of een regel die van toepassing is in het Vlaamse Gewest maar niet in het Waalse Gewest; feitelijke consistentie zorgt ervoor dat deze details nauwkeurig worden bewaard
+- **Vertrouwensopbouw** — consequent feitelijke outputs bouwen het vertrouwen van de gebruiker op over tijd, terwijl zelfs incidentele inconsistenties het vertrouwen in de betrouwbaarheid van het systeem kunnen vernietigen
+
+## Hoe het werkt
+
+Feitelijke consistentie is zowel een ontwerpdoel als een meetbare metriek:
+
+**Meting** — feitelijke consistentie wordt geëvalueerd door elke bewering in de gegenereerde output te vergelijken met de brondocumenten waarnaar wordt verwezen. Dit kan worden gedaan via natural language inference (NLI)-modellen die de relatie tussen een bewering en de bron classificeren als implicatie (consistent), tegenspraak (inconsistent) of neutraal (niet behandeld). Een score voor feitelijke consistentie wordt doorgaans uitgedrukt als het percentage beweringen dat wordt onderbouwd door de geciteerde bronnen.
+
+**Geautomatiseerde evaluatie** — NLI-gebaseerde metrieken en LLM-as-judge-benaderingen kunnen feitelijke consistentie op schaal evalueren. Het gegenereerde antwoord wordt opgesplitst in individuele beweringen, en elke bewering wordt gecontroleerd aan de hand van de relevante bronpassage. Systemen zoals AlignScore en de TRUE-benchmark bieden gestandaardiseerde evaluatiekaders. Voor juridische AI moeten deze geautomatiseerde controles worden aangevuld met domeinspecifieke verificatie — bijvoorbeeld controleren of geciteerde artikelnummers daadwerkelijk bestaan en of vermelde tarieven overeenkomen met de bron.
+
+**Verbeteringsstrategieën** — feitelijke consistentie wordt verbeterd via meerdere technieken: generatie beperken met expliciete instructies om alleen te vermelden wat de bronnen ondersteunen, hoogwaardige context bieden via sterke retrieval, postproductieverificatie gebruiken om inconsistenties te signaleren en te corrigeren, en modellen trainen of fine-tunen om getrouwer te zijn aan hun invoercontext. In de praktijk behaalt de combinatie van goede retrieval, duidelijke systeemprompts en nacontrole de beste resultaten.
+
+**Granulariteit** — feitelijke consistentie kan op verschillende niveaus worden gemeten: documentniveau (komt het algehele antwoord overeen met de bronnen?), beweringsniveau (komt elke individuele uitspraak overeen?) en entiteitsniveau (zijn specifieke entiteiten zoals datums, bedragen en verwijzingen correct?). Fijnmazigere meting vangt subtielere fouten op maar vereist geavanceerdere evaluatie.
+
+## Veelgestelde vragen
+
+**V: Is feitelijke consistentie hetzelfde als correctheid?**
+
+A: Nee. Feitelijke consistentie meet of de output de bronnen getrouw weergeeft. Correctheid meet of de bronnen zelf nauwkeurig en actueel zijn. Een antwoord kan perfect consistent zijn met een verouderde bron en toch fout zijn. Zowel consistentie als bronkwaliteit zijn van belang.
+
+**V: Welke score voor feitelijke consistentie is aanvaardbaar voor juridische AI?**
+
+A: Voor professionele juridische toepassingen moet feitelijke consistentie meer dan 95% bedragen op beweringsniveau. Lagere scores geven aan dat het systeem te vaak ongestaafde inhoud toevoegt om betrouwbaar te zijn voor professioneel gebruik. Kritische toepassingen (belastingberekeningen, nalevingsadvies) moeten nog hogere drempels nastreven met menselijke verificatie voor alle gesignaleerde inconsistenties.
 
 ## References
 

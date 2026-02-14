@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Log probabilities zijn de natuurlijke logaritmen van de waarschijnlijkheden die een taalmodel toekent aan mogelijke volgende tokens, vaak beschikbaar in API's voor debugging, kalibratie en aangepaste decodeerstrategieën.
+Log probabilities (logprobs) zijn de natuurlijke logaritmen van de waarschijnlijkheidswaarden die een taalmodel toekent aan elk mogelijk volgend token bij elke generatiestap. Wanneer een model tekst produceert, berekent het intern een kansverdeling over zijn volledige vocabulaire — logprobs zijn de log-getransformeerde versie van deze kansen. Ze bieden een venster op het vertrouwen van het model op tokenniveau: hoge logprobs (dicht bij 0) geven aan dat het model zeker is over dat token; lage logprobs (grote negatieve getallen) duiden op onzekerheid. In juridische AI kunnen logprobs worden gebruikt om te detecteren wanneer het model raadt in plaats van met vertrouwen genereert vanuit zijn context.
+
+## Waarom het ertoe doet
+
+- **Vertrouwenssignalen** — logprobs onthullen of het model zeker was bij het genereren van kritieke delen van een antwoord (artikelnummers, belastingtarieven, data) of feitelijk aan het gokken was tussen alternatieven
+- **Hallucinatiedetectie** — tokens die worden gegenereerd met ongewoon lage waarschijnlijkheden kunnen erop wijzen dat het model inhoud verzint in plaats van put uit zijn context; het monitoren van logprobs kan mogelijke hallucinaties signaleren
+- **Kalibratie-analyse** — logprobs zijn het ruwe materiaal voor kalibratie: door voorspelde waarschijnlijkheden te vergelijken met daadwerkelijke correctheid kunnen ontwikkelaars beoordelen of het vertrouwen van het model goed gekalibreerd is
+- **Aangepaste decodering** — logprobs maken geavanceerde generatiestrategieën mogelijk: beam search, nucleus sampling en constrained decoding werken allemaal op de logprob-verdeling om de uitvoerkwaliteit te beheersen
+
+## Hoe het werkt
+
+Bij elke generatiestap produceert het taalmodel een vector van scores (logits) over zijn vocabulaire. Deze logits worden via de softmax-functie omgezet in kansen, en logprobs zijn de logaritme van deze kansen.
+
+**Logprobs interpreteren**: een logprob van -0,01 betekent dat het model ongeveer 99% waarschijnlijkheid toekent aan dat token. Een logprob van -2,3 betekent ruwweg 10% waarschijnlijkheid. Een logprob van -6,9 betekent ruwweg 0,1%. In de praktijk hebben de meeste tokens in vloeiende tekst logprobs tussen -0,001 en -1,0.
+
+**Analyse op tokenniveau** — door logprobs voor elk token in een gegenereerd antwoord te onderzoeken, kunnen ontwikkelaars precies identificeren waar het vertrouwen van het model daalt. Als het model "artikel" genereert met hoog vertrouwen maar "215" met laag vertrouwen, is het mogelijk onzeker over het specifieke artikelnummer — een cruciaal onderscheid in juridische tekst.
+
+**Scoring op sequentieniveau** — de totale logprob van een sequentie (som van alle token-logprobs) geeft het algehele vertrouwen van het model in de volledige uitvoer aan. Dit kan worden gebruikt om verschillende gegenereerde antwoorden te vergelijken en het meest zekere te selecteren, of om drempelwaarden in te stellen waaronder antwoorden worden gemarkeerd voor beoordeling.
+
+**API-toegang** — de meeste LLM-API's (OpenAI, Anthropic, enz.) bieden logprob-uitvoer als optionele parameter. Wanneer ingeschakeld, retourneert de API logprobs naast de gegenereerde tekst, doorgaans voor de top-k meest waarschijnlijke tokens op elke positie.
+
+Logprobs zijn in log-ruimte (negatieve getallen) omdat kansen extreem klein kunnen zijn, en het vermenigvuldigen van veel kleine kansen numerieke underflow veroorzaakt. Werken in log-ruimte zet vermenigvuldiging om in optelling, wat numerieke stabiliteit behoudt.
+
+## Veelgestelde vragen
+
+**V: Kunnen logprobs hallucinaties betrouwbaar detecteren?**
+
+A: Ze bieden nuttige signalen maar vormen geen complete oplossing. Modellen kunnen hallucineren met hoog vertrouwen (hoge logprobs voor verzonnen inhoud) omdat de gehallucineerde tekst taalkundig vloeiend is. Logprobs zijn het nuttigst voor het detecteren van oppervlakkige onzekerheid (verkeerde nummers, onbekende termen) in plaats van diepe feitelijke fouten.
+
+**V: Waarom logaritmen gebruiken in plaats van ruwe kansen?**
+
+A: Ruwe kansen voor individuele tokens kunnen extreem klein zijn (bijv. 0,000001), waardoor ze computationeel moeilijk te verwerken zijn. Log probabilities zetten deze om in beheersbare negatieve getallen en maken het mogelijk om sequentiekansen te berekenen door optelling in plaats van vermenigvuldiging.
 
 ## References
 

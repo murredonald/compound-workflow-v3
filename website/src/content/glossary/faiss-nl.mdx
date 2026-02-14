@@ -57,7 +57,7 @@ Als je vector search doet, gebruik je waarschijnlijk FAISS direct of indirect.
 │  │  • IndexFlatIP - Inner Product (voor cosine sim)  │   │
 │  │  • Brute force - vergelijkt met ALLE vectoren     │   │
 │  │  • 100% accuraat maar O(n×d) per query           │   │
-│  │  • Gebruik voor: <100K vectoren of ground truth  │   │
+│  │  • Gebruik voor: &lt;100K vectoren of ground truth  │   │
 │  │                                                     │   │
 │  │  IVF (Inverted File Index)                         │   │
 │  │  ═════════════════════════                         │   │
@@ -166,7 +166,7 @@ A: Gebruik FAISS direct voor onderzoek/prototyping, single-node applicaties, of 
 
 **V: Hoe kies ik de juiste FAISS index?**
 
-A: Begin met IndexFlatL2/IP voor <100K vectoren (exact, simpel). Voor 100K-10M, gebruik IndexIVFFlat of IndexHNSWFlat. Voor 10M-1B, gebruik IndexIVFPQ. Voor >1B, overweeg gedistribueerde oplossingen of agressieve compressie. Benchmark altijd op je werkelijke data.
+A: Begin met IndexFlatL2/IP voor &lt;100K vectoren (exact, simpel). Voor 100K-10M, gebruik IndexIVFFlat of IndexHNSWFlat. Voor 10M-1B, gebruik IndexIVFPQ. Voor >1B, overweeg gedistribueerde oplossingen of agressieve compressie. Benchmark altijd op je werkelijke data.
 
 **V: Wat is het verschil tussen IndexFlatIP en IndexFlatL2?**
 

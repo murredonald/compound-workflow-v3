@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Eine Data Pipeline für Suche umfasst typischerweise Ingestion, Parsing, Normalisierung, Anreicherung, Chunking und Indexierung, mit überwachten Jobs und Logging zwischen den Schritten.
+Eine Data Pipeline ist die automatisierte Abfolge von Schritten, die Daten von ihren ursprünglichen Quellen durch Verarbeitungs-, Transformations- und Anreicherungsphasen in eine Form überführt, die für Indexierung, Analyse oder Modelltraining geeignet ist. In der juristischen KI nimmt die Data Pipeline rohe Rechtsdokumente von Verlagen, offiziellen Amtsblättern, Gerichtsdatenbanken und regulatorischen Quellen auf, bereinigt, strukturiert, zerlegt, vektorisiert und indexiert sie dann in der Wissensbasis. Die Zuverlässigkeit und Korrektheit der Pipeline bestimmen direkt die Qualität und Vollständigkeit des Wissens, über das das KI-System verfügt.
+
+## Warum es wichtig ist
+
+- **Aktualität der Wissensbasis** — eine gut konzipierte Pipeline nimmt neue Gesetzgebung, Urteile und Rundschreiben automatisch auf, sobald sie veröffentlicht werden, und hält das System ohne manuellen Eingriff aktuell
+- **Datenqualität** — jede Pipeline-Phase enthält Validierungs- und Qualitätsprüfungen, die Fehler (OCR-Fehler, fehlende Metadaten, beschädigte Dateien) abfangen, bevor sie in den Index gelangen und die Retrieval-Qualität beeinträchtigen
+- **Reproduzierbarkeit** — eine automatisierte Pipeline liefert konsistente Ergebnisse, unabhängig davon, wer sie wann ausführt; manuelle Prozesse sind fehleranfällig und nicht wiederholbar
+- **Skalierbarkeit** — wenn das Volumen der Rechtsquellen wächst, bewältigt die Pipeline den steigenden Durchsatz, ohne dass ein proportionaler Anstieg des manuellen Aufwands erforderlich ist
+
+## Wie es funktioniert
+
+Eine Data Pipeline für juristische KI besteht typischerweise aus folgenden Phasen:
+
+**Extraktion** — Rohdokumente werden aus ihren Quellen gesammelt. Dies kann das Scraping von Websites offizieller Amtsblätter, den Empfang von Datenfeeds juristischer Verlage, den Download aus Gerichtsdatenbanken oder die Verarbeitung per E-Mail zugestellter Rundschreiben umfassen. Jede Quelle hat ihr eigenes Format und ihren eigenen Bereitstellungsmechanismus.
+
+**Parsing** — extrahierte Dokumente werden von ihren nativen Formaten (PDF, HTML, DOCX, XML) in sauberen Text umgewandelt. Diese Phase umfasst Layouterkennung, Tabellenerkennung, OCR für gescannte Dokumente und Entfernung von Standardtextbausteinen. Die Parsing-Qualität ist oft der größte Engpass in der Pipeline.
+
+**Transformation** — der bereinigte Text wird mit Metadaten angereichert (Veröffentlichungsdatum, Dokumenttyp, Rechtsgebiet, Artikelnummern), gegen bestehende Inhalte dedupliziert und in ein einheitliches Format normalisiert. Querverweise zwischen Dokumenten werden identifiziert und verknüpft.
+
+**Chunking** — Dokumente werden in für das Retrieval geeignete Segmente (Absätze, Artikel, Abschnitte) mit Überlappung aufgeteilt, um den Kontext an den Grenzen zu bewahren. Die Chunk-Grenzen werden so gewählt, dass die semantische Kohärenz maximiert wird.
+
+**Embedding** — jeder Chunk wird durch ein [Embedding](/de/glossary/embeddings/)-Modell verarbeitet, um eine Vektorrepräsentation für die semantische Suche zu erzeugen. Embeddings werden stapelweise berechnet und zusammen mit dem Chunk-Text und den Metadaten im Vektorindex gespeichert.
+
+**Laden** — verarbeitete Chunks, Embeddings und Metadaten werden in den Produktionsindex geladen (Vektordatenbank, lexikalischer Index und Metadatenspeicher). Diese Phase umfasst oft atomare Austauschvorgänge oder inkrementelle Updates, um die Auslieferung unvollständiger Daten zu vermeiden.
+
+**Monitoring** — die Pipeline erfasst Metriken in jeder Phase: verarbeitete Dokumente, aufgetretene Fehler, Verarbeitungszeit und Ausgabequalität. Alarme benachrichtigen das Team bei Ausfällen oder Anomalien.
+
+## Häufige Fragen
+
+**F: Wie oft sollte die Data Pipeline ausgeführt werden?**
+
+A: Das hängt von der Veröffentlichungsfrequenz der Quellen ab. Das Belgische Staatsblatt veröffentlicht täglich, sodass tägliche Pipeline-Durchläufe sicherstellen, dass neue Gesetzgebung innerhalb von 24 Stunden verfügbar ist. Gerichtsentscheidungen und Verwaltungsrundschreiben erscheinen möglicherweise weniger häufig. Die meisten juristischen KI-Systeme führen ihre Pipeline täglich aus, mit bedarfsgesteuerten Durchläufen für dringende Aktualisierungen.
+
+**F: Was passiert, wenn die Pipeline auf halber Strecke fehlschlägt?**
+
+A: Eine gut konzipierte Pipeline ist idempotent (ein erneuter Durchlauf erzeugt dasselbe Ergebnis) und unterstützt partielle Wiederherstellung (Fortsetzung ab der fehlgeschlagenen Phase statt Neustart von Anfang an). Fehlgeschlagene Dokumente werden protokolliert, isoliert und erneut versucht oder zur manuellen Überprüfung eskaliert.

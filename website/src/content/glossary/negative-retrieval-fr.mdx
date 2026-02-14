@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le negative retrieval vise à trouver des documents qui contredisent, remettent en cause ou ne confirment pas une affirmation, afin d’aider les systèmes [RAG](/fr/glossary/rag/) à faire apparaître les conflits et à réduire les réponses trop confiantes.
+Le negative retrieval est une stratégie de récupération qui recherche délibérément des documents qui contredisent, nuancent ou ne soutiennent pas une affirmation ou une réponse préliminaire donnée. Alors que la récupération standard cherche des preuves confirmant, le negative retrieval cherche des preuves infirmantes — des sources présentant un point de vue opposé, une règle conflictuelle, une exception ou un amendement plus récent qui prime sur une disposition antérieure. En IA juridique, le negative retrieval est essentiel car le droit fiscal regorge d'exceptions, de régimes spéciaux, de dispositions anti-abus et d'interprétations contradictoires que la récupération standard pourrait manquer.
+
+## Pourquoi c'est important
+
+- **Détection des exceptions** — une règle générale peut comporter des exceptions qui changent entièrement la réponse ; le negative retrieval fait apparaître ces exceptions avant que le système ne présente une réponse incomplète
+- **Identification des conflits** — le droit fiscal belge contient parfois des dispositions contradictoires entre les niveaux fédéral et régional, ou entre des textes anciens et nouveaux ; le negative retrieval expose ces conflits au lieu de les masquer
+- **Réduction de l'excès de confiance** — lorsque le système trouve des preuves confirmantes solides mais découvre aussi des sources contradictoires, il peut abaisser son score de confiance et signaler l'incertitude à l'utilisateur
+- **Complétude professionnelle** — une analyse fiscale approfondie considère à la fois les arguments favorables et défavorables ; le negative retrieval aide le système d'IA à refléter cette norme professionnelle
+
+## Comment ça fonctionne
+
+Le negative retrieval étend le pipeline de récupération standard avec des stratégies de requête supplémentaires :
+
+**Les requêtes de négation** reformulent la requête originale pour rechercher du contenu opposé. Si la requête originale porte sur la déductibilité d'une dépense spécifique, la requête de négation pourrait chercher « non déductible », « exclusion », « exception » ou des dispositions anti-abus spécifiques liées à cette catégorie de dépenses.
+
+**La détection de contradictions** utilise des modèles d'inférence en langage naturel (NLI) pour identifier des passages dans le corpus qui contredisent l'ensemble initial de documents récupérés. Après que la récupération standard a renvoyé des preuves confirmantes, une seconde passe recherche des passages dont la relation sémantique avec les résultats initiaux est classée comme « contradiction » plutôt que comme « implication ».
+
+**Le negative retrieval temporel** recherche spécifiquement des amendements, abrogations ou modifications postérieurs aux dispositions initialement récupérées. Cela permet de détecter les cas où une loi a été modifiée depuis son indexation, ou lorsqu'une décision plus récente remplace une plus ancienne.
+
+**L'exploration d'exceptions** cible des structures récurrentes dans la législation — des articles commençant par « nonobstant », « sauf lorsque » ou « par dérogation à » — qui signalent des exceptions aux règles générales. Ces structures sont particulièrement courantes en droit fiscal belge, où les principes généraux comportent souvent de multiples exceptions par région ou catégorie de contribuable.
+
+Les résultats du negative retrieval ne sont pas présentés comme « la réponse » mais comme des mises en garde, des contre-arguments ou du contexte supplémentaire. Le système peut présenter sa réponse sur la base de la récupération primaire, puis noter : « cependant, les exceptions ou dispositions contradictoires suivantes ont été trouvées... »
+
+## Questions fréquentes
+
+**Q : le negative retrieval trouve-t-il toujours des contradictions ?**
+
+R : non. Lorsque la loi est claire et sans ambiguïté, le negative retrieval confirme simplement qu'aucune contradiction n'existe, ce qui augmente en fait la confiance dans la réponse. La valeur ajoutée réside dans les cas où des contradictions existent et seraient autrement passées inaperçues.
+
+**Q : en quoi le negative retrieval diffère-t-il de la récupération exhaustive ?**
+
+R : la récupération exhaustive tente de trouver tous les documents pertinents. Le negative retrieval cible spécifiquement les documents qui s'opposent aux résultats initiaux ou les nuancent. L'intention est différente — la récupération exhaustive vise la couverture ; le negative retrieval vise l'équilibre et la complétude de l'analyse juridique.
 
 ## References
 

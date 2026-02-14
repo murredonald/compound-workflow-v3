@@ -10,6 +10,39 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Content indexing creëert datastructuren waarmee queries snel over tekstvelden, metadata en eventueel [embeddings](/nl/glossary/embeddings/) kunnen worden uitgevoerd, en houdt deze indexen up‑to‑date bij veranderingen in het [corpus](/nl/glossary/corpus/).
+Content indexing is het proces waarbij doorzoekbare datastructuren worden aangemaakt over een documentcollectie, zodat zoekopdrachten in milliseconden kunnen worden beantwoord in plaats van een volledige scan van elk document te vereisen. Het omvat het opbouwen van geïnverteerde indexen voor zoeken op trefwoorden, vectorindexen voor semantisch zoeken en metadata-indexen voor gestructureerd filteren. Content indexing transformeert een passieve documentopslag in een actief zoeksysteem — zonder indexering zou elke zoekopdracht het lezen van elk document vereisen, wat zoeken op elke betekenisvolle schaal onpraktisch maakt.
+
+## Waarom het ertoe doet
+
+- **Zoeksnelheid** — indexen maken zoeken in minder dan een seconde mogelijk over miljoenen documenten; zonder indexen zou een eenvoudige zoekopdracht tegen een groot juridisch [corpus](/nl/glossary/corpus/) minuten duren
+- **Multimodaal zoeken** — content indexing ondersteunt verschillende zoekparadigma's (trefwoord, semantisch, gestructureerd) door voor elk de juiste indexstructuren op te bouwen
+- **Versheid** — efficiënte incrementele indexering maakt het mogelijk dat nieuwe documenten binnen minuten na ingestie doorzoekbaar worden, zodat de kennisbank actueel blijft
+- **Queryflexibiliteit** — goed ontworpen indexen ondersteunen complexe zoekopdrachten die tekstzoekopdrachten, metadatafilters en semantische gelijkenis combineren zonder prestatieverlies
+
+## Hoe het werkt
+
+Content indexing creëert tijdens documentingestie meerdere parallelle datastructuren:
+
+**Geïnverteerde index** — voor elke term in de woordenschat slaat de index een lijst op van documenten die die term bevatten, samen met termfrequentie en positie-informatie. Dit ondersteunt zoeken op trefwoorden (BM25), zoeken op woordgroepen en booleaanse zoekopdrachten. Het opbouwen van een geïnverteerde index omvat het tokeniseren, stemmen en catalogiseren van elke term in elk document.
+
+**Vectorindex** — elk documentchunk wordt verwerkt door een [embeddingmodel](/nl/glossary/embeddings/) om een dense vector te produceren, die vervolgens wordt toegevoegd aan een approximate nearest neighbour (ANN) indexstructuur (HNSW, IVF of vergelijkbaar). Dit ondersteunt semantisch zoeken — documenten vinden op betekenis in plaats van exacte termen.
+
+**Metadata-index** — gestructureerde velden (datum, jurisdictie, documenttype, autoriteitsniveau) worden opgeslagen in een vorm die snel filteren ondersteunt. Dit kan gebruikmaken van database-indexen, geïnverteerde indexen over metadatawaarden of gespecialiseerde kolomopslag.
+
+**Volledige-tekstopslag** — de originele documenttekst wordt naast de indexen opgeslagen, zodat gevonden passages aan de gebruiker kunnen worden getoond en aan de generatielaag kunnen worden doorgegeven.
+
+Indexering is doorgaans een offline- of batchproces dat als onderdeel van de datapijplijn draait. Wanneer een nieuw document wordt opgenomen, wordt het geparseerd, opgeschoond, opgedeeld in chunks en vervolgens geïndexeerd in alle relevante indexstructuren. Het indexeringsproces moet naast toevoegingen ook updates (herindexering van gewijzigde documenten) en verwijderingen (verwijdering van ingetrokken bepalingen) verwerken.
+
+Indexonderhoud omvat het bewaken van de indexgezondheid (fragmentatie, veroudering), periodieke herbouw (om de prestaties te optimaliseren) en capaciteitsbeheer (toevoegen van indexshards naarmate de collectie groeit).
+
+## Veelgestelde vragen
+
+**V: Hoe lang duurt content indexing?**
+
+A: Voor tekstindexering kunnen op moderne hardware duizenden documenten per seconde worden geïndexeerd. De berekening van [embeddings](/nl/glossary/embeddings/) is het knelpunt — het genereren van embeddings voor documentchunks loopt doorgaans op 100-1.000 chunks per seconde, afhankelijk van het embeddingmodel en de hardware. Een volledige herindexering van een groot juridisch corpus (miljoenen chunks) kan uren duren.
+
+**V: Kan het zoeksysteem zoekopdrachten verwerken tijdens herindexering?**
+
+A: Ja, met de juiste architectuur. Blue-green indexering (een nieuwe index opbouwen terwijl de oude zoekopdrachten verwerkt, en dan omschakelen) of incrementele updates maken ononderbroken dienstverlening mogelijk tijdens indexering.

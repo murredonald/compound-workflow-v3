@@ -12,7 +12,36 @@ draft: false
 
 ## Définition
 
-Le retrieval scoring est le processus d'[attribution](/fr/glossary/attribution/) de scores numériques estimant la pertinence de chaque document ou [chunk](/fr/glossary/document-chunk/) candidat par rapport à une requête donnée, en utilisant des modèles tels que [BM25](/fr/glossary/bm25/), des encodeurs denses ou des rerankers.
+Le retrieval scoring est le processus de calcul d'un score numérique de pertinence pour chaque document ou passage candidat en fonction d'une requête utilisateur, permettant au système de classer les résultats du plus pertinent au moins pertinent. Tout système de recherche doit décider quels documents retourner et dans quel ordre — le scoring est le mécanisme qui prend cette décision. Différentes méthodes de scoring capturent différents aspects de la pertinence : chevauchement lexical, similarité sémantique ou cross-attention fine entre les tokens de la requête et du document.
+
+## Pourquoi c'est important
+
+- **Classement des résultats** — les utilisateurs comptent sur le fait que les premiers résultats soient les plus pertinents ; le scoring détermine cet ordre, affectant directement la question de savoir si la bonne disposition apparaît en premier ou est enfouie en troisième page
+- **Sélection du contexte RAG** — dans la génération augmentée par la recherche, le scoring détermine quels passages entrent dans la fenêtre de contexte du modèle de langage ; un mauvais scoring signifie que le modèle reçoit un contexte moins pertinent et produit des réponses de moindre qualité
+- **Fusion multi-signaux** — les systèmes modernes combinent plusieurs signaux de scoring ([BM25](/fr/glossary/bm25/), similarité dense, métadonnées, niveau d'autorité) ; l'architecture de scoring détermine comment ces signaux sont pondérés et fusionnés
+- **Décisions de seuil** — le scoring permet des décisions de coupure : seuls les passages dépassant un score de pertinence minimum sont retournés, empêchant les résultats de faible qualité d'atteindre l'utilisateur ou la couche de génération
+
+## Comment ça fonctionne
+
+Le retrieval scoring opère à différentes étapes du pipeline, avec des méthodes de plus en plus coûteuses mais plus précises à chaque étape :
+
+**Scoring sparse** (BM25 et variantes) calcule la pertinence en fonction du chevauchement de termes entre la requête et le document. BM25 prend en compte la fréquence du terme (combien de fois le terme de la requête apparaît dans le document), la fréquence inverse du document (la rareté du terme dans l'ensemble du corpus) et la normalisation par la longueur du document. Il est rapide, interprétable et efficace pour les requêtes avec une terminologie spécifique.
+
+**Scoring dense** calcule la similarité cosinus ou le produit scalaire entre le vecteur d'embedding de la requête et le vecteur d'embedding de chaque document. Cela capture la pertinence sémantique — une requête sur « vennootschapsbelasting » obtient un score élevé face à un document sur « impôt des sociétés » même sans termes communs. Le scoring dense dépend de la qualité du modèle d'embedding.
+
+**Scoring par cross-encoder** (reranking) traite la requête et chaque document candidat ensemble à travers un modèle transformer, permettant une interaction profonde au niveau des tokens. Cela produit les scores de pertinence les plus précis, mais est trop coûteux pour être appliqué à des millions de documents — il n'est donc utilisé que sur les meilleurs candidats des étapes précédentes. Les cross-encoders peuvent capturer des nuances que le scoring dense (bi-encoder) manque, comme la négation, les déclarations conditionnelles et les relations complexes entre requête et document.
+
+**Fusion de scores** combine les scores de plusieurs méthodes. La Reciprocal Rank Fusion (RRF) est une approche courante : elle convertit la liste classée de chaque méthode de scoring en un score unifié basé sur la position dans le classement, puis additionne les scores de toutes les méthodes. Cette technique simple surpasse souvent des méthodes de fusion apprises plus complexes.
+
+## Questions fréquentes
+
+**Q : Quelle méthode de scoring est la meilleure ?**
+
+R : Aucune méthode unique n'est la meilleure pour toutes les requêtes. BM25 excelle dans la correspondance exacte de termes (numéros d'articles, références spécifiques). Le scoring dense excelle dans la correspondance sémantique (requêtes conceptuelles). Le reranking par cross-encoder offre la plus grande précision, mais uniquement sur un petit ensemble de candidats. Les meilleurs systèmes combinent les trois dans un pipeline.
+
+**Q : Les scores de pertinence ont-ils une signification absolue ?**
+
+R : Généralement non. Les scores sont relatifs — utiles pour classer les documents les uns par rapport aux autres pour une requête spécifique, mais pas directement comparables entre différentes requêtes ou méthodes de scoring. Un score BM25 de 15 pour une requête n'est pas comparable à un score de 15 pour une requête différente.
 
 ## References
 

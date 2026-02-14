@@ -12,7 +12,36 @@ draft: false
 
 ## Definitie
 
-Een feedforward-netwerk is een [neuraal netwerk](/nl/glossary/neural-network/) waarbij signalen enkel van de invoerlaag via eventuele verborgen lagen naar de uitvoerlaag gaan, zonder cycli of terugkerende verbindingen.
+Een feedforward-netwerk (FFN) is een [neuraal netwerk](/nl/glossary/neural-network/)-architectuur waarbij gegevens in één richting stromen — van invoer via een of meer verborgen lagen naar de uitvoer — zonder lussen, cycli of terugkoppelverbindingen. Elke laag past een lineaire transformatie toe gevolgd door een niet-lineaire activeringsfunctie, waardoor de invoer stapsgewijs wordt omgezet in een bruikbare representatie. Feedforward-netwerken zijn het eenvoudigste type neuraal netwerk en dienen als bouwstenen binnen complexere architecturen, waaronder de [transformer](/nl/glossary/transformer-architecture/)-modellen die moderne taalmodellen en embeddingsystemen aandrijven.
+
+## Waarom het belangrijk is
+
+- **Bouwsteen van transformers** — elke transformerlaag bevat een feedforward-netwerk dat elk token onafhankelijk verwerkt nadat het [attention](/nl/glossary/attention-mechanism/)-mechanisme informatie over tokens heen heeft gemengd; het FFN is waar een groot deel van de "kennis" van het model is opgeslagen
+- **Universele benadering** — feedforward-netwerken met voldoende breedte kunnen elke continue functie benaderen, wat ze in theorie in staat stelt elke invoer-uitvoer-mapping te leren
+- **Rekenkundige eenvoud** — omdat gegevens in één richting stromen zonder herhaling, zijn feedforward-netwerken eenvoudig te parallelliseren op moderne hardware (GPU's, TPU's), wat efficiënte training en inferentie mogelijk maakt
+- **Fundament voor begrip** — het begrijpen van feedforward-netwerken is essentieel om te begrijpen hoe op transformers gebaseerde taalmodellen en embeddingmodellen intern werken
+
+## Hoe het werkt
+
+Een feedforward-netwerk bestaat uit lagen van kunstmatige neuronen. Elk neuron ontvangt invoer, vermenigvuldigt deze met geleerde gewichten, telt een biasterm op en past een niet-lineaire activeringsfunctie toe (zoals ReLU of GELU):
+
+**Invoerlaag** — ontvangt de gegevens; in een transformercontext is dit de uitvoer van het attention-mechanisme voor een bepaalde tokenpositie. De invoer is een vector met een vaste dimensionaliteit.
+
+**Verborgen lagen** — passen opeenvolgende transformaties toe. Elke laag vermenigvuldigt de invoer met een gewichtsmatrix, telt een biasvector op en past een activeringsfunctie toe. In transformer-FFN's zijn er doorgaans twee lineaire transformaties met een activeringsfunctie ertussen: de eerste projecteert van de modeldimensie naar een grotere tussenliggende dimensie (vaak 4x de modeldimensie), en de tweede projecteert terug naar beneden. Dit expansie-contractiepatroon stelt het netwerk in staat om te werken in een hogerdimensionale ruimte waar complexe transformaties eenvoudiger zijn.
+
+**Uitvoerlaag** — produceert het eindresultaat; in een transformer is dit de bijgewerkte representatie voor het token, die vervolgens wordt doorgegeven aan de volgende transformerlaag.
+
+De naam "feedforward" onderscheidt deze architectuur van recurrente neurale netwerken (waar uitvoer teruggekoppeld wordt als invoer) en van convolutionele netwerken (waar lokale ruimtelijke patronen worden benut). In modern gebruik verwijst de term meestal naar het positiegewijs FFN binnen een transformerlaag.
+
+## Veelgestelde vragen
+
+**V: Welke rol speelt het FFN in een transformer?**
+
+A: Het attention-mechanisme combineert informatie over tokenposities heen (wat is relevant voor wat). Het FFN verwerkt vervolgens elke positie onafhankelijk en past geleerde transformaties toe die feitelijke kennis en taalkundige patronen coderen. Onderzoek suggereert dat de FFN-lagen een groot deel van de wereldkennis van het model opslaan.
+
+**V: Hoe verschilt een feedforward-netwerk van een deep learning-model?**
+
+A: Een feedforward-netwerk is één type deep learning-model (specifiek wanneer het meerdere verborgen lagen heeft). Deep learning omvat ook recurrente netwerken, convolutionele netwerken, transformers en andere architecturen. Een transformer is een deep learning-model dat feedforward-netwerken als componenten gebruikt.
 
 ## References
 

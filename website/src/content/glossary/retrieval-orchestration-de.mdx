@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Retrieval-Orchestrierung ist die Logik, die entscheidet, welche Retrievalaktionen in welcher Reihenfolge – gegebenenfalls über mehrere Indizes oder Tools hinweg – ausgeführt werden, um den bestmöglichen Kontext für ein KI-System aufzubauen.
+Retrieval-Orchestrierung ist die Koordinationsschicht, die entscheidet, welche Retrievalaktionen ausgeführt werden, in welcher Reihenfolge, und wie ihre Ergebnisse kombiniert werden, um den optimalen Kontext für eine gegebene Anfrage zusammenzustellen. Bei komplexen Fragen reicht eine einzelne Suchanfrage gegen einen einzelnen Index selten aus. Retrieval-Orchestrierung verwaltet mehrere Retrievalschritte — die Abfrage verschiedener Indizes, die Anwendung verschiedener Strategien, das Verfolgen von Querverweisen und die Integration strukturierter Abfragen — zu einem kohärenten Prozess, der umfassenden, gut organisierten Kontext an die Generierungsschicht liefert.
+
+## Warum es wichtig ist
+
+- **Umgang mit komplexen Anfragen** — viele juristische Fragen erfordern Informationen aus mehreren Quellentypen (Gesetzgebung, Rechtsprechung, behördliche Leitlinien), die in verschiedenen Indizes oder Datenbanken gespeichert sein können; Orchestrierung koordiniert über diese Quellen hinweg
+- **Strategieauswahl** — verschiedene Anfragetypen profitieren von verschiedenen Retrievalstrategien; Orchestrierung leitet jede Anfrage an die am besten geeignete Strategie weiter (exakte Suche für Artikelverweise, semantische Suche für konzeptuelle Fragen, strukturierte Abfrage für Tariftabellen)
+- **Effizienz** — Orchestrierung kann unabhängige Retrievalschritte parallelisieren, häufig abgerufene Ergebnisse zwischenspeichern und frühzeitig abbrechen, wenn ausreichend Kontext gesammelt wurde, wodurch sowohl Latenz als auch Ressourcenverbrauch optimiert werden
+- **Qualitätskontrolle** — Orchestrierung bewertet Zwischenergebnisse und entscheidet, ob zusätzliche Retrievalschritte nötig sind, und verhindert so sowohl unzureichenden Kontext (zu wenige Quellen) als auch Kontextverschmutzung (zu viele irrelevante Quellen)
+
+## Wie es funktioniert
+
+Retrieval-Orchestrierung arbeitet über eine Entscheidungsschleife:
+
+**Anfrageanalyse** — der Orchestrator untersucht die eingehende Anfrage, um deren Typ, Komplexität und voraussichtliche Informationsbedürfnisse zu bestimmen. Eine einfache Faktenfrage („Wie hoch ist der aktuelle Mehrwertsteuersatz?") erfordert eine andere Retrievalstrategie als eine komplexe analytische Frage („Wie interagiert die neue Mindeststeuer mit bestehenden Abzugsregeln?").
+
+**Strategieauswahl** — basierend auf der Anfrageanalyse wählt der Orchestrator eine oder mehrere Retrievalstrategien aus: Stichwortsuche für präzise Referenzen, semantische Suche für konzeptionelles Matching, strukturierte Datenbankabfragen für Sätze und Schwellenwerte oder Multi-Hop-Retrieval für querverweisende Fragen.
+
+**Ausführung** — die ausgewählten Strategien werden ausgeführt, potenziell parallel. Jede liefert eine Menge an Kandidatenergebnissen mit Relevanzwerten. Der Orchestrator kann basierend auf den ersten Ergebnissen zusätzliche Anfragen stellen (Querverweise verfolgen, identifizierte Themen vertiefen, nach widersprüchlicher Evidenz suchen).
+
+**Ergebniszusammenstellung** — Ergebnisse aller Retrievalschritte werden zusammengeführt, dedupliziert, nach Relevanz gerankt und zu einem kohärenten Kontextpaket zusammengestellt. Der Orchestrator stellt Vielfalt (verschiedene Quellentypen vertreten), Vollständigkeit (zentrale Aspekte der Frage abgedeckt) und Qualität (Ergebnisse mit niedriger Relevanz herausgefiltert) sicher.
+
+**Ausreichendheitsprüfung** — der Orchestrator bewertet, ob der zusammengestellte Kontext ausreicht, um die Frage zu beantworten. Falls zentrale Aspekte nicht abgedeckt sind, kann ein zusätzliches gezieltes Retrieval ausgelöst werden. Ist der Kontext ausreichend, wird er an die Generierungsschicht übergeben.
+
+In fortgeschrittenen Systemen ist die Orchestrierung modellgesteuert: Ein LLM entscheidet, wonach als Nächstes gesucht werden soll, basierend auf dem, was bisher gefunden wurde (agentisches Retrieval). In einfacheren Systemen folgt die Orchestrierung vordefinierten Regeln basierend auf der Anfrageklassifikation.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Orchestrierung von der Retrieval-Pipeline?**
+
+A: Die Retrieval-Pipeline ist die Abfolge von Stufen (Retrieval → Filterung → Reranking) für eine einzelne Anfrage. Orchestrierung operiert oberhalb der Pipeline und entscheidet, wann die Pipeline aufgerufen wird, mit welchen Anfragen, und wie Ergebnisse über mehrere Pipeline-Durchläufe hinweg kombiniert werden.
+
+**F: Verursacht Orchestrierung zusätzliche Latenz?**
+
+A: Ja — zusätzliche Retrievalschritte benötigen zusätzliche Zeit. Orchestrierung steuert dies durch Parallelisierung, frühzeitigen Abbruch und Caching. Die Latenzkosten sind gerechtfertigt, wenn sie einen deutlich besseren Kontext liefern als ein einzelner Retrievaldurchlauf.
 
 ## References
 

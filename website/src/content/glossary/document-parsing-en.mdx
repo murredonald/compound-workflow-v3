@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Document parsing turns binary or markup formats into structured representations—such as sections, headings, and plain text—that can be indexed and searched.
+Document parsing is the process of extracting structured text and layout information from raw document formats — PDFs, HTML pages, Word documents, scanned images, and XML feeds — and converting them into a clean, structured representation suitable for indexing and retrieval. Parsing is the first transformation step in the data pipeline: it bridges the gap between how documents are published (optimised for human reading) and how AI systems consume them (needing clean text with structural annotations). The quality of document parsing directly affects everything downstream — a poorly parsed document with garbled text, lost structure, or missing content will produce bad embeddings, bad search results, and bad answers.
+
+## Why it matters
+
+- **Data quality foundation** — all downstream processing (chunking, embedding, retrieval, generation) operates on the parser's output; errors introduced during parsing propagate through the entire pipeline
+- **Format diversity** — Belgian legal sources arrive in many formats: Official Gazette PDFs, legislative database HTML, court decision XML, and scanned historical circulars; the parser must handle all of them
+- **Structure preservation** — legal documents have meaningful structure (articles, paragraphs, numbered items, tables) that must be preserved through parsing for accurate chunking and citation
+- **Table and list extraction** — tax legislation frequently contains rate tables, threshold lists, and structured criteria that must be extracted as structured data, not as garbled prose
+
+## How it works
+
+Document parsing uses format-specific techniques:
+
+**PDF parsing** is the most challenging because PDFs are display-format documents — they specify where to draw characters on a page, not the logical structure of the text. Parsers must reconstruct reading order from character positions, detect columns, identify headers and footers, handle hyphenation, and extract tables. Tools like pdfplumber, PyMuPDF, and commercial solutions (ABBYY, Amazon Textract) offer varying trade-offs between accuracy and speed.
+
+**HTML parsing** extracts content from web pages by stripping navigation, advertisements, and boilerplate while preserving the meaningful content and its structure (headings, paragraphs, lists, tables). HTML is generally easier to parse than PDF because the structure is explicitly encoded in tags, though inconsistent markup quality complicates real-world parsing.
+
+**XML parsing** processes structured data feeds using the document's schema. Belgian legislative databases often provide XML with explicit structural markup (article numbers, paragraphs, cross-references), making XML the cleanest input format when available.
+
+**OCR (Optical Character Recognition)** processes scanned documents by converting images of text into machine-readable characters. OCR quality depends on scan resolution, document condition, and language. For Belgian legal documents, OCR must handle three languages, legal formatting, and potentially degraded historical scans. OCR confidence scores flag characters or regions where the recognition is uncertain.
+
+After initial extraction, **post-processing** cleans the output: fixing encoding issues, merging hyphenated words, normalising whitespace, and validating structural integrity.
+
+## Common questions
+
+**Q: What is the biggest parsing challenge for legal documents?**
+
+A: Multi-column PDF layouts and complex tables. Legal documents frequently use multi-column formatting that simple PDF parsers misinterpret, interleaving text from different columns. Tables with merged cells, nested headers, and footnotes are similarly difficult to extract accurately.
+
+**Q: How do you measure parsing quality?**
+
+A: By comparing parser output against manually verified ground truth for a sample of documents. Metrics include character-level accuracy, structural element detection (headings, tables, lists), and downstream retrieval quality (does better parsing improve search results?).

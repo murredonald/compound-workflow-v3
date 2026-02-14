@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Answer [Grounding](/de/glossary/grounding/) verlangt, dass wesentliche Aussagen eines KI-Antworts durch zitierte Passagen oder Daten belegbar sind.
+Answer Grounding ist die Praxis, sicherzustellen, dass jede inhaltliche Aussage in einer KI-generierten Antwort direkt auf ein bestimmtes Quelldokument oder eine bestimmte Textpassage zurückgeführt werden kann. Eine fundierte Antwort zitiert nicht nur allgemein Quellen — sie verknüpft jede einzelne Aussage mit dem spezifischen Text, der sie stützt, sodass der Nutzer jede Behauptung unabhängig überprüfen kann. Im Bereich der juristischen KI verwandelt Answer Grounding die Ausgabe des Modells von einer unbelegten Meinung in eine überprüfbare Analyse, die durch spezifische Gesetzesartikel, Urteile oder behördliche Leitlinien gestützt wird.
+
+## Warum es wichtig ist
+
+- **Überprüfbarkeit** — fundierte Antworten können geprüft werden: Der Nutzer kann die zitierte Quelle lesen und bestätigen, ob die Aussage korrekt wiedergegeben ist; unbelegte Antworten erfordern, dass der Nutzer jede Aussage selbständig recherchiert
+- **Berufliche Sicherheit** — Steuerberater, die sich auf KI-generierte Analysen stützen, müssen deren Richtigkeit prüfen, bevor sie Mandanten beraten; Grounding liefert die Quellenangaben, die für eine effiziente Überprüfung notwendig sind
+- **Halluzinationserkennung** — Aussagen, die sich auf keine Quelle stützen lassen, sind per Definition Halluzinationen; Grounding-Anforderungen zwingen das System, zwischen belegten und unbelegten Aussagen zu unterscheiden
+- **Prüfpfad** — fundierte Antworten erzeugen eine vollständige Dokumentation darüber, welche Quellen jeden Teil der Antwort informiert haben, und unterstützen so die berufliche Rechenschaftspflicht und die Einhaltung regulatorischer Anforderungen
+
+## Wie es funktioniert
+
+Answer Grounding arbeitet durch die Koordination zwischen der Retrieval- und der Generierungsschicht:
+
+**Quellenbewusste Generierung** — der System-Prompt weist das Sprachmodell an, nur Aussagen zu machen, die durch den bereitgestellten Kontext gestützt werden, und für jede Aussage die spezifische Quelle zu zitieren. Die Anweisung fordert das Modell ausdrücklich auf, Lücken einzugestehen, anstatt sie mit unbelegtem Inhalt zu füllen.
+
+**Inline-Zitate** — während das Modell seine Antwort generiert, fügt es Verweise auf spezifische Quellpassagen (Artikelnummern, Veröffentlichungsdaten, Quellkennungen) neben jeder inhaltlichen Aussage ein. Dies schafft eine direkte Verbindung zwischen jeder Behauptung und dem stützenden Beleg.
+
+**Nachträgliche Verifizierung** — nach der Generierung prüft ein Verifizierungsschritt, ob jede zitierte Aussage tatsächlich durch die referenzierte Quellpassage gestützt wird. Natural Language Inference (NLI)-Modelle oder ein zweites LLM können die Implikation zwischen der Aussage und dem zitierten Text bewerten. Aussagen, die nicht impliziert werden, werden zur Überprüfung markiert oder entfernt.
+
+**Enthaltung bei unzureichender Evidenz** — wenn der abgerufene Kontext nicht genügend Informationen enthält, um die Frage vollständig zu beantworten, erklärt ein fundiertes System ausdrücklich, was es nicht feststellen kann, anstatt plausiblen, aber unbelegten Inhalt zu generieren. Dies ist bei juristischer KI entscheidend, da eine unvollständige Antwort, die als solche gekennzeichnet ist, weitaus sicherer ist als eine fabricierte vollständige Antwort.
+
+Die Grounding-Qualität wird durch Treue-Metriken gemessen: Welcher Prozentsatz der Aussagen in der generierten Antwort wird durch die zitierten Quellen impliziert? Hohe Treue (>95 %) weist auf starkes Grounding hin; niedrige Treue deutet darauf hin, dass das Modell unbelegte Inhalte hinzufügt.
+
+## Häufige Fragen
+
+**F: Eliminiert Answer Grounding Halluzinationen?**
+
+A: Es reduziert sie erheblich, beseitigt sie aber nicht vollständig. Modelle können Aussagen immer noch falschen Quellen zuordnen, den Inhalt einer Quelle subtil verfälschen oder wichtige Einschränkungen übersehen. Grounding ist die wirksamste Gegenmaßnahme, sollte aber durch Konfidenzwerte und menschliche Überprüfung ergänzt werden.
+
+**F: Kann eine fundierte Antwort trotzdem falsch sein?**
+
+A: Ja, wenn die Quelle selbst falsch oder veraltet ist. Grounding stellt sicher, dass die Antwort ihre Quellen korrekt wiedergibt, nicht dass die Quellen selbst korrekt sind. Deshalb sind Quellenqualität (Autorität, Aktualität, Vollständigkeit) und Grounding komplementäre Aspekte.
 
 ## References
 

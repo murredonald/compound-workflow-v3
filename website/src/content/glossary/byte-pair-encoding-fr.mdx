@@ -12,7 +12,36 @@ draft: false
 
 ## Définition
 
-Byte Pair Encoding (BPE) est une méthode de [tokenisation](/fr/glossary/tokenization/) fondée sur les données qui part des caractères individuels et fusionne de façon répétée les paires de symboles adjacents les plus fréquentes pour créer un vocabulaire compact de sous-mots pour les modèles de langue.
+Byte Pair Encoding (BPE) est un algorithme de [tokenisation](/fr/glossary/tokenization/) en sous-mots qui construit un vocabulaire en fusionnant itérativement les paires de symboles adjacents les plus fréquentes dans un corpus d'entraînement. En partant des caractères individuels, BPE trouve répétitivement la paire la plus fréquente, la fusionne en un nouveau token, et recommence jusqu'à ce que le vocabulaire atteigne une taille cible. Le résultat est un vocabulaire d'unités sous-lexicales qui équilibre la granularité au niveau des caractères (capable de traiter n'importe quel mot, y compris les mots inconnus) et l'efficacité au niveau des mots (les mots courants deviennent des tokens uniques). BPE est à la base de la tokenisation dans la plupart des modèles de langage modernes.
+
+## Pourquoi c'est important
+
+- **Gestion du vocabulaire ouvert** — BPE peut représenter n'importe quel mot, y compris les termes juridiques rares, les noms en langue étrangère et la terminologie nouvellement créée, en le décomposant en sous-mots connus ; le modèle ne rencontre jamais un mot véritablement « inconnu »
+- **Efficacité multilingue** — dans le système juridique trilingue de la Belgique, BPE partage naturellement les unités sous-lexicales entre le néerlandais, le français et l'allemand (par exemple les racines latines communes), permettant un traitement multilingue efficace sans vocabulaires séparés
+- **Compression** — les mots et expressions courants sont encodés comme des tokens uniques tandis que les mots rares sont divisés en plusieurs tokens, optimisant la fenêtre de contexte pour le langage fréquemment utilisé
+- **Fondement de l'entrée du modèle** — tout texte traité par un modèle de langage ou un modèle d'embedding est d'abord tokenisé ; la tokenisation BPE détermine directement la façon dont le texte est segmenté et donc la façon dont le modèle l'interprète
+
+## Comment ça fonctionne
+
+BPE opère en deux phases :
+
+**Entraînement** — l'algorithme traite un grand corpus de texte pour construire le vocabulaire. Il commence avec un vocabulaire de base de caractères individuels (ou d'octets). Il analyse ensuite le corpus pour trouver la paire de tokens adjacents la plus fréquente, fusionne cette paire en un nouveau token unique, l'ajoute au vocabulaire et recommence. Par exemple, la paire « t » + « h » pourrait être fusionnée en « th », puis « th » + « e » en « the ». Chaque étape de fusion est enregistrée comme une règle de fusion. L'entraînement continue jusqu'à ce que le vocabulaire atteigne une taille prédéfinie (généralement 30 000 à 100 000 tokens).
+
+**Encodage** — pour tokeniser un nouveau texte, l'algorithme applique les règles de fusion apprises dans le même ordre qu'elles ont été apprises pendant l'entraînement. En partant des caractères, il fusionne les paires selon la priorité établie par la fréquence d'entraînement. Les mots courants comme « the » ou « belasting » seront encodés comme des tokens uniques ; les mots rares comme « dubbelbelastingverdrag » seront divisés en sous-mots familiers.
+
+La taille du vocabulaire est un choix de conception qui équilibre des préoccupations concurrentes. Les vocabulaires plus grands produisent des séquences de tokens plus courtes (davantage de mots deviennent des tokens uniques) mais augmentent les besoins en mémoire du modèle. Les vocabulaires plus petits produisent des séquences plus longues (davantage de mots sont divisés en morceaux) mais gardent le modèle compact. La plupart des LLM modernes utilisent des vocabulaires de 32 000 à 128 000 tokens.
+
+Les variantes de BPE incluent le BPE au niveau des octets (qui opère sur des octets bruts plutôt que des caractères Unicode, évitant les problèmes d'encodage) et SentencePiece (qui traite l'entrée comme un flux de caractères bruts et inclut les espaces comme un caractère ordinaire plutôt qu'un séparateur de mots).
+
+## Questions fréquentes
+
+**Q : Pourquoi ne pas simplement utiliser des mots entiers comme tokens ?**
+
+R : Un vocabulaire au niveau des mots ne peut pas traiter les mots non rencontrés pendant l'entraînement — ils deviennent des tokens « inconnus », perdant toute information. Les textes juridiques contiennent régulièrement des mots composés rares, des références de jurisprudence et des termes techniques. BPE les traite en les divisant en sous-mots connus, préservant un sens partiel.
+
+**Q : La tokenisation BPE affecte-t-elle les modèles multilingues ?**
+
+R : Oui. Si BPE est entraîné principalement sur du texte anglais, il peut diviser les mots néerlandais ou français en plus de tokens que les mots anglais de longueur équivalente, rendant ces langues moins efficaces à traiter. Les modèles multilingues utilisent un BPE entraîné sur des corpus multilingues équilibrés pour assurer une efficacité à peu près égale entre les langues.
 
 ## References
 

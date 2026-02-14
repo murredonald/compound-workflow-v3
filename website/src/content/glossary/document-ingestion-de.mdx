@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Document Ingestion umfasst das Abrufen, Validieren und Speichern von Quelldateien – etwa PDFs oder E‑Mails – als ersten Schritt in der Inhaltspipeline eines Such‑ oder KI‑Systems.
+Document Ingestion ist der Prozess, Rohdokumente aus ihren Quellen zu sammeln, in ein nutzbares Format zu konvertieren, Metadaten zu extrahieren und sie in der Wissensbasis zu registrieren. Es ist der erste Schritt in der Datenpipeline — der Punkt, an dem externe juristische Inhalte in das KI-System gelangen und durchsuchbar werden. Die Qualität der Ingestion bestimmt die Qualität der Wissensbasis: Dokumente, die fehlerhaft geparst werden, falsche Metadaten zugewiesen bekommen oder unvollständig extrahiert werden, führen nachgelagert zu ungenauen Retrieval- und Generierungsergebnissen.
+
+## Warum es wichtig ist
+
+- **Vollständigkeit der Wissensbasis** — wenn die Ingestion-Pipeline ein neues Gesetz, eine Verwaltungsanweisung oder ein Urteil nicht erfasst, kann das KI-System es in Antworten nicht referenzieren, was eine gefährliche Lücke erzeugt
+- **Ursprung der Datenqualität** — die meisten Datenqualitätsprobleme entstehen bei der Ingestion: OCR-Fehler, fehlerhafte Datumsextraktion, falsche Zuständigkeitszuordnung oder fehlende Querverweise; Fehler bei der Ingestion zu erkennen ist weitaus günstiger als sie nach der Indexierung zu korrigieren
+- **Quellenvielfalt** — belgisches Steuerrecht stammt aus vielen Quellen (Belgisches Staatsblatt, FÖD Finanzen, Gerichtsdatenbanken, regionale Verlage) in vielen Formaten (PDF, HTML, XML, gescannte Bilder); die Ingestion-Pipeline muss diese Vielfalt zuverlässig verarbeiten
+- **Aktualität** — automatisierte Ingestion ermöglicht es dem System, neue Rechtsquellen innerhalb von Stunden nach der Veröffentlichung aufzunehmen und so die Aktualität ohne manuellen Eingriff zu gewährleisten
+
+## So funktioniert es
+
+Eine Document-Ingestion-Pipeline durchläuft typischerweise folgende Stufen:
+
+**Akquisition** — Dokumente werden aus ihren Quellen gesammelt. Dies kann geplantes Scraping von Websites des Amtsblatts, API-Aufrufe an juristische Datenbankanbieter, SFTP-Übertragungen von Verlagen oder manuellen Upload von Ad-hoc-Quellen umfassen. Jede Quelle hat ihre eigene Zugriffsmethode, ihr Format und ihren Lieferplan.
+
+**Formatverarbeitung** — Rohdokumente werden von ihrem nativen Format in sauberen Text konvertiert. PDF-Extraktion verarbeitet mehrspaltiges Layout, Tabellen und eingebettete Bilder. HTML-Parsing entfernt Navigation, Styling und Standardelemente. Gescannte Dokumente durchlaufen OCR mit Konfidenz-Scoring, um unzuverlässige Extraktionen zu kennzeichnen. XML-Dokumente (häufig bei amtlichen Veröffentlichungen) werden gemäß ihrem Schema geparst.
+
+**Metadaten-Extraktion** — wichtige strukturierte Felder werden identifiziert und extrahiert: Veröffentlichungsdatum, Dokumenttyp (Gesetz, Erlass, Verwaltungsanweisung, Urteil), Zuständigkeit (föderaler, regionaler Ebene), Sprachversion, Artikelnummern und Querverweise zu anderen Dokumenten. Manche Metadaten sind explizit vorhanden (in Dokumentkopfzeilen oder XML-Tags); andere müssen aus dem Inhalt mithilfe von Entitätsextraktion oder Mustererkennung abgeleitet werden.
+
+**Deduplizierungsprüfung** — das Dokument wird mit vorhandenen Inhalten verglichen, um festzustellen, ob es neu ist, eine Aktualisierung eines bestehenden Dokuments darstellt oder ein Duplikat ist. Content-Hashing und Beinahe-Duplikat-Erkennung verhindern, dass dasselbe Dokument mehrfach indexiert wird.
+
+**Registrierung** — dem Dokument wird eine eindeutige Kennung zugewiesen, seine Metadaten werden gegen das Schema validiert und es wird für die nächsten Pipeline-Stufen (Chunking, Embedding, Indexierung) in die Warteschlange gestellt. Fehlgeschlagene Dokumente werden mit Fehlerdetails zur manuellen Überprüfung in Quarantäne gestellt.
+
+## Häufige Fragen
+
+**F: Wie oft sollte die Ingestion laufen?**
+
+A: Für Quellen mit regelmäßigem Veröffentlichungsrhythmus (tägliches Amtsblatt, wöchentliche Verwaltungsanweisungen) sollte die Ingestion in entsprechender Frequenz laufen. Ereignisgesteuerte Ingestion (ausgelöst durch Veröffentlichungsbenachrichtigungen) bietet schnellere Abdeckung als geplantes Polling.
+
+**F: Was passiert, wenn die Ingestion für ein Dokument fehlschlägt?**
+
+A: Fehlgeschlagene Dokumente sollten in Quarantäne gestellt und mit dem spezifischen Fehlergrund protokolliert werden (OCR-Fehler, Formatfehler, Fehler bei der Metadaten-Extraktion) und entweder automatisch erneut versucht oder zur manuellen Überprüfung markiert werden. Das System sollte die Verarbeitung anderer Dokumente fortsetzen, anstatt die gesamte Pipeline anzuhalten.

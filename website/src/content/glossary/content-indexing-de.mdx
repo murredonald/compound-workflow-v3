@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Content Indexing erstellt Datenstrukturen, über die Anfragen schnell auf Textfeldern, Metadaten und ggf. [Embeddings](/de/glossary/embeddings/) ausgeführt werden können, und hält diese Indizes bei Änderungen am [Korpus](/de/glossary/corpus/) aktuell.
+Content Indexing ist der Prozess der Erstellung durchsuchbarer Datenstrukturen über eine Dokumentensammlung, sodass Anfragen in Millisekunden beantwortet werden können, anstatt jeden einzelnen Dokumententext vollständig durchsuchen zu müssen. Es umfasst den Aufbau invertierter Indizes für die Stichwortsuche, Vektorindizes für die semantische Suche und Metadatenindizes für strukturierte Filterung. Content Indexing verwandelt einen passiven Dokumentenspeicher in ein aktives Suchsystem — ohne Indexierung müsste bei jeder Abfrage jedes Dokument gelesen werden, was die Suche in jeder relevanten Größenordnung unpraktikabel macht.
+
+## Warum es wichtig ist
+
+- **Suchgeschwindigkeit** — Indizes ermöglichen die Suche in unter einer Sekunde über Millionen von Dokumenten; ohne sie würde eine einfache Abfrage gegen einen großen juristischen [Korpus](/de/glossary/corpus/) Minuten dauern
+- **Multimodale Suche** — Content Indexing unterstützt verschiedene Suchparadigmen (Stichwort, semantisch, strukturiert) durch den Aufbau geeigneter Indexstrukturen für jedes Paradigma
+- **Aktualität** — effiziente inkrementelle Indexierung ermöglicht es, dass neue Dokumente innerhalb von Minuten nach der Aufnahme durchsuchbar werden und die Wissensbasis aktuell bleibt
+- **Abfrageflexibilität** — gut konzipierte Indizes unterstützen komplexe Abfragen, die Textsuche, Metadatenfilter und semantische Ähnlichkeit kombinieren, ohne Leistungseinbußen
+
+## So funktioniert es
+
+Content Indexing erstellt während der Dokumentenaufnahme mehrere parallele Datenstrukturen:
+
+**Invertierter Index** — für jeden Begriff im Vokabular speichert der Index eine Liste der Dokumente, die diesen Begriff enthalten, zusammen mit Worthäufigkeit und Positionsinformationen. Dies unterstützt die Stichwortsuche (BM25), Phrasensuche und boolesche Abfragen. Der Aufbau eines invertierten Index umfasst die Tokenisierung, Stammformreduktion und Katalogisierung jedes Begriffs in jedem Dokument.
+
+**Vektorindex** — jeder Dokumentenabschnitt wird durch ein [Embedding](/de/glossary/embeddings/)-Modell verarbeitet, um einen dichten Vektor zu erzeugen, der dann einer ANN-Indexstruktur (Approximate Nearest Neighbour, z. B. HNSW oder IVF) hinzugefügt wird. Dies unterstützt die semantische Suche — das Auffinden von Dokumenten nach Bedeutung statt nach exakten Begriffen.
+
+**Metadatenindex** — strukturierte Felder (Datum, Rechtsgebiet, Dokumenttyp, Autoritätsstufe) werden in einer Form gespeichert, die schnelle Filterung ermöglicht. Dies kann Datenbankindizes, invertierte Indizes über Metadatenwerte oder spezialisierte spaltenbasierte Speicherung nutzen.
+
+**Volltextspeicherung** — der ursprüngliche Dokumenttext wird neben den Indizes gespeichert, damit übereinstimmende Passagen an den Benutzer zurückgegeben und an die Generierungsschicht weitergeleitet werden können.
+
+Die Indexierung ist typischerweise ein Offline- oder Batch-Prozess, der als Teil der Datenpipeline läuft. Wenn ein neues Dokument aufgenommen wird, wird es geparst, bereinigt, in Chunks aufgeteilt und dann in alle relevanten Indexstrukturen indexiert. Der Indexierungsprozess muss Aktualisierungen (Neuindexierung geänderter Dokumente) und Löschungen (Entfernung aufgehobener Bestimmungen) ebenso handhaben wie Neuzugänge.
+
+Die Indexpflege umfasst die Überwachung der Indexgesundheit (Fragmentierung, Veralterung), periodische Neuaufbauten (zur Leistungsoptimierung) und Kapazitätsverwaltung (Hinzufügen von Index-Shards bei wachsender Sammlung).
+
+## Häufige Fragen
+
+**F: Wie lange dauert Content Indexing?**
+
+A: Bei der Textindexierung können auf moderner Hardware Tausende von Dokumenten pro Sekunde indexiert werden. Die Embedding-Berechnung ist der Engpass — die Erzeugung von Embeddings für Dokumentenabschnitte läuft je nach Embedding-Modell und Hardware typischerweise mit 100–1.000 Chunks pro Sekunde. Eine vollständige Neuindexierung eines großen juristischen Korpus (Millionen von Chunks) kann Stunden dauern.
+
+**F: Kann das Suchsystem während der Neuindexierung Abfragen bedienen?**
+
+A: Ja, mit geeigneter Architektur. Blue-Green-Indexierung (Aufbau eines neuen Index, während der alte Abfragen bedient, dann Umschaltung) oder inkrementelle Aktualisierungen ermöglichen einen unterbrechungsfreien Dienst während der Indexierung.

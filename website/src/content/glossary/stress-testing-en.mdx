@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Stress testing pushes systems beyond normal operating ranges—such as high load, noisy inputs, or partial outages—to measure [robustness](/en/glossary/model-robustness/) and failure behavior.
+Stress testing evaluates how an AI system behaves under extreme or degraded conditions that exceed normal operating parameters. This includes high query volumes that saturate system capacity, noisy or adversarial inputs, partial infrastructure failures, and unusual query patterns. The goal is not to test normal performance (that is what standard evaluation does) but to find the system's breaking points, understand its failure modes, and verify that it degrades gracefully rather than catastrophically when pushed beyond its limits.
+
+## Why it matters
+
+- **Failure mode discovery** — stress testing reveals how the system fails: does it slow down gracefully, return errors cleanly, or produce silently incorrect answers? Each failure mode has different implications for user trust and safety
+- **Capacity planning** — understanding the system's throughput limits and degradation curve informs infrastructure sizing and scaling decisions
+- **Adversarial resilience** — stress testing with adversarial inputs reveals vulnerabilities to prompt injection, query manipulation, and other attacks that might not surface in normal operation
+- **Regulatory readiness** — the EU AI Act requires high-risk AI systems to maintain performance under "reasonably foreseeable conditions of use"; stress testing provides evidence for this requirement
+
+## How it works
+
+Stress testing covers several dimensions:
+
+**Load testing** gradually increases query volume until the system's performance degrades. Metrics tracked include response time (how much does latency increase?), error rate (do requests start failing?), and answer quality (do answers become less accurate under load?). The test identifies the maximum sustainable throughput and the degradation pattern beyond it.
+
+**Input perturbation testing** sends inputs that deviate from normal patterns: extremely long queries, queries in unexpected languages, queries with special characters or formatting, and queries designed to confuse the retrieval or generation layers. The goal is to verify that the system handles unusual inputs without crashing or producing dangerous outputs.
+
+**Infrastructure failure testing** simulates component failures: a vector database shard going offline, an embedding model service becoming unavailable, or a network partition between system components. The test verifies that the system detects failures, routes around them when possible, and communicates degradation to users clearly.
+
+**Adversarial testing** uses deliberately crafted inputs that attempt to exploit system weaknesses: prompt injection attacks, queries designed to extract training data, and inputs that attempt to bypass safety guardrails. This overlaps with security testing but focuses specifically on AI-specific vulnerabilities.
+
+**Edge case testing** targets known difficult scenarios: ambiguous queries, queries at the boundary of the system's scope, queries about topics where the knowledge base has sparse coverage, and queries that require reasoning across multiple sources.
+
+Results are documented in terms of discovered failure modes, breaking points, and remediation priorities.
+
+## Common questions
+
+**Q: How is stress testing different from regression testing?**
+
+A: Regression testing verifies that the system maintains quality under normal conditions after changes. Stress testing pushes the system beyond normal conditions to find its limits. Regression testing asks "is it still working?"; stress testing asks "when does it stop working, and how?"
+
+**Q: How often should stress testing be performed?**
+
+A: After significant architecture changes, before major releases, and periodically (quarterly) as a health check. Automated load testing can run more frequently as part of the CI/CD pipeline.
 
 ## References
 

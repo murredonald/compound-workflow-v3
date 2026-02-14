@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Byte Pair Encoding (BPE) ist ein datengetriebenes Tokenisierungsverfahren, das bei einzelnen Zeichen beginnt und wiederholt die häufigsten benachbarten Symbolpaare zusammenführt, um ein kompaktes Subword-Vokabular für Sprachmodelle zu konstruieren.
+Byte Pair Encoding (BPE) ist ein Subword-Tokenisierungsalgorithmus, der ein Vokabular aufbaut, indem er iterativ die am häufigsten vorkommenden Paare benachbarter Symbole in einem Trainingskorpus zusammenführt. Ausgehend von einzelnen Zeichen findet BPE wiederholt das am häufigsten auftretende Paar, führt es zu einem neuen Token zusammen und wiederholt den Vorgang, bis das Vokabular eine Zielgröße erreicht. Das Ergebnis ist ein Vokabular aus Subword-Einheiten, das zwischen Zeichenebene-Granularität (Verarbeitung jedes Wortes, einschließlich unbekannter) und Wortebene-Effizienz (häufige Wörter werden zu einzelnen Token) ausbalanciert. BPE bildet die Grundlage der Tokenisierung in den meisten modernen Sprachmodellen.
+
+## Warum es wichtig ist
+
+- **Open-Vocabulary-Verarbeitung** — BPE kann jedes Wort darstellen, einschließlich seltener juristischer Fachbegriffe, fremdsprachiger Namen und neu geprägter Terminologie, indem es diese in bekannte Subword-Teile zerlegt; das Modell trifft nie auf ein wirklich „unbekanntes" Wort
+- **Mehrsprachige Effizienz** — im dreisprachigen Rechtssystem Belgiens teilt BPE natürlicherweise Subword-Einheiten zwischen Niederländisch, Französisch und Deutsch (z. B. gemeinsame lateinische Wurzeln), was eine effiziente mehrsprachige Verarbeitung ohne separate Vokabulare ermöglicht
+- **Komprimierung** — häufige Wörter und Phrasen werden als einzelne Token kodiert, während seltene Wörter in mehrere Token aufgeteilt werden, was das Kontextfenster für häufig verwendete Sprache optimiert
+- **Grundlage der Modelleingabe** — jeder Text, der von einem Sprachmodell oder Embedding-Modell verarbeitet wird, wird zunächst tokenisiert; die BPE-Tokenisierung bestimmt direkt, wie Text segmentiert wird und damit, wie das Modell ihn interpretiert
+
+## Wie es funktioniert
+
+BPE arbeitet in zwei Phasen:
+
+**Training** — der Algorithmus verarbeitet einen großen Textkorpus, um das Vokabular aufzubauen. Er beginnt mit einem Basisvokabular aus einzelnen Zeichen (oder Bytes). Dann durchsucht er den Korpus nach dem häufigsten Paar benachbarter Token, führt dieses Paar zu einem neuen einzelnen Token zusammen, fügt es dem Vokabular hinzu und wiederholt den Vorgang. Beispielsweise könnte das Paar „t" + „h" zu „th" zusammengeführt werden, dann „th" + „e" zu „the". Jeder Zusammenführungsschritt wird als Merge-Regel aufgezeichnet. Das Training wird fortgesetzt, bis das Vokabular eine vordefinierte Größe erreicht (üblicherweise 30.000 bis 100.000 Token).
+
+**Kodierung** — um einen neuen Text zu tokenisieren, wendet der Algorithmus die gelernten Merge-Regeln in derselben Reihenfolge an, in der sie während des Trainings gelernt wurden. Ausgehend von Zeichen werden Paare gemäß der durch die Trainingshäufigkeit festgelegten Priorität zusammengeführt. Häufige Wörter wie „the" oder „belasting" werden als einzelne Token kodiert; seltene Wörter wie „dubbelbelastingverdrag" werden in vertraute Subword-Teile aufgespalten.
+
+Die Vokabulargröße ist eine Designentscheidung, die konkurrierende Anforderungen ausbalanciert. Größere Vokabulare erzeugen kürzere Tokensequenzen (mehr Wörter werden zu einzelnen Token), erhöhen aber den Speicherbedarf des Modells. Kleinere Vokabulare erzeugen längere Sequenzen (mehr Wörter werden in Teile aufgespalten), halten aber das Modell kompakt. Die meisten modernen LLMs verwenden Vokabulare von 32.000 bis 128.000 Token.
+
+Varianten von BPE umfassen Byte-Level-BPE (das auf rohen Bytes statt Unicode-Zeichen arbeitet und Kodierungsprobleme vermeidet) und SentencePiece (das die Eingabe als rohen Zeichenstrom behandelt und Leerzeichen als reguläres Zeichen statt als Wortgrenze einbezieht).
+
+## Häufige Fragen
+
+**F: Warum nicht einfach ganze Wörter als Token verwenden?**
+
+A: Ein Wortebene-Vokabular kann Wörter, die im Training nicht vorkamen, nicht verarbeiten — sie werden zu „unbekannten" Token, und alle Information geht verloren. Juristische Texte enthalten regelmäßig seltene Komposita, Aktenzeichen und Fachbegriffe. BPE bewältigt diese, indem es sie in bekannte Subword-Teile aufteilt und so partielle Bedeutung bewahrt.
+
+**F: Beeinflusst BPE-Tokenisierung mehrsprachige Modelle?**
+
+A: Ja. Wenn BPE hauptsächlich auf englischem Text trainiert wurde, kann es niederländische oder französische Wörter in mehr Token aufteilen als englische Wörter vergleichbarer Länge, was die Verarbeitung dieser Sprachen weniger effizient macht. Mehrsprachige Modelle verwenden BPE, das auf ausgewogenen mehrsprachigen Korpora trainiert wurde, um eine ungefähr gleiche Effizienz über alle Sprachen hinweg sicherzustellen.
 
 ## References
 

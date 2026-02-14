@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-[Query rewriting](/en/glossary/query-expansion/) modifies the original user query—often using rules or [LLMs](/en/glossary/llm/)—to clarify intent, expand synonyms, or fix structure so that search and retrieval perform better.
+Query rewriting is the process of transforming a user's original query into one or more reformulated queries that are more effective for retrieval. The original query may be ambiguous, use informal language, lack technical terminology, or be structured in a way that does not match how information is stored in the knowledge base. Query rewriting bridges this gap by generating alternative formulations that better align with the indexed content while preserving the user's intent. In Belgian tax law, query rewriting is particularly important because users may phrase questions in everyday language while the underlying legislation uses precise legal terminology, and the same concept may be expressed differently across Dutch, French, and German legal texts.
+
+## Why it matters
+
+- **Vocabulary mismatch** — a user asking about "inheritance tax in Flanders" needs the system to also search for "erfbelasting" (Dutch), "Vlaamse Codex Fiscaliteit", and the specific article references that contain the relevant provisions; without rewriting, lexical search would miss these matches
+- **Intent clarification** — ambiguous queries like "tax on shares" could refer to the TOB (tax on stock exchange transactions), dividend withholding tax, or capital gains taxation; rewriting can decompose such queries into more specific variants
+- **Multilingual bridging** — Belgian law exists in Dutch and French (and sometimes German); query rewriting can generate cross-lingual variants so that relevant provisions are found regardless of which language the user queries in
+- **Retrieval quality** — well-rewritten queries consistently improve both precision and recall compared to using the raw user input, because they align more closely with the terminology and structure of the indexed documents
+
+## How it works
+
+Query rewriting can be implemented through several approaches, often combined:
+
+**Rule-based rewriting** applies deterministic transformations: expanding known abbreviations (WIB → Wetboek van de Inkomstenbelastingen), adding standard legal references when specific terms are detected, or normalising date formats. These rules are fast and predictable but limited to anticipated patterns.
+
+**LLM-based rewriting** uses a language model to understand the user's intent and generate reformulated queries. The model can decompose a complex question into sub-queries, add relevant technical terms, generate cross-lingual variants, and remove unnecessary words. This is more flexible than rules but adds latency and requires careful prompting to avoid changing the query's meaning.
+
+**Hypothetical document generation** (HyDE) takes rewriting further: instead of reformulating the query, the system generates a hypothetical ideal answer and uses that answer's embedding for retrieval. This can be effective when the user's question is very different in style from the documents being searched — the hypothetical answer bridges the gap by being written in document-like language.
+
+**Multi-query generation** produces several alternative formulations from a single user query. Each variant emphasises a different aspect or uses different terminology. The retrieval results from all variants are merged and deduplicated, increasing the chance of finding all relevant documents.
+
+In practice, query rewriting is applied before the retrieval step in the pipeline. The original query is preserved alongside the rewritten variants so that the system can attribute results back to the original intent and explain why particular documents were retrieved.
+
+## Common questions
+
+**Q: Can query rewriting change the meaning of the question?**
+
+A: It should not, but it can if poorly implemented. Effective query rewriting preserves the user's intent while improving retrieval effectiveness. Safeguards include always including the original query as one of the retrieval inputs, and using constrained prompts that instruct the rewriting model to reformulate without changing meaning.
+
+**Q: How does query rewriting differ from query expansion?**
+
+A: Query expansion specifically adds terms (synonyms, related concepts) to broaden the search. Query rewriting is broader — it includes expansion but also restructuring, decomposition, cross-lingual translation, and intent clarification. Expansion is a subset of rewriting.
 
 ## References
 

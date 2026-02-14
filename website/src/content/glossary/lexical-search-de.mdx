@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Lexical Search vergleicht den Text einer [Anfrage](/de/glossary/prompt/) mit Dokumenten über Schlüsselwörter, Operatoren und einfache Scoring‑Funktionen wie [BM25](/de/glossary/bm25/), ohne die tiefere Bedeutung des Textes zu modellieren.
+Lexical Search ist eine Suchmethode, die Dokumente findet, indem sie die exakten Wörter (oder deren Stammformen) einer Anfrage mit den Wörtern in einer Dokumentensammlung abgleicht. Sie basiert auf invertierten Indizes — Datenstrukturen, die jeden Begriff auf die Liste der Dokumente abbilden, die ihn enthalten — und Scoring-Funktionen wie [BM25](/de/glossary/bm25/), die Ergebnisse anhand von Termhäufigkeit, Dokumentlänge und korpusweiter Seltenheit bewerten. Lexical Search ist der älteste und am besten erprobte Ansatz im Information Retrieval und bleibt ein zentraler Bestandteil moderner Suchsysteme, einschließlich jener, die für die juristische Recherche eingesetzt werden.
+
+## Warum es wichtig ist
+
+- **Präzision bei exakten Begriffen** — wenn ein Steuerberater nach „Artikel 215 WIB92" oder einer bestimmten Ruling-Referenz sucht, findet die lexikalische Suche exakte Treffer, die eine [semantische Suche](/de/glossary/semantic-search/) möglicherweise übersieht oder schlecht rankt
+- **Geschwindigkeit und Skalierbarkeit** — invertierte Indizes sind hochoptimiert und können Millionen von Dokumenten in einstelligen Millisekunden mit minimalem Hardwareaufwand durchsuchen
+- **Transparenz** — Ergebnisse lassen sich erklären, indem gezeigt wird, welche Suchbegriffe mit welchen Dokumentbegriffen übereinstimmen, was das Ranking für Nutzer nachvollziehbar macht
+- **Komplementär zur semantischen Suche** — lexikalische und semantische Suche haben unterschiedliche Fehlermodi; ihre Kombination in der [hybriden Suche](/de/glossary/hybrid-search/) kompensiert die jeweiligen Schwächen beider Methoden
+
+## So funktioniert es
+
+Lexical Search arbeitet über eine Pipeline aus Textverarbeitung und Abgleich:
+
+**Indexierung** — wenn Dokumente in das System aufgenommen werden, wird ihr Text tokenisiert (in Wörter aufgeteilt), normalisiert (in Kleinbuchstaben umgewandelt, Akzente entfernt) und optional gestemmt (auf die Stammform reduziert, z. B. werden „belasting" und „belastingen" beide zu „belasting"). Jeder Begriff wird in einem invertierten Index erfasst, der Begriffe den Dokumenten und Positionen zuordnet, an denen sie vorkommen.
+
+**Anfrageverarbeitung** — die Anfrage des Nutzers durchläuft dieselbe Tokenisierung und Stemming-Verarbeitung wie die Dokumente, um einen konsistenten Abgleich zu gewährleisten. Einige Systeme erweitern die Anfrage um Synonyme oder verwandte Begriffe, um den Recall zu verbessern.
+
+**Scoring** — Kandidatendokumente werden mit Algorithmen wie BM25 bewertet, der drei Faktoren berücksichtigt: wie oft der Suchbegriff im Dokument vorkommt (Termhäufigkeit), wie selten der Begriff in der gesamten Sammlung ist (inverse Dokumenthäufigkeit) und die Länge des Dokuments (längere Dokumente werden leicht abgewertet, um eine Verzerrung zugunsten ausführlicher Quellen zu vermeiden). Der resultierende Score spiegelt wider, wie gut das Dokument zu den spezifischen Begriffen der Anfrage passt.
+
+Die Haupteinschränkung der lexikalischen Suche ist das **Vokabular-Mismatch-Problem**: Sie kann Konzepte, die mit anderen Wörtern ausgedrückt werden, nicht abgleichen. Eine Anfrage zu „corporate income tax" findet keine Dokumente, die nur „vennootschapsbelasting" verwenden, da die Begriffe lexikalisch unterschiedlich sind. Deshalb kombinieren moderne Systeme die lexikalische Suche mit dichter semantischer Suche in einem hybriden Ansatz.
+
+## Häufige Fragen
+
+**F: Ist BM25 der einzige lexikalische Scoring-Algorithmus?**
+
+A: Nein, aber er ist der am weitesten verbreitete. Alternativen sind TF-IDF (einfacher, weniger effektiv), BM25+ (eine Variante, die eine Verzerrung gegen lange Dokumente adressiert) und sprachmodellbasiertes Scoring. BM25 ist dominant geblieben, weil er einfach, schnell und überraschend effektiv ist.
+
+**F: Warum nicht einfach nur semantische Suche statt lexikalischer Suche verwenden?**
+
+A: Semantische Suche ist hervorragend im Abgleich von Bedeutungen, kann aber bei präzisen Identifikatoren, Referenznummern und fachspezifischen Begriffen Schwierigkeiten haben. Eine Kombination beider übertrifft konstant jede einzelne Methode — die lexikalische Suche übernimmt Präzisionsanfragen, während die semantische Suche konzeptuelle Anfragen abdeckt.

@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Vector normalization divides a vector by its norm so that its length becomes one, simplifying similarity calculations and making magnitude-independent comparisons.
+Vector normalisation (L2 normalisation) is the process of scaling a vector so that its length (L2 norm) equals exactly one, without changing its direction. This is done by dividing each dimension of the vector by the vector's total magnitude. Normalised vectors lie on the surface of a unit hypersphere, and the angular relationships between them are preserved while magnitude differences are removed. In the context of embedding-based search, normalisation ensures that similarity comparisons are based purely on directional alignment (meaning similarity) rather than being influenced by arbitrary differences in vector magnitude.
+
+## Why it matters
+
+- **Metric equivalence** — when vectors are normalised, cosine similarity, dot product, and squared Euclidean distance all produce equivalent rankings; this simplifies implementation and allows using the fastest available metric
+- **Fair comparison** — without normalisation, documents with longer or more information-dense embeddings might have larger magnitude vectors and receive artificially higher similarity scores; normalisation levels the playing field
+- **Index compatibility** — many vector index implementations (HNSW, IVF) are optimised for normalised vectors; using normalised vectors ensures optimal index performance
+- **Numerical stability** — normalised vectors have bounded values (each dimension between -1 and 1), preventing numerical overflow issues in distance computations
+
+## How it works
+
+For a vector **v** with dimensions (v₁, v₂, ..., vd), the L2 norm is:
+
+**‖v‖ = √(v₁² + v₂² + ... + vd²)**
+
+The normalised vector **v̂** is:
+
+**v̂ = v / ‖v‖**
+
+After normalisation, ‖v̂‖ = 1 by construction. The direction is preserved — normalised vectors point in the same direction as the originals — but the magnitude becomes uniform across all vectors.
+
+**When to normalise**: most text embedding models (E5, BGE, Cohere Embed) produce normalised or near-normalised vectors by design. Some models (like earlier OpenAI embeddings) produce unnormalised vectors where magnitude may carry information. Check the model's documentation to determine whether normalisation is appropriate.
+
+**When not to normalise**: if the embedding model intentionally encodes information in vector magnitude (e.g., using magnitude to represent confidence or document importance), normalisation would discard this information. This is uncommon but exists in some specialised models.
+
+**Implementation**: normalisation is a simple, fast operation — one pass through the vector to compute the L2 norm, followed by one element-wise division. Most embedding libraries and vector databases handle normalisation automatically when configured to use cosine similarity.
+
+## Common questions
+
+**Q: Should I normalise before or after storing in the vector database?**
+
+A: Normalise before storing. This ensures all stored vectors have unit length, allowing the database to use the faster dot product metric (which is equivalent to cosine similarity on normalised vectors) instead of explicitly computing cosine similarity.
+
+**Q: Can normalisation be reversed?**
+
+A: Only if the original magnitude is stored separately. Once a vector is normalised, its original magnitude is lost. If magnitude carries meaningful information, store it as a separate metadata field before normalising.
 
 ## References
 

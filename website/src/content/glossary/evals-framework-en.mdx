@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-An evals framework provides tooling and configuration to run repeatable tests—on [prompts](/en/glossary/prompt/), models, or pipelines—and to store [metrics](/en/glossary/distance-metric/) and results over time.
+An evals framework is a structured system of tools, test sets, metrics, and reporting infrastructure for systematically evaluating an AI system's performance. It automates the process of running test queries, comparing outputs against expected answers, computing quality metrics, and tracking results over time. Without an evals framework, quality assessment is ad hoc and unrepeatable; with one, teams can measure the impact of every change — new models, prompt revisions, knowledge base updates — against a consistent baseline.
+
+## Why it matters
+
+- **Measurable quality** — an evals framework transforms subjective assessments ("the system seems better") into quantifiable metrics (precision improved from 82% to 87%) that support data-driven decisions
+- **Regression prevention** — automated evaluations catch quality degradations before they reach users; if a prompt change improves one area but breaks another, the framework surfaces this
+- **Comparison and selection** — when evaluating different models, embedding strategies, or retrieval configurations, a standardised framework enables fair comparison under identical conditions
+- **Regulatory evidence** — the EU AI Act requires demonstrating that high-risk AI systems meet accuracy and performance standards; an evals framework produces the documentation and evidence for this
+
+## How it works
+
+An evals framework typically consists of four components:
+
+**Test datasets** — curated sets of questions with known correct answers, covering the system's expected use cases. For a legal AI system, this includes queries about specific tax provisions, cross-jurisdictional questions, temporal queries (law in force on a specific date), and edge cases (ambiguous questions, conflicting provisions). Test sets are versioned and expanded over time.
+
+**Evaluation metrics** — the specific measures used to assess quality. Common metrics include retrieval precision and recall (did the system find the right sources?), faithfulness (does the answer match the sources?), factual accuracy (is the answer correct?), and latency (how fast is the response?). Domain-specific metrics might include citation accuracy (are article numbers correct?) and temporal correctness (does the answer reflect the law in force at the relevant time?).
+
+**Execution engine** — the automation that runs test queries through the system, captures outputs, computes metrics, and stores results. This runs on a schedule (daily, weekly) or is triggered by changes (new model deployment, knowledge base update).
+
+**Reporting and alerting** — dashboards that visualise metric trends over time and alerts that notify the team when metrics drop below defined thresholds. Historical data allows the team to correlate performance changes with specific system modifications.
+
+The framework should support multiple evaluation modes: offline evaluation (running against a fixed test set), online evaluation (sampling and assessing production queries), and A/B testing (comparing two system versions on the same queries).
+
+## Common questions
+
+**Q: How large should the evaluation test set be?**
+
+A: Large enough to cover the system's key use cases and edge cases with statistical significance. For legal AI, 200-500 test queries across different topics, jurisdictions, and question types is a reasonable starting point. The set should grow as new use cases are identified.
+
+**Q: Can evaluation be fully automated?**
+
+A: Partially. Metrics like retrieval precision, latency, and format compliance can be automated. Faithfulness can be approximated with NLI models. But nuanced legal correctness often requires periodic human review, especially for complex or ambiguous queries.
 
 ## References
 

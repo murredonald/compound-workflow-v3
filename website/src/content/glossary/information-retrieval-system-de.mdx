@@ -12,4 +12,31 @@ draft: false
 
 ## Definition
 
-Ein Information Retrieval System verwaltet Indizes, Suchstrategien und Ranking‑Modelle, um für jede [Anfrage](/de/glossary/prompt/) eine geordnete Liste relevanter Dokumente oder Passagen zu liefern.
+Ein Information Retrieval System (IR-System) ist eine Kombination aus Software, Indizes und Algorithmen, die eine Dokumentensammlung speichert, Benutzeranfragen entgegennimmt und eine nach Relevanz geordnete Ergebnisliste zurückgibt. IR-Systeme reichen von einfachen schlüsselwortbasierten Suchmaschinen bis hin zu ausgefeilten mehrstufigen Pipelines, die lexikalisches Matching, semantisches Verständnis und Metadatenfilterung kombinieren. In der juristischen KI bildet das IR-System das Rückgrat, das die Frage eines Fachmanns mit dem exakten Gesetzesartikel, der Entscheidung oder dem Rundschreiben verbindet, das sie beantwortet.
+
+## Warum es wichtig ist
+
+- **Präzision in Hochrisikobereichen** — Steuerberater benötigen den spezifischen Artikel, der zutrifft, nicht eine Seite mit lose verwandten Ergebnissen; das Design des IR-Systems bestimmt unmittelbar, ob die richtige Bestimmung angezeigt wird
+- **Skalierbarkeit** — das belgische Steuerrecht umfasst Tausende von Gesetzen, königlichen Erlassen, Rundschreiben, Entscheidungen und parlamentarischen Anfragen in drei Sprachen; ein IR-System macht dies in Millisekunden durchsuchbar
+- **Grundlage für RAG** — bei der retrieval-augmentierten Generierung liefert das IR-System das Kontextfenster für das Sprachmodell; schlechtes Retrieval bedeutet schlechte Antworten, unabhängig von der Modellqualität
+- **Nachvollziehbarkeit** — ein gut konzipiertes IR-System protokolliert, welche Dokumente abgerufen wurden und warum, und unterstützt so die berufliche Rechenschaftspflicht und die Einhaltung regulatorischer Anforderungen
+
+## Wie es funktioniert
+
+Moderne IR-Systeme arbeiten in Schichten. Die erste Schicht ist die **Indexierung**: Dokumente werden verarbeitet, in handhabbare Einheiten aufgeteilt und in einer oder mehreren Indexstrukturen gespeichert. Ein lexikalischer Index (wie BM25) speichert Termfrequenzen für das Schlüsselwort-Matching. Ein Vektorindex speichert dichte Embeddings für semantisches Matching. Viele Systeme unterhalten beides und kombinieren die Ergebnisse in einer hybriden Suche.
+
+Die zweite Schicht ist die **Anfrageverarbeitung**: Die Rohfrage des Benutzers wird analysiert, mit Synonymen oder juristischer Terminologie erweitert und möglicherweise in Teilanfragen zerlegt. Das Anfrageverständnis ist in juristischen Bereichen besonders wichtig, da dasselbe Konzept in verschiedenen Rechtsordnungen oder Sprachen unterschiedliche Bezeichnungen haben kann.
+
+Die dritte Schicht ist das **Retrieval und Ranking**: Kandidatendokumente werden aus den Indizes abgerufen, bewertet, nach Metadaten gefiltert (Rechtsordnung, Datum, Autoritätsstufe) und mit einem aufwändigeren, aber genaueren Modell neu gerankt. Die endgültige Rangliste wird dem Benutzer zurückgegeben oder an eine Generierungsschicht zur Antwortsynthese weitergeleitet.
+
+Was ein juristisches IR-System von einem generischen unterscheidet, ist die domänenspezifische Logik, die in jede Schicht eingewoben ist: temporales Bewusstsein (Wissen, welche Version eines Gesetzes an einem bestimmten Datum galt), Autoritätsranking (Gesetzgebung wiegt schwerer als Verwaltungsrichtlinien) und sprachübergreifendes Retrieval (eine niederländische Anfrage sollte auch relevante französischsprachige Quellen finden).
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich ein IR-System von einer Datenbank?**
+
+A: Eine Datenbank ruft exakte Datensätze ab, die strukturierten Abfragen (SQL) entsprechen. Ein IR-System ruft Dokumente nach Relevanz für unstrukturierte natürlichsprachliche Anfragen ab. Datenbanken liefern präzise Treffer; IR-Systeme liefern gerankte Annäherungen, bewertet danach, wie gut sie der Abfrageintention entsprechen.
+
+**F: Kann ein IR-System mehrere Sprachen verarbeiten?**
+
+A: Ja. Sprachübergreifende IR-Systeme verwenden mehrsprachige Embeddings oder Übersetzungsschichten, um Anfragen in einer Sprache mit Dokumenten in einer anderen Sprache abzugleichen. Dies ist in Belgien unverzichtbar, wo Gesetzgebung auf Niederländisch, Französisch und Deutsch existiert.

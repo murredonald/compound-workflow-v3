@@ -12,4 +12,37 @@ draft: false
 
 ## Definitie
 
-Een beleid voor gegevensbewaring stelt minimale en maximale bewaartermijnen vast voor logbestanden, trainingsgegevens en gebruikersinhoud in overeenstemming met juridische en zakelijke vereisten.
+Een dataretentiebeleid is een formeel geheel van regels dat bepaalt hoe lang verschillende categorieën gegevens worden bewaard, wanneer ze moeten worden herzien, en wanneer ze moeten worden verwijderd of geanonimiseerd. Het beleid balanceert tegenstrijdige vereisten: wettelijke verplichtingen die minimale bewaartermijnen voorschrijven, privacyregelgeving die dataminimalisatie en maximale bewaartermijnen vereist, zakelijke behoeften aan historische gegevens, en technische beperkingen van opslagsystemen. Voor AI-systemen die opereren in gereguleerde domeinen zoals het Belgisch fiscaal recht, moet het dataretentiebeleid niet alleen gebruikersgegevens en querylogboeken behandelen, maar ook de AI-specifieke datacategorieën — trainingsgegevens, embeddingindexen, modeloutputs en audittrails — die elk hun eigen bewaarvereisten hebben.
+
+## Waarom het belangrijk is
+
+- **AVG-naleving** — de AVG vereist dataminimalisatie (artikel 5, lid 1, onder e), wat betekent dat persoonsgegevens niet langer mogen worden bewaard dan noodzakelijk voor het doel ervan; een dataretentiebeleid operationaliseert dit principe door specifieke bewaartermijnen voor elke datacategorie vast te stellen
+- **Belgische wettelijke verplichtingen** — het Belgisch fiscaal recht vereist dat bepaalde documenten gedurende specifieke perioden worden bewaard (7 jaar voor boekhoudkundige stukken op grond van het Wetboek van Vennootschappen en Verenigingen, 10 jaar voor bepaalde fiscale documenten); het retentiebeleid moet ervoor zorgen dat deze minima worden gerespecteerd
+- **Integriteit van de audittrail** — AI-systemen in professionele omgevingen hebben audittrails nodig die aantonen welke bronnen werden geraadpleegd en welke antwoorden werden gegenereerd; het retentiebeleid moet deze trails lang genoeg bewaren voor beroepsaansprakelijkheidsdoeleinden, maar niet onbeperkt
+- **Opslag- en kostenbeheer** — zonder retentielimieten stapelen gegevens zich onbeperkt op, wat de opslagkosten verhoogt, queries vertraagt en het aanvalsoppervlak vergroot; systematische verwijdering van verlopen gegevens houdt systemen efficiënt en veilig
+
+## Hoe het werkt
+
+Een dataretentiebeleid definieert doorgaans retentieregels voor elke datacategorie:
+
+**Dataclassificatie** — de eerste stap is het identificeren en categoriseren van alle gegevens die het systeem verwerkt. Voor een juridisch AI-systeem omvatten de categorieën doorgaans: gebruikersaccountgegevens, querylogboeken, opgehaalde brondocumenten, gegenereerde antwoorden, embeddingindexen, trainingsgegevens van het model, systeemlogboeken en factureringsgegevens. Elke categorie heeft andere retentiedrijvers.
+
+**Toewijzing van bewaartermijnen** — elke categorie krijgt een bewaartermijn toegewezen op basis van de langst geldende vereiste. Querylogboeken kunnen 12 maanden worden bewaard voor dienstverbetering en daarna worden geanonimiseerd. Gegenereerde antwoorden met audittrails kunnen 7 jaar worden bewaard om aan te sluiten bij de Belgische vereisten voor boekhoudkundige stukken. Embeddingindexen voor opgeheven wetgeving kunnen worden gearchiveerd in plaats van verwijderd, aangezien historisch onderzoek ze mogelijk nodig heeft.
+
+**Verwijdering en anonimisering** — wanneer de bewaartermijn verstrijkt, worden gegevens permanent verwijderd of geanonimiseerd (ontdaan van persoonsidentificatoren met behoud van geaggregeerde patronen). Het beleid specificeert welke aanpak van toepassing is op elke categorie. Onder de AVG is anonimisering een aanvaardbaar alternatief voor verwijdering als de gegevens niet langer aan personen kunnen worden gekoppeld.
+
+**Implementatie** — retentiebeleid wordt afgedwongen via geautomatiseerde systemen die de ouderdom van gegevens bijhouden en verwijderingsworkflows activeren. Handmatige verwijdering is onbetrouwbaar op grote schaal. De implementatie moet afhankelijkheden afhandelen — een gebruikersaccount kan bijvoorbeeld niet worden verwijderd zolang bijbehorende factureringsgegevens nog binnen hun bewaartermijn vallen.
+
+**Herziening en updates** — bewaartermijnen moeten regelmatig worden herzien (doorgaans jaarlijks) om rekening te houden met wijzigingen in wetgeving, zakelijke behoeften of regelgevende richtlijnen. De Belgische Gegevensbeschermingsautoriteit (GBA/APD) kan sectorspecifieke richtlijnen uitvaardigen die de bewaartermijnen beïnvloeden.
+
+Specifiek voor AI-systemen moet het beleid modelspecifieke aandachtspunten behandelen: kunnen trainingsgegevens worden verwijderd als ze de modelgewichten al hebben beïnvloed? Hoe lang moeten prompt-antwoordparen worden bewaard voor evaluatiedoeleinden? Wat gebeurt er met embeddings wanneer het onderliggende brondocument wordt bijgewerkt of verwijderd?
+
+## Veelgestelde vragen
+
+**V: Kunnen bewaartermijnen voor dezelfde gegevens verschillen afhankelijk van het doel?**
+
+A: Ja. Dezelfde gegevens kunnen onderworpen zijn aan verschillende bewaartermijnen voor verschillende doeleinden. Een querylogboek kan bijvoorbeeld 30 dagen worden bewaard voor foutopsporing, 12 maanden voor dienstverbeteringsanalyse (geanonimiseerd na 30 dagen), en 7 jaar als het deel uitmaakt van een audittrail voor professioneel advies. De langste geldende termijn bepaalt de daadwerkelijke verwijdering, maar toegangsbeperkingen kunnen doelbinding afdwingen vóór dat moment.
+
+**V: Wat gebeurt er wanneer een gebruiker gegevensverwijdering vraagt onder de AVG?**
+
+A: Het recht op gegevenswissing van de betrokkene (artikel 17 AVG) vereist verwijdering van persoonsgegevens tenzij een wettelijke uitzondering van toepassing is. Wettelijke verplichtingen (bewaring van fiscale documenten), gerechtvaardigde belangen (fraudepreventie) of juridische vorderingen (beroepsaansprakelijkheid) kunnen voortgezette bewaring rechtvaardigen. Het retentiebeleid moet vooraf definiëren welke uitzonderingen van toepassing zijn op elke datacategorie, zodat verwijderingsverzoeken consistent kunnen worden afgehandeld.

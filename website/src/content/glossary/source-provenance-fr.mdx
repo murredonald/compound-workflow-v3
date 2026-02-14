@@ -12,4 +12,37 @@ draft: false
 
 ## Définition
 
-La provenance des sources enregistre l'origine, la propriété et l'historique de transformation des données ou du contenu afin que leur fiabilité et leur conformité puissent être évaluées.
+La provenance des sources est la chaîne documentée d'origine, de propriété et d'historique de transformation pour toute donnée ou contenu utilisé dans un système d'IA. Elle répond aux questions : d'où vient cette information, qui l'a publiée, quand a-t-elle été mise à jour pour la dernière fois, et quels traitements a-t-elle subis ? En IA juridique, la provenance est essentielle car l'autorité et la fiabilité d'une source affectent directement la fiabilité de toute réponse qui en est dérivée.
+
+## Pourquoi c'est important
+
+- **Vérification de l'autorité** — en droit fiscal, un arrêt de la Cour constitutionnelle a plus de poids qu'une question parlementaire ; les métadonnées de provenance permettent au système de distinguer entre les niveaux d'autorité des sources
+- **Suivi de la fraîcheur** — savoir quand une source a été publiée et si elle a été modifiée ou abrogée empêche le système de citer des dispositions obsolètes
+- **Conformité** — l'AI Act européen et le RGPD imposent tous deux des exigences en matière de transparence et de traçabilité des données que les métadonnées de provenance aident à satisfaire
+- **Reproductibilité** — lorsqu'un système d'IA produit une réponse, les enregistrements de provenance permettent à quiconque de remonter jusqu'aux sources originales et de vérifier l'exactitude
+
+## Comment ça fonctionne
+
+Le suivi de la provenance s'effectue tout au long du cycle de vie des données :
+
+1. **Ingestion** — lorsqu'un document entre dans le système, il est étiqueté avec des métadonnées : source de publication (Moniteur belge, SPF Finances, base de données judiciaire), date de publication, niveau d'autorité, type de document (loi, arrêté royal, circulaire, décision) et portée juridictionnelle
+
+2. **Transformation** — au fur et à mesure que le document est traité (analysé, découpé en chunks, nettoyé, intégré en embeddings), chaque étape de transformation est enregistrée. Si le texte a été extrait d'un PDF, la confiance de l'OCR est journalisée. Si une limite de chunk a été ajustée, les versions originale et modifiée sont liées.
+
+3. **Stockage** — les métadonnées de provenance sont stockées aux côtés du contenu du document dans la base de connaissances, les rendant disponibles au moment de la requête pour le filtrage, le classement et la génération de citations
+
+4. **Citation** — lorsque le système génère une réponse, il inclut les informations de provenance dans ses citations : le document source spécifique, sa date de publication, l'article ou la section pertinente, et un lien vers le texte faisant autorité. Cela permet à l'utilisateur de vérifier la réponse par rapport à la source originale.
+
+## Questions fréquentes
+
+**Q : En quoi la provenance des sources diffère-t-elle de la citation ?**
+
+R : La citation indique quelle source a été utilisée dans une réponse. La provenance des sources est plus large — elle inclut le cycle de vie complet des données : où elles ont été collectées, comment elles ont été traitées et chaque transformation qu'elles ont subie avant d'être utilisées. La citation est ce que l'utilisateur voit ; la provenance est la chaîne complète derrière.
+
+**Q : Pourquoi l'autorité de la source est-elle importante pour les réponses de l'IA ?**
+
+R : Toutes les sources juridiques n'ont pas le même poids. La législation prévaut sur les circulaires administratives ; les arrêts de la Cour de cassation prévalent sur les décisions des tribunaux inférieurs. Un système sans classement d'autorité basé sur la provenance pourrait accorder le même poids à une FAQ ministérielle et à une loi contraignante, produisant des résultats trompeurs.
+
+**Q : Comment la provenance contribue-t-elle à la conformité au RGPD ?**
+
+R : Le RGPD exige des organisations qu'elles sachent d'où proviennent les données personnelles et comment elles sont traitées (articles 13-14 sur la transparence, article 30 sur les registres de traitement). La provenance des sources fournit cette documentation, montrant l'origine des données, leur historique de traitement et leur utilisation actuelle au sein du système d'IA.

@@ -10,6 +10,41 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+L'évaluation continue est la pratique consistant à exécuter régulièrement et automatiquement des évaluations de qualité sur les sorties d'un système d'IA en utilisant des données de production récentes ou en temps réel, plutôt que de se fier uniquement à des évaluations ponctuelles lors du déploiement. Elle détecte la dégradation des performances, les régressions et les dérives au moment où elles se produisent — avant que les utilisateurs ne les remarquent ou n'en soient affectés. En IA juridique, l'évaluation continue est particulièrement importante car la base de connaissances change constamment à mesure que de nouvelles législations, décisions et circulaires sont ajoutées, et chacun de ces changements peut affecter la qualité des réponses.
+
+## Pourquoi c'est important
+
+- **Détection précoce des régressions** — une nouvelle ingestion de documents, une mise à jour du modèle ou un changement de prompt peut dégrader subtilement la qualité des réponses ; l'évaluation continue détecte ces régressions en quelques heures plutôt qu'en quelques semaines
+- **Santé de la base de connaissances** — à mesure que de nouvelles sources juridiques sont ajoutées, elles peuvent entrer en conflit avec des dispositions existantes ou introduire des cas limites ; l'évaluation continue met en lumière ces problèmes avant qu'ils n'affectent les réponses destinées aux utilisateurs
+- **Conformité réglementaire** — le règlement européen sur l'IA (AI Act) exige un suivi continu des systèmes d'IA à haut risque tout au long de leur cycle de vie, et pas seulement au moment du déploiement ; l'évaluation continue fournit les preuves de cette conformité permanente
+- **Confiance dans les mises à jour** — les équipes peuvent déployer des améliorations en toute confiance sachant que les évaluations automatisées signaleront toute dégradation inattendue
+
+## Comment ça fonctionne
+
+L'évaluation continue fonctionne comme un pipeline automatisé qui s'exécute selon un calendrier régulier ou qui est déclenché par des changements du système :
+
+**Évaluation sur jeu de test** — un ensemble organisé de questions représentatives avec des réponses correctes connues est exécuté périodiquement contre le système (quotidiennement ou hebdomadairement). Les résultats sont comparés aux scores de référence. Des baisses de précision, de [fidélité](/fr/glossary/faithfulness/) ou de précision de recherche déclenchent des alertes.
+
+**Échantillonnage de production** — un échantillon aléatoire de requêtes réelles des utilisateurs et de réponses du système est capturé et évalué automatiquement. Des métriques automatisées évaluent la fidélité (la réponse correspond-elle aux sources citées ?), la complétude (la couche de recherche a-t-elle trouvé les dispositions pertinentes ?) et la conformité de format (la sortie suit-elle la structure attendue ?).
+
+**Tests de régression** — lorsque la base de connaissances est mise à jour (nouvelle législation ingérée, documents existants modifiés), un ensemble ciblé de requêtes liées au contenu modifié est automatiquement exécuté pour vérifier que les réponses sont correctement mises à jour et que les réponses non liées ne sont pas affectées.
+
+**Le suivi de la dérive** surveille les propriétés statistiques des entrées et sorties du système au fil du temps. Des changements dans la distribution des requêtes (les utilisateurs posent des questions sur de nouveaux sujets), dans les distributions de scores de recherche (scores de pertinence moyens plus bas) ou dans les distributions de confiance (réponses plus incertaines) peuvent indiquer des problèmes sous-jacents.
+
+Les résultats sont agrégés dans des tableaux de bord montrant les tendances au fil du temps : courbes de précision, métriques de qualité de recherche, taux d'hallucination et latence. Des seuils définissent quand des alertes automatisées sont déclenchées par rapport à quand le changement se situe dans la variance normale.
+
+## Questions fréquentes
+
+**Q : En quoi l'évaluation continue diffère-t-elle des tests unitaires ?**
+
+R : Les tests unitaires vérifient que les composants de code individuels fonctionnent correctement de manière isolée. L'évaluation continue évalue la qualité des sorties du système de bout en bout sur des données réalistes. Les tests unitaires détectent les bugs de code ; l'évaluation continue détecte la dégradation de la qualité qui peut ne pas être causée par des changements de code (par exemple, un document nouvellement ingéré qui entre en conflit avec le contenu existant).
+
+**Q : À quelle fréquence l'évaluation continue doit-elle être exécutée ?**
+
+R : Cela dépend de la fréquence de mise à jour du système et de la tolérance au risque. Une évaluation quotidienne est courante pour les systèmes en production. Une évaluation déclenchée par événement (exécutée après chaque mise à jour de la base de connaissances ou changement de modèle) est plus réactive mais plus gourmande en ressources.
+
 ## References
 
 > Baifan Zhou et al. (2022), "[Machine learning with domain knowledge for predictive quality monitoring in resistance spot welding](https://doi.org/10.1007/s10845-021-01892-y)", Journal of Intelligent Manufacturing.

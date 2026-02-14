@@ -12,7 +12,40 @@ draft: false
 
 ## Definitie
 
-Human-in-the-loop-validatie brengt [menselijk toezicht](/nl/glossary/human-oversight/) in de evaluatielus voor gevoelige of hoog-risico-toepassingen.
+Human-in-the-loop-validatie (HITL) is de praktijk waarbij menselijke Expertbeoordeling wordt geïntegreerd in de Workflow van het AI-systeem — hetzij als verplichte Goedkeuringsstap voordat Outputs worden afgerond, hetzij als steekproefsgewijs kwaliteitsborgingsproces. In plaats van AI-outputs blind te vertrouwen, zorgt HITL ervoor dat een gekwalificeerde Professional de Outputs van het Systeem beoordeelt, corrigeert of goedkeurt, met name in scenario's met hoge Inzet waar Fouten aanzienlijke Gevolgen hebben. In juridische AI weerspiegelt HITL de professionele Realiteit dat Belastingadvies uiteindelijk menselijk Oordeelsvermogen en Verantwoordelijkheid vereist.
+
+## Waarom het ertoe doet
+
+- **Foutendetectie** — AI-systemen hallucineren, interpreteren Zoekopdrachten verkeerd en missen Nuances die een Domeinexpert zou opvangen; HITL biedt een vangnet dat voorkomt dat onjuiste Outputs ongecontroleerd bij Eindgebruikers terechtkomen
+- **Professionele verantwoordelijkheid** — in gereguleerde Beroepen zoals Belastingadvies is een menselijke Professional uiteindelijk verantwoordelijk voor het gegeven Advies; HITL handhaaft deze Verantwoordelijkheidsketen in plaats van deze aan een AI-systeem te delegeren
+- **Continue verbetering** — menselijke Correcties genereren gelabelde Data die kan worden gebruikt om het Systeem te verbeteren: retrieval-lacunes dichten, Prompts verfijnen en evaluatiedatasets bijwerken
+- **Afstemming op Regelgeving** — de EU AI Act benadrukt menselijk Toezicht voor AI-systemen met hoog Risico; HITL-validatie biedt een concreet Mechanisme voor dit Toezicht
+
+## Hoe het werkt
+
+HITL-validatie functioneert op verschillende niveaus, afhankelijk van Risico en Haalbaarheid:
+
+**Verplichte beoordeling** — elke AI-output wordt door een menselijke Expert beoordeeld voordat deze wordt geleverd. Dit is geschikt voor scenario's met hoge Inzet (bindende Belastingadviezen, klantgerichte Adviezen) maar schaalt niet voor zoekopdrachten met hoog Volume en laag Risico. De Beoordelaar controleert feitelijke Juistheid, Broncorrectheid en Volledigheid.
+
+**Steekproefsgewijze beoordeling** — een willekeurige Steekproef van AI-outputs wordt periodiek beoordeeld (bijv. 10% van de dagelijkse Zoekopdrachten). Dit biedt statistische Kwaliteitsmonitoring zonder dat elke Output moet worden beoordeeld. Patronen in gedetecteerde Fouten sturen Systeemverbeteringen aan.
+
+**Door betrouwbaarheid getriggerde beoordeling** — Outputs onder een bepaalde Betrouwbaarheidsdrempel worden automatisch naar een menselijke Beoordelaar gestuurd, terwijl Outputs met hoge Betrouwbaarheid rechtstreeks worden geleverd. Dit concentreert de menselijke Inspanning op de Gevallen die het meest waarschijnlijk Fouten bevatten.
+
+**Feedbackintegratie** — wanneer Beoordelaars een AI-output corrigeren, wordt de Correctie vastgelegd als Trainingssignaal: de oorspronkelijke Zoekopdracht, de onjuiste Output en de gecorrigeerde Versie vormen samen een Datapunt dat kan worden gebruikt om Retrieval te verbeteren, Prompts te verfijnen of de Evaluatiedataset uit te breiden.
+
+Effectieve HITL vereist duidelijke Workflows: wat de Beoordelaar ziet (de AI-output, de geciteerde Bronnen, de Betrouwbaarheidsscore), wat er van hem of haar wordt verwacht te controleren (Juistheid, Volledigheid, Correctheid van Citaten), hoe de Beoordeling wordt vastgelegd (goedkeuren, corrigeren, afwijzen) en hoe de Feedback terugstroomt naar Systeemverbetering.
+
+De kernspanning in HITL ligt tussen Grondigheid en Efficiëntie. Elke Output beoordelen garandeert Kwaliteit maar elimineert het tijdsbesparende Voordeel van AI. Risicogebaseerde Benaderingen die menselijke Beoordeling richten op onzekere of hoog-risico-outputs brengen Kwaliteitsborging en praktische Efficiëntie met elkaar in evenwicht.
+
+## Veelgestelde vragen
+
+**V: Betekent HITL dat de AI niet wordt vertrouwd?**
+
+A: Niet precies. HITL betekent dat de AI proportioneel wordt vertrouwd in verhouding tot zijn aangetoonde Betrouwbaarheid. Naarmate het Systeem zichzelf bewijst (consistent hoge Kwaliteit bij beoordeelde Outputs), kan de Reikwijdte van verplichte Beoordeling worden verkleind. Vertrouwen wordt verdiend door Bewijs, en HITL levert dat Bewijs.
+
+**V: Hoeveel vertraagt HITL de Workflow?**
+
+A: Bij door betrouwbaarheid getriggerde Beoordeling worden de meeste Outputs (hoge Betrouwbaarheid) onmiddellijk geleverd. Alleen onzekere Outputs wachten op Beoordeling. De totale Vertraging hangt af van het Aandeel onzekere Outputs en de Reactietijd van de Beoordelaar.
 
 ## References
 

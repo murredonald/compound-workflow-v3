@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le nearest-neighbor search parcourt un index pour identifier les k vecteurs les plus proches d’un embedding de requête selon une métrique de distance choisie et constitue la base de la [vector search](/fr/glossary/similarity-search/).
+La recherche de plus proches voisins (k-NN search) consiste à trouver les k éléments d'un jeu de données dont les représentations vectorielles sont les plus proches d'un vecteur de requête donné selon une métrique de distance choisie. C'est le moteur computationnel derrière la recherche sémantique : lorsqu'un utilisateur pose une question, le système l'encode sous forme de vecteur et récupère les k vecteurs de documents les plus proches dans l'index. Le défi réside dans l'efficacité de cette opération — la recherche exacte de plus proches voisins devient impraticablement lente sur de grands jeux de données, ce qui explique pourquoi les algorithmes approximatifs dominent les systèmes en production.
+
+## Pourquoi c'est important
+
+- **Fondement de la recherche sémantique** — chaque requête de recherche sémantique se résout en fin de compte par une recherche de plus proches voisins dans l'espace vectoriel ; la vitesse et la précision de l'algorithme déterminent directement les performances du système
+- **Contraintes d'échelle** — les bases de connaissances juridiques contiennent des millions de fragments de documents ; une comparaison naïve avec chaque vecteur prendrait des secondes par requête, bien trop lent pour un usage interactif
+- **Compromis rappel-vitesse** — le choix de l'algorithme de plus proches voisins détermine si le système trouve tous les documents pertinents (rappel) ou répond rapidement (latence), une décision de conception critique pour l'IA juridique
+- **Utilisation du matériel** — les algorithmes efficaces de plus proches voisins exploitent les instructions SIMD, le parallélisme GPU et la hiérarchie mémoire pour maximiser le débit sur le matériel disponible
+
+## Comment ça fonctionne
+
+**La recherche exacte de plus proches voisins** compare le vecteur de requête à chaque vecteur du jeu de données, en calculant un score de distance pour chacun. Cela garantit de trouver les vrais plus proches voisins, mais évolue linéairement avec la taille du jeu de données — rechercher dans 10 millions de vecteurs prend 10 fois plus de temps que dans 1 million. Pour les petits jeux de données (moins de 100 000 vecteurs), c'est souvent suffisamment rapide.
+
+**La recherche approximative de plus proches voisins (ANN)** sacrifie une petite part de précision pour une recherche considérablement plus rapide. Les approches les plus courantes sont :
+
+- **HNSW (Hierarchical Navigable Small World graphs)** — construit une structure de graphe en couches sur les vecteurs. La recherche commence à la couche supérieure et navigue à travers des couches progressivement plus denses, trouvant les plus proches voisins en temps logarithmique. HNSW offre un excellent rappel (typiquement 95-99 %) avec des temps de recherche inférieurs à la milliseconde.
+
+- **IVF (Inverted File Index)** — partitionne l'espace vectoriel en clusters à l'aide de k-means. Au moment de la recherche, seuls les clusters les plus proches sont analysés plutôt que l'ensemble du jeu de données. Cette méthode est particulièrement efficace pour les très grands jeux de données.
+
+- **Quantification produit (PQ)** — compresse les vecteurs en les divisant en sous-vecteurs et en quantifiant chacun indépendamment. Cela réduit l'utilisation mémoire et accélère le calcul de distance au prix d'une certaine perte de précision.
+
+Les bases de données vectorielles en production combinent généralement ces techniques — par exemple, IVF pour le partitionnement grossier suivi de PQ pour l'analyse compressée au sein de chaque partition, ou HNSW avec PQ pour une recherche graphique efficace en mémoire.
+
+Les paramètres clés à ajuster sont le nombre de voisins à retourner (k), le nombre de clusters candidats ou de nœuds de graphe à explorer (contrôlant le compromis rappel-vitesse), et la métrique de distance (similarité cosinus, produit scalaire ou distance euclidienne).
+
+## Questions fréquentes
+
+**Q : Quelle perte de rappel avec la recherche approximative ?**
+
+R : Des index ANN bien paramétrés atteignent un rappel de 95-99 % — ce qui signifie qu'ils trouvent 95 à 99 des 100 vrais plus proches voisins. Pour la plupart des applications de recherche, cela est indiscernable de la recherche exacte en pratique, car le reranking en aval compense les candidats occasionnellement manqués.
+
+**Q : Quel algorithme ANN est le meilleur ?**
+
+R : HNSW est le choix le plus populaire grâce à sa combinaison de rappel élevé, de recherche rapide et d'un paramétrage relativement simple. IVF+PQ est préféré lorsque la mémoire est limitée. Le meilleur choix dépend de la taille du jeu de données, de la dimensionnalité, des exigences de latence et du matériel disponible.
 
 ## References
 

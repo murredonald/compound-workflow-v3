@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Dimensionsreduktion wendet mathematische Transformationen – etwa PCA oder Autoencoder – an, um [Embeddings](/de/glossary/embeddings/) kompakter zu machen, wodurch Speicher- und Suchkosten mit begrenztem Qualitätsverlust sinken.
+Dimensionsreduktion ist eine Familie von Techniken, die hochdimensionale Daten in eine niedrigerdimensionale Darstellung transformieren und dabei möglichst viel bedeutungsvolle Struktur bewahren. Im Kontext von KI und Information Retrieval bedeutet dies typischerweise die Komprimierung von [Vektoreinbettungen](/de/glossary/embeddings/) — die 768 oder mehr Dimensionen haben können — in kleinere Vektoren, die schneller zu durchsuchen, günstiger zu speichern und einfacher zu visualisieren sind. Der Kompromiss besteht immer zwischen Kompression und Informationsverlust: aggressivere Reduktion spart mehr Ressourcen, riskiert aber, Unterscheidungen zu verwerfen, die für die Abrufqualität relevant sind.
+
+## Warum es wichtig ist
+
+- **Suchgeschwindigkeit** — Ähnlichkeitssuche über niedrigerdimensionale Vektoren ist schneller, weil Abstandsberechnungen weniger Operationen erfordern; dies ist im großen Maßstab relevant, wenn Millionen von Dokumenteinbettungen durchsucht werden
+- **Speichereffizienz** — die Reduktion von 1536-dimensionalen Vektoren auf 256 Dimensionen senkt den Speicherbedarf um über 80 %, was bei großen Wissensbasen erheblich ist
+- **Visualisierung** — die Reduktion von Einbettungen auf 2 oder 3 Dimensionen ermöglicht die menschliche Inspektion des [Embedding Space](/de/glossary/embedding-space/) und offenbart Cluster, Ausreißer und Abdeckungslücken
+- **Rauschreduktion** — hochdimensionale Einbettungen können redundante oder verrauschte Dimensionen enthalten; die Reduktion kann den Abruf tatsächlich verbessern, indem Dimensionen eliminiert werden, die Rauschen hinzufügen, ohne zur Bedeutung beizutragen
+
+## So funktioniert es
+
+Techniken der Dimensionsreduktion fallen in zwei Kategorien:
+
+**Lineare Methoden** projizieren Daten entlang der Richtungen maximaler Varianz. Die Hauptkomponentenanalyse (PCA) ist die gebräuchlichste: Sie identifiziert die Achsen, entlang derer die Daten am stärksten variieren, und verwirft den Rest. PCA ist schnell, deterministisch und funktioniert gut, wenn die wichtige Struktur in den Daten linear ist. Für Einbettungen bewahrt PCA von 768 auf 256 Dimensionen typischerweise 90–95 % der Abrufleistung.
+
+**Nichtlineare Methoden** erfassen komplexere Strukturen. t-SNE (t-distributed Stochastic Neighbour Embedding) und UMAP (Uniform Manifold Approximation and Projection) werden hauptsächlich zur Visualisierung eingesetzt — sie bilden hochdimensionale Daten auf 2–3 Dimensionen ab und bewahren dabei lokale Nachbarschaftsbeziehungen. Autoencoder verwenden neuronale Netzwerke, um eine komprimierte Darstellung zu lernen, und können nichtlineare Muster erfassen, erfordern aber Training und sind komplexer im Einsatz.
+
+In produktiven Abrufsystemen wird die Dimensionsreduktion oft zur Indexierungszeit angewendet: Einbettungen in voller Dimensionalität werden vom Embedding-Modell berechnet und dann vor der Speicherung im Vektorindex komprimiert. Zur Anfragezeit durchläuft die Anfrageeinbettung dieselbe Reduktion vor der Suche. Einige Vektordatenbanken wenden Quantisierung (eine verwandte Technik) zusätzlich zu oder anstelle von Dimensionsreduktion an, um den Speicherbedarf weiter zu komprimieren.
+
+Die zentrale Entscheidung ist, wie viele Dimensionen beibehalten werden sollen. Dies wird empirisch bestimmt, indem die Abrufqualität (Recall@k, nDCG) bei verschiedenen Dimensionszahlen gemessen und der Punkt gefunden wird, an dem eine weitere Reduktion die Ergebnisse merklich verschlechtert.
+
+## Häufige Fragen
+
+**F: Hilft Dimensionsreduktion immer?**
+
+A: Nicht immer. Wenn das Embedding-Modell kompakte, informationsdichte Vektoren mit wenigen redundanten Dimensionen erzeugt, kann die Reduktion mehr schaden als nutzen. Sie ist am vorteilhaftesten, wenn die ursprüngliche Dimensionalität hoch ist (1000+) und Speicher- oder Geschwindigkeitsbeschränkungen erheblich sind.
+
+**F: Was ist der Unterschied zwischen Dimensionsreduktion und Vektorquantisierung?**
+
+A: Dimensionsreduktion reduziert die Anzahl der Dimensionen (z. B. 768 → 256). Vektorquantisierung reduziert die Präzision jeder Dimension (z. B. 32-Bit-Fließkomma → 8-Bit-Ganzzahlen) oder bildet Vektoren auf Cluster-Zentroide ab. Beide reduzieren den Speicherbedarf und beschleunigen die Suche und können kombiniert werden.
 
 ## References
 

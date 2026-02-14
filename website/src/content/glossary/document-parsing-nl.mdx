@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Document parsing haalt tekst, structuur (koppen, tabellen) en soms afbeeldingen uit bestanden zoals pdf’s of Word‑documenten en zet ze om naar een uniform intern formaat.
+Document parsing is het proces van het extraheren van gestructureerde tekst en lay-outinformatie uit ruwe documentformaten — pdf's, HTML-pagina's, Word-documenten, gescande afbeeldingen en XML-feeds — en het omzetten ervan in een schone, gestructureerde representatie die geschikt is voor indexering en retrieval. Parsing is de eerste transformatiestap in de datapipeline: het overbrugt het verschil tussen hoe documenten worden gepubliceerd (geoptimaliseerd voor menselijk lezen) en hoe AI-systemen ze verwerken (met behoefte aan schone tekst met structurele annotaties). De kwaliteit van document parsing beïnvloedt alles wat er downstream op volgt — een slecht geparsed document met verminkte tekst, verloren structuur of ontbrekende inhoud levert slechte [embeddings](/nl/glossary/embeddings/), slechte zoekresultaten en slechte antwoorden op.
+
+## Waarom het belangrijk is
+
+- **Fundament voor datakwaliteit** — alle downstream-verwerking (chunking, embedding, retrieval, generatie) werkt op de output van de parser; fouten die tijdens het parsen worden geïntroduceerd, planten zich voort door de gehele pipeline
+- **Diversiteit aan formaten** — Belgische juridische bronnen komen in veel formaten aan: pdf's van het Belgisch Staatsblad, HTML van wetgevingsdatabases, XML van rechtspraak en gescande historische omzendbrieven; de parser moet ze allemaal aankunnen
+- **Behoud van structuur** — juridische documenten hebben een betekenisvolle structuur (artikelen, paragrafen, genummerde opsommingen, tabellen) die door het parseerproces heen behouden moet blijven voor nauwkeurige chunking en citatie
+- **Extractie van tabellen en lijsten** — belastingwetgeving bevat frequent tarieftabellen, drempellijsten en gestructureerde criteria die als gestructureerde gegevens moeten worden geëxtraheerd, niet als verminkte lopende tekst
+
+## Hoe het werkt
+
+Document parsing gebruikt formaatspecifieke technieken:
+
+**PDF-parsing** is het meest uitdagend omdat pdf's weergaveformaatdocumenten zijn — ze specificeren waar tekens op een pagina getekend moeten worden, niet de logische structuur van de tekst. Parsers moeten de leesvolgorde reconstrueren uit tekenposities, kolommen detecteren, kop- en voetteksten identificeren, woordafbreking afhandelen en tabellen extraheren. Tools zoals pdfplumber, PyMuPDF en commerciële oplossingen (ABBYY, Amazon Textract) bieden verschillende afwegingen tussen nauwkeurigheid en snelheid.
+
+**HTML-parsing** extraheert inhoud uit webpagina's door navigatie, advertenties en standaardtekst te verwijderen terwijl de betekenisvolle inhoud en structuur (koppen, paragrafen, lijsten, tabellen) behouden blijft. HTML is over het algemeen makkelijker te parsen dan pdf omdat de structuur expliciet in tags is gecodeerd, hoewel inconsistente opmaakkwaliteit het parsen in de praktijk bemoeilijkt.
+
+**XML-parsing** verwerkt gestructureerde datafeeds aan de hand van het documentschema. Belgische wetgevingsdatabases bieden vaak XML met expliciete structurele opmaak (artikelnummers, paragrafen, kruisverwijzingen), waardoor XML het schoonste invoerformaat is wanneer het beschikbaar is.
+
+**[OCR](/nl/glossary/ocr/) (Optical Character Recognition)** verwerkt gescande documenten door afbeeldingen van tekst om te zetten in machineleesbare tekens. OCR-kwaliteit hangt af van scanresolutie, documentconditie en taal. Voor Belgische juridische documenten moet OCR drie talen aankunnen, juridische opmaak verwerken en mogelijk aangetaste historische scans behandelen. OCR-betrouwbaarheidsscores markeren tekens of gebieden waar de herkenning onzeker is.
+
+Na de initiële extractie ruimt **naverwerking** de output op: het oplossen van coderingsproblemen, het samenvoegen van afgebroken woorden, het normaliseren van witruimte en het valideren van structurele integriteit.
+
+## Veelgestelde vragen
+
+**V: Wat is de grootste parsing-uitdaging voor juridische documenten?**
+
+A: Meerkoloms-pdf-lay-outs en complexe tabellen. Juridische documenten gebruiken frequent meerkoloms-opmaak die eenvoudige pdf-parsers verkeerd interpreteren, waarbij tekst uit verschillende kolommen door elkaar wordt gehaald. Tabellen met samengevoegde cellen, geneste koppen en voetnoten zijn eveneens moeilijk nauwkeurig te extraheren.
+
+**V: Hoe meet je de kwaliteit van parsing?**
+
+A: Door de parseroutput te vergelijken met handmatig geverifieerde [ground truth](/nl/glossary/ground-truth/) voor een steekproef van documenten. Metrieken omvatten nauwkeurigheid op tekenniveau, detectie van structurele elementen (koppen, tabellen, lijsten) en downstream-retrievalkwaliteit (verbeteren betere parseresultaten de zoekresultaten?).

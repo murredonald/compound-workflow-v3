@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Embedding [Alignment](/de/glossary/alignment/) nutzt Transformationen oder gemeinsames Training, um Embedding‑Räume so zu verschieben, dass Vektoren mit gleicher Bedeutung aus unterschiedlichen Quellen nahe beieinander landen.
+Embedding [Alignment](/de/glossary/alignment/) ist der Prozess, Embedding-Vektoren aus verschiedenen Modellen, Sprachen oder Domänen in einen gemeinsamen Vektorraum abzubilden, in dem sie sinnvoll verglichen werden können. Wenn zwei Embedding-Modelle Vektoren in unterschiedlichen Räumen erzeugen, kann ein mit Modell A eingebettetes Dokument nicht mit einer mit Modell B eingebetteten Abfrage verglichen werden — Alignment-Techniken lernen eine Transformation, die diese Lücke überbrückt. Im mehrsprachigen Legal-AI-Bereich ermöglicht Embedding Alignment einem einzigen Retrievalsystem, niederländische Abfragen mit französischen Dokumenten abzugleichen, indem die Embedding-Räume beider Sprachen aufeinander ausgerichtet werden.
+
+## Warum es wichtig ist
+
+- **Sprachübergreifendes Retrieval** — belgische Rechtsquellen existieren auf Niederländisch, Französisch und Deutsch; Embedding Alignment ermöglicht es, dass eine Abfrage in einer Sprache Dokumente in allen drei Sprachen findet, ohne dass eine Übersetzung erforderlich ist
+- **Modellmigration** — beim Upgrade auf ein neueres Embedding-Modell kann Alignment alte und neue Embeddings während des Übergangs überbrücken, wodurch die gleichzeitige Neueinbettung des gesamten Korpus vermieden wird
+- **Multi-Modell-Fusion** — verschiedene Embedding-Modelle können auf unterschiedliche Aspekte spezialisiert sein (eines besser für kurze Abfragen, ein anderes für lange Dokumente); Alignment ermöglicht die Kombination ihrer Stärken
+- **Domänenanpassung** — die Ausrichtung allgemeiner Embeddings mit domänenspezifischen überträgt die Breite des allgemeinen Modells auf die Präzision des spezialisierten Modells
+
+## So funktioniert es
+
+Embedding Alignment umfasst typischerweise das Erlernen einer Transformationsmatrix, die Vektoren von einem Raum in einen anderen abbildet:
+
+**Lineares Alignment** lernt eine Rotations- und/oder Skalierungsmatrix W, sodass die Transformation von Vektoren aus Raum A durch W diese nahe an die entsprechenden Vektoren in Raum B abbildet. Die Matrix wird anhand einer Menge gepaarter Beispiele gelernt — Elemente, die im ausgerichteten Raum nahe beieinander liegen sollten (z. B. dasselbe Rechtskonzept auf Niederländisch und Französisch ausgedrückt). Dies ist rechnerisch einfach und oft erstaunlich effektiv.
+
+**Orthogonales Alignment** (Procrustes-Alignment) beschränkt die Transformation auf eine orthogonale Matrix (Rotation ohne Skalierung), die Abstände und Winkel innerhalb jedes Raums erhält. Dies funktioniert gut, wenn die beiden Räume eine ähnliche Struktur, aber unterschiedliche Ausrichtungen haben.
+
+**Nichtlineares Alignment** verwendet neuronale Netze, um komplexere Abbildungen zwischen Räumen zu lernen. Dies kann Fälle bewältigen, in denen die Räume strukturell unterschiedliche Bedeutungsrepräsentationen haben, erfordert jedoch mehr Trainingsdaten und birgt das Risiko von Overfitting.
+
+**Trainingsdaten** für Alignment bestehen aus parallelen Paaren: dasselbe Dokument oder Konzept, dargestellt in beiden Räumen. Für sprachübergreifendes Alignment liefern zweisprachige Wörterbücher, parallele Rechtstexte (belgische Gesetze existieren in offiziellen niederländischen und französischen Fassungen) oder übersetzte Satzpaare das Trainingssignal. Bereits einige tausend parallele Paare können ein effektives Alignment erzeugen.
+
+**Gemeinsames Training** vermeidet das Alignment-Problem vollständig, indem ein einziges mehrsprachiges Embedding-Modell trainiert wird, das alle Sprachen nativ in einen gemeinsamen Raum abbildet. Modelle wie multilingual E5 und SONAR werden gleichzeitig auf Text aus vielen Sprachen trainiert und erzeugen von Anfang an einen einheitlichen Raum.
+
+## Häufige Fragen
+
+**F: Ist Alignment so gut wie ein nativ mehrsprachiges Modell?**
+
+A: Im Allgemeinen nein — ein nativ mehrsprachiges Modell erzeugt einen kohärenteren gemeinsamen Raum, da es sprachübergreifende Beziehungen während des Trainings lernt. Nachträgliches Alignment ist ein nützlicher Rückgriff, wenn kein mehrsprachiges Modell verfügbar ist oder wenn spezialisierte Modelle überbrückt werden müssen.
+
+**F: Wie viele parallele Paare werden für das Alignment benötigt?**
+
+A: Lineares Alignment kann mit nur 1.000–5.000 qualitativ hochwertigen parallelen Paaren funktionieren. Mehr Daten verbessern die Qualität, aber die Zugewinne nehmen nach etwa 10.000–20.000 Paaren ab. Die Paare sollten das gesamte Themenspektrum abdecken, das das System behandelt.
 
 ## References
 

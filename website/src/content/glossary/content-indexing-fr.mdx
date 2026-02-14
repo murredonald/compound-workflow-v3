@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Le content indexing construit des structures de données permettant d’exécuter rapidement des requêtes sur des champs texte, des métadonnées et éventuellement des [embeddings](/fr/glossary/embeddings/), et garde ces index à jour lorsque le [corpus](/fr/glossary/corpus/) évolue.
+L'indexation de contenu est le processus de création de structures de données interrogeables sur une collection de documents afin que les requêtes puissent obtenir des réponses en millisecondes plutôt que de nécessiter un balayage complet de chaque document. Elle englobe la construction d'index inversés pour la recherche par mots-clés, d'index vectoriels pour la recherche sémantique et d'index de métadonnées pour le filtrage structuré. L'indexation de contenu transforme un dépôt de documents passif en un système de recherche actif — sans elle, chaque requête nécessiterait la lecture de chaque document, rendant la recherche impraticable à toute échelle significative.
+
+## Pourquoi c'est important
+
+- **Vitesse de recherche** — les index permettent une recherche en moins d'une seconde sur des millions de documents ; sans eux, une simple requête sur un vaste corpus juridique prendrait des minutes
+- **Recherche multimodale** — l'indexation de contenu prend en charge différents paradigmes de recherche (mots-clés, sémantique, structuré) en construisant des structures d'index appropriées pour chacun
+- **Fraîcheur** — une indexation incrémentale efficace permet aux nouveaux documents de devenir consultables en quelques minutes après leur ingestion, maintenant la base de connaissances à jour
+- **Flexibilité des requêtes** — des index bien conçus prennent en charge des requêtes complexes combinant recherche textuelle, filtres de métadonnées et similarité sémantique sans dégradation des performances
+
+## Comment ça fonctionne
+
+L'indexation de contenu crée plusieurs structures de données en parallèle lors de l'ingestion des documents :
+
+**Index inversé** — pour chaque terme du vocabulaire, l'index stocke une liste de documents contenant ce terme, accompagnée de la fréquence du terme et de ses positions. Cela permet la recherche par mots-clés (BM25), la recherche de phrases et les requêtes booléennes. La construction d'un index inversé implique la tokenisation, la racinisation et le catalogage de chaque terme dans chaque document.
+
+**Index vectoriel** — chaque fragment de document est traité par un modèle d'embedding pour produire un vecteur dense, qui est ensuite ajouté à une structure d'index de plus proches voisins approchés (ANN) (HNSW, IVF ou similaire). Cela permet la recherche sémantique — trouver des documents par signification plutôt que par termes exacts.
+
+**Index de métadonnées** — les champs structurés (date, juridiction, type de document, niveau d'autorité) sont stockés sous une forme permettant un filtrage rapide. Cela peut utiliser des index de base de données, des index inversés sur les valeurs de métadonnées ou un stockage en colonnes spécialisé.
+
+**Stockage en texte intégral** — le texte original du document est stocké à côté des index afin que les passages correspondants puissent être renvoyés à l'utilisateur et transmis à la couche de génération.
+
+L'indexation est généralement un processus hors ligne ou par lots qui s'exécute dans le cadre du pipeline de données. Lorsqu'un nouveau document est ingéré, il est analysé, nettoyé, découpé, puis indexé dans toutes les structures d'index pertinentes. Le processus d'indexation doit gérer les mises à jour (réindexation des documents modifiés) et les suppressions (retrait des dispositions abrogées) en plus des ajouts.
+
+La maintenance des index comprend la surveillance de leur santé (fragmentation, obsolescence), les reconstructions périodiques (pour optimiser les performances) et la gestion de la capacité (ajout de shards d'index à mesure que la collection grandit).
+
+## Questions fréquentes
+
+**Q : Combien de temps prend l'indexation de contenu ?**
+
+R : Pour l'indexation textuelle, des milliers de documents peuvent être indexés par seconde sur du matériel moderne. Le calcul des embeddings est le goulot d'étranglement — la génération d'embeddings pour les fragments de documents s'exécute généralement à 100-1 000 fragments par seconde selon le modèle d'embedding et le matériel. Une réindexation complète d'un vaste corpus juridique (des millions de fragments) peut prendre plusieurs heures.
+
+**Q : Le système de recherche peut-il répondre aux requêtes pendant la réindexation ?**
+
+R : Oui, avec une architecture adaptée. L'indexation blue-green (construction d'un nouvel index pendant que l'ancien répond aux requêtes, puis basculement) ou les mises à jour incrémentales permettent un service ininterrompu pendant l'indexation.

@@ -10,9 +10,44 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Retrieval latency is de verstreken tijd tussen het versturen van een query en het ontvangen van gerangschikte resultaten van een retrieval- of [zoeksysteem](/nl/glossary/information-retrieval-system/), vaak gemeten in milliseconden.
+Retrieval latency is de verstreken Tijd tussen het indienen van een Query bij een Retrievalsysteem en het ontvangen van de gerangschikte Resultaten, gemeten in Milliseconden. Het omvat alle Verwerkingsfasen: Query-parsing, Embedding-berekening, Index-lookup, Scoring, Filtering, Reranking en Resultaatformattering. In een RAG-systeem is Retrieval latency een belangrijk Onderdeel van de totale Responstijd -- als het ophalen te lang duurt, lijdt de hele Gebruikerservaring, ongeacht hoe goed het gegenereerde Antwoord is.
+
+## Waarom het belangrijk is
+
+- **Gebruikerservaring** -- Professionals verwachten vrijwel onmiddellijke Zoekresultaten; Latentie boven 500ms voelt traag aan, en boven 2 Seconden voelt het als defect; Retrieval latency moet binnen strakke Budgetten worden beheerd
+- **End-to-end-responstijd** -- RAG-systemen tellen Retrieval latency op bovenop Generatielatentie (LLM-inferentie); als het ophalen 500ms duurt en de Generatie 2 Seconden, is het Totaal 2,5 Seconden; elke bespaarde Milliseconde bij het ophalen verbetert de algehele Ervaring
+- **Schaalbaarheids-indicator** -- stijgende Latentie bij toenemende Belasting wijst op Infrastructuur-knelpunten die erger worden naarmate het Gebruikersbestand groeit
+- **Architectuurbeslissingen** -- Latentiebudgetten beperken welke Retrievalcomponenten haalbaar zijn; dure Reranking of meervoudige Retrievalpasses zijn alleen mogelijk als het Latentiebudget deze toelaat
+
+## Hoe het werkt
+
+Retrieval latency is de som van de Tijd die in elke Pipelinefase wordt besteed:
+
+**Query-encoding** (5-50ms) -- het omzetten van de Querytekst van de Gebruiker naar een Embedding-vector met behulp van het Embeddingmodel. Dit gebeurt doorgaans op GPU en schaalt met de Modelgrootte.
+
+**Index-zoekopdracht** (1-20ms) -- het bevragen van de Vectorindex en/of lexicale Index voor Kandidaat-overeenkomsten. ANN-algoritmen zoals HNSW worden doorgaans binnen 10ms afgerond, zelfs voor miljoenen Vectoren. BM25-zoekopdrachten zijn even snel met goed geoptimaliseerde inverteerde Indexen.
+
+**Metadatafiltering** (1-10ms) -- het toepassen van gestructureerde Beperkingen (Datum, Jurisdictie, Documenttype) om de Kandidatenset te verkleinen. Pre-filtering verkleint het Zoekbereik; post-filtering verwijdert niet in aanmerking komende Resultaten.
+
+**Reranking** (50-200ms) -- het doorsturen van de top-Kandidaten via een Cross-encoder voor nauwkeurigere Scoring. Dit is de duurste Fase omdat de Cross-encoder elk Query-documentpaar afzonderlijk verwerkt. Het Aantal Kandidaten dat geherrangschikt wordt, bepaalt direct deze Kosten.
+
+**Naverwerking** (1-5ms) -- Deduplicatie, Groepering en Formattering van de uiteindelijke Resultaten.
+
+Latentie wordt doorgaans gerapporteerd in Percentielen: P50 (Mediaan), P95 (95e Percentiel) en P99 (99e Percentiel). P50 weerspiegelt typische Prestaties; P95 en P99 onthullen worst-case Gedrag. Een Systeem met 50ms P50 maar 2 Seconden P99 heeft een Tail-latency-probleem dat 1 op de 100 Gebruikers treft.
+
+Optimalisatiestrategieen omvatten: het verminderen van het Aantal Kandidaten dat aan de Reranker wordt doorgegeven, Caching van veelvoorkomende Queries, het gebruik van kleinere Embeddingmodellen voor Query-encoding, en Hardwareversnelling (GPU-inferentie, geoptimaliseerde Vectorindexen).
+
+## Veelgestelde vragen
+
+**V: Wat is een aanvaardbare Retrieval latency?**
+
+A: Voor interactieve Toepassingen is een totale Retrieval latency onder 200ms ideaal. Onder 500ms is aanvaardbaar. Boven 1 Seconde merken Gebruikers de Vertraging. Deze Doelen moeten rekening houden met de gehele Retrievalpipeline, niet alleen de Index-zoekcomponent.
+
+**V: Heeft de Corpusgrootte een significant Effect op de Latentie?**
+
+A: Met ANN-indexen groeit de Retrieval latency logaritmisch met de Corpusgrootte -- een Verdubbeling van het Corpus voegt slechts enkele Milliseconden toe. De Rerankingfase is gevoeliger voor het Aantal Kandidaten dan voor de Corpusgrootte. Lexicale Indexen (BM25) schalen ook goed met moderne Implementaties.
 
 ## References
 

@@ -10,6 +10,39 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Relevance scoring combineert signalen zoals trefwoordoverlap, [semantische gelijkenis](/nl/glossary/semantic-similarity/), bronkwaliteit en gebruikersgedrag om documenten in een zoekresultaatlijst te rangschikken.
+Relevance scoring is het proces waarbij een samengestelde score wordt berekend die weergeeft hoe goed een zoekresultaat overeenkomt met de zoekvraag en intentie van een gebruiker, vaak door meerdere signalen te combineren die verder gaan dan basistekstvergelijking. Terwijl [retrievalscoring](/nl/glossary/retrieval-scoring/) zich richt op de gelijkenis tussen zoekvraag en document, kan relevance scoring daarbovenop gedragssignalen (doorklikpercentages, leestijd), contextuele factoren (het vakgebied van de gebruiker, recente zoekgeschiedenis) en domeinspecifieke regels ([authority ranking](/nl/glossary/authority-ranking/), temporele prioriteit) meenemen om een score te produceren die beter weergeeft wat de gebruiker werkelijk nodig heeft.
+
+## Waarom het belangrijk is
+
+- **Gebruikersgerichte rangschikking** — pure tekstgelijkenis voorspelt niet altijd wat de gebruiker nodig heeft; relevance scoring neemt aanvullende signalen mee om de kloof te overbruggen tussen tekstuele gelijkenis en praktisch nut
+- **Differentiatie op gezag** — in juridisch zoeken zijn niet alle treffers even gezaghebbend; relevance scoring kan wetgeving boven commentaren plaatsen, of arresten van het Hof van Cassatie boven uitspraken van lagere rechtbanken, om hun werkelijke belang te weerspiegelen
+- **Temporele prioriteit** — recentere bepalingen en uitspraken zijn vaak relevanter dan oudere; relevance scoring kan recentheid meewegen naast [semantische gelijkenis](/nl/glossary/semantic-similarity/)
+- **Personalisatie** — relevance scoring kan zich aanpassen aan de context van de gebruiker: een specialist Vennootschapsbelasting ziet bepalingen over vennootschapsbelasting hoger gerangschikt, zelfs bij algemene zoekvragen
+
+## Hoe het werkt
+
+Relevance scoring combineert doorgaans meerdere featurecategorieën tot één enkele score:
+
+**Tekstuele relevantie** — de basisgelijkenis tussen zoekvraag en document, berekend via lexicale matching (BM25), semantische gelijkenis (embedding-cosinus) of cross-encoderscoring. Dit is het fundament dat ervoor zorgt dat resultaten thematisch gerelateerd zijn aan de zoekvraag.
+
+**Gezagsfeatures** — domeinspecifieke gewichten die het juridische gezag van de bron weerspiegelen. Primaire wetgeving scoort hoger dan administratieve circulaires. Arresten van het Grondwettelijk Hof scoren hoger dan vonnissen in eerste aanleg. Deze gewichten coderen de juridische hiërarchie in de rangschikking.
+
+**Temporele features** — recentheidssignalen die nieuwere documenten een boost geven wanneer dat gepast is. Geldende wetgeving is relevanter dan opgeheven bepalingen. Temporele relevantie moet echter contextbewust zijn: een zoekvraag over historische belastingtarieven moet de relevante historische periode prioriteren, niet het meest recente jaar.
+
+**Gedragsfeatures** — in systemen met voldoende gebruiksdata geven doorklikpercentages en betrokkenheidsmetrics aan welke resultaten gebruikers het nuttigst vinden. Documenten die consequent worden geselecteerd en gelezen krijgen een relevantieboost voor vergelijkbare zoekvragen.
+
+**Contextuele features** — het profiel, vakgebied of de recente zoekgeschiedenis van de gebruiker kan de relevantie beïnvloeden. Een gebruiker die de hele dag btw heeft onderzocht, wil waarschijnlijk btw-gerelateerde resultaten, zelfs bij dubbelzinnige zoekvragen.
+
+Deze features worden gecombineerd met behulp van learned-to-rank-modellen (LambdaMART, neurale rankingmodellen) of eenvoudigere gewogen combinaties. De gewichten worden gekalibreerd op menselijke relevantieoordelen: annotatoren beoordelen de relevantie van zoekresultaten voor testzoekvragen, en het scoringsmodel wordt getraind om deze beoordelingen te reproduceren.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt relevance scoring van retrievalscoring?**
+
+A: De termen overlappen aanzienlijk. Retrievalscoring verwijst doorgaans naar de berekening van de gelijkenis tussen zoekvraag en document binnen de retrievalpijplijn. Relevance scoring is breder — het kan aanvullende signalen buiten tekstgelijkenis meenemen (gezag, recentheid, gebruikerscontext) om een meer holistisch relevantieoordeel te produceren.
+
+**V: Kan relevance scoring gemanipuleerd worden?**
+
+A: Bij webzoekmachines wel — SEO-technieken manipuleren relevantiesignalen. In gesloten juridische AI-systemen waar het corpus gecureerd is, is manipulatie geen probleem omdat de inhoud gezaghebbende juridische tekst is, niet door gebruikers gegenereerde inhoud die voor ranking is geoptimaliseerd.

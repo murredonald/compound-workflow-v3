@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Dimensionality reduction methods such as PCA or autoencoders map high-dimensional data into a lower-dimensional space to save storage, speed up search, or improve visualization.
+Dimensionality reduction is a family of techniques that transform high-dimensional data into a lower-dimensional representation while preserving as much meaningful structure as possible. In the context of AI and information retrieval, this typically means compressing vector embeddings — which may have 768 or more dimensions — into smaller vectors that are faster to search, cheaper to store, and easier to visualise. The trade-off is always between compression and information loss: more aggressive reduction saves more resources but risks discarding distinctions that matter for retrieval quality.
+
+## Why it matters
+
+- **Search speed** — similarity search over lower-dimensional vectors is faster because distance calculations involve fewer operations; this matters at scale when searching millions of document embeddings
+- **Storage efficiency** — reducing 1536-dimensional vectors to 256 dimensions cuts storage by over 80%, which is significant for large knowledge bases
+- **Visualisation** — reducing embeddings to 2 or 3 dimensions allows human inspection of the embedding space, revealing clusters, outliers, and gaps in coverage
+- **Noise reduction** — high-dimensional embeddings may contain redundant or noisy dimensions; reduction can actually improve retrieval by eliminating dimensions that add noise without contributing meaning
+
+## How it works
+
+Dimensionality reduction techniques fall into two categories:
+
+**Linear methods** project data along the directions of maximum variance. Principal Component Analysis (PCA) is the most common: it identifies the axes along which the data varies most and discards the rest. PCA is fast, deterministic, and works well when the important structure in the data is linear. For embeddings, PCA from 768 to 256 dimensions typically preserves 90-95% of retrieval performance.
+
+**Non-linear methods** capture more complex structure. t-SNE (t-distributed Stochastic Neighbour Embedding) and UMAP (Uniform Manifold Approximation and Projection) are primarily used for visualisation — they map high-dimensional data to 2-3 dimensions while preserving local neighbourhood relationships. Autoencoders use neural networks to learn a compressed representation and can capture non-linear patterns, but they require training and are more complex to deploy.
+
+In production retrieval systems, dimensionality reduction is often applied at indexing time: full-dimensional embeddings are computed by the embedding model, then compressed before being stored in the vector index. At query time, the query embedding undergoes the same reduction before search. Some vector databases apply quantisation (a related technique) alongside or instead of dimensionality reduction to further compress storage.
+
+The key decision is how many dimensions to keep. This is determined empirically by measuring retrieval quality (recall@k, nDCG) at different dimension counts and finding the point where further reduction noticeably degrades results.
+
+## Common questions
+
+**Q: Does dimensionality reduction always help?**
+
+A: Not always. If the embedding model produces compact, information-dense vectors with few redundant dimensions, reduction may hurt more than it helps. It is most beneficial when the original dimensionality is high (1000+) and storage or speed constraints are significant.
+
+**Q: What is the difference between dimensionality reduction and vector quantisation?**
+
+A: Dimensionality reduction reduces the number of dimensions (e.g., 768 → 256). Vector quantisation reduces the precision of each dimension (e.g., 32-bit floats → 8-bit integers) or maps vectors to cluster centroids. Both reduce storage and speed up search, and they can be combined.
 
 ## References
 

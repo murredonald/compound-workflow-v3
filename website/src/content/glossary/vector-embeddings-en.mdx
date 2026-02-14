@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-[Vector embeddings](/en/glossary/embeddings/) are numerical vectors that encode the meaning of text, images, or other data so that similar items end up close together in the [vector space](/en/glossary/embedding-space/).
+Vector embeddings are numerical arrays (vectors) that represent the meaning of text, images, or other data in a high-dimensional space. Each dimension captures some aspect of the input's semantics, and the geometric relationships between vectors — their distances and angles — encode similarity. Two texts with similar meaning produce vectors that are close together; unrelated texts produce vectors that are far apart.
+
+## Why it matters
+
+- **Foundation of semantic search** — vector embeddings enable retrieval based on meaning rather than keyword matching, which is essential when legal terminology varies across languages and contexts
+- **Multilingual capability** — cross-lingual embedding models map Dutch, French, and German text into the same vector space, enabling a query in one language to retrieve documents in another
+- **Scalable similarity** — once embedded, millions of documents can be compared efficiently using approximate nearest-neighbour algorithms, returning results in milliseconds
+- **Downstream flexibility** — the same embeddings can power search, clustering, deduplication, classification, and anomaly detection
+
+## How it works
+
+An embedding model (typically a transformer-based neural network) processes an input text and produces a fixed-length vector, commonly ranging from 384 to 1536 dimensions. During training, the model learns to map semantically similar inputs to nearby points and dissimilar inputs to distant points.
+
+At retrieval time, both the user's query and all documents in the corpus are represented as vectors. The system finds documents whose vectors are closest to the query vector using a distance metric — usually cosine similarity or dot product. This computation is made efficient at scale through specialised vector indexes (HNSW, IVF) stored in vector databases.
+
+The quality of vector embeddings depends heavily on the model used. General-purpose models work broadly but may underperform on specialised domains. Fine-tuning on domain-specific text pairs — for instance, tax queries matched to relevant legislation — can substantially improve relevance for legal and tax applications.
+
+## Common questions
+
+**Q: How are vector embeddings different from traditional TF-IDF vectors?**
+
+A: TF-IDF vectors are sparse (mostly zeros) and based on word frequency statistics — they cannot capture synonyms or meaning. Vector embeddings are dense (every dimension has a value) and learned from large text datasets, capturing semantic relationships. "Corporate tax" and "vennootschapsbelasting" would have very different TF-IDF vectors but similar dense embeddings.
+
+**Q: How many dimensions do vector embeddings typically have?**
+
+A: Common sizes are 384 (smaller, faster models), 768 (BERT-class), and 1536 (larger models like OpenAI's ada-002). More dimensions can capture finer distinctions but require more storage and compute. For most legal retrieval tasks, 768-dimensional embeddings provide a good balance.
+
+**Q: Do vector embeddings need to be recomputed when the model changes?**
+
+A: Yes. Each embedding model defines its own vector space. If you switch models or update to a newer version, all documents must be re-embedded. This is why model selection is an important architectural decision — re-embedding a large corpus is computationally expensive.
 
 ## References
 

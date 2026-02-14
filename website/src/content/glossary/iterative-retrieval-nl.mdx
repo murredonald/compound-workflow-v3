@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Iterative retrieval past de [query](/nl/glossary/prompt/) of selectie van documenten over meerdere rondes aan, vaak met behulp van een [LLM](/nl/glossary/llm/) die beslist wat er op basis van eerdere resultaten vervolgens moet worden opgehaald.
+Iterative retrieval is een retrievalstrategie die meerdere opeenvolgende zoekpassen uitvoert, waarbij de resultaten van elke pas worden gebruikt om de query te verfijnen, de zoekopdracht uit te breiden of lacunes op te vullen voordat de volgende ronde begint. In tegenstelling tot single-pass retrieval, dat één query uitvoert en alles teruggeeft wat het vindt, behandelt iterative retrieval de initiële resultaten als vertrekpunt en verbetert de opgehaalde context geleidelijk via herhaalde cycli van zoeken, evalueren en verfijnen. In juridische AI-systemen is iterative retrieval essentieel omdat complexe vragen vaak informatie vereisen die niet met één enkele query kan worden gevonden — kruisverwijzingen moeten worden gevolgd, gerelateerde bepalingen moeten worden verzameld, en uitzonderingen of wijzigingen moeten worden geïdentificeerd.
+
+## Waarom het belangrijk is
+
+- **Dekking van complexe vragen** — een vraag over de wisselwerking tussen Belgische federale vennootschapsbelastingregels en Vlaamse regionale incentives vereist retrieval uit meerdere juridische domeinen; iterative retrieval volgt de verbanden daartussen in plaats van te hopen dat één enkele query alles opvangt
+- **Opvullen van lacunes** — na een eerste retrievalpas kan het systeem identificeren welke aspecten van de vraag onbeantwoord blijven en gerichte vervolgqueries uitvoeren voor ontbrekende informatie, wat zorgt voor volledige context
+- **Oplossing van kruisverwijzingen** — Belgische wetgeving verwijst frequent naar andere bepalingen ("zoals gedefinieerd in artikel 2, §1, 5° WIB92"); iterative retrieval volgt deze verwijzingen om de volledige juridische context samen te stellen die nodig is voor nauwkeurige antwoorden
+- **Kwaliteitsverbetering** — elke iteratie kan strengere relevantiecriteria toepassen, waarbij eerdere resultaten worden gebruikt om beter te begrijpen wat werkelijk relevant is; latere passen halen preciezer op dan de initiële brede zoekopdracht
+
+## Hoe het werkt
+
+Iterative retrieval werkt via een ophaal-evalueer-verfijn-lus:
+
+**Initiële retrieval** — het systeem voert een eerste query uit op basis van de vraag van de gebruiker en haalt een eerste set kandidaatdocumenten op. Deze pas gebruikt brede matching om de recall te maximaliseren, waarbij wordt geaccepteerd dat sommige resultaten slechts zijdelings relevant kunnen zijn.
+
+**Evaluatie van resultaten** — het systeem (vaak een [LLM](/nl/glossary/llm/)) onderzoekt de initiële resultaten en bepaalt of de opgehaalde context voldoende is om de vraag te beantwoorden. Het identificeert lacunes: ontbrekende jurisdicties, niet-gerefereerde artikelen, niet-gedekte tijdsperioden of aspecten van de vraag die niet zijn behandeld.
+
+**Queryverfijning** — op basis van de lacuneanalyse genereert het systeem nieuwe queries gericht op de ontbrekende informatie. Deze verfijnde queries zijn specifieker dan de oorspronkelijke — als de initiële resultaten bijvoorbeeld het algemene vennootschapsbelastingtarief dekten maar niet het verlaagd KMO-tarief, richt de verfijnde query zich specifiek op "KMO-tarief vennootschapsbelasting" of het equivalent daarvan.
+
+**Vervolgpassen** — de verfijnde queries worden uitgevoerd en hun resultaten worden samengevoegd met de bestaande context. De evaluatiestap herhaalt zich: zijn er nog steeds lacunes? Zo ja, dan volgt er nog een verfijningscyclus. Een maximumlimiet voor iteraties (doorgaans 2-4 rondes) voorkomt oneindige lussen.
+
+**Beëindiging** — de lus eindigt wanneer de context als voldoende wordt beoordeeld, het maximumaantal iteraties is bereikt, of bijkomende passen geen nieuwe relevante informatie opleveren. De samengestelde context uit alle passen wordt vervolgens doorgegeven aan de generatielaag.
+
+Geavanceerde implementaties gebruiken een LLM als luscontroller (agentische retrieval), waardoor deze dynamisch kan beslissen wat er vervolgens moet worden opgezocht op basis van wat het tot dan toe heeft geleerd. Eenvoudigere implementaties gebruiken regelgebaseerde verfijning — bijvoorbeeld altijd wettelijke kruisverwijzingen volgen of altijd zoeken naar wijzigingen wanneer het initiële resultaat wetgeving betreft.
+
+## Veelgestelde vragen
+
+**V: Hoeveel iteraties zijn doorgaans nodig?**
+
+A: De meeste vragen worden adequaat bediend met 1-3 iteraties. Eenvoudige feitelijke vragen hebben vaak slechts één pas nodig. Complexe analytische vragen die meerdere juridische domeinen of kruisverwijzingen omvatten, profiteren doorgaans van 2-3 passen. Na 3-4 iteraties treden afnemende meeropbrengsten op en wordt latentie een aandachtspunt.
+
+**V: Verhoogt iterative retrieval de latentie?**
+
+A: Ja — elke iteratie voegt een retrieval-rondreis toe. De latentiekosten worden beheerst door parallellisatie binnen elke ronde, vroegtijdige beëindiging wanneer de context voldoende is, en caching van eerder opgehaalde resultaten. De afweging is de moeite waard wanneer het alternatief een onvolledig of onjuist antwoord is.
 
 ## References
 

@@ -12,4 +12,39 @@ draft: false
 
 ## Définition
 
-Le contrôle d'accès basé sur les rôles accorde ou refuse l'accès en fonction du rôle d'un utilisateur — tel qu'administrateur, réviseur ou lecteur — simplifiant la gestion des autorisations dans les systèmes d'IA complexes.
+Le contrôle d'accès basé sur les rôles (RBAC) est un modèle de sécurité dans lequel les autorisations sont attribuées à des rôles plutôt qu'à des utilisateurs individuels, et les utilisateurs sont ensuite affectés à un ou plusieurs rôles. Au lieu de configurer l'accès pour chaque personne individuellement, un administrateur définit des rôles (par ex. conseiller senior, analyste junior, administrateur, auditeur en lecture seule) avec des autorisations spécifiques, et les utilisateurs héritent des autorisations de leur rôle attribué. Le RBAC simplifie la gestion des autorisations, réduit les erreurs et facilite l'audit de qui a accès à quoi — des aspects essentiels pour les systèmes d'IA traitant des données fiscales confidentielles.
+
+## Pourquoi c'est important
+
+- **Évolutivité** — à mesure que le nombre d'utilisateurs augmente, la gestion des autorisations individuelles devient impraticable ; le RBAC évolue en ajoutant des utilisateurs à des rôles existants plutôt qu'en configurant chacun séparément
+- **Principe du moindre privilège** — le RBAC facilite la mise en œuvre du principe du moindre privilège : chaque rôle ne dispose que des autorisations nécessaires à sa fonction, ce qui réduit la surface d'attaque
+- **Conformité** — le RGPD et les lois belges sur le secret professionnel exigent que les données personnelles et confidentielles ne soient accessibles qu'aux personnes autorisées ; le RBAC fournit le mécanisme et la documentation pour le démontrer
+- **Simplicité d'audit** — les auditeurs peuvent examiner les définitions de rôles et les affectations de rôles plutôt que les autorisations individuelles des utilisateurs, ce qui rend les audits de conformité plus rapides et plus fiables
+
+## Comment ça fonctionne
+
+Le RBAC fonctionne à travers trois concepts fondamentaux :
+
+**Les rôles** définissent un ensemble d'autorisations pertinentes pour une fonction professionnelle spécifique. Dans un système d'IA juridique, les rôles typiques peuvent inclure :
+- **Administrateur** — gère les utilisateurs, les rôles, la configuration du système et les mises à jour de la base de connaissances
+- **Conseiller senior** — accès complet à toutes les requêtes, sources et données clients dans son domaine de pratique
+- **Analyste junior** — accès aux requêtes et aux sources mais pas aux fichiers confidentiels des clients ni aux fonctions d'administration
+- **Auditeur** — accès en lecture seule aux journaux système, aux statistiques d'utilisation et aux rapports de conformité
+
+**Les autorisations** définissent des actions spécifiques sur des ressources spécifiques : lire un document, exécuter une requête, consulter les journaux d'audit, modifier la configuration du système, accéder aux données d'un client. Les autorisations sont suffisamment granulaires pour imposer des limites d'accès significatives, mais pas au point que la gestion des rôles devienne aussi complexe que la gestion des autorisations individuelles.
+
+**L'affectation** associe les utilisateurs aux rôles. Un utilisateur peut détenir plusieurs rôles (par ex. conseiller senior et administrateur), auquel cas ses autorisations effectives sont l'union des autorisations de tous les rôles attribués. Les affectations de rôles sont gérées par les administrateurs et journalisées à des fins d'audit.
+
+Dans les systèmes d'IA multi-locataires (où plusieurs cabinets partagent la même plateforme), le RBAC est combiné avec l'isolation des locataires pour garantir que les rôles n'accordent l'accès qu'aux données d'une seule organisation. Un administrateur du Cabinet A ne peut pas voir les données du Cabinet B, quel que soit son rôle.
+
+Le RBAC est souvent étendu avec des contraintes supplémentaires : rôles à durée limitée (accès temporaire qui expire), rôles contextuels (autorisations dépendant de la localisation ou de l'appareil) et rôles hiérarchiques (les rôles seniors héritent de toutes les autorisations des rôles juniors).
+
+## Questions fréquentes
+
+**Q : En quoi le RBAC diffère-t-il du contrôle d'accès basé sur les attributs (ABAC) ?**
+
+R : Le RBAC attribue les autorisations en fonction du rôle d'un utilisateur. L'ABAC attribue les autorisations en fonction d'une combinaison d'attributs — attributs de l'utilisateur (département, ancienneté), attributs de la ressource (classification, propriétaire) et attributs environnementaux (heure, localisation). L'ABAC est plus flexible mais plus complexe à gérer. De nombreux systèmes utilisent le RBAC comme modèle principal avec l'ABAC pour des règles spécifiques et granulaires.
+
+**Q : Combien de rôles un système devrait-il avoir ?**
+
+R : Aussi peu que nécessaire pour exprimer des distinctions d'accès significatives. La prolifération excessive de rôles (créer un rôle unique pour chaque utilisateur) annule l'intérêt du RBAC. La plupart des systèmes d'IA juridique ont besoin de 4 à 8 rôles pour couvrir les niveaux d'accès pertinents.

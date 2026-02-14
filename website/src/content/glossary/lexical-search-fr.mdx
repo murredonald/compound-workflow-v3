@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-La lexical search compare le texte d’une [requête](/fr/glossary/prompt/) aux documents à l’aide de mots‑clés, d’opérateurs et de fonctions de score comme [BM25](/fr/glossary/bm25/), sans modéliser en profondeur la signification du texte.
+La recherche lexicale est une méthode de recherche documentaire qui retrouve des documents en faisant correspondre les mots exacts (ou leurs formes racinisées) d'une requête avec les mots d'une collection de documents. Elle repose sur des index inversés — des structures de données qui associent chaque terme à la liste des documents qui le contiennent — et sur des fonctions de scoring comme [BM25](/fr/glossary/bm25/) qui classent les résultats en fonction de la fréquence des termes, de la longueur des documents et de la rareté des termes dans l'ensemble du corpus. La recherche lexicale est l'approche de recherche d'information la plus ancienne et la plus éprouvée, et elle reste un composant essentiel des systèmes de recherche modernes, y compris ceux utilisés pour la recherche juridique.
+
+## Pourquoi c'est important
+
+- **Précision sur les termes exacts** — lorsqu'un conseiller fiscal recherche « article 215 WIB92 » ou une référence de ruling spécifique, la recherche lexicale trouve des correspondances exactes que la [recherche sémantique](/fr/glossary/semantic-search/) pourrait manquer ou mal classer
+- **Rapidité et scalabilité** — les index inversés sont hautement optimisés et peuvent parcourir des millions de documents en quelques millisecondes avec un minimum de ressources matérielles
+- **Transparence** — les résultats peuvent être expliqués en montrant quels termes de la requête correspondent à quels termes du document, ce qui rend le classement interprétable pour les utilisateurs
+- **Complémentarité avec la recherche sémantique** — la recherche lexicale et la recherche sémantique ont des modes de défaillance différents ; les combiner dans une [recherche hybride](/fr/glossary/hybrid-search/) compense les faiblesses de chaque méthode
+
+## Comment ça fonctionne
+
+La recherche lexicale opère à travers un pipeline de traitement de texte et de correspondance :
+
+**Indexation** — lorsque des documents sont ajoutés au système, leur texte est tokenisé (découpé en mots), normalisé (mis en minuscules, accents supprimés) et éventuellement racinisé (réduction des mots à leur forme racine, par exemple « belasting » et « belastingen » deviennent tous deux « belasting »). Chaque terme est enregistré dans un index inversé qui associe les termes aux documents et aux positions où ils apparaissent.
+
+**Traitement de la requête** — la requête de l'utilisateur subit la même tokenisation et racinisation que les documents, garantissant une correspondance cohérente. Certains systèmes étendent la requête avec des synonymes ou des termes apparentés pour améliorer le rappel.
+
+**Scoring** — les documents candidats sont notés à l'aide d'algorithmes comme BM25, qui prend en compte trois facteurs : la fréquence d'apparition du terme de la requête dans le document (fréquence du terme), la rareté du terme dans l'ensemble de la collection (fréquence inverse de document) et la longueur du document (les documents plus longs sont légèrement pénalisés pour éviter un biais en faveur des sources verbeuses). Le score obtenu reflète la qualité de la correspondance entre le document et les termes spécifiques de la requête.
+
+La principale limitation de la recherche lexicale est le **problème de discordance de vocabulaire** : elle ne peut pas faire correspondre des concepts exprimés avec des mots différents. Une requête sur « impôt des sociétés » ne trouvera pas les documents qui n'utilisent que « vennootschapsbelasting » parce que les termes sont lexicalement différents. C'est pourquoi les systèmes modernes associent la recherche lexicale à la recherche sémantique dense dans une approche hybride.
+
+## Questions fréquentes
+
+**Q : BM25 est-il le seul algorithme de scoring lexical ?**
+
+R : Non, mais c'est le plus largement utilisé. Parmi les alternatives, on trouve TF-IDF (plus simple, moins efficace), BM25+ (une variante qui corrige un biais contre les documents longs) et le scoring basé sur des modèles de langage. BM25 reste dominant car il est simple, rapide et étonnamment efficace.
+
+**Q : Pourquoi ne pas simplement utiliser la recherche sémantique au lieu de la recherche lexicale ?**
+
+R : La recherche sémantique excelle dans la correspondance de sens, mais peut avoir des difficultés avec les identifiants précis, les numéros de référence et les termes spécifiques à un domaine. Un hybride des deux surpasse systématiquement chacune des méthodes utilisée seule — la recherche lexicale gère les requêtes de précision tandis que la recherche sémantique gère les requêtes conceptuelles.

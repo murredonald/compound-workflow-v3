@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Retrieval orchestration is de logica die beslist welke retrievalacties in welke volgorde worden uitgevoerd – eventueel over meerdere indices of tools – om de beste context voor een AI-systeem samen te stellen.
+Retrieval orchestration is de Coördinatielaag die beslist welke retrievalacties moeten worden uitgevoerd, in welke Volgorde, en hoe hun Resultaten worden gecombineerd om de optimale Context voor een bepaalde Query samen te stellen. Voor complexe Vragen is een enkele Zoekopdracht tegen een enkele Index zelden voldoende. Retrieval orchestration beheert meerdere Retrievalstappen — het bevragen van verschillende Indexes, het toepassen van verschillende Strategieën, het volgen van Kruisverwijzingen en het integreren van gestructureerde Lookups — in een samenhangend Proces dat uitgebreide, goed georganiseerde Context aan de Generatielaag levert.
+
+## Waarom het belangrijk is
+
+- **Complexe Queryverwerking** — veel juridische Vragen vereisen Informatie uit meerdere Brontypes (Wetgeving, Rechtspraak, administratieve Richtlijnen) die in verschillende Indexes of Databases kunnen zijn opgeslagen; Orkestratie coördineert over deze Bronnen heen
+- **Strategieselectie** — verschillende Querytypes profiteren van verschillende Retrievalstrategieën; Orkestratie stuurt elke Query naar de meest geschikte Strategie (exacte Lookup voor Artikelverwijzingen, semantisch zoeken voor conceptuele Vragen, gestructureerde Query voor Tarieftabellen)
+- **Efficiëntie** — Orkestratie kan onafhankelijke Retrievalstappen parallelliseren, veelgebruikte Resultaten cachen en vroegtijdig stoppen wanneer voldoende Context is verzameld, wat zowel Latentie als Resourcegebruik optimaliseert
+- **Kwaliteitscontrole** — Orkestratie evalueert tussenresultaten en beslist of aanvullende Retrievalstappen nodig zijn, waardoor zowel onvoldoende Context (te weinig Bronnen) als Contextvervuiling (te veel irrelevante Bronnen) wordt voorkomen
+
+## Hoe het werkt
+
+Retrieval orchestration werkt via een Beslissingslus:
+
+**Queryanalyse** — de Orkestrator onderzoekt de inkomende Query om het Type, de Complexiteit en de waarschijnlijke Informatiebehoeften vast te stellen. Een eenvoudige feitelijke Vraag ("Wat is het huidige btw-tarief?") vereist een andere Retrievalstrategie dan een complexe analytische Vraag ("Hoe interageert de nieuwe Minimumbelasting met bestaande Aftrekregels?").
+
+**Strategieselectie** — op basis van de Queryanalyse selecteert de Orkestrator een of meer Retrievalstrategieën: zoeken op Trefwoorden voor precieze Verwijzingen, semantisch zoeken voor conceptuele Overeenkomsten, gestructureerde Databasequeries voor Tarieven en Drempels, of [multi-hop retrieval](/nl/glossary/multi-hop-retrieval/) voor kruisverwijzende Vragen.
+
+**Uitvoering** — de geselecteerde Strategieën worden uitgevoerd, eventueel parallel. Elk retourneert een Set Kandidaatresultaten met Relevantiescores. De Orkestrator kan aanvullende Queries uitvoeren op basis van de eerste Resultaten (Kruisverwijzingen volgen, geïdentificeerde Onderwerpen uitbreiden, zoeken naar tegenstrijdig Bewijs).
+
+**Resultaatassemblage** — Resultaten van alle Retrievalstappen worden samengevoegd, ontdubbeld, gerangschikt op Relevantie en samengesteld tot een samenhangend Contextpakket. De Orkestrator zorgt voor Diversiteit (verschillende Brontypes vertegenwoordigd), Volledigheid (belangrijke Aspecten van de Vraag gedekt) en Kwaliteit (laag-relevante Resultaten uitgefilterd).
+
+**Toereikendheidscontrole** — de Orkestrator evalueert of de samengestelde Context voldoende is om de Vraag te beantwoorden. Als belangrijke Aspecten niet gedekt zijn, kan aanvullende gerichte Retrieval worden geactiveerd. Als de Context toereikend is, wordt deze doorgegeven aan de Generatielaag.
+
+In geavanceerde Systemen is Orkestratie modelgestuurd: een LLM beslist wat er vervolgens gezocht moet worden op basis van wat er tot dusver is gevonden (agentische Retrieval). In eenvoudigere Systemen volgt Orkestratie vooraf gedefinieerde Regels op basis van Queryclassificatie.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt Orkestratie van de [retrieval pipeline](/nl/glossary/retrieval-pipeline/)?**
+
+A: De retrieval pipeline is de Reeks Stappen (retrieval → filtering → reranking) voor een enkele Query. Orkestratie opereert boven de Pipeline en beslist wanneer de Pipeline wordt aangeroepen, met welke Queries, en hoe Resultaten over meerdere Pipeline-aanroepen worden gecombineerd.
+
+**V: Voegt Orkestratie Latentie toe?**
+
+A: Ja — aanvullende Retrievalstappen kosten extra Tijd. Orkestratie beheert dit via Parallellisatie, vroegtijdige Beëindiging en Caching. De Latentiekosten zijn gerechtvaardigd wanneer ze significant betere Context opleveren dan een enkele Retrievalbeurt.
 
 ## References
 

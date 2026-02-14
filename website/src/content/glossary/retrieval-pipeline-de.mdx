@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Eine Retrieval-Pipeline kombiniert Stufen wie [Query-Parsing](/de/glossary/query-understanding/), Kandidatengenerierung, Filterung und [Reranking](/de/glossary/reranking/), um eine Eingabeanfrage in eine endgültige gerankte Liste relevanter Dokumente oder [Chunks](/de/glossary/document-chunk/) umzuwandeln.
+Eine Retrieval-Pipeline ist die End-to-End-Abfolge von Stufen, die eine Benutzeranfrage in eine gerankte Liste relevanter Dokumente oder Passagen umwandelt. Jede Stufe grenzt die Ergebnisse schrittweise ein und verfeinert sie -- von der anfänglichen Kandidatengenerierung über Millionen von Dokumenten bis zum finalen [Reranking](/de/glossary/reranking/) einer Handvoll Top-Kandidaten. In Retrieval-Augmented-Generation-Systemen (RAG) wird die Ausgabe der Pipeline direkt als Kontext an das Sprachmodell zur Antwortgenerierung weitergegeben.
+
+## Warum es wichtig ist
+
+- **Genauigkeit hängt vom Pipeline-Design ab** -- das Sprachmodell kann nur über das argumentieren, was die Retrieval-Pipeline liefert; fehlende relevante Dokumente oder falsch positive Treffer pflanzen sich direkt in die generierten Antworten fort
+- **Latenz-Budgets** -- jede Pipeline-Stufe fügt Latenz hinzu; die Architektur muss Gründlichkeit gegen Anforderungen an die Antwortzeit abwägen
+- **Modularität** -- eine modulare Pipeline erlaubt das Austauschen von Komponenten (z. B. Ersetzen von BM25 durch einen Dense Retriever oder Hinzufügen eines Rerankers), ohne das gesamte System neu zu entwerfen
+- **Rechtliche Anforderungen** -- in der Steuerrecherche muss die Pipeline temporale Anfragen, Quellen aus mehreren Rechtsgebieten und Autoritätshierarchien verarbeiten, die generische Such-Pipelines nicht berücksichtigen
+
+## Wie es funktioniert
+
+Eine typische Retrieval-Pipeline besteht aus diesen Stufen:
+
+1. **Query-Verständnis** -- die rohe Benutzerfrage wird geparst, erweitert oder umgeschrieben, um die Abdeckung zu verbessern (z. B. Hinzufügen von Synonymen oder juristischer Terminologie)
+2. **Kandidaten-Retrieval** -- eine schnelle, breite Suche (mittels BM25, Dense Vectors oder hybridem Ansatz) liefert Hunderte von Kandidaten-Passagen aus dem Index
+3. **Filterung** -- Kandidaten werden nach Metadaten-Kriterien wie Rechtsgebiet, Zeitraum oder Dokumenttyp gefiltert
+4. **Reranking** -- ein Cross-Encoder oder ein anderer Reranker bewertet die verbleibenden Kandidaten mit tieferer semantischer Analyse neu und erstellt eine finale, nach Relevanz sortierte Liste
+5. **Nachbearbeitung** -- die Top-Ergebnisse werden dedupliziert, nach Quelle gruppiert und mit Metadaten angereichert, bevor sie an die Generierungsschicht weitergegeben werden
+
+Jede Stufe wägt Recall (nichts Relevantes verpassen) gegen Precision (nichts Irrelevantes einschließen) ab. Die frühen Stufen bevorzugen Recall; spätere Stufen verfeinern in Richtung Precision.
+
+## Häufige Fragen
+
+**F: Wie viele Stufen braucht eine Retrieval-Pipeline?**
+
+A: Mindestens zwei: einen Retriever und einen Reranker. Einfache Systeme überspringen das Reranking, aber dessen Hinzufügung verbessert die Ergebnisqualität in der Regel erheblich. Komplexere Pipelines fügen Stufen für Query-Erweiterung, Metadaten-Filterung und Quellen-Deduplizierung hinzu.
+
+**F: Was ist der Unterschied zwischen einer Retrieval-Pipeline und einer RAG-Pipeline?**
+
+A: Eine Retrieval-Pipeline kümmert sich um den Suchteil -- das Finden relevanter Dokumente. Eine RAG-Pipeline umfasst sowohl die Retrieval-Pipeline als auch die Generierungsschicht (das Sprachmodell, das aus dem abgerufenen Kontext die endgültige Antwort produziert). Die Retrieval-Pipeline ist eine Komponente innerhalb des umfassenderen RAG-Systems.
+
+**F: Wie bewertet man eine Retrieval-Pipeline?**
+
+A: Gängige Metriken sind Recall@k (wie viele relevante Dokumente in den Top-k-Ergebnissen erscheinen), Precision@k, Mean Reciprocal Rank (MRR) und Normalised Discounted Cumulative Gain (nDCG). Die End-to-End-Bewertung eines RAG-Systems misst zusätzlich die Korrektheit und Quellentreue der Antworten.
 
 ## References
 

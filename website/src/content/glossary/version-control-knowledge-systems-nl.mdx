@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Version control for knowledge systems traceert wijzigingen in documenten, indexconfiguraties en ontologieën zodat je kunt terugrollen, vergelijken en audits ondersteunen.
+Versiebeheer in kennissystemen is de praktijk van het bijhouden, opslaan en beheren van verschillende Versies van Documenten, Configuraties en Data-artefacten naarmate deze in de loop van de tijd veranderen. Elke Wijziging wordt geregistreerd met Metadata over wat er is gewijzigd, wanneer en waarom, zodat het Systeem elke historische Versie kan ophalen, Versies kan vergelijken en naar eerdere Toestanden kan terugkeren. In juridische AI is Versiebeheer essentieel omdat Wetgeving verandert door Amendementen, kennisbankconfiguraties evolueren, en het vermogen om een eerdere Systeemtoestand te reproduceren — om uit te leggen welk Antwoord het Systeem op een specifieke Datum zou hebben gegeven — zowel een professionele als een regelgevende Vereiste is.
+
+## Waarom het ertoe doet
+
+- **Temporele zoekopdrachten** — Belastingadviseurs moeten vaak weten wat de Wet op een specifieke datum in het verleden bepaalde; Versiebeheer stelt het Systeem in staat om de exacte Versie van een Bepaling op te halen die op elk gewenst Moment van kracht was
+- **Controleerbaarheid** — wanneer een eerder AI-gegenereerd Antwoord in vraag wordt gesteld, maakt Versiebeheer het mogelijk om de exacte Systeemtoestand te reconstrueren (Inhoud van de Kennisbank, Modelversie, Promptconfiguratie) die dat Antwoord heeft geproduceerd
+- **Veilige updates** — Versiebeheer maakt rollback mogelijk wanneer een kennisbankupdate Fouten introduceert of wanneer een nieuwe Configuratie de Systeemkwaliteit verslechtert
+- **Naleving van Regelgeving** — de EU AI Act vereist Documentatie van Systeemwijzigingen gedurende de volledige Levenscyclus; Versiebeheer levert deze Documentatie automatisch
+
+## Hoe het werkt
+
+Versiebeheer functioneert op verschillende niveaus in een juridisch AI-systeem:
+
+**Documentversiebeheer** — elk juridisch Document wordt opgeslagen met zijn volledige Versiegeschiedenis. Wanneer een Artikel van het WIB92 wordt gewijzigd, wordt de nieuwe Versie naast de oude toegevoegd, met Ingangsdatums die aangeven welke Versie gedurende welke Periode van toepassing was. Het Systeem kan de Versie ophalen die op elke gewenste Datum van kracht was.
+
+**Kennisbankversiebeheer** — de Toestand van de volledige Kennisbank (alle Documenten, Metadata en Indexconfiguraties) wordt in de tijd bijgehouden. Elke Inname, Metadatacorrectie of structurele Wijziging creëert een nieuwe Versie. Dit stelt het Systeem in staat om de vraag "wat zou je me vorige maand hebben verteld?" te beantwoorden door een Zoekopdracht opnieuw uit te voeren tegen de historische Toestand van de Kennisbank.
+
+**Configuratieversiebeheer** — Promptsjablonen, Systeeminstructies, Modelselecties en Retrievalparameters worden samen met de Inhoud onder Versiebeheer geplaatst. Wanneer het Systeemgedrag verandert, kan de Configuratiewijziging die dit heeft veroorzaakt worden geïdentificeerd door Versies te vergelijken.
+
+**Indexversiebeheer** — Vectorindexen kunnen worden gesnapshot of geversioneerd, zodat een specifieke Indextoestand kan worden hersteld. Dit ondersteunt A/B-testen (twee Indexversies vergelijken), rollback (een problematische Update terugdraaien) en historische replay.
+
+De Implementatie maakt doorgaans gebruik van een combinatie van Tools: documentbeheersystemen voor Versiebeheer van juridische Teksten, git of vergelijkbare Systemen voor Configuratieversiebeheer, en mechanismen op Databaseniveau (append-only-tabellen, soft deletes, temporele Tabellen) voor Versiebeheer van Kennisbank en Index.
+
+## Veelgestelde vragen
+
+**V: Hoe verhoudt Versiebeheer zich tot temporele Indexering?**
+
+A: Versiebeheer slaat de verschillende Versies van Documenten op. [Temporele indexering](/nl/glossary/temporal-indexing/) maakt die Versies doorzoekbaar op basis van hun Ingangsdatums. Samen maken ze tijdsbewust ophalen mogelijk: het Systeem kan de Versie van een Bepaling vinden die op een specifieke Datum van kracht was en deze gebruiken om temporele Zoekopdrachten te beantwoorden.
+
+**V: Hoeveel Opslagruimte vereist Versiebeheer?**
+
+A: Voor Tekstdocumenten is de overhead van Versiebeheer bescheiden — juridische Documenten zijn klein, en het opslaan van historische Versies voegt beperkte Opslagruimte toe. Voor Vectorindexen kan het opslaan van meerdere Versies significant zijn, dus Systemen bewaren doorgaans alleen belangrijke Snapshots in plaats van elke tussentijdse Toestand.

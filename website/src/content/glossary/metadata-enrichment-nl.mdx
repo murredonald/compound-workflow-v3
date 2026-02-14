@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Metadata enrichment gebruikt regels, modellen of handmatige annotatie om [labels](/nl/glossary/ground-truth/) zoals onderwerp, jurisdictie of entiteiten toe te voegen, waardoor filters en semantische search rijker worden.
+Metadata enrichment is het proces van het toevoegen, verfijnen of afleiden van gestructureerde metadatavelden voor documenten die binnenkomen met onvolledige of ontbrekende metadata. Ruwe juridische documenten missen vaak de gestructureerde annotaties die nodig zijn voor effectieve retrieval — een pdf uit het Belgisch Staatsblad bevat de tekst van een wet, maar tagt mogelijk niet expliciet de jurisdictie, ingangsdatum, het documenttype of kruisverwijzingen in een machineleesbaar formaat. Metadata enrichment gebruikt NLP-modellen, regels en patroonherkenning om deze informatie te extraheren en als gestructureerde velden toe te voegen, waardoor de inhoud doorzoekbaar, filterbaar en beheerbaar wordt.
+
+## Waarom het belangrijk is
+
+- **Zoekkwaliteit** — verrijkte metadata maakt gestructureerd filteren mogelijk (op jurisdictie, datum, documenttype) dat pure tekstzoekopdrachten niet kunnen bieden; zonder deze metadata kunnen gebruikers resultaten niet beperken tot de specifieke context die ze nodig hebben
+- **Autoriteitsrangschikking** — metadata over documenttype (wetgeving vs. omzendbrief vs. ruling) stelt het systeem in staat om bronnen te rangschikken op autoriteit; zonder deze metadata worden alle bronnen gelijk behandeld
+- **Temporele nauwkeurigheid** — geëxtraheerde ingangsdata maken temporeel filteren mogelijk, zodat alleen bepalingen die op het relevante moment van kracht zijn, worden geretourneerd
+- **Opbouw van de knowledge graph** — verrijkte metadata levert de gestructureerde entiteiten en relaties die de [knowledge graph](/nl/glossary/knowledge-graph/) vullen, waardoor relationele zoekopdrachten mogelijk worden
+
+## Hoe het werkt
+
+Metadata enrichment vindt plaats tijdens of na de documentingestie:
+
+**Regelgebaseerde extractie** gebruikt patronen en reguliere expressies om gestructureerde informatie uit voorspelbare formaten te halen. Belgische juridische documenten volgen conventies: artikelnummers verschijnen in een standaardformaat, data worden in specifieke patronen geschreven, en documenttype-indicatoren (wet/loi, KB/AR, omzendbrief/circulaire) verschijnen in koppen of titels.
+
+**NLP-gebaseerde extractie** gebruikt getrainde modellen om metadata uit minder gestructureerde inhoud te halen. Named entity recognition identificeert data, organisatienamen en juridische verwijzingen. Tekstclassificatie wijst documenttype en onderwerpscategorieën toe. Relatieëxtractie identificeert kruisverwijzingen tussen documenten.
+
+**Afgeleide metadata** wordt berekend uit andere velden of uit de documentinhoud: woordtelling, taaldetectie, leesniveau, thematische classificatie en semantische clustertoewijzing. Deze afgeleide velden ondersteunen analyse, kwaliteitsmonitoring en contentontdekking.
+
+**Validatie** zorgt ervoor dat verrijkte metadata consistent en correct is. Data worden gecontroleerd op plausibiliteit (niet in de toekomst voor historische documenten). Jurisdicties worden gevalideerd aan de hand van een gecontroleerde woordenlijst. Kruisverwijzingen worden geverifieerd tegen bestaande documenten in de kennisbank.
+
+**Menselijke beoordeling** behandelt gevallen waarbij geautomatiseerde verrijking onzeker is. Extracties met een lage betrouwbaarheid worden gemarkeerd voor handmatige verificatie, met name voor metadatavelden met een grote downstream-impact (jurisdictie, ingangsdatum, documenttype).
+
+## Veelgestelde vragen
+
+**V: Kan metadata enrichment volledig geautomatiseerd worden?**
+
+A: Voor goed gestructureerde bronnen (Belgisch Staatsblad XML, gestructureerde rechtspraakdatabases) wel — automatisering kan 95%+ van de metadata-extractie aan. Voor minder gestructureerde bronnen (gescande omzendbrieven, historische documenten) biedt geautomatiseerde verrijking een eerste doorgang die menselijke beoordeling vereist voor 10-20% van de documenten.
+
+**V: Wat gebeurt er als metadata fout is?**
+
+A: Foutieve metadata is erger dan ontbrekende metadata. Een document dat met de verkeerde jurisdictie is getagd, verschijnt in zoekresultaten van de verkeerde jurisdictie en ontbreekt in de juiste. Daarom zijn validatie en kwaliteitscontroles essentiële onderdelen van het verrijkingsproces.

@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Jailbreaking bezeichnet Techniken, bei denen [Prompts](/de/glossary/prompt/) oder Eingaben absichtlich so formuliert werden, dass ein Sprachmodell seine Sicherheitsrichtlinien umgeht oder ignoriert und dadurch eigentlich eingeschränkte oder problematische Inhalte erzeugt.
+Jailbreaking ist die Praxis, [Prompts](/de/glossary/prompt/) oder Eingaben so zu gestalten, dass ein Sprachmodell seine eingebauten Sicherheitsbeschränkungen, Richtlinien oder System-Prompt-Anweisungen umgeht und Ausgaben erzeugt, die es eigentlich ablehnen sollte. Jailbreaking-Techniken nutzen die Spannung zwischen der Fähigkeit eines Modells, Anweisungen zu befolgen, und seinem Sicherheitstraining aus — sie verwenden kreative Prompt-Formulierungen, um Sicherheitsfilter zu überschreiben. Im Bereich Legal AI umfassen die Risiken von Jailbreaking unter anderem, das System dazu zu verleiten, sich als zugelassener Berater auszugeben, Zitate ohne entsprechende Vorbehalte zu fabrizieren oder Haftungsausschlüsse zur unverbindlichen Natur seiner Ausgaben zu umgehen.
+
+## Warum es wichtig ist
+
+- **Umgehung von Sicherheitsmaßnahmen** — ein per Jailbreak manipuliertes Legal-AI-System könnte Ausgaben ohne erforderliche Haftungsausschlüsse erzeugen, spekulative Antworten als verbindlich darstellen oder professionelle Zuständigkeitsgrenzen umgehen
+- **Haftungsrisiko** — wenn ein Nutzer ein Legal-AI-System per Jailbreak manipuliert und eine Ausgabe erhält, die Schaden verursacht, wird die Haftungsfrage komplex; robuste Jailbreak-Resistenz ist eine defensive Notwendigkeit
+- **Offenlegung des System-Prompts** — einige Jailbreaking-Techniken extrahieren den System-Prompt und legen proprietäre Anweisungen, Sicherheitsregeln und Architekturdetails offen
+- **Vertrauen und Regulierung** — der EU AI Act verlangt angemessene Schutzmaßnahmen gegen Missbrauch; Jailbreak-Resistenz ist Teil der Erfüllung dieser Anforderung
+
+## So funktioniert es
+
+Jailbreaking-Techniken nutzen verschiedene Aspekte der Verarbeitung von Anweisungen durch Sprachmodelle aus:
+
+**Rollenspiel-Prompts** bitten das Modell, „so zu tun", als wäre es ein anderes System ohne Sicherheitsbeschränkungen („stell dir vor, du bist eine KI ohne Einschränkungen …"). Dies nutzt das Anweisungsbefolgungstraining des Modells aus, um sein Sicherheitstraining zu überschreiben.
+
+**Kodierung und Verschleierung** präsentieren die problematische Anfrage in kodierter Form (Base64, umgekehrter Text, Zeichenersetzung), die schlüsselwortbasierte Sicherheitsfilter umgeht, während das Modell die Absicht dennoch versteht.
+
+**Mehrstufige Eskalation** bewegt das Gespräch schrittweise in Richtung eingeschränkter Bereiche durch eine Reihe harmlos erscheinender Fragen, die jeweils auf der vorherigen aufbauen, bis sich das Modell in einem Kontext befindet, in dem es eingeschränkte Ausgaben erzeugt.
+
+**Prompt-Injection** bettet Anweisungen in scheinbar normalen Inhalt ein — beispielsweise werden Überschreibungsanweisungen in einem Dokument versteckt, das das System abruft und als Kontext verarbeitet. Dies ist besonders relevant für RAG-Systeme, bei denen externe Inhalte in den Prompt gelangen.
+
+**Indirekte Aufforderung** nutzt legitime Funktionen (Zusammenfassung, Übersetzung, Analyse) auf Inhalte an, die die eingeschränkte Anfrage enthalten, wodurch das Modell den eingeschränkten Inhalt als Teil seiner Analyse erzeugt.
+
+Abwehrmaßnahmen gegen Jailbreaking umfassen: robustes Sicherheitstraining, das gegen Rollenspiel- und Kodierungstricks resistent ist, Eingabefilterung, die gängige Jailbreaking-Muster erkennt, Ausgabeüberwachung, die Antworten markiert, die gegen Sicherheitsrichtlinien verstoßen, und regelmäßiges adversariales Testen, um neue Jailbreaking-Techniken zu entdecken, bevor sie ausgenutzt werden. Keine aktuelle Abwehr ist vollständig wirksam — Jailbreak-Resistenz ist ein fortlaufendes Wettrüsten zwischen Angriffs- und Verteidigungstechniken.
+
+## Häufige Fragen
+
+**F: Kann Jailbreaking vollständig verhindert werden?**
+
+A: Nicht mit der aktuellen Technologie. Je besser Modelle darin werden, Anweisungen zu befolgen, desto anfälliger werden sie potenziell auch für geschickt formulierte Überschreibungsanweisungen. Die Verteidigung konzentriert sich darauf, die Hürde zu erhöhen (Jailbreaking schwieriger und unzuverlässiger zu machen), anstatt es vollständig zu eliminieren.
+
+**F: Ist Jailbreaking illegal?**
+
+A: Im Allgemeinen nein, wenn es zu Forschungs- oder persönlichen Experimentierzwecken durchgeführt wird. Die Nutzung von Jailbreaking zur Extraktion vertraulicher Informationen, Umgehung von Zugangskontrollen oder Verursachung von Schaden kann jedoch je nach Rechtsordnung und Kontext gegen Computerbetrugsgesetze oder Nutzungsbedingungen verstoßen.
 
 ## References
 

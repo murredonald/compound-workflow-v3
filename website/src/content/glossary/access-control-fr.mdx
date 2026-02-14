@@ -12,4 +12,33 @@ draft: false
 
 ## Définition
 
-Le contrôle d'accès applique des autorisations pour les utilisateurs, les services et les processus, garantissant que seules les parties autorisées peuvent lire ou modifier des ressources spécifiques.
+Le contrôle d'accès est l'ensemble des politiques, mécanismes et implémentations techniques qui déterminent qui peut accéder à quelles données, systèmes ou actions au sein d'un environnement logiciel. Il régit l'authentification (vérification de l'identité), l'autorisation (vérification des permissions) et l'application (blocage des opérations non autorisées). Dans les systèmes d'IA juridique qui traitent des données fiscales sensibles, le contrôle d'accès garantit que les informations des clients ne sont visibles que par les conseillers autorisés, que les fonctions administratives sont restreintes aux rôles appropriés, et que le système respecte les obligations de confidentialité inhérentes à la pratique professionnelle.
+
+## Pourquoi c'est important
+
+- **Confidentialité des clients** — les conseillers fiscaux ont des obligations de secret professionnel ; le contrôle d'accès garantit que les données d'un client ne sont jamais exposées à un autre client ou à du personnel non autorisé
+- **Conformité réglementaire** — le RGPD exige des mesures techniques appropriées pour protéger les données personnelles ; le règlement européen sur l'IA (AI Act) ajoute des exigences de transparence et d'accès pour les systèmes à haut risque ; le contrôle d'accès est fondamental pour les deux
+- **Multi-tenancy** — lorsque plusieurs cabinets ou praticiens utilisent la même plateforme d'IA, le contrôle d'accès isole leurs données, requêtes et résultats les uns des autres
+- **Préparation à l'audit** — les journaux de contrôle d'accès documentent qui a accédé à quoi et quand, soutenant à la fois la gouvernance interne et les audits réglementaires externes
+
+## Comment ça fonctionne
+
+Le contrôle d'accès opère à plusieurs couches dans un système d'IA :
+
+L'**authentification** vérifie l'identité — elle confirme qu'un utilisateur est bien celui qu'il prétend être. Cela implique généralement des identifiants (nom d'utilisateur et mot de passe), une authentification multifacteur (une deuxième étape de vérification comme un code ou une biométrie) ou une intégration d'authentification unique (SSO) avec le fournisseur d'identité d'une organisation.
+
+L'**autorisation** détermine ce qu'un utilisateur authentifié peut faire. Le modèle le plus courant est le **contrôle d'accès basé sur les rôles (RBAC)**, où les permissions sont attribuées à des rôles (administrateur, conseiller, analyste junior, auditeur en lecture seule) et les utilisateurs sont assignés à des rôles. Les systèmes plus granulaires utilisent le **contrôle d'accès basé sur les attributs (ABAC)**, où les permissions dépendent d'une combinaison d'attributs de l'utilisateur, d'attributs de la ressource et de conditions environnementales (par exemple l'heure, la localisation).
+
+L'**application** se fait à chaque frontière du système : les points d'accès API vérifient l'autorisation avant de traiter les requêtes, les requêtes en base de données sont filtrées par tenant, et la couche de récupération applique des filtres basés sur les permissions afin que les résultats de recherche n'incluent que les documents que l'utilisateur est autorisé à consulter.
+
+Dans un contexte d'IA juridique, le contrôle d'accès s'étend à la base de connaissances elle-même. Certains documents peuvent être restreints à des domaines de pratique ou niveaux d'ancienneté spécifiques. Les avis juridiques privilégiés ou les notes internes d'un cabinet nécessitent des contrôles plus stricts que la législation accessible au public.
+
+## Questions fréquentes
+
+**Q : Comment le contrôle d'accès interagit-il avec les réponses générées par l'IA ?**
+
+R : La couche de récupération doit filtrer les documents sources selon les permissions de l'utilisateur avant de transmettre le contexte au modèle de langage. Cela empêche le modèle de voir — et potentiellement de citer — des documents auxquels l'utilisateur n'est pas autorisé à accéder. La vérification d'accès se fait au moment de la récupération, pas après la génération.
+
+**Q : Quelle est la différence entre authentification et autorisation ?**
+
+R : L'authentification répond à « qui êtes-vous ? » — elle vérifie l'identité. L'autorisation répond à « qu'avez-vous le droit de faire ? » — elle vérifie les permissions. Les deux sont nécessaires : l'authentification sans autorisation laisse entrer tout le monde avec un accès complet ; l'autorisation sans authentification ne peut pas vérifier qui demande l'accès.

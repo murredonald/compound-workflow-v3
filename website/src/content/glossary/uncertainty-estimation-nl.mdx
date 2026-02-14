@@ -10,6 +10,44 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Onzekerheidsinschatting is het proces van het kwantificeren van hoe zeker een AI-systeem is over zijn Voorspellingen of Antwoorden, waarbij onderscheid wordt gemaakt tussen Gevallen waarin het Systeem betrouwbaar correct is en Gevallen waarin het fout zou kunnen zitten. In plaats van elk Antwoord met gelijke Overtuiging te presenteren, communiceert een Systeem met Onzekerheidsinschatting zijn Mate van Zekerheid — zodat Gebruikers kunnen beslissen wanneer ze de Uitvoer direct kunnen vertrouwen en wanneer onafhankelijke Verificatie nodig is. Bij juridische AI is Onzekerheidsinschatting essentieel omdat de Gevolgen van handelen op basis van een onjuist Antwoord (verkeerde Belastingaangifte, gemiste Deadline, regulatoire Boete) vereisen dat Professionals weten wanneer aanvullende Verificatie geboden is.
+
+## Waarom het ertoe doet
+
+- **Geïnformeerde besluitvorming** — Belastingadviseurs kunnen hun Verificatie-inspanning prioriteren: Antwoorden met hoog Vertrouwen kunnen met een snelle Controle worden gebruikt, terwijl Antwoorden met laag Vertrouwen grondig onafhankelijk Onderzoek vereisen
+- **Eerlijk systeemgedrag** — een Systeem dat zijn Onzekerheid erkent, is betrouwbaarder dan een Systeem dat elk Antwoord met vals Vertrouwen presenteert; Professionals verliezen snel het Vertrouwen in Systemen die met Overtuiging fout zitten
+- **Doorverwijzing naar mensen** — Onzekerheidsinschatting maakt automatische Escalatie mogelijk: wanneer het Vertrouwen van het Systeem onder een Drempelwaarde zakt, kan het de Vraag markeren voor menselijke Beoordeling in plaats van een mogelijk onjuist Antwoord te geven
+- **Kwaliteitsmonitoring** — het bijhouden van Onzekerheidsverdelingen over tijd onthult de Systeemgezondheid; een plotselinge Stijging in gemiddelde Onzekerheid kan wijzen op Hiaten in de Kennisbank, Modeldegradatie of nieuwe Soorten Vragen die het Systeem niet goed aankan
+
+## Hoe het werkt
+
+Onzekerheid in AI-systemen komt uit twee Bronnen:
+
+**Epistemische onzekerheid** (Modelonzekerheid) weerspiegelt wat het Model niet weet — Hiaten in Trainingsgegevens, onbekende Concepten of ambigue Invoer. Dit Type Onzekerheid kan in principe worden verminderd door meer Gegevens of betere Training. In een RAG-systeem is epistemische Onzekerheid hoog wanneer de Retrievallaag geen relevante Bronnen kan vinden of wanneer de beschikbare Bronnen de Vraag niet duidelijk beantwoorden.
+
+**Aleatoire onzekerheid** (Data-onzekerheid) weerspiegelt inherente Ambiguïteit in de Invoer of de Taak. Sommige juridische Vragen hebben werkelijk meerdere geldige Interpretaties, tegenstrijdige gezaghebbende Bronnen, of hangen af van Feiten die niet in de Vraag zijn vermeld. Deze Onzekerheid kan niet worden verminderd door het Model te verbeteren — het vereist Verduidelijking van de Gebruiker of Erkenning dat de Vraag inherent ambigu is.
+
+Veelgebruikte Inschattingstechnieken zijn onder meer:
+
+- **Ensemblemethoden** — dezelfde Query door meerdere Modellen of meerdere Retrievalconfiguraties sturen en de Overeenstemming meten; grote Onenigheid duidt op hoge Onzekerheid
+- **Monte Carlo-dropout** — het Model meerdere keren draaien met willekeurige Dropout tijdens Inferentie en de Uitvoervariantie meten
+- **Token-niveau waarschijnlijkheden** — de uitvoerlogits van het Taalmodel gebruiken om te beoordelen hoe zeker het is over elk gegenereerd Token; Tokens met lage Waarschijnlijkheid op kritieke Posities suggereren Onzekerheid
+- **Retrievalkwaliteitssignalen** — de Relevantiesores van opgehaalde Documenten meten; als de best overeenkomende Documenten lage Relevantiesores hebben, moet het Systeem een lager Vertrouwen uitdrukken
+
+In productie-RAG-systemen worden deze Signalen doorgaans gecombineerd tot een samengestelde Betrouwbaarheidsscore die zowel Retrievalkwaliteit als Generatiezekerheid weerspiegelt.
+
+## Veelgestelde vragen
+
+**V: Is Onzekerheidsinschatting hetzelfde als confidence scoring?**
+
+A: Ze zijn nauw verwant. Onzekerheidsinschatting is de bredere Discipline van het kwantificeren van wat het Model niet weet. Confidence scoring is een specifieke Uitvoer — een Score die aan de Gebruiker wordt gepresenteerd — die is afgeleid van Onzekerheidsschattingen. Een goed gekalibreerde Betrouwbaarheidsscore is het gebruikersgerichte Product van Onzekerheidsinschatting.
+
+**V: Kan een Systeem onzeker maar correct zijn?**
+
+A: Ja. Het Systeem kan het juiste Antwoord produceren terwijl het eerlijk aangeeft niet volledig zeker te zijn — bijvoorbeeld wanneer slechts één marginaal relevante Bron is gevonden. Dit is wenselijk Gedrag: het waarschuwt de Gebruiker om te verifiëren, ook al zou Verificatie het Antwoord bevestigen.
+
 ## References
 
 - Gal & Ghahramani (2016), "[Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning](https://arxiv.org/abs/1506.02142)", ICML.

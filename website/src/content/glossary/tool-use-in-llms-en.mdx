@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Tool use in [LLMs](/en/glossary/llm/) describes architectures where the model is allowed or encouraged to call external tools—such as search, databases, or calculators—to gather information or take actions instead of relying purely on its internal weights.
+Tool use in LLMs is the design pattern in which a language model can invoke external tools — such as search engines, databases, calculators, APIs, or code interpreters — to gather information or perform actions that complement its own capabilities. Instead of relying solely on knowledge stored in its weights, the model recognises when it needs external data or computation, generates a structured tool call, receives the tool's output, and incorporates it into its response. In legal AI, tool use enables models to perform precise tax calculations, query current legislation databases, and verify citations against authoritative sources.
+
+## Why it matters
+
+- **Precision on computations** — language models are unreliable at arithmetic; tool use allows them to delegate tax calculations, interest computations, and threshold comparisons to a calculator or code interpreter that produces exact results
+- **Current information** — models' training data has a cut-off date; tool use allows them to query live databases for current tax rates, recent rulings, or the latest legislative amendments
+- **Structured data access** — legal databases, tax rate tables, and filing deadline calendars are structured data that models cannot access from their weights; tools bridge this gap
+- **Action capability** — beyond information retrieval, tool use enables models to take actions: generating documents, submitting forms, or scheduling tasks as part of an agentic workflow
+
+## How it works
+
+Tool use operates through a structured interaction loop:
+
+**Tool definition** — the system provides the model with descriptions of available tools: their names, what they do, what parameters they accept, and what they return. For a legal AI system, tools might include a legislation search API, a tax rate lookup table, an interest calculator, and a citation verifier.
+
+**Tool selection** — during response generation, the model determines that it needs information or computation beyond its own capabilities. It generates a structured tool call specifying which tool to use and what parameters to pass. For example: `search_legislation(query="article 215 WIB92", jurisdiction="federal", date="2025-01-01")`.
+
+**Tool execution** — the system executes the tool call, retrieves the result, and passes it back to the model. The model never executes tools directly — the system layer mediates, enforcing access controls and validating inputs.
+
+**Response integration** — the model incorporates the tool's output into its ongoing response generation, using the retrieved data to produce an accurate, grounded answer.
+
+Multiple tool calls may occur in a single response. The model might first search for relevant legislation, then look up a specific tax rate from a structured table, then use a calculator to compute the tax due, all within a single answer generation flow.
+
+**Safety considerations** include: validating tool call parameters to prevent injection attacks, limiting which tools are available in which contexts, logging all tool calls for audit trails, and ensuring that tool outputs are from authoritative sources.
+
+## Common questions
+
+**Q: How is tool use different from RAG?**
+
+A: RAG is a specific instance of tool use where the tool is a search/retrieval system. Tool use is the broader pattern — it includes any external tool, not just retrieval. A model using both a search engine and a calculator is using two tools, one of which is RAG-style retrieval.
+
+**Q: Can models use tools they were not trained on?**
+
+A: Yes, to a degree. Modern LLMs trained with tool use capabilities can generalise to new tools described in the prompt, as long as the tool descriptions are clear. However, fine-tuning on specific tools improves reliability.
 
 ## References
 

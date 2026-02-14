@@ -12,4 +12,43 @@ draft: false
 
 ## Definition
 
-Source hierarchy expresses which sources outrank others—for example statutes over guidance or case law—so that retrieval and reasoning can prioritise higher-authority material.
+Source hierarchy is the ordered ranking of legal sources by their authority and binding force, reflecting which sources take precedence when they conflict. In Belgian law, the Constitution outweighs ordinary legislation, legislation outweighs royal decrees, royal decrees outweigh ministerial circulars, and binding case law from higher courts outweighs lower court decisions. An AI system that understands source hierarchy can prioritise authoritative sources in its retrieval and generation, ensuring that its answers reflect the law as it is actually applied rather than giving equal weight to a binding statute and a non-binding FAQ.
+
+## Why it matters
+
+- **Correct conflict resolution** — when a circular contradicts a statute, the statute prevails; without source hierarchy, the system might cite the circular and produce an incorrect answer
+- **Authority-weighted retrieval** — source hierarchy enables the retrieval pipeline to boost authoritative sources and demote weaker ones, improving the relevance of top results
+- **Professional credibility** — tax advisors expect an AI tool to understand that legislation outranks administrative guidance; a system that treats all sources equally undermines professional trust
+- **Nuanced answers** — source hierarchy enables the system to distinguish between what the law says (binding statute), what the administration thinks (circular), and what courts have decided (case law), producing more nuanced and useful responses
+
+## How it works
+
+Source hierarchy is implemented through metadata tagging and scoring:
+
+**Authority classification** — each document in the knowledge base is tagged with its source type and authority level during ingestion. A typical hierarchy for Belgian tax law, from highest to lowest authority:
+
+1. **Constitutional provisions** — fundamental rules that override all other sources
+2. **European Union law** — regulations and directives with direct or indirect effect
+3. **Federal legislation** — codes (WIB92, WBTW), laws, and programme laws
+4. **Regional legislation** — Flemish, Walloon, Brussels, and German Community codes and decrees
+5. **Royal decrees** — implementing regulations issued by the executive
+6. **Ministerial decrees** — more specific implementing rules
+7. **Administrative circulars** — the tax administration's interpretation (not binding on courts)
+8. **Administrative rulings** — individual advance rulings on specific situations
+9. **Case law** — court decisions (binding force depends on court level)
+10. **Parliamentary questions** — ministerial answers (informative, not binding)
+11. **Commentary and doctrine** — academic and practitioner analysis
+
+**Retrieval boosting** — during retrieval, authority scores are incorporated into relevance scoring. A statute matching the query with moderate semantic similarity may be ranked above a circular with higher semantic similarity because of its greater authority.
+
+**Conflict flagging** — when the system detects sources at different authority levels that present conflicting information, it can flag this to the user, explaining which source prevails and why.
+
+## Common questions
+
+**Q: Is source hierarchy always clear-cut?**
+
+A: At the extremes, yes — the Constitution always outranks a circular. In the middle, ranking can be nuanced: how does a recent circular that explicitly changes administrative practice compare to older case law? The hierarchy provides the framework, but professional judgement is still needed for edge cases.
+
+**Q: How is source hierarchy different from source provenance?**
+
+A: Source provenance tracks where a document came from and how it was processed (origin and processing history). Source hierarchy ranks documents by their legal authority. A circular has clear provenance (published by FPS Finance on a specific date) and a specific position in the hierarchy (below legislation, above doctrine).

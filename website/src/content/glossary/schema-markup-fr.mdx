@@ -12,4 +12,40 @@ draft: false
 
 ## Definition
 
-Le schema markup s’appuie sur des standards comme Schema.org pour étiqueter dans le HTML des entités – personnes, articles, organisations – afin que moteurs de recherche et systèmes d’IA comprennent mieux le contenu.
+Le schema markup est un vocabulaire standardisé d'annotations lisibles par les machines, ajouté au contenu web ou aux documents, qui décrit leur structure, leur type et leur signification. En utilisant des formats comme JSON-LD, les microdonnées ou RDFa, le schema markup indique aux moteurs de recherche et aux autres systèmes ce que contient une page — pas seulement le texte, mais le sens sémantique : ceci est un article sur un concept juridique, cela est une définition, ceci est une date de publication, ce sont des termes associés. Le schema markup comble le fossé entre le contenu lisible par l'humain et les données structurées interprétables par les machines.
+
+## Pourquoi c'est important
+
+- **Compréhension par les moteurs de recherche** — le schema markup aide Google et les autres moteurs de recherche à comprendre le contenu des pages, permettant des résultats enrichis (extraits en vedette, panneaux de connaissances, cartes FAQ) qui augmentent la visibilité et le taux de clics
+- **Valeur SEO** — les pages avec schema markup sont plus susceptibles d'apparaître dans les résultats de recherche enrichis, qui surpassent systématiquement les liens bleus standards en termes de taux de clics
+- **Amélioration de la recherche interne** — au-delà des moteurs de recherche externes, le schema markup aide les systèmes de récupération internes à comprendre la structure du contenu, permettant un filtrage et une catégorisation plus précis
+- **Interopérabilité** — le schema markup utilise des vocabulaires partagés (principalement Schema.org) qui permettent à différents systèmes de comprendre et d'échanger des descriptions de contenu de manière cohérente
+
+## Comment ça fonctionne
+
+Le schema markup est implémenté en ajoutant des annotations de données structurées aux pages web ou aux documents :
+
+**JSON-LD** (JSON for Linking Data) est le format recommandé. Un bloc JSON-LD est intégré dans le `<head>` ou le `<body>` du HTML de la page, décrivant le contenu de la page dans un format structuré. Pour une page de glossaire, cela peut spécifier : le terme défini (name), la définition (description), la catégorie (about), les termes associés (relatedLink) et la langue de la page (inLanguage).
+
+**Le vocabulaire Schema.org** fournit les types et propriétés standardisés. Les types courants pour un site web d'IA juridique incluent :
+- **DefinedTerm** — pour les entrées de glossaire (nom du terme, description, catégorie)
+- **Article** — pour les articles de blog (titre, auteur, datePublished, articleBody)
+- **FAQPage** — pour les pages avec du contenu en questions-réponses
+- **WebSite** — pour le site global avec sa fonctionnalité de recherche
+- **Organization** — pour l'entreprise avec ses coordonnées
+
+**L'implémentation** consiste à identifier les types de contenu de chaque page, à les mapper vers les types Schema.org appropriés et à générer le balisage JSON-LD. Pour un site multilingue comme une plateforme juridique belge, la propriété `inLanguage` distingue le contenu néerlandais, français et allemand.
+
+**La validation** utilise le test de résultats enrichis de Google ou le validateur de Schema.org pour vérifier que le balisage est syntaxiquement correct, utilise des types et propriétés valides, et est susceptible de générer des résultats de recherche enrichis.
+
+Le schema markup ne modifie pas le contenu visible de la page — c'est une métadonnée consommée par les machines, pas par les lecteurs humains. Cependant, les informations qu'il transmet doivent refléter fidèlement le contenu visible ; un balisage trompeur enfreint les directives des moteurs de recherche et peut entraîner des pénalités.
+
+## Questions fréquentes
+
+**Q : Le schema markup améliore-t-il directement le classement dans les résultats de recherche ?**
+
+R : Le schema markup n'est pas un facteur de classement direct, mais il permet des résultats enrichis qui augmentent le taux de clics, ce qui soutient indirectement le SEO. Plus important encore, il aide les moteurs de recherche à comprendre la sémantique du contenu, ce qui peut améliorer la manière et le moment où les pages apparaissent dans les résultats de recherche.
+
+**Q : Quelle quantité de schema markup une page devrait-elle contenir ?**
+
+R : Suffisamment pour décrire le contenu principal de la page. Une page de glossaire devrait avoir un balisage DefinedTerm. Un article de blog devrait avoir un balisage Article. Le balisage excessif de contenu accessoire (navigation, pieds de page, publicités) est inutile et peut dérouter les validateurs.

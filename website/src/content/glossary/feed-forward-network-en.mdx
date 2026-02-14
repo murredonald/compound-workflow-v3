@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-A feed-forward network is a [neural network](/en/glossary/neural-network/) architecture in which signals move only forward from inputs through hidden layers to outputs, without cycles or feedback connections.
+A feed-forward network (FFN) is a neural network architecture in which data flows in one direction — from input through one or more hidden layers to the output — without any loops, cycles, or feedback connections. Each layer applies a linear transformation followed by a non-linear activation function, progressively transforming the input into a useful representation. Feed-forward networks are the simplest type of neural network and serve as building blocks within more complex architectures, including the transformer models that power modern language models and embedding systems.
+
+## Why it matters
+
+- **Transformer building block** — every transformer layer contains a feed-forward network that processes each token independently after the attention mechanism has mixed information across tokens; the FFN is where much of the model's "knowledge" is stored
+- **Universal approximation** — feed-forward networks with sufficient width can approximate any continuous function, making them theoretically capable of learning any input-output mapping
+- **Computational simplicity** — because data flows in one direction without recurrence, feed-forward networks are straightforward to parallelise on modern hardware (GPUs, TPUs), enabling efficient training and inference
+- **Foundation for understanding** — understanding feed-forward networks is essential for understanding how transformer-based language models and embedding models work internally
+
+## How it works
+
+A feed-forward network consists of layers of artificial neurons. Each neuron receives inputs, multiplies them by learned weights, adds a bias term, and applies a non-linear activation function (such as ReLU or GELU):
+
+**Input layer** receives the data — in a transformer context, this is the output of the attention mechanism for a given token position. The input is a vector of fixed dimensionality.
+
+**Hidden layers** apply successive transformations. Each layer multiplies the input by a weight matrix, adds a bias vector, and applies an activation function. In transformer FFNs, there are typically two linear transformations with an activation function in between: the first projects from the model dimension to a larger intermediate dimension (often 4x the model dimension), and the second projects back down. This expansion-contraction pattern allows the network to operate in a higher-dimensional space where complex transformations are easier.
+
+**Output layer** produces the final result — in a transformer, this is the updated representation for the token, which is then passed to the next transformer layer.
+
+The "feed-forward" name distinguishes this architecture from recurrent neural networks (where outputs loop back as inputs) and from convolutional networks (where local spatial patterns are exploited). In modern usage, the term most often refers to the position-wise FFN within a transformer layer.
+
+## Common questions
+
+**Q: What role does the FFN play in a transformer?**
+
+A: The attention mechanism combines information across token positions (what is relevant to what). The FFN then processes each position independently, applying learned transformations that encode factual knowledge and linguistic patterns. Research suggests that the FFN layers store much of the model's world knowledge.
+
+**Q: How is a feed-forward network different from a deep learning model?**
+
+A: A feed-forward network is one type of deep learning model (specifically, when it has multiple hidden layers). Deep learning also includes recurrent networks, convolutional networks, transformers, and other architectures. A transformer is a deep learning model that uses feed-forward networks as components.
 
 ## References
 

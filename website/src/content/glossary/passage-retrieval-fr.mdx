@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le passage retrieval se concentre sur l’indexation et la récupération de segments de texte fins afin que les systèmes [RAG](/fr/glossary/rag/) puissent fonder leurs réponses sur les passages les plus pertinents plutôt que sur des documents entiers.
+Le passage retrieval consiste à indexer et récupérer de petits segments de texte (passages ou chunks) plutôt que des documents entiers, permettant une livraison de contexte plus précise et ciblée à la couche de génération. Au lieu de renvoyer une loi de 50 pages et de demander au modèle de langage de trouver l'article pertinent, le passage retrieval renvoie le paragraphe ou l'article spécifique qui répond à la requête. Cette granularité est essentielle pour les systèmes [RAG](/fr/glossary/rag/), où la fenêtre de contexte est limitée et chaque token compte.
+
+## Pourquoi c'est important
+
+- **Précision** — renvoyer un article spécifique plutôt qu'une loi entière garantit que le modèle de langage reçoit un contexte ciblé et pertinent au lieu de devoir parcourir des pages de texte non pertinent
+- **Efficacité de la fenêtre de contexte** — les modèles de langage ont des fenêtres de contexte limitées ; le passage retrieval maximise la proportion de contenu pertinent dans cette fenêtre
+- **Exactitude des citations** — lorsque l'unité récupérée est un seul article ou paragraphe, le système peut citer la disposition exacte plutôt que de pointer vers un document de plusieurs pages
+- **Précision du score de pertinence** — encoder un passage ciblé produit une représentation vectorielle plus précise qu'encoder un document entier, améliorant ainsi la qualité de la recherche
+
+## Comment ça fonctionne
+
+Le passage retrieval implique deux décisions de conception clés : comment créer les passages et comment les récupérer.
+
+**La création des passages** se fait lors de l'ingestion des documents. Les documents sont découpés en passages selon l'une de plusieurs stratégies : le chunking à taille fixe (segments d'un nombre défini de tokens), le chunking structurel (un passage par article ou section), ou le chunking à fenêtre glissante (segments qui se chevauchent). Le choix dépend du type de document — la législation structurée se prête au découpage par article, tandis que les commentaires en texte libre peuvent nécessiter des approches à taille fixe ou à fenêtre glissante.
+
+**L'indexation des passages** — chaque passage est encodé indépendamment et stocké dans l'index vectoriel avec ses métadonnées (document parent, position, numéro d'article, date d'effet). Les métadonnées relient chaque passage à son contexte plus large, permettant au système de récupérer les passages voisins lorsqu'un contexte supplémentaire est nécessaire.
+
+**La récupération des passages** — au moment de la requête, le système interroge l'index des passages (et non un index de documents) et renvoie les top-k passages les plus pertinents. Ces passages peuvent provenir de documents différents, fournissant la base de preuves diversifiée nécessaire pour des réponses complètes.
+
+**L'expansion du contexte** — lorsqu'un passage récupéré est trop étroit (par ex., une seule phrase qui fait référence au paragraphe précédent), le système peut l'étendre en récupérant les passages voisins du même document. Cela fournit le contexte local nécessaire pour comprendre le passage sans importer l'intégralité du document.
+
+La granularité des passages implique un compromis : des passages plus petits sont plus précisément ciblés mais peuvent manquer de contexte ; des passages plus grands préservent le contexte mais réduisent la précision. La plupart des systèmes de recherche juridique utilisent des passages de 200 à 500 tokens, correspondant approximativement à un ou deux paragraphes ou à un seul article législatif.
+
+## Questions fréquentes
+
+**Q : en quoi le passage retrieval diffère-t-il de la recherche de documents ?**
+
+R : la recherche de documents renvoie des documents entiers classés par pertinence. Le passage retrieval renvoie de petits segments de texte extraits de documents. Le passage retrieval fournit des résultats plus précis et une meilleure qualité d'encodage, mais peut perdre le contexte plus large que la recherche de documents préserve.
+
+**Q : peut-on combiner passage retrieval et recherche de documents ?**
+
+R : oui. Certains systèmes récupèrent au niveau du passage pour la précision, puis étendent le résultat pour inclure le document parent ou les passages voisins pour le contexte. Cette approche hybride combine la précision du passage retrieval avec le contexte de la recherche de documents.
 
 ## References
 

@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Die euklidische Distanz misst, wie weit zwei [Embeddings](/de/glossary/embeddings/) in einem [Vektorraum](/de/glossary/embedding-space/) voneinander entfernt sind, und wird häufig als Grundlage für Next-Neighbor-Suchalgorithmen verwendet.
+Die euklidische Distanz (auch L2-Distanz genannt) ist die Luftliniendistanz zwischen zwei Punkten in einem Vektorraum, berechnet als Quadratwurzel der Summe der quadrierten Differenzen über alle Dimensionen. Sie ist eine der drei Standard-Distanzmetriken in der Ähnlichkeitssuche, neben Kosinusähnlichkeit und Skalarprodukt. Im Information Retrieval misst die euklidische Distanz, wie weit zwei [Embeddings](/de/glossary/embeddings/) in absoluten geometrischen Begriffen voneinander entfernt sind — kleinere Distanzen deuten auf ähnlichere Inhalte hin.
+
+## Warum es wichtig ist
+
+- **Intuitive Geometrie** — die euklidische Distanz entspricht dem alltäglichen Begriff der „Luftlinie", was sie konzeptionell zugänglich für das Verständnis von Embedding-Beziehungen macht
+- **Metrische Raumeigenschaften** — die euklidische Distanz erfüllt die Dreiecksungleichung, das heißt, die Distanz von A nach C ist nie größer als die Distanz von A nach B plus B nach C; diese Eigenschaft ermöglicht effiziente Indexstrukturen
+- **Komplementär zur Kosinusähnlichkeit** — während die Kosinusähnlichkeit die Winkelähnlichkeit (Richtung) misst, berücksichtigt die euklidische Distanz sowohl Richtung als auch Betrag, was bedeutsam sein kann, wenn Vektornormen Information tragen
+- **Standardisierte Messung** — als wohldefinierte mathematische Größe bietet die euklidische Distanz ein konsistentes, vergleichbares Ähnlichkeitsmaß über verschiedene Experimente und Systeme hinweg
+
+## Wie es funktioniert
+
+Für zwei Vektoren **a** und **b** der Dimension *d* wird die euklidische Distanz berechnet als:
+
+**d(a, b) = √(Σ(aᵢ - bᵢ)²)** für i von 1 bis d.
+
+Jede Dimension trägt unabhängig zur Gesamtdistanz bei. Dimensionen, in denen sich die beiden Vektoren stark unterscheiden, tragen mehr bei als Dimensionen, in denen sie ähnlich sind.
+
+In der Praxis wird oft die quadrierte euklidische Distanz (ohne Quadratwurzel) verwendet, da sie die Reihenfolge der Ergebnisse beibehält — wenn d(a,b) < d(a,c), dann d²(a,b) < d²(a,c) — und gleichzeitig den Rechenaufwand der Quadratwurzel vermeidet.
+
+**Beziehung zur Kosinusähnlichkeit**: Wenn Vektoren auf Einheitslänge normalisiert sind (L2-normalisiert), stehen euklidische Distanz und Kosinusähnlichkeit in einer monotonen Beziehung. Die Minimierung der euklidischen Distanz ist gleichbedeutend mit der Maximierung der Kosinusähnlichkeit. Viele Embedding-Modelle erzeugen normalisierte Vektoren, in welchem Fall die Wahl zwischen den beiden Metriken die Rangfolge der Ergebnisse nicht beeinflusst.
+
+**Empfindlichkeit gegenüber dem Betrag**: Anders als die Kosinusähnlichkeit wird die euklidische Distanz vom Vektorbetrag beeinflusst. Zwei Vektoren, die in dieselbe Richtung zeigen, aber unterschiedliche Längen haben, weisen eine Kosinusdistanz von null, aber eine euklidische Distanz ungleich null auf. Ob dies relevant ist, hängt vom Embedding-Modell ab — wenn der Vektorbetrag bedeutsame Information kodiert (wie Dokumentlänge oder Konfidenz), erfasst die euklidische Distanz dies; wenn der Betrag beliebiges Rauschen ist, wird die Kosinusähnlichkeit bevorzugt.
+
+Die meisten Vektordatenbanken unterstützen die euklidische Distanz als eingebaute Metrik. ANN-Algorithmen wie HNSW arbeiten effizient mit der euklidischen Distanz, da sie die Dreiecksungleichung erfüllt und so effektives Pruning während der Graphtraversierung ermöglicht.
+
+## Häufige Fragen
+
+**F: Sollte ich die euklidische Distanz oder die Kosinusähnlichkeit für Text-Embeddings verwenden?**
+
+A: Für die meisten Text-Embedding-Modelle wird die Kosinusähnlichkeit bevorzugt, da sie die Richtungsähnlichkeit unabhängig vom Betrag misst. Wenn das Modell jedoch L2-normalisierte Vektoren erzeugt (wie viele es tun), liefern beide Metriken identische Rankings. Prüfen Sie die Dokumentation des Embedding-Modells für die empfohlene Metrik.
+
+**F: Funktioniert die euklidische Distanz gut in hohen Dimensionen?**
+
+A: In sehr hohen Dimensionen konvergieren alle paarweisen Distanzen (der sogenannte „Fluch der Dimensionalität"), was es schwieriger macht, nahe von fernen Nachbarn zu unterscheiden. Dies betrifft alle Distanzmetriken, nicht nur die euklidische. Dimensionsreduktion und ANN-Algorithmen mildern diesen Effekt ab.
 
 ## References
 

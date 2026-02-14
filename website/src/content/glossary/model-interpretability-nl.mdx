@@ -12,4 +12,35 @@ draft: false
 
 ## Definitie
 
-Modelinterpreteerbaarheid betreft hoe gemakkelijk het gedrag van een model kan worden uitgelegd en geïnspecteerd, wat belangrijk is voor regelgevend en ethisch toezicht.
+Modelinterpreteerbaarheid is de mate waarin een mens kan begrijpen hoe en waarom een AI-model een bepaalde output produceert. Een interpreteerbaar model stelt gebruikers, ontwikkelaars en toezichthouders in staat om het pad van input naar output te traceren — en te begrijpen welke kenmerken, datapunten of redeneerstappen het resultaat hebben beïnvloed. In juridische AI is interpreteerbaarheid niet slechts een technische voorkeur maar een regelgevende vereiste: de EU AI Act schrijft voor dat AI-systemen met een hoog risico voldoende transparantie bieden zodat gebruikers de output van het systeem kunnen interpreteren en op gepaste wijze kunnen gebruiken.
+
+## Waarom het belangrijk is
+
+- **Professionele verantwoordingsplicht** — wanneer een belastingadviseur vertrouwt op een AI-gegenereerde analyse, moet deze begrijpen waarom het systeem tot zijn conclusie is gekomen om aan de eigen professionele zorgplicht te voldoen; een black-box-antwoord is niet voldoende
+- **Regelgevende naleving** — de EU AI Act vereist dat AI-systemen met een hoog risico "voldoende transparant zijn om gebruikers in staat te stellen de output van het systeem te interpreteren en op gepaste wijze te gebruiken" (artikel 13); interpreteerbaarheidsmechanismen zijn het belangrijkste middel om aan deze vereiste te voldoen
+- **Foutdetectie** — interpreteerbare outputs stellen gebruikers in staat om fouten te ontdekken: als het systeem een irrelevante bron citeert of een essentiële bepaling negeert, maakt een transparante redeneerketen dit zichtbaar
+- **Vertrouwen en adoptie** — professionals zijn eerder geneigd AI-tools te adopteren die ze kunnen begrijpen en verifiëren; ondoorzichtige systemen stuiten op weerstand, ongeacht hun nauwkeurigheid
+
+## Hoe het werkt
+
+Interpreteerbaarheid werkt op meerdere niveaus binnen een AI-systeem:
+
+**Bronattributie** is de meest directe vorm van interpreteerbaarheid in retrieval-augmented generation. Het systeem toont welke documenten zijn opgehaald, welke passages het antwoord hebben geïnformeerd en hoe elke bron heeft bijgedragen. Dit stelt de gebruiker in staat om het antwoord te verifiëren aan de hand van de geciteerde bronnen in plaats van het model blindelings te vertrouwen.
+
+**Betrouwbaarheidscommunicatie** biedt een gekalibreerd signaal over hoe zeker het systeem is over zijn antwoord. Wanneer het systeem tegenstrijdige bronnen, onvoldoende bewijs of ambigue vragen tegenkomt, communiceert het deze onzekerheid expliciet in plaats van een definitief klinkend maar onzeker antwoord te presenteren.
+
+**Redeneertraces** tonen de tussenstappen in de redenering van het systeem: welke zoekopdrachten zijn gegenereerd, hoe resultaten zijn gefilterd en gerangschikt, en hoe het uiteindelijke antwoord is samengesteld uit meerdere bronnen. Deze zijn gedetailleerder dan bronattributie en zijn voornamelijk nuttig voor ontwikkelaars en gevorderde gebruikers die systeemgedrag diagnosticeren.
+
+**Feature importance**-methoden (zoals aandachtvisualisatie of SHAP-waarden) identificeren welke delen van de input de grootste invloed hadden op de output. Bij tekstmodellen kan dit aangeven welke woorden in de query of welke passages in de opgehaalde context het meest invloedrijk waren bij het genereren van het antwoord.
+
+De fundamentele spanning in interpreteerbaarheid is die tussen modelcomplexiteit en verklaarbaarheid. Eenvoudigere modellen (beslisbomen, lineaire classifiers) zijn inherent interpreteerbaar maar minder capabel. Complexe modellen (transformers, diepe netwerken) bereiken hogere prestaties maar zijn moeilijker uit te leggen. RAG-systemen verlichten deze spanning door de retrievalcomponent transparant te maken — zelfs als het generatiemodel ondoorzichtig is, kan de gebruiker zien uit welke bronnen het heeft geput.
+
+## Veelgestelde vragen
+
+**V: Is interpreteerbaarheid hetzelfde als verklaarbaarheid?**
+
+A: De termen worden vaak door elkaar gebruikt. Wanneer er een onderscheid wordt gemaakt, verwijst interpreteerbaarheid naar de inherente begrijpelijkheid van het mechanisme van een model, terwijl verklaarbaarheid verwijst naar post-hoc-methoden die de outputs van een model verklaren. In de praktijk dragen beide bij aan hetzelfde doel: mensen in staat stellen om AI-beslissingen te begrijpen.
+
+**V: Vermindert interpreteerbaarheid de modelprestaties?**
+
+A: Niet noodzakelijk. Bronattributie en betrouwbaarheidsscores kunnen aan een RAG-systeem worden toegevoegd zonder de onderliggende modellen te wijzigen. Het beperken van een model tot inherente interpreteerbaarheid (bijvoorbeeld door een regelgebaseerd systeem te gebruiken in plaats van een neuraal netwerk) kan echter wel de mogelijkheden beperken.

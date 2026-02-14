@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Model robustness captures a model’s stability when conditions change, such as new data distributions, perturbations, or attacks.
+Model robustness is the degree to which an AI model maintains reliable performance when faced with inputs that differ from its training conditions — including noisy data, distribution shifts, edge cases, and adversarial manipulation. A robust model produces consistent, accurate outputs even when the input is slightly misspelled, unusually phrased, or deliberately crafted to confuse it. In legal AI, robustness is essential because real-world queries are messy: users mix languages, abbreviate references, and ask ambiguous questions that a fragile model would handle poorly.
+
+## Why it matters
+
+- **Real-world reliability** — tax professionals phrase questions in many different ways; a robust model handles natural variation in terminology, language, and query structure without degrading
+- **Adversarial resistance** — models deployed as public-facing services must resist prompt injection and other attacks that attempt to extract training data, bypass safety filters, or produce misleading outputs
+- **Distribution shift handling** — tax law changes regularly; a robust model maintains performance when new legislation introduces concepts or terminology not present in its training data
+- **Trust and adoption** — professionals will not rely on a tool that gives wildly different answers to slightly rephrased versions of the same question
+
+## How it works
+
+Robustness is evaluated and improved across several dimensions:
+
+**Input perturbation testing** measures how much model output changes when inputs are slightly modified — adding typos, paraphrasing, or translating between languages. A robust model produces substantially the same answer regardless of superficial variation.
+
+**Distribution shift testing** evaluates performance on data that differs systematically from the training set. For a legal AI system, this might mean testing on newly enacted legislation, different jurisdictions, or document types not seen during training. Techniques like domain adaptation and continual learning help models handle distribution shifts gracefully.
+
+**Adversarial testing** deliberately crafts inputs designed to cause failures — prompts that attempt to override system instructions, queries that exploit ambiguities in legal terminology, or inputs with hidden instructions embedded in seemingly normal text. Adversarial training, where the model is fine-tuned on examples of these attacks, improves resistance.
+
+**Ensemble methods** improve robustness by combining predictions from multiple models or retrieval strategies. If one component fails on a particular input, others may compensate. In RAG systems, this translates to hybrid retrieval (combining sparse and dense search) and answer verification against multiple sources.
+
+Robustness is often in tension with performance on clean, well-formed inputs. Over-optimising for adversarial cases can reduce accuracy on normal queries. The goal is a model that handles the full spectrum of real-world inputs reliably, not one that is perfect on benchmarks but brittle in practice.
+
+## Common questions
+
+**Q: How is robustness different from accuracy?**
+
+A: Accuracy measures performance on a standard test set. Robustness measures how much accuracy degrades when conditions change. A model can have 95% accuracy on clean data but drop to 60% on noisy or adversarial inputs — that model is accurate but not robust.
+
+**Q: Can robustness be measured with a single metric?**
+
+A: No. Robustness is multidimensional — a model may be robust to typos but fragile against distribution shifts. Evaluation typically involves multiple test sets covering different perturbation types, with performance tracked across each.
 
 ## References
 

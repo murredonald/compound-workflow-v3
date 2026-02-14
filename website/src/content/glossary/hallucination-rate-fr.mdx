@@ -12,7 +12,36 @@ draft: false
 
 ## Définition
 
-Le taux d'[hallucination](/fr/glossary/hallucination/) mesure à quelle fréquence un modèle génère du contenu factuellement infondé.
+Le taux d'hallucination est la proportion des sorties d'un système d'IA contenant des affirmations non étayées par les sources fournies, le registre factuel, ou les deux. C'est la métrique de sécurité principale pour l'IA juridique : un système avec un taux d'hallucination de 5 % signifie qu'environ 1 réponse sur 20 contient des informations fabriquées, mal attribuées ou factuellement incorrectes. Dans des domaines comme le droit fiscal, où des informations erronées peuvent entraîner des pénalités financières ou une exposition réglementaire, même des taux d'hallucination faibles exigent des stratégies d'atténuation.
+
+## Pourquoi c'est important
+
+- **Risque professionnel** — un conseiller fiscal s'appuyant sur une réponse générée par l'IA qui cite un article inexistant ou déforme un taux pourrait fournir des conseils incorrects à ses clients, avec des conséquences en termes de responsabilité
+- **Calibration de la confiance** — connaître le taux d'hallucination du système permet aux professionnels de calibrer le degré de vérification indépendante requis pour chaque réponse ; un taux de 1 % nécessite des vérifications ponctuelles, un taux de 10 % nécessite de vérifier chaque réponse
+- **Comparaison de systèmes** — le taux d'hallucination fournit une métrique standardisée pour comparer différents systèmes d'IA, modèles ou configurations sur la même tâche
+- **Exigence réglementaire** — le règlement européen sur l'IA (AI Act) exige des systèmes d'IA à haut risque qu'ils maintiennent des niveaux de précision appropriés ; les taux d'hallucination publiés démontrent la conformité à cette obligation
+
+## Comment ça fonctionne
+
+Le taux d'hallucination est mesuré par évaluation sur un jeu de test dont les réponses correctes sont connues :
+
+**L'évaluation humaine** — des annotateurs comparent chaque réponse générée par l'IA aux documents sources et signalent les affirmations fabriquées (citant des sources inexistantes), mal attribuées (attribuant une affirmation à la mauvaise source) ou factuellement incorrectes (déformant un taux d'imposition ou un seuil). Le taux d'hallucination est le pourcentage de réponses contenant au moins une affirmation hallucinée.
+
+**L'évaluation automatisée** utilise des modèles d'inférence en langage naturel (NLI) ou des approches de type LLM-as-judge pour vérifier si chaque affirmation de la réponse générée est soutenue par les documents sources. Les affirmations qui ne peuvent être rattachées à aucune source sont signalées comme hallucinations. Les méthodes automatisées sont plus rapides et moins coûteuses que l'évaluation humaine, mais moins fiables, particulièrement sur du contenu juridique nuancé.
+
+**La granularité** est importante dans la mesure. Un taux d'hallucination au niveau de la réponse comptabilise toute réponse contenant au moins une hallucination. Un taux au niveau des affirmations compte les déclarations fausses individuelles en proportion de toutes les affirmations faites. La métrique au niveau des affirmations est plus informative mais plus difficile à calculer.
+
+Les taux d'hallucination sont influencés par l'ensemble du pipeline RAG. Une mauvaise recherche (sources pertinentes manquantes) force le modèle à s'appuyer sur ses connaissances d'entraînement, qui peuvent être obsolètes ou erronées. Un prompting insuffisant (instructions système vagues) laisse au modèle la latitude de spéculer. Une atténuation efficace cible les deux aspects : améliorer la couverture de la recherche et ajouter des instructions dans le prompt système qui dirigent le modèle vers la reconnaissance de l'incertitude plutôt que la fabrication de réponses.
+
+## Questions fréquentes
+
+**Q : Quel est un taux d'hallucination acceptable pour l'IA juridique ?**
+
+R : Il n'existe pas de seuil universellement convenu, mais des taux inférieurs à 2-3 % sont généralement considérés comme acceptables pour un usage professionnel, à condition qu'ils soient accompagnés de citations de sources permettant la vérification. L'essentiel est que chaque réponse soit vérifiable de manière indépendante grâce aux sources citées, réduisant la dépendance à la seule précision factuelle du modèle.
+
+**Q : Le taux d'hallucination peut-il être nul ?**
+
+R : En pratique, aucun système actuel n'atteint un taux d'hallucination nul sur des requêtes ouvertes. Les hallucinations peuvent être minimisées grâce à une meilleure recherche, une génération contrainte et des couches de vérification, mais les éliminer entièrement reste un défi de recherche ouvert.
 
 ## References
 

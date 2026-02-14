@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Ein Embedding-Modell ist ein [neuronales Netz](/de/glossary/neural-network/), das Eingaben – etwa Text, Code oder Bilder – in einen kontinuierlichen [Vektorraum](/de/glossary/embedding-space/) projiziert, in dem semantisch ähnliche Elemente nahe beieinander liegen.
+Ein Embedding-Modell ist ein neuronales Netz, das Eingaben — Textpassagen, Abfragen, Bilder oder andere Daten — in einen kontinuierlichen Vektorraum abbildet, in dem geometrische Nähe semantischer Ähnlichkeit entspricht. Diese Modelle bilden das Rückgrat moderner Retrieval-Systeme: Sie wandeln sowohl Abfragen als auch Dokumente in Vektoren um, sodass relevante Treffer durch Abstandsberechnungen statt durch Stichwortübereinstimmung gefunden werden können.
+
+## Warum es wichtig ist
+
+- **Semantisches Verständnis** — Embedding-Modelle erfassen Bedeutung jenseits exakter Wortübereinstimmungen und finden relevante Dokumente auch bei unterschiedlicher Terminologie (z. B. „vennootschapsbelasting" und „Körperschaftsteuer")
+- **Mehrsprachiges Retrieval** — mehrsprachige Embedding-Modelle bilden verschiedene Sprachen in denselben Vektorraum ab, sodass eine niederländische Abfrage französische Gesetzgebung abrufen kann
+- **Retrieval-Qualität** — die Wahl des Embedding-Modells hat einen größeren Einfluss auf die Suchqualität als fast jede andere Komponente in der Pipeline
+- **Domänenanpassung** — allgemeine Modelle, die auf Webtexten trainiert wurden, liefern bei spezialisierten juristischen oder steuerlichen Inhalten oft schwächere Ergebnisse; domänenadaptierte Modelle können die Präzision erheblich verbessern
+
+## Wie es funktioniert
+
+Ein Embedding-Modell nimmt eine Texteingabe (einen Satz, Absatz oder Dokument-Chunk) und erzeugt einen Vektor fester Dimension, typischerweise 384 bis 1536 Dimensionen. Während des Trainings lernt das Modell, semantisch ähnliche Texte nahe beieinander und unähnliche Texte weit voneinander entfernt zu platzieren.
+
+Das Training verwendet typischerweise kontrastives Lernen: Das Modell sieht Paare verwandter Texte (positive Paare) und nicht verwandter Texte (negative Paare) und passt seine Gewichte an, um den Abstand für positive Paare zu minimieren und für negative Paare zu maximieren. Beliebte Architekturen sind BERT-basierte Bi-Encoder (wie Sentence-BERT), die Abfrage und Dokument unabhängig voneinander kodieren, um schnelles Retrieval zu ermöglichen.
+
+Zur Inferenzzeit werden alle Dokumente im Korpus vorab kodiert und in einem Vektorindex gespeichert. Wenn eine Abfrage eingeht, muss nur die Abfrage kodiert werden — das System findet dann die nächsten Dokumentvektoren mittels Approximate-Nearest-Neighbour-Suche.
+
+## Häufige Fragen
+
+**F: Was ist der Unterschied zwischen einem Embedding-Modell und einem Sprachmodell?**
+
+A: Ein Sprachmodell (wie GPT) generiert Text Token für Token. Ein Embedding-Modell erzeugt einen einzelnen festen Vektor, der die Bedeutung der gesamten Eingabe repräsentiert. Manche Architekturen können beides, aber sie dienen unterschiedlichen Zwecken: Embedding-Modelle sind für Ähnlichkeitsvergleiche optimiert, Sprachmodelle für die Generierung.
+
+**F: Sollte man ein allgemeines oder ein domänenspezifisches Embedding-Modell verwenden?**
+
+A: Für spezialisierte Bereiche wie das belgische Steuerrecht übertrifft ein domänenadaptiertes Modell in der Regel ein allgemeines. Das Feintuning eines Embedding-Modells auf domänenspezifischen Paaren (z. B. Steuerabfragen, die mit relevanter Gesetzgebung verknüpft sind) kann die Retrieval-Präzision erheblich verbessern.
+
+**F: Wie funktionieren mehrsprachige Embedding-Modelle?**
+
+A: Modelle wie multilingual-e5 oder mE5 werden auf parallelen Texten in vielen Sprachen trainiert. Sie lernen, gleichbedeutende Sätze in verschiedenen Sprachen auf benachbarte Vektoren abzubilden, was mehrsprachiges Retrieval aus einem einzigen Index ermöglicht.
 
 ## References
 

@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Index refresh is the operational practice of periodically adding, updating, or deleting entries in an index so that retrieval reflects the current state of the underlying data.
+Index refresh is the process of updating the search and vector indexes to reflect changes in the underlying knowledge base — adding new documents, updating modified ones, and removing deleted or superseded content. Without regular index refreshes, the retrieval system returns stale results that may reference repealed legislation, outdated tax rates, or superseded administrative guidance. In legal AI, index refresh frequency directly determines how quickly new legislation and rulings become findable in the system.
+
+## Why it matters
+
+- **Legal currency** — Belgian tax law changes through programme laws, royal decrees, and circulars published on an ongoing basis; an index that lags behind these changes will return outdated provisions as if they were current
+- **Correctness** — if a provision is amended but the index still contains the old version, the system may produce answers based on repealed law, creating serious professional risk
+- **Completeness** — new court decisions and administrative rulings must be indexed promptly to be available for retrieval; delays create coverage gaps
+- **Consistency** — the index must reflect the same state as the underlying document store; inconsistencies between the two cause confusing results (e.g., a document appears in search but is missing when accessed)
+
+## How it works
+
+Index refresh can operate in several modes:
+
+**Incremental refresh** processes only new or changed documents since the last refresh. When a new circular is ingested, only that circular's chunks are embedded and added to the index. This is efficient but requires reliable change detection — the system must know which documents are new or modified.
+
+**Full rebuild** reconstructs the entire index from scratch. This guarantees consistency but is expensive for large knowledge bases (re-embedding millions of chunks). Full rebuilds are typically scheduled periodically (weekly or monthly) as a consistency check, with incremental refreshes handling day-to-day updates.
+
+**Real-time indexing** adds documents to the index immediately upon ingestion, with no delay. This provides the fastest update latency but requires the index structure to support concurrent reads and writes without degradation.
+
+**Versioned refresh** maintains multiple index versions, building a new index in the background while the old one continues serving queries. Once the new index is ready and validated, traffic is switched atomically. This avoids any period where the index is partially updated.
+
+Key operational considerations include:
+
+- **Embedding consistency** — if the embedding model is updated, all documents must be re-embedded; a partial re-embedding creates an inconsistent index where old and new embeddings are not comparable
+- **Delete handling** — when a document is repealed or superseded, its chunks must be removed from the index, not just marked as inactive in the document store
+- **Validation** — after each refresh, automated checks verify that the index contains the expected number of documents, that key documents are retrievable, and that no corruption occurred during the update
+
+## Common questions
+
+**Q: How quickly should new legislation appear in the index?**
+
+A: For a professional legal AI tool, same-day indexing of Official Gazette publications is the expectation. This typically means daily ingestion and index refresh cycles, with the ability to trigger ad hoc refreshes for urgent updates.
+
+**Q: Can the system serve queries during an index refresh?**
+
+A: Yes, with proper architecture. Incremental updates and versioned refreshes allow the system to continue serving queries from the current index while the update proceeds. Only full rebuilds without versioning require temporary degradation.
 
 ## References
 

@@ -10,6 +10,43 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Betrouwbaarheidsmetrieken zijn kwantitatieve maten die vastleggen hoe consistent, voorspelbaar en veilig een AI-systeem presteert in de tijd en onder wisselende omstandigheden — verder gaand dan eenvoudige nauwkeurigheid om te beoordelen of het systeem in productie kan worden vertrouwd. Terwijl nauwkeurigheid meet hoe vaak het systeem correct is op een testset, meten betrouwbaarheidsmetrieken of het correct blijft bij distributieverschuivingen, onzekerheid eerlijk communiceert, catastrofale fouten vermijdt en consistent gedrag handhaaft. Voor juridische AI-systemen waarop professionals vertrouwen voor cliëntadvies is betrouwbaarheid even belangrijk als ruwe nauwkeurigheid.
+
+## Waarom het ertoe doet
+
+- **Professionele betrouwbaarheid** — belastingadviseurs moeten niet alleen weten dat het systeem meestal juist is, maar ook dat het op een beheerste manier faalt wanneer het fout zit — onzekerheid signaleren in plaats van onjuiste antwoorden met vertrouwen presenteren
+- **Regelgevende naleving** — de EU AI Act vereist dat AI-systemen met een hoog risico "passende niveaus van nauwkeurigheid, robuustheid en cyberbeveiliging" handhaven gedurende hun levenscyclus; betrouwbaarheidsmetrieken leveren het bewijs voor deze voortdurende naleving
+- **Operationele stabiliteit** — metrieken zoals uptime, latentieconsistentie en foutpercentages volgen of het systeem operationeel betrouwbaar is, niet alleen intellectueel nauwkeurig
+- **Vertrouwen in de tijd** — een systeem dat 90% nauwkeurig is maar onvoorspelbaar (soms briljant, soms catastrofaal fout) is minder bruikbaar dan een systeem dat 85% nauwkeurig is maar consistent betrouwbaar
+
+## Hoe het werkt
+
+Betrouwbaarheidsmetrieken bestrijken verschillende dimensies:
+
+**Kalibratiemetrieken** — Expected Calibration Error (ECE) en Brier-score meten of de vertrouwensscores van het systeem overeenkomen met de werkelijke correctheidspercentages. Een goed gekalibreerd systeem met 80% vertrouwen is ongeveer 80% van de tijd correct.
+
+**Robuustheidsmetrieken** — nauwkeurigheid onder verstoring (hoeveel daalt de prestatie wanneer invoer ruis bevat of vijandig is?), prestatie bij distributieverschuivingen (behoudt het systeem kwaliteit bij nieuwe wetgeving?) en consistentie (levert dezelfde vraag hetzelfde antwoord op wanneer deze meerdere keren wordt gesteld?).
+
+**Dekkingsmetrieken** — onthoudingspercentage (hoe vaak weigert het systeem te antwoorden?), dekking-bij-nauwkeurigheid (welk percentage van de queries kan het systeem beantwoorden terwijl het een doelnauwkeurigheid handhaaft?) en gapdetectiepercentage (hoe vaak identificeert het systeem correct dat zijn kennisbank de benodigde informatie mist?).
+
+**Operationele metrieken** — uptime (welk percentage van de tijd is het systeem beschikbaar?), latentiepercentilen (P50, P95, P99 responstijden), foutpercentage (welk percentage van de verzoeken mislukt?) en doorvoer (hoeveel queries per seconde kan het systeem verwerken?).
+
+**Veiligheidsmetrieken** — hallucinatiepercentage (hoe vaak verzint het systeem informatie?), schadelijke uitvoerpercentage (hoe vaak produceert het systeem misleidende of gevaarlijke inhoud?) en guardrail-overtredingspercentage (hoe vaak schendt het systeem zijn eigen regels, zoals bindend juridisch advies geven wanneer het geïnstrueerd is dit niet te doen?).
+
+Deze metrieken worden in de tijd bijgehouden via dashboards, met waarschuwingen wanneer een metriek een vooraf gedefinieerde drempelwaarde overschrijdt. De combinatie biedt een multidimensionaal beeld van systeembetrouwbaarheid dat geen enkele metriek afzonderlijk kan vastleggen.
+
+## Veelgestelde vragen
+
+**V: Is een betrouwbaar systeem altijd nauwkeurig?**
+
+A: Niet noodzakelijk, maar betrouwbaarheid omvat het weten wanneer het niet nauwkeurig is. Een betrouwbaar systeem met 80% nauwkeurigheid dat de onzekere 20% markeert, is meer betrouwbaar dan een onbetrouwbaar systeem met 90% nauwkeurigheid dat geen indicatie geeft van wanneer het fout kan zitten.
+
+**V: Welke betrouwbaarheidsmetrieken zijn het belangrijkst?**
+
+A: Dat hangt af van het gebruiksscenario. Voor juridische AI zijn kalibratiekwaliteit en hallucinatiepercentage doorgaans het meest kritisch — ze bepalen of professionals de vertrouwenssignalen van het systeem kunnen vertrouwen en of de uitvoer gebaseerd is op echte bronnen.
+
 ## References
 
 - Vilone & Longo (2021), "[Notions of explainability and evaluation approaches for explainable artificial intelligence](https://doi.org/10.1016/j.inffus.2021.05.009)", Information Fusion.

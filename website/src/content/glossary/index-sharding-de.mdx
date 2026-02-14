@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Index Sharding teilt einen Vektor‑ oder Dokumentindex in mehrere Teile auf, damit Suchlast und Speicher horizontal über Server skaliert werden können.
+Index Sharding bezeichnet die Praxis, einen Suchindex in mehrere kleinere Partitionen (Shards) aufzuteilen, die über verschiedene Server oder Speichergeräte verteilt werden können. Jeder Shard enthält eine Teilmenge der gesamten Dokumentensammlung und kann unabhängig durchsucht werden. Zur Abfragezeit wird die Suche parallel über alle Shards ausgeführt, und die Ergebnisse werden zu einer einzigen gerankten Liste zusammengeführt. Sharding ermöglicht es Retrievalsystemen, über die Speicher- und Verarbeitungskapazität einer einzelnen Maschine hinauszuwachsen und Sammlungen von Milliarden von Dokumenten bei gleichbleibend niedriger Latenz zu verarbeiten.
+
+## Warum es wichtig ist
+
+- **Horizontale Skalierbarkeit** — wenn ein Index die Speicher- oder Verarbeitungskapazität einer einzelnen Maschine überschreitet, verteilt Sharding die Last auf mehrere Maschinen und ermöglicht Wachstum ohne Hardwarebeschränkungen
+- **Parallele Abfrageverarbeitung** — die gleichzeitige Durchsuchung mehrerer Shards reduziert die Latenz im Vergleich zur sequenziellen Durchsuchung eines einzelnen großen Index; bei N Shards verarbeitet jeder Shard 1/N der Daten
+- **Fehlertoleranz** — wenn der Host eines Shards ausfällt, bedienen die anderen Shards weiterhin Abfragen (mit eingeschränkter Abdeckung); replizierte Shards bieten vollständige Fehlertoleranz
+- **Inkrementelles Wachstum** — neue Daten können zu neuen Shards hinzugefügt werden, ohne bestehende neu aufzubauen, was die Erweiterung der Wissensbasis vereinfacht
+
+## So funktioniert es
+
+Sharding-Strategien bestimmen, wie Dokumente auf Shards verteilt werden:
+
+**Zufallsbasiertes oder hashbasiertes Sharding** verteilt Dokumente gleichmäßig über Shards, indem ein Hash der Dokument-ID verwendet wird. Dies gewährleistet ausgewogene Shard-Größen und Abfragelast. Jede Abfrage muss jeden Shard durchsuchen, da sich jedes Dokument in jedem Shard befinden kann.
+
+**Inhaltsbasiertes Sharding** gruppiert verwandte Dokumente zusammen — beispielsweise ein Shard pro Zuständigkeitsbereich oder ein Shard pro Dokumenttyp. Dies ermöglicht selektive Suche: eine auf flämische Gesetzgebung gefilterte Abfrage muss nur den flämischen Shard durchsuchen. Das reduziert den Rechenaufwand pro Abfrage, erzeugt jedoch ungleichmäßige Shard-Größen und birgt das Risiko, Shard-übergreifende Ergebnisse zu übersehen.
+
+**Temporales Sharding** ordnet Dokumente nach Zeitraum in Shards ein — beispielsweise ein Shard pro Jahr. Abfragen zum aktuellen Recht durchsuchen nur den neuesten Shard; historische Abfragen durchsuchen ältere Shards. Dies eignet sich besonders gut für juristische Inhalte mit klaren zeitlichen Grenzen.
+
+Zur Abfragezeit leitet ein **Koordinator** die Abfrage an alle relevanten Shards weiter, jeder Shard sucht unabhängig und gibt seine Top-k-Ergebnisse zurück, und der Koordinator führt diese Teilergebnisse zu einer endgültigen gerankten Liste zusammen. Der Zusammenführungsschritt muss unterschiedliche Score-Verteilungen über die Shards hinweg abstimmen.
+
+## Häufige Fragen
+
+**F: Wie viele Shards sollte ein Index haben?**
+
+A: Genug, um die Daten auf die verfügbare Hardware zu verteilen, aber nicht so viele, dass der Koordinationsaufwand signifikant wird. Eine gängige Faustregel ist ein Shard pro 1–10 Millionen Dokumente, angepasst an Dokumentgröße, Latenzanforderungen und Hardwarespezifikationen.
+
+**F: Beeinflusst Sharding die Suchqualität?**
+
+A: Bei zufälligem Sharding und erschöpfender Suche (Abfrage aller Shards) ist die Qualität identisch mit einer Einzelindex-Suche. Bei selektivem Sharding (nur relevante Shards werden abgefragt) hängt die Qualität davon ab, wie gut die Sharding-Strategie zu den Abfragemustern passt.
 
 ## References
 

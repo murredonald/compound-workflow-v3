@@ -12,7 +12,40 @@ draft: false
 
 ## Définition
 
-Les tests adversariaux exposent les systèmes d'IA à des cas extrêmes ou hostiles afin d'identifier des modes de défaillance.
+Les tests adversariaux (également appelés red teaming) consistent à soumettre systématiquement un système d'IA à des entrées délibérément difficiles, trompeuses ou malveillantes afin de découvrir ses vulnérabilités, ses modes de défaillance et ses failles de sécurité avant qu'ils ne soient rencontrés en production. Contrairement à l'évaluation standard qui teste les performances normales, les tests adversariaux cherchent spécifiquement à faire échouer le système — en identifiant les entrées qui provoquent des réponses incorrectes, des violations de sécurité ou des comportements inattendus. En IA juridique, les tests adversariaux vérifient si le système peut être amené à citer une législation inexistante, à fournir des taux d'imposition erronés ou à contourner ses garde-fous contre la délivrance de conseils juridiques contraignants.
+
+## Pourquoi c'est important
+
+- **Sécurité pré-déploiement** — découvrir les vulnérabilités par des tests adversariaux est largement préférable à les découvrir via des plaintes d'utilisateurs ou des actions réglementaires après la mise en production
+- **Validation de la robustesse** — les tests adversariaux révèlent comment le système gère les cas limites que l'évaluation normale ne couvre pas : requêtes ambiguës, prompts contradictoires et entrées conçues pour confondre
+- **Vérification des garde-fous** — les tests confirment que les mécanismes de sécurité du système (refus de fournir des conseils contraignants, signalement de l'incertitude, rejet des requêtes hors périmètre) fonctionnent réellement sous pression adversariale
+- **Conformité réglementaire** — le règlement européen sur l'IA (AI Act) exige une évaluation des risques et des tests pour les systèmes d'IA à haut risque ; les tests adversariaux sont une méthode principale pour satisfaire à cette exigence
+
+## Comment ça fonctionne
+
+Les tests adversariaux sont menés par des testeurs spécialisés (red team) qui tentent de faire échouer le système :
+
+**Tests d'injection de prompts** — élaboration d'entrées qui tentent de contourner les instructions du système, d'extraire son prompt système ou de lui faire ignorer ses consignes de sécurité. En IA juridique, cela peut impliquer des requêtes qui tentent de faire passer des orientations non contraignantes pour du droit contraignant.
+
+**Attaques sur l'exactitude factuelle** — requêtes conçues pour provoquer des hallucinations : questions sur des dispositions obscures, utilisation d'une terminologie juridique plausible mais incorrecte, ou présentation de prémisses fausses (« étant donné que le taux de TVA a été réduit à 15 % en 2024... ») pour tester si le système les corrige ou les accepte.
+
+**Sondage des limites** — test des frontières du périmètre du système : requêtes sur le droit étranger alors que le système ne couvre que le droit belge, conseils médicaux ou financiers hors du domaine juridique, et requêtes ambiguës pouvant être interprétées comme relevant ou non du périmètre.
+
+**Attaques de cohérence** — poser la même question de plusieurs manières pour vérifier si le système donne des réponses contradictoires, ou présenter les mêmes faits sous différents angles pour tester la cohérence du raisonnement.
+
+**Extraction d'informations** — tentatives d'extraire le prompt système, les détails des données d'entraînement ou des informations confidentielles sur l'architecture du système par des requêtes soigneusement conçues.
+
+Les tests adversariaux produisent un catalogue de vulnérabilités découvertes, classées par gravité et exploitabilité. Chaque vulnérabilité est corrigée par des améliorations du système (meilleurs garde-fous, prompts améliorés, données d'entraînement supplémentaires) et retestée pour confirmer la correction.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre tests adversariaux et tests de charge ?**
+
+R : Les tests de charge évaluent le comportement du système sous une charge extrême ou des conditions dégradées. Les tests adversariaux évaluent le comportement du système face à des entrées malveillantes délibérément conçues. Les tests de charge poussent le système au-delà de sa capacité ; les tests adversariaux tentent de lui faire produire des résultats erronés ou dangereux.
+
+**Q : Qui devrait réaliser les tests adversariaux ?**
+
+R : Idéalement, des personnes qui n'ont pas participé à la construction du système — elles l'abordent sans présupposés sur la manière dont il devrait être utilisé et sont plus susceptibles de découvrir des modes de défaillance inattendus. Les experts du domaine (professionnels de la fiscalité) et les spécialistes en sécurité apportent chacun des perspectives adversariales différentes.
 
 ## References
 

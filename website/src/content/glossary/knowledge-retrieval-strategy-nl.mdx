@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Een knowledge retrieval strategy bepaalt hoe content wordt gechunkt, geïndexeerd, gefilterd en gecombineerd zodat downstream AI-systemen op het juiste moment toegang hebben tot de juiste informatie.
+Een knowledge retrieval strategy is de overkoepelende Ontwerpblauwdruk voor hoe een AI-systeem Kennis organiseert, indexeert, doorzoekt en aan het Taalmodel levert voor Antwoordgeneratie. Het omvat het volledige Scala aan Beslissingen: hoe Documenten worden gechunkt, welke Embeddingmodellen worden gebruikt, of Zoeken lexicaal, semantisch of hybride is, hoe Resultaten worden gefilterd en geherrangschikt, en hoe Context wordt samengesteld voor de Generatielaag. De Retrievalstrategie is een architecturale Keuze die elk Aspect van Systeemprestaties vormgeeft — Nauwkeurigheid, Latentie, Dekking en Verklaarbaarheid.
+
+## Waarom het belangrijk is
+
+- **Basis voor nauwkeurigheid** — de Retrievalstrategie bepaalt wat het Taalmodel te zien krijgt; een Strategie die relevante Documenten mist of irrelevante opneemt, verslechtert direct de Antwoordkwaliteit
+- **Domeingeschiktheid** — generieke Retrievalstrategieën houden geen rekening met juridisch-specifieke Vereisten zoals temporele Versionering, Autoriteitshiërarchieën en jurisdictionele Filtering; een domeingeschikte Strategie adresseert deze Behoeften
+- **Prestatiearchitectuur** — de Strategie definieert het Latentiebudget: hoeveel Stadia de Pipeline heeft, hoe kostbaar elke Fase is, en welke Afwegingen tussen Grondigheid en Snelheid aanvaardbaar zijn
+- **Evolueerbaarheid** — een goed ontworpen Strategie is modulair, waardoor individuele Componenten (Embeddingmodel, Reranker, Filterregels) kunnen worden geüpgraded zonder het gehele Systeem te herontwerpen
+
+## Hoe het werkt
+
+Een knowledge retrieval strategy adresseert verschillende onderling verbonden Ontwerpdimensies:
+
+**Chunkingstrategie** — hoe Documenten worden opgesplitst in Retrievaleenheden. Opties variëren van sliding windows met vaste Grootte tot structuurbewuste Chunking (één Chunk per Artikel of Sectie) tot hiërarchische Chunking (verschillende Granulariteiten voor verschillende Doeleinden). De Keuze beïnvloedt de Embeddingkwaliteit, Retrievalgranulariteit en Citatieprecisie.
+
+**Indexeringsstrategie** — welke Indextypen worden onderhouden en hoe ze zijn geconfigureerd. De meeste Systemen gebruiken een hybride Aanpak: een lexicale Index (BM25) voor exacte Termmatching en een Vectorindex (HNSW) voor semantische Matching. De Indexen kunnen worden aangevuld met een Metadata-opslag voor gestructureerde Filtering en een Knowledge graph voor relationele Zoekopdrachten.
+
+**Zoekstrategie** — hoe Zoekopdrachten worden verwerkt en gematcht tegen de Indexen. Dit omvat Querybegrip (Uitbreiding, Herschrijving, Decompositie), Retrievalmodus (sparse, dense of hybride) en Kandidaatgeneratieparameters (hoeveel Kandidaten uit elke Index worden opgehaald).
+
+**Rangschikkingsstrategie** — hoe Kandidaten worden gescoord, gefilterd en geherrangschikt. Dit omvat Metadatafiltering (Jurisdictie, Datum, Autoriteit), cross-encoder-herrangschikking en Scorefusie over meerdere Retrievalmethoden.
+
+**Contextsamenstelling** — hoe de uiteindelijke Verzameling Passages wordt geformatteerd en in de Taalmodelprompt wordt geïnjecteerd. Dit omvat het selecteren van het Aantal Passages, het ordenen naar Relevantie of Brontype, en het opnemen van Metadata voor Citatiegeneratie.
+
+De Strategie moet ook Randgevallen adresseren: wat er gebeurt wanneer geen relevante Documenten worden gevonden (onthouden vs. antwoorden vanuit Trainingskennis), hoe Tegenspraken tussen Bronnen worden afgehandeld, en hoe het Systeem zich gedraagt wanneer de Vraag buiten het Toepassingsgebied valt.
+
+## Veelgestelde vragen
+
+**V: Kan de Retrievalstrategie worden gewijzigd na Deployment?**
+
+A: Ja, als het Systeem modulair is. Individuele Componenten (Embeddingmodel, Reranker, Filterregels) kunnen onafhankelijk worden bijgewerkt. Het wijzigen van fundamentele Beslissingen (Chunkinggranulariteit, Indextype) kan echter Herverwerking van de gehele Kennisbank vereisen.
+
+**V: Wat is het belangrijkste Onderdeel van een Retrievalstrategie?**
+
+A: Het Embeddingmodel en de Chunkingstrategie hebben doorgaans de grootste Impact op de Retrievalkwaliteit. Het Embeddingmodel bepaalt of semantische Matching goed werkt; de Chunkingstrategie bepaalt de Granulariteit en Samenhang van wat wordt opgehaald.
 
 ## References
 

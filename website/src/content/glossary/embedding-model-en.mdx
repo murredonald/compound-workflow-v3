@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-An embedding model is a [neural network](/en/glossary/neural-network/) trained to map inputs into a vector space where distances correspond to [semantic similarity](/en/glossary/semantic-similarity/) or task-specific relevance.
+An embedding model is a neural network trained to map inputs — text passages, queries, images, or other data — into a continuous vector space where geometric proximity corresponds to semantic similarity. These models form the backbone of modern retrieval systems: they convert both queries and documents into vectors so that relevant matches can be found through distance calculations rather than keyword overlap.
+
+## Why it matters
+
+- **Semantic understanding** — embedding models capture meaning beyond exact word matches, finding relevant documents even when different terminology is used (e.g., "vennootschapsbelasting" and "corporate tax")
+- **Multilingual retrieval** — cross-lingual embedding models map different languages into the same vector space, enabling a Dutch query to retrieve French legislation
+- **Retrieval quality** — the choice of embedding model has a larger impact on search quality than almost any other component in the pipeline
+- **Domain adaptation** — general-purpose models trained on web text often underperform on specialised legal or tax content; domain-adapted models can significantly improve precision
+
+## How it works
+
+An embedding model takes a text input (a sentence, paragraph, or document chunk) and produces a fixed-dimensional vector, typically 384 to 1536 dimensions. During training, the model learns to place semantically similar texts close together and dissimilar texts far apart.
+
+Training typically uses contrastive learning: the model sees pairs of related texts (positive pairs) and unrelated texts (negative pairs) and adjusts its weights to minimise distance for positives and maximise distance for negatives. Popular architectures include BERT-based bi-encoders (like Sentence-BERT), which encode query and document independently for fast retrieval.
+
+At inference time, all documents in the corpus are pre-encoded and stored in a vector index. When a query arrives, only the query needs encoding — the system then finds the nearest document vectors using approximate nearest-neighbour search.
+
+## Common questions
+
+**Q: What is the difference between an embedding model and a language model?**
+
+A: A language model (like GPT) generates text token by token. An embedding model produces a single fixed vector that represents the entire input's meaning. Some architectures can do both, but they serve different purposes: embedding models are optimised for similarity comparison, language models for generation.
+
+**Q: Should I use a general or domain-specific embedding model?**
+
+A: For specialised domains like Belgian tax law, a domain-adapted model generally outperforms a general-purpose one. Fine-tuning an embedding model on domain-specific pairs (e.g., tax queries matched to relevant legislation) can substantially improve retrieval precision.
+
+**Q: How do multilingual embedding models work?**
+
+A: Models like multilingual-e5 or mE5 are trained on parallel text across many languages. They learn to map equivalent sentences in different languages to nearby vectors, enabling cross-lingual retrieval from a single index.
 
 ## References
 

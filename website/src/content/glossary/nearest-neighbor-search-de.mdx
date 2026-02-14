@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Nearest-Neighbor-Suche durchsucht einen Index, um die k Vektoren zu finden, die einer Query‑Embedding nach einer gewählten [Distanzmetrik](/de/glossary/distance-metric/) am nächsten liegen, und bildet damit die Grundlage von [Vector Search](/de/glossary/similarity-search/).
+Nearest-Neighbor-Suche (k-NN-Suche) ist die Aufgabe, die k Elemente in einem Datensatz zu finden, deren Vektorrepräsentationen einem gegebenen Abfragevektor unter einer gewählten Distanzmetrik am nächsten liegen. Sie ist die rechnerische Grundlage der semantischen Suche: Wenn ein Nutzer eine Frage stellt, kodiert das System diese als Vektor und ruft die k nächsten Dokumentenvektoren aus dem Index ab. Die Herausforderung besteht darin, dies effizient zu tun — exakte Nearest-Neighbor-Suche wird bei großen Datensätzen unpraktisch langsam, weshalb approximative Algorithmen in Produktionssystemen dominieren.
+
+## Warum es wichtig ist
+
+- **Kern des semantischen Retrievals** — jede semantische Suchanfrage löst sich letztlich in einen Nearest-Neighbor-Lookup im Vektorraum auf; Geschwindigkeit und Genauigkeit des Algorithmus bestimmen direkt die Systemleistung
+- **Skalierungsbeschränkungen** — juristische Wissensdatenbanken enthalten Millionen von Dokumentfragmenten; ein naiver Vergleich mit jedem Vektor würde Sekunden pro Abfrage dauern, viel zu langsam für interaktive Nutzung
+- **Kompromiss zwischen Recall und Geschwindigkeit** — die Wahl des Nearest-Neighbor-Algorithmus bestimmt, ob das System alle relevanten Dokumente findet (Recall) oder schnell antwortet (Latenz), eine kritische Designentscheidung für juristische KI
+- **Hardware-Auslastung** — effiziente Nearest-Neighbor-Algorithmen nutzen SIMD-Befehle, GPU-Parallelismus und Speicherhierarchie, um den Durchsatz auf der verfügbaren Hardware zu maximieren
+
+## Wie es funktioniert
+
+**Exakte Nearest-Neighbor-Suche** vergleicht den Abfragevektor mit jedem Vektor im Datensatz und berechnet für jeden einen Distanzwert. Dies garantiert das Finden der tatsächlich nächsten Nachbarn, skaliert aber linear mit der Datensatzgröße — die Suche in 10 Millionen Vektoren dauert 10-mal länger als in 1 Million. Für kleine Datensätze (unter 100.000 Vektoren) ist dies oft schnell genug.
+
+**Approximate Nearest Neighbor (ANN) Suche** tauscht einen geringen Genauigkeitsverlust gegen dramatisch schnellere Suche ein. Die gängigsten Ansätze sind:
+
+- **HNSW (Hierarchical Navigable Small World Graphs)** — baut eine geschichtete Graphstruktur über die Vektoren auf. Die Suche beginnt in der obersten Schicht und navigiert durch zunehmend dichtere Schichten, um die nächsten Nachbarn in logarithmischer Zeit zu finden. HNSW bietet hervorragenden Recall (typischerweise 95–99 %) mit Suchzeiten unter einer Millisekunde.
+
+- **IVF (Inverted File Index)** — unterteilt den Vektorraum mittels k-Means in Cluster. Zur Suchzeit werden nur die nächstgelegenen Cluster durchsucht statt des gesamten Datensatzes. Dies ist besonders effektiv für sehr große Datensätze.
+
+- **Product Quantisation (PQ)** — komprimiert Vektoren, indem sie in Subvektoren aufgeteilt und jeweils unabhängig quantisiert werden. Dies reduziert den Speicherverbrauch und beschleunigt die Distanzberechnung auf Kosten einer gewissen Präzision.
+
+Produktive Vektordatenbanken kombinieren typischerweise diese Techniken — beispielsweise IVF für grobe Partitionierung gefolgt von PQ für komprimierte Suche innerhalb jeder Partition, oder HNSW mit PQ für speichereffiziente Graphsuche.
+
+Die wichtigsten Parameter sind die Anzahl der zurückzugebenden Nachbarn (k), die Anzahl der zu untersuchenden Kandidaten-Cluster oder Graphknoten (steuert den Kompromiss zwischen Recall und Geschwindigkeit) und die Distanzmetrik (Kosinus-Ähnlichkeit, Skalarprodukt oder euklidische Distanz).
+
+## Häufige Fragen
+
+**F: Wie viel Recall geht bei approximativer Suche verloren?**
+
+A: Gut konfigurierte ANN-Indizes erreichen 95–99 % Recall — das heißt, sie finden 95–99 der tatsächlichen 100 nächsten Nachbarn. Für die meisten Retrieval-Anwendungen ist dies in der Praxis nicht von einer exakten Suche zu unterscheiden, da nachgelagertes Reranking den gelegentlich verpassten Kandidaten kompensiert.
+
+**F: Welcher ANN-Algorithmus ist der beste?**
+
+A: HNSW ist die beliebteste Wahl wegen seiner Kombination aus hohem Recall, schneller Suche und relativ einfacher Abstimmung. IVF+PQ wird bevorzugt, wenn der Speicher begrenzt ist. Die beste Wahl hängt von Datensatzgröße, Dimensionalität, Latenzanforderungen und verfügbarer Hardware ab.
 
 ## References
 

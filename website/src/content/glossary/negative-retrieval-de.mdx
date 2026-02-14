@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Negative Retrieval konzentriert sich darauf, Dokumente zu finden, die eine Behauptung widersprechen, in Frage stellen oder nicht stützen, damit [RAG](/de/glossary/rag/)-Systeme Konflikte aufdecken und übertriebenes Vertrauen reduzieren können.
+Negative Retrieval ist eine Retrieval-Strategie, die gezielt nach Dokumenten sucht, die einer bestimmten Behauptung oder vorläufigen Antwort widersprechen, sie einschränken oder nicht stützen. Während Standard-Retrieval bestätigende Belege sucht, sucht Negative Retrieval nach widerlegenden Belegen — Quellen, die eine gegenteilige Sichtweise, eine abweichende Regel, eine Ausnahme oder eine neuere Änderung darstellen, die eine frühere Bestimmung außer Kraft setzt. In der juristischen KI ist Negative Retrieval unverzichtbar, da das Steuerrecht voller Ausnahmen, Sonderregelungen, Missbrauchsbekämpfungsvorschriften und widersprüchlicher Interpretationen ist, die Standard-Retrieval übersehen könnte.
+
+## Warum es wichtig ist
+
+- **Ausnahmeerkennung** — eine allgemeine Regel kann Ausnahmen haben, die die Antwort vollständig verändern; Negative Retrieval bringt diese Ausnahmen ans Licht, bevor das System eine unvollständige Antwort liefert
+- **Konfliktidentifikation** — belgisches Steuerrecht enthält manchmal widersprüchliche Bestimmungen zwischen föderaler und regionaler Ebene oder zwischen älteren und neueren Texten; Negative Retrieval legt diese Konflikte offen, anstatt sie zu verbergen
+- **Reduzierung übermäßiger Konfidenz** — wenn das System starke bestätigende Belege findet, aber auch widersprüchliche Quellen entdeckt, kann es seinen Konfidenzwert senken und die Unsicherheit dem Nutzer signalisieren
+- **Professionelle Vollständigkeit** — eine gründliche Steueranalyse berücksichtigt sowohl unterstützende als auch gegenteilige Argumente; Negative Retrieval hilft dem KI-System, diesen professionellen Standard zu spiegeln
+
+## Wie es funktioniert
+
+Negative Retrieval erweitert die Standard-Retrieval-Pipeline um zusätzliche Abfragestrategien:
+
+**Negationsabfragen** formulieren die ursprüngliche Anfrage um, um nach gegenteiligem Inhalt zu suchen. Wenn die ursprüngliche Anfrage die Absetzbarkeit einer bestimmten Ausgabe betrifft, könnte die Negationsabfrage nach „nicht absetzbar", „Ausschluss", „Ausnahme" oder spezifischen Missbrauchsbekämpfungsvorschriften in Bezug auf diese Ausgabenkategorie suchen.
+
+**Widerspruchserkennung** nutzt Natural Language Inference (NLI)-Modelle, um Passagen im Korpus zu identifizieren, die den anfänglich abgerufenen Dokumenten widersprechen. Nachdem Standard-Retrieval unterstützende Belege zurückgibt, sucht ein zweiter Durchlauf nach Passagen, deren semantische Beziehung zu den anfänglichen Ergebnissen als „Widerspruch" statt als „Bestätigung" klassifiziert wird.
+
+**Temporales Negative Retrieval** sucht gezielt nach Änderungen, Aufhebungen oder Modifikationen, die nach den anfänglich abgerufenen Bestimmungen datieren. Dies erfasst Fälle, in denen ein Gesetz seit seiner Indexierung geändert wurde oder ein neueres Urteil ein älteres ersetzt.
+
+**Ausnahmen-Mining** zielt auf strukturelle Muster in der Gesetzgebung ab — Artikel, die mit „unbeschadet", „außer wenn" oder „abweichend von" beginnen — die auf Ausnahmen von allgemeinen Regeln hinweisen. Diese Muster sind im belgischen Steuerrecht besonders häufig, wo allgemeine Grundsätze oft mehrere Ausnahmen pro Region oder Steuerpflichtigenkategorie haben.
+
+Die Ergebnisse des Negative Retrieval werden nicht als „Antwort" präsentiert, sondern als Vorbehalte, Gegenargumente oder zusätzlicher Kontext. Das System könnte seine Antwort auf Basis des primären Retrievals präsentieren und dann anmerken: „Allerdings wurden folgende Ausnahmen oder widersprüchliche Bestimmungen gefunden …"
+
+## Häufige Fragen
+
+**F: Findet Negative Retrieval immer Widersprüche?**
+
+A: Nein. Wenn das Gesetz klar und eindeutig ist, bestätigt Negative Retrieval lediglich, dass keine Widersprüche existieren, was tatsächlich das Vertrauen in die Antwort erhöht. Der Wert liegt in den Fällen, in denen Widersprüche existieren und andernfalls übersehen würden.
+
+**F: Wie unterscheidet sich Negative Retrieval von umfassendem Retrieval?**
+
+A: Umfassendes Retrieval versucht, alle relevanten Dokumente zu finden. Negative Retrieval zielt spezifisch auf Dokumente ab, die den anfänglichen Ergebnissen widersprechen oder sie einschränken. Die Absicht ist unterschiedlich — umfassendes Retrieval zielt auf Abdeckung; Negative Retrieval zielt auf Ausgewogenheit und Vollständigkeit der juristischen Analyse.
 
 ## References
 

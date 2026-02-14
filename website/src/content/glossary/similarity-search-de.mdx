@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Similarity Search vergleicht eine Query‑Embedding mit einer großen Menge von Vektoren und reiht Elemente anhand einer gewählten Distanz‑ oder [Ähnlichkeitsmetrik](/de/glossary/distance-metric/), um den relevantesten Kontext zu finden.
+Similarity Search ist der Prozess, Elemente in einem Datensatz zu finden, deren Vektorrepräsentationen unter einer gewählten [Distanzmetrik](/de/glossary/distance-metric/) am nächsten zum gegebenen Anfragevektor liegen. Anstatt exakte Schlüsselwörter abzugleichen, arbeitet Similarity Search im Embedding-Raum -- und liefert Ergebnisse, die semantisch mit der Anfrage verwandt sind, selbst wenn sie eine völlig andere Formulierung verwenden. Diese Fähigkeit bildet die Grundlage moderner semantischer Suche, Empfehlungssysteme und Deduplizierungs-Workflows.
+
+## Warum es wichtig ist
+
+- **Semantischer Abgleich** -- Juristen formulieren Anfragen möglicherweise anders als die Gesetzgebung geschrieben ist; Similarity Search überbrückt diese Lücke, indem sie auf Bedeutung statt auf exakte Begriffe abgleicht
+- **Sprachübergreifende Entdeckung** -- in mehrsprachigen Rechtssystemen wie dem belgischen kann Similarity Search über sprachübergreifende Embeddings relevante französische Gesetzgebung aus einer niederländischen Anfrage aufspüren
+- **Skalierbarkeit** -- approximative Similarity-Search-Algorithmen verarbeiten Milliarden von Vektoren in Millisekunden und machen semantisches Retrieval im großen Maßstab praktikabel
+- **Deduplizierung** -- das Erkennen nahezu identischer Dokumente oder Bestimmungen aus verschiedenen Quellen verhindert redundante Ergebnisse
+
+## Wie es funktioniert
+
+Similarity Search arbeitet in drei Phasen:
+
+1. **Kodierung** -- sowohl die Anfrage als auch alle Elemente im Datensatz werden mithilfe eines Embedding-Modells in [Vektor-Embeddings](/de/glossary/vector-embeddings/) umgewandelt. Für einen Dokumentenkorpus erfolgt diese Kodierung einmalig bei der Indizierung; nur die Anfrage wird zur Suchzeit kodiert.
+
+2. **Index-Abfrage** -- der Anfragevektor wird mit den gespeicherten Vektoren anhand einer Distanzmetrik (Kosinusähnlichkeit, Skalarprodukt oder euklidischer Abstand) verglichen. Ein exakter Vergleich mit jedem Vektor wäre bei großen Datensätzen zu langsam, daher werden Approximate-Nearest-Neighbour-Algorithmen (ANN) wie HNSW oder IVF eingesetzt. Diese bauen Graph- oder Clustering-Strukturen über die Vektoren auf, um sublineare Suchzeiten zu ermöglichen.
+
+3. **Ranking** -- die k nächsten Vektoren werden zurückgegeben, gerankt nach Ähnlichkeits-Score. Diese können durch Reranking oder Metadaten-Filterung weiter verfeinert werden, bevor sie dem Nutzer präsentiert werden.
+
+Der Kompromiss bei Similarity Search besteht zwischen Recall (alle wirklich relevanten Elemente finden) und Geschwindigkeit. Exakte Suche garantiert perfekten Recall, ist aber im großen Maßstab langsam. ANN-Algorithmen opfern eine geringe Menge Recall zugunsten dramatisch schnellerer Suche, was für die meisten Anwendungen akzeptabel ist.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Similarity Search von der Schlüsselwortsuche?**
+
+A: Die Schlüsselwortsuche (lexikalische Suche) findet Dokumente, die die exakten Wörter der Anfrage enthalten. Similarity Search gleicht auf Bedeutungsebene ab -- sie kann Dokumente über "Körperschaftsteuer" finden, wenn die Anfrage "vennootschapsbelasting" lautet, weil deren Embeddings im Vektorraum nahe beieinander liegen. Die meisten modernen Systeme kombinieren beide Ansätze in einer hybriden Suche.
+
+**F: Wie schnell ist Similarity Search bei großen Datensätzen?**
+
+A: Mit ANN-Indizes dauert Similarity Search über 100 Millionen Vektoren typischerweise 1-10 Millisekunden. Die genaue Geschwindigkeit hängt vom Indextyp, der Vektordimensionalität und der Hardware ab. Vektordatenbanken wie FAISS, Pinecone und Milvus sind für diese Aufgabe optimiert.
+
+**F: Was bestimmt die Qualität der Similarity-Search-Ergebnisse?**
+
+A: Drei Faktoren: das Embedding-Modell (wie gut es semantische Bedeutung erfasst), die Distanzmetrik (ob sie zum Trainingsziel des Modells passt) und die Index-Konfiguration (wie aggressiv Recall gegen Geschwindigkeit getauscht wird). Von diesen hat das Embedding-Modell den größten Einfluss.
 
 ## References
 

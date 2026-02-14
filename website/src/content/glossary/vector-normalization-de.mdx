@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Vektor-Normalisierung wendet eine Norm – etwa L2‑Normalisierung – an, sodass alle [Embeddings](/de/glossary/embeddings/) die gleiche Länge haben und Vergleiche mittels Cosine‑ oder [Dot-Product-Similarität](/de/glossary/dot-product-similarity/) konsistenter werden.
+Vektor-Normalisierung (L2-Normalisierung) ist der Vorgang, einen Vektor so zu skalieren, dass seine Länge (L2-Norm) exakt eins beträgt, ohne seine Richtung zu ändern. Dies geschieht durch Division jeder Dimension des Vektors durch seine Gesamtmagnitude. Normalisierte Vektoren liegen auf der Oberfläche einer Einheitshypersphäre, und die Winkelbeziehungen zwischen ihnen bleiben erhalten, während Magnitudenunterschiede entfernt werden. Im Kontext der Embedding-basierten Suche stellt die Normalisierung sicher, dass Ähnlichkeitsvergleiche ausschließlich auf der Richtungsübereinstimmung (Bedeutungsähnlichkeit) basieren und nicht durch willkürliche Unterschiede in der Vektormagnitude beeinflusst werden.
+
+## Warum es wichtig ist
+
+- **Metrikäquivalenz** — wenn Vektoren normalisiert sind, erzeugen Kosinusähnlichkeit, Skalarprodukt und quadrierter euklidischer Abstand gleichwertige Rankings; dies vereinfacht die Implementierung und ermöglicht die Verwendung der schnellsten verfügbaren Metrik
+- **Fairer Vergleich** — ohne Normalisierung könnten Dokumente mit längeren oder informationsdichteren Embeddings größere Magnitudenvektoren haben und künstlich höhere Ähnlichkeitswerte erhalten; Normalisierung schafft gleiche Bedingungen
+- **Indexkompatibilität** — viele Vektor-Index-Implementierungen (HNSW, IVF) sind für normalisierte Vektoren optimiert; die Verwendung normalisierter Vektoren gewährleistet optimale Indexleistung
+- **Numerische Stabilität** — normalisierte Vektoren haben begrenzte Werte (jede Dimension zwischen -1 und 1), was numerische Überlaufprobleme bei Abstandsberechnungen verhindert
+
+## Wie es funktioniert
+
+Für einen Vektor **v** mit den Dimensionen (v₁, v₂, ..., vd) ist die L2-Norm:
+
+**‖v‖ = √(v₁² + v₂² + ... + vd²)**
+
+Der normalisierte Vektor **v̂** ist:
+
+**v̂ = v / ‖v‖**
+
+Nach der Normalisierung gilt ‖v̂‖ = 1 per Konstruktion. Die Richtung bleibt erhalten — normalisierte Vektoren zeigen in dieselbe Richtung wie die Originale — aber die Magnitude wird über alle Vektoren hinweg einheitlich.
+
+**Wann normalisieren**: Die meisten Text-Embedding-Modelle (E5, BGE, Cohere Embed) erzeugen standardmäßig normalisierte oder nahezu normalisierte Vektoren. Einige Modelle (wie frühere OpenAI-Embeddings) erzeugen nicht-normalisierte Vektoren, bei denen die Magnitude Informationen tragen kann. Prüfen Sie die Dokumentation des Modells, um festzustellen, ob eine Normalisierung angemessen ist.
+
+**Wann nicht normalisieren**: Wenn das Embedding-Modell absichtlich Informationen in der Vektormagnitude kodiert (z. B. um Konfidenz oder Dokumentenwichtigkeit auszudrücken), würde die Normalisierung diese Information verwerfen. Dies ist selten, kommt aber bei einigen spezialisierten Modellen vor.
+
+**Implementierung**: Die Normalisierung ist eine einfache, schnelle Operation — ein Durchlauf durch den Vektor zur Berechnung der L2-Norm, gefolgt von einer elementweisen Division. Die meisten Embedding-Bibliotheken und Vektordatenbanken führen die Normalisierung automatisch durch, wenn die Kosinusähnlichkeit konfiguriert ist.
+
+## Häufige Fragen
+
+**F: Sollte ich vor oder nach dem Speichern in der Vektordatenbank normalisieren?**
+
+A: Normalisieren Sie vor dem Speichern. Dies stellt sicher, dass alle gespeicherten Vektoren Einheitslänge haben, sodass die Datenbank die schnellere Skalarprodukt-Metrik verwenden kann (die bei normalisierten Vektoren der Kosinusähnlichkeit entspricht), anstatt die Kosinusähnlichkeit explizit berechnen zu müssen.
+
+**F: Kann die Normalisierung rückgängig gemacht werden?**
+
+A: Nur wenn die ursprüngliche Magnitude separat gespeichert wird. Sobald ein Vektor normalisiert ist, geht seine ursprüngliche Magnitude verloren. Wenn die Magnitude bedeutungsvolle Informationen enthält, speichern Sie sie vor der Normalisierung als separates Metadatenfeld.
 
 ## References
 

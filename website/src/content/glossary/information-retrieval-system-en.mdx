@@ -12,4 +12,31 @@ draft: false
 
 ## Definition
 
-An information retrieval system manages documents and indices so that users can issue queries and receive relevant ranked results, covering classic search engines and modern [RAG](/en/glossary/rag/) backends.
+An information retrieval system (IR system) is a combination of software, indexes, and algorithms that stores a collection of documents, accepts user queries, and returns a ranked list of results ordered by relevance. IR systems range from simple keyword-based search engines to sophisticated multi-stage pipelines that combine lexical matching, semantic understanding, and metadata filtering. In legal AI, the IR system is the backbone that connects a professional's question to the exact statute, ruling, or circular that answers it.
+
+## Why it matters
+
+- **Precision in high-stakes domains** — tax advisors need the specific article that applies, not a page of loosely related results; IR system design directly determines whether the right provision surfaces
+- **Scale handling** — Belgian tax law spans thousands of statutes, royal decrees, circulars, rulings, and parliamentary questions across three languages; an IR system makes this searchable in milliseconds
+- **Foundation for RAG** — in retrieval-augmented generation, the IR system provides the context window for the language model; poor retrieval means poor answers regardless of model quality
+- **Auditability** — a well-designed IR system logs which documents were retrieved and why, supporting professional accountability and regulatory compliance
+
+## How it works
+
+Modern IR systems operate in layers. The first layer is **indexing**: documents are processed, split into manageable units, and stored in one or more index structures. A lexical index (like BM25) stores term frequencies for keyword matching. A vector index stores dense embeddings for semantic matching. Many systems maintain both and combine their results in hybrid search.
+
+The second layer is **query processing**: the user's raw question is analysed, expanded with synonyms or legal terminology, and potentially decomposed into sub-queries. Query understanding is especially important in legal domains where the same concept may have different names across jurisdictions or languages.
+
+The third layer is **retrieval and ranking**: candidate documents are pulled from the indexes, scored, filtered by metadata (jurisdiction, date, authority level), and reranked using a more expensive but more accurate model. The final ranked list is returned to the user or passed to a generation layer for answer synthesis.
+
+What distinguishes a legal IR system from a generic one is the domain-specific logic woven through each layer: temporal awareness (knowing which version of a law was in force on a given date), authority ranking (legislation outweighs administrative guidance), and cross-lingual retrieval (a Dutch query should find relevant French-language sources).
+
+## Common questions
+
+**Q: How is an IR system different from a database?**
+
+A: A database retrieves exact records matching structured queries (SQL). An IR system retrieves documents by relevance to unstructured natural-language queries. Databases return precise matches; IR systems return ranked approximations, scored by how well they match the query intent.
+
+**Q: Can an IR system handle multiple languages?**
+
+A: Yes. Cross-lingual IR systems use multilingual embeddings or translation layers to match queries in one language against documents in another. This is essential in Belgium where legislation exists in Dutch, French, and German.

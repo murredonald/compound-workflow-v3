@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Zugriffskontrolle setzt Berechtigungen für Benutzer, Dienste und Prozesse durch und stellt sicher, dass nur autorisierte Parteien bestimmte Ressourcen lesen oder ändern können.
+Zugriffskontrolle ist die Gesamtheit der Richtlinien, Mechanismen und technischen Implementierungen, die festlegen, wer auf welche Daten, Systeme oder Aktionen innerhalb einer Softwareumgebung zugreifen darf. Sie regelt die Authentifizierung (Identitätsüberprüfung), die Autorisierung (Berechtigungsprüfung) und die Durchsetzung (Blockierung nicht autorisierter Operationen). In juristischen KI-Systemen, die sensible Steuerdaten verarbeiten, stellt die Zugriffskontrolle sicher, dass Mandanteninformationen nur für autorisierte Berater sichtbar sind, dass Verwaltungsfunktionen auf die entsprechenden Rollen beschränkt sind und dass das System die der beruflichen Praxis inhärenten Vertraulichkeitspflichten einhält.
+
+## Warum es wichtig ist
+
+- **Mandantenvertraulichkeit** — Steuerberater unterliegen der beruflichen Geheimhaltungspflicht; die Zugriffskontrolle stellt sicher, dass die Daten eines Mandanten niemals einem anderen Mandanten oder unbefugtem Personal offengelegt werden
+- **Regulatorische Konformität** — die DSGVO verlangt angemessene technische Maßnahmen zum Schutz personenbezogener Daten; der EU AI Act fügt Transparenz- und Zugangsanforderungen für Hochrisikosysteme hinzu; die Zugriffskontrolle ist für beides grundlegend
+- **Mandantenfähigkeit** — wenn mehrere Kanzleien oder Fachleute dieselbe KI-Plattform nutzen, isoliert die Zugriffskontrolle ihre Daten, Anfragen und Ergebnisse voneinander
+- **Prüfungsbereitschaft** — Zugriffskontrollprotokolle dokumentieren, wer wann auf was zugegriffen hat, und unterstützen sowohl die interne Governance als auch externe regulatorische Prüfungen
+
+## Wie es funktioniert
+
+Die Zugriffskontrolle arbeitet auf mehreren Ebenen in einem KI-System:
+
+**Authentifizierung** überprüft die Identität — sie bestätigt, dass ein Benutzer derjenige ist, der er vorgibt zu sein. Dies beinhaltet typischerweise Anmeldedaten (Benutzername und Passwort), Multi-Faktor-Authentifizierung (einen zweiten Verifizierungsschritt wie einen Code oder ein biometrisches Merkmal) oder Single Sign-On (SSO) Integration mit dem Identitätsanbieter einer Organisation.
+
+**Autorisierung** bestimmt, was ein authentifizierter Benutzer tun darf. Das gebräuchlichste Modell ist die **rollenbasierte Zugriffskontrolle (RBAC)**, bei der Berechtigungen Rollen zugewiesen werden (Administrator, Berater, Junior-Analyst, Nur-Lese-Prüfer) und Benutzer den Rollen zugeordnet werden. Granularere Systeme verwenden die **attributbasierte Zugriffskontrolle (ABAC)**, bei der Berechtigungen von einer Kombination aus Benutzerattributen, Ressourcenattributen und Umgebungsbedingungen abhängen (z. B. Tageszeit, Standort).
+
+**Durchsetzung** erfolgt an jeder Systemgrenze: API-Endpunkte prüfen die Autorisierung vor der Verarbeitung von Anfragen, Datenbankabfragen werden nach Mandant gefiltert, und die Retrieval-Schicht wendet berechtigungsbasierte Filter an, sodass Suchergebnisse nur Dokumente enthalten, die der Benutzer einsehen darf.
+
+Im Kontext juristischer KI erstreckt sich die Zugriffskontrolle auch auf die Wissensbasis selbst. Einige Dokumente können auf bestimmte Fachbereiche oder Hierarchiestufen beschränkt sein. Privilegierte Rechtsgutachten oder interne Kanzleimemoranden erfordern strengere Kontrollen als öffentlich zugängliche Gesetzgebung.
+
+## Häufige Fragen
+
+**F: Wie interagiert die Zugriffskontrolle mit KI-generierten Antworten?**
+
+A: Die Retrieval-Schicht sollte Quelldokumente nach den Berechtigungen des Benutzers filtern, bevor der Kontext an das Sprachmodell übergeben wird. Dies verhindert, dass das Modell Dokumente sieht — und möglicherweise zitiert —, auf die der Benutzer keinen Zugriff hat. Die Zugriffsprüfung erfolgt zum Zeitpunkt des Retrievals, nicht nach der Generierung.
+
+**F: Was ist der Unterschied zwischen Authentifizierung und Autorisierung?**
+
+A: Authentifizierung beantwortet die Frage „Wer sind Sie?" — sie überprüft die Identität. Autorisierung beantwortet die Frage „Was dürfen Sie tun?" — sie prüft die Berechtigungen. Beides ist erforderlich: Authentifizierung ohne Autorisierung lässt jeden mit vollem Zugriff herein; Autorisierung ohne Authentifizierung kann nicht überprüfen, wer den Zugriff anfordert.

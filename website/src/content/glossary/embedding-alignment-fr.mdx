@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’embedding [alignment](/fr/glossary/alignment/) applique des transformations ou un entraînement conjoint pour déplacer les espaces d’[embeddings](/fr/glossary/embeddings/) de sorte que les vecteurs de même signification issus de sources différentes se retrouvent proches les uns des autres.
+L'embedding alignment est le processus de projection des vecteurs d'[embeddings](/fr/glossary/embeddings/) provenant de modèles, de langues ou de domaines différents dans un espace vectoriel partagé où ils peuvent être comparés de manière significative. Lorsque deux modèles d'embeddings produisent des vecteurs dans des espaces différents, un document encodé avec le modèle A ne peut pas être comparé à une requête encodée avec le modèle B — les techniques d'[alignement](/fr/glossary/alignment/) apprennent une transformation qui comble cet écart. En IA juridique multilingue, l'embedding alignment permet à un système de recherche unique de faire correspondre des requêtes en néerlandais avec des documents en français en alignant les espaces d'embeddings des deux langues.
+
+## Pourquoi c'est important
+
+- **Recherche multilingue** — les sources juridiques belges existent en néerlandais, français et allemand ; l'embedding alignment permet à une requête dans une langue de retrouver des documents dans les trois, sans nécessiter de traduction
+- **Migration de modèle** — lors de la mise à niveau vers un modèle d'embeddings plus récent, l'alignement peut faire le pont entre les anciens et les nouveaux embeddings pendant la transition, évitant de devoir ré-encoder l'ensemble du corpus simultanément
+- **Fusion multi-modèle** — différents modèles d'embeddings peuvent se spécialiser dans différents aspects (l'un meilleur pour les requêtes courtes, l'autre pour les documents longs) ; l'alignement permet de combiner leurs forces
+- **Adaptation au domaine** — aligner des embeddings généralistes avec des embeddings spécialisés transfère l'étendue du modèle général vers la précision du modèle spécialisé
+
+## Comment ça fonctionne
+
+L'embedding alignment implique généralement l'apprentissage d'une matrice de transformation qui projette les vecteurs d'un espace vers un autre :
+
+**L'alignement linéaire** apprend une matrice de rotation et/ou de mise à l'échelle W telle que la transformation des vecteurs de l'espace A par W les rapproche des vecteurs correspondants dans l'espace B. La matrice est apprise à partir d'un ensemble d'exemples appariés — des éléments qui devraient être proches dans l'espace aligné (par exemple, le même concept juridique exprimé en néerlandais et en français). C'est computationnellement simple et souvent étonnamment efficace.
+
+**L'alignement orthogonal** (alignement de Procrustes) contraint la transformation à être une matrice orthogonale (rotation sans mise à l'échelle), ce qui préserve les distances et les angles au sein de chaque espace. Cela fonctionne bien lorsque les deux espaces ont une structure similaire mais des orientations différentes.
+
+**L'alignement non linéaire** utilise des réseaux de neurones pour apprendre des correspondances plus complexes entre les espaces. Cela peut gérer les cas où les espaces ont des représentations structurellement différentes du sens, mais nécessite davantage de données d'entraînement et risque le surapprentissage.
+
+**Les données d'entraînement** pour l'alignement consistent en des paires parallèles : le même document ou concept représenté dans les deux espaces. Pour l'alignement multilingue, les dictionnaires bilingues, les textes juridiques parallèles (les lois belges existent en versions officielles néerlandaise et française) ou les paires de phrases traduites fournissent le signal d'entraînement. Même quelques milliers de paires parallèles peuvent produire un alignement efficace.
+
+**L'entraînement conjoint** évite entièrement le problème d'alignement en entraînant un seul modèle d'embeddings multilingue qui projette nativement toutes les langues dans un espace partagé. Des modèles comme multilingual E5 et SONAR sont entraînés sur du texte provenant de nombreuses langues simultanément, produisant un espace unifié dès le départ.
+
+## Questions fréquentes
+
+**Q : L'alignement est-il aussi performant qu'un modèle nativement multilingue ?**
+
+R : Généralement non — un modèle nativement multilingue produit un espace partagé plus cohérent car il apprend les relations interlinguistiques pendant l'entraînement. L'alignement a posteriori est une solution de repli utile lorsqu'un modèle multilingue n'est pas disponible ou lorsqu'il faut faire le pont entre des modèles spécialisés existants.
+
+**Q : Combien de paires parallèles sont nécessaires pour l'alignement ?**
+
+R : L'alignement linéaire peut fonctionner avec aussi peu que 1 000 à 5 000 paires parallèles de haute qualité. Davantage de données améliore la qualité, mais les gains diminuent au-delà de 10 000 à 20 000 paires. Les paires doivent couvrir l'ensemble des sujets que le système traite.
 
 ## References
 

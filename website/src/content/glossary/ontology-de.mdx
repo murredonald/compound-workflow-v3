@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Eine [Ontologie](/de/glossary/knowledge-graph/) beschreibt Entitäten, ihre Eigenschaften und Beziehungen in einem Domänenbereich, sodass Menschen und Systeme ein gemeinsames, explizites Wissensmodell für Suche und Schlussfolgern nutzen können.
+Eine Ontologie ist eine formale, explizite Spezifikation der Konzepte, Entitäten, Eigenschaften und Beziehungen innerhalb eines Fachgebiets, die so strukturiert ist, dass sowohl Menschen als auch Maschinen konsistent über Wissen schlussfolgern können. Im Gegensatz zu einem einfachen Glossar (das Begriffe definiert) oder einer Taxonomie (die sie hierarchisch einordnet) definiert eine Ontologie, welche Arten von Dingen existieren, welche Attribute sie haben und wie sie zueinander in Beziehung stehen. In der juristischen KI könnte eine Steuerrecht-Ontologie definieren, dass ein „Steuerpflichtiger" eine Entität ist, die einen „steuerlichen Wohnsitz" hat, „Steuerpflichten" unterliegt und „Abzüge" geltend machen kann — mit präzisen Definitionen für jedes Konzept und formalen Regeln für deren Zusammenspiel.
+
+## Warum es wichtig ist
+
+- **Konsistentes Schlussfolgern** — eine Ontologie bietet ein gemeinsames, eindeutiges Vokabular, das verhindert, dass das KI-System verwandte, aber unterschiedliche Konzepte verwechselt (z. B. „Steuerbefreiung" vs. „Steuerabzug" vs. „Steuerermäßigung")
+- **Strukturierte Abfragen** — Ontologien ermöglichen relationale Abfragen, die über die Textsuche hinausgehen: „Welche Abzüge stehen gebietsfremden Steuerpflichtigen in der Wallonischen Region zur Verfügung?" erfordert das Verständnis von Entitätstypen und deren Beziehungen
+- **Grundlage für Knowledge Graphs** — Ontologien definieren das Schema für [Knowledge Graphs](/de/glossary/knowledge-graph/), indem sie festlegen, welche Arten von Knoten und Kanten gültig sind und welche Eigenschaften sie haben können
+- **Systemübergreifende Interoperabilität** — eine gemeinsame Ontologie ermöglicht es verschiedenen Systemen (Dokumentenmanagement, Retrieval, Fallmanagement), Daten mit konsistenter Semantik auszutauschen
+
+## So funktioniert es
+
+Eine Ontologie besteht aus mehreren Komponenten:
+
+**Klassen** definieren die Typen von Entitäten im Fachgebiet: Gesetzgebung, Artikel, Gerichtsentscheidung, Steuerpflichtiger, Steuerart, Zuständigkeitsbereich. Klassen können Unterklassen haben: Gerichtsentscheidung kann die Unterklassen Verfassungsgerichtsentscheidung, Kassationsgerichtsentscheidung und Berufungsgerichtsentscheidung haben.
+
+**Eigenschaften** definieren Attribute von und Beziehungen zwischen Entitäten. Ein Artikel hat Eigenschaften wie Artikelnummer, Inkrafttretungsdatum und Gesetzgebungscode. Eine Gerichtsentscheidung hat Eigenschaften wie Entscheidungsdatum, Gericht und zitierte Artikel (die auf die interpretierten Artikel verweisen).
+
+**Einschränkungen** definieren Regeln über gültige Kombinationen: Jeder Artikel muss genau einem Gesetz angehören; ein Steuersatz muss sowohl einen Wert als auch ein Inkrafttretungsdatum haben; eine Gerichtsentscheidung muss mindestens eine Rechtsvorschrift referenzieren.
+
+**Instanzen** sind die tatsächlichen Entitäten in der Wissensbasis: Artikel 215 des WIB92, die Verfassungsgerichtsentscheidung vom 15. März 2024, die Flämische Region als Zuständigkeitsbereich.
+
+Ontologien werden typischerweise in formalen Sprachen wie OWL (Web Ontology Language) oder RDF Schema ausgedrückt, die automatisiertes Schlussfolgern ermöglichen — das Ableiten neuer Fakten aus bestehenden auf der Grundlage der Ontologieregeln. Wenn die Ontologie beispielsweise definiert, dass Bundesgesetzgebung für alle Regionen gilt, und ein bestimmter Abzug in der Bundesgesetzgebung definiert ist, kann das System schlussfolgern, dass der Abzug in allen drei Regionen gilt, ohne dass dies explizit angegeben werden muss.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich eine Ontologie von einem Datenbankschema?**
+
+A: Ein Datenbankschema definiert Tabellenstrukturen und Spaltentypen für die Speicherung. Eine Ontologie definiert konzeptuelle Entitäten, ihre Eigenschaften und ihre Beziehungen für das Schlussfolgern. Ein Datenbankschema sagt „diese Tabelle hat eine Datumsspalte"; eine Ontologie sagt „ein Artikel hat ein Inkrafttretungsdatum, das eine temporale Eigenschaft ist, die bestimmt, wann der Artikel in Kraft ist."
+
+**F: Lohnt sich der Aufwand für den Aufbau einer Ontologie?**
+
+A: Für komplexe Fachgebiete wie das Steuerrecht mit vielen miteinander verknüpften Konzepten: ja. Die anfängliche Investition in das Ontologiedesign zahlt sich durch genaueres Retrieval, besseres Schlussfolgern und konsistente Wissensorganisation aus. Für einfachere Fachgebiete kann eine Taxonomie ausreichend sein.

@@ -10,9 +10,44 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Metadata filtering gebruikt expliete velden in de index om resultaten in of uit te sluiten, bijvoorbeeld om alleen recente, Nederlandstalige of publiek toegankelijke documenten op te halen.
+Metadata filtering is het proces waarbij zoekresultaten worden beperkt tot documenten die overeenkomen met specifieke gestructureerde kenmerken — zoals documenttype, publicatiedatum, rechtsgebied, autoriteitsniveau of taal — vóór of tijdens een similariteitszoekopdracht. In plaats van uitsluitend te vertrouwen op semantische relevantie, legt metadata filtering harde beperkingen op die ervoor zorgen dat resultaten voldoen aan contextuele vereisten. In het Belgische fiscale recht betekent dit dat een vraag over actuele Waalse registratierechten alleen Waalse gewestelijke wetgeving retourneert die momenteel van kracht is, en geen vervallen federale bepalingen of Vlaamse equivalenten.
+
+## Waarom het belangrijk is
+
+- **Jurisdictionele precisie** — De drie gewesten van België en het federale niveau hebben elk eigen fiscale regels; metadata filtering voorkomt dat het systeem wetgeving uit het verkeerde rechtsgebied retourneert
+- **Temporele nauwkeurigheid** — fiscale wetgeving verandert frequent; filteren op datum zorgt ervoor dat het systeem de versie van een bepaling retourneert die van kracht was op het relevante moment, niet een opgeheven voorganger
+- **Autoriteitsrangschikking** — filteren op documenttype (wetgeving, circulaire, ruling, parlementaire vraag) stelt het systeem in staat om bindende bronnen voorrang te geven boven interpretatieve richtlijnen waar dat gepast is
+- **Ruisvermindering** — zonder metadata filtering kan semantisch zoeken documenten retourneren die thematisch relevant maar praktisch irrelevant zijn, zoals ontwerpvoorstellen, buitenlandse wetgeving of vervangen bepalingen
+
+## Hoe het werkt
+
+Metadata filtering werkt binnen de retrievalpipeline, doorgaans op een van twee punten:
+
+**Pre-filtering** verkleint de zoekruimte voordat de similariteitszoekopdracht wordt uitgevoerd. De vectordatabase ontvangt zowel de queryvector als de metadatabeperkingen, en zoekt alleen binnen de subset van documenten die aan de beperkingen voldoen. Dit is efficiënt omdat het aantal te vergelijken vectoren afneemt, maar het kan relevante documenten missen als de filters te restrictief zijn.
+
+**Post-filtering** voert eerst de volledige similariteitszoekopdracht uit en verwijdert vervolgens resultaten die niet aan de metadatabeperkingen voldoen. Dit zorgt ervoor dat geen semantisch relevante documenten worden gemist door te nauwe filters, maar het kan verspillend zijn — veel opgehaalde kandidaten worden mogelijk verworpen na scoring.
+
+De meeste productiesystemen gebruiken een combinatie. Veelvoorkomende filtertypes in juridische AI zijn:
+
+- **Datumbereik** — alleen documenten gepubliceerd tussen specifieke data, of documenten die van kracht zijn op een specifieke datum
+- **Rechtsgebied** — federaal, Vlaams, Waals, Brussels Hoofdstedelijk of Duitstalige Gemeenschap
+- **Documenttype** — wet, koninklijk besluit, ministerieel besluit, circulaire, administratieve ruling, rechterlijke uitspraak, parlementaire vraag
+- **Autoriteitsniveau** — grondwettelijke bepalingen, primaire wetgeving, secundaire wetgeving, administratieve richtlijnen
+- **Taal** — Nederlandstalige, Franstalige of Duitstalige versie van de tekst
+
+Metadata filtering is afhankelijk van nauwkeurige, volledige metadata op het moment van indexering. Als een document niet is getagd met het juiste rechtsgebied of de juiste publicatiedatum, zal geen enkel filter het correct vinden of uitsluiten. Dit maakt metadataverrijking tijdens documentingestie een essentiële voorwaarde.
+
+## Veelgestelde vragen
+
+**V: Kunnen metadatafilters te strikt zijn?**
+
+A: Ja. Te streng filteren kan relevante resultaten uitsluiten — filteren op uitsluitend "Vlaams" rechtsgebied zou bijvoorbeeld federale wetgeving missen die uniform van toepassing is in alle gewesten. Slimme standaardwaarden en filterversoepeling (filters verbreden wanneer te weinig resultaten worden geretourneerd) helpen dit te voorkomen.
+
+**V: Hoe werkt metadata filtering samen met semantisch zoeken?**
+
+A: Ze zijn complementair. Semantisch zoeken vindt documenten die over het juiste onderwerp gaan; metadata filtering zorgt ervoor dat ze uit het juiste rechtsgebied, de juiste periode en het juiste autoriteitsniveau komen. Geen van beide is op zichzelf voldoende voor juridisch onderzoek — de combinatie van beide levert nauwkeurige, contextueel passende resultaten op.
 
 ## References
 

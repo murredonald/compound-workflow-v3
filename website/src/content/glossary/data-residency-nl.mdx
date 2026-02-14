@@ -12,4 +12,35 @@ draft: false
 
 ## Definitie
 
-Vereisten voor dataresidentie specificeren in welke rechtsgebieden gegevens moeten worden opgeslagen of verwerkt, wat invloed heeft op cloud-, hosting- en leverancierskeuzes voor AI-systemen.
+Dataresidentie verwijst naar de geografische en juridische Vereisten die bepalen waar Gegevens fysiek worden opgeslagen en verwerkt. Regelgeving, Contracten en organisatiebeleid kunnen voorschrijven dat bepaalde categorieën Gegevens — met name Persoonsgegevens, financiële Dossiers of vertrouwelijke Klantinformatie — binnen specifieke Rechtsgebieden blijven. Voor AI-systemen die gevoelige Belastinggegevens in België verwerken, bepaalt Dataresidentie welke Cloudproviders, Hostingregio's en Verwerkingsarchitecturen zijn toegestaan, en beïnvloedt dit rechtstreeks de Leveranciersselectie en het Systeemontwerp.
+
+## Waarom het ertoe doet
+
+- **AVG-compliance** — de AVG beperkt de Overdracht van Persoonsgegevens buiten de Europese Economische Ruimte (EER) tenzij passende Waarborgen aanwezig zijn; AI-systemen die Belgische Belastingplichtigengegevens verwerken, moeten ervoor zorgen dat Gegevens binnen toegestane Rechtsgebieden blijven
+- **Beroepsverplichtingen** — Belastingadviseurs en Accountants zijn gebonden aan wetten op het Beroepsgeheim die aanvullende geografische Beperkingen kunnen opleggen voor waar Klantgegevens mogen worden opgeslagen of verwerkt
+- **Klantvereisten** — zakelijke Klanten nemen vaak dataresidentieclausules op in hun Contracten, die vereisen dat hun Gegevens nooit bepaalde Landen of Regio's verlaten
+- **Soevereiniteit en controle** — het bewaren van Gegevens binnen de EU zorgt ervoor dat ze onder het EU-recht en regelgevend Toezicht vallen, wat sterkere juridische Bescherming biedt dan Opslag in Rechtsgebieden met zwakkere Gegevensbeschermingskaders
+
+## Hoe het werkt
+
+Dataresidentie werkt op meerdere Systeemlagen:
+
+**Opslaglaag** — Databases, Objectstores en Bestandssystemen moeten worden ingericht in goedgekeurde geografische Regio's. Grote Cloudproviders (AWS, Azure, GCP) bieden regiospecifieke Implementatie, waardoor Organisaties EU-datacentra kunnen selecteren. De specifieke Regio (bijv. eu-west-1 in Ierland vs. eu-central-1 in Frankfurt) kan relevant zijn afhankelijk van de geldende Vereisten.
+
+**Verwerkingslaag** — Dataresidentie gaat niet alleen over waar Gegevens in rust worden opgeslagen, maar ook over waar ze worden verwerkt. Als een AI-model in een Amerikaans Datacenter draait en Belgische Klantgegevens ontvangt voor Inferentie, hebben de Gegevens de EU verlaten, zelfs als ze in Europa worden opgeslagen. Dit betekent dat LLM-API-aanroepen, Embeddingberekeningen en Retrievaloperaties allemaal binnen goedgekeurde Regio's moeten plaatsvinden.
+
+**Transitlaag** — Gegevens in Transit (die worden overgedragen tussen Services) moeten versleuteld zijn en via goedgekeurde Netwerkpaden worden gerouteerd. Sommige Organisaties vereisen dat zelfs versleutelde Gegevens niet door niet-goedgekeurde Rechtsgebieden transiteren.
+
+**Leveranciersbeoordeling** — bij het gebruik van AI-diensten van derden (Embedding-API's, LLM-providers, Vectordatabases) moeten Organisaties verifiëren dat de Gegevensverwerking van de Leverancier in conforme Rechtsgebieden plaatsvindt. Dit omvat het controleren van Subverwerkers — Leveranciers die Gegevens verwerken namens de primaire Leverancier.
+
+Vereisten voor Dataresidentie variëren per Regelgeving en Context. De AVG geldt breed voor Persoonsgegevens van EU-ingezetenen. De Belgische wetgeving op het Beroepsgeheim voegt Beperkingen toe voor juridische en financiële Beroepsbeoefenaars. Sectorspecifieke Regelgeving (bijv. financiële Dienstverlening) kan aanvullende Vereisten opleggen. Organisaties moeten alle Gegevensstromen in kaart brengen en Residentiëcompliance op elk Punt verifiëren.
+
+## Veelgestelde vragen
+
+**V: Geldt Dataresidentie voor geanonimiseerde Gegevens?**
+
+A: Als Gegevens werkelijk en onomkeerbaar zijn geanonimiseerd (niet gepseudonimiseerd), is de AVG niet meer van toepassing en gelden op de AVG gebaseerde Dataresidentiebeperkingen niet. Het bereiken van echte Anonimisering is echter moeilijk, en veel "geanonimiseerde" Datasets kunnen opnieuw worden geïdentificeerd. Gepseudonimiseerde Gegevens blijven Persoonsgegevens onder de AVG en vallen onder Residentiëvereisten.
+
+**V: Kunnen we in de VS gevestigde AI-API's gebruiken als we EU-dataresidentievereisten hebben?**
+
+A: Alleen als de API-provider Verwerking in de EU-regio en passende Gegevensbeschermingswaarborgen biedt. Veel LLM-providers bieden inmiddels in de EU gehoste Endpoints aan om hieraan tegemoet te komen. Zonder Verwerking in de EU-regio zou het verzenden van Persoons- of vertrouwelijke Klantgegevens naar een in de VS gevestigde API de AVG-overdrachtsbeperking schenden.

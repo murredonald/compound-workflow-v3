@@ -10,6 +10,43 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+Le stress testing évalue le comportement d'un système d'IA dans des conditions extrêmes ou dégradées qui dépassent les paramètres normaux de fonctionnement. Cela inclut des volumes de requêtes élevés qui saturent la capacité du système, des entrées bruitées ou adversariales, des pannes partielles d'infrastructure et des schémas de requêtes inhabituels. L'objectif n'est pas de tester les performances normales (c'est le rôle de l'évaluation standard), mais de trouver les points de rupture du système, de comprendre ses modes de défaillance et de vérifier qu'il se dégrade de manière contrôlée plutôt que catastrophique lorsqu'il est poussé au-delà de ses limites.
+
+## Pourquoi c'est important
+
+- **Découverte des modes de défaillance** — le stress testing révèle comment le système échoue : ralentit-il progressivement, renvoie-t-il des erreurs proprement, ou produit-il silencieusement des réponses incorrectes ? Chaque mode de défaillance a des implications différentes pour la confiance des utilisateurs et la sécurité
+- **Planification de capacité** — comprendre les limites de débit du système et sa courbe de dégradation permet de dimensionner l'infrastructure et de prendre des décisions de mise à l'échelle
+- **Résilience adversariale** — le stress testing avec des entrées adversariales révèle des vulnérabilités aux injections de prompt, à la manipulation de requêtes et à d'autres attaques qui pourraient ne pas apparaître en fonctionnement normal
+- **Conformité réglementaire** — le règlement européen sur l'IA (AI Act) exige que les systèmes d'IA à haut risque maintiennent leurs performances dans des « conditions d'utilisation raisonnablement prévisibles » ; le stress testing fournit des preuves pour cette exigence
+
+## Comment ça fonctionne
+
+Le stress testing couvre plusieurs dimensions :
+
+**Les tests de charge** augmentent progressivement le volume de requêtes jusqu'à ce que les performances du système se dégradent. Les métriques suivies incluent le temps de réponse (de combien la latence augmente-t-elle ?), le taux d'erreur (les requêtes commencent-elles à échouer ?) et la qualité des réponses (les réponses deviennent-elles moins précises sous charge ?). Le test identifie le débit maximal soutenable et le schéma de dégradation au-delà.
+
+**Les tests de perturbation des entrées** envoient des entrées qui s'écartent des schémas normaux : des requêtes extrêmement longues, des requêtes dans des langues inattendues, des requêtes avec des caractères spéciaux ou un formatage inhabituel, et des requêtes conçues pour perturber les couches de recherche ou de génération. L'objectif est de vérifier que le système gère les entrées inhabituelles sans planter ni produire de résultats dangereux.
+
+**Les tests de défaillance d'infrastructure** simulent des pannes de composants : un shard de base de données vectorielle qui tombe hors ligne, un service de modèle d'embedding qui devient indisponible, ou une partition réseau entre les composants du système. Le test vérifie que le système détecte les pannes, les contourne lorsque c'est possible et communique clairement la dégradation aux utilisateurs.
+
+**Les tests adversariaux** utilisent des entrées délibérément conçues pour exploiter les faiblesses du système : des attaques par injection de prompt, des requêtes conçues pour extraire des données d'entraînement et des entrées qui tentent de contourner les garde-fous de sécurité. Cela chevauche les tests de sécurité mais se concentre spécifiquement sur les vulnérabilités propres à l'IA.
+
+**Les tests de cas limites** ciblent des scénarios réputés difficiles : des requêtes ambiguës, des requêtes à la frontière du périmètre du système, des requêtes sur des sujets où la base de connaissances a une couverture clairsemée, et des requêtes nécessitant un raisonnement sur plusieurs sources.
+
+Les résultats sont documentés en termes de modes de défaillance découverts, de points de rupture et de priorités de remédiation.
+
+## Questions fréquentes
+
+**Q : en quoi le stress testing diffère-t-il des tests de régression ?**
+
+R : les tests de régression vérifient que le système maintient sa qualité dans des conditions normales après des modifications. Le stress testing pousse le système au-delà des conditions normales pour trouver ses limites. Les tests de régression demandent « est-ce que ça fonctionne toujours ? » ; le stress testing demande « quand est-ce que ça cesse de fonctionner, et comment ? »
+
+**Q : à quelle fréquence le stress testing doit-il être réalisé ?**
+
+R : après des changements architecturaux significatifs, avant des mises en production majeures, et périodiquement (tous les trimestres) comme bilan de santé. Les tests de charge automatisés peuvent être exécutés plus fréquemment dans le cadre du pipeline CI/CD.
+
 ## References
 
 - Ribeiro et al. (2020), "[Beyond Accuracy: Behavioral Testing of NLP Models with CheckList](https://doi.org/10.18653/v1/2020.acl-main.442)", ACL.

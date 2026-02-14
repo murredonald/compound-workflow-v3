@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Lexical search retrieves documents whose terms match the query terms, often using inverted indices, [tokenization](/en/glossary/tokenization/), and ranking functions like BM25.
+Lexical search is a retrieval method that finds documents by matching the exact words (or their stemmed forms) in a query against the words in a document collection. It relies on inverted indexes — data structures that map every term to the list of documents containing it — and scoring functions like BM25 that rank results based on term frequency, document length, and corpus-wide rarity. Lexical search is the oldest and most battle-tested approach to information retrieval, and it remains a critical component of modern search systems including those used for legal research.
+
+## Why it matters
+
+- **Precision on exact terms** — when a tax advisor searches for "article 215 WIB92" or a specific ruling reference, lexical search finds exact matches that semantic search might miss or rank poorly
+- **Speed and scalability** — inverted indexes are highly optimised and can search millions of documents in single-digit milliseconds with minimal hardware
+- **Transparency** — results can be explained by showing which query terms matched which document terms, making the ranking interpretable to users
+- **Complementary to semantic search** — lexical and semantic search have different failure modes; combining them in hybrid search compensates for each method's weaknesses
+
+## How it works
+
+Lexical search operates through a pipeline of text processing and matching:
+
+**Indexing** — when documents are added to the system, their text is tokenised (split into words), normalised (lowercased, accents removed), and optionally stemmed (reducing words to their root form, e.g., "belasting" and "belastingen" both become "belasting"). Each term is recorded in an inverted index that maps terms to the documents and positions where they appear.
+
+**Query processing** — the user's query undergoes the same tokenisation and stemming as the documents, ensuring consistent matching. Some systems expand the query with synonyms or related terms to improve recall.
+
+**Scoring** — candidate documents are scored using algorithms like BM25, which considers three factors: how often the query term appears in the document (term frequency), how rare the term is across the entire collection (inverse document frequency), and the document's length (longer documents are penalised slightly to avoid biasing toward verbose sources). The resulting score reflects how well the document matches the query's specific terms.
+
+The main limitation of lexical search is the **vocabulary mismatch problem**: it cannot match concepts expressed with different words. A query about "corporate income tax" will not find documents that only use "vennootschapsbelasting" because the terms are lexically different. This is why modern systems pair lexical search with dense semantic retrieval in a hybrid approach.
+
+## Common questions
+
+**Q: Is BM25 the only lexical scoring algorithm?**
+
+A: No, but it is the most widely used. Alternatives include TF-IDF (simpler, less effective), BM25+ (a variant that addresses a bias against long documents), and language model-based scoring. BM25 has remained dominant because it is simple, fast, and surprisingly effective.
+
+**Q: Why not just use semantic search instead of lexical search?**
+
+A: Semantic search excels at matching meaning but can struggle with precise identifiers, reference numbers, and domain-specific terms. A hybrid of both consistently outperforms either alone — lexical search handles precision queries while semantic search handles conceptual queries.

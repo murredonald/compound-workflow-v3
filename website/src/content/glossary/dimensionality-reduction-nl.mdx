@@ -10,9 +10,38 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Dimensionality reduction past wiskundige transformaties toe – zoals PCA of auto‑encoders – om [embeddings](/nl/glossary/embeddings/) compacter te maken, wat opslag en zoekkosten verlaagt met beperkte kwaliteitsverlies.
+Dimensionaliteitsreductie is een familie van technieken die hoogdimensionale data transformeren naar een laagdimensionale representatie, met behoud van zoveel mogelijk betekenisvolle structuur. In de context van AI en informatieophaling betekent dit doorgaans het comprimeren van [vectorembeddings](/nl/glossary/vector-embeddings/) — die 768 of meer dimensies kunnen hebben — tot kleinere vectoren die sneller te doorzoeken, goedkoper op te slaan en gemakkelijker te visualiseren zijn. De afweging is altijd tussen compressie en informatieverlies: agressievere reductie bespaart meer middelen maar riskeert het weggooien van onderscheidingen die belangrijk zijn voor de ophaalkwaliteit.
+
+## Waarom het belangrijk is
+
+- **Zoeksnelheid** — gelijkeniszoekopdrachten over laagdimensionale vectoren zijn sneller omdat afstandsberekeningen minder bewerkingen vereisen; dit is belangrijk op schaal bij het doorzoeken van miljoenen documentembeddings
+- **Opslagefficiëntie** — het reduceren van 1536-dimensionale vectoren naar 256 dimensies bespaart meer dan 80% aan opslag, wat significant is voor grote kennisbanken
+- **Visualisatie** — het reduceren van embeddings naar 2 of 3 dimensies maakt menselijke inspectie van de [Embeddingspace](/nl/glossary/embedding-space/) mogelijk, waardoor clusters, uitbijters en hiaten in de dekking zichtbaar worden
+- **Ruisreductie** — hoogdimensionale embeddings kunnen redundante of ruisrijke dimensies bevatten; reductie kan de ophaling zelfs verbeteren door dimensies te elimineren die ruis toevoegen zonder bij te dragen aan betekenis
+
+## Hoe het werkt
+
+Dimensionaliteitsreductietechnieken vallen in twee categorieën uiteen:
+
+**Lineaire methoden** projecteren data langs de richtingen van maximale variantie. Principal Component Analysis (PCA) is de meest gebruikte: het identificeert de assen waarlangs de data het meest varieert en gooit de rest weg. PCA is snel, deterministisch en werkt goed wanneer de belangrijke structuur in de data lineair is. Voor embeddings behoudt PCA van 768 naar 256 dimensies doorgaans 90-95% van de ophaalprestaties.
+
+**Niet-lineaire methoden** leggen complexere structuur vast. t-SNE (t-distributed Stochastic Neighbour Embedding) en UMAP (Uniform Manifold Approximation and Projection) worden voornamelijk gebruikt voor visualisatie — ze brengen hoogdimensionale data terug naar 2-3 dimensies met behoud van lokale buurtrelaties. Auto-encoders gebruiken neurale netwerken om een gecomprimeerde representatie te leren en kunnen niet-lineaire patronen vastleggen, maar ze vereisen training en zijn complexer om in productie te nemen.
+
+In productieomgevingen voor ophaling wordt dimensionaliteitsreductie vaak toegepast bij indexering: het embeddingmodel berekent volledige embeddings, die vervolgens worden gecomprimeerd voordat ze in de vectorindex worden opgeslagen. Bij het zoeken ondergaat de queryembedding dezelfde reductie voordat er gezocht wordt. Sommige vectordatabases passen [kwantisatie](/nl/glossary/vector-quantization/) (een verwante techniek) toe naast of in plaats van dimensionaliteitsreductie om de opslag verder te comprimeren.
+
+De cruciale beslissing is hoeveel dimensies behouden moeten worden. Dit wordt empirisch bepaald door de ophaalkwaliteit (recall@k, nDCG) te meten bij verschillende dimensie-aantallen en het punt te vinden waarop verdere reductie de resultaten merkbaar verslechtert.
+
+## Veelgestelde vragen
+
+**V: Helpt dimensionaliteitsreductie altijd?**
+
+A: Niet altijd. Als het embeddingmodel compacte, informatiedichte vectoren produceert met weinig redundante dimensies, kan reductie meer kwaad dan goed doen. Het is het meest nuttig wanneer de oorspronkelijke dimensionaliteit hoog is (1000+) en er significante beperkingen zijn op opslag of snelheid.
+
+**V: Wat is het verschil tussen dimensionaliteitsreductie en vectorkwantisatie?**
+
+A: Dimensionaliteitsreductie vermindert het aantal dimensies (bv. 768 naar 256). Vectorkwantisatie vermindert de precisie van elke dimensie (bv. 32-bits floats naar 8-bits integers) of mapt vectoren naar clusterzwaartepunten. Beide verminderen opslag en versnellen het zoeken, en ze kunnen worden gecombineerd.
 
 ## References
 

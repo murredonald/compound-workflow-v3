@@ -12,4 +12,43 @@ draft: false
 
 ## Definition
 
-Source Hierarchy legt fest, welche Quellen Vorrang haben – etwa Gesetzestexte vor Blogbeiträgen –, damit Such‑ und KI‑Systeme verlässlichere Dokumente stärker gewichten können.
+Quellenhierarchie bezeichnet die geordnete Rangfolge rechtlicher Quellen nach ihrer Autorität und Bindungskraft, die bestimmt, welche Quellen bei Widersprüchen Vorrang haben. Im belgischen Recht steht die Verfassung über gewöhnlicher Gesetzgebung, Gesetzgebung über königlichen Erlassen, königliche Erlasse über ministeriellen Rundschreiben, und bindende Rechtsprechung höherer Gerichte über Entscheidungen niedrigerer Gerichte. Ein KI-System, das die Quellenhierarchie versteht, kann autoritative Quellen bei Abruf und Generierung priorisieren und so sicherstellen, dass seine Antworten das tatsächlich angewandte Recht widerspiegeln, anstatt einem verbindlichen Gesetz und einem unverbindlichen FAQ das gleiche Gewicht zu geben.
+
+## Warum das wichtig ist
+
+- **Korrekte Konfliktlösung** — wenn ein Rundschreiben einem Gesetz widerspricht, hat das Gesetz Vorrang; ohne Quellenhierarchie könnte das System das Rundschreiben zitieren und eine falsche Antwort liefern
+- **Autoritätsgewichteter Abruf** — die Quellenhierarchie ermöglicht es der Retrieval-Pipeline, autoritative Quellen höher zu gewichten und schwächere herabzustufen, wodurch die Relevanz der Top-Ergebnisse verbessert wird
+- **Professionelle Glaubwürdigkeit** — Steuerberater erwarten von einem KI-Tool, dass es versteht, dass Gesetzgebung über administrativer Anleitung steht; ein System, das alle Quellen gleich behandelt, untergräbt das professionelle Vertrauen
+- **Nuancierte Antworten** — die Quellenhierarchie ermöglicht es dem System, zwischen dem, was das Gesetz sagt (verbindliches Gesetz), dem, was die Verwaltung denkt (Rundschreiben), und dem, was Gerichte entschieden haben (Rechtsprechung), zu unterscheiden und so differenziertere und nützlichere Antworten zu liefern
+
+## So funktioniert es
+
+Die Quellenhierarchie wird durch Metadaten-Tagging und Scoring implementiert:
+
+**Autoritätsklassifikation** — jedes Dokument in der Wissensbasis wird bei der Aufnahme mit seinem Quellentyp und seiner Autoritätsstufe versehen. Eine typische Hierarchie für belgisches Steuerrecht, von der höchsten zur niedrigsten Autorität:
+
+1. **Verfassungsbestimmungen** — grundlegende Regeln, die alle anderen Quellen überlagern
+2. **Recht der Europäischen Union** — Verordnungen und Richtlinien mit direkter oder indirekter Wirkung
+3. **Föderale Gesetzgebung** — Gesetzbücher (WIB92, WBTW), Gesetze und Programmgesetze
+4. **Regionale Gesetzgebung** — flämische, wallonische, Brüsseler und deutschsprachige Gemeinschaftsgesetze und Erlasse
+5. **Königliche Erlasse** — Durchführungsverordnungen der Exekutive
+6. **Ministerielle Erlasse** — spezifischere Durchführungsvorschriften
+7. **Administrative Rundschreiben** — Interpretation der Steuerverwaltung (nicht bindend für Gerichte)
+8. **Steuerliche Vorabentscheidungen** — individuelle Vorabrulings zu konkreten Sachverhalten
+9. **Rechtsprechung** — Gerichtsentscheidungen (Bindungskraft abhängig von der Gerichtsebene)
+10. **Parlamentarische Anfragen** — ministerielle Antworten (informativ, nicht bindend)
+11. **Kommentare und Lehre** — akademische und fachliche Analyse
+
+**Retrieval-Boosting** — beim Abruf werden Autoritätswerte in das Relevanz-Scoring einbezogen. Ein Gesetz, das mit mäßiger semantischer Ähnlichkeit zur Anfrage passt, kann über einem Rundschreiben mit höherer semantischer Ähnlichkeit gerankt werden, weil seine Autorität größer ist.
+
+**Konfliktmarkierung** — wenn das System Quellen auf verschiedenen Autoritätsstufen erkennt, die widersprüchliche Informationen enthalten, kann es den Nutzer darauf hinweisen und erklären, welche Quelle Vorrang hat und warum.
+
+## Häufige Fragen
+
+**F: Ist die Quellenhierarchie immer eindeutig?**
+
+A: An den Extremen ja — die Verfassung hat immer Vorrang vor einem Rundschreiben. In der Mitte kann die Rangfolge nuanciert sein: Wie verhält sich ein aktuelles Rundschreiben, das ausdrücklich die Verwaltungspraxis ändert, im Vergleich zu älterer Rechtsprechung? Die Hierarchie liefert den Rahmen, aber für Grenzfälle ist weiterhin fachliche Beurteilung erforderlich.
+
+**F: Wie unterscheidet sich die Quellenhierarchie von der Quellenprovenienz?**
+
+A: Quellenprovenienz verfolgt, woher ein Dokument stammt und wie es verarbeitet wurde (Herkunft und Verarbeitungshistorie). Die Quellenhierarchie ordnet Dokumente nach ihrer rechtlichen Autorität ein. Ein Rundschreiben hat eine klare Provenienz (veröffentlicht vom FÖD Finanzen an einem bestimmten Datum) und eine bestimmte Position in der Hierarchie (unter Gesetzgebung, über Lehre).

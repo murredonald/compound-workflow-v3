@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le data preprocessing inclut la [déduplication](/fr/glossary/deduplication/), le filtrage, la tokenisation et la correction d’encodage ou de jeux de caractères afin que les modèles en aval reçoivent une entrée plus propre.
+Le data preprocessing désigne l'ensemble des étapes de nettoyage, de transformation et d'enrichissement appliquées aux données brutes avant leur utilisation pour l'entraînement de modèles, l'indexation ou la recherche. Les documents juridiques bruts arrivent dans des formats incohérents — PDF avec des mises en page variées, pages HTML avec du contenu de navigation superflu, images scannées nécessitant de l'OCR — et le prétraitement les convertit en texte propre et normalisé avec des métadonnées précises. La qualité du prétraitement détermine directement la qualité de tout ce qui suit : embeddings, résultats de recherche et réponses générées.
+
+## Pourquoi c'est important
+
+- **Données médiocres, résultats médiocres** — si les documents bruts contiennent des erreurs d'OCR, des artefacts de mise en forme ou des métadonnées manquantes, ces problèmes se propagent dans les embeddings et les résultats de recherche ; le prétraitement les détecte et les corrige à la source
+- **Cohérence** — les sources juridiques belges proviennent de multiples éditeurs dans différents formats ; le prétraitement les normalise en une structure cohérente que le pipeline de recherche peut traiter de manière uniforme
+- **Enrichissement des métadonnées** — les documents bruts arrivent rarement avec des métadonnées complètes ; le prétraitement extrait et attribue les dates de publication, les types de documents, les codes juridictionnels et les numéros d'articles à partir du texte lui-même
+- **Efficacité** — la suppression du contenu superflu, des éléments de navigation, des en-têtes, des pieds de page et du contenu en double réduit la taille de l'index et améliore la qualité des embeddings en éliminant le bruit
+
+## Comment ça fonctionne
+
+Un pipeline de prétraitement typique pour les documents juridiques comprend les étapes suivantes :
+
+**Conversion de format** — les documents en PDF, HTML, DOCX ou images scannées sont convertis en texte propre. L'extraction PDF gère les mises en page multi-colonnes et les tableaux. L'analyse HTML supprime la navigation, les publicités et le contenu superflu. L'OCR traite les documents scannés avec un score de confiance pour signaler les extractions de faible qualité.
+
+**Nettoyage du texte** — le texte extrait est normalisé : correction des problèmes d'encodage, suppression des espaces en double, correction des erreurs OCR courantes (par ex. « l » lu comme « 1 » dans les numéros d'articles) et normalisation des guillemets et des tirets. Pour le texte juridique, cela inclut la normalisation des formats de citation afin que les références à la même disposition soient cohérentes d'un document à l'autre.
+
+**[Déduplication](/fr/glossary/deduplication/)** — les documents en double et quasi-double sont identifiés et supprimés ou consolidés. Le même texte législatif peut apparaître dans le Moniteur belge, les bases de données consolidées et les sources de commentaires ; le prétraitement garantit qu'il n'est indexé qu'une seule fois, en conservant la version la plus fiable.
+
+**Extraction des métadonnées** — les champs structurés sont extraits du texte : date de publication, type de document (loi, décret, circulaire, décision), juridiction, numéros d'articles et renvois croisés. Ces métadonnées permettent le filtrage lors de la recherche.
+
+**Validation de la qualité** — des vérifications automatisées confirment que le résultat traité répond aux normes attendues : longueur du texte dans les plages normales, champs de métadonnées requis présents, absence de corruption ou de troncature évidente.
+
+## Questions fréquentes
+
+**Q : Quelle proportion du prétraitement peut être automatisée ?**
+
+R : La majeure partie. La conversion de format, le nettoyage de texte et la déduplication sont entièrement automatisés. L'extraction de métadonnées peut être largement automatisée à l'aide de modèles d'extraction d'entités, avec une vérification manuelle pour les cas ambigus. La validation de la qualité est automatisée avec une revue humaine pour les cas signalés comme atypiques.
+
+**Q : Le prétraitement affecte-t-il la qualité des embeddings ?**
+
+R : De manière significative. Les embeddings générés à partir d'un texte propre et ciblé sont plus précis que ceux issus d'un texte encombré de contenu superflu, d'erreurs OCR ou d'artefacts de mise en forme. Le prétraitement est l'une des étapes ayant le plus d'impact sur l'amélioration de la qualité de la recherche.

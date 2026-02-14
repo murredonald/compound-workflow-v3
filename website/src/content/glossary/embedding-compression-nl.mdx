@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Embedding compression gebruikt bijvoorbeeld lagere precisie, product‑[quantization](/nl/glossary/quantization/) of hashing om de opslag per embedding te verlagen en zo grotere corpora betaalbaar te indexeren.
+Embedding compression is de toepassing van technieken die de opslagruimte en rekenkosten van [embeddingvectoren](/nl/glossary/embeddings/) verlagen en tegelijkertijd hun bruikbaarheid voor gelijkeniszoekopdrachten behouden. Embeddings op volledige precisie (768 dimensies bij 32-bit float = 3.072 bytes per stuk) worden op schaal duur — een kennisbank van 10 miljoen chunks vereist alleen al circa 30 GB voor embeddings. Compressietechnieken reduceren dit met een factor 4 tot 30 via [dimensionaliteitsreductie](/nl/glossary/dimensionality-reduction/), kwantisatie, of beide, waardoor grootschalige semantische zoekopdrachten haalbaar worden op standaardhardware.
+
+## Waarom het ertoe doet
+
+- **Geheugenwinst** — gecomprimeerde embeddings vereisen minder RAM, waardoor grotere indexen op minder machines passen en de infrastructuurkosten dalen
+- **Sneller zoeken** — kleinere vectoren betekenen snellere afstandsberekeningen; gecomprimeerde representaties maken ook gespecialiseerde snelle berekeningen mogelijk, zoals op opzoektabellen gebaseerde afstandsberekeningen
+- **Lagere embeddingkosten** — sommige compressietechnieken (zoals Matryoshka-embeddings) maken het mogelijk kortere vectoren van hetzelfde model te gebruiken, wat zowel opslag als initiële berekening vermindert
+- **Flexibeler uitrollen** — gecomprimeerde embeddings maken uitrol op apparaten of edge-scenario's mogelijk waar geheugen en rekenkracht beperkt zijn
+
+## Hoe het werkt
+
+Embeddingcompressietechnieken opereren op verschillende niveaus:
+
+**Dimensionaliteitsreductie** (PCA, willekeurige projectie) vermindert het aantal dimensies — van 768 naar 256, bijvoorbeeld. Dit verwijdert de minst informatieve dimensies terwijl de belangrijkste structuur behouden blijft. De zoekwaliteit daalt doorgaans 2-5% bij een 60-70% reductie in omvang.
+
+**Scalaire kwantisatie** verlaagt de precisie van elke dimensie — door 32-bit floats om te zetten naar 8-bit integers of zelfs binaire waarden. Elke dimensie wordt lineair afgebeeld van het waargenomen bereik naar een kleiner geheeltallig bereik. 8-bit kwantisatie biedt 4x compressie met minimaal kwaliteitsverlies; binaire kwantisatie (1 bit per dimensie) levert 32x compressie op, maar met aanzienlijke kwaliteitsverslechtering.
+
+**Productkwantisatie (PQ)** splitst de vector in subvectoren en vervangt elk daarvan door een index in een aangeleerd codeboek. Dit kan 20-60x compressie bereiken met behoud van meer dan 95% van de zoekwaliteit, waardoor het de populairste techniek is voor grootschalige indexen.
+
+**Matryoshka-representatieleren** traint embeddingmodellen zodanig dat de eerste N dimensies een geldige lagerdimensionale embedding vormen. Hierdoor kan het compressieniveau op querytijdstip worden gekozen — volledige 768-dimensionale vectoren voor zeer precieze zoekopdrachten en afgekapte 256-dimensionale vectoren voor snelle benaderende zoekopdrachten — zonder dat een aparte compressiestap nodig is.
+
+Deze technieken kunnen worden gecombineerd: bijvoorbeeld PCA om van 768 naar 256 dimensies te reduceren, gevolgd door scalaire kwantisatie van de gereduceerde vectoren. De optimale combinatie hangt af van de dataset, het vereiste kwaliteitsniveau en de hardwarebeperkingen.
+
+## Veelgestelde vragen
+
+**V: Hoeveel kwaliteit gaat er verloren bij compressie?**
+
+A: Dat hangt af van de techniek en de agressiviteit. PCA van 768 naar 384 dimensies behoudt doorgaans meer dan 97% van de zoekwaliteit. 8-bit scalaire kwantisatie behoudt meer dan 99%. Productkwantisatie met gebruikelijke parameters behoudt 95-98%. Binaire kwantisatie daalt naar 85-90%, maar met enorme compressie.
+
+**V: Wanneer moet ik embeddings comprimeren?**
+
+A: Wanneer de index op volledige precisie het beschikbare geheugen overschrijdt, wanneer de zoeklatentie moet worden verlaagd, of wanneer de infrastructuurkosten omlaag moeten. Voor kleine collecties (minder dan 1 miljoen vectoren) is opslag op volledige precisie doorgaans betaalbaar en is compressie niet nodig.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Ein Evals-Framework stellt Werkzeuge und Konfiguration bereit, um feste Eval-Suites reproduzierbar auszuführen und zu versionieren.
+Ein Evals-Framework ist ein strukturiertes System aus Werkzeugen, Testdatensätzen, Metriken und Reporting-Infrastruktur zur systematischen Bewertung der Leistung eines KI-Systems. Es automatisiert den Prozess, Testanfragen auszuführen, Ausgaben mit erwarteten Antworten zu vergleichen, Qualitätsmetriken zu berechnen und Ergebnisse über die Zeit zu verfolgen. Ohne ein Evals-Framework ist die Qualitätsbewertung ad hoc und nicht reproduzierbar; mit einem solchen Framework können Teams die Auswirkungen jeder Änderung — neue Modelle, Prompt-Revisionen, Aktualisierungen der Wissensbasis — gegen eine konsistente Baseline messen.
+
+## Warum es wichtig ist
+
+- **Messbare Qualität** — ein Evals-Framework verwandelt subjektive Einschätzungen („das System scheint besser") in quantifizierbare Metriken (Precision verbesserte sich von 82 % auf 87 %), die datengestützte Entscheidungen unterstützen
+- **Regressionsvermeidung** — automatisierte Evaluierungen erkennen Qualitätsverschlechterungen, bevor sie die Nutzer erreichen; wenn eine Prompt-Änderung einen Bereich verbessert, aber einen anderen verschlechtert, macht das Framework dies sichtbar
+- **Vergleich und Auswahl** — bei der Bewertung verschiedener Modelle, Embedding-Strategien oder Retrieval-Konfigurationen ermöglicht ein standardisiertes Framework einen fairen Vergleich unter identischen Bedingungen
+- **Regulatorische Nachweise** — der EU AI Act verlangt den Nachweis, dass hochriskante KI-Systeme Genauigkeits- und Leistungsstandards erfüllen; ein Evals-Framework liefert die dafür erforderliche Dokumentation und Evidenz
+
+## Wie es funktioniert
+
+Ein Evals-Framework besteht typischerweise aus vier Komponenten:
+
+**Testdatensätze** — kuratierte Sammlungen von Fragen mit bekannten richtigen Antworten, die die erwarteten Anwendungsfälle des Systems abdecken. Für ein juristisches KI-System umfasst dies Anfragen zu spezifischen Steuervorschriften, jurisdiktionsübergreifende Fragen, temporale Anfragen (geltendes Recht zu einem bestimmten Datum) und Grenzfälle (mehrdeutige Fragen, widersprüchliche Vorschriften). Testdatensätze werden versioniert und im Laufe der Zeit erweitert.
+
+**Evaluierungsmetriken** — die spezifischen Maße zur Bewertung der Qualität. Gängige Metriken umfassen Retrieval-Precision und -Recall (hat das System die richtigen Quellen gefunden?), Faithfulness (stimmt die Antwort mit den Quellen überein?), faktische Genauigkeit (ist die Antwort korrekt?) und Latenz (wie schnell erfolgt die Antwort?). Domänenspezifische Metriken können Zitiergenauigkeit (sind Artikelnummern korrekt?) und temporale Korrektheit (spiegelt die Antwort das zum relevanten Zeitpunkt geltende Recht wider?) umfassen.
+
+**Ausführungsengine** — die Automatisierung, die Testanfragen durch das System leitet, Ausgaben erfasst, Metriken berechnet und Ergebnisse speichert. Diese läuft nach einem Zeitplan (täglich, wöchentlich) oder wird durch Änderungen ausgelöst (neues Modell-Deployment, Aktualisierung der Wissensbasis).
+
+**Reporting und Alerting** — Dashboards, die Metrik-Trends über die Zeit visualisieren, und Benachrichtigungen, die das Team informieren, wenn Metriken unter definierte Schwellenwerte fallen. Historische Daten ermöglichen es dem Team, Leistungsänderungen mit bestimmten Systemmodifikationen zu korrelieren.
+
+Das Framework sollte mehrere Evaluierungsmodi unterstützen: Offline-Evaluierung (Ausführung gegen einen festen Testdatensatz), Online-Evaluierung (Stichprobenentnahme und Bewertung von Produktionsanfragen) und A/B-Tests (Vergleich zweier Systemversionen mit denselben Anfragen).
+
+## Häufige Fragen
+
+**F: Wie groß sollte der Evaluierungs-Testdatensatz sein?**
+
+A: Groß genug, um die wichtigsten Anwendungsfälle und Grenzfälle des Systems mit statistischer Signifikanz abzudecken. Für juristische KI sind 200–500 Testanfragen über verschiedene Themen, Rechtsgebiete und Fragetypen ein sinnvoller Ausgangspunkt. Der Datensatz sollte wachsen, wenn neue Anwendungsfälle identifiziert werden.
+
+**F: Kann die Evaluierung vollständig automatisiert werden?**
+
+A: Teilweise. Metriken wie Retrieval-Precision, Latenz und Formatkonformität können automatisiert werden. Faithfulness kann mit NLI-Modellen approximiert werden. Aber die Beurteilung nuancierter juristischer Korrektheit erfordert oft eine regelmäßige menschliche Überprüfung, insbesondere bei komplexen oder mehrdeutigen Anfragen.
 
 ## References
 

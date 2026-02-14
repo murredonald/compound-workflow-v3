@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-L’embedding compression utilise par exemple la moindre précision, la [product quantization](/fr/glossary/vector-quantization/) ou le hashing pour réduire le stockage par embedding et rendre l’indexation de [corpus](/fr/glossary/corpus/) plus grands abordable.
+La compression d'embeddings désigne l'application de techniques qui réduisent la taille de stockage et le coût computationnel des vecteurs d'embeddings tout en préservant leur utilité pour la recherche par similarité. Les embeddings en pleine précision (768 dimensions en float 32 bits = 3 072 octets chacun) deviennent coûteux à grande échelle — une base de connaissances de 10 millions de chunks nécessite environ 30 Go rien que pour les embeddings. Les techniques de compression réduisent ce volume de 4 à 30 fois grâce à la réduction de dimensionnalité, la quantisation, ou les deux, rendant la recherche sémantique à grande échelle réalisable sur du matériel standard.
+
+## Pourquoi c'est important
+
+- **Économie de mémoire** — les embeddings compressés nécessitent moins de RAM, permettant à des index plus grands de tenir sur moins de machines et réduisant les coûts d'infrastructure
+- **Recherche plus rapide** — des vecteurs plus petits signifient des calculs de distance plus rapides ; les représentations compressées peuvent aussi permettre des calculs spécialisés accélérés comme la distance basée sur des tables de correspondance
+- **Réduction du coût d'embedding** — certaines techniques de compression (comme les embeddings Matryoshka) permettent d'utiliser des vecteurs plus courts issus du même modèle, réduisant à la fois le stockage et le calcul initial
+- **Flexibilité de déploiement** — les embeddings compressés permettent un déploiement on-device ou en edge computing dans des scénarios où la mémoire et la puissance de calcul sont limitées
+
+## Comment ça fonctionne
+
+Les techniques de compression d'embeddings opèrent à différents niveaux :
+
+**Réduction de dimensionnalité** (PCA, projection aléatoire) réduit le nombre de dimensions — de 768 à 256, par exemple. Cela supprime les dimensions les moins informatives tout en préservant la structure principale. La qualité de récupération baisse généralement de 2 à 5 % pour une réduction de taille de 60 à 70 %.
+
+**Quantisation scalaire** réduit la précision de chaque dimension — en convertissant les floats 32 bits en entiers 8 bits ou même en valeurs binaires. Chaque dimension est linéairement mappée de sa plage observée vers une plage d'entiers plus petite. La quantisation 8 bits offre une compression 4x avec une perte de qualité minimale ; la quantisation binaire (1 bit par dimension) offre une compression 32x mais avec une dégradation significative de la qualité.
+
+**Quantisation par produit (PQ)** divise le vecteur en sous-vecteurs et remplace chacun par un index dans un codebook appris. Cela peut atteindre une compression de 20 à 60x tout en maintenant plus de 95 % de la qualité de récupération, ce qui en fait la technique la plus populaire pour les index à grande échelle.
+
+**Apprentissage de représentation Matryoshka** entraîne les modèles d'embedding à produire des vecteurs dont les N premières dimensions constituent un embedding valide en moindre dimension. Cela permet de choisir le niveau de compression au moment de la requête — en utilisant les vecteurs complets à 768 dimensions pour les requêtes de haute précision et des vecteurs tronqués à 256 dimensions pour les requêtes approximatives rapides — sans nécessiter une étape de compression séparée.
+
+Ces techniques peuvent être combinées : par exemple, la PCA pour réduire de 768 à 256 dimensions, suivie d'une quantisation scalaire des vecteurs réduits. La combinaison optimale dépend du jeu de données, du niveau de qualité requis et des contraintes matérielles.
+
+## Questions fréquentes
+
+**Q : Quelle perte de qualité entraîne la compression ?**
+
+R : Cela dépend de la technique et de son agressivité. La PCA de 768 à 384 dimensions préserve généralement plus de 97 % de la qualité de récupération. La quantisation scalaire 8 bits préserve plus de 99 %. La quantisation par produit avec des paramètres typiques préserve 95 à 98 %. La quantisation binaire descend à 85-90 % mais avec une compression spectaculaire.
+
+**Q : Quand faut-il compresser les embeddings ?**
+
+R : Lorsque l'index en pleine précision dépasse la mémoire disponible, lorsque la latence de recherche doit être réduite, ou lorsque les coûts d'infrastructure doivent être abaissés. Pour les petites collections (moins d'un million de vecteurs), le stockage en pleine précision est généralement abordable et la compression est inutile.
 
 ## References
 

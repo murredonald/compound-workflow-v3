@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Confidence scoring combineert factoren zoals bronkwaliteit, dekking van bewijs en modelonzekerheid in een numerieke score die weergeeft hoe betrouwbaar een voorstel of antwoord is.
+Confidence scoring is de praktijk om aan elke voorspelling, elk antwoord of elk retrievalresultaat een numerieke indicator toe te kennen die weergeeft hoe waarschijnlijk het correct is. Een goed gekalibreerde confidencescore stelt downstream-systemen en menselijke gebruikers in staat om drempels te stellen — resultaten met hoge betrouwbaarheid automatisch te accepteren en resultaten met lage betrouwbaarheid te markeren voor handmatige beoordeling. In juridische en fiscale AI, waar onjuiste antwoorden materiële gevolgen kunnen hebben, is confidence scoring een cruciaal veiligheidsmechanisme.
+
+## Waarom het belangrijk is
+
+- **Risicobeheer** — antwoorden met lage betrouwbaarheid kunnen worden geëscaleerd naar menselijke experts in plaats van rechtstreeks te worden getoond, wat de kans verkleint dat fouten eindgebruikers bereiken
+- **Transparantie** — het tonen van betrouwbaarheidsniveaus naast antwoorden helpt professionals in te schatten hoeveel ze op AI-output kunnen vertrouwen
+- **Regelgevende compliance** — de EU AI Act verwacht dat hoog-risicosystemen onzekerheid communiceren; confidencescores zijn hiervoor een natuurlijk mechanisme
+- **Efficiëntie** — door antwoorden met hoge betrouwbaarheid te automatiseren en alleen onzekere gevallen naar mensen te routeren, optimaliseert confidence scoring de balans tussen snelheid en nauwkeurigheid
+
+## Hoe het werkt
+
+Confidencescores kunnen worden afgeleid uit meerdere signalen in de retrieval- en generatiepipeline:
+
+- **Retrievalscores** — de gelijkenisafstand tussen query- en documentembeddings levert een ruw relevantiesignaal; documenten die ver van de query liggen krijgen lage scores
+- **Rerankerscores** — cross-encoder rerankers produceren gekalibreerde relevantiescores voor query-documentparen
+- **Generatiekansen** — token-level log-kansen van het taalmodel geven aan hoe zeker het was over elk gegenereerd woord
+- **Bronovereenstemming** — wanneer meerdere opgehaalde bronnen het eens zijn over een antwoord, is de betrouwbaarheid hoger; tegenstrijdige bronnen verlagen die
+- **Consistentiecontroles** — dezelfde vraag op meerdere manieren stellen en de antwoorden vergelijken (zelfconsistentie) levert een aanvullend betrouwbaarheidssignaal
+
+Deze signalen kunnen worden gecombineerd tot één samengestelde score via aangeleerde weging of op regels gebaseerde aggregatie. Kalibratie zorgt ervoor dat een score van 0,9 daadwerkelijk overeenkomt met ongeveer 90% van de keren correct zijn.
+
+## Veelgestelde vragen
+
+**V: Wat maakt een confidencescore "goed gekalibreerd"?**
+
+A: Een score is goed gekalibreerd wanneer de voorspelde waarschijnlijkheid overeenkomt met de waargenomen nauwkeurigheid. Als het systeem 80% betrouwbaarheid toekent aan een reeks antwoorden, zou ongeveer 80% van die antwoorden daadwerkelijk correct moeten zijn. Kalibratie wordt gemeten met betrouwbaarheidsdiagrammen en metrieken zoals Expected Calibration Error (ECE).
+
+**V: Kan confidence scoring hallucinaties elimineren?**
+
+A: Niet volledig, maar het kan ze wel markeren. Gehallucineerde inhoud heeft vaak lagere retrievalscores (geen sterke bronmatch) en kan inconsistentie vertonen bij herformuleerde vragen. Confidence scoring helpt deze signalen naar boven te brengen zodat gebruikers of geautomatiseerde systemen mogelijke fabricaties kunnen opvangen.
+
+**V: Hoe verschilt confidence scoring van relevantieranking?**
+
+A: Relevantieranking ordent resultaten van meest naar minst relevant. Confidence scoring kent een absolute score toe die de waarschijnlijkheid van correctheid weergeeft. Een systeem kan resultaat A boven resultaat B rangschikken, maar beide toch als lage betrouwbaarheid markeren als geen van beide goed bij de query past.

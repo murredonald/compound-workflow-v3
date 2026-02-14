@@ -12,4 +12,34 @@ draft: false
 
 ## Definition
 
-Deduplication vergleicht Dokumente anhand ihres Inhalts oder von Hashes, um Kopien und Fast‑Kopien zu finden, sodass Indexierung und Evaluation nicht durch Wiederholungen verzerrt werden.
+Deduplication ist der Prozess des Erkennens und Entfernens doppelter oder nahezu doppelter Dokumente, Passagen oder Datensätze aus einem Datenbestand. In Information-Retrieval- und KI-Systemen verhindert Deduplication, dass derselbe Inhalt mehrfach in Suchergebnissen erscheint, unnötig Speicherplatz verbraucht oder Analysen verzerrt. Im belgischen Steuerrecht ist Deduplication besonders wichtig, da derselbe Gesetzestext in mehreren offiziellen Quellen erscheinen kann, konsolidierte Fassungen neben Originalveröffentlichungen existieren können und Gerichtsentscheidungen in mehreren Datenbanken erfasst sein können.
+
+## Warum es wichtig ist
+
+- **Qualität der Suchergebnisse** — dieselbe Bestimmung dreimal aus verschiedenen Quellen anzuzeigen verschwendet die Zeit des Nutzers und reduziert die Anzahl verschiedener sichtbarer Ergebnisse; Deduplication stellt vielfältige, nützliche Ergebnisse sicher
+- **Embedding- und Index-Effizienz** — doppelte Dokumente erzeugen doppelte Embeddings, die Speicherplatz belegen und die Nearest-Neighbor-Suche verlangsamen, ohne informationellen Mehrwert zu bieten
+- **Qualität der Trainingsdaten** — KI-Modelle, die auf Datensätzen mit starker Duplizierung trainiert werden, können auf wiederholte Inhalte überanpassen und ihre Ausgaben verzerren; Deduplication ist ein Standard-Vorverarbeitungsschritt
+- **Akkurate Analysen** — wenn dasselbe Dokument fünfmal erscheint, werden frequenzbasierte Analysen es überzählen; Deduplication stellt sicher, dass Metriken wie Themenverteilung und Zitationszählungen korrekt sind
+
+## Wie es funktioniert
+
+Deduplication arbeitet auf mehreren Ähnlichkeitsstufen:
+
+**Exakte Deduplication** identifiziert Dokumente, die Byte für Byte oder Zeichen für Zeichen identisch sind. Dies ist der einfachste Fall und wird typischerweise durch den Vergleich kryptografischer Hashes (SHA-256) des Dokumentinhalts gelöst. Wenn zwei Dokumente denselben Hash erzeugen, sind sie identisch.
+
+**Near-Duplicate-Erkennung** identifiziert Dokumente, die im Wesentlichen ähnlich, aber nicht identisch sind — beispielsweise zwei Fassungen desselben Gesetzes mit geringfügigen Formatierungsunterschieden oder dasselbe Urteil mit unterschiedlichen Metadaten. Techniken umfassen MinHash (Erzeugung kompakter „Fingerabdrücke" aus Dokument-Shingles und deren Vergleich), SimHash (lokalitätssensitives Hashing, das ähnliche Dokumente auf ähnliche Hashwerte abbildet) und Embedding-basierte Ähnlichkeit (Markierung von Dokumenten, deren Vektorembeddings näher als ein definierter Schwellenwert liegen).
+
+**Semantische Deduplication** identifiziert Dokumente, die dieselbe Information in anderen Worten ausdrücken. Dies erfordert Embedding-basierten Vergleich und ist aggressiver — es könnte eine niederländische und französische Fassung desselben Gesetzes zusammenführen. Diese Stufe wird typischerweise mit Vorsicht eingesetzt, da juristische Texte in verschiedenen Sprachen subtile Unterschiede aufweisen können, die relevant sind.
+
+Die Deduplication-Entscheidung umfasst auch die Wahl, welche Kopie behalten wird. Im juristischen Kontext wird die maßgeblichste Quelle bevorzugt (das Belgische Staatsblatt gegenüber einer Drittanbieter-Datenbank), die aktuellste Fassung (ein konsolidierter Text gegenüber einer Originalveröffentlichung) oder die Version mit den reichhaltigsten Metadaten.
+
+## Häufige Fragen
+
+**F: Sollte Deduplication vor oder nach der Indexierung stattfinden?**
+
+A: Idealerweise vor der Indexierung, während der Dokumenten-Ingestion-Pipeline. Dies verhindert, dass doppelte Embeddings überhaupt erzeugt werden. Einige Systeme wenden jedoch auch Deduplication auf Ergebnisebene zur Abfragezeit an und fassen nahezu doppelte Ergebnisse zusammen, bevor sie dem Nutzer präsentiert werden.
+
+**F: Kann Deduplication versehentlich wichtige Inhalte entfernen?**
+
+A: Ja, wenn der Ähnlichkeitsschwellenwert zu aggressiv eingestellt ist. Zwei Artikel mit ähnlichem Wortlaut, aber unterschiedlicher Rechtswirkung (z. B. föderale vs. regionale Fassungen einer ähnlichen Bestimmung) sollten als separate Einträge erhalten bleiben. Konservative Schwellenwerte und metadatenbasierte Deduplication-Regeln verhindern falsche Zusammenführungen.
+

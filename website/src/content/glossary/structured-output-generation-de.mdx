@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Strukturierte Ausgabe-Generierung ist die Technik, Sprachmodelle so zu prompten oder zu konfigurieren, dass ihre Antworten einem strengen Format oder Schema entsprechen und dadurch leichter zu parsen, zu validieren und an nachgelagerte Systeme anzubinden sind.
+Strukturierte Ausgabe-Generierung ist die Praxis, die Ausgabe eines Sprachmodells auf ein vordefiniertes Format oder Schema zu beschränken — etwa JSON, XML, typisierte Felder oder eine spezifische Dokumentvorlage — anstatt Freitext zu erzeugen. Dies stellt sicher, dass die Ausgabe des Modells von nachgelagerten Systemen zuverlässig geparst, gegen ein Schema validiert und in automatisierte Workflows integriert werden kann. In der juristischen KI ermöglicht strukturierte Ausgabe-Generierung dem System, maschinenlesbare Ergebnisse mit separat adressierbaren Feldern für Antworttext, zitierte Quellen, Konfidenzwert, anwendbare Zuständigkeit und relevante Daten zu erzeugen.
+
+## Warum es wichtig ist
+
+- **Zuverlässiges Parsing** — Freitext ist unvorhersehbar und programmatisch schwer zu parsen; strukturierte Ausgabe garantiert konsistente Feldnamen, Typen und Formatierung, die nachgelagerte Systeme ohne individuelle Parsing-Logik verarbeiten können
+- **Validierung** — strukturierte Ausgabe kann unmittelbar nach der Generierung gegen ein Schema validiert werden, wodurch Formatfehler, fehlende Felder oder Typinkongruenzen erkannt werden, bevor das Ergebnis den Nutzer erreicht
+- **Integration** — strukturierte Ausgabe ermöglicht die direkte Integration mit externen Systemen: Befüllung von Zitierungsdatenbanken, Einspeisung in Steuerberechnungsmaschinen, Erstellung von Einreichungsdokumenten oder Aktualisierung von Fallverwaltungssystemen
+- **Trennung der Zuständigkeiten** — durch die Strukturierung der Ausgabe in getrennte Felder (Antwort, Quellen, Konfidenz, Vorbehalte) kann die Benutzeroberfläche jede Komponente unterschiedlich darstellen — Unsicherheit hervorheben, Zitate klickbar machen und Antworttexte angemessen formatieren
+
+## Wie es funktioniert
+
+Mehrere Techniken erzeugen strukturierte Ausgabe aus Sprachmodellen:
+
+**Prompt-basierte Strukturierung** — der System-Prompt enthält Anweisungen und Beispiele des gewünschten Ausgabeformats. Das Modell wird angewiesen, JSON mit bestimmten Feldern zu erzeugen, und Few-Shot-Beispiele demonstrieren die erwartete Struktur. Dies funktioniert mit jedem Modell, ist aber nicht garantiert — das Modell kann gelegentlich vom Format abweichen.
+
+**Schema-beschränkte Dekodierung** — der Generierungsprozess wird auf Token-Ebene so eingeschränkt, dass nur Ausgaben erzeugt werden, die einer vorgegebenen Grammatik oder einem JSON-Schema entsprechen. Bei jedem Generierungsschritt sind nur Tokens zulässig, die gemäß dem Schema gültig sind. Dies garantiert Formatkonformität, erfordert aber spezialisierte Inferenz-Infrastruktur (Bibliotheken wie Outlines, Guidance oder eingebaute API-Funktionen).
+
+**Function Calling / Tool Use** — moderne LLM-APIs unterstützen strukturierte Ausgabe über Function-Calling-Schnittstellen. Dem Modell wird eine Funktionssignatur mit typisierten Parametern übergeben, und seine Ausgabe wird automatisch als strukturierter Funktionsaufruf formatiert. Dies ist der gängigste Ansatz in der Produktion.
+
+**Nachverarbeitung** — das Modell generiert Freitext, und ein Nachprozessor extrahiert strukturierte Felder mittels Musterabgleich, Entitätsextraktion oder einem zweiten Modellaufruf. Dies ist ein Fallback-Ansatz — weniger zuverlässig, funktioniert aber mit jedem Modell.
+
+In der Praxis nutzen die meisten Produktionssysteme eine Kombination: Prompt-Engineering für die Gesamtstruktur, mit Schema-beschränkter Dekodierung oder Function Calling für kritische Felder, die exakt formatiert sein müssen (Daten, Artikelverweise, Konfidenzwerte).
+
+## Häufige Fragen
+
+**F: Beeinflusst strukturierte Ausgabe-Generierung die Antwortqualität?**
+
+A: Minimal, bei guter Implementierung. Schema-Beschränkungen und Formatanweisungen fügen dem Prompt etwas Overhead hinzu, reduzieren aber die Reasoning-Fähigkeit des Modells nicht wesentlich. Übermäßig komplexe Schemata mit vielen Pflichtfeldern können die Antwortqualität verringern, indem sie die Aufmerksamkeit des Modells auf Formatkonformität umlenken.
+
+**F: Können alle LLMs strukturierte Ausgabe erzeugen?**
+
+A: Die meisten modernen LLMs können über Prompt-Engineering strukturierte Ausgabe erzeugen, mit unterschiedlicher Zuverlässigkeit. Schema-beschränkte Dekodierung und Function Calling sind zuverlässiger, erfordern aber API- oder Infrastrukturunterstützung. Neuere Modelle sind speziell für strukturierte Ausgabe trainiert und erzeugen sie konsistenter.
 
 ## References
 

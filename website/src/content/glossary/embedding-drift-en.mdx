@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Embedding drift occurs when the relationship between [embeddings](/en/glossary/embeddings/) and their underlying meaning shifts—because the model or data changed—so that [similarity search](/en/glossary/similarity-search/) and downstream models become less reliable.
+Embedding drift is the phenomenon where the relationship between embedding vectors and their underlying semantic content degrades over time, causing similarity search to become less accurate. This occurs when the distribution of content being embedded changes (new terminology, new document styles, new topics) while the embedding model remains fixed, or when the embedding model is updated but the stored vectors are not re-embedded. Embedding drift is a form of model drift specific to the vector representations that power semantic search.
+
+## Why it matters
+
+- **Silent retrieval degradation** — embedding drift reduces search quality gradually; the system returns slightly less relevant results over time without any obvious error, making it difficult to detect
+- **New content misrepresentation** — as new legislation introduces concepts or terminology not present in the embedding model's training data, the vectors for these new documents may not accurately represent their meaning
+- **Index inconsistency** — if the embedding model is updated but existing vectors are not re-computed, old and new embeddings exist in different spaces and are not comparable; a query may preferentially match old or new documents based on embedding space differences rather than actual relevance
+- **Compounding effects** — embedding drift affects retrieval, which affects generation quality, which affects user trust; small drift in embeddings can have outsized impact on end-to-end system quality
+
+## How it works
+
+Embedding drift manifests through several mechanisms:
+
+**Data distribution shift** — the content being embedded changes over time. New legislation introduces terminology ("pillar two global minimum tax", "DAC 8 reporting") that was not in the embedding model's training data. The model still produces vectors for this text, but those vectors may not accurately capture the meaning because the model has no prior experience with these concepts.
+
+**Model update without re-embedding** — when the embedding model is upgraded to a newer version, the new model produces vectors in a different space than the old one. If existing documents are not re-embedded with the new model, the index contains vectors from two incompatible spaces. Queries (embedded with the new model) may not match well against old documents (embedded with the old model).
+
+**Concept evolution** — the meaning of legal concepts changes over time through new legislation, case law, and administrative practice. An embedding model trained on 2023 data may not capture the evolved meaning of concepts that have shifted by 2025.
+
+**Detection** relies on monitoring retrieval quality metrics over time. Declining precision, recall, or relevance scores on a fixed evaluation set may indicate embedding drift. More direct detection involves periodically re-embedding a sample of documents and comparing the new embeddings against the stored ones — significant divergence indicates drift.
+
+**Mitigation** strategies include: periodic re-embedding of the entire corpus (expensive but thorough), continual fine-tuning of the embedding model on recent content (addresses data distribution shift), and monitoring retrieval quality metrics for early detection.
+
+## Common questions
+
+**Q: How fast does embedding drift occur?**
+
+A: It depends on how quickly the content domain evolves. In tax law, significant new legislation each year means noticeable drift within 12-18 months. In more static domains, drift may take years to become significant.
+
+**Q: Is re-embedding the only solution?**
+
+A: It is the most reliable solution. Alternatives include aligning old and new embedding spaces (if the model was updated) or augmenting the index with supplementary embeddings for new terminology. But periodic full re-embedding remains the gold standard.
 
 ## References
 

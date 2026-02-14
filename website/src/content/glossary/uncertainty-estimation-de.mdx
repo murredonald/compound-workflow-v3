@@ -10,6 +10,44 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Unsicherheitsabschätzung ist der Prozess der Quantifizierung, wie sicher ein KI-System in seinen Vorhersagen oder Antworten ist, wobei zwischen Fällen unterschieden wird, in denen das System zuverlässig korrekt liegt, und Fällen, in denen es falsch liegen könnte. Anstatt jede Antwort mit gleicher Überzeugung zu präsentieren, kommuniziert ein System mit Unsicherheitsabschätzung seinen Grad an Gewissheit — so können Nutzer entscheiden, wann sie der Ausgabe direkt vertrauen und wann sie unabhängig verifizieren sollten. In der juristischen KI ist Unsicherheitsabschätzung essenziell, weil die Konsequenzen einer falschen Antwort (fehlerhafte Steuererklärung, verpasste Frist, regulatorische Strafe) verlangen, dass Fachleute wissen, wann zusätzliche Überprüfung angebracht ist.
+
+## Warum es wichtig ist
+
+- **Fundierte Entscheidungsfindung** — Steuerberater können ihren Überprüfungsaufwand priorisieren: Antworten mit hoher Konfidenz können mit einer kurzen Prüfung verwendet werden, während Antworten mit niedriger Konfidenz eine gründliche unabhängige Recherche erfordern
+- **Ehrliches Systemverhalten** — ein System, das seine Unsicherheit eingesteht, ist vertrauenswürdiger als eines, das jede Antwort mit falscher Sicherheit präsentiert; Fachleute verlieren schnell das Vertrauen in Systeme, die selbstsicher falsch liegen
+- **Delegation an Menschen** — Unsicherheitsabschätzung ermöglicht automatische Eskalation: wenn die Konfidenz des Systems unter einen Schwellenwert fällt, kann es die Frage zur menschlichen Überprüfung markieren, anstatt eine potenziell falsche Antwort zu geben
+- **Qualitätsüberwachung** — die Verfolgung von Unsicherheitsverteilungen über die Zeit zeigt den Systemzustand; ein plötzlicher Anstieg der durchschnittlichen Unsicherheit kann auf Lücken in der Wissensbasis, Modellverschlechterung oder neue Fragetypen hinweisen, die das System nicht gut bewältigen kann
+
+## Wie es funktioniert
+
+Unsicherheit in KI-Systemen stammt aus zwei Quellen:
+
+**Epistemische Unsicherheit** (Modellunsicherheit) spiegelt wider, was das Modell nicht weiß — Lücken in den Trainingsdaten, unbekannte Konzepte oder mehrdeutige Eingaben. Diese Art von Unsicherheit kann prinzipiell durch mehr Daten oder besseres Training reduziert werden. In einem RAG-System ist die epistemische Unsicherheit hoch, wenn die Retrieval-Schicht keine relevanten Quellen finden kann oder wenn die verfügbaren Quellen die Frage nicht klar beantworten.
+
+**Aleatorische Unsicherheit** (Datenunsicherheit) spiegelt inhärente Mehrdeutigkeit in der Eingabe oder der Aufgabe wider. Manche Rechtsfragen haben tatsächlich mehrere gültige Interpretationen, widersprüchliche autoritative Quellen oder hängen von nicht in der Anfrage genannten Fakten ab. Diese Unsicherheit kann nicht durch Verbesserung des Modells reduziert werden — sie erfordert Klärung durch den Nutzer oder die Anerkennung, dass die Frage inhärent mehrdeutig ist.
+
+Gängige Schätzmethoden umfassen:
+
+- **Ensemble-Methoden** — die gleiche Anfrage wird durch mehrere Modelle oder mehrere Retrieval-Konfigurationen geleitet und die Übereinstimmung gemessen; hohe Uneinigkeit deutet auf hohe Unsicherheit hin
+- **Monte-Carlo-Dropout** — das Modell wird zur Inferenzzeit mehrmals mit zufälligem Dropout ausgeführt und die Ausgabevarianz gemessen
+- **Token-Level-Wahrscheinlichkeiten** — die Output-Logits des Sprachmodells werden verwendet, um die Konfidenz für jedes generierte Token zu bewerten; Tokens mit niedriger Wahrscheinlichkeit an kritischen Positionen deuten auf Unsicherheit hin
+- **Retrieval-Qualitätssignale** — die Relevanzbewertungen der abgerufenen Dokumente werden gemessen; wenn die am besten passenden Dokumente niedrige Relevanzwerte haben, sollte das System eine geringere Konfidenz ausdrücken
+
+In produktiven RAG-Systemen werden diese Signale typischerweise zu einem zusammengesetzten Konfidenzwert kombiniert, der sowohl die Retrieval-Qualität als auch die Generierungssicherheit widerspiegelt.
+
+## Häufige Fragen
+
+**F: Ist Unsicherheitsabschätzung dasselbe wie Confidence Scoring?**
+
+A: Sie sind eng verwandt. Unsicherheitsabschätzung ist die umfassendere Disziplin der Quantifizierung dessen, was das Modell nicht weiß. Confidence Scoring ist ein spezifischer Output — ein dem Nutzer präsentierter Wert —, der aus Unsicherheitsschätzungen abgeleitet wird. Ein gut kalibrierter Konfidenzwert ist das nutzerseitige Produkt der Unsicherheitsabschätzung.
+
+**F: Kann ein System unsicher, aber korrekt sein?**
+
+A: Ja. Das System kann die korrekte Antwort liefern und gleichzeitig ehrlich darauf hinweisen, dass es nicht vollständig sicher ist — zum Beispiel wenn nur eine marginal relevante Quelle gefunden wurde. Dies ist erwünschtes Verhalten: Es weist den Nutzer darauf hin zu verifizieren, auch wenn die Überprüfung die Antwort bestätigen würde.
+
 ## References
 
 - Gal & Ghahramani (2016), "[Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning](https://arxiv.org/abs/1506.02142)", ICML.

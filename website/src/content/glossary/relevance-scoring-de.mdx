@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Relevance Scoring vereint Signale wie Schlüsselwortüberlappung, [semantische Ähnlichkeit](/de/glossary/semantic-similarity/), Quellenqualität und Nutzerverhalten, um Dokumente in einer Ergebnisliste zu ordnen.
+Relevance Scoring ist der Prozess der Berechnung eines zusammengesetzten Scores, der widerspiegelt, wie gut ein Suchergebnis zu einer Anfrage und der Intention des Nutzers passt, wobei oft mehrere Signale über den reinen Textabgleich hinaus kombiniert werden. Während Retrieval Scoring sich auf die Ähnlichkeit zwischen Anfrage und Dokument konzentriert, kann Relevance Scoring zusätzlich Verhaltenssignale (Klickraten, Verweildauer), kontextuelle Faktoren (Fachgebiet des Nutzers, jüngste Suchanfragen) und domänenspezifische Regeln (Autoritätsranking, zeitliche Priorität) einbeziehen, um einen Score zu erzeugen, der besser widerspiegelt, was der Nutzer tatsächlich benötigt.
+
+## Warum es wichtig ist
+
+- **Nutzerzentriertes Ranking** — reine Textähnlichkeit sagt nicht immer voraus, was der Nutzer braucht; Relevance Scoring bezieht zusätzliche Signale ein, um die Lücke zwischen textueller Ähnlichkeit und praktischem Nutzen zu überbrücken
+- **Autoritätsdifferenzierung** — in der juristischen Suche sind nicht alle Treffer gleich maßgeblich; Relevance Scoring kann Gesetzgebung gegenüber Kommentaren oder Urteile des Kassationshofs gegenüber erstinstanzlichen Entscheidungen bevorzugen und so deren tatsächliche Bedeutung widerspiegeln
+- **Zeitliche Priorität** — neuere Bestimmungen und Urteile sind oft relevanter als ältere; Relevance Scoring kann Aktualität neben [semantischer Ähnlichkeit](/de/glossary/semantic-similarity/) gewichten
+- **Personalisierung** — Relevance Scoring kann sich an den Kontext des Nutzers anpassen: Ein Spezialist für Körperschaftsteuer sieht körperschaftsteuerliche Bestimmungen höher gerankt, auch bei allgemeinen Anfragen
+
+## Wie es funktioniert
+
+Relevance Scoring kombiniert typischerweise mehrere Merkmalskategorien zu einem einzigen Score:
+
+**Textuelle Relevanz** — die grundlegende Ähnlichkeit zwischen Anfrage und Dokument, berechnet durch lexikalischen Abgleich (BM25), semantische Ähnlichkeit (Embedding-Kosinus) oder Cross-Encoder-Scoring. Dies ist die Grundlage, die sicherstellt, dass die Ergebnisse thematisch mit der Anfrage zusammenhängen.
+
+**Autoritätsmerkmale** — domänenspezifische Gewichtungen, die die rechtliche Autorität der Quelle widerspiegeln. Primäre Gesetzgebung wird höher bewertet als Verwaltungsrundschreiben. Entscheidungen des Verfassungsgerichts werden höher bewertet als erstinstanzliche Urteile. Diese Gewichtungen kodieren die rechtliche Hierarchie in das Ranking.
+
+**Zeitliche Merkmale** — Aktualitätssignale, die neuere Dokumente bei Bedarf bevorzugen. Geltende Gesetzgebung ist relevanter als aufgehobene Bestimmungen. Die zeitliche Relevanz muss jedoch kontextabhängig sein: Eine Anfrage zu historischen Steuersätzen sollte den relevanten historischen Zeitraum priorisieren, nicht das jüngste Jahr.
+
+**Verhaltensmerkmale** — in Systemen mit ausreichenden Nutzungsdaten zeigen Klickraten und Engagement-Metriken, welche Ergebnisse Nutzer am nützlichsten finden. Dokumente, die konsequent ausgewählt und gelesen werden, erhalten bei ähnlichen Anfragen einen Relevanzbonus.
+
+**Kontextuelle Merkmale** — das Profil des Nutzers, sein Fachgebiet oder seine jüngsten Suchanfragen können die Relevanz informieren. Ein Nutzer, der den ganzen Tag zu Mehrwertsteuer recherchiert hat, möchte wahrscheinlich Mehrwertsteuer-bezogene Ergebnisse, auch bei mehrdeutigen Anfragen.
+
+Diese Merkmale werden mithilfe von Learning-to-Rank-Modellen (LambdaMART, neuronale Ranking-Modelle) oder einfacheren gewichteten Kombinationen zusammengeführt. Die Gewichte werden anhand menschlicher Relevanzurteile kalibriert: Annotatoren bewerten die Relevanz von Suchergebnissen für Testanfragen, und das Scoring-Modell wird trainiert, diese Bewertungen zu reproduzieren.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Relevance Scoring von Retrieval Scoring?**
+
+A: Die Begriffe überschneiden sich erheblich. Retrieval Scoring bezieht sich typischerweise auf die Berechnung der Ähnlichkeit zwischen Anfrage und Dokument innerhalb der Retrieval-Pipeline. Relevance Scoring ist breiter gefasst — es kann zusätzliche Signale über die Textähnlichkeit hinaus einbeziehen (Autorität, Aktualität, Nutzerkontext), um ein ganzheitlicheres Relevanzurteil zu erzeugen.
+
+**F: Kann Relevance Scoring manipuliert werden?**
+
+A: In der Websuche ja — SEO-Techniken manipulieren Relevanzsignale. In geschlossenen juristischen KI-Systemen, bei denen der Korpus kuratiert wird, ist Manipulation kein Thema, da der Inhalt aus maßgeblichen juristischen Texten besteht und nicht aus nutzergenerierten Inhalten, die für das Ranking optimiert wurden.

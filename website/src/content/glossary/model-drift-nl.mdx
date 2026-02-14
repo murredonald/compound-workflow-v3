@@ -10,6 +10,46 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Modeldrift is de geleidelijke verslechtering van de prestaties van een AI-model in de loop van de tijd, doordat de real-world data die het tegenkomt afwijkt van de data waarop het is getraind. Een model dat is getraind op belastingwetgeving zoals die bestond in 2024 zal steeds minder betrouwbaar worden naarmate nieuwe wetgeving wordt aangenomen, arresten worden uitgesproken en administratieve praktijken evolueren. Modeldrift is geen plotselinge storing maar een langzame erosie — het model blijft antwoorden produceren, maar die worden steeds onnauwkeuriger, verouderd of niet meer in lijn met de huidige praktijk.
+
+## Waarom het belangrijk is
+
+- **Stille verslechtering** — modeldrift kondigt zichzelf niet aan; het model blijft zelfverzekerd klinkende antwoorden produceren, zelfs terwijl hun nauwkeurigheid afneemt, wat gevaarlijk is in domeinen met hoge inzet zoals belastingrecht
+- **Juridische actualiteit** — het Belgische belastingrecht verandert elk jaar door jaarlijkse programmawetten, indexaanpassingen en nieuwe circulaires; een model dat geen rekening houdt met deze wijzigingen zal verouderde tarieven, drempels of bepalingen citeren
+- **Veroudering van embeddings** — als het embeddingmodel of het retrievalmodel is getraind op een corpussnapshot, worden nieuwe terminologie, concepten of documentstijlen mogelijk niet goed gerepresenteerd in de embeddingSpace
+- **Regulatoire verplichting** — de EU AI Act vereist doorlopende monitoring van de prestaties van AI-systemen; het detecteren en aanpakken van drift maakt deel uit van deze verplichting
+
+## Hoe het werkt
+
+Modeldrift manifesteert zich in verschillende vormen:
+
+**Datadrift** (ook wel covariate shift genoemd) treedt op wanneer de distributie van inkomende query's verandert — gebruikers beginnen over onderwerpen of op manieren te vragen die niet vertegenwoordigd waren in de trainingsdata. Bijvoorbeeld, een grote belastinghervorming kan query's genereren over nieuwe concepten die het model nooit eerder heeft gezien.
+
+**Conceptdrift** treedt op wanneer het correcte antwoord op een bepaalde query in de loop van de tijd verandert. De vraag "Wat is het standaard btw-tarief?" heeft vandaag een stabiel antwoord, maar als het tarief verandert, wordt de trainingsdata van het model onjuist. In juridische AI is conceptdrift de meest kritieke vorm, omdat wetgeving bij opzet verandert.
+
+**Modelveroudering** treedt op in RAG-systemen wanneer het retrievalmodel of de reranker is gefinetuned op een vaste dataset. Naarmate de kennisbasis groeit met nieuwe documenttypes of -stijlen, kan het vermogen van het model om ze correct te rangschikken afnemen, omdat het was geoptimaliseerd voor de oorspronkelijke corpuskenmerken.
+
+**Detectie** steunt op continue evaluatie: het systeem regelmatig testen tegen bekende correcte antwoorden en prestatiemetrieken in de tijd monitoren. Statistische tests vergelijken recente prestatiedistributies met baselinedistributies. Significante afwijkingen triggeren waarschuwingen.
+
+**Mitigatie**-strategieën omvatten:
+
+- **Kennisbasis-updates** — regelmatig nieuwe wetgeving, arresten en circulaires opnemen zodat het retrievalsysteem over actuele bronnen beschikt
+- **Periodieke hertraining** — het embeddingmodel of de reranker bijwerken op recente data om de afstemming met huidige inhoud te behouden
+- **Continue evaluatie** — geautomatiseerd testen dat drift opvangt voordat het gebruikers treft
+- **Temporeel bewustzijn** — metadatafiltering die ervoor zorgt dat het systeem huidige bepalingen prioriteert boven historische
+
+## Veelgestelde vragen
+
+**V: Is modeldrift hetzelfde als een bug?**
+
+A: Nee. Bugs worden geïntroduceerd door codewijzigingen en kunnen worden verholpen door die wijzigingen terug te draaien. Drift ontstaat doordat de wereld verandert terwijl het model hetzelfde blijft. Het vereist doorlopende monitoring en periodieke updates in plaats van een eenmalige fix.
+
+**V: Hoe snel treedt modeldrift op in juridische AI?**
+
+A: Dat hangt af van het juridische domein. Belastingrecht verandert elk jaar significant door programmawetten, tariefaanpassingen en nieuwe circulaires. Een model zonder kennisbasis-updates zal binnen maanden merkbare drift vertonen. Grondwettelijk of procedureel recht verandert langzamer.
+
 ## References
 
 > Zhe Yang et al. (2019), "[A Novel Concept Drift Detection Method for Incremental Learning in Nonstationary Environments](https://doi.org/10.1109/tnnls.2019.2900956)", IEEE Transactions on Neural Networks and Learning Systems.

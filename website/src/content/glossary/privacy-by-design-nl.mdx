@@ -12,4 +12,39 @@ draft: false
 
 ## Definitie
 
-Privacy by design betekent het inbedden van privacywaarborgen — zoals minimalisatie, toegangsbeheer en transparantie — in architecturen en processen, in plaats van ze als bijzaak te behandelen.
+Privacy by design is het principe dat gegevensbescherming en privacywaarborgen vanaf het begin moeten worden ingebouwd in de architectuur, het ontwerp en de werking van een systeem — niet achteraf als bijzaak toegevoegd. Het is verankerd in artikel 25 van de AVG als "gegevensbescherming door ontwerp en door standaardinstellingen" en vereist dat organisaties bij elke fase van systeemontwikkeling rekening houden met privacy-implicaties: van de keuze welke gegevens te verzamelen, tot hoe ze worden opgeslagen en verwerkt, tot wanneer en hoe ze worden verwijderd. Voor AI-systemen die gevoelige fiscale gegevens verwerken, bepaalt privacy by design fundamentele architecturale beslissingen over gegevensstromen, opslag, toegang en bewaring.
+
+## Waarom het belangrijk is
+
+- **Wettelijke verplichting** — artikel 25 AVG maakt privacy by design een wettelijke verplichting, geen best practice; niet-naleving kan leiden tot aanzienlijke boetes
+- **Beroepsgeheim** — belastingadviseurs en accountants zijn gebonden aan het beroepsgeheim; het AI-systeem moet ontworpen zijn om deze verplichtingen op architecturaal niveau te waarborgen
+- **Vertrouwensbasis** — cliënten delen gevoelige financiële informatie met de verwachting dat deze wordt beschermd; privacy by design biedt structurele zekerheid in plaats van te vertrouwen op procedurele beloften
+- **Kostenefficiëntie** — privacy achteraf inbouwen in een bestaand systeem is duur en foutgevoelig; het vanaf het begin inbouwen is goedkoper, betrouwbaarder en levert een coherentere architectuur op
+
+## Hoe het werkt
+
+Privacy by design wordt geïmplementeerd via zeven fundamentele principes die op de architectuur van het AI-systeem worden toegepast:
+
+**Dataminimalisatie** — verzamel en verwerk alleen de gegevens die strikt noodzakelijk zijn voor het doel van het systeem. Als het AI-systeem gebruikersvragen niet hoeft op te slaan na het genereren van een antwoord, dan moet het dat niet doen. Als geaggregeerde gebruiksstatistieken voldoende zijn voor systeemverbetering, moeten individuele querylogboeken worden geanonimiseerd of verwijderd.
+
+**Doelbinding** — gegevens die voor één doel zijn verzameld, mogen niet zonder aparte rechtsgrondslag worden hergebruikt. Gebruikersvragen die zijn verzameld voor het genereren van antwoorden, mogen niet zonder uitdrukkelijke toestemming worden gebruikt voor marketing.
+
+**Toegangsbeheer** — implementeer technische maatregelen (rolgebaseerde toegang, versleuteling, tenantisolatie) die privacybeleid op systeemniveau afdwingen, niet alleen op beleidsniveau. Gebruikersgegevens moeten ontoegankelijk zijn voor iedereen zonder een legitieme behoefte, inclusief systeembeheerders waar haalbaar.
+
+**Versleuteling** — bescherm gegevens in rust en tijdens transport met passende versleuteling. Cliëntgegevens in databases moeten versleuteld zijn. Gegevens die tussen systeemcomponenten worden verzonden, moeten TLS gebruiken. Versleutelingssleutels moeten volgens vastgestelde sleutelbeheerpraktijken worden beheerd.
+
+**Bewaartermijnen** — definieer en handhaaf bewaartermijnen voor alle gegevenstypen. Gebruikerssessiegegevens, querylogboeken en tijdelijke verwerkingsartefacten moeten automatisch worden verwijderd na het verstrijken van hun bewaartermijn. Automatische verwijdering voorkomt ophoping van onnodige persoonsgegevens.
+
+**Transparantie** — bied duidelijke documentatie over welke gegevens worden verzameld, hoe ze worden verwerkt, waar ze worden opgeslagen en hoe lang ze worden bewaard. Privacyverklaringen moeten specifiek en begrijpelijk zijn, geen generieke juridische standaardtekst.
+
+**Standaardprivacy** — de standaardconfiguratie van het systeem moet de meest privacybeschermende optie zijn. Functies die extra gegevensverzameling of -deling inhouden, moeten een expliciete opt-in vereisen in plaats van opt-out.
+
+## Veelgestelde vragen
+
+**V: Hoe is privacy by design van toepassing op het trainen van AI-modellen?**
+
+A: Als gebruikersinteractiegegevens worden gebruikt om het model te verbeteren, vereist privacy by design geïnformeerde toestemming, anonimisering waar mogelijk, doelbinding en de mogelijkheid voor gebruikers om zich af te melden. Sommige organisaties vermijden het gebruik van cliëntgegevens voor training volledig en vertrouwen in plaats daarvan op synthetische of openbare gegevens.
+
+**V: Staat privacy by design op gespannen voet met de verbetering van AI-systemen?**
+
+A: Niet per se, maar het beperkt hoe verbetering plaatsvindt. Geaggregeerde, geanonimiseerde gebruikspatronen kunnen systeemverbeteringen informeren zonder individuele gegevens bloot te stellen. De sleutel is het ontwerpen van gegevensverzamelings- en verwerkingspipelines die systeemverbeteringssignalen scheiden van persoonsgegevens.

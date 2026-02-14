@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-[Query](/nl/glossary/prompt/) rewriting past de oorspronkelijke gebruikersvraag aan – vaak met regels of [LLM](/nl/glossary/llm/)’s – om intentie te verduidelijken, synoniemen toe te voegen of de structuur te verbeteren zodat zoeken en retrieval beter presteren.
+Query rewriting is het proces waarbij de oorspronkelijke query van een gebruiker wordt omgezet in een of meer geherformuleerde queries die effectiever zijn voor retrieval. De oorspronkelijke query kan ambigu zijn, informeel taalgebruik bevatten, technische terminologie missen, of op een manier gestructureerd zijn die niet overeenkomt met hoe informatie is opgeslagen in de kennisbank. Query rewriting overbrugt dit verschil door alternatieve formuleringen te genereren die beter aansluiten bij de geïndexeerde inhoud, terwijl de intentie van de gebruiker behouden blijft. In het Belgisch fiscaal recht is query rewriting bijzonder belangrijk omdat gebruikers hun vragen mogelijk in alledaagse taal formuleren terwijl de onderliggende wetgeving nauwkeurige juridische terminologie gebruikt, en hetzelfde concept in Nederlandstalige, Franstalige en Duitstalige juridische teksten anders kan worden uitgedrukt.
+
+## Waarom het belangrijk is
+
+- **Vocabulairemismatch** — een gebruiker die vraagt naar "erfbelasting in Vlaanderen" heeft een systeem nodig dat ook zoekt naar "erfbelasting" (Nederlands), "Vlaamse Codex Fiscaliteit", en de specifieke artikelverwijzingen die de relevante bepalingen bevatten; zonder herschrijving zou lexicaal zoeken deze overeenkomsten missen
+- **Intentieverduidelijking** — ambigue queries zoals "belasting op aandelen" kunnen verwijzen naar de TOB (taks op beursverrichtingen), roerende voorheffing op dividenden, of meerwaardebelasting; herschrijving kan dergelijke queries opsplitsen in specifiekere varianten
+- **Meertalige overbrugging** — Belgisch recht bestaat in het Nederlands en het Frans (en soms het Duits); query rewriting kan meertalige varianten genereren zodat relevante bepalingen worden gevonden ongeacht in welke taal de gebruiker zoekt
+- **Retrievalkwaliteit** — goed herschreven queries verbeteren consequent zowel de precisie als de recall in vergelijking met het gebruik van de ruwe gebruikersinvoer, omdat ze beter aansluiten bij de terminologie en structuur van de geïndexeerde documenten
+
+## Hoe het werkt
+
+Query rewriting kan via verschillende benaderingen worden geïmplementeerd, die vaak gecombineerd worden:
+
+**Regelgebaseerd herschrijven** past deterministische transformaties toe: het uitbreiden van bekende afkortingen (WIB → Wetboek van de Inkomstenbelastingen), het toevoegen van standaard juridische verwijzingen wanneer specifieke termen worden gedetecteerd, of het normaliseren van datumformaten. Deze regels zijn snel en voorspelbaar maar beperkt tot verwachte patronen.
+
+**LLM-gebaseerd herschrijven** gebruikt een [taalmodel](/nl/glossary/llm/) om de intentie van de gebruiker te begrijpen en geherformuleerde queries te genereren. Het model kan een complexe vraag opsplitsen in subqueries, relevante technische termen toevoegen, meertalige varianten genereren en overbodige woorden verwijderen. Dit is flexibeler dan regels maar voegt latentie toe en vereist zorgvuldige prompting om te voorkomen dat de betekenis van de query verandert.
+
+**Hypothetische documentgeneratie** (HyDE) gaat verder dan herschrijven: in plaats van de query te herformuleren, genereert het systeem een hypothetisch ideaal antwoord en gebruikt de embedding van dat antwoord voor retrieval. Dit kan effectief zijn wanneer de vraag van de gebruiker sterk verschilt in stijl van de documenten waarin wordt gezocht — het hypothetische antwoord overbrugt het verschil door te zijn geschreven in documentachtige taal.
+
+**Multi-querygeneratie** produceert meerdere alternatieve formuleringen uit één enkele gebruikersquery. Elke variant benadrukt een ander aspect of gebruikt andere terminologie. De retrievalresultaten van alle varianten worden samengevoegd en ontdubbeld, waardoor de kans toeneemt dat alle relevante documenten worden gevonden.
+
+In de praktijk wordt query rewriting toegepast vóór de retrievalstap in de pipeline. De oorspronkelijke query wordt bewaard naast de herschreven varianten, zodat het systeem resultaten kan herleiden tot de oorspronkelijke intentie en kan uitleggen waarom bepaalde documenten zijn opgehaald.
+
+## Veelgestelde vragen
+
+**V: Kan query rewriting de betekenis van de vraag veranderen?**
+
+A: Dat zou niet moeten, maar het kan als het slecht is geïmplementeerd. Effectief query rewriting behoudt de intentie van de gebruiker terwijl het de retrievaleffectiviteit verbetert. Waarborgen zijn onder meer het altijd opnemen van de oorspronkelijke query als een van de retrieval-invoeren, en het gebruik van beperkte prompts die het herschrijfmodel instrueren om te herformuleren zonder de betekenis te wijzigen.
+
+**V: Hoe verschilt query rewriting van query expansion?**
+
+A: [Query expansion](/nl/glossary/query-expansion/) voegt specifiek termen toe (synoniemen, gerelateerde concepten) om de zoekopdracht te verbreden. Query rewriting is breder — het omvat expansion maar ook herstructurering, decompositie, meertalige vertaling en intentieverduidelijking. Expansion is een deelverzameling van rewriting.
 
 ## References
 

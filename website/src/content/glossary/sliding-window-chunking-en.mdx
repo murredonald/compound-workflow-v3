@@ -12,7 +12,41 @@ draft: false
 
 ## Definition
 
-Sliding window chunking splits long documents into overlapping segments so that each chunk shares some context with its neighbors, reducing boundary effects in retrieval and generation.
+Sliding window chunking is a document segmentation strategy that creates overlapping chunks by moving a fixed-size window across the text at regular intervals. Unlike non-overlapping chunking, which splits text at hard boundaries and risks losing context that spans two chunks, sliding window chunking ensures that every sentence appears in at least one chunk with its full surrounding context. The overlap between consecutive chunks acts as a safety margin, preventing information loss at chunk boundaries.
+
+## Why it matters
+
+- **Boundary context preservation** — in legal text, a sentence often depends on the preceding sentence for its meaning ("notwithstanding the above..."); overlap ensures these dependencies are captured in at least one chunk
+- **Retrieval robustness** — if a relevant passage falls exactly at a chunk boundary in non-overlapping chunking, neither chunk may score highly enough to be retrieved; overlap eliminates this failure mode
+- **Consistent embedding quality** — chunks that start or end mid-sentence produce lower-quality embeddings; overlap ensures that the critical content appears in a chunk with proper surrounding context
+- **Simple implementation** — sliding window chunking requires only two parameters (window size and stride) and no document structure analysis, making it easy to implement and reproduce
+
+## How it works
+
+Sliding window chunking is defined by two parameters:
+
+**Window size** — the length of each chunk, measured in tokens (e.g., 512 tokens). This determines how much text each chunk contains and must balance between embedding quality (shorter is more focused) and context completeness (longer preserves more context).
+
+**Stride** (or step size) — how far the window moves between chunks. A stride smaller than the window size creates overlap. For example, with a 512-token window and 256-token stride, each chunk overlaps with the previous one by 256 tokens (50% overlap). Smaller strides create more overlap and more chunks; larger strides create less overlap and fewer chunks.
+
+**Overlap ratio** = (window size - stride) / window size. Common overlap ratios are 10-50%. Higher overlap reduces the risk of missing boundary-spanning content but increases the number of chunks (and therefore storage and embedding costs).
+
+The algorithm steps through the document:
+1. Extract tokens from position 0 to position window_size → Chunk 1
+2. Extract tokens from position stride to position stride + window_size → Chunk 2
+3. Continue until the end of the document
+
+**Trade-offs**: sliding window chunking is simple and robust but does not respect document structure — it may split an article header from its body or cut a paragraph mid-sentence. Structure-aware chunking (using headings, article boundaries) avoids this but requires document structure detection. In practice, many systems combine both: use structure-aware boundaries when available, fall back to sliding window otherwise.
+
+## Common questions
+
+**Q: What is the optimal overlap percentage?**
+
+A: 10-25% overlap is standard for most retrieval applications. Higher overlap (50%+) is sometimes used for critical content where missing any context is unacceptable, but it doubles storage and embedding costs. The right choice depends on how structured the source documents are — well-structured legal text with clear article boundaries needs less overlap than free-form commentary.
+
+**Q: Does overlap increase storage requirements?**
+
+A: Yes, proportionally to the overlap ratio. With 50% overlap, the number of chunks is approximately double that of non-overlapping chunking. Each chunk must be embedded and stored, so overlap directly increases both storage and embedding computation costs.
 
 ## References
 

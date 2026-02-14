@@ -12,7 +12,40 @@ draft: false
 
 ## Definitie
 
-Een retrieval pipeline combineert stadia zoals query-parsing, kandidaatgeneratie, filtering en [reranking](/nl/glossary/reranking/) om een invoerquery om te zetten in een uiteindelijke gerangschikte lijst van relevante documenten of [chunks](/nl/glossary/document-chunk/).
+Een retrieval pipeline is de end-to-end-reeks van stadia die een gebruikersquery omzet in een gerangschikte lijst van relevante documenten of passages. Elke fase beperkt en verfijnt de resultaten progressief — van de eerste kandidaatgeneratie over miljoenen documenten tot de uiteindelijke [reranking](/nl/glossary/reranking/) van een handvol topkandidaten. In retrieval-augmented generation (RAG)-systemen wordt de output van de pipeline rechtstreeks als context aan het taalmodel gevoed voor het genereren van antwoorden.
+
+## Waarom het belangrijk is
+
+- **Nauwkeurigheid hangt af van het pipeline-ontwerp** — het taalmodel kan alleen redeneren over wat de retrieval pipeline teruggeeft; gemiste relevante documenten of fout-positieven werken rechtstreeks door in de gegenereerde antwoorden
+- **Latentiebudgetten** — elke pipeline-fase voegt latentie toe; de architectuur moet grondigheid afwegen tegen de vereisten voor responstijd
+- **Composabiliteit** — een modulaire pipeline maakt het mogelijk om componenten te verwisselen (bijv. BM25 vervangen door een dense retriever, of een reranker toevoegen) zonder het hele systeem opnieuw te ontwerpen
+- **Juridische vereisten** — bij fiscaal onderzoek moet de pipeline temporele queries, bronnen uit meerdere rechtsgebieden en autoriteitshiërarchieën verwerken waar generieke zoekpipelines geen rekening mee houden
+
+## Hoe het werkt
+
+Een typische retrieval pipeline bestaat uit de volgende stadia:
+
+1. **Querybegrip** — de ruwe gebruikersvraag wordt geparseerd, uitgebreid of herschreven om de dekking te verbeteren (bijv. door synoniemen of juridische terminologie toe te voegen)
+2. **Kandidaatophaling** — een snelle, brede zoekopdracht (met BM25, dense vectoren of hybride) levert honderden kandidaatpassages op uit de index
+3. **Filtering** — kandidaten worden gefilterd op metadata-beperkingen zoals rechtsgebied, datumbereik of documenttype
+4. **Reranking** — een cross-encoder of andere reranker herscores de resterende kandidaten met diepere semantische analyse en produceert een definitieve lijst op relevantie gerangschikt
+5. **Naverwerking** — de topresultaten worden gedeÿdupliceerd, gegroepeerd per bron en verrijkt met metadata voordat ze aan de generatielaag worden doorgegeven
+
+Elke fase weegt recall (niets relevants missen) af tegen precisie (geen irrelevante resultaten opnemen). De vroege stadia geven voorrang aan recall; latere stadia verfijnen voor precisie.
+
+## Veelgestelde vragen
+
+**V: Hoeveel stadia heeft een retrieval pipeline nodig?**
+
+A: Minimaal twee: een retriever en een reranker. Eenvoudige systemen slaan reranking over, maar het toevoegen ervan verbetert de resultaatkwaliteit doorgaans aanzienlijk. Complexere pipelines voegen query-uitbreiding, metadata-filtering en brondeduplicatie toe.
+
+**V: Wat is het verschil tussen een retrieval pipeline en een RAG-pipeline?**
+
+A: Een retrieval pipeline handelt het zoekgedeelte af — het vinden van relevante documenten. Een RAG-pipeline omvat zowel de retrieval pipeline als de generatielaag (het taalmodel dat het uiteindelijke antwoord produceert op basis van opgehaalde context). De retrieval pipeline is een component binnen het bredere RAG-systeem.
+
+**V: Hoe evalueer je een retrieval pipeline?**
+
+A: Veelgebruikte metrieken zijn recall@k (hoeveel relevante documenten verschijnen in de top-k-resultaten), precision@k, mean reciprocal rank (MRR) en normalised discounted cumulative gain (nDCG). End-to-end RAG-evaluatie meet daarnaast ook de correctheid en getrouwheid van antwoorden.
 
 ## References
 

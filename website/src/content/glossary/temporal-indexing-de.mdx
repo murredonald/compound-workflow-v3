@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Temporal Indexing speichert Informationen darüber, wann ein Dokument gültig, veröffentlicht oder ersetzt wurde, damit Abfragen gezielt den Zustand zu einem bestimmten Zeitpunkt anfragen können.
+Temporale Indexierung ist die Praxis, Inhalte mit zeitbasierten Metadaten zu speichern und zu indexieren — Gültig-ab-Daten, Gültig-bis-Daten, Veröffentlichungsdaten und Änderungsdaten — damit das Retrieval-System Ergebnisse nach ihrer zeitlichen Relevanz filtern und ranken kann. Im Steuerrecht ist temporale Indexierung keine nette Ergänzung, sondern eine Notwendigkeit: Der Steuersatz, der auf eine Transaktion anwendbar ist, hängt vom Datum dieser Transaktion ab, und das System muss die Version des Gesetzes abrufen, die zu genau diesem Zeitpunkt in Kraft war — nicht die aktuelle Version oder eine historische Version aus dem falschen Zeitraum.
+
+## Warum das wichtig ist
+
+- **Korrekte zeitliche Antworten** — eine Frage zum Körperschaftsteuersatz im Jahr 2020 sollte den damals geltenden Satz liefern, nicht den aktuellen; temporale Indexierung macht dies möglich
+- **Änderungsverfolgung** — belgisches Steuerrecht wird häufig geändert; temporale Indexierung stellt sicher, dass das System weiß, wann jede Version einer Bestimmung in Kraft war, und verhindert das Zitieren aufgehobener oder noch nicht wirksamer Bestimmungen
+- **Periodenübergreifende Analyse** — Steuerberater müssen oft Bestimmungen über Zeiträume hinweg vergleichen (wie hat sich der Steuersatz verändert? Wann wurde dieser Abzug eingeführt?); temporale Indexierung unterstützt diese vergleichenden Anfragen
+- **Fristenbewusstsein** — Einreichungsfristen, Verjährungsfristen und Übergangsbestimmungen haben alle eine zeitliche Dimension, die das System verstehen muss
+
+## So funktioniert es
+
+Temporale Indexierung erweitert die Standard-Dokumentenmetadaten um zeitspezifische Felder:
+
+**Gültigkeitszeitraum** — jede Dokumentversion wird mit einem Gültig-ab-Datum (wann sie in Kraft trat) und einem Gültig-bis-Datum (wann sie ersetzt oder aufgehoben wurde) versehen. Unbefristete Bestimmungen haben ein leeres Gültig-bis-Datum, was anzeigt, dass sie noch in Kraft sind.
+
+**Veröffentlichungsdatum** — wann das Dokument offiziell veröffentlicht wurde (z. B. im Belgischen Staatsblatt). Dies unterscheidet sich vom Gültigkeitsdatum — ein Gesetz kann am 1. Dezember veröffentlicht werden, aber erst am 1. Januar in Kraft treten.
+
+**Änderungskette** — Verknüpfungen zwischen aufeinanderfolgenden Versionen derselben Bestimmung, die eine Versionshistorie bilden. Jede Version verweist auf das ändernde Gesetz und auf die vorherige Version, was das Nachvollziehen der Entwicklung der Bestimmung ermöglicht.
+
+**Filterung zur Abfragezeit** — wenn ein Nutzer das System abfragt, verwendet die Retrieval-Pipeline die temporalen Metadaten zur Filterung der Ergebnisse. Wenn die Abfrage ein Datum angibt (explizit oder implizit), werden nur Bestimmungen zurückgegeben, die an diesem Datum in Kraft waren. Wenn kein Datum angegeben wird, verwendet das System standardmäßig das aktuelle Datum.
+
+**Temporales Ranking** — unter den Bestimmungen, die der Abfrage entsprechen und zeitlich gültig sind, können neuere Bestimmungen höher gerankt werden, unter der Annahme, dass der Nutzer den aktuellen Rechtsstand wünscht. Dieser Standard wird jedoch überschrieben, wenn die Abfrage ausdrücklich auf einen historischen Zeitraum verweist.
+
+Die Implementierung erfordert sorgfältigen Umgang mit Sonderfällen: Bestimmungen mit Rückwirkung, Bestimmungen mit verzögertem Inkrafttreten, Übergangsregelungen, bei denen alte und neue Regeln gleichzeitig gelten, sowie Bestimmungen, die nur für bestimmte Steuerjahre gelten.
+
+## Häufige Fragen
+
+**F: Wie geht temporale Indexierung mit rückwirkender Gesetzgebung um?**
+
+A: Rückwirkende Bestimmungen werden mit einem Gültig-ab-Datum indexiert, das vor ihrem Veröffentlichungsdatum liegt. Das System muss sie für Anfragen zum betroffenen historischen Zeitraum anzeigen, auch wenn sie erst später erlassen wurden. Dafür muss das Gültig-ab-Datum auf Basis der rechtlichen Wirkung der Bestimmung festgelegt werden, nicht auf Basis ihrer Veröffentlichung.
+
+**F: Was passiert, wenn in einer Abfrage kein Datum angegeben wird?**
+
+A: Das System verwendet in der Regel standardmäßig das aktuelle Datum und gibt Bestimmungen zurück, die derzeit in Kraft sind. Einige Systeme zeigen zusätzlich kürzlich aufgehobene Bestimmungen an (mit einer Kennzeichnung), um Übergangssituationen abzudecken, in denen der Nutzer möglicherweise nicht bemerkt hat, dass sich eine Bestimmung geändert hat.

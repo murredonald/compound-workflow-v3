@@ -10,6 +10,46 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+La dérive de modèle est la dégradation progressive des performances d'un modèle d'IA au fil du temps, à mesure que les données du monde réel qu'il rencontre divergent de celles sur lesquelles il a été entraîné. Un modèle entraîné sur le droit fiscal tel qu'il existait en 2024 deviendra progressivement moins fiable à mesure que de nouvelles législations sont adoptées, que des décisions sont rendues et que les pratiques administratives évoluent. La dérive de modèle n'est pas une défaillance soudaine mais une érosion lente — le modèle continue de produire des réponses, mais celles-ci deviennent de plus en plus inexactes, obsolètes ou en décalage avec la pratique actuelle.
+
+## Pourquoi c'est important
+
+- **Dégradation silencieuse** — la dérive de modèle ne s'annonce pas ; le modèle continue de produire des réponses qui sonnent de manière assurée même si leur précision décline, ce qui le rend dangereux dans des domaines à enjeux élevés comme le droit fiscal
+- **Actualité juridique** — le droit fiscal belge change chaque année par le biais des lois-programmes annuelles, des ajustements d'index et de nouvelles circulaires ; un modèle qui ne tient pas compte de ces changements citera des taux, des seuils ou des dispositions obsolètes
+- **Obsolescence des embeddings** — si le modèle d'embedding ou le modèle de recherche a été entraîné sur un instantané du corpus, les nouvelles terminologies, concepts ou styles de documents peuvent ne pas être bien représentés dans l'espace d'embedding
+- **Obligation réglementaire** — le règlement européen sur l'IA (AI Act) exige un suivi continu des performances des systèmes d'IA ; détecter et traiter la dérive fait partie de cette obligation
+
+## Comment ça fonctionne
+
+La dérive de modèle se manifeste sous plusieurs formes :
+
+**La dérive des données** (aussi appelée décalage des covariables) survient lorsque la distribution des requêtes entrantes change — les utilisateurs commencent à poser des questions sur des sujets ou de manières qui n'étaient pas représentés dans les données d'entraînement. Par exemple, une réforme fiscale majeure peut générer des requêtes portant sur de nouveaux concepts que le modèle n'a jamais rencontrés.
+
+**La dérive conceptuelle** survient lorsque la réponse correcte à une requête donnée change au fil du temps. La question « Quel est le taux normal de TVA ? » a une réponse stable aujourd'hui, mais si le taux change, les données d'entraînement du modèle deviennent erronées. En IA juridique, la dérive conceptuelle est la forme la plus critique car la législation change par nature.
+
+**L'obsolescence du modèle** survient dans les systèmes RAG lorsque le modèle de recherche ou le reranker a été fine-tuné sur un jeu de données fixe. À mesure que la base de connaissances s'enrichit de nouveaux types ou styles de documents, la capacité du modèle à les classer correctement peut se dégrader parce qu'il a été optimisé pour les caractéristiques du corpus original.
+
+**La détection** repose sur l'[évaluation continue](/fr/glossary/continuous-evaluation/) : tester régulièrement le système par rapport à des réponses correctes connues et suivre les métriques de performance dans le temps. Des tests statistiques comparent les distributions de performances récentes aux distributions de référence. Les écarts significatifs déclenchent des alertes.
+
+**Les stratégies d'atténuation** comprennent :
+
+- **Les mises à jour de la base de connaissances** — ingérer régulièrement les nouvelles législations, décisions et circulaires afin que le système de recherche dispose de sources à jour
+- **Le réentraînement périodique** — mettre à jour le modèle d'embedding ou le reranker sur des données récentes pour maintenir l'alignement avec le contenu actuel
+- **L'évaluation continue** — des tests automatisés qui détectent la dérive avant qu'elle n'affecte les utilisateurs
+- **La conscience temporelle** — un filtrage par métadonnées qui garantit que le système privilégie les dispositions en vigueur par rapport aux dispositions historiques
+
+## Questions fréquentes
+
+**Q : La dérive de modèle est-elle la même chose qu'un bug ?**
+
+R : Non. Les bugs sont introduits par des changements de code et peuvent être corrigés en annulant ces changements. La dérive se produit parce que le monde change tandis que le modèle reste le même. Elle nécessite un suivi continu et des mises à jour périodiques plutôt qu'une correction ponctuelle.
+
+**Q : À quelle vitesse la dérive de modèle se produit-elle en IA juridique ?**
+
+R : Cela dépend du domaine juridique. Le droit fiscal change significativement chaque année par le biais des lois-programmes, des ajustements de taux et de nouvelles circulaires. Un modèle sans mises à jour de sa base de connaissances montrera une dérive notable en quelques mois. Le droit constitutionnel ou procédural évolue plus lentement.
+
 ## References
 
 > Zhe Yang et al. (2019), "[A Novel Concept Drift Detection Method for Incremental Learning in Nonstationary Environments](https://doi.org/10.1109/tnnls.2019.2900956)", IEEE Transactions on Neural Networks and Learning Systems.

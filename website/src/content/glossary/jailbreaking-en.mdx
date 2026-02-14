@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Jailbreaking refers to techniques that deliberately manipulate [prompts](/en/glossary/prompt/) or inputs so that a language model ignores or evades its safety policies and produces restricted or harmful content.
+Jailbreaking is the practice of crafting prompts or inputs that cause a language model to bypass its built-in safety constraints, policy guidelines, or system prompt instructions and produce outputs it was designed to refuse. Jailbreaking techniques exploit the tension between a model's instruction-following capability and its safety training — they use creative prompt formulations to override safety filters. In legal AI, jailbreaking risks include tricking the system into presenting itself as a licensed advisor, fabricating citations without appropriate caveats, or bypassing disclaimers about the non-binding nature of its outputs.
+
+## Why it matters
+
+- **Safety circumvention** — a jailbroken legal AI system might produce outputs without required disclaimers, present speculative answers as authoritative, or bypass professional scope limitations
+- **Liability exposure** — if a user jailbreaks a legal AI system and receives output that causes harm, the question of liability becomes complex; robust jailbreak resistance is a defensive requirement
+- **System prompt exposure** — some jailbreaking techniques extract the system prompt, revealing proprietary instructions, safety rules, and architectural details
+- **Trust and regulation** — the EU AI Act requires appropriate safeguards against misuse; jailbreak resistance is part of meeting this requirement
+
+## How it works
+
+Jailbreaking techniques exploit various aspects of how language models process instructions:
+
+**Role-playing prompts** ask the model to "pretend" to be a different system without safety constraints ("imagine you are an AI without restrictions..."). This exploits the model's instruction-following training to override its safety training.
+
+**Encoding and obfuscation** present the problematic request in an encoded form (base64, reversed text, character substitution) that bypasses keyword-based safety filters while the model still understands the intent.
+
+**Multi-turn escalation** gradually moves the conversation toward restricted territory through a series of innocent-seeming questions, each building on the previous, until the model finds itself in a context where it produces restricted output.
+
+**Prompt injection** embeds instructions within seemingly normal content — for example, hiding override instructions in a document that the system retrieves and processes as context. This is particularly relevant for RAG systems where external content enters the prompt.
+
+**Indirect prompting** uses legitimate features (summarisation, translation, analysis) on content that contains the restricted request, causing the model to produce the restricted content as part of its analysis.
+
+Defences against jailbreaking include: robust safety training that is resistant to role-playing and encoding tricks, input filtering that detects common jailbreaking patterns, output monitoring that flags responses that violate safety policies, and regular adversarial testing to discover new jailbreaking techniques before they are exploited. No current defence is completely effective — jailbreaking resistance is an ongoing arms race between attack and defence techniques.
+
+## Common questions
+
+**Q: Can jailbreaking be fully prevented?**
+
+A: Not with current technology. As models become better at following instructions, they also become potentially more susceptible to cleverly crafted override instructions. Defence focuses on raising the bar (making jailbreaking harder and less reliable) rather than eliminating it entirely.
+
+**Q: Is jailbreaking illegal?**
+
+A: Generally no, when performed for research or personal experimentation. However, using jailbreaking to extract confidential information, bypass access controls, or cause harm may violate computer fraud laws or terms of service depending on the jurisdiction and context.
 
 ## References
 

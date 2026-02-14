@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Semantic clustering past algoritmen zoals k‑means of hiërarchische clustering toe op [embeddings](/nl/glossary/embeddings/) om verwante documenten of concepten te groeperen in betekenisvolle segmenten.
+Semantic clustering is het Proces van het groeperen van Documenten, Passages of andere Tekstitems in Clusters op basis van hun semantische Gelijkenis in de Embeddingsruimte, zodanig dat Items binnen elk Cluster een samenhangend Onderwerp of Concept delen. In tegenstelling tot op trefwoorden gebaseerde Categorisering vangt semantic clustering Betekenis -- het groepeert Documenten over "vennootschapsbelasting" en "corporate income tax" samen, ook al delen ze geen Trefwoorden. Dit maakt automatische Onderwerpdetectie, Contentorganisatie en Gap-analyse mogelijk over grote Documentcollecties.
+
+## Waarom het belangrijk is
+
+- **Corpusorganisatie** -- Clustering onthult de natuurlijke Onderwerpstructuur van een juridische Kennisbank, wat helpt om te identificeren welke Gebieden van het Belastingrecht goed gedekt zijn en welke Lacunes vertonen
+- **Deduplicatie** -- Clusters van zeer gelijkaardige Documenten kunnen Duplicaten of bijna-Duplicaten bevatten die geconsolideerd moeten worden
+- **Navigatie** -- het presenteren van Zoekresultaten of Glossariumtermen in semantische Clusters helpt Gebruikers om verwante Concepten te verkennen in plaats van door platte alfabetische Lijsten te navigeren
+- **Kwaliteitsanalyse** -- het onderzoeken van Clusters onthult of het Embeddingmodel verwante Concepten correct groepeert; Clusters die niet-verwante Onderwerpen mengen wijzen op Kwaliteitsproblemen met de Embeddings
+
+## Hoe het werkt
+
+Semantic clustering werkt op Vectorembeddings van de Items die geclusterd moeten worden:
+
+**Embedding** -- elk Document of elke Passage wordt omgezet naar een Vectorembedding met behulp van een Embeddingmodel. Deze Vectoren plaatsen elk Item in een hoogdimensionale Ruimte waar Nabijheid semantische Gelijkenis weerspiegelt.
+
+**Clusteringalgoritme** -- een Clusteringalgoritme groepeert de Vectoren in Clusters. Veelgebruikte Algoritmen zijn:
+
+- **K-means** -- verdeelt Vectoren in precies k Clusters door de Afstand binnen het Cluster tot het Clustercentrum te minimaliseren. Vereist dat k vooraf wordt opgegeven, wat geschat kan worden met Silhouetteanalyse of de Elleboogmethode.
+- **HDBSCAN** -- een op Dichtheid gebaseerd Algoritme dat Clusters van wisselende Vormen en Groottes vindt zonder dat k opgegeven moet worden. Het identificeert ook Ruispunten (Items die niet tot een Cluster behoren), wat nuttig is voor het markeren van uitbijter-Documenten.
+- **Agglomeratieve clustering** -- bouwt een Hierarchie van Clusters op door iteratief de meest gelijkaardige Paren samen te voegen, wat een Dendrogram oplevert dat op verschillende Niveaus doorgesneden kan worden om Clusters van verschillende Granulariteit te produceren.
+
+**Interpretatie** -- elk Cluster wordt gekarakteriseerd door de Leden ervan te onderzoeken en het gemeenschappelijke Thema te identificeren. Geautomatiseerde Methoden omvatten het extraheren van de meest voorkomende Termen, het selecteren van het Document dat het dichtst bij het Clustercentrum ligt als Representant, of het gebruik van een Taalmodel om een Clusterlabel te genereren.
+
+**Dimensionaliteitsreductie** -- voor Visualisatie worden hoogdimensionale Embeddings geprojecteerd naar 2D met behulp van t-SNE of UMAP. De resulterende Scatterplot toont de Clusterstructuur en inter-Clusterrelaties, en onthult hoe verschillende Gebieden van het Belastingrecht zich tot elkaar verhouden in de Kennisrepresentatie van het Systeem.
+
+## Veelgestelde vragen
+
+**V: Hoeveel Clusters moeten er gebruikt worden?**
+
+A: Er is geen universeel Antwoord -- het juiste Aantal hangt af van het Corpus en de gewenste Granulariteit. Te weinig Clusters voegen verschillende Onderwerpen samen; te veel creeren gefragmenteerde Groepen met weinig semantische Samenhang. Algoritmen zoals HDBSCAN bepalen het Aantal automatisch op basis van Datadichtheid, terwijl k-means een expliciete Keuze vereist, gestuurd door Metrieken.
+
+**V: Kan semantic clustering over Talen heen werken?**
+
+A: Ja, wanneer meertalige Embeddingmodellen worden gebruikt. Documenten in het Nederlands, Frans en Duits over hetzelfde Belastingonderwerp worden samen geclusterd omdat hun Embeddings dicht bij elkaar liggen in de gedeelde Vectorruimte. Dit is bijzonder nuttig voor het analyseren van Belgische meertalige juridische Corpora.
 
 ## References
 

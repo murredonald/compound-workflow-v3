@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-La réduction de dimensionnalité applique des transformations mathématiques – comme la PCA ou des auto‑encodeurs – pour rendre les [embeddings](/fr/glossary/embeddings/) plus compacts, ce qui réduit les coûts de stockage et de recherche avec une perte de qualité limitée.
+La réduction de dimensionnalité est une famille de techniques qui transforment des données de grande dimension en une représentation de dimension inférieure tout en préservant autant de structure significative que possible. Dans le contexte de l'IA et de la recherche d'information, cela signifie généralement comprimer des [embeddings](/fr/glossary/vector-embeddings/) vectoriels — qui peuvent avoir 768 dimensions ou plus — en vecteurs plus petits, plus rapides à rechercher, moins coûteux à stocker et plus faciles à visualiser. Le compromis est toujours entre compression et perte d'information : une réduction plus agressive économise davantage de ressources mais risque d'éliminer des distinctions importantes pour la qualité de la recherche.
+
+## Pourquoi c'est important
+
+- **Vitesse de recherche** — la recherche de similarité sur des vecteurs de dimension inférieure est plus rapide car les calculs de distance impliquent moins d'opérations ; cela compte à grande échelle lorsqu'on recherche parmi des millions d'embeddings de documents
+- **Efficacité de stockage** — réduire des vecteurs de 1536 dimensions à 256 dimensions diminue le stockage de plus de 80 %, ce qui est significatif pour les grandes bases de connaissances
+- **Visualisation** — réduire les embeddings à 2 ou 3 dimensions permet l'inspection humaine de l'[espace d'embedding](/fr/glossary/embedding-space/), révélant les clusters, les valeurs aberrantes et les lacunes de couverture
+- **Réduction du bruit** — les embeddings de grande dimension peuvent contenir des dimensions redondantes ou bruitées ; la réduction peut en fait améliorer la recherche en éliminant les dimensions qui ajoutent du bruit sans contribuer au sens
+
+## Comment ça fonctionne
+
+Les techniques de réduction de dimensionnalité se répartissent en deux catégories :
+
+**Les méthodes linéaires** projettent les données selon les directions de variance maximale. L'analyse en composantes principales (PCA) est la plus courante : elle identifie les axes selon lesquels les données varient le plus et élimine le reste. La PCA est rapide, déterministe et fonctionne bien lorsque la structure importante des données est linéaire. Pour les embeddings, une PCA de 768 à 256 dimensions préserve généralement 90-95 % des performances de recherche.
+
+**Les méthodes non linéaires** capturent des structures plus complexes. t-SNE (t-distributed Stochastic Neighbour Embedding) et UMAP (Uniform Manifold Approximation and Projection) sont principalement utilisés pour la visualisation — ils projettent des données de grande dimension en 2-3 dimensions tout en préservant les relations de voisinage local. Les auto-encodeurs utilisent des réseaux neuronaux pour apprendre une représentation compressée et peuvent capturer des motifs non linéaires, mais ils nécessitent un entraînement et sont plus complexes à déployer.
+
+Dans les systèmes de recherche en production, la réduction de dimensionnalité est souvent appliquée au moment de l'indexation : les embeddings en dimension complète sont calculés par le modèle d'embedding, puis compressés avant d'être stockés dans l'index vectoriel. Au moment de la requête, l'embedding de la requête subit la même réduction avant la recherche. Certaines bases de données vectorielles appliquent la quantification (une technique apparentée) en complément ou à la place de la réduction de dimensionnalité pour comprimer davantage le stockage.
+
+La décision clé est le nombre de dimensions à conserver. Cela est déterminé empiriquement en mesurant la qualité de la recherche (recall@k, nDCG) à différents nombres de dimensions et en trouvant le point où une réduction supplémentaire dégrade notablement les résultats.
+
+## Questions fréquentes
+
+**Q : La réduction de dimensionnalité aide-t-elle toujours ?**
+
+R : Pas toujours. Si le modèle d'embedding produit des vecteurs compacts et denses en information avec peu de dimensions redondantes, la réduction peut faire plus de mal que de bien. Elle est plus bénéfique lorsque la dimensionnalité originale est élevée (1000+) et que les contraintes de stockage ou de vitesse sont significatives.
+
+**Q : Quelle est la différence entre la réduction de dimensionnalité et la quantification vectorielle ?**
+
+R : La réduction de dimensionnalité réduit le nombre de dimensions (par ex. 768 vers 256). La quantification vectorielle réduit la précision de chaque dimension (par ex. des flottants 32 bits vers des entiers 8 bits) ou associe les vecteurs à des centroïdes de clusters. Les deux réduisent le stockage et accélèrent la recherche, et elles peuvent être combinées.
 
 ## References
 

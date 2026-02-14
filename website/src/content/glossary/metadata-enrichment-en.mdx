@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Metadata enrichment attaches additional [labels](/en/glossary/ground-truth/), classifications, or derived fields to content—often using NLP or rules—so that search, recommendations, and governance policies work better.
+Metadata enrichment is the process of adding, refining, or deriving structured metadata fields for documents that arrive with incomplete or missing metadata. Raw legal documents often lack the structured annotations needed for effective retrieval — a PDF from the Official Gazette contains the text of a law but may not explicitly tag its jurisdiction, effective date, document type, or cross-references in a machine-readable format. Metadata enrichment uses NLP models, rules, and pattern matching to extract this information and attach it as structured fields, making the content searchable, filterable, and governable.
+
+## Why it matters
+
+- **Search quality** — enriched metadata enables structured filtering (by jurisdiction, date, document type) that pure text search cannot provide; without it, users cannot narrow results to the specific context they need
+- **Authority ranking** — document type metadata (legislation vs. circular vs. ruling) enables the system to rank sources by authority; without this metadata, all sources are treated equally
+- **Temporal accuracy** — extracted effective dates enable temporal filtering, ensuring that only provisions in force at the relevant time are returned
+- **Knowledge graph construction** — enriched metadata provides the structured entities and relationships that populate the knowledge graph, enabling relational queries
+
+## How it works
+
+Metadata enrichment operates during or after document ingestion:
+
+**Rule-based extraction** uses patterns and regular expressions to extract structured information from predictable formats. Belgian legal documents follow conventions: article numbers appear in a standard format, dates are written in specific patterns, and document type indicators (wet/loi, KB/AR, omzendbrief/circulaire) appear in headers or titles.
+
+**NLP-based extraction** uses trained models to extract metadata from less structured content. Named entity recognition identifies dates, organisation names, and legal references. Text classification assigns document type and topic categories. Relation extraction identifies cross-references between documents.
+
+**Derived metadata** is computed from other fields or from the document's content: word count, language detection, reading level, topical classification, and semantic cluster assignment. These derived fields support analytics, quality monitoring, and content discovery.
+
+**Validation** ensures that enriched metadata is consistent and correct. Dates are checked for plausibility (not in the future for historical documents). Jurisdictions are validated against a controlled vocabulary. Cross-references are verified against existing documents in the knowledge base.
+
+**Human review** handles cases where automated enrichment is uncertain. Low-confidence extractions are flagged for manual verification, particularly for metadata fields with high downstream impact (jurisdiction, effective date, document type).
+
+## Common questions
+
+**Q: Can metadata enrichment be fully automated?**
+
+A: For well-structured sources (Official Gazette XML, structured court decision databases), yes — automation can handle 95%+ of metadata extraction. For less structured sources (scanned circulars, historical documents), automated enrichment provides a first pass that requires human review for 10-20% of documents.
+
+**Q: What happens when metadata is wrong?**
+
+A: Incorrect metadata is worse than missing metadata. A document tagged with the wrong jurisdiction will appear in wrong-jurisdiction search results and be absent from correct ones. This is why validation and quality checks are essential parts of the enrichment process.

@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Document ingestion covers all steps needed to bring raw documents into a system, including acquisition, format handling, and initial metadata assignment.
+Document ingestion is the process of collecting raw documents from their sources, converting them into a usable format, extracting metadata, and registering them in the knowledge base. It is the first step in the data pipeline — the point where external legal content enters the AI system and becomes searchable. Ingestion quality determines knowledge base quality: documents that are incorrectly parsed, assigned wrong metadata, or incompletely extracted will produce inaccurate retrieval and generation downstream.
+
+## Why it matters
+
+- **Knowledge base completeness** — if the ingestion pipeline does not capture a new law, circular, or ruling, the AI system cannot reference it in answers, creating a dangerous gap
+- **Data quality origin** — most data quality problems originate during ingestion: OCR errors, incorrect date extraction, wrong jurisdictional tagging, or missing cross-references; catching errors at ingestion is far cheaper than correcting them after indexing
+- **Source diversity** — Belgian tax law comes from many sources (Official Gazette, FPS Finance, court databases, regional publishers) in many formats (PDF, HTML, XML, scanned images); the ingestion pipeline must handle this diversity reliably
+- **Freshness** — automated ingestion enables the system to incorporate new legal sources within hours of publication, maintaining currency without manual intervention
+
+## How it works
+
+A document ingestion pipeline typically proceeds through these stages:
+
+**Acquisition** — documents are collected from their sources. This may involve scheduled scraping of official gazette websites, API calls to legal database providers, SFTP transfers from publishers, or manual upload of ad hoc sources. Each source has its own access method, format, and delivery schedule.
+
+**Format handling** — raw documents are converted from their native format to clean text. PDF extraction handles multi-column layouts, tables, and embedded images. HTML parsing strips navigation, styling, and boilerplate. Scanned documents undergo OCR with confidence scoring to flag unreliable extractions. XML documents (common for official publications) are parsed according to their schema.
+
+**Metadata extraction** — key structured fields are identified and extracted: publication date, document type (law, decree, circular, ruling), jurisdiction (federal, regional), language version, article numbers, and cross-references to other documents. Some metadata is explicit (in document headers or XML tags); some must be inferred from the content using entity extraction or pattern matching.
+
+**Deduplication check** — the document is compared against existing content to determine whether it is new, an update to an existing document, or a duplicate. Content hashing and near-duplicate detection prevent the same document from being indexed multiple times.
+
+**Registration** — the document is assigned a unique identifier, its metadata is validated against the schema, and it is queued for the next pipeline stages (chunking, embedding, indexing). Failed documents are quarantined with error details for manual review.
+
+## Common questions
+
+**Q: How often should ingestion run?**
+
+A: For sources with regular publication schedules (daily gazette, weekly circulars), ingestion should run at matching frequency. Event-driven ingestion (triggered by publication notifications) provides faster coverage than scheduled polling.
+
+**Q: What happens when ingestion fails for a document?**
+
+A: Failed documents should be quarantined, logged with the specific failure reason (OCR failure, format error, metadata extraction failure), and either retried automatically or flagged for manual review. The system should continue processing other documents rather than halting the entire pipeline.

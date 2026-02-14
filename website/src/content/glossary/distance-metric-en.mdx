@@ -12,7 +12,37 @@ draft: false
 
 ## Definition
 
-A distance metric is a function that assigns a non-negative distance between pairs of points and satisfies properties like symmetry and the triangle inequality, such as Euclidean or Manhattan distance.
+A distance metric is a mathematical function that measures the separation between two points in a space. To qualify as a true metric, it must satisfy four properties: non-negativity, identity of indiscernibles (zero distance only for identical points), symmetry, and the triangle inequality. In AI and retrieval systems, distance metrics determine how "close" or "far apart" two embeddings are, which directly translates to how similar or different their meanings are considered.
+
+## Why it matters
+
+- **Retrieval quality** — the choice of distance metric determines which documents are considered most relevant to a query; a poor choice can rank irrelevant results higher
+- **Consistency** — metric properties like the triangle inequality ensure that similarity relationships behave predictably across the embedding space
+- **Index performance** — approximate nearest-neighbour algorithms (HNSW, IVF) are optimised for specific metrics; mismatching the metric degrades both speed and recall
+- **Legal precision** — in tax research, small semantic differences between provisions can have large practical consequences, making metric selection critical
+
+## How it works
+
+When a query is embedded into a vector, the retrieval system computes distances between the query vector and all document vectors in the index. The documents with the smallest distances (or highest similarity scores) are returned as results.
+
+Common distance metrics include:
+
+- **Euclidean distance** — straight-line distance in the vector space; sensitive to vector magnitude
+- **Cosine similarity** — measures the angle between vectors, ignoring magnitude; widely used for text embeddings where direction matters more than length
+- **Dot product** — equivalent to cosine similarity when vectors are normalised; faster to compute
+- **Manhattan distance** — sum of absolute differences along each dimension; occasionally used for sparse representations
+
+Most modern embedding models are trained with cosine similarity in mind, so retrieval systems typically normalise vectors and use dot product for efficient computation.
+
+## Common questions
+
+**Q: Does the distance metric need to match how the model was trained?**
+
+A: Yes. If an embedding model was trained using cosine similarity as its objective, you should use cosine similarity (or dot product on normalised vectors) at retrieval time. Using Euclidean distance with a cosine-trained model can degrade results.
+
+**Q: What is the difference between a distance and a similarity?**
+
+A: They are inversely related. A small distance means high similarity. Cosine similarity ranges from -1 to 1 (higher is more similar), while Euclidean distance ranges from 0 to infinity (lower is more similar). Most systems convert between the two as needed.
 
 ## References
 

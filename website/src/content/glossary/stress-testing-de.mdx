@@ -10,6 +10,43 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Stresstests bewerten, wie sich ein KI-System unter extremen oder degradierten Bedingungen verhält, die über die normalen Betriebsparameter hinausgehen. Dazu gehören hohe Abfragevolumen, die die Systemkapazität auslasten, verrauschte oder adversariale Eingaben, partielle Infrastrukturausfälle und ungewöhnliche Abfragemuster. Das Ziel ist nicht, die normale Leistung zu testen (dafür gibt es die Standardevaluation), sondern die Belastungsgrenzen des Systems zu finden, seine Fehlermodi zu verstehen und zu verifizieren, dass es bei Überlastung graceful degradiert statt katastrophal zu versagen.
+
+## Warum es wichtig ist
+
+- **Entdeckung von Fehlermodi** — Stresstests zeigen, wie das System versagt: Wird es langsamer, gibt es saubere Fehlermeldungen zurück, oder produziert es stillschweigend falsche Antworten? Jeder Fehlermodus hat unterschiedliche Auswirkungen auf das Nutzervertrauen und die Sicherheit
+- **Kapazitätsplanung** — das Verständnis der Durchsatzgrenzen und der Degradationskurve des Systems informiert Entscheidungen zur Infrastrukturdimensionierung und Skalierung
+- **Adversariale Resilienz** — Stresstests mit adversarialen Eingaben decken Schwachstellen gegenüber Prompt Injection, Abfragemanipulation und anderen Angriffen auf, die im Normalbetrieb möglicherweise nicht sichtbar werden
+- **Regulatorische Bereitschaft** — der EU AI Act verlangt von Hochrisiko-KI-Systemen, ihre Leistung unter „vernünftigerweise vorhersehbaren Nutzungsbedingungen" aufrechtzuerhalten; Stresstests liefern den Nachweis für diese Anforderung
+
+## So funktioniert es
+
+Stresstests decken mehrere Dimensionen ab:
+
+**Lasttests** erhöhen schrittweise das Abfragevolumen, bis die Leistung des Systems nachlässt. Gemessene Metriken umfassen Antwortzeit (wie stark steigt die Latenz?), Fehlerrate (beginnen Anfragen fehlzuschlagen?) und Antwortqualität (werden Antworten unter Last ungenauer?). Der Test identifiziert den maximal tragfähigen Durchsatz und das Degradationsmuster darüber hinaus.
+
+**Eingabeperturbationstests** senden Eingaben, die von normalen Mustern abweichen: extrem lange Abfragen, Abfragen in unerwarteten Sprachen, Abfragen mit Sonderzeichen oder besonderer Formatierung und Abfragen, die darauf ausgelegt sind, die Retrieval- oder Generierungsschichten zu verwirren. Ziel ist zu verifizieren, dass das System ungewöhnliche Eingaben verarbeitet, ohne abzustürzen oder gefährliche Ausgaben zu erzeugen.
+
+**Infrastrukturausfallstests** simulieren Komponentenausfälle: ein Vektordatenbank-Shard, der offline geht, ein Embedding-Modell-Service, der nicht mehr verfügbar ist, oder eine Netzwerkpartition zwischen Systemkomponenten. Der Test verifiziert, dass das System Ausfälle erkennt, sie wenn möglich umgeht und die Degradation den Nutzern klar kommuniziert.
+
+**Adversariale Tests** verwenden gezielt erstellte Eingaben, die versuchen, Systemschwächen auszunutzen: Prompt-Injection-Angriffe, Abfragen, die darauf abzielen, Trainingsdaten zu extrahieren, und Eingaben, die versuchen, Sicherheitsmaßnahmen zu umgehen. Dies überschneidet sich mit Sicherheitstests, konzentriert sich jedoch speziell auf KI-spezifische Schwachstellen.
+
+**Grenzfalltests** zielen auf bekannte schwierige Szenarien: mehrdeutige Abfragen, Abfragen an der Grenze des Systemumfangs, Abfragen zu Themen, bei denen die Wissensbasis dünn besetzt ist, und Abfragen, die Schlussfolgern über mehrere Quellen hinweg erfordern.
+
+Die Ergebnisse werden in Form von entdeckten Fehlermodi, Belastungsgrenzen und Priorisierung der Gegenmaßnahmen dokumentiert.
+
+## Häufige Fragen
+
+**F: Wie unterscheiden sich Stresstests von Regressionstests?**
+
+A: Regressionstests prüfen, ob das System nach Änderungen unter normalen Bedingungen seine Qualität beibehält. Stresstests treiben das System über die normalen Bedingungen hinaus, um seine Grenzen zu finden. Regressionstests fragen „funktioniert es noch?"; Stresstests fragen „wann hört es auf zu funktionieren, und wie?"
+
+**F: Wie oft sollten Stresstests durchgeführt werden?**
+
+A: Nach wesentlichen Architekturänderungen, vor größeren Releases und periodisch (vierteljährlich) als Gesundheitscheck. Automatisierte Lasttests können häufiger als Teil der CI/CD-Pipeline durchgeführt werden.
+
 ## References
 
 - Ribeiro et al. (2020), "[Beyond Accuracy: Behavioral Testing of NLP Models with CheckList](https://doi.org/10.18653/v1/2020.acl-main.442)", ACL.

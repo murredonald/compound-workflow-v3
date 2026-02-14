@@ -10,9 +10,43 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le découpage en fenêtre glissante segmente les longs documents en portions qui se chevauchent afin que chaque [chunk](/fr/glossary/document-chunk/) partage du contexte avec ses voisins et réduise les effets de bord en retrieval et génération.
+Le découpage en fenêtre glissante est une stratégie de segmentation de documents qui crée des chunks se chevauchant en déplaçant une fenêtre de taille fixe à travers le texte à intervalles réguliers. Contrairement au découpage sans chevauchement, qui coupe le texte à des limites fixes et risque de perdre le contexte qui s'étend sur deux chunks, le découpage en fenêtre glissante garantit que chaque phrase apparaît dans au moins un chunk avec son contexte environnant complet. Le chevauchement entre chunks consécutifs agit comme une marge de sécurité, empêchant la perte d'information aux frontières des chunks.
+
+## Pourquoi c'est important
+
+- **Préservation du contexte aux frontières** — dans un texte juridique, une phrase dépend souvent de la phrase précédente pour sa signification (« nonobstant ce qui précède... ») ; le chevauchement garantit que ces dépendances sont capturées dans au moins un chunk
+- **Robustesse de la récupération** — si un passage pertinent tombe exactement à la frontière d'un chunk dans un découpage sans chevauchement, aucun des deux chunks ne peut obtenir un score suffisamment élevé pour être récupéré ; le chevauchement élimine ce mode de défaillance
+- **Qualité constante des embeddings** — les chunks qui commencent ou finissent au milieu d'une phrase produisent des embeddings de moindre qualité ; le chevauchement garantit que le contenu critique apparaît dans un chunk avec un contexte environnant approprié
+- **Simplicité d'implémentation** — le découpage en fenêtre glissante ne nécessite que deux paramètres (taille de la fenêtre et pas) et aucune analyse de la structure du document, ce qui le rend facile à implémenter et à reproduire
+
+## Comment ça fonctionne
+
+Le découpage en fenêtre glissante est défini par deux paramètres :
+
+**Taille de la fenêtre** — la longueur de chaque chunk, mesurée en tokens (par exemple, 512 tokens). Cela détermine la quantité de texte que chaque chunk contient et doit trouver un équilibre entre la qualité de l'embedding (plus court est plus ciblé) et la complétude du contexte (plus long préserve plus de contexte).
+
+**Pas** (ou taille du pas) — la distance parcourue par la fenêtre entre les chunks. Un pas inférieur à la taille de la fenêtre crée un chevauchement. Par exemple, avec une fenêtre de 512 tokens et un pas de 256 tokens, chaque chunk chevauche le précédent de 256 tokens (50 % de chevauchement). Des pas plus petits créent plus de chevauchement et plus de chunks ; des pas plus grands créent moins de chevauchement et moins de chunks.
+
+**Ratio de chevauchement** = (taille de la fenêtre - pas) / taille de la fenêtre. Les ratios de chevauchement courants sont de 10 à 50 %. Un chevauchement plus élevé réduit le risque de manquer du contenu à cheval sur les frontières, mais augmente le nombre de chunks (et donc les coûts de stockage et d'embedding).
+
+L'algorithme parcourt le document :
+1. Extraire les tokens de la position 0 à la position taille_fenêtre → Chunk 1
+2. Extraire les tokens de la position pas à la position pas + taille_fenêtre → Chunk 2
+3. Continuer jusqu'à la fin du document
+
+**Compromis** : le découpage en fenêtre glissante est simple et robuste mais ne respecte pas la structure du document — il peut séparer un en-tête d'article de son corps ou couper un paragraphe au milieu d'une phrase. Le découpage tenant compte de la structure (utilisant les titres, les limites d'articles) évite cela mais nécessite la détection de la structure du document. En pratique, de nombreux systèmes combinent les deux : utiliser les limites structurelles quand elles sont disponibles, se rabattre sur la fenêtre glissante sinon.
+
+## Questions fréquentes
+
+**Q : Quel est le pourcentage de chevauchement optimal ?**
+
+R : Un chevauchement de 10 à 25 % est standard pour la plupart des applications de récupération. Un chevauchement plus élevé (50 %+) est parfois utilisé pour du contenu critique où manquer le moindre contexte est inacceptable, mais cela double les coûts de stockage et d'embedding. Le bon choix dépend de la structuration des documents sources — un texte juridique bien structuré avec des limites d'articles claires nécessite moins de chevauchement qu'un commentaire en texte libre.
+
+**Q : Le chevauchement augmente-t-il les besoins en stockage ?**
+
+R : Oui, proportionnellement au ratio de chevauchement. Avec 50 % de chevauchement, le nombre de chunks est approximativement le double de celui d'un découpage sans chevauchement. Chaque chunk doit être vectorisé et stocké, donc le chevauchement augmente directement les coûts de stockage et de calcul d'embedding.
 
 ## References
 

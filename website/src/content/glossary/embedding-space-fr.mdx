@@ -12,7 +12,34 @@ draft: false
 
 ## Definition
 
-L’embedding space est l’espace de grande dimension défini par un [modèle d’embedding](/fr/glossary/embedding-model/), dans lequel les éléments sémantiquement proches se trouvent à proximité et forment des clusters.
+L'espace d'embedding est l'espace mathématique de grande dimension dans lequel existent les [embeddings](/fr/glossary/vector-embeddings/) vectoriels. Chaque dimension de cet espace capture un aspect appris de la signification, et les relations géométriques entre les points — leurs distances et leurs angles — encodent la similarité sémantique et les relations conceptuelles. Les textes ayant des significations similaires sont projetés en des points proches ; les textes sans rapport sont projetés loin l'un de l'autre. L'espace d'embedding est ce qui rend la [recherche sémantique](/fr/glossary/semantic-search/) possible : retrouver des documents pertinents revient à trouver des points voisins dans cet espace.
+
+## Pourquoi c'est important
+
+- **Organisation sémantique** — l'espace d'embedding organise tout le contenu de la base de connaissances par signification plutôt que par ordre alphabétique ou emplacement de fichier, permettant une recherche basée sur la pertinence conceptuelle
+- **Cartographie interlinguistique** — les modèles d'embedding multilingues projettent des textes de différentes langues dans un espace partagé, de sorte qu'une requête en néerlandais peut trouver une législation française pertinente parce que les deux occupent des régions voisines
+- **Clustering et exploration** — la structure géométrique de l'espace d'embedding révèle des regroupements naturels dans les données — des clusters de documents sur le même sujet fiscal, par exemple — ce qui soutient la recherche exploratoire et la découverte de thématiques
+- **Diagnostic de qualité** — visualiser l'espace d'embedding révèle des problèmes comme des régions effondrées (où des concepts différents sont projetés trop proches les uns des autres) ou des lacunes (où des sujets importants manquent de couverture)
+
+## Comment ça fonctionne
+
+Un modèle d'embedding définit l'espace d'embedding à travers son processus d'entraînement. Pendant l'entraînement, le modèle apprend à attribuer des vecteurs de sorte que les entrées sémantiquement similaires soient proches et que les entrées dissemblables soient éloignées. Le nombre de dimensions (généralement entre 384 et 1536) détermine la capacité de l'espace à capturer des distinctions fines.
+
+**Les métriques de distance** définissent comment la « proximité » est mesurée dans l'espace. La similarité cosinus mesure l'angle entre deux vecteurs (en ignorant la magnitude), ce qui en fait le choix le plus courant pour les embeddings de texte. Le produit scalaire considère à la fois l'angle et la magnitude. La distance euclidienne mesure la distance en ligne droite entre les points. Le choix de la métrique doit correspondre à l'objectif d'entraînement du modèle d'embedding.
+
+**Les propriétés géométriques** de l'espace encodent des relations significatives. Dans des espaces bien entraînés, les relations analogiques peuvent apparaître sous forme de décalages vectoriels cohérents — la direction de « belasting » vers « tarief » pourrait être similaire à la direction de « tax » vers « rate ». Les clusters se forment naturellement autour des thématiques : les dispositions de droit fiscal se regroupent séparément du droit procédural, qui se regroupe séparément de la jurisprudence.
+
+**Les limitations** sont inhérentes à tout espace de dimension fixe. L'espace d'embedding capture les relations que le modèle a apprises pendant l'entraînement ; les concepts absents des données d'entraînement seront mal positionnés. L'affinage spécifique au domaine remodèle l'espace pour mieux représenter le contenu spécialisé — par exemple, en s'assurant que les différents types de législation fiscale belge occupent des régions distinctes et bien séparées plutôt que d'être compressés dans un cluster générique « droit ».
+
+## Questions fréquentes
+
+**Q : Peut-on visualiser un espace d'embedding ?**
+
+R : Pas directement — les espaces d'embedding ont généralement des centaines de dimensions. Les techniques de [réduction de dimensionnalité](/fr/glossary/dimensionality-reduction/) comme t-SNE ou UMAP projettent l'espace en 2 ou 3 dimensions pour la visualisation. Ces projections préservent la structure de voisinage local (les points proches restent proches) mais déforment les distances globales, ce qui les rend utiles pour repérer les clusters et les valeurs aberrantes, mais pas pour mesurer les distances absolues.
+
+**Q : Différents modèles d'embedding créent-ils des espaces différents ?**
+
+R : Oui. Chaque modèle définit son propre espace d'embedding avec sa propre structure géométrique. Les vecteurs de différents modèles ne sont pas comparables — un vecteur de 768 dimensions d'un modèle ne peut pas être comparé de manière significative avec un vecteur de 768 dimensions d'un autre modèle. Changer de modèle nécessite de ré-encoder tous les documents.
 
 ## References
 

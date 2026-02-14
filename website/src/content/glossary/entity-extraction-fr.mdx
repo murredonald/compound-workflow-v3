@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-L’entity extraction identifie des éléments structurés tels que personnes, entreprises, lois ou lieux dans un texte non structuré et les expose comme champs pour la recherche et l’analyse.
+L'extraction d'entités est le processus d'identification et de classification automatiques des entités nommées — telles que les personnes, les organisations, les dates, les montants monétaires, les références juridiques et les juridictions — dans un texte non structuré. Il s'agit d'une tâche fondamentale du traitement automatique du langage naturel (NLP) qui transforme des documents bruts en données structurées en étiquetant chaque mention d'entité avec un label de type. Dans l'IA juridique, l'extraction d'entités alimente des capacités en aval comme la construction de [graphes de connaissances](/fr/glossary/knowledge-graph/), l'enrichissement des métadonnées, le référencement croisé entre documents et le filtrage structuré des recherches.
+
+## Pourquoi c'est important
+
+- **Métadonnées structurées à partir de texte non structuré** — la législation et les décisions arrivent sous forme de prose ; l'extraction d'entités identifie les numéros d'articles, les dates, les parties et les seuils monétaires qu'ils contiennent, les rendant cherchables et filtrables
+- **Construction de graphes de connaissances** — les entités extraites et leurs relations forment les nœuds et les arêtes d'un graphe de connaissances, permettant au système de répondre à des requêtes relationnelles comme « quelles décisions citent l'article 215 WIB92 ? »
+- **Référencement croisé** — lorsqu'une circulaire mentionne un arrêté royal par son nom, l'extraction d'entités identifie la référence et la relie au document correspondant dans la base de connaissances
+- **Enrichissement de la recherche** — les entités extraites deviennent des métadonnées qui supportent la recherche à facettes, permettant aux utilisateurs de filtrer les résultats par juridiction, type d'impôt, période ou niveau d'autorité
+
+## Comment ça fonctionne
+
+L'extraction d'entités opère généralement en deux étapes :
+
+**La détection** identifie les limites des mentions d'entités dans le texte — déterminant que « Grondwettelijk Hof » dans une phrase est une seule entité et non deux mots séparés. C'est un défi car les noms d'entités peuvent s'étendre sur plusieurs mots, contenir des mots courants ou se chevaucher avec le texte environnant.
+
+**La classification** attribue un type à chaque entité détectée. Les types standards incluent personne, organisation, lieu et date, mais le NLP juridique étend cette liste avec des types spécifiques au domaine : références législatives (numéros d'articles, codes de loi), identifiants de juridictions, catégories fiscales, marqueurs juridictionnels et montants monétaires avec devise.
+
+L'extraction d'entités moderne utilise des modèles basés sur des transformers, affinés sur du texte juridique annoté. Le modèle traite chaque token en contexte et prédit s'il fait partie d'une entité et à quel type il appartient (en utilisant l'étiquetage BIO : Begin, Inside, Outside). Les modèles de langage juridique pré-entraînés obtiennent des résultats nettement meilleurs que les modèles généralistes car ils comprennent les conventions de nommage juridiques, les formats de citation et la terminologie du domaine.
+
+Pour le droit fiscal belge, l'extraction d'entités doit traiter des documents multilingues (néerlandais, français, allemand), reconnaître les références aux instruments juridiques belges spécifiques (WIB92, BWHI, KB/AR) et distinguer les références législatives fédérales des régionales.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre l'extraction d'entités et l'extraction de mots-clés ?**
+
+R : L'extraction de mots-clés identifie les termes les plus importants d'un document, quel que soit leur type. L'extraction d'entités identifie des éléments nommés spécifiques et les classe par catégorie. « Vennootschapsbelasting » pourrait être extrait comme mot-clé ; « article 185 WIB92 » serait extrait comme entité de référence législative avec des métadonnées structurées (numéro d'article : 185, code de loi : WIB92).
+
+**Q : Quelle est la précision de l'extraction d'entités sur du texte juridique ?**
+
+R : Les modèles NER généralistes atteignent généralement 85-90 % de F1 sur du texte juridique sans adaptation. L'affinage sur des données annotées spécifiques au domaine pousse ce score à 93-97 % de F1, selon le type d'entité. Les dates et montants monétaires sont les plus faciles ; les références croisées législatives et les marqueurs juridictionnels sont plus difficiles en raison de la variété de leurs formats.

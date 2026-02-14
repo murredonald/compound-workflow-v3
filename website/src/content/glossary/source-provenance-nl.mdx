@@ -12,4 +12,37 @@ draft: false
 
 ## Definitie
 
-Bronherkomst legt de oorsprong, het eigendom en de transformatiegeschiedenis van gegevens of inhoud vast, zodat de betrouwbaarheid en compliance ervan kunnen worden beoordeeld.
+Bronprovenance is de gedocumenteerde keten van oorsprong, eigendom en transformatiegeschiedenis voor elk stuk data of inhoud dat in een AI-systeem wordt gebruikt. Het beantwoordt de vragen: waar komt deze informatie vandaan, wie heeft het gepubliceerd, wanneer is het voor het laatst bijgewerkt, en welke verwerking heeft het ondergaan? In juridische AI is provenance essentieel omdat het gezag en de betrouwbaarheid van een bron rechtstreeks van invloed zijn op de betrouwbaarheid van elk antwoord dat eruit wordt afgeleid.
+
+## Waarom het belangrijk is
+
+- **Autoriteitverificatie** — in het fiscaal recht weegt een arrest van het Grondwettelijk Hof zwaarder dan een parlementaire vraag; provenancemetadata stelt het systeem in staat om onderscheid te maken tussen niveaus van bronautoriteit
+- **Actualiteitsbewaking** — weten wanneer een bron is gepubliceerd en of deze is gewijzigd of opgeheven, voorkomt dat het systeem verouderde bepalingen citeert
+- **Compliance** — zowel de EU AI Act als de AVG stellen eisen aan datatransparantie en traceerbaarheid waaraan provenancemetadata helpt te voldoen
+- **Reproduceerbaarheid** — wanneer een AI-systeem een antwoord produceert, maken provenancegegevens het voor iedereen mogelijk om het antwoord terug te traceren naar de oorspronkelijke bronnen en de correctheid te verifiëren
+
+## Hoe het werkt
+
+Provenancetracking werkt over de gehele datalevenscyclus:
+
+1. **Inname** — wanneer een document het systeem binnenkomt, wordt het getagd met metadata: publicatiebron (Belgisch Staatsblad, FOD Financiën, rechtspraakdatabank), publicatiedatum, autoriteitsniveau, documenttype (wet, koninklijk besluit, circulaire, uitspraak) en jurisdictioneel toepassingsgebied
+
+2. **Transformatie** — naarmate het document wordt verwerkt (geparseerd, gechunkt, opgeschoond, ingebed), wordt elke transformatiestap vastgelegd. Als tekst uit een PDF is geëxtraheerd, wordt de OCR-betrouwbaarheid gelogd. Als een chunkgrens is aangepast, worden de oorspronkelijke en gewijzigde versies gekoppeld.
+
+3. **Opslag** — provenancemetadata worden opgeslagen naast de documentinhoud in de kennisbank, zodat ze beschikbaar zijn op querytijd voor filtering, rangschikking en citatiegeneratie
+
+4. **Citatie** — wanneer het systeem een antwoord genereert, bevat het provenanceinformatie in zijn citaties: het specifieke brondocument, de publicatiedatum, het relevante artikel of de sectie, en een link naar de gezaghebbende tekst. Dit stelt de gebruiker in staat het antwoord te verifiëren aan de hand van de oorspronkelijke bron.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt bronprovenance van citatie?**
+
+A: Citatie vertelt je welke bron in een antwoord is gebruikt. Bronprovenance is breder — het omvat de volledige levenscyclus van de data: waar deze zijn verzameld, hoe ze zijn verwerkt, en elke transformatie die ze hebben ondergaan voordat ze werden gebruikt. Citatie is wat de gebruiker ziet; provenance is de volledige keten erachter.
+
+**V: Waarom is bronautoriteit belangrijk voor AI-antwoorden?**
+
+A: Niet alle juridische bronnen hebben hetzelfde gewicht. Wetgeving gaat boven administratieve circulaires; uitspraken van het Hof van Cassatie gaan boven uitspraken van lagere rechtbanken. Een systeem zonder op provenance gebaseerde autoriteitrangschikking zou evenveel gewicht kunnen toekennen aan een ministeriële FAQ als aan een bindende wet, wat misleidende resultaten oplevert.
+
+**V: Hoe ondersteunt provenance AVG-compliance?**
+
+A: De AVG vereist dat organisaties weten waar persoonsgegevens vandaan komen en hoe deze worden verwerkt (artikelen 13-14 over transparantie, artikel 30 over verwerkingsregisters). Bronprovenance biedt deze documentatie, door de oorsprong van de data, de verwerkingsgeschiedenis en het huidige gebruik binnen het AI-systeem te tonen.

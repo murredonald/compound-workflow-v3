@@ -12,7 +12,40 @@ draft: false
 
 ## Définition
 
-Un retrieval pipeline combine des étapes telles que l'analyse de requête, la génération de candidats, le filtrage et le [reranking](/fr/glossary/reranking/) pour [transformer](/fr/glossary/transformer-architecture/) une requête en une liste finale classée de documents ou de [chunks](/fr/glossary/document-chunk/) pertinents.
+Un retrieval pipeline est la séquence de bout en bout d'étapes qui transforme une requête utilisateur en une liste classée de documents ou de passages pertinents. Chaque étape affine progressivement les résultats — de la génération initiale de candidats parmi des millions de documents au [reranking](/fr/glossary/reranking/) final d'une poignée de meilleurs candidats. Dans les systèmes de génération augmentée par la recherche (RAG), la sortie du pipeline est directement transmise au modèle de langage comme contexte pour la génération de réponses.
+
+## Pourquoi c'est important
+
+- **La précision dépend de la conception du pipeline** — le modèle de langage ne peut raisonner que sur ce que le retrieval pipeline renvoie ; des documents pertinents manqués ou des faux positifs se propagent directement dans les réponses générées
+- **Budgets de latence** — chaque étape du pipeline ajoute de la latence ; l'architecture doit équilibrer la rigueur de la recherche et les exigences de temps de réponse
+- **Composabilité** — un pipeline modulaire permet de remplacer des composants (par exemple, remplacer BM25 par un retriever dense, ou ajouter un reranker) sans repenser l'ensemble du système
+- **Exigences juridiques** — dans la recherche fiscale, le pipeline doit gérer des requêtes temporelles, des sources multi-juridictionnelles et des hiérarchies d'autorité que les pipelines de recherche génériques ne prennent pas en compte
+
+## Comment ça fonctionne
+
+Un retrieval pipeline typique se compose des étapes suivantes :
+
+1. **Compréhension de la requête** — la question brute de l'utilisateur est analysée, étendue ou reformulée pour améliorer la couverture (par exemple, en ajoutant des synonymes ou de la terminologie juridique)
+2. **Recherche de candidats** — une recherche rapide et large (utilisant BM25, des vecteurs denses ou une approche hybride) renvoie des centaines de passages candidats depuis l'index
+3. **Filtrage** — les candidats sont filtrés selon des contraintes de métadonnées telles que la juridiction, la plage de dates ou le type de document
+4. **Reranking** — un cross-encoder ou un autre [reranker](/fr/glossary/reranking/) réévalue les candidats restants avec une analyse sémantique plus approfondie, produisant une liste finale ordonnée par pertinence
+5. **Post-traitement** — les meilleurs résultats sont dédupliqués, regroupés par source et enrichis de métadonnées avant d'être transmis à la couche de génération
+
+Chaque étape fait un compromis entre le rappel (ne rien manquer de pertinent) et la précision (ne pas inclure de résultats non pertinents). Les premières étapes favorisent le rappel ; les étapes ultérieures affinent la précision.
+
+## Questions fréquentes
+
+**Q : Combien d'étapes un retrieval pipeline nécessite-t-il ?**
+
+R : Au minimum, deux : un retriever et un reranker. Les systèmes simples omettent le reranking, mais l'ajouter améliore généralement de manière significative la qualité des résultats. Les pipelines plus complexes ajoutent des étapes d'expansion de requête, de filtrage par métadonnées et de déduplication des sources.
+
+**Q : Quelle est la différence entre un retrieval pipeline et un pipeline RAG ?**
+
+R : Un retrieval pipeline gère la partie recherche — trouver les documents pertinents. Un pipeline RAG inclut à la fois le retrieval pipeline et la couche de génération (le modèle de langage qui produit la réponse finale à partir du contexte récupéré). Le retrieval pipeline est un composant au sein du système RAG plus large.
+
+**Q : Comment évaluer un retrieval pipeline ?**
+
+R : Les métriques courantes incluent le recall@k (combien de documents pertinents apparaissent dans les k premiers résultats), la precision@k, le mean reciprocal rank (MRR) et le normalised discounted cumulative gain (nDCG). L'évaluation de bout en bout d'un système RAG mesure également la justesse et la fidélité des réponses.
 
 ## References
 

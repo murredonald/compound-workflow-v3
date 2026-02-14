@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Vector indexing builds specialized data structures over [embedding vectors](/en/glossary/vector-embeddings/) so that nearest neighbors can be found quickly without comparing every vector in the [corpus](/en/glossary/corpus/).
+Vector indexing is the process of organising embedding vectors into specialised data structures that enable fast approximate nearest neighbour (ANN) search without comparing the query against every vector in the collection. Just as a book index lets you find a topic without reading every page, a vector index lets you find the most similar vectors without computing distances to every stored vector. The choice of index type, its configuration parameters, and the hardware it runs on together determine the speed, accuracy, and memory requirements of semantic search.
+
+## Why it matters
+
+- **Search speed** — without an index, searching 10 million vectors requires 10 million distance computations per query; with an index, the same search completes in milliseconds by examining only a fraction of the vectors
+- **Scalability** — vector indexes enable semantic search at scale; legal knowledge bases with millions of document chunks remain searchable in real time
+- **Cost efficiency** — efficient indexes reduce the hardware required for a given query throughput, lowering operational costs
+- **Recall-speed trade-off** — index configuration controls the balance between finding all relevant results (recall) and responding quickly (latency); this trade-off is a key architectural decision
+
+## How it works
+
+The most common vector index types are:
+
+**HNSW (Hierarchical Navigable Small World graphs)** builds a layered graph where each vector is a node connected to its nearest neighbours. Search starts at the top (sparse) layer and navigates down through progressively denser layers, greedily moving toward the query vector. HNSW offers excellent recall (95-99%) with sub-millisecond search times and is the most popular choice for production systems.
+
+**IVF (Inverted File Index)** partitions the vector space into clusters using k-means. Each vector is assigned to its nearest cluster centroid. At search time, only the nearest clusters are searched rather than the entire collection. The number of clusters probed (nprobe) controls the recall-speed trade-off.
+
+**Product Quantisation (PQ)** compresses vectors by dividing them into subvectors and quantising each to a small set of centroids. This dramatically reduces memory usage (e.g., 768-dimensional float vectors compressed to 48 bytes) at the cost of some accuracy. PQ is often combined with IVF for memory-efficient search on very large datasets.
+
+**Flat index** stores vectors without any index structure, performing exact (brute-force) nearest neighbour search. This guarantees perfect recall but scales linearly with dataset size. Useful only for small datasets (under 100,000 vectors) or as a baseline for measuring ANN index quality.
+
+Index construction happens at ingestion time — when a document is embedded and added to the knowledge base. Most vector databases (FAISS, Milvus, Qdrant, Pinecone) handle index construction and querying transparently. Key configuration parameters include the number of neighbours per node (HNSW), the number of clusters (IVF), and the quantisation resolution (PQ).
+
+## Common questions
+
+**Q: Which index type should I choose?**
+
+A: HNSW is the default choice for most applications — it provides high recall, fast search, and relatively simple configuration. IVF+PQ is preferred when memory is constrained (very large datasets that must fit in RAM). Flat indexes are appropriate for datasets under 100,000 vectors where exact search is feasible.
+
+**Q: Can a vector index be updated incrementally?**
+
+A: Most index types support adding new vectors without rebuilding the entire index. However, some (like IVF) may need periodic retraining of cluster centroids as the data distribution evolves. HNSW supports efficient incremental insertion natively.
 
 ## References
 

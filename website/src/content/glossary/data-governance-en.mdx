@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Data governance defines how data is collected, documented, protected, and used, aligning technical practices with legal and organisational requirements.
+Data governance is the framework of policies, processes, roles, and standards that ensures data within an organisation is managed responsibly, consistently, and in compliance with applicable regulations. It covers the entire data lifecycle — from collection and storage through processing and eventual deletion — and defines who is responsible for data quality, security, access, and compliance at each stage. For AI systems operating in regulated domains like tax law, data governance is not optional: it is a legal and professional requirement that underpins trust in the system's outputs.
+
+## Why it matters
+
+- **Regulatory compliance** — GDPR mandates documented data processing activities, lawful bases for processing, and data protection measures; the EU AI Act adds requirements around training data quality and documentation; data governance provides the framework for meeting both
+- **Data quality assurance** — without governance, knowledge bases accumulate errors, inconsistencies, and outdated content over time; governance processes enforce quality standards at ingestion and through ongoing audits
+- **Professional trust** — tax advisors need assurance that the AI system's knowledge base is authoritative, current, and complete; governance documentation provides this assurance
+- **Accountability** — governance assigns clear ownership: who is responsible for data accuracy, who approves new data sources, who handles data subject access requests, and who makes decisions about data retention
+
+## How it works
+
+Data governance operates through several interconnected components:
+
+**Data inventory and classification** — every data source used by the AI system is catalogued: what data it contains, where it comes from, how sensitive it is, and what legal basis applies. Legal sources (legislation, rulings, circulars) are classified differently from user data (queries, session logs) because different rules apply.
+
+**Quality management** — standards define acceptable data quality for each source type: accuracy, completeness, timeliness, and consistency. Automated quality checks run during ingestion, and regular audits verify that existing data still meets standards. For a legal knowledge base, this includes verifying that legislative texts match their official published versions and that amendments have been correctly incorporated.
+
+**Access and security policies** — data governance defines who can access what data and under what conditions, implemented through access control mechanisms. It also specifies security requirements: encryption standards, audit logging, and incident response procedures.
+
+**Retention and deletion** — policies specify how long each data type is retained and how it is disposed of. User interaction data may be retained for a limited period for system improvement, then anonymised or deleted. Legal source data has different retention requirements tied to the sources' ongoing validity.
+
+**Roles and responsibilities** — governance assigns specific roles: a data owner (accountable for a data domain's quality and compliance), a data steward (operationally responsible for day-to-day data management), and a data protection officer (overseeing GDPR compliance).
+
+## Common questions
+
+**Q: Is data governance only about compliance?**
+
+A: No. Compliance is one driver, but governance also improves system quality (clean, current, complete data produces better AI outputs), reduces operational risk (clear processes prevent ad hoc decisions that may cause problems), and builds user trust (documented governance demonstrates professionalism).
+
+**Q: How does data governance relate to AI governance?**
+
+A: Data governance is a subset of the broader AI governance framework. AI governance additionally covers model selection, prompt design, output monitoring, and ethical considerations. Data governance ensures the foundation — the data — is sound.

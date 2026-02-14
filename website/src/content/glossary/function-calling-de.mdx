@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Function Calling ist ein Muster, bei dem ein Sprachmodell eine strukturierte Ausgabe erzeugt, die angibt, welche externe Funktion oder welches Tool mit welchen Argumenten aufgerufen werden soll, um etwa APIs, Datenbanken oder andere Systeme einzubinden.
+Function Calling ist eine Fähigkeit moderner Sprachmodelle, bei der das Modell eine geeignete externe Funktion aus einem vordefinierten Satz auswählt, die erforderlichen Argumente in einem strukturierten Format (typischerweise JSON) generiert und das System die Funktion ausführt und das Ergebnis an das Modell zurückgibt. Dies ermöglicht es LLMs, über eine strukturierte Schnittstelle mit externen APIs, Datenbanken, Rechnern und anderen Tools zu interagieren, anstatt Freitext zu generieren. Im Bereich Legal AI ermöglicht Function Calling dem Modell, Gesetzesdatenbanken abzufragen, Steuerberechnungen durchzuführen, Einreichungsfristen nachzuschlagen und die Genauigkeit von Zitaten zu überprüfen — Aufgaben, die präzise strukturierte Interaktionen mit externen Systemen erfordern.
+
+## Warum es wichtig ist
+
+- **Präzise externe Interaktionen** — Function Calling bietet eine typisierte, validierte Schnittstelle zwischen dem Modell und externen Systemen und reduziert das Risiko fehlerhafter Anfragen, wie sie bei der Freitextgenerierung auftreten würden
+- **Zuverlässige Toolauswahl** — das Modell wählt aus einem definierten Satz von Funktionen mit dokumentierten Parametern, was die Toolnutzung vorhersagbar und überprüfbar macht
+- **Auslagerung von Berechnungen** — Aufgaben, die LLMs schlecht bewältigen (Arithmetik, Datenbankabfragen, Datumsberechnungen), werden an spezialisierte Tools delegiert, die exakte Ergebnisse liefern
+- **Agentische Workflows** — Function Calling ist der Mechanismus, der es KI-Agenten ermöglicht, in der realen Welt zu handeln: zu suchen, zu berechnen, zu schreiben und sich über mehrere Systeme hinweg zu koordinieren
+
+## So funktioniert es
+
+Function Calling arbeitet über ein definiertes Protokoll:
+
+**Funktionsdefinitionen** — der Entwickler stellt dem Modell Beschreibungen der verfügbaren Funktionen bereit, einschließlich Name, Zweck, Parameter (mit Typen und Beschreibungen) und Rückgabewerte. Für ein Legal-AI-System könnten Funktionen beispielsweise `search_legislation(query, jurisdiction, date)`, `calculate_tax(income, deductions, year)` und `verify_citation(article, law_code)` umfassen.
+
+**Modellentscheidung** — während der Antwortgenerierung stellt das Modell fest, dass es eine Funktion aufrufen muss, um die Frage des Nutzers zu beantworten. Es generiert einen strukturierten Funktionsaufruf mit Funktionsname und Argumentwerten. Beispiel: `{"function": "calculate_tax", "arguments": {"income": 75000, "deductions": 12500, "year": 2025}}`.
+
+**Ausführung** — die Anwendungsschicht validiert den Funktionsaufruf, führt ihn gegen das entsprechende Backend aus und gibt das Ergebnis an das Modell zurück. Das Modell führt Funktionen nie direkt aus — das System vermittelt und erzwingt Sicherheit, Zugangskontrollen und Eingabevalidierung.
+
+**Antwortintegration** — das Modell empfängt das Funktionsergebnis und integriert es in seine Antwort an den Nutzer, wobei es typischerweise das strukturierte Ergebnis mit erläuterndem Text kombiniert.
+
+Mehrere Funktionsaufrufe können in einer einzelnen Antwort erfolgen (paralleles Aufrufen), oder Aufrufe können verkettet werden (das Ergebnis eines Aufrufs bestimmt die Argumente des nächsten). Moderne LLM-APIs von Anthropic, OpenAI und anderen bieten integrierte Unterstützung für Function Calling mit automatischer strukturierter Ausgabegenerierung.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Function Calling von Tool Use?**
+
+A: Function Calling ist der spezifische Mechanismus — das Modell gibt strukturiertes JSON aus, das einer Funktionssignatur entspricht. Tool Use ist das umfassendere Konzept — jedes Muster, bei dem das Modell mit externen Fähigkeiten interagiert. Function Calling ist die häufigste Implementierung von Tool Use in Produktionssystemen.
+
+**F: Können Modelle die falsche Funktion aufrufen?**
+
+A: Ja. Modelle können eine unpassende Funktion auswählen oder falsche Argumente generieren, insbesondere bei mehrdeutigen Anfragen. Klare Funktionsbeschreibungen, Parametervalidierung und Bestätigungsschritte für kritische Aktionen mindern dieses Risiko.
 
 ## References
 

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Negative retrieval focuses on finding documents that contradict, challenge, or fail to support a claim, helping [RAG](/en/glossary/rag/) systems surface conflicts and reduce overconfident answers.
+Negative retrieval is a retrieval strategy that deliberately searches for documents that contradict, qualify, or fail to support a given claim or preliminary answer. While standard retrieval seeks confirming evidence, negative retrieval seeks disconfirming evidence — sources that present an opposing view, a conflicting rule, an exception, or a more recent amendment that overrides an earlier provision. In legal AI, negative retrieval is essential because tax law is full of exceptions, special regimes, anti-abuse provisions, and conflicting interpretations that standard retrieval might miss.
+
+## Why it matters
+
+- **Exception detection** — a general rule may have exceptions that change the answer entirely; negative retrieval surfaces these exceptions before the system presents an incomplete answer
+- **Conflict identification** — Belgian tax law sometimes contains conflicting provisions between federal and regional levels, or between older and newer texts; negative retrieval exposes these conflicts instead of hiding them
+- **Overconfidence reduction** — when the system finds strong confirming evidence but also discovers contradicting sources, it can lower its confidence score and flag the uncertainty to the user
+- **Professional completeness** — a thorough tax analysis considers both supporting and opposing arguments; negative retrieval helps the AI system mirror this professional standard
+
+## How it works
+
+Negative retrieval extends the standard retrieval pipeline with additional query strategies:
+
+**Negation queries** reformulate the original query to search for opposing content. If the original query is about deductibility of a specific expense, the negation query might search for "non-deductible", "exclusion", "exception", or specific anti-abuse provisions related to that expense category.
+
+**Contradiction detection** uses natural language inference (NLI) models to identify passages in the corpus that contradict the initial set of retrieved documents. After standard retrieval returns supporting evidence, a second pass searches for passages whose semantic relationship to the initial results is classified as "contradiction" rather than "entailment".
+
+**Temporal negative retrieval** specifically searches for amendments, repeals, or modifications that post-date the initially retrieved provisions. This catches cases where a law has been changed since it was indexed, or where a newer ruling supersedes an older one.
+
+**Exception mining** targets structural patterns in legislation — articles beginning with "notwithstanding", "except where", or "by derogation from" — that signal exceptions to general rules. These patterns are particularly common in Belgian tax law, where general principles often have multiple exceptions per region or taxpayer category.
+
+The results of negative retrieval are not presented as the "answer" but as caveats, counterarguments, or additional context. The system might present its answer based on the primary retrieval and then note: "However, the following exceptions or conflicting provisions were found..."
+
+## Common questions
+
+**Q: Does negative retrieval always find contradictions?**
+
+A: No. When the law is clear and unambiguous, negative retrieval simply confirms that no contradictions exist, which actually increases confidence in the answer. The value is in the cases where contradictions do exist and would otherwise be missed.
+
+**Q: How is negative retrieval different from comprehensive retrieval?**
+
+A: Comprehensive retrieval tries to find all relevant documents. Negative retrieval specifically targets documents that oppose or qualify the initial findings. The intent is different — comprehensive retrieval aims for coverage; negative retrieval aims for balance and completeness of the legal analysis.
 
 ## References
 

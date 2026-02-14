@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Taxonomie en information architecture definiëren hoe content wordt gegroepeerd, benoemd en genavigeerd – bijvoorbeeld in categorieën en menu’s – zodat zoeken en browsen logisch en voorspelbaar blijven.
+Een Taxonomie in informatiearchitectuur is een hiërarchisch Classificatieschema dat Inhoud ordent in Categorieën en Subcategorieën, en zo een gestructureerd Raamwerk biedt voor Navigatie, Ontdekking en Filtering. In tegenstelling tot vlakke Tags of vrije Tekstlabels legt een Taxonomie een gecontroleerd, consistent Vocabulaire op met expliciete ouder-kindrelaties. In een juridisch AI-systeem definieert de Taxonomie hoe juridische Inhoud wordt gecategoriseerd — naar Belastingtype (Inkomstenbelasting, BTW, Registratierechten), naar Jurisdictie (federaal, Vlaams, Waals), naar Documenttype (Wetgeving, Rechtspraak, administratieve Richtlijnen) en naar Themagebied (aftrekbare Kosten, internationale Fiscaliteit, procedurele Verplichtingen).
+
+## Waarom het ertoe doet
+
+- **Consistente categorisering** — een Taxonomie zorgt ervoor dat hetzelfde Onderwerp altijd op dezelfde manier wordt gelabeld, waardoor inconsistenties worden voorkomen zoals "vennootschapsbelasting", "impôt des sociétés" en "Körperschaftsteuer" die als afzonderlijke Categorieën worden behandeld
+- **Navigatiestructuur** — Taxonomieën vormen de ruggengraat van browse-gebaseerde Navigatie: Gebruikers kunnen inzoomen van "Belastingtypes" naar "Inkomstenbelasting" naar "Vennootschapsbelasting" naar "Aftrekbare kosten" om relevante Inhoud te vinden
+- **Gefacetteerde filtering** — Taxonomieën maken gestructureerde Filters in Zoekresultaten mogelijk: filteren op Belastingtype, Jurisdictie, Documenttype of Tijdsperiode om Resultaten te verfijnen zonder de Zoekopdracht te wijzigen
+- **Identificatie van kennislacunes** — een goed onderhouden Taxonomie onthult waar Inhoud schaars is (Categorieën met weinig Documenten) of waar nieuwe Categorieën nodig zijn (opkomende Onderwerpen die nog niet zijn geclassificeerd)
+
+## Hoe het werkt
+
+Een Taxonomie bestaat uit drie Elementen:
+
+**Termen** — het gecontroleerde Vocabulaire van Categorienamen. Elke Term heeft een voorkeurslabel (de canonieke Naam), alternatieve Labels (Synoniemen in verschillende Talen of gangbare Varianten) en een Definitie. Termen zijn taalbewust: hetzelfde Concept heeft Nederlandse, Franse en Duitse Labels.
+
+**Hiërarchie** — de ouder-kindrelaties tussen Termen. "Inkomstenbelasting" is een kind van "Belastingtypes". "Vennootschapsbelasting" is een kind van "Inkomstenbelasting". De Hiërarchie kan meerdere diepteniveaus hebben, hoewel praktische Taxonomieën zelden meer dan 4-5 niveaus bevatten.
+
+**Relaties** — naast Hiërarchie kunnen Taxonomieën ook associatieve Relaties ("gerelateerd aan"), equivalentierelaties ("gelijk aan") en Scope-notities (die uitleggen wat een Term omvat en uitsluit) bevatten. Deze helpen Gebruikers te navigeren tussen gerelateerde maar niet-hiërarchische Onderwerpen.
+
+Taxonomieën worden onderhouden door Domeinexperts die nieuwe Termen toevoegen naarmate het juridische Landschap evolueert (bijvoorbeeld een Categorie toevoegen voor nieuwe Belastingtypes die door Wetgeving worden ingevoerd), Categorieën samenvoegen of opsplitsen waar nodig, en meertalige Consistentie waarborgen.
+
+In een juridisch AI-systeem dient de Taxonomie een dubbel Doel: zij organiseert de gebruikersgerichte Navigatie en levert Metadatacategorieën voor Documenttagging tijdens de Inname. Automatische Classificatie wijst Taxonomiecategorieën toe aan nieuwe Documenten met behulp van Tekstclassificatoren die zijn getraind op de Structuur van de Taxonomie.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt een Taxonomie van een Ontologie?**
+
+A: Een Taxonomie is een hiërarchische Classificatie — zij ordent Concepten in ouder-kindrelaties. Een [Ontologie](/nl/glossary/ontology/) is rijker — zij definieert typen Entiteiten, hun Eigenschappen en de Relaties daartussen, wat logisch redeneren mogelijk maakt. Een Taxonomie zegt "vennootschapsbelasting is een type inkomstenbelasting". Een Ontologie definieert daarbovenop dat Vennootschapsbelasting een Tarief heeft, van toepassing is op specifieke Entiteiten en interactie heeft met specifieke Aftrekposten.
+
+**V: Hoeveel Categorieën moet een Taxonomie hebben?**
+
+A: Genoeg om nuttig te zijn voor Navigatie en Filtering, maar niet zoveel dat de Categorieën gefragmenteerd of overlappend worden. Voor een Belgisch fiscaal AI-systeem biedt 50-200 bladcategorieën (gegroepeerd onder 10-20 Categorieën op het hoogste niveau) doorgaans voldoende Granulariteit zonder Gebruikers te overweldigen.

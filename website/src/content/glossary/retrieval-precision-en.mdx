@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Retrieval precision measures what proportion of the documents returned by a search or [RAG](/en/glossary/rag/) system are truly relevant to the query, often computed at a cut-off like Precision@k.
+Retrieval precision is the fraction of documents returned by a search system that are actually relevant to the user's query. If a system returns 10 documents and 7 are relevant, precision is 70%. It is typically measured at a specific cut-off point — Precision@5 (of the top 5 results, how many are relevant) or Precision@10 — because users rarely look beyond the first page of results. In legal AI, precision matters because every irrelevant result wastes a professional's time and, in RAG systems, dilutes the context provided to the language model.
+
+## Why it matters
+
+- **User efficiency** — tax advisors have limited time; high precision means they spend less time sifting through irrelevant results and more time on the relevant provisions
+- **RAG context quality** — in retrieval-augmented generation, retrieved documents become the language model's context window; low precision means the model receives noisy, irrelevant passages that can degrade answer quality or trigger hallucination
+- **Trust** — a system that consistently returns irrelevant results erodes user confidence, even if the relevant result is somewhere in the list; precision directly affects perceived system quality
+- **Complementary to recall** — precision and recall measure different aspects of retrieval quality; a system needs both to be effective
+
+## How it works
+
+Precision is computed by dividing the number of relevant documents retrieved by the total number of documents retrieved:
+
+**Precision@k = (relevant documents in top k) / k**
+
+Evaluation requires a labelled test set where human annotators have identified which documents are relevant for each query. The system's ranked output is then compared against these relevance judgements.
+
+**Precision-recall trade-off**: precision and recall are inversely related. Returning more documents (higher recall — fewer relevant documents are missed) typically reduces precision (more irrelevant documents are included). The retrieval pipeline's architecture — particularly the reranking stage — aims to maximise both by placing the most relevant documents at the top.
+
+**Mean Average Precision (MAP)** extends precision by considering the ranking of relevant documents, not just their count. It rewards systems that place relevant documents higher in the ranked list. This is particularly important for legal search, where the first few results receive the most attention.
+
+**Precision in RAG specifically**: in a RAG system, the top-k retrieved passages are concatenated into the language model's context. Low precision means irrelevant passages occupy context window slots that could have been used for relevant sources, potentially causing the model to ignore important information or be distracted by noise.
+
+Improving precision typically involves better query understanding (interpreting the user's intent correctly), more effective reranking (scoring candidates with a deeper semantic model), and metadata filtering (excluding documents that are topically related but contextually wrong — e.g., legislation from the wrong jurisdiction or time period).
+
+## Common questions
+
+**Q: What is a good precision score for legal search?**
+
+A: Precision@5 above 80% is generally considered strong for legal retrieval. This means 4 out of the top 5 results are relevant. In practice, the acceptable threshold depends on the use case — exploratory research tolerates lower precision, while specific question answering demands higher precision.
+
+**Q: How is precision different from accuracy?**
+
+A: Accuracy measures overall correctness across all predictions (including documents correctly not retrieved). Precision specifically measures the quality of what was returned. A system that returns nothing has undefined precision but could have high accuracy if most documents are indeed irrelevant.
 
 ## References
 

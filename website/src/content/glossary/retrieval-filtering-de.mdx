@@ -12,7 +12,45 @@ draft: false
 
 ## Definition
 
-Retrieval-Filterung begrenzt die Kandidatenmenge anhand von Attributen wie Dokumenttyp, Datum, Jurisdiktion oder Berechtigungen, sodass bei der Suche nur zulässige oder relevante Inhalte berücksichtigt werden.
+Retrieval-Filterung ist die Anwendung strukturierter Einschränkungen auf den Retrievalprozess, die Dokumente ausschließen, die bestimmte Kriterien nicht erfüllen — wie Jurisdiktion, Zeitraum, Dokumenttyp, Autoritätsebene, Sprache oder Zugriffsberechtigungen. Die Filterung stellt sicher, dass das Retrievalsystem nur kontextuell angemessene Ergebnisse liefert und ergänzt die semantische und lexikalische Relevanz durch harte Einschränkungen. Im belgischen Steuerrecht ist Retrieval-Filterung unerlässlich, da semantisch ähnliche Bestimmungen aus verschiedenen Jurisdiktionen oder Zeiträumen völlig unterschiedliche Rechtswirkungen haben können.
+
+## Warum es wichtig ist
+
+- **Jurisdiktionelle Genauigkeit** — ohne Filterung könnte eine Anfrage zur flämischen Registrierungssteuer wallonische Gesetzgebung zurückliefern, die semantisch ähnlich, aber rechtlich irrelevant ist; die Filterung nach Jurisdiktion verhindert dies
+- **Zeitliche Korrektheit** — die Filterung nach Datum stellt sicher, dass das System die Version einer Bestimmung liefert, die zum relevanten Zeitpunkt in Kraft war, und nicht eine aufgehobene oder noch nicht wirksame Fassung
+- **Angemessenheit der Autoritätsebene** — die Filterung nach Dokumenttyp ermöglicht die Priorisierung verbindlicher Quellen (Gesetzgebung, Gerichtsentscheidungen) gegenüber interpretierender Orientierung (Rundschreiben, parlamentarische Anfragen), wenn dies angemessen ist
+- **Durchsetzung der Zugriffskontrolle** — die Filterung nach Berechtigungen stellt sicher, dass Nutzer nur Dokumente sehen, auf die sie Zugriff haben, und setzt Vertraulichkeits- und Mandantenfähigkeitsanforderungen durch
+
+## Wie es funktioniert
+
+Retrieval-Filterung kann in verschiedenen Phasen der Retrieval-Pipeline angewendet werden:
+
+**Vorfilterung** grenzt den Suchraum ein, bevor die Ähnlichkeitssuche ausgeführt wird. Die Vektordatenbank erhält sowohl die Anfrage als auch die Filtereinschränkungen, und nur Vektoren, die den Einschränkungen entsprechen, werden berücksichtigt. Dies ist effizient (weniger Vektoren zum Vergleichen), kann aber zu restriktiv sein, wenn die Filter zu eng gefasst sind.
+
+**Nachfilterung** führt zuerst die vollständige Ähnlichkeitssuche durch und entfernt dann Ergebnisse, die den Einschränkungen nicht entsprechen. Dies stellt sicher, dass keine semantisch relevanten Kandidaten durch enge Vorfilter verpasst werden, verschwendet aber Rechenleistung für Ergebnisse, die verworfen werden.
+
+**Hybride Filterung** kombiniert beides: breite Vorfilter (z. B. Sprache), um den Suchraum deutlich zu reduzieren, gefolgt von spezifischeren Nachfiltern (z. B. exakter Zeitraum) auf die zurückgegebenen Ergebnisse.
+
+Häufige Filtertypen in der juristischen KI umfassen:
+
+- **Jurisdiktionsfilter** — Bundesebene, Flämische Region, Wallonische Region, Region Brüssel-Hauptstadt, Deutschsprachige Gemeinschaft
+- **Datumsfilter** — Dokumente, die an einem bestimmten Datum in Kraft sind, innerhalb eines Zeitraums veröffentlicht wurden oder nach einem bestimmten Datum geändert wurden
+- **Dokumenttypfilter** — Gesetzgebung, königliche Erlasse, ministerielle Erlasse, Rundschreiben, Entscheidungen, Rechtsprechung, parlamentarische Anfragen
+- **Sprachfilter** — Niederländisch, Französisch, Deutsch oder spezifische Sprachversion
+- **Autoritätsebenenfilter** — Verfassung, Primärgesetzgebung, Sekundärgesetzgebung, behördliche Leitlinien
+- **Zugriffsfilter** — Durchsetzung von Nutzerberechtigungen und Mandantenisolierung
+
+Filter können vom Nutzer explizit angegeben werden („nur flämische Gesetzgebung anzeigen") oder vom System implizit basierend auf der Anfrageanalyse angewendet werden („diese Anfrage erwähnt ‚Vlaamse erfbelasting', flämischen Regionsfilter anwenden").
+
+## Häufige Fragen
+
+**F: Kann zu viel Filterung die Ergebnisse verschlechtern?**
+
+A: Ja. Überfilterung kann relevante Ergebnisse ausschließen — beispielsweise würde eine strikte Filterung auf die Jurisdiktion „Flandern" Bundesgesetzgebung ausschließen, die einheitlich in allen Regionen gilt. Intelligente Filterlockerung (Erweiterung der Filter, wenn zu wenige Ergebnisse zurückgegeben werden) mindert dieses Risiko.
+
+**F: Wie interagiert die Filterung mit der semantischen Suche?**
+
+A: Sie sind komplementär. Die semantische Suche bestimmt, was thematisch relevant ist; die Filterung bestimmt, was kontextuell angemessen ist. Beides muss erfüllt sein, damit ein Ergebnis nützlich ist.
 
 ## References
 

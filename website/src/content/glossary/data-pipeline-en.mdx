@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-A data pipeline orchestrates extraction, transformation, and loading of data from raw sources into cleaned, structured stores for indexing or modelling.
+A data pipeline is the automated sequence of steps that moves data from its original sources through processing, transformation, and enrichment stages into a form suitable for indexing, analysis, or model training. In legal AI, the data pipeline ingests raw legal documents from publishers, official gazettes, court databases, and regulatory sources, then cleans, structures, chunks, embeds, and indexes them into the knowledge base. The pipeline's reliability and correctness directly determine the quality and completeness of the AI system's knowledge.
+
+## Why it matters
+
+- **Knowledge base freshness** — a well-designed pipeline automatically ingests new legislation, rulings, and circulars as they are published, ensuring the system stays current without manual intervention
+- **Data quality** — each pipeline stage includes validation and quality checks that catch errors (OCR failures, missing metadata, corrupt files) before they enter the index and affect retrieval quality
+- **Reproducibility** — an automated pipeline produces consistent results regardless of who runs it or when; manual processes are error-prone and unrepeatable
+- **Scalability** — as the volume of legal sources grows, the pipeline handles increasing throughput without requiring proportional increases in manual effort
+
+## How it works
+
+A legal AI data pipeline typically consists of these stages:
+
+**Extraction** — raw documents are collected from their sources. This may involve scraping official gazette websites, receiving data feeds from legal publishers, downloading from court databases, or processing email-delivered circulars. Each source has its own format and delivery mechanism.
+
+**Parsing** — extracted documents are converted from their native formats (PDF, HTML, DOCX, XML) into clean text. This stage handles layout extraction, table detection, OCR for scanned documents, and boilerplate removal. Parsing quality is often the biggest bottleneck in the pipeline.
+
+**Transformation** — the cleaned text is enriched with metadata (publication date, document type, jurisdiction, article numbers), deduplicated against existing content, and normalised to a consistent format. Cross-references between documents are identified and linked.
+
+**Chunking** — documents are split into retrieval-appropriate segments (paragraphs, articles, sections) with overlap to preserve context at boundaries. Chunk boundaries are chosen to maximise semantic coherence.
+
+**Embedding** — each chunk is processed through an embedding model to produce a vector representation for semantic search. Embeddings are computed in batches and stored in the vector index alongside the chunk text and metadata.
+
+**Loading** — processed chunks, embeddings, and metadata are loaded into the production index (vector database, lexical index, and metadata store). This stage often involves atomic swaps or incremental updates to avoid serving partial data.
+
+**Monitoring** — the pipeline tracks metrics at each stage: documents processed, errors encountered, processing time, and output quality. Alerts notify the team of failures or anomalies.
+
+## Common questions
+
+**Q: How often should the data pipeline run?**
+
+A: It depends on source publication frequency. The Belgian Official Gazette publishes daily, so daily pipeline runs ensure new legislation is available within 24 hours. Court decisions and administrative circulars may arrive less frequently. Most legal AI systems run their pipeline daily with on-demand runs for urgent updates.
+
+**Q: What happens when the pipeline fails partway through?**
+
+A: A well-designed pipeline is idempotent (rerunning it produces the same result) and supports partial recovery (resuming from the failed stage rather than restarting from scratch). Failed documents are logged, quarantined, and retried or escalated for manual review.

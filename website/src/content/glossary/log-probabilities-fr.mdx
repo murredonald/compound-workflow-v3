@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-Les log probabilities sont les logarithmes naturels des probabilités qu'un modèle de langage attribue aux différents tokens possibles suivants, souvent exposés via les API pour le débogage, la [calibration](/fr/glossary/calibration/) et des stratégies de décodage personnalisées.
+Les log probabilities (logprobs) sont les logarithmes naturels des valeurs de probabilité qu'un modèle de langage attribue à chaque token suivant possible à chaque étape de génération. Lorsqu'un modèle produit du texte, il calcule en interne une distribution de probabilité sur l'ensemble de son vocabulaire — les logprobs sont la version transformée en logarithme de ces probabilités. Elles offrent une fenêtre sur la confiance du modèle au niveau du token : des logprobs élevées (proches de 0) indiquent que le modèle est confiant pour ce token ; des logprobs basses (grands nombres négatifs) indiquent une incertitude. Dans l'IA juridique, les logprobs peuvent servir à détecter quand le modèle devine plutôt qu'il ne génère avec confiance à partir de son contexte.
+
+## Pourquoi c'est important
+
+- **Signaux de confiance** — les logprobs révèlent si le modèle était confiant en générant les parties critiques d'une réponse (numéros d'articles, taux d'imposition, dates) ou s'il devinait essentiellement entre plusieurs alternatives
+- **Détection des hallucinations** — les tokens générés avec des probabilités inhabituellement basses peuvent indiquer que le modèle fabrique du contenu plutôt que de s'appuyer sur son contexte ; le suivi des logprobs peut signaler de potentielles hallucinations
+- **Analyse de [calibration](/fr/glossary/calibration/)** — les logprobs sont la matière première pour la calibration : en comparant les probabilités prédites avec l'exactitude réelle, les développeurs peuvent évaluer si la confiance du modèle est bien calibrée
+- **Décodage personnalisé** — les logprobs permettent des stratégies de génération avancées : la recherche en faisceau (beam search), l'échantillonnage par noyau (nucleus sampling) et le décodage contraint opèrent tous sur la distribution des logprobs pour contrôler la qualité de la sortie
+
+## Comment ça fonctionne
+
+À chaque étape de génération, le modèle de langage produit un vecteur de scores (logits) sur son vocabulaire. Ces logits sont convertis en probabilités via la fonction softmax, et les logprobs sont le logarithme de ces probabilités.
+
+**Interprétation des logprobs** : une logprob de -0,01 signifie que le modèle attribue environ 99 % de probabilité à ce token. Une logprob de -2,3 signifie environ 10 % de probabilité. Une logprob de -6,9 signifie environ 0,1 %. En pratique, la plupart des tokens dans un texte fluide ont des logprobs entre -0,001 et -1,0.
+
+**Analyse au niveau du token** — en examinant les logprobs de chaque token dans une réponse générée, les développeurs peuvent identifier exactement où la confiance du modèle chute. Si le modèle génère « article » avec une confiance élevée mais « 215 » avec une confiance basse, il est peut-être incertain quant au numéro d'article spécifique — une distinction critique dans un texte juridique.
+
+**Scoring au niveau de la séquence** — la logprob totale d'une séquence (somme de toutes les logprobs des tokens) indique la confiance globale du modèle dans la sortie complète. Cela peut servir à comparer différentes réponses générées et sélectionner la plus confiante, ou à définir des seuils en dessous desquels les réponses sont signalées pour révision.
+
+**Accès via API** — la plupart des API de LLM (OpenAI, Anthropic, etc.) proposent les logprobs en paramètre optionnel. Lorsque cette option est activée, l'API retourne les logprobs aux côtés du texte généré, typiquement pour les top-k tokens les plus probables à chaque position.
+
+Les logprobs sont exprimées dans l'espace logarithmique (nombres négatifs) parce que les probabilités peuvent être extrêmement petites, et multiplier de nombreuses petites probabilités provoque un soupassement numérique. Travailler dans l'espace logarithmique convertit la multiplication en addition, maintenant la stabilité numérique.
+
+## Questions fréquentes
+
+**Q : Les logprobs peuvent-elles détecter les hallucinations de manière fiable ?**
+
+R : Elles fournissent des signaux utiles mais ne constituent pas une solution complète. Les modèles peuvent halluciner avec une confiance élevée (logprobs élevées pour du contenu fabriqué) parce que le texte halluciné est linguistiquement fluide. Les logprobs sont surtout utiles pour détecter l'incertitude de surface (mauvais chiffres, termes inconnus) plutôt que les erreurs factuelles profondes.
+
+**Q : Pourquoi utiliser des logarithmes plutôt que des probabilités brutes ?**
+
+R : Les probabilités brutes pour des tokens individuels peuvent être extrêmement petites (par exemple 0,000001), ce qui les rend difficiles à manipuler informatiquement. Les log probabilities les convertissent en nombres négatifs gérables et permettent de calculer les probabilités de séquence par addition plutôt que par multiplication.
 
 ## References
 

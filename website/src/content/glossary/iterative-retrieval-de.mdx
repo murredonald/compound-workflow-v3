@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Iteratives Retrieval aktualisiert die [Anfrage](/de/glossary/prompt/) oder die Auswahl von Dokumenten über mehrere Runden, häufig gesteuert durch ein [LLM](/de/glossary/llm/), das auf Basis bereits gesehener Ergebnisse entscheidet, was als Nächstes abgerufen werden soll.
+Iteratives Retrieval ist eine Retrievalstrategie, die mehrere aufeinanderfolgende Suchdurchgänge ausführt und die Ergebnisse jedes Durchgangs nutzt, um die Anfrage zu verfeinern, die Suche zu erweitern oder Lücken vor der nächsten Runde zu schließen. Im Gegensatz zu Single-Pass-Retrieval, das eine einzelne Anfrage stellt und die jeweiligen Ergebnisse zurückliefert, behandelt iteratives Retrieval die ersten Ergebnisse als Ausgangspunkt und verbessert den abgerufenen Kontext schrittweise durch wiederholte Zyklen aus Suche, Bewertung und Verfeinerung. In juristischen KI-Systemen ist iteratives Retrieval unverzichtbar, weil komplexe Fragen oft Informationen erfordern, die mit einer einzigen Anfrage nicht auffindbar sind — Querverweise müssen verfolgt, verwandte Bestimmungen zusammengetragen und Ausnahmen oder Änderungen identifiziert werden.
+
+## Warum es wichtig ist
+
+- **Abdeckung komplexer Fragen** — eine Frage zur Wechselwirkung zwischen belgischen föderalen Körperschaftsteuerregeln und flämischen regionalen Anreizen erfordert Retrieval aus mehreren Rechtsgebieten; iteratives Retrieval folgt den Verbindungen zwischen ihnen, statt darauf zu hoffen, dass eine einzige Anfrage alles erfasst
+- **Lückenfüllung** — nach einem ersten Retrievaldurchgang kann das System erkennen, welche Aspekte der Frage noch unbeantwortet sind, und gezielte Folgeanfragen für fehlende Informationen stellen, um einen umfassenden Kontext sicherzustellen
+- **Querverweisauflösung** — belgische Gesetzgebung verweist häufig auf andere Bestimmungen („wie definiert in Artikel 2, §1, 5° WIB92"); iteratives Retrieval folgt diesen Verweisen, um den vollständigen rechtlichen Kontext zusammenzustellen, der für korrekte Antworten benötigt wird
+- **Qualitätsverbesserung** — jede Iteration kann strengere Relevanzkriterien anwenden und frühere Ergebnisse nutzen, um besser zu verstehen, was wirklich relevant ist; spätere Durchgänge rufen präziser ab als die anfängliche breite Suche
+
+## So funktioniert es
+
+Iteratives Retrieval arbeitet über eine Schleife aus Abrufen, Bewerten und Verfeinern:
+
+**Erster Abruf** — das System stellt eine erste Anfrage auf Basis der Benutzerfrage und ruft einen initialen Satz von Kandidatendokumenten ab. Dieser Durchgang verwendet breites Matching, um den Recall zu maximieren, und akzeptiert dabei, dass einige Ergebnisse nur am Rande relevant sein können.
+
+**Ergebnisbewertung** — das System (oft ein [LLM](/de/glossary/llm/)) untersucht die initialen Ergebnisse und bestimmt, ob der abgerufene Kontext ausreicht, um die Frage zu beantworten. Es identifiziert Lücken: fehlende Zuständigkeitsbereiche, nicht referenzierte Artikel, nicht abgedeckte Zeiträume oder nicht adressierte Aspekte der Frage.
+
+**Anfrageverfeinerung** — auf Basis der Lückenanalyse generiert das System neue Anfragen, die auf die fehlenden Informationen abzielen. Diese verfeinerten Anfragen sind spezifischer als die ursprüngliche — wenn die initialen Ergebnisse beispielsweise den allgemeinen Körperschaftsteuersatz abdeckten, aber nicht den ermäßigten KMU-Satz, zielt die verfeinerte Anfrage gezielt auf „KMO-tarief vennootschapsbelasting" oder dessen Entsprechung ab.
+
+**Folgedurchgänge** — die verfeinerten Anfragen werden ausgeführt und ihre Ergebnisse mit dem bestehenden Kontext zusammengeführt. Der Bewertungsschritt wiederholt sich: Gibt es noch Lücken? Falls ja, läuft ein weiterer Verfeinerungszyklus. Ein maximales Iterationslimit (typischerweise 2–4 Runden) verhindert Endlosschleifen.
+
+**Terminierung** — die Schleife endet, wenn entweder der Kontext als ausreichend bewertet wird, die maximale Iterationsanzahl erreicht ist oder weitere Durchgänge keine neuen relevanten Informationen liefern. Der aus allen Durchgängen zusammengestellte Kontext wird dann an die Generierungsschicht weitergegeben.
+
+Fortgeschrittene Implementierungen verwenden ein LLM als Schleifensteuerung (agentenbasiertes Retrieval), das dynamisch entscheidet, wonach als Nächstes gesucht werden soll, basierend auf dem bisher Gelernten. Einfachere Implementierungen nutzen regelbasierte Verfeinerung — etwa das konsequente Verfolgen gesetzlicher Querverweise oder die automatische Suche nach Änderungen, wenn das ursprüngliche Ergebnis ein Gesetzestext ist.
+
+## Häufige Fragen
+
+**F: Wie viele Iterationen werden typischerweise benötigt?**
+
+A: Die meisten Fragen werden mit 1–3 Iterationen ausreichend bedient. Einfache Sachfragen brauchen oft nur einen Durchgang. Komplexe analytische Fragen, die mehrere Rechtsgebiete oder Querverweise umfassen, profitieren typischerweise von 2–3 Durchgängen. Über 3–4 Iterationen hinaus setzt ein abnehmender Ertrag ein, und die Latenz wird zum Problem.
+
+**F: Erhöht iteratives Retrieval die Latenz?**
+
+A: Ja — jede Iteration fügt einen Retrieval-Roundtrip hinzu. Die Latenzkosten werden durch Parallelisierung innerhalb jeder Runde, frühzeitige Terminierung bei ausreichendem Kontext und Caching bereits abgerufener Ergebnisse gemanagt. Der Kompromiss lohnt sich, wenn die Alternative eine unvollständige oder fehlerhafte Antwort wäre.
 
 ## References
 

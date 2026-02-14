@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Iterative retrieval updates the [query](/en/glossary/prompt/) or selection of documents over multiple rounds, often using an [LLM](/en/glossary/llm/) to decide what to retrieve next based on what has already been seen.
+Iterative retrieval is a retrieval strategy that executes multiple successive search passes, using the results from each pass to refine the query, expand the search, or fill gaps before the next round. Unlike single-pass retrieval, which issues one query and returns whatever it finds, iterative retrieval treats the initial results as a starting point and progressively improves the retrieved context through repeated cycles of search, evaluation, and refinement. In legal AI systems, iterative retrieval is essential because complex questions often require information that cannot be located with a single query — cross-references must be followed, related provisions must be gathered, and exceptions or amendments must be identified.
+
+## Why it matters
+
+- **Complex question coverage** — a question about the interaction between Belgian federal corporate tax rules and Flemish regional incentives requires retrieving from multiple legal domains; iterative retrieval follows the connections between them rather than hoping a single query captures everything
+- **Gap filling** — after an initial retrieval pass, the system can identify which aspects of the question remain unanswered and issue targeted follow-up queries for missing information, ensuring comprehensive context
+- **Cross-reference resolution** — Belgian legislation frequently references other provisions ("as defined in Article 2, §1, 5° WIB92"); iterative retrieval follows these references to assemble the full legal context needed for accurate answers
+- **Quality improvement** — each iteration can apply stricter relevance criteria, using earlier results to better understand what is truly relevant; later passes retrieve more precisely than the initial broad search
+
+## How it works
+
+Iterative retrieval operates through a retrieve-evaluate-refine loop:
+
+**Initial retrieval** — the system issues a first query based on the user's question and retrieves an initial set of candidate documents. This pass uses broad matching to maximise recall, accepting that some results may be only tangentially relevant.
+
+**Result evaluation** — the system (often an LLM) examines the initial results and determines whether the retrieved context is sufficient to answer the question. It identifies gaps: missing jurisdictions, unreferenced articles, time periods not covered, or aspects of the question not addressed.
+
+**Query refinement** — based on the gap analysis, the system generates new queries targeting the missing information. These refined queries are more specific than the original — for example, if the initial results covered the general corporate tax rate but not the SME reduced rate, the refined query specifically targets "KMO-tarief vennootschapsbelasting" or its equivalent.
+
+**Subsequent passes** — the refined queries are executed, and their results are merged with the existing context. The evaluation step repeats: are there still gaps? If so, another refinement cycle runs. A maximum iteration limit (typically 2-4 rounds) prevents infinite loops.
+
+**Termination** — the loop terminates when either the context is judged sufficient, the maximum iteration count is reached, or additional passes return no new relevant information. The assembled context from all passes is then passed to the generation layer.
+
+Advanced implementations use an LLM as the loop controller (agentic retrieval), allowing it to dynamically decide what to search for next based on what it has learned so far. Simpler implementations use rule-based refinement — for example, always following statutory cross-references or always searching for amendments when the initial result is legislation.
+
+## Common questions
+
+**Q: How many iterations are typically needed?**
+
+A: Most questions are adequately served by 1-3 iterations. Simple factual questions often need only one pass. Complex analytical questions involving multiple legal domains or cross-references typically benefit from 2-3 passes. Beyond 3-4 iterations, diminishing returns set in and latency becomes a concern.
+
+**Q: Does iterative retrieval increase latency?**
+
+A: Yes — each iteration adds a retrieval round-trip. The latency cost is managed through parallelisation within each round, early termination when context is sufficient, and caching of previously retrieved results. The trade-off is worthwhile when the alternative is an incomplete or incorrect answer.
 
 ## References
 

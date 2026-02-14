@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-[Human-in-the-loop](/en/glossary/human-oversight/) validation incorporates expert or user feedback into evaluation, ensuring that AI outputs are checked and corrected before being trusted in high-stakes settings.
+Human-in-the-loop validation (HITL) is the practice of incorporating human expert review into the AI system's workflow — either as a mandatory approval step before outputs are finalised or as a sampling-based quality assurance process. Rather than trusting AI outputs blindly, HITL ensures that a qualified professional reviews, corrects, or approves the system's outputs, particularly in high-stakes scenarios where errors have significant consequences. In legal AI, HITL reflects the professional reality that tax advice ultimately requires human judgement and accountability.
+
+## Why it matters
+
+- **Error catching** — AI systems hallucinate, misinterpret queries, and miss nuances that a domain expert would catch; HITL provides a safety net that prevents incorrect outputs from reaching end users unchecked
+- **Professional accountability** — in regulated professions like tax advisory, a human professional is ultimately responsible for the advice given; HITL maintains this chain of accountability rather than delegating it to an AI system
+- **Continuous improvement** — human corrections generate labelled data that can be used to improve the system: fixing retrieval gaps, refining prompts, and updating evaluation datasets
+- **Regulatory alignment** — the EU AI Act emphasises human oversight for high-risk AI systems; HITL validation provides a concrete mechanism for this oversight
+
+## How it works
+
+HITL validation operates at different levels depending on risk and practicality:
+
+**Mandatory review** — every AI output is reviewed by a human expert before being delivered. This is appropriate for high-stakes scenarios (binding tax opinions, client-facing advice) but does not scale for high-volume, low-risk queries. The reviewer checks factual accuracy, source correctness, and completeness.
+
+**Sampling-based review** — a random sample of AI outputs is reviewed periodically (e.g., 10% of daily queries). This provides statistical quality monitoring without requiring review of every output. Patterns in detected errors inform system improvements.
+
+**Confidence-triggered review** — outputs below a confidence threshold are automatically routed to a human reviewer, while high-confidence outputs are delivered directly. This focuses human effort on the cases most likely to contain errors.
+
+**Feedback integration** — when reviewers correct an AI output, the correction is captured as training signal: the original query, the incorrect output, and the corrected version form a data point that can be used to improve retrieval, refine prompts, or expand the evaluation dataset.
+
+Effective HITL requires clear workflows: what the reviewer sees (the AI output, the cited sources, the confidence score), what they are expected to check (accuracy, completeness, citation correctness), how they record their assessment (approve, correct, reject), and how their feedback flows back into system improvement.
+
+The key tension in HITL is between thoroughness and efficiency. Reviewing every output ensures quality but eliminates the time-saving benefit of AI. Risk-based approaches that focus human review on uncertain or high-stakes outputs balance quality assurance with practical efficiency.
+
+## Common questions
+
+**Q: Does HITL mean the AI is not trusted?**
+
+A: Not exactly. HITL means the AI is trusted proportionally to its demonstrated reliability. As the system proves itself over time (consistently high quality on reviewed outputs), the scope of mandatory review can be reduced. Trust is earned through evidence, and HITL provides that evidence.
+
+**Q: How much does HITL slow down the workflow?**
+
+A: For confidence-triggered review, most outputs (high confidence) are delivered immediately. Only uncertain outputs wait for review. The overall delay depends on the proportion of uncertain outputs and the reviewer's response time.
 
 ## References
 

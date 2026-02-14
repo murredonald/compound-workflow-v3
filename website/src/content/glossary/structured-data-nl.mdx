@@ -10,6 +10,37 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Structured data volgt een vast schema met kolomnamen en types, waardoor querytalen of zoekmachines gericht kunnen filteren en aggregeren zonder eerst tekst te ontleden.
+Gestructureerde data is informatie die georganiseerd is in een vooraf gedefinieerd schema met expliciete velden, datatypes en relaties — zoals rijen en kolommen in een databasetabel, sleutel-waardeparen in JSON, of velden in een formulier. In tegenstelling tot ongestructureerde data (vrije tekst, PDF's, afbeeldingen) kan gestructureerde data rechtstreeks worden bevraagd, gefilterd, gesorteerd en samengevoegd zonder dat natuurlijke taalverwerking of interpretatie nodig is. In juridische AI-systemen legt gestructureerde data de metadata vast die ongestructureerde juridische tekst doorzoekbaar en filterbaar maakt: artikelnummers, publicatiedata, jurisdictiecodes, autoriteitsniveaus en belastingtarieftabellen.
+
+## Waarom het belangrijk is
+
+- **Nauwkeurig filteren** — gestructureerde velden zoals jurisdictie, datum en documenttype maken exact-match-filtering mogelijk die semantisch zoeken alleen niet kan bieden; een zoekopdracht naar "Vlaamse registratierechten in 2025" vereist gestructureerde datum- en jurisdictievelden om nauwkeurig te beantwoorden
+- **Basis voor de kennisgraaf** — gestructureerde data levert de getypeerde entiteiten en relaties die de knooppunten en verbindingen van een kennisgraaf vormen, waardoor relationele zoekopdrachten over het juridische corpus mogelijk worden
+- **Integratie met bedrijfssystemen** — belastingberekeningen, aangiftetermijnen en tarieventabellen zijn inherent gestructureerd; het AI-systeem moet gestructureerde data kunnen verwerken en produceren om te integreren met bestaande professionele tools
+- **Validatie en consistentie** — schema's waarborgen de data-integriteit: een datumveld kan geen naam bevatten, een belastingtarief moet een getal zijn; dit voorkomt kwaliteitsproblemen die zich zouden voortplanten in AI-output
+
+## Hoe het werkt
+
+Gestructureerde data komt in een juridisch AI-systeem in verschillende vormen voor:
+
+**Documentmetadata** — elk opgenomen document wordt getagd met gestructureerde velden: publicatiebron, publicatiedatum, documenttype (wet, decreet, circulaire, ruling), jurisdictie (federaal, Vlaams, Waals, Brussels Hoofdstedelijk), taal en autoriteitsniveau. Deze velden worden opgeslagen naast de vectorembeddings van het document en maken metadatafiltering mogelijk tijdens het ophalen.
+
+**Belastingtabellen en -tarieven** — belastingschijven, tarieven, drempels en vrijstellingsbedragen zijn inherent gestructureerd. Ze worden opgeslagen als getypeerde records die nauwkeurig bevraagd kunnen worden: "Wat is het vennootschapsbelastingtarief voor kmo's in 2025?" wordt opgelost via een gestructureerde opzoeking, niet via semantisch zoeken.
+
+**Entiteit-relatiedata** — kennisgrafen slaan gestructureerde relaties op tussen entiteiten: welke artikelen naar welke andere artikelen verwijzen, welke arresten welke bepalingen interpreteren, welke wijzigingen welke oorspronkelijke teksten hebben aangepast. Deze relaties worden opgeslagen als gestructureerde triples (subject, predicaat, object) of propertygrafen.
+
+**Schemavalidatie** zorgt ervoor dat alle gestructureerde data voldoet aan de verwachte formaten. Een publicatiedatum moet een geldige datum zijn. Een jurisdictiecode moet een van de gedefinieerde waarden zijn. Een belastingtarief moet een positief getal zijn. Validatie vangt fouten op bij het inladen, voordat ze downstream het ophalen of de generatie kunnen beïnvloeden.
+
+De uitdaging in juridische AI is het overbruggen van gestructureerde en ongestructureerde data. Wetgeving arriveert als proza (ongestructureerd) maar bevat ingebedde gestructureerde informatie (artikelnummers, data, bedragen). Entiteitsextractie en documentparsing zetten ongestructureerde juridische tekst om in gestructureerde metadata, terwijl de oorspronkelijke tekst behouden blijft voor semantisch zoeken.
+
+## Veelgestelde vragen
+
+**V: Kan een AI-systeem werken met alleen gestructureerde data?**
+
+A: Voor juridisch onderzoek niet. De redenering, context en nuance in juridische tekst is ongestructureerd. Gestructureerde data biedt de steiger — metadata, relaties en precieze waarden — maar de inhoud van juridische analyse vereist het begrijpen van proza. De meest effectieve systemen combineren beide.
+
+**V: Hoe verschilt gestructureerde data van een kennisgraaf?**
+
+A: Gestructureerde data is de bredere categorie — alle data met een gedefinieerd schema. Een kennisgraaf is een specifiek type gestructureerde data dat entiteiten en hun relaties als een graaf voorstelt. Kennisgrafen worden opgebouwd uit gestructureerde data (en uit entiteitsextractie op ongestructureerde data).

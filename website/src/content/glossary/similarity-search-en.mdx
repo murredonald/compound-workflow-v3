@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Similarity search retrieves items whose [embeddings](/en/glossary/embeddings/) are close to a query embedding, enabling use cases like [semantic search](/en/glossary/semantic-search/), recommendations, and deduplication.
+Similarity search is the process of finding items in a dataset whose vector representations are closest to a given query vector under a chosen distance metric. Rather than matching on exact keywords, similarity search operates in embedding space — returning results that are semantically related to the query even when they use entirely different wording. This capability underpins modern semantic search, recommendation systems, and deduplication workflows.
+
+## Why it matters
+
+- **Semantic matching** — legal professionals may phrase queries differently from how legislation is written; similarity search bridges that gap by matching on meaning rather than exact terms
+- **Cross-lingual discovery** — in multilingual legal systems like Belgium's, similarity search over cross-lingual embeddings can surface relevant French legislation from a Dutch query
+- **Scale** — approximate similarity search algorithms process billions of vectors in milliseconds, making large-scale semantic retrieval practical
+- **Deduplication** — identifying near-duplicate documents or provisions across different sources prevents redundant results
+
+## How it works
+
+Similarity search operates in three phases:
+
+1. **Encoding** — both the query and all items in the dataset are converted to vector embeddings using an embedding model. For a document corpus, this encoding is done once at indexing time; only the query is encoded at search time.
+
+2. **Index lookup** — the query vector is compared against stored vectors using a distance metric (cosine similarity, dot product, or Euclidean distance). Exact comparison against every vector would be too slow for large datasets, so approximate nearest-neighbour (ANN) algorithms like HNSW or IVF are used. These build graph or clustering structures over the vectors to enable sub-linear search time.
+
+3. **Ranking** — the k nearest vectors are returned, ranked by similarity score. These may be further refined through reranking or metadata filtering before being presented to the user.
+
+The trade-off in similarity search is between recall (finding all truly relevant items) and speed. Exact search guarantees perfect recall but is slow at scale. ANN algorithms trade a small amount of recall for dramatically faster search, which is acceptable for most applications.
+
+## Common questions
+
+**Q: How is similarity search different from keyword search?**
+
+A: Keyword search (lexical search) matches documents containing the exact words in the query. Similarity search matches on meaning — it can find documents about "corporate income tax" when the query says "vennootschapsbelasting" because their embeddings are close in vector space. Most modern systems combine both approaches in hybrid search.
+
+**Q: How fast is similarity search on large datasets?**
+
+A: With ANN indexes, similarity search over 100 million vectors typically takes 1-10 milliseconds. The exact speed depends on the index type, vector dimensionality, and hardware. Vector databases like FAISS, Pinecone, and Milvus are optimised for this workload.
+
+**Q: What determines the quality of similarity search results?**
+
+A: Three factors: the embedding model (how well it captures semantic meaning), the distance metric (whether it matches the model's training objective), and the index configuration (how aggressively it trades recall for speed). Of these, the embedding model has the largest impact.
 
 ## References
 

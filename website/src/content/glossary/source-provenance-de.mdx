@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Quellenherkunft dokumentiert den Ursprung, die Eigentumsverhältnisse und die Transformationshistorie von Daten oder Inhalten, damit deren Zuverlässigkeit und Compliance bewertet werden können.
+Quellenprovenienz ist die dokumentierte Kette von Herkunft, Eigentumsverhältnissen und Transformationshistorie für jedes Datenelement oder jeden Inhalt, der in einem KI-System verwendet wird. Sie beantwortet die Fragen: Woher stammt diese Information, wer hat sie veröffentlicht, wann wurde sie zuletzt aktualisiert und welche Verarbeitung hat sie durchlaufen? In der juristischen KI ist Provenienz unerlässlich, da die Autorität und Zuverlässigkeit einer Quelle direkt die Vertrauenswürdigkeit jeder daraus abgeleiteten Antwort beeinflusst.
+
+## Warum es wichtig ist
+
+- **Autoritätsverifizierung** -- im Steuerrecht hat ein Urteil des Verfassungsgerichts mehr Gewicht als eine parlamentarische Anfrage; Provenienz-Metadaten ermöglichen es dem System, zwischen verschiedenen Autoritätsebenen der Quellen zu unterscheiden
+- **Aktualitätsverfolgung** -- das Wissen, wann eine Quelle veröffentlicht wurde und ob sie geändert oder aufgehoben wurde, verhindert, dass das System veraltete Bestimmungen zitiert
+- **Compliance** -- sowohl der EU AI Act als auch die DSGVO stellen Anforderungen an Datentransparenz und Nachvollziehbarkeit, die Provenienz-Metadaten erfüllen helfen
+- **Reproduzierbarkeit** -- wenn ein KI-System eine Antwort produziert, ermöglichen Provenienz-Aufzeichnungen jedem, die Antwort zu ihren Originalquellen zurückzuverfolgen und die Korrektheit zu überprüfen
+
+## Wie es funktioniert
+
+Provenienz-Tracking erstreckt sich über den gesamten Datenlebenszyklus:
+
+1. **Aufnahme** -- wenn ein Dokument in das System gelangt, wird es mit Metadaten versehen: Publikationsquelle (Belgisches Staatsblatt, FÖD Finanzen, Gerichtsdatenbank), Veröffentlichungsdatum, Autoritätsebene, Dokumenttyp (Gesetz, Königlicher Erlass, Rundschreiben, Urteil) und jurisdiktioneller Geltungsbereich
+
+2. **Transformation** -- während das Dokument verarbeitet wird (geparst, in Chunks aufgeteilt, bereinigt, eingebettet), wird jeder Transformationsschritt aufgezeichnet. Wenn Text aus einem PDF extrahiert wurde, wird die OCR-Konfidenz protokolliert. Wenn eine Chunk-Grenze angepasst wurde, werden Original- und geänderte Version verknüpft.
+
+3. **Speicherung** -- Provenienz-Metadaten werden zusammen mit dem Dokumentinhalt in der Wissensbasis gespeichert und stehen zur Abfragezeit für Filterung, Ranking und Zitatgenerierung zur Verfügung
+
+4. **Zitation** -- wenn das System eine Antwort generiert, enthält es Provenienzinformationen in seinen Zitaten: das spezifische Quelldokument, sein Veröffentlichungsdatum, den relevanten Artikel oder Abschnitt und einen Link zum autoritativen Text. Dies ermöglicht dem Nutzer, die Antwort anhand der Originalquelle zu überprüfen.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Quellenprovenienz von einer Quellenangabe?**
+
+A: Eine Quellenangabe nennt Ihnen, welche Quelle in einer Antwort verwendet wurde. Quellenprovenienz ist umfassender -- sie umfasst den gesamten Lebenszyklus der Daten: wo sie gesammelt wurden, wie sie verarbeitet wurden und jede Transformation, die sie vor der Verwendung durchlaufen haben. Die Quellenangabe ist das, was der Nutzer sieht; die Provenienz ist die vollständige Kette dahinter.
+
+**F: Warum ist die Quellenautorität für KI-Antworten wichtig?**
+
+A: Nicht alle Rechtsquellen haben das gleiche Gewicht. Gesetzgebung hat Vorrang vor Verwaltungsrundschreiben; Urteile des obersten Gerichts haben Vorrang vor Urteilen niedrigerer Instanzen. Ein System ohne provenienzbasiertes Autoritätsranking könnte einem ministeriellen FAQ und einem bindenden Gesetz gleiches Gewicht geben und so irreführende Ergebnisse liefern.
+
+**F: Wie unterstützt Provenienz die DSGVO-Compliance?**
+
+A: Die DSGVO verlangt von Organisationen, zu wissen, woher personenbezogene Daten stammen und wie sie verarbeitet werden (Artikel 13-14 zur Transparenz, Artikel 30 zu Verarbeitungsverzeichnissen). Quellenprovenienz liefert diese Dokumentation und zeigt den Datenursprung, die Verarbeitungshistorie und die aktuelle Nutzung innerhalb des KI-Systems.

@@ -10,6 +10,41 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Document normalization harmoniseert zaken zoals encodering, witruimte, datumformaten en veldnamen, zodat downstream zoek‑ en AI‑componenten met consistente input werken.
+Documentnormalisatie is het proces waarbij de structuur, encodering, opmaak en metadata van documenten uit diverse bronnen worden gestandaardiseerd, zodat ze consistent kunnen worden verwerkt door downstream systemen. Juridische documenten komen van verschillende uitgevers in verschillende formaten, met verschillende conventies voor datums, verwijzingen, koppen en tekenencodering. Normalisatie transformeert deze heterogene input in een uniforme representatie die de indexerings-, chunking- en retrievalcomponenten betrouwbaar kunnen verwerken.
+
+## Waarom het ertoe doet
+
+- **Consistente verwerking** — zonder normalisatie kan dezelfde datum voorkomen als "15/03/2025", "March 15, 2025", "15 maart 2025" en "2025-03-15" in verschillende bronnen; normalisatie converteert alles naar één enkel formaat
+- **Nauwkeurige deduplicatie** — documenten met verschillende opmaak maar identieke inhoud moeten als duplicaten worden herkend; normalisatie verwijdert oppervlakkige verschillen die matching zouden verhinderen
+- **Embeddingkwaliteit** — [embeddingmodellen](/nl/glossary/embeddings/) produceren betere vectoren uit schone, consistent opgemaakte tekst; opmaakfouten, inconsistente witruimte en encoderingsfouten verslechteren de embeddingkwaliteit
+- **Vergelijkbaarheid tussen bronnen** — genormaliseerde documenten uit verschillende bronnen kunnen worden doorzocht en vergeleken alsof ze uit één enkele bron komen
+
+## Hoe het werkt
+
+Documentnormalisatie richt zich doorgaans op meerdere dimensies:
+
+**Tekenencodering** — alle tekst wordt omgezet naar een consistente encodering (UTF-8). Speciale tekens, ligaturen en typografische varianten worden genormaliseerd: gekrulde aanhalingstekens naar rechte aanhalingstekens, gedachtestreepjes naar standaardstreepjes, vaste spaties naar gewone spaties.
+
+**Datumnormalisatie** — datums in alle formaten worden omgezet naar een standaardrepresentatie (ISO 8601: JJJJ-MM-DD). Dit is cruciaal voor juridische teksten, waar datums bepalen welke versie van een bepaling van kracht was.
+
+**Verwijzingsnormalisatie** — citaten en kruisverwijzingen worden gestandaardiseerd. "Art. 215 WIB92", "article 215 du CIR92" en "Artikel 215 WIB92" verwijzen allemaal naar dezelfde bepaling en moeten worden genormaliseerd naar een canonieke vorm die het systeem als identiek herkent.
+
+**Kop- en structuurnormalisatie** — sectiekoppen, artikelnummers en paragraafmarkeringen worden afgebeeld op een consistent structuurschema. Dit zorgt ervoor dat structuurbewuste chunking consistente resultaten oplevert, ongeacht de opmaakconventies van het brondocument.
+
+**Witruimte en opmaak** — meerdere opeenvolgende spaties, tabs en lege regels worden samengevoegd. HTML-entiteiten worden gedecodeerd. Markdown of andere opmaak wordt ofwel gestript of gestandaardiseerd, afhankelijk van het downstreamgebruik.
+
+**Taaldetectie** — elk document of elke sectie wordt getagd met zijn taal (Nederlands, Frans, Duits) op basis van geautomatiseerde detectie, waardoor taalbewuste verwerking en routering mogelijk worden.
+
+Normalisatie is idempotent — twee keer toepassen levert hetzelfde resultaat op als één keer toepassen. Deze eigenschap is belangrijk voor de betrouwbaarheid van de pijplijn: het opnieuw verwerken van een document mag de genormaliseerde vorm niet veranderen.
+
+## Veelgestelde vragen
+
+**V: Kan normalisatie de betekenis van juridische tekst veranderen?**
+
+A: Dat zou niet mogen. Normalisatie richt zich op opmaak en encodering, niet op inhoud. Agressieve normalisatie (bijvoorbeeld het verwijderen van alle speciale tekens) zou echter in uitzonderlijke gevallen onbedoeld de betekenis kunnen aantasten. Normalisatie van juridische teksten moet conservatief zijn, waarbij alle inhoudelijke tekst behouden blijft en enkel de opmaak wordt gestandaardiseerd.
+
+**V: Moet normalisatie plaatsvinden voor of na het parsen?**
+
+A: Na het parsen. Het parsen converteert ruwe formaten (PDF, HTML) naar tekst; normalisatie standaardiseert die tekst vervolgens. Sommige normalisatiestappen (zoals encoderingsreparaties) kunnen al tijdens het parsen nodig zijn om corrupte invoer te verwerken.

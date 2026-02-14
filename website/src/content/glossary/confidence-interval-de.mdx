@@ -10,6 +10,44 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Ein Konfidenzintervall ist ein statistischer Bereich, innerhalb dessen eine gemessene Kennzahl (wie Genauigkeit, Halluzinationsrate oder Präzision) mit einer bestimmten Wahrscheinlichkeit erwartet wird, gegeben die Stichprobenvariabilität der Evaluierungsdaten. Wenn ein System „92 % Genauigkeit mit einem 95 %-Konfidenzintervall von 89–95 %" meldet, bedeutet das: Würde die Evaluierung mit verschiedenen repräsentativen Stichproben wiederholt, läge die tatsächliche Genauigkeit in 95 % der Fälle zwischen 89 % und 95 %. Konfidenzintervalle kommunizieren die Unsicherheit, die jeder aus einem endlichen Testdatensatz berechneten Kennzahl innewohnt, und verhindern eine Überinterpretation von Punktschätzungen.
+
+## Warum es wichtig ist
+
+- **Aussagekräftige Vergleiche** — ohne Konfidenzintervalle lässt sich nicht feststellen, ob eine Genauigkeitsverbesserung von 2 % statistisch signifikant ist oder nur Stichprobenrauschen; Konfidenzintervalle machen diesen Unterschied sichtbar
+- **Ehrliche Berichterstattung** — eine Punktkennzahl wie „94 % Genauigkeit" ohne Konfidenzintervall zu veröffentlichen, übertreibt die Gewissheit; die tatsächliche Leistung könnte je nach Testdatensatz bei 91 % oder 97 % liegen
+- **Entscheidungsunterstützung** — beim Vergleich zweier Systemkonfigurationen deuten überlappende Konfidenzintervalle darauf hin, dass der Unterschied möglicherweise nicht bedeutsam ist; nicht überlappende Intervalle liefern stärkere Belege für die Wahl der einen oder anderen Variante
+- **Stichprobengrößenplanung** — Konfidenzintervalle zeigen, wie präzise die Evaluierung ist; breite Intervalle signalisieren, dass der Testdatensatz zu klein für zuverlässige Schlussfolgerungen ist, und leiten Investitionen in größere Evaluierungsdatensätze
+
+## So funktioniert es
+
+Konfidenzintervalle werden aus dem Kennzahlenwert, der Stichprobengröße und dem gewünschten Konfidenzniveau (typischerweise 95 %) berechnet:
+
+**Für Anteile** (Genauigkeit, Halluzinationsrate): Ein gängiger Ansatz verwendet die Normalapproximation oder das Wilson-Score-Intervall. Bei einer Genauigkeit von 92 % auf 500 Testanfragen beträgt das 95 %-Konfidenzintervall etwa 89,5 % bis 94,1 %. Bei 50 Testanfragen ergibt dieselbe Genauigkeit von 92 % ein deutlich breiteres Intervall: 81 % bis 97 %.
+
+**Für Mittelwerte** (durchschnittliche Latenz, mittlerer Konfidenzwert): Das Intervall wird aus dem Stichprobenmittelwert, der Standardabweichung und der Stichprobengröße mithilfe der t-Verteilung berechnet.
+
+**Bootstrap-Konfidenzintervalle** bieten einen allgemeineren Ansatz: Der Testdatensatz wird mehrfach mit Zurücklegen gezogen, die Kennzahl auf jeder Stichprobe berechnet und die Verteilung der Ergebnisse zur Bestimmung des Intervalls verwendet. Dies funktioniert für jede Kennzahl, auch für komplexe wie nDCG oder F1-Score.
+
+Die Breite eines Konfidenzintervalls hängt von drei Faktoren ab:
+- **Stichprobengröße** — größere Evaluierungsdatensätze erzeugen engere Intervalle (mehr Präzision)
+- **Varianz** — Kennzahlen mit hoher Variabilität über die Testfälle erzeugen breitere Intervalle
+- **Konfidenzniveau** — ein 99 %-Konfidenzintervall ist bei denselben Daten breiter als ein 95 %-Intervall
+
+In der KI-Evaluierung sind Konfidenzintervalle besonders wichtig, weil Testdatensätze oft klein sind (200–500 Anfragen). Bei solchen Datensätzen sind Kennzahlenschwankungen von 2–3 % allein durch Stichprobeneffekte üblich.
+
+## Häufige Fragen
+
+**F: Bedeutet ein 95 %-Konfidenzintervall, dass die Wahrscheinlichkeit 95 % beträgt, dass der wahre Wert im Intervall liegt?**
+
+A: Streng genommen nein — die frequentistische Interpretation besagt, dass bei wiederholter Evaluierung 95 % der berechneten Intervalle den wahren Wert enthalten würden. In der Praxis bietet das Intervall jedoch einen vernünftigen Bereich plausibler Werte für die Kennzahl.
+
+**F: Wie groß sollte der Evaluierungsdatensatz für enge Konfidenzintervalle sein?**
+
+A: Für Anteile nahe 90 % ergibt ein Testdatensatz von 500 Anfragen eine 95 %-Konfidenzintervallbreite von etwa ±3 %. Für eine Präzision von ±1 % werden ungefähr 3.500 Anfragen benötigt. Die erforderliche Größe hängt vom Kennzahlenwert und der gewünschten Präzision ab.
+
 ## References
 
 > Darius Roman et al. (2021), "[Machine learning pipeline for battery state-of-health estimation](https://doi.org/10.1038/s42256-021-00312-3)", Nature Machine Intelligence.

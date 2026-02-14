@@ -10,6 +10,41 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Kontinuierliche Evaluation ist die Praxis, regelmäßig und automatisch Qualitätsbewertungen der Ausgaben eines KI-Systems anhand von Live- oder aktuellen Produktionsdaten durchzuführen, anstatt sich ausschließlich auf einmalige Evaluationen bei der Bereitstellung zu verlassen. Sie erkennt Leistungsverschlechterungen, Regressionen und Drift, sobald sie auftreten — bevor Benutzer es bemerken oder betroffen sind. In der juristischen KI ist kontinuierliche Evaluation besonders wichtig, da sich die Wissensbasis ständig ändert, wenn neue Gesetze, Urteile und Rundschreiben hinzugefügt werden, und jede dieser Änderungen die Antwortqualität beeinflussen kann.
+
+## Warum es wichtig ist
+
+- **Frühe Regressionserkennung** — eine neue Dokumentenaufnahme, ein Modellupdate oder eine Prompt-Änderung kann die Antwortqualität subtil verschlechtern; kontinuierliche Evaluation erkennt diese Regressionen innerhalb von Stunden statt Wochen
+- **Gesundheit der Wissensbasis** — wenn neue Rechtsquellen hinzugefügt werden, können sie mit bestehenden Bestimmungen in Konflikt stehen oder Grenzfälle einführen; kontinuierliche Evaluation macht diese Probleme sichtbar, bevor sie benutzerseitige Antworten beeinflussen
+- **Regulatorische Compliance** — der EU AI Act verlangt eine fortlaufende Überwachung von Hochrisiko-KI-Systemen über ihren gesamten Lebenszyklus, nicht nur bei der Bereitstellung; kontinuierliche Evaluation liefert den Nachweis für diese fortlaufende Compliance
+- **Vertrauen in Updates** — Teams können Verbesserungen mit der Gewissheit bereitstellen, dass automatisierte Evaluationen jede unerwartete Verschlechterung melden
+
+## Wie es funktioniert
+
+Kontinuierliche Evaluation arbeitet als automatisierte Pipeline, die nach einem regelmäßigen Zeitplan läuft oder durch Systemänderungen ausgelöst wird:
+
+**Testset-Evaluation** — ein kuratierter Satz repräsentativer Fragen mit bekannten korrekten Antworten wird periodisch (täglich oder wöchentlich) gegen das System ausgeführt. Die Ergebnisse werden mit Baseline-Werten verglichen. Rückgänge bei Genauigkeit, Faithfulness oder Retrieval-Präzision lösen Warnungen aus.
+
+**Produktionsstichproben** — eine zufällige Stichprobe echter Benutzeranfragen und Systemantworten wird erfasst und automatisch evaluiert. Automatisierte Metriken bewerten Faithfulness (stimmt die Antwort mit den zitierten Quellen überein?), Vollständigkeit (hat die Retrieval-Schicht die relevanten Bestimmungen gefunden?) und Formatkonformität (entspricht die Ausgabe der erwarteten Struktur?).
+
+**Regressionstests** — wenn die Wissensbasis aktualisiert wird (neue Gesetzgebung aufgenommen, bestehende Dokumente geändert), wird automatisch ein gezielter Satz von Anfragen zum geänderten Inhalt ausgeführt, um zu überprüfen, ob die Antworten korrekt aktualisiert wurden und ob nicht betroffene Antworten unbeeinflusst bleiben.
+
+**Drift-Monitoring** verfolgt statistische Eigenschaften der Systemeingaben und -ausgaben im Zeitverlauf. Änderungen in der Anfrageverteilung (Benutzer fragen nach neuen Themen), Retrieval-Score-Verteilungen (niedrigere durchschnittliche Relevanzwerte) oder Konfidenzverteilungen (mehr unsichere Antworten) können auf zugrunde liegende Probleme hindeuten.
+
+Die Ergebnisse werden in Dashboards aggregiert, die Trends über die Zeit zeigen: Genauigkeitskurven, Retrieval-Qualitätsmetriken, Halluzinationsraten und Latenz. Schwellenwerte definieren, wann automatisierte Warnungen ausgelöst werden und wann die Änderung innerhalb der normalen Varianz liegt.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich kontinuierliche Evaluation von Unit-Tests?**
+
+A: Unit-Tests überprüfen, ob einzelne Codekomponenten isoliert korrekt funktionieren. Kontinuierliche Evaluation bewertet die Ausgabequalität des Gesamtsystems anhand realistischer Daten. Unit-Tests finden Codefehler; kontinuierliche Evaluation erkennt Qualitätsverschlechterungen, die möglicherweise gar nicht durch Codeänderungen verursacht werden (z.B. ein neu aufgenommenes Dokument, das mit bestehenden Inhalten in Konflikt steht).
+
+**F: Wie oft sollte kontinuierliche Evaluation durchgeführt werden?**
+
+A: Das hängt von der Aktualisierungshäufigkeit des Systems und der Risikotoleranz ab. Tägliche Evaluation ist für Produktionssysteme üblich. Triggerbasierte Evaluation (Ausführung nach jeder Wissensbasis-Aktualisierung oder Modelländerung) ist reaktionsschneller, aber ressourcenintensiver.
+
 ## References
 
 > Baifan Zhou et al. (2022), "[Machine learning with domain knowledge for predictive quality monitoring in resistance spot welding](https://doi.org/10.1007/s10845-021-01892-y)", Journal of Intelligent Manufacturing.

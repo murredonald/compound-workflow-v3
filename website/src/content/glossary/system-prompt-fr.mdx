@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-Le prompt système est le texte d'[instruction](/fr/glossary/prompt/) fourni au modèle de langage pour définir son rôle, son ton et ses contraintes de sécurité, et que les utilisateurs finaux ne voient généralement pas et ne peuvent pas modifier directement.
+Le prompt système est le bloc d'instructions fondamental fourni à un grand modèle de langage au début de chaque interaction, définissant son rôle, son comportement, ses contraintes et son format de sortie. Contrairement aux prompts utilisateur, qui varient à chaque requête, le prompt système est fixé par le développeur de l'application et généralement masqué à l'utilisateur final. Il agit comme la couche « personnalité et règlement » — indiquant au modèle ce qu'il est (par exemple, un assistant de recherche fiscale belge), ce qu'il doit faire (citer ses sources, signaler l'incertitude) et ce qu'il ne doit jamais faire (inventer de la législation, fournir des conseils contraignants).
+
+## Pourquoi c'est important
+
+- **Cohérence comportementale** — le prompt système garantit que le modèle répond de manière cohérente à toutes les requêtes, en maintenant le même niveau de formalité, de discipline de citation et de focus sur le domaine
+- **Sécurité et conformité** — les garde-fous encodés dans le prompt système empêchent le modèle de produire des sorties nuisibles, trompeuses ou hors périmètre ; dans un contexte d'IA juridique, cela inclut des avertissements sur le conseil professionnel et les limitations juridictionnelles
+- **Formatage des sorties** — le prompt système peut spécifier des exigences de sortie structurée : toujours inclure les citations de sources, toujours signaler les niveaux de confiance, toujours présenter les réponses dans un format spécifique
+- **Ancrage au domaine** — en demandant au modèle de ne répondre qu'en se basant sur le contexte récupéré et de reconnaître l'incertitude lorsque les sources sont insuffisantes, le prompt système est un mécanisme clé pour réduire les hallucinations
+
+## Comment ça fonctionne
+
+Le prompt système est ajouté au début de chaque conversation avec le modèle de langage, généralement dans un rôle de message « system » dédié que le modèle est entraîné à suivre avec une haute priorité. Son contenu comprend habituellement :
+
+**Définition du rôle** — une description de ce qu'est le modèle et dans quel domaine il opère. Par exemple : « Vous êtes un assistant de recherche fiscale belge spécialisé en impôt sur le revenu, TVA et droits d'enregistrement. »
+
+**Règles comportementales** — des instructions spécifiques sur la gestion de divers scénarios : toujours citer l'article source, ne jamais inventer de législation, signaler quand plusieurs sources contradictoires existent, refuser les questions en dehors du domaine fiscal.
+
+**Format de sortie** — des exigences structurées pour la réponse : utiliser des puces pour les réponses en plusieurs parties, inclure un indicateur de confiance, citer les sources avec les numéros d'articles et les dates de publication.
+
+**Instructions de contexte** — comment traiter les documents récupérés qui accompagnent chaque requête : les considérer comme la source de vérité faisant autorité, ne pas s'appuyer sur les connaissances d'entraînement pour les faits juridiques, indiquer explicitement quand le contexte récupéré ne répond pas à la question.
+
+L'ingénierie du prompt système est un processus itératif. Le prompt est affiné par des tests : examiner où le modèle échoue (halluciner un article inexistant, donner des réponses trop confiantes à des questions ambiguës) et ajouter ou ajuster les instructions pour prévenir ces échecs. La robustesse du prompt contre les tentatives d'injection — où des entrées utilisateur malveillantes tentent de contourner les instructions système — est un domaine de préoccupation actif.
+
+## Questions fréquentes
+
+**Q : Les utilisateurs peuvent-ils contourner le prompt système ?**
+
+R : Dans un système bien conçu, non. Cependant, les attaques par injection de prompt tentent d'inclure dans l'entrée utilisateur des instructions qui contournent ou modifient les règles du prompt système. Les défenses comprennent l'assainissement des entrées, l'application d'une hiérarchie d'instructions dans le modèle et la surveillance des sorties anormales.
+
+**Q : Quelle longueur doit avoir un prompt système ?**
+
+R : Assez long pour couvrir les règles et contraintes nécessaires, mais pas au point de consommer une part significative de la fenêtre de contexte du modèle. La plupart des prompts système en production font entre 500 et 2 000 tokens. Des prompts excessivement longs peuvent aussi amener le modèle à perdre le focus sur des instructions spécifiques enfouies au milieu.
 
 ## References
 

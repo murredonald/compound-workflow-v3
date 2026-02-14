@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Vector-indexering organiseert [embeddings](/nl/glossary/embeddings/) in datastructuren zoals IVF, [HNSW](/nl/glossary/hnsw/) of flat‑indexen om gelijkaardige vectoren efficiënt terug te vinden bij query‑tijd.
+Vector-indexering is het Proces van het organiseren van Embedding-vectoren in gespecialiseerde Datastructuren die snelle approximate nearest neighbour (ANN) Zoekopdrachten mogelijk maken zonder de Query met elke Vector in de Collectie te vergelijken. Net zoals een Boekindex je een Onderwerp laat vinden zonder elke Pagina te lezen, laat een Vectorindex je de meest gelijkaardige Vectoren vinden zonder Afstanden te berekenen naar elke opgeslagen Vector. De Keuze van het Indextype, de Configuratieparameters en de Hardware waarop het draait bepalen samen de Snelheid, Nauwkeurigheid en Geheugenvereisten van semantisch zoeken.
+
+## Waarom het belangrijk is
+
+- **Zoeksnelheid** -- zonder Index vereist het doorzoeken van 10 miljoen Vectoren 10 miljoen Afstandsberekeningen per Query; met een Index wordt dezelfde Zoekopdracht in Milliseconden afgerond door slechts een Fractie van de Vectoren te onderzoeken
+- **Schaalbaarheid** -- Vectorindexen maken semantisch zoeken op schaal mogelijk; juridische Kennisbanken met miljoenen Documentchunks blijven in real-time doorzoekbaar
+- **Kostenefficiency** -- efficiente Indexen verminderen de Hardware die nodig is voor een bepaalde Querydoorvoer, wat de operationele Kosten verlaagt
+- **Recall-snelheid-afweging** -- de Indexconfiguratie bepaalt de Balans tussen het vinden van alle relevante Resultaten (Recall) en snel reageren (Latentie); deze Afweging is een belangrijke architecturale Beslissing
+
+## Hoe het werkt
+
+De meest voorkomende Vectorindextypen zijn:
+
+**HNSW (Hierarchical Navigable Small World-grafen)** bouwt een gelaagde Graaf waarin elke Vector een Knooppunt is dat verbonden is met zijn naaste Buren. Het zoeken begint op de bovenste (schaarse) Laag en navigeert omlaag door progressief dichtere Lagen, gretig bewegend richting de Queryvector. HNSW biedt uitstekende Recall (95-99%) met sub-milliseconde Zoektijden en is de populairste Keuze voor Productiesystemen.
+
+**IVF (Inverted File Index)** verdeelt de Vectorruimte in Clusters met behulp van k-means. Elke Vector wordt toegewezen aan het dichtstbijzijnde Clusterzwaartepunt. Bij het zoeken worden alleen de dichtstbijzijnde Clusters doorzocht in plaats van de gehele Collectie. Het Aantal onderzochte Clusters (nprobe) bepaalt de Recall-snelheid-afweging.
+
+**Productquantisatie (PQ)** comprimeert Vectoren door ze op te delen in Subvectoren en elke Subvector te kwantiseren naar een kleine Verzameling Zwaartepunten. Dit vermindert het Geheugengebruik dramatisch (bijv. 768-dimensionale float-Vectoren gecomprimeerd tot 48 Bytes) ten koste van enige Nauwkeurigheid. PQ wordt vaak gecombineerd met IVF voor geheugenefficient zoeken op zeer grote Datasets.
+
+**Flat Index** slaat Vectoren op zonder enige Indexstructuur en voert exacte (brute-force) nearest neighbour-zoekopdrachten uit. Dit garandeert perfecte Recall maar schaalt lineair met de Datasetgrootte. Alleen nuttig voor kleine Datasets (minder dan 100.000 Vectoren) of als Baseline voor het meten van de Kwaliteit van ANN-indexen.
+
+Indexconstructie vindt plaats op het Moment van Ingestie -- wanneer een Document wordt ge-embed en toegevoegd aan de Kennisbank. De meeste Vectordatabases (FAISS, Milvus, Qdrant, Pinecone) handelen Indexconstructie en -bevragingen transparant af. Belangrijke Configuratieparameters zijn het Aantal Buren per Knooppunt (HNSW), het Aantal Clusters (IVF) en de Kwantisatieresolutie (PQ).
+
+## Veelgestelde vragen
+
+**V: Welk Indextype moet ik kiezen?**
+
+A: HNSW is de standaardkeuze voor de meeste Toepassingen -- het biedt hoge Recall, snel zoeken en relatief eenvoudige Configuratie. IVF+PQ heeft de Voorkeur wanneer Geheugen beperkt is (zeer grote Datasets die in RAM moeten passen). Flat Indexen zijn geschikt voor Datasets onder 100.000 Vectoren waar exact zoeken haalbaar is.
+
+**V: Kan een Vectorindex incrementeel worden bijgewerkt?**
+
+A: De meeste Indextypen ondersteunen het toevoegen van nieuwe Vectoren zonder de gehele Index opnieuw op te bouwen. Sommige (zoals IVF) hebben echter periodieke Hertraining van Clusterzwaartepunten nodig naarmate de Datadistributie evolueert. HNSW ondersteunt efficiente incrementele Invoeging standaard.
 
 ## References
 

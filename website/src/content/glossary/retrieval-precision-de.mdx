@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Retrieval-Präzision misst, welcher Anteil der von einem Such- oder [RAG](/de/glossary/rag/)-System zurückgegebenen Dokumente wirklich relevant für die Anfrage ist, häufig mit einem Cutoff wie Precision@k berechnet.
+Retrieval-Präzision ist der Anteil der von einem Suchsystem zurückgegebenen Dokumente, die tatsächlich für die Anfrage des Nutzers relevant sind. Wenn ein System 10 Dokumente zurückgibt und 7 davon relevant sind, beträgt die Präzision 70 %. Sie wird typischerweise an einem bestimmten Cutoff-Punkt gemessen — Precision@5 (von den Top-5-Ergebnissen, wie viele sind relevant) oder Precision@10 — da Nutzer selten über die erste Ergebnisseite hinausschauen. In der juristischen KI ist Präzision wichtig, weil jedes irrelevante Ergebnis die Zeit eines Fachmanns verschwendet und in [RAG](/de/glossary/rag/)-Systemen den dem Sprachmodell bereitgestellten Kontext verwässert.
+
+## Warum es wichtig ist
+
+- **Effizienz für Nutzer** — Steuerberater haben begrenzte Zeit; hohe Präzision bedeutet, dass sie weniger Zeit mit dem Sichten irrelevanter Ergebnisse verbringen und mehr Zeit für die relevanten Bestimmungen haben
+- **RAG-Kontextqualität** — in Retrieval-Augmented Generation werden abgerufene Dokumente zum Kontextfenster des Sprachmodells; niedrige Präzision bedeutet, dass das Modell verrauschte, irrelevante Passagen erhält, die die Antwortqualität verschlechtern oder Halluzinationen auslösen können
+- **Vertrauen** — ein System, das konsistent irrelevante Ergebnisse liefert, untergräbt das Nutzervertrauen, selbst wenn das relevante Ergebnis irgendwo in der Liste steht; Präzision beeinflusst direkt die wahrgenommene Systemqualität
+- **Komplementär zum Recall** — Präzision und Recall messen unterschiedliche Aspekte der Retrieval-Qualität; ein System muss beides aufweisen, um effektiv zu sein
+
+## Wie es funktioniert
+
+Präzision wird berechnet, indem die Anzahl der abgerufenen relevanten Dokumente durch die Gesamtzahl der abgerufenen Dokumente geteilt wird:
+
+**Precision@k = (relevante Dokumente in den Top k) / k**
+
+Die Auswertung erfordert einen gelabelten Testdatensatz, bei dem menschliche Annotatoren identifiziert haben, welche Dokumente für jede Anfrage relevant sind. Die gerankte Ausgabe des Systems wird dann mit diesen Relevanzurteilen verglichen.
+
+**Precision-Recall-Trade-off**: Präzision und Recall stehen in einem umgekehrten Verhältnis. Das Zurückgeben von mehr Dokumenten (höherer Recall — weniger relevante Dokumente werden verpasst) reduziert typischerweise die Präzision (mehr irrelevante Dokumente werden einbezogen). Die Architektur der Retrieval-Pipeline — insbesondere die Reranking-Stufe — zielt darauf ab, beides zu maximieren, indem die relevantesten Dokumente an die Spitze gesetzt werden.
+
+**Mean Average Precision (MAP)** erweitert die Präzision, indem sie die Rangfolge relevanter Dokumente berücksichtigt, nicht nur deren Anzahl. Sie belohnt Systeme, die relevante Dokumente höher in der Rangliste platzieren. Dies ist besonders wichtig für juristische Suche, wo die ersten Ergebnisse die meiste Aufmerksamkeit erhalten.
+
+**Präzision spezifisch in RAG**: In einem RAG-System werden die Top-k abgerufenen Passagen in das Kontextfenster des Sprachmodells eingefügt. Niedrige Präzision bedeutet, dass irrelevante Passagen Kontextfenster-Plätze belegen, die für relevante Quellen hätten genutzt werden können, was dazu führen kann, dass das Modell wichtige Informationen ignoriert oder durch Rauschen abgelenkt wird.
+
+Die Verbesserung der Präzision umfasst typischerweise besseres Anfrageverständnis (korrekte Interpretation der Nutzerintention), effektiveres Reranking (Bewertung von Kandidaten mit einem tieferen semantischen Modell) und Metadatenfilterung (Ausschluss von Dokumenten, die thematisch verwandt, aber kontextuell falsch sind — z. B. Gesetzgebung aus dem falschen Zuständigkeitsbereich oder Zeitraum).
+
+## Häufige Fragen
+
+**F: Was ist ein guter Präzisionswert für juristische Suche?**
+
+A: Precision@5 über 80 % wird allgemein als stark für juristisches Retrieval angesehen. Das bedeutet, dass 4 von 5 Top-Ergebnissen relevant sind. In der Praxis hängt der akzeptable Schwellenwert vom Anwendungsfall ab — explorative Recherche toleriert niedrigere Präzision, während spezifische Fragenantwortung höhere Präzision erfordert.
+
+**F: Wie unterscheidet sich Präzision von Genauigkeit (Accuracy)?**
+
+A: Accuracy misst die Gesamtkorrektheit über alle Vorhersagen hinweg (einschließlich Dokumente, die korrekt nicht abgerufen wurden). Präzision misst spezifisch die Qualität dessen, was zurückgegeben wurde. Ein System, das nichts zurückgibt, hat eine undefinierte Präzision, könnte aber eine hohe Accuracy aufweisen, wenn die meisten Dokumente tatsächlich irrelevant sind.
 
 ## References
 

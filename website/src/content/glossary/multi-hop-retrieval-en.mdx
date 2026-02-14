@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Multi-hop retrieval performs several dependent retrieval steps, where the results of one step inform the next, to gather evidence spread across multiple documents or sources.
+Multi-hop retrieval is a retrieval strategy that chains multiple search steps together, where the results of each step inform the query for the next, in order to gather evidence that is spread across multiple documents. Unlike single-hop retrieval (one query, one set of results), multi-hop retrieval recognises that complex questions often cannot be answered from a single document — the answer requires connecting information from several sources. In tax law, this is common: determining the tax treatment of a transaction may require the general rule (one article), its exceptions (another article), implementing regulations (a decree), and relevant case law (a court decision).
+
+## Why it matters
+
+- **Complex question answering** — many real tax questions require information from multiple sources that no single query would retrieve; multi-hop retrieval gathers the complete evidence chain
+- **Cross-reference resolution** — legal texts frequently reference other provisions ("notwithstanding article 215"); multi-hop retrieval follows these references to retrieve the referenced provisions
+- **Completeness** — a single retrieval pass may miss important context (exceptions, amendments, conditions) that a subsequent retrieval step would find based on what the first step returned
+- **Reasoning support** — the language model can reason more effectively when provided with the complete chain of relevant provisions rather than a single isolated article
+
+## How it works
+
+Multi-hop retrieval extends the standard retrieval pipeline with iterative query generation:
+
+**Step 1: Initial retrieval** — the user's question is used to retrieve the first set of relevant documents. This initial set provides the starting evidence.
+
+**Step 2: Query generation** — based on the initial results, the system generates follow-up queries to fill gaps. If the initial results mention "article 215 WIB92" as an exception, a follow-up query retrieves that article. If the results reference a implementing decree, a follow-up query retrieves it. Query generation can be rule-based (following detected cross-references) or model-based (using an LLM to identify what additional information is needed).
+
+**Step 3: Subsequent retrieval** — follow-up queries are executed, retrieving additional documents that complement the initial results.
+
+**Step 4: Evidence aggregation** — all retrieved documents across all hops are combined, deduplicated, and presented to the generation layer as a comprehensive evidence set.
+
+The number of hops is typically limited (2-3) to control latency and prevent the retrieval from wandering into irrelevant territory. Each hop adds latency (a query generation step plus a retrieval step), so the total response time increases with the number of hops.
+
+Multi-hop retrieval is particularly valuable for questions that involve: conditional rules ("is this deductible IF..."), cross-references between provisions, comparisons across jurisdictions, and questions about how general rules interact with specific exceptions.
+
+## Common questions
+
+**Q: How many hops are typically needed?**
+
+A: Most questions can be answered in 1-2 hops. Three hops are occasionally needed for highly complex cross-referential questions. Beyond three hops, the risk of retrieving irrelevant content increases and the latency cost becomes significant.
+
+**Q: Can multi-hop retrieval retrieve wrong evidence?**
+
+A: Yes. Each hop introduces the risk of following an irrelevant reference or generating a poor follow-up query. This is why evidence from all hops is ranked and filtered before being passed to the generation layer.
 
 ## References
 

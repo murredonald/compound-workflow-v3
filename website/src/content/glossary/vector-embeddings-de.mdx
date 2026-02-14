@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-[Vektor-Embeddings](/de/glossary/embeddings/) wandeln Wörter, Sätze oder Dokumente in numerische Vektoren um, damit Systeme [semantische Ähnlichkeit](/de/glossary/semantic-similarity/) über Distanz‑ oder Ähnlichkeitsmaße bewerten können.
+Vektor-Embeddings sind numerische Arrays (Vektoren), die die Bedeutung von Text, Bildern oder anderen Daten in einem hochdimensionalen Raum repräsentieren. Jede Dimension erfasst einen bestimmten Aspekt der Semantik des Inputs, und die geometrischen Beziehungen zwischen Vektoren -- ihre Abstände und Winkel -- kodieren Ähnlichkeit. Zwei Texte mit ähnlicher Bedeutung erzeugen Vektoren, die nahe beieinander liegen; nicht verwandte Texte erzeugen Vektoren, die weit auseinander liegen.
+
+## Warum es wichtig ist
+
+- **Grundlage der semantischen Suche** -- Vektor-Embeddings ermöglichen Retrieval basierend auf Bedeutung statt Schlüsselwortabgleich, was unerlässlich ist, wenn juristische Terminologie je nach Sprache und Kontext variiert
+- **Mehrsprachigkeit** -- sprachübergreifende Embedding-Modelle bilden niederländischen, französischen und deutschen Text in denselben Vektorraum ab und ermöglichen so, mit einer Anfrage in einer Sprache Dokumente in einer anderen Sprache zu finden
+- **Skalierbare Ähnlichkeit** -- einmal eingebettet, können Millionen von Dokumenten effizient mit Approximate-Nearest-Neighbour-Algorithmen verglichen werden und liefern Ergebnisse in Millisekunden
+- **Nachgelagerte Flexibilität** -- dieselben Embeddings können Suche, Clustering, Deduplizierung, Klassifikation und Anomalieerkennung antreiben
+
+## Wie es funktioniert
+
+Ein Embedding-Modell (in der Regel ein transformerbasiertes neuronales Netz) verarbeitet einen Eingabetext und erzeugt einen Vektor fester Länge, üblicherweise zwischen 384 und 1536 Dimensionen. Während des Trainings lernt das Modell, semantisch ähnliche Eingaben auf nahe Punkte und unähnliche Eingaben auf entfernte Punkte abzubilden.
+
+Zum Zeitpunkt des Retrievals werden sowohl die Anfrage des Nutzers als auch alle Dokumente im Korpus als Vektoren dargestellt. Das System findet Dokumente, deren Vektoren dem Anfragevektor am nächsten sind, anhand einer Distanzmetrik -- üblicherweise Kosinusähnlichkeit oder Skalarprodukt. Diese Berechnung wird durch spezialisierte Vektorindizes (HNSW, IVF) in [Vektordatenbanken](/de/glossary/vector-database/) effizient skalierbar gemacht.
+
+Die Qualität von Vektor-Embeddings hängt stark vom verwendeten Modell ab. Allgemeine Modelle funktionieren breit, können aber in spezialisierten Domänen unterdurchschnittlich abschneiden. Fine-Tuning auf domänenspezifische Textpaare -- beispielsweise Steueranfragen, die mit relevanter Gesetzgebung abgeglichen werden -- kann die Relevanz für juristische und steuerliche Anwendungen erheblich verbessern.
+
+## Häufige Fragen
+
+**F: Wie unterscheiden sich Vektor-Embeddings von traditionellen TF-IDF-Vektoren?**
+
+A: TF-IDF-Vektoren sind dünn besetzt (hauptsächlich Nullen) und basieren auf Worthäufigkeitsstatistiken -- sie können keine Synonyme oder Bedeutungen erfassen. Vektor-Embeddings sind dicht besetzt (jede Dimension hat einen Wert) und werden aus großen Textdatensätzen gelernt, wobei semantische Beziehungen erfasst werden. "Körperschaftsteuer" und "vennootschapsbelasting" hätten sehr unterschiedliche TF-IDF-Vektoren, aber ähnliche dichte Embeddings.
+
+**F: Wie viele Dimensionen haben Vektor-Embeddings typischerweise?**
+
+A: Gängige Größen sind 384 (kleinere, schnellere Modelle), 768 (BERT-Klasse) und 1536 (größere Modelle wie OpenAIs ada-002). Mehr Dimensionen können feinere Unterscheidungen erfassen, erfordern aber mehr Speicher und Rechenleistung. Für die meisten juristischen Retrieval-Aufgaben bieten 768-dimensionale Embeddings eine gute Balance.
+
+**F: Müssen Vektor-Embeddings bei einem Modellwechsel neu berechnet werden?**
+
+A: Ja. Jedes Embedding-Modell definiert seinen eigenen Vektorraum. Wenn Sie das Modell wechseln oder auf eine neuere Version aktualisieren, müssen alle Dokumente neu eingebettet werden. Deshalb ist die Modellauswahl eine wichtige architektonische Entscheidung -- das erneute Einbetten eines großen Korpus ist rechenintensiv.
 
 ## References
 

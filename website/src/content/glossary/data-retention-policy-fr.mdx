@@ -12,4 +12,37 @@ draft: false
 
 ## Définition
 
-Une politique de conservation des données fixe les durées minimales et maximales de conservation des journaux, des données d'entraînement et du contenu utilisateur conformément aux exigences juridiques et commerciales.
+Une politique de conservation des données est un ensemble formel de règles qui définit combien de temps différentes catégories de données sont stockées, quand elles doivent être réexaminées, et quand elles doivent être supprimées ou anonymisées. La politique équilibre des exigences concurrentes : les obligations légales qui imposent des durées minimales de conservation, les réglementations sur la vie privée qui exigent la minimisation des données et des limites maximales de conservation, les besoins commerciaux en données historiques, et les contraintes techniques des systèmes de stockage. Pour les systèmes d'IA opérant dans des domaines réglementés comme le droit fiscal belge, les politiques de conservation des données doivent couvrir non seulement les données utilisateur et les journaux de requêtes, mais aussi les catégories de données spécifiques à l'IA — données d'entraînement, index d'embeddings, sorties de modèles et pistes d'audit — chacune ayant des exigences de conservation distinctes.
+
+## Pourquoi c'est important
+
+- **Conformité RGPD** — le RGPD exige la minimisation des données (article 5(1)(e)), ce qui signifie que les données personnelles ne doivent pas être conservées plus longtemps que nécessaire pour leur finalité ; une politique de conservation des données opérationnalise ce principe en définissant des durées de conservation spécifiques pour chaque catégorie de données
+- **Obligations légales belges** — le droit fiscal belge exige que certains registres soient conservés pendant des périodes spécifiques (7 ans pour les documents comptables en vertu du Code des sociétés et des associations, 10 ans pour certains documents fiscaux) ; la politique de conservation doit garantir que ces minimums sont respectés
+- **Intégrité de la piste d'audit** — les systèmes d'IA dans des contextes professionnels nécessitent des [pistes d'audit](/fr/glossary/audit-trail/) montrant quelles sources ont été consultées et quelles réponses ont été générées ; les politiques de conservation doivent garder ces traces suffisamment longtemps pour les besoins de responsabilité professionnelle, sans les conserver indéfiniment
+- **Gestion du stockage et des coûts** — sans limites de conservation, les données s'accumulent indéfiniment, augmentant les coûts de stockage, ralentissant les requêtes et élargissant la surface d'attaque ; la suppression systématique des données expirées maintient les systèmes efficaces et sécurisés
+
+## Comment ça fonctionne
+
+Une politique de conservation des données définit typiquement des règles de conservation pour chaque catégorie de données :
+
+**Classification des données** — la première étape consiste à identifier et catégoriser toutes les données que le système traite. Pour un système d'IA juridique, les catégories incluent typiquement : données de compte utilisateur, journaux de requêtes, documents sources récupérés, réponses générées, index d'embeddings, données d'entraînement du modèle, journaux système et registres de facturation. Chaque catégorie a des facteurs de conservation différents.
+
+**Attribution des durées de conservation** — chaque catégorie se voit attribuer une durée de conservation basée sur l'exigence applicable la plus longue. Les journaux de requêtes peuvent être conservés 12 mois pour l'amélioration du service, puis anonymisés. Les réponses générées avec pistes d'audit peuvent être conservées 7 ans pour correspondre aux exigences belges de conservation des documents comptables. Les index d'embeddings pour la législation abrogée peuvent être archivés plutôt que supprimés, car la recherche historique peut en avoir besoin.
+
+**Suppression et anonymisation** — lorsque la durée de conservation expire, les données sont soit définitivement supprimées, soit anonymisées (dépouillées des identifiants personnels tout en conservant les schémas agrégés). La politique précise quelle approche s'applique à chaque catégorie. Selon le RGPD, l'anonymisation est une alternative acceptable à la suppression si les données ne peuvent plus être liées à des individus.
+
+**Mise en oeuvre** — les politiques de conservation sont appliquées par des systèmes automatisés qui suivent l'âge des données et déclenchent des flux de suppression. La suppression manuelle n'est pas fiable à grande échelle. La mise en oeuvre doit gérer les dépendances — par exemple, un compte utilisateur ne peut pas être supprimé tant que les registres de facturation associés sont encore dans leur période de conservation.
+
+**Révision et mises à jour** — les durées de conservation doivent être révisées régulièrement (typiquement annuellement) pour tenir compte des changements législatifs, des besoins commerciaux ou des orientations réglementaires. L'Autorité belge de protection des données (GBA/APD) peut publier des orientations sectorielles qui affectent les durées de conservation.
+
+Pour les systèmes d'IA spécifiquement, la politique doit traiter des préoccupations propres aux modèles : les données d'entraînement peuvent-elles être supprimées si elles ont déjà influencé les poids du modèle ? Combien de temps les paires prompt-réponse doivent-elles être conservées à des fins d'évaluation ? Que se passe-t-il avec les embeddings lorsque le document source sous-jacent est mis à jour ou supprimé ?
+
+## Questions fréquentes
+
+**Q : Les durées de conservation peuvent-elles différer pour les mêmes données selon leur finalité ?**
+
+R : Oui. Les mêmes données peuvent être soumises à des durées de conservation différentes pour des finalités différentes. Par exemple, un journal de requêtes peut être conservé 30 jours pour le débogage, 12 mois pour l'analyse d'amélioration du service (anonymisé après 30 jours), et 7 ans s'il fait partie d'une piste d'audit pour un conseil professionnel. La durée applicable la plus longue régit la suppression effective, mais des restrictions d'accès peuvent imposer la limitation des finalités avant cette échéance.
+
+**Q : Que se passe-t-il lorsqu'un utilisateur demande la suppression de ses données en vertu du RGPD ?**
+
+R : Le droit à l'effacement d'une personne concernée (article 17 RGPD) exige la suppression des données personnelles sauf si une exception légale s'applique. Les obligations légales (conservation de documents fiscaux), les intérêts légitimes (prévention de la fraude) ou les actions en justice (responsabilité professionnelle) peuvent justifier le maintien de la conservation. La politique de conservation devrait prédéfinir quelles exceptions s'appliquent à chaque catégorie de données afin que les demandes de suppression puissent être traitées de manière cohérente.

@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-A data retention policy sets minimum and maximum retention periods for logs, training data, and user content in line with legal and business requirements.
+A data retention policy is a formal set of rules that defines how long different categories of data are stored, when they must be reviewed, and when they must be deleted or anonymised. The policy balances competing requirements: legal obligations that mandate minimum retention periods, privacy regulations that require data minimisation and maximum retention limits, business needs for historical data, and technical constraints of storage systems. For AI systems operating in regulated domains like Belgian tax law, data retention policies must address not only user data and query logs but also the AI-specific data categories — training data, embedding indexes, model outputs, and audit trails — each of which has distinct retention requirements.
+
+## Why it matters
+
+- **GDPR compliance** — the GDPR requires data minimisation (Article 5(1)(e)), meaning personal data must not be kept longer than necessary for its purpose; a data retention policy operationalises this principle by defining specific retention periods for each data category
+- **Belgian legal obligations** — Belgian tax law requires certain records to be retained for specific periods (7 years for accounting records under the Code of Companies and Associations, 10 years for certain tax documents); the retention policy must ensure these minimums are met
+- **Audit trail integrity** — AI systems in professional settings need audit trails showing what sources were consulted and what answers were generated; retention policies must keep these trails long enough for professional liability purposes while not indefinitely
+- **Storage and cost management** — without retention limits, data accumulates indefinitely, increasing storage costs, slowing queries, and expanding the attack surface; systematic deletion of expired data keeps systems efficient and secure
+
+## How it works
+
+A data retention policy typically defines retention rules for each data category:
+
+**Data classification** — the first step is identifying and categorising all data the system processes. For a legal AI system, categories typically include: user account data, query logs, retrieved source documents, generated responses, embedding indexes, model training data, system logs, and billing records. Each category has different retention drivers.
+
+**Retention period assignment** — each category is assigned a retention period based on the longest applicable requirement. Query logs might be retained for 12 months for service improvement, then anonymised. Generated responses with audit trails might be retained for 7 years to match Belgian accounting record requirements. Embedding indexes for repealed legislation might be archived rather than deleted, as historical research may require them.
+
+**Deletion and anonymisation** — when the retention period expires, data is either permanently deleted or anonymised (stripped of personal identifiers while retaining aggregate patterns). The policy specifies which approach applies to each category. Under GDPR, anonymisation is an acceptable alternative to deletion if the data can no longer be linked to individuals.
+
+**Implementation** — retention policies are enforced through automated systems that track data age and trigger deletion workflows. Manual deletion is unreliable at scale. The implementation must handle dependencies — for example, a user account cannot be deleted while associated billing records are still within their retention period.
+
+**Review and updates** — retention periods must be reviewed regularly (typically annually) to account for changes in legislation, business needs, or regulatory guidance. The Belgian Data Protection Authority (GBA/APD) may issue sector-specific guidance that affects retention periods.
+
+For AI systems specifically, the policy must address model-specific concerns: can training data be deleted if it has already influenced model weights? How long should prompt-response pairs be retained for evaluation purposes? What happens to embeddings when the underlying source document is updated or deleted?
+
+## Common questions
+
+**Q: Can retention periods differ for the same data depending on its purpose?**
+
+A: Yes. The same data may be subject to different retention periods for different purposes. For example, a query log might be retained for 30 days for debugging, 12 months for service improvement analytics (anonymised after 30 days), and 7 years if it forms part of an audit trail for professional advice. The longest applicable period governs actual deletion, but access restrictions can enforce purpose limitation before that.
+
+**Q: What happens when a user requests data deletion under GDPR?**
+
+A: A data subject's right to erasure (Article 17 GDPR) requires deletion of personal data unless a legal exception applies. Legal obligations (tax record keeping), legitimate interests (fraud prevention), or legal claims (professional liability) can justify continued retention. The retention policy should pre-define which exceptions apply to each data category so that deletion requests can be handled consistently.

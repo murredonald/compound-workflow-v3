@@ -10,6 +10,33 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Un information retrieval system gère des index, des stratégies de recherche et des modèles de ranking afin de fournir, pour chaque requête, une liste ordonnée de documents ou passages pertinents.
+Un système de recherche d'information (système IR) est une combinaison de logiciels, d'index et d'algorithmes qui stocke une collection de documents, accepte des requêtes utilisateur et renvoie une liste classée de résultats ordonnés par pertinence. Les systèmes IR vont des moteurs de recherche simples basés sur des mots-clés à des pipelines sophistiqués à plusieurs étapes combinant correspondance lexicale, compréhension sémantique et filtrage par métadonnées. Dans l'IA juridique, le système IR est l'épine dorsale qui relie la question d'un professionnel à l'article de loi, la décision ou la circulaire exacte qui y répond.
+
+## Pourquoi c'est important
+
+- **Précision dans les domaines à enjeux élevés** — les conseillers fiscaux ont besoin de l'article spécifique qui s'applique, et non d'une page de résultats vaguement liés ; la conception du système IR détermine directement si la bonne disposition apparaît
+- **Gestion de l'échelle** — le droit fiscal belge comprend des milliers de lois, d'arrêtés royaux, de circulaires, de décisions et de questions parlementaires dans trois langues ; un système IR rend tout cela consultable en millisecondes
+- **Fondement du RAG** — dans la génération augmentée par la récupération, le système IR fournit la fenêtre de contexte au modèle de langage ; une mauvaise récupération signifie de mauvaises réponses, quelle que soit la qualité du modèle
+- **Auditabilité** — un système IR bien conçu enregistre quels documents ont été récupérés et pourquoi, soutenant la responsabilité professionnelle et la conformité réglementaire
+
+## Comment ça fonctionne
+
+Les systèmes IR modernes fonctionnent en couches. La première couche est l'**indexation** : les documents sont traités, découpés en unités gérables et stockés dans une ou plusieurs structures d'index. Un index lexical (comme BM25) stocke les fréquences de termes pour la correspondance par mots-clés. Un index vectoriel stocke des embeddings denses pour la correspondance sémantique. De nombreux systèmes maintiennent les deux et combinent leurs résultats en recherche hybride.
+
+La deuxième couche est le **traitement de la requête** : la question brute de l'utilisateur est analysée, enrichie de synonymes ou de terminologie juridique, et potentiellement décomposée en sous-requêtes. La compréhension de la requête est particulièrement importante dans les domaines juridiques où un même concept peut avoir des noms différents selon les juridictions ou les langues.
+
+La troisième couche est la **récupération et le classement** : les documents candidats sont extraits des index, évalués, filtrés par métadonnées (juridiction, date, niveau d'autorité) et reclassés à l'aide d'un modèle plus coûteux mais plus précis. La liste classée finale est renvoyée à l'utilisateur ou transmise à une couche de génération pour la synthèse de la réponse.
+
+Ce qui distingue un système IR juridique d'un système générique, c'est la logique spécifique au domaine intégrée à chaque couche : la conscience temporelle (savoir quelle version d'une loi était en vigueur à une date donnée), le classement par autorité (la législation prévaut sur les orientations administratives) et la récupération multilingue (une requête en néerlandais doit retrouver des sources pertinentes en français).
+
+## Questions fréquentes
+
+**Q : En quoi un système IR diffère-t-il d'une base de données ?**
+
+R : Une base de données récupère des enregistrements exacts correspondant à des requêtes structurées (SQL). Un système IR récupère des documents par pertinence par rapport à des requêtes en langage naturel non structuré. Les bases de données renvoient des correspondances précises ; les systèmes IR renvoient des approximations classées, évaluées selon la mesure dans laquelle elles correspondent à l'intention de la requête.
+
+**Q : Un système IR peut-il gérer plusieurs langues ?**
+
+R : Oui. Les systèmes IR multilingues utilisent des embeddings multilingues ou des couches de traduction pour faire correspondre des requêtes dans une langue à des documents dans une autre. C'est essentiel en Belgique où la législation existe en néerlandais, en français et en allemand.

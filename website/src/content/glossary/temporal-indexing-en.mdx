@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Temporal indexing attaches temporal metadata—such as effective-from and effective-to dates—to content so that queries can respect time-sensitive interpretations, especially in law and tax. 
+Temporal indexing is the practice of storing and indexing content with time-based metadata — effective-from dates, effective-to dates, publication dates, and amendment dates — so that the retrieval system can filter and rank results based on their temporal relevance. In tax law, temporal indexing is not a nice-to-have but a necessity: the tax rate that applies to a transaction depends on the date of that transaction, and the system must retrieve the version of the law that was in force at that specific moment, not the current version or a historical version from the wrong period.
+
+## Why it matters
+
+- **Correct temporal answers** — a question about the corporate tax rate in 2020 should return the rate that applied in 2020, not the current rate; temporal indexing makes this possible
+- **Amendment tracking** — Belgian tax law is frequently amended; temporal indexing ensures that the system knows when each version of a provision was in force, preventing citation of repealed or not-yet-effective provisions
+- **Multi-period analysis** — tax advisors often need to compare provisions across time periods (how did the rate change? when was this deduction introduced?); temporal indexing supports these comparative queries
+- **Deadline awareness** — filing deadlines, prescription periods, and transitional provisions all have temporal dimensions that the system must understand
+
+## How it works
+
+Temporal indexing extends the standard document metadata with time-specific fields:
+
+**Effective date range** — each document version is tagged with an effective-from date (when it entered into force) and an effective-to date (when it was replaced or repealed). Open-ended provisions have a null effective-to date, indicating they are still in force.
+
+**Publication date** — when the document was officially published (e.g., in the Belgian Official Gazette). This is distinct from the effective date — a law may be published on 1 December but take effect on 1 January.
+
+**Amendment chain** — links between successive versions of the same provision, forming a version history. Each version points to the amending law and to the previous version, enabling traversal of the provision's evolution.
+
+**Query-time filtering** — when a user queries the system, the retrieval pipeline uses the temporal metadata to filter results. If the query specifies a date (explicitly or implicitly), only provisions in force on that date are returned. If no date is specified, the system defaults to the current date.
+
+**Temporal ranking** — among provisions that match the query and are temporally valid, more recent provisions may be ranked higher under the assumption that the user wants the current state of the law. However, this default is overridden when the query explicitly references a historical period.
+
+Implementation requires careful handling of edge cases: provisions that take effect retroactively, provisions with delayed effectiveness, transitional regimes where old and new rules apply simultaneously, and provisions that apply only to specific tax years.
+
+## Common questions
+
+**Q: How does temporal indexing handle retroactive legislation?**
+
+A: Retroactive provisions are indexed with an effective-from date that precedes their publication date. The system must surface them for queries about the affected historical period, even though they were enacted later. This requires the effective-from date to be set based on the provision's legal effect, not its publication.
+
+**Q: What happens when no date is specified in a query?**
+
+A: The system typically defaults to the current date, returning provisions currently in force. Some systems also include recently repealed provisions (with a flag) to handle transitional situations where the user might not realise a provision has changed.

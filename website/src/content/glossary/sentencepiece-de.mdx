@@ -12,7 +12,39 @@ draft: false
 
 ## Definition
 
-SentencePiece ist ein Open-Source-Tokenizer, der Eingaben als Roh-Byte- oder Unicode-Strom behandelt und ein Subword-Vokabular (z. B. BPE oder Unigram) ohne sprachspezifische Vor-[Tokenisierung](/de/glossary/tokenization/) lernt.
+SentencePiece ist eine quelloffene, sprachunabhängige Tokenisierungsbibliothek, die ein Subword-Vokabular direkt aus Rohtext lernt, ohne dass Vor-Tokenisierungsregeln wie Wortgrenzen-Erkennung oder sprachspezifische Aufteilung erforderlich sind. Im Gegensatz zu herkömmlichen Tokenizern, die Text zuerst in Wörter und dann in Subwords aufteilen, behandelt SentencePiece die gesamte Eingabe als eine Folge von Unicode-Zeichen (oder Bytes) und lernt die Segmentierung entweder mittels [Byte Pair Encoding](/de/glossary/byte-pair-encoding/) (BPE) oder eines Unigram-Sprachmodells. Dieses Design macht es besonders effektiv für mehrsprachige Anwendungen, bei denen sprachspezifische Vorverarbeitungsregeln unpraktisch sind.
+
+## Warum es wichtig ist
+
+- **Sprachunabhängigkeit** — SentencePiece funktioniert identisch für Niederländisch, Französisch, Deutsch und jede andere Sprache, ohne sprachspezifische Regeln zu benötigen, was es ideal für mehrsprachige juristische KI-Systeme macht
+- **Leerzeichen-Behandlung** — durch die Behandlung von Leerzeichen als reguläres Zeichen (dargestellt als ▁) kann SentencePiece den Originaltext aus Tokens ohne Informationsverlust rekonstruieren, was für die Beibehaltung der Formatierung juristischer Texte wichtig ist
+- **Reproduzierbarkeit** — dasselbe SentencePiece-Modell erzeugt unabhängig von Plattform oder Umgebung eine identische Tokenisierung und gewährleistet konsistente Verarbeitung über Training und Inferenz hinweg
+- **Grundlage moderner Modelle** — SentencePiece ist der Tokenizer hinter vielen weit verbreiteten Sprachmodellen, darunter T5, ALBERT und verschiedene mehrsprachige Modelle; es zu verstehen hilft, das Modellverhalten nachzuvollziehen
+
+## Wie es funktioniert
+
+SentencePiece arbeitet in zwei Phasen:
+
+**Training** — auf Basis eines Textkorpus lernt SentencePiece ein Vokabular aus Subword-Einheiten. Es unterstützt zwei Algorithmen:
+
+- **BPE-Modus** beginnt mit einzelnen Zeichen und führt iterativ die häufigsten Paare benachbarter Tokens zusammen, wobei ein Vokabular aus zunehmend längeren Einheiten aufgebaut wird. Die Merge-Operationen werden als Modell gespeichert.
+- **Unigram-Modus** beginnt mit einem großen anfänglichen Vokabular aller möglichen Teilzeichenketten (bis zu einer Längenbegrenzung) und entfernt iterativ Tokens, deren Verlust den geringsten Einfluss auf die Korpus-Likelihood hat, bis die Ziel-Vokabulargröße erreicht ist. Dieser Ansatz tendiert dazu, linguistisch sinnvollere Segmentierungen zu erzeugen.
+
+Beide Modi arbeiten direkt auf dem Roh-Zeichenstrom, wobei Leerzeichen als reguläres Zeichen mit einem speziellen Symbol (▁) als Präfix behandelt werden. Dies eliminiert den Bedarf an sprachspezifischen Wortgrenzregeln — entscheidend für Sprachen wie Deutsch und Niederländisch, in denen zusammengesetzte Wörter häufig sind („vennootschapsbelasting" ist ein einzelnes Wort, mit dem herkömmliche Tokenizer Schwierigkeiten haben könnten).
+
+**Encoding** — zur Inferenzzeit segmentiert das trainierte Modell jeden Eingabetext in Subword-Tokens. Häufige Wörter werden zu einzelnen Tokens; seltene oder unbekannte Wörter werden in kleinere Einheiten zerlegt. Das Encoding ist deterministisch — dieselbe Eingabe erzeugt immer dieselben Tokens.
+
+SentencePiece unterstützt auch Byte-Level-Fallback: Jedes Zeichen, das nicht vom gelernten Vokabular abgedeckt wird, wird als seine Roh-Byte-Sequenz dargestellt, was garantiert, dass keine Eingabe jemals nicht darstellbar ist. Dies ist essenziell für den Umgang mit Sonderzeichen, mathematischen Symbolen oder ungewöhnlichem Unicode in juristischen Dokumenten.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich SentencePiece vom Standard-BPE-Tokenizer?**
+
+A: Herkömmliche BPE-Tokenizer erfordern eine Vor-Tokenisierung — zuerst wird Text mittels sprachspezifischer Regeln (Leerzeichen, Satzzeichen) in Wörter aufgeteilt, dann wird BPE innerhalb jedes Wortes angewendet. SentencePiece überspringt die Vor-Tokenisierung vollständig und arbeitet direkt auf dem Rohtextstrom. Das macht es sprachunabhängig und vermeidet Fehler durch falsche Wortgrenzen-Erkennung.
+
+**F: Beeinflusst die Wahl des Tokenizers die Modellqualität?**
+
+A: Ja. Der Tokenizer bestimmt, wie Text segmentiert wird, was direkt beeinflusst, wie das Modell ihn verarbeitet. Ein Tokenizer, der überwiegend auf englischem Text trainiert wurde, zerlegt niederländische Rechtsbegriffe in mehr Tokens als nötig, was die Effizienz verringert und potenziell die Leistung beeinträchtigt. Das Training von SentencePiece auf einem mehrsprachigen juristischen Korpus erzeugt ein Vokabular, das besser für die Domäne geeignet ist.
 
 ## References
 

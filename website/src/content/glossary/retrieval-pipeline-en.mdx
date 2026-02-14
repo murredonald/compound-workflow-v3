@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-A retrieval pipeline combines stages such as [query parsing](/en/glossary/query-understanding/), candidate generation, filtering, and [reranking](/en/glossary/reranking/) to transform an input query into a final ranked list of relevant documents or chunks.
+A retrieval pipeline is the end-to-end sequence of stages that transforms a user query into a ranked list of relevant documents or passages. Each stage progressively narrows and refines the results — from initial candidate generation across millions of documents to final reranking of a handful of top candidates. In retrieval-augmented generation (RAG) systems, the pipeline's output is fed directly to the language model as context for answer generation.
+
+## Why it matters
+
+- **Accuracy depends on pipeline design** — the language model can only reason over what the retrieval pipeline returns; missed relevant documents or false positives propagate directly into generated answers
+- **Latency budgets** — each pipeline stage adds latency; the architecture must balance thoroughness against response time requirements
+- **Composability** — a modular pipeline allows swapping components (e.g., replacing BM25 with a dense retriever, or adding a reranker) without redesigning the entire system
+- **Legal requirements** — in tax research, the pipeline must handle temporal queries, multi-jurisdictional sources, and authority hierarchies that generic search pipelines do not account for
+
+## How it works
+
+A typical retrieval pipeline consists of these stages:
+
+1. **Query understanding** — the raw user question is parsed, expanded, or rewritten to improve coverage (e.g., adding synonyms or legal terminology)
+2. **Candidate retrieval** — a fast, broad search (using BM25, dense vectors, or hybrid) returns hundreds of candidate passages from the index
+3. **Filtering** — candidates are filtered by metadata constraints such as jurisdiction, date range, or document type
+4. **Reranking** — a cross-encoder or other reranker rescores the remaining candidates with deeper semantic analysis, producing a final relevance-ordered list
+5. **Post-processing** — the top results are deduplicated, grouped by source, and enriched with metadata before being passed to the generation layer
+
+Each stage trades off recall (not missing anything relevant) against precision (not including irrelevant results). The early stages favour recall; later stages refine for precision.
+
+## Common questions
+
+**Q: How many stages does a retrieval pipeline need?**
+
+A: At minimum, two: a retriever and a reranker. Simple systems skip reranking, but adding it typically improves result quality significantly. More complex pipelines add query expansion, metadata filtering, and source deduplication stages.
+
+**Q: What is the difference between a retrieval pipeline and a RAG pipeline?**
+
+A: A retrieval pipeline handles the search portion — finding relevant documents. A RAG pipeline includes both the retrieval pipeline and the generation layer (the language model that produces the final answer from retrieved context). The retrieval pipeline is a component within the broader RAG system.
+
+**Q: How do you evaluate a retrieval pipeline?**
+
+A: Common metrics include recall@k (how many relevant documents appear in the top k results), precision@k, mean reciprocal rank (MRR), and normalised discounted cumulative gain (nDCG). End-to-end RAG evaluation also measures answer correctness and faithfulness.
 
 ## References
 

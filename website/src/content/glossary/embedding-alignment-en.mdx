@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Embedding [alignment](/en/glossary/alignment/) adjusts or learns transformations so that vectors from different sources become comparable, enabling cross-model or cross-lingual retrieval.
+Embedding alignment is the process of mapping embedding vectors from different models, languages, or domains into a shared vector space where they can be meaningfully compared. When two embedding models produce vectors in different spaces, a document embedded with model A cannot be compared with a query embedded with model B — alignment techniques learn a transformation that bridges this gap. In multilingual legal AI, embedding alignment enables a single retrieval system to match Dutch queries against French documents by aligning the embedding spaces of both languages.
+
+## Why it matters
+
+- **Cross-lingual retrieval** — Belgian legal sources exist in Dutch, French, and German; embedding alignment enables a query in one language to retrieve documents in all three, without requiring translation
+- **Model migration** — when upgrading to a newer embedding model, alignment can bridge old and new embeddings during transition, avoiding the need to re-embed the entire corpus simultaneously
+- **Multi-model fusion** — different embedding models may specialise in different aspects (one better for short queries, another for long documents); alignment enables combining their strengths
+- **Domain adaptation** — aligning general-purpose embeddings with domain-specific ones transfers the general model's breadth to the specialised model's precision
+
+## How it works
+
+Embedding alignment typically involves learning a transformation matrix that maps vectors from one space to another:
+
+**Linear alignment** learns a rotation and/or scaling matrix W such that transforming vectors from space A by W maps them close to corresponding vectors in space B. The matrix is learned from a set of paired examples — items that should be close together in the aligned space (e.g., the same legal concept expressed in Dutch and French). This is computationally simple and often surprisingly effective.
+
+**Orthogonal alignment** (Procrustes alignment) constrains the transformation to be an orthogonal matrix (rotation without scaling), which preserves distances and angles within each space. This works well when the two spaces have similar structure but different orientations.
+
+**Non-linear alignment** uses neural networks to learn more complex mappings between spaces. This can handle cases where the spaces have structurally different representations of meaning but requires more training data and risks overfitting.
+
+**Training data** for alignment consists of parallel pairs: the same document or concept represented in both spaces. For cross-lingual alignment, bilingual dictionaries, parallel legal texts (Belgian laws exist in official Dutch and French versions), or translated sentence pairs provide the training signal. Even a few thousand parallel pairs can produce effective alignment.
+
+**Joint training** avoids the alignment problem entirely by training a single multilingual embedding model that natively maps all languages into a shared space. Models like multilingual E5 and SONAR are trained on text from many languages simultaneously, producing a unified space from the start.
+
+## Common questions
+
+**Q: Is alignment as good as a natively multilingual model?**
+
+A: Generally no — a natively multilingual model produces a more coherent shared space because it learns cross-lingual relationships during training. Post-hoc alignment is a useful fallback when a multilingual model is not available or when bridging between existing specialised models.
+
+**Q: How many parallel pairs are needed for alignment?**
+
+A: Linear alignment can work with as few as 1,000-5,000 high-quality parallel pairs. More data improves quality, but the gains diminish after about 10,000-20,000 pairs. The pairs should cover the full range of topics the system handles.
 
 ## References
 

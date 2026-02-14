@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Passage retrieval richt zich op het indexeren en ophalen van fijnmazige tekstsegmenten zodat [RAG](/nl/glossary/rag/)-systemen antwoorden kunnen gronden in de meest relevante passages in plaats van hele documenten.
+Passage retrieval is de praktijk van het indexeren en ophalen van kleine tekstsegmenten (passages of chunks) in plaats van volledige documenten, waardoor meer nauwkeurige en gerichte contextlevering aan de generatielaag mogelijk wordt. In plaats van een wet van 50 pagina's te retourneren en het taalmodel te vragen het relevante artikel te vinden, retourneert passage retrieval de specifieke paragraaf of het specifieke artikel dat de zoekopdracht beantwoordt. Deze granulariteit is essentieel voor [RAG](/nl/glossary/rag/)-systemen, waar het contextvenster beperkt is en elke token telt.
+
+## Waarom het belangrijk is
+
+- **Precisie** — het retourneren van een specifiek artikel in plaats van een volledige wet zorgt ervoor dat het taalmodel gerichte, relevante context ontvangt in plaats van door pagina's irrelevante tekst te moeten waden
+- **Efficiëntie van het contextvenster** — taalmodellen hebben beperkte contextvensters; passage retrieval maximaliseert het aandeel relevante inhoud binnen dat venster
+- **Nauwkeurigheid van citaties** — wanneer de opgehaalde eenheid een enkel artikel of een enkele paragraaf is, kan het systeem de exacte bepaling citeren in plaats van naar een document van meerdere pagina's te verwijzen
+- **Nauwkeurigheid van relevantiescore** — het embedden van een gerichte passage levert een nauwkeurigere vectorrepresentatie op dan het embedden van een volledig document, wat de retrievalkwaliteit verbetert
+
+## Hoe het werkt
+
+Passage retrieval omvat twee belangrijke ontwerpbeslissingen: hoe passages te creëren en hoe ze op te halen.
+
+**Passage-creatie** vindt plaats tijdens documentinname. Documenten worden opgesplitst in passages met behulp van een van de volgende strategieën: vaste-grootte chunking (segmenten van een vast aantal tokens), structuurbewuste chunking (één passage per artikel of sectie) of sliding window chunking (overlappende segmenten). De keuze hangt af van het documenttype — gestructureerde wetgeving leent zich voor passages op artikelniveau, terwijl vrije-vorm commentaar vaste-grootte of sliding window benaderingen kan vereisen.
+
+**Passage-indexering** — elke passage wordt onafhankelijk ge-embed en opgeslagen in de vectorindex samen met metadata (bovenliggend document, positie, artikelnummer, ingangsdatum). De metadata koppelt elke passage terug aan de bredere context, waardoor het systeem naburige passages kan ophalen wanneer aanvullende context nodig is.
+
+**Passage retrieval** — op het moment van een zoekopdracht doorzoekt het systeem de passage-index (niet een documentindex) en retourneert de top-k meest relevante passages. Deze passages kunnen afkomstig zijn uit verschillende documenten, wat de diverse bewijsbasis biedt die nodig is voor uitgebreide antwoorden.
+
+**Contextuitbreiding** — wanneer een opgehaalde passage te smal is (bijv. een enkele zin die verwijst naar de voorgaande paragraaf), kan het systeem uitbreiden door naburige passages uit hetzelfde document op te halen. Dit biedt de lokale context die nodig is om de passage te begrijpen zonder het volledige document op te halen.
+
+De granulariteit van passages brengt een afweging met zich mee: kleinere passages zijn preciezer gericht maar missen mogelijk context; grotere passages behouden context maar verminderen precisie. De meeste juridische retrievalsystemen gebruiken passages van 200-500 tokens, wat ruwweg overeenkomt met één of twee paragrafen of een enkel wetsartikel.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt passage retrieval van documentretrieval?**
+
+A: Documentretrieval retourneert volledige documenten gerangschikt op relevantie. Passage retrieval retourneert kleine tekstsegmenten uit documenten. Passage retrieval levert nauwkeurigere resultaten en betere embeddingkwaliteit, maar kan bredere context verliezen die documentretrieval behoudt.
+
+**V: Kunnen passage- en documentretrieval worden gecombineerd?**
+
+A: Ja. Sommige systemen halen op passage-niveau op voor precisie en breiden vervolgens uit naar het bovenliggende document of naburige passages voor context. Deze hybride aanpak combineert de precisie van passage retrieval met de context van documentretrieval.
 
 ## References
 

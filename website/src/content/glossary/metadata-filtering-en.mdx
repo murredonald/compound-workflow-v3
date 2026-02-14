@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Metadata filtering uses structured fields such as tags, dates, or legal domains to limit which documents are eligible to be retrieved for a given [query](/en/glossary/prompt/).
+Metadata filtering is the process of restricting retrieval results to documents that match specific structured attributes — such as document type, publication date, jurisdiction, authority level, or language — before or during similarity search. Rather than relying solely on semantic relevance, metadata filtering applies hard constraints that ensure results meet contextual requirements. In Belgian tax law, this means a query about current Walloon registration duties only returns Walloon regional legislation that is currently in force, not expired federal provisions or Flemish equivalents.
+
+## Why it matters
+
+- **Jurisdictional precision** — Belgium's three regions and federal level each have distinct tax rules; metadata filtering prevents the system from returning legislation from the wrong jurisdiction
+- **Temporal accuracy** — tax law changes frequently; filtering by date ensures the system returns the version of a provision that was in force at the relevant time, not a repealed predecessor
+- **Authority ranking** — filtering by document type (legislation, circular, ruling, parliamentary question) allows the system to prioritise binding sources over interpretive guidance when appropriate
+- **Noise reduction** — without metadata filtering, semantic search may return topically relevant but practically irrelevant documents, such as draft proposals, foreign legislation, or superseded provisions
+
+## How it works
+
+Metadata filtering operates within the retrieval pipeline, typically at one of two points:
+
+**Pre-filtering** narrows the search space before similarity search runs. The vector database receives both the query vector and metadata constraints, and only searches within the subset of documents that match the constraints. This is efficient because it reduces the number of vectors to compare, but it can miss relevant documents if the filters are too restrictive.
+
+**Post-filtering** runs the full similarity search first and then removes results that do not match metadata constraints. This ensures no semantically relevant documents are missed by overly narrow filters, but it can be wasteful — many retrieved candidates may be discarded after scoring.
+
+Most production systems use a combination. Common filter types in legal AI include:
+
+- **Date range** — only documents published between specific dates, or documents in force on a specific date
+- **Jurisdiction** — federal, Flemish, Walloon, Brussels-Capital, or German-speaking Community
+- **Document type** — law, royal decree, ministerial decree, circular, administrative ruling, court decision, parliamentary question
+- **Authority level** — constitutional provisions, primary legislation, secondary legislation, administrative guidance
+- **Language** — Dutch, French, or German version of the text
+
+Metadata filtering depends on accurate, complete metadata at indexing time. If a document is not tagged with the correct jurisdiction or publication date, no filter will find or exclude it correctly. This makes metadata enrichment during document ingestion a critical prerequisite.
+
+## Common questions
+
+**Q: Can metadata filters be too strict?**
+
+A: Yes. Over-filtering can exclude relevant results — for example, filtering strictly by "Flemish" jurisdiction would miss federal legislation that applies uniformly across all regions. Smart defaults and filter relaxation (broadening filters when too few results are returned) help prevent this.
+
+**Q: How does metadata filtering interact with semantic search?**
+
+A: They are complementary. Semantic search finds documents that are about the right topic; metadata filtering ensures they are from the right jurisdiction, time period, and authority level. Neither alone is sufficient for legal research — combining both produces accurate, contextually appropriate results.
 
 ## References
 

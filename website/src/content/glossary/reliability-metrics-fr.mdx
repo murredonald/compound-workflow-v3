@@ -10,6 +10,43 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+Les métriques de fiabilité sont des mesures quantitatives qui capturent la constance, la prévisibilité et la sûreté avec lesquelles un système d'IA fonctionne dans le temps et sous des conditions variables — allant au-delà de la simple exactitude pour évaluer si le système est fiable en production. Alors que l'exactitude mesure la fréquence à laquelle le système est correct sur un jeu de test, les métriques de fiabilité mesurent s'il reste correct face aux changements de distribution, s'il communique honnêtement son incertitude, s'il évite les défaillances catastrophiques et s'il maintient un comportement cohérent. Pour les systèmes d'IA juridique où les professionnels s'appuient sur les résultats pour conseiller leurs clients, la fiabilité est aussi importante que l'exactitude brute.
+
+## Pourquoi c'est important
+
+- **Fiabilité professionnelle** — les conseillers fiscaux ont besoin de savoir non seulement que le système est généralement correct, mais qu'il échoue de manière gracieuse quand il se trompe — en signalant l'incertitude plutôt qu'en présentant des réponses incorrectes avec assurance
+- **Conformité réglementaire** — l'AI Act européen exige que les systèmes d'IA à haut risque maintiennent des « niveaux appropriés d'exactitude, de robustesse et de cybersécurité » tout au long de leur cycle de vie ; les métriques de fiabilité fournissent les preuves de cette conformité continue
+- **Stabilité opérationnelle** — des métriques comme le temps de disponibilité, la constance de la latence et les taux d'erreur suivent si le système est opérationnellement fiable, et pas seulement intellectuellement exact
+- **Confiance dans le temps** — un système exact à 90 % mais imprévisible (parfois brillant, parfois catastrophiquement faux) est moins utile qu'un système exact à 85 % mais constamment fiable
+
+## Comment ça fonctionne
+
+Les métriques de fiabilité couvrent plusieurs dimensions :
+
+**Métriques de [calibration](/fr/glossary/calibration/)** — l'erreur de calibration attendue (ECE) et le score de Brier mesurent si les scores de confiance du système correspondent aux taux d'exactitude réels. Un système bien calibré avec 80 % de confiance est correct environ 80 % du temps.
+
+**Métriques de robustesse** — exactitude sous perturbation (dans quelle mesure les performances chutent-elles quand les entrées sont bruitées ou adversariales ?), performance face aux changements de distribution (le système maintient-il sa qualité sur de nouvelles législations ?), et cohérence (la même question produit-elle la même réponse quand elle est posée plusieurs fois ?).
+
+**Métriques de couverture** — taux d'abstention (à quelle fréquence le système refuse-t-il de répondre ?), couverture à un niveau d'exactitude donné (quel pourcentage de requêtes le système peut-il traiter tout en maintenant un niveau d'exactitude cible ?), et taux de détection de lacunes (à quelle fréquence le système identifie-t-il correctement que sa base de connaissances ne contient pas l'information nécessaire ?).
+
+**Métriques opérationnelles** — temps de disponibilité (quel pourcentage du temps le système est-il accessible ?), percentiles de latence (temps de réponse P50, P95, P99), taux d'erreur (quel pourcentage de requêtes échouent ?), et débit (combien de requêtes par seconde le système peut-il traiter ?).
+
+**Métriques de sécurité** — taux d'hallucination (à quelle fréquence le système fabrique-t-il des informations ?), taux de sorties nuisibles (à quelle fréquence le système produit-il du contenu trompeur ou dangereux ?), et taux de violation des garde-fous (à quelle fréquence le système enfreint-il ses propres règles, par exemple en fournissant un avis juridique contraignant alors qu'il est instruit de ne pas le faire ?).
+
+Ces métriques sont suivies dans le temps via des tableaux de bord, avec des alertes lorsqu'une métrique dépasse un seuil prédéfini. Leur combinaison offre une vision multidimensionnelle de la fiabilité du système qu'aucune métrique isolée ne peut capturer.
+
+## Questions fréquentes
+
+**Q : Un système fiable est-il toujours exact ?**
+
+R : Pas nécessairement, mais la fiabilité implique de savoir quand il n'est pas exact. Un système fiable avec 80 % d'exactitude qui signale les 20 % incertains est plus fiable qu'un système non fiable avec 90 % d'exactitude qui ne donne aucune indication sur ses moments d'erreur potentielle.
+
+**Q : Quelles métriques de fiabilité sont les plus importantes ?**
+
+R : Cela dépend du cas d'usage. Pour l'IA juridique, la qualité de calibration et le taux d'hallucination sont généralement les plus critiques — ils déterminent si les professionnels peuvent faire confiance aux signaux de confiance du système et si ses résultats sont ancrés dans des sources réelles.
+
 ## References
 
 - Vilone & Longo (2021), "[Notions of explainability and evaluation approaches for explainable artificial intelligence](https://doi.org/10.1016/j.inffus.2021.05.009)", Information Fusion.

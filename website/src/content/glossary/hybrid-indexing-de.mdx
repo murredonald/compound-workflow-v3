@@ -12,7 +12,44 @@ draft: false
 
 ## Definition
 
-Hybrid Indexing speichert Dokumente in mehreren Indizes – etwa einem [BM25](/de/glossary/bm25/)‑Index und einem Vektorindex –, damit Anfragen sowohl nach Schlüsselwörtern als auch nach semantischer Ähnlichkeit bewertet werden können.
+Hybrid Indexing ist die Praxis, sowohl Sparse- (lexikalische) als auch Dense- (Vektor-)Indizes über derselben Dokumentensammlung aufzubauen und zu pflegen, sodass das Retrievalsystem Schlüsselwort-Matching und semantisches Matching in einer einzigen Abfrage kombinieren kann. Anstatt zwischen [BM25](/de/glossary/bm25/) und Vektorsuche zu wählen, unterstützt Hybrid Indexing beides gleichzeitig und nutzt so die Stärken beider Ansätze. Im Bereich Legal AI ist dies besonders wertvoll, da manche Abfragen exaktes Term-Matching erfordern (bestimmte Artikelnummern, Gesetzesverweise), während andere semantisches Verständnis benötigen (konzeptuelle Fragen, die in unterschiedlicher Terminologie formuliert werden).
+
+## Warum es wichtig ist
+
+- **Das Beste aus beiden Ansätzen** — lexikalische Indizes sind hervorragend im exakten Term-Matching; Vektorindizes im semantischen Matching; Hybrid Indexing ermöglicht beides in jeder Abfrage
+- **Robustheit** — Abfragen, die mit einem Ansatz allein scheitern würden, sind mit dem anderen erfolgreich; Hybrid Indexing reduziert die Anzahl der Abfragen ohne relevante Ergebnisse
+- **Anforderungen der Rechtssuche** — Steuerfachleute stellen sowohl präzise Anfragen („Artikel 215 WIB92") als auch konzeptuelle Anfragen („Absetzbarkeit von Homeoffice-Kosten"); ein einzelner Indextyp kann nicht beide optimal bedienen
+- **Bewiesene Effektivität** — hybrides Retrieval übertrifft in Benchmarks durchgängig sowohl rein Sparse- als auch rein Dense-Retrieval, einschließlich Benchmarks im Rechtsbereich
+
+## So funktioniert es
+
+Hybrid Indexing pflegt zwei parallele Indexstrukturen:
+
+**Lexikalischer Index** — ein invertierter Index (typischerweise BM25-basiert), der Terme den Dokumenten zuordnet, die sie enthalten. Er wird während der Aufnahme durch Tokenisierung, Stemming und Indexierung des Textes jedes Dokumentenchunks erstellt. Er unterstützt exaktes Term-Matching, Phrasenabfragen und boolesche Filter.
+
+**Vektorindex** — ein ANN-Index (typischerweise HNSW), der Embedding-Vektoren für jeden Dokumentenchunk speichert. Er wird während der Aufnahme erstellt, indem jeder Chunk durch ein Embedding-Modell verarbeitet und der resultierende Vektor dem Index hinzugefügt wird. Er unterstützt semantische Ähnlichkeitssuche.
+
+Zur Abfragezeit durchsucht das System beide Indizes:
+1. Die Anfrage des Nutzers wird sowohl von der lexikalischen Suchmaschine (BM25-Scoring) als auch von der Vektorsuchmaschine (Embedding + Nearest-Neighbour-Suche) verarbeitet
+2. Jede Engine gibt ihre Top-k-Ergebnisse mit Scores zurück
+3. Die Ergebnisse werden mit einem Fusionsalgorithmus zusammengeführt
+
+**Score-Fusion** kombiniert die beiden Ranglisten. Gängige Ansätze sind:
+- **Reciprocal Rank Fusion (RRF)** — wandelt Ränge mit 1/(k + Rang) in Scores um und summiert über beide Methoden; einfach und effektiv
+- **Gewichtete lineare Kombination** — normalisiert die Scores jeder Methode und kombiniert sie mit gelernten oder optimierten Gewichten
+- **Gelernte Fusion** — ein trainiertes Modell, das Features aus beiden Retrievalmethoden aufnimmt und einen einheitlichen Relevanz-Score erzeugt
+
+Die zusammengeführten Ergebnisse werden dann an die Reranking-Stufe und schließlich an die Generierungsschicht weitergegeben.
+
+## Häufige Fragen
+
+**F: Verdoppelt Hybrid Indexing den Speicherbedarf?**
+
+A: Annähernd ja. Der lexikalische Index und der Vektorindex verbrauchen jeweils unabhängig Speicherplatz. Die Speicherkosten werden jedoch durch die erhebliche Verbesserung der Retrievalqualität gerechtfertigt. Vektorindizes können durch Quantisierung komprimiert werden, um diesen Overhead zu reduzieren.
+
+**F: Welche Fusionsmethode funktioniert am besten?**
+
+A: Reciprocal Rank Fusion (RRF) ist die beliebteste Wahl, da sie einfach ist, kein Training erfordert und im Vergleich zu komplexeren Methoden wettbewerbsfähig abschneidet. Sie ist die Standard-Fusionsmethode in den meisten Produktionssystemen.
 
 ## References
 

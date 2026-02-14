@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Vector [quantization](/nl/glossary/quantization/) verdeelt de embeddingruimte in cellen en vervangt elke vector door een dichtsbijzijnde representant uit een codeboek, wat opslag en zoekkosten sterk kan verlagen.
+Vectorquantisatie is een Compressietechniek die hoogprecisie-embeddingvectoren benadert met behulp van een kleine Verzameling representatieve Prototypevectoren (een Codeboek). In plaats van elke Embedding op te slaan als honderden volwaardige Floating-pointgetallen, wordt de Vector toegewezen aan het dichtstbijzijnde Prototype in elke Deelruimte, en wordt alleen de Prototype-index opgeslagen. Dit vermindert het Geheugengebruik drastisch en versnelt Afstandsberekeningen, waardoor semantisch Zoeken mogelijk wordt op Schalen waarop volledige-precisie-opslag onbetaalbaar zou zijn.
+
+## Waarom het belangrijk is
+
+- **Geheugenreductie** — een 768-dimensionale float32-embedding vereist 3.072 bytes; met productquantisatie kan dezelfde Embedding worden gecomprimeerd tot 48-96 bytes — een 30-60x Reductie die indexen op Miljardenschaal haalbaar maakt in RAM
+- **Zoekversnelling** — Afstandsberekeningen op gequantiseerde Vectoren zijn sneller omdat ze werken op kleinere Datastructuren en voorberekende Opzoektabellen kunnen gebruiken in plaats van volledige Vectorrekenkunde
+- **Kostenefficiëntie** — kleinere Indexen vereisen minder Geheugen en minder Servers, wat de Infrastructuurkosten voor grootschalige Retrievalsystemen verlaagt
+- **Schaalbaarheid** — Quantisatie is wat indexen op Miljardenschaal praktisch maakt op standaard Hardware; zonder Quantisatie zou grootschalig semantisch Zoeken onpraktische Hoeveelheden RAM vereisen
+
+## Hoe het werkt
+
+Vectorquantisatie werkt door een Verzameling Prototypevectoren (Centroïden) te leren uit de Data en vervolgens elke Vector te coderen als een Verwijzing naar het dichtstbijzijnde Prototype:
+
+**Scalaire Quantisatie** verlaagt de Precisie van elke Dimensie afzonderlijk — bijvoorbeeld door 32-bit Floats om te zetten naar 8-bit Integers. Dit is de eenvoudigste Vorm: elke Dimensie wordt lineair afgebeeld van het waargenomen Bereik naar 256 Integerwaarden. De Opslag wordt 4x gereduceerd met een bescheiden Nauwkeurigheidsverlies.
+
+**Productquantisatie (PQ)** splitst elke Vector op in Deelvectoren (bv. een 768-dimensionale Vector in 48 Deelvectoren van elk 16 Dimensies) en quantiseert elke Deelvector onafhankelijk met een eigen Codeboek van 256 Centroïden. De volledige Vector wordt dan voorgesteld als 48 eenbytecodes — slechts 48 bytes in plaats van 3.072. Afstandsberekeningen gebruiken voorberekende Afstandstabellen tussen de Querydeelvectoren en de Codeboekitems, wat zeer snel is.
+
+**Geoptimaliseerde productquantisatie (OPQ)** past een Rotatie toe op de Vectoren voordat ze in Deelvectoren worden gesplitst, waardoor het Informatieverlies door onafhankelijke Quantisatie van elke Deelvector wordt geminimaliseerd.
+
+Het Codeboek wordt aangeleerd tijdens de Indexconstructie met behulp van k-means-clustering op de Trainingsvectoren. De Kwaliteit van de Quantisatie hangt af van hoe goed het Codeboek de Datadistributie representeert — Codeboeken die getraind zijn op het daadwerkelijke Corpus presteren beter dan generieke.
+
+Quantisatie wordt doorgaans gecombineerd met een Indexstructuur (IVF+PQ, HNSW+PQ) om zowel snelle Kandidaatselectie als geheugenefficiënte Opslag te verkrijgen.
+
+## Veelgestelde vragen
+
+**V: Hoeveel Nauwkeurigheid gaat er verloren met Quantisatie?**
+
+A: Bij productquantisatie met redelijke Parameters daalt de Recall doorgaans 2-5% in vergelijking met volledige-precisie-zoeken. Het exacte Verlies hangt af van de Data, de Codeboekgrootte en het Aantal Deelvectoren. Dit is meestal aanvaardbaar gezien de drastische Verbeteringen in Geheugen en Snelheid.
+
+**V: Kunnen gequantiseerde Indexen incrementeel worden bijgewerkt?**
+
+A: Ja, nieuwe Vectoren kunnen worden gequantiseerd met het bestaande Codeboek en aan de Index worden toegevoegd. Als de Datadistributie echter significant verandert, kan het Codeboek suboptimaal worden en moet het opnieuw worden getraind.
 
 ## References
 

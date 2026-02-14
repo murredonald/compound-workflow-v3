@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Eine Knowledge Base enthält kuratierte Artikel, Referenztexte und teils strukturierte Datensätze, die als verlässliche Quelle für Such‑ und Frage‑Antwort‑Systeme dienen.
+Eine Knowledge Base ist eine kuratierte, strukturierte Sammlung von Informationen — Dokumente, Fakten, Regeln oder Entitätsbeziehungen — die für effizientes Abfragen, Retrieval und Wiederverwendung organisiert ist. Anders als ein roher Dokumentenkorpus enthält eine Knowledge Base typischerweise Metadaten, Taxonomien oder relationale Strukturen, die präzises Nachschlagen und Schlussfolgern ermöglichen. In der Legal- und Steuer-KI speichern Knowledge Bases Gesetzgebung, Entscheidungen, Rundschreiben und deren Verknüpfungen.
+
+## Warum es wichtig ist
+
+- **Einzige Wahrheitsquelle** — zentralisiert autoritative Informationen, sodass alle Abfragen auf dieselben verifizierten Daten zugreifen
+- **Strukturiertes Retrieval** — Metadaten und Beziehungen ermöglichen die Filterung nach Rechtsordnung, Datum, Thema oder Autoritätsstufe, weit über das hinaus, was eine Stichwortsuche bietet
+- **RAG-Grundlage** — Retrieval-Augmented-Generation-Systeme sind auf hochwertige Knowledge Bases angewiesen, um ihre Antworten auf Fakten statt auf parametrisches Wissen zu stützen
+- **Zeitliche Genauigkeit** — eine gut gepflegte Knowledge Base verfolgt, welche Fassung eines Gesetzes zu einem bestimmten Zeitpunkt galt, und verhindert so, dass das System aufgehobene Bestimmungen zitiert
+
+## Wie es funktioniert
+
+Eine Knowledge Base wird durch eine Pipeline aus Aufnahme, Strukturierung und Indexierung aufgebaut. Rohdokumente (Gesetzestexte, Gerichtsentscheidungen, Verwaltungsentscheidungen) werden geparst und mit Metadaten angereichert: Veröffentlichungsdatum, Behörde, Themenklassifikation, jurisdiktionaler Geltungsbereich und Querverweise auf andere Bestimmungen.
+
+Der angereicherte Inhalt wird dann in einem Format gespeichert, das sowohl Volltextsuche als auch strukturierte Abfragen unterstützt. Moderne juristische Knowledge Bases kombinieren oft einen Dokumentenspeicher (für Volltext), einen Vektorindex (für semantische Suche) und eine Graphen-Schicht (für Beziehungen zwischen Entitäten wie Artikeln, Änderungen und Entscheidungen).
+
+Die Aktualisierung einer Knowledge Base erfordert eine automatisierte Überwachung offizieller Veröffentlichungen, Änderungserkennung und Re-Indexierungspipelines, die Updates verbreiten, ohne bestehende Referenzen zu beeinträchtigen.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich eine Knowledge Base von einer Datenbank?**
+
+A: Eine traditionelle Datenbank speichert strukturierte Daten in Tabellen mit festen Schemata. Eine Knowledge Base ist breiter angelegt — sie kann unstrukturierten Text, semi-strukturierte Metadaten und relationales Wissen umfassen. Juristische Knowledge Bases kombinieren oft alle drei: vollständige Gesetzestexte, strukturierte Metadatenfelder und Beziehungslinks zwischen Bestimmungen.
+
+**F: Kann eine Knowledge Base veralten?**
+
+A: Ja, und dies ist ein kritisches Risiko im juristischen Bereich. Steuerrecht ändert sich häufig durch neue Gesetzgebung, Änderungen und Verwaltungsrundschreiben. Eine Knowledge Base ohne automatisierte Aktualisierungspipelines kann veraltete Informationen liefern, was zu fehlerhaften Auskünften führt. Versionsverfolgung und Aktualitätsüberwachung sind unerlässlich.
+
+**F: Wie unterstützt eine Knowledge Base RAG?**
+
+A: In einer RAG-Pipeline dient die Knowledge Base als Retrieval-Schicht. Wenn ein Nutzer eine Frage stellt, durchsucht das System die Knowledge Base nach relevanten Passagen und speist diese dann als Kontext in das Sprachmodell ein. Das Modell generiert seine Antwort auf Grundlage der abgerufenen Inhalte, anstatt sich allein auf seine Trainingsdaten zu verlassen.

@@ -10,6 +10,33 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Een information retrieval system beheert indexen, zoekt strategieën en rankingmodellen om per [query](/nl/glossary/prompt/) een geordende lijst met relevante documenten of passages te leveren.
+Een information retrieval system (IR-systeem) is een combinatie van software, indexen en algoritmen die een verzameling documenten opslaat, zoekvragen van gebruikers accepteert en een gerangschikte lijst met resultaten retourneert, geordend op relevantie. IR-systemen variëren van eenvoudige zoekmachines op basis van trefwoorden tot geavanceerde meerfasige pipelines die lexicale matching, semantisch begrip en metadatafiltering combineren. In juridische AI vormt het IR-systeem de ruggengraat die de vraag van een professional verbindt met het exacte wetsartikel, de uitspraak of de circulaire die het antwoord bevat.
+
+## Waarom het belangrijk is
+
+- **Precisie in domeinen met hoge inzet** — belastingadviseurs hebben het specifieke artikel nodig dat van toepassing is, niet een pagina met losjes gerelateerde resultaten; het ontwerp van het IR-systeem bepaalt rechtstreeks of de juiste bepaling bovenaan verschijnt
+- **Schaalverwerking** — het Belgische belastingrecht omvat duizenden wetten, koninklijke besluiten, circulaires, rulings en parlementaire vragen in drie talen; een IR-systeem maakt dit doorzoekbaar in milliseconden
+- **Fundament voor RAG** — bij retrieval-augmented generation levert het IR-systeem het contextvenster voor het taalmodel; slechte retrieval betekent slechte antwoorden, ongeacht de kwaliteit van het model
+- **Controleerbaarheid** — een goed ontworpen IR-systeem logt welke documenten werden opgehaald en waarom, wat professionele verantwoording en naleving van regelgeving ondersteunt
+
+## Hoe het werkt
+
+Moderne IR-systemen werken in lagen. De eerste laag is **indexering**: documenten worden verwerkt, opgesplitst in beheersbare eenheden en opgeslagen in een of meer indexstructuren. Een lexicale index (zoals BM25) slaat termfrequenties op voor trefwoordmatching. Een vectorindex slaat dense embeddings op voor semantische matching. Veel systemen onderhouden beide en combineren hun resultaten in hybride zoekopdrachten.
+
+De tweede laag is **queryverwerking**: de ruwe vraag van de gebruiker wordt geanalyseerd, uitgebreid met synoniemen of juridische terminologie, en eventueel ontleed in subquery's. Querybegrip is bijzonder belangrijk in juridische domeinen, waar hetzelfde concept verschillende namen kan hebben in verschillende rechtsgebieden of talen.
+
+De derde laag is **retrieval en rangschikking**: kandidaatdocumenten worden uit de indexen gehaald, gescoord, gefilterd op metadata (rechtsgebied, datum, autoriteitsniveau) en geherscoord met een duurder maar nauwkeuriger model. De uiteindelijke gerangschikte lijst wordt aan de gebruiker geretourneerd of doorgegeven aan een generatielaag voor antwoordsynthese.
+
+Wat een juridisch IR-systeem onderscheidt van een generiek systeem is de domeinspecifieke logica die door elke laag is verweven: temporeel bewustzijn (weten welke versie van een wet van kracht was op een bepaalde datum), autoriteitsrangschikking (wetgeving weegt zwaarder dan administratieve richtlijnen), en cross-linguïstische retrieval (een Nederlandstalige zoekvraag moet ook relevante Franstalige bronnen vinden).
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt een IR-systeem van een database?**
+
+A: Een database haalt exacte records op die overeenkomen met gestructureerde query's (SQL). Een IR-systeem haalt documenten op op basis van relevantie ten opzichte van ongestructureerde, natuurlijke-taalvragen. Databases retourneren precieze overeenkomsten; IR-systemen retourneren gerangschikte benaderingen, gescoord op hoe goed ze overeenkomen met de intentie van de zoekvraag.
+
+**V: Kan een IR-systeem meerdere talen aan?**
+
+A: Ja. Cross-linguïstische IR-systemen gebruiken meertalige embeddings of vertalingslagen om query's in de ene taal te matchen met documenten in een andere taal. Dit is essentieel in België, waar wetgeving bestaat in het Nederlands, Frans en Duits.

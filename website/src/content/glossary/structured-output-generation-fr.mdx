@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-La génération de sorties structurées consiste à demander ou configurer les modèles de langage pour que leurs réponses respectent un format ou un schéma strict, ce qui facilite le parsing, la validation et l'intégration dans des systèmes en aval.
+La génération de sorties structurées est la pratique consistant à contraindre la sortie d'un modèle de langage à se conformer à un format ou schéma prédéfini — comme JSON, XML, des champs typés ou un modèle de document spécifique — plutôt que de produire du texte libre. Cela garantit que la sortie du modèle peut être analysée de manière fiable par les systèmes en aval, validée par rapport à un schéma et intégrée dans des flux de travail automatisés. En IA juridique, la génération de sorties structurées permet au système de produire des résultats lisibles par les machines avec des champs séparément adressables pour le texte de la réponse, les sources citées, le score de confiance, la juridiction applicable et les dates pertinentes.
+
+## Pourquoi c'est important
+
+- **Parsing fiable** — le texte libre est imprévisible et difficile à analyser programmatiquement ; la sortie structurée garantit des noms de champs, des types et un formatage cohérents que les systèmes en aval peuvent consommer sans logique d'analyse personnalisée
+- **Validation** — la sortie structurée peut être validée par rapport à un schéma immédiatement après la génération, détectant les erreurs de format, les champs manquants ou les incompatibilités de type avant que le résultat n'atteigne l'utilisateur
+- **Intégration** — la sortie structurée permet l'intégration directe avec des systèmes externes : alimenter des bases de données de citations, des moteurs de calcul fiscal, générer des documents de déclaration ou mettre à jour des systèmes de gestion de dossiers
+- **Séparation des préoccupations** — en structurant la sortie en champs distincts (réponse, sources, confiance, réserves), l'interface utilisateur peut afficher chaque composant différemment — en mettant en évidence l'incertitude, en rendant les citations cliquables et en formatant le texte de réponse de manière appropriée
+
+## Comment ça fonctionne
+
+Plusieurs techniques produisent des sorties structurées à partir de modèles de langage :
+
+**Structuration par prompt** — le prompt système inclut des instructions et des exemples du format de sortie souhaité. On demande au modèle de produire du JSON avec des champs spécifiques, et des exemples few-shot démontrent la structure attendue. Cela fonctionne avec n'importe quel modèle mais n'est pas garanti — le modèle peut occasionnellement dévier du format.
+
+**Décodage contraint par schéma** — le processus de génération est contraint au niveau du token pour ne produire que des sorties conformes à une grammaire ou un schéma JSON spécifié. À chaque étape de génération, seuls les tokens valides selon le schéma sont autorisés. Cela garantit la conformité du format mais nécessite une infrastructure d'inférence spécialisée (bibliothèques comme Outlines, Guidance, ou fonctionnalités intégrées des API).
+
+**Appel de fonctions / utilisation d'outils** — les API LLM modernes supportent la sortie structurée via des interfaces d'appel de fonctions. Le modèle reçoit une signature de fonction avec des paramètres typés, et sa sortie est automatiquement formatée comme un appel de fonction structuré. C'est l'approche de production la plus courante.
+
+**Post-traitement** — le modèle génère du texte libre, et un post-processeur extrait les champs structurés à l'aide de pattern matching, d'extraction d'entités ou d'un second appel au modèle. C'est une approche de repli — moins fiable mais compatible avec n'importe quel modèle.
+
+En pratique, la plupart des systèmes de production utilisent une combinaison : l'ingénierie de prompt pour la structure globale, avec le décodage contraint par schéma ou l'appel de fonctions pour les champs critiques qui doivent être précisément formatés (dates, références d'articles, scores de confiance).
+
+## Questions fréquentes
+
+**Q : La génération de sorties structurées affecte-t-elle la qualité des réponses ?**
+
+R : Minimalement, si elle est bien implémentée. Les contraintes de schéma et les instructions de format ajoutent une certaine charge au prompt mais ne réduisent pas significativement la capacité de raisonnement du modèle. Des schémas trop complexes avec de nombreux champs obligatoires peuvent réduire la qualité des réponses en détournant l'attention du modèle vers la conformité du format.
+
+**Q : Tous les LLM peuvent-ils produire des sorties structurées ?**
+
+R : La plupart des LLM modernes peuvent produire des sorties structurées via l'ingénierie de prompt, avec une fiabilité variable. Le décodage contraint par schéma et l'appel de fonctions sont plus fiables mais nécessitent un support API ou d'infrastructure. Les modèles plus récents sont spécifiquement entraînés pour la sortie structurée et la produisent de manière plus cohérente.
 
 ## References
 

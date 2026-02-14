@@ -10,6 +10,43 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Zuverlässigkeitsmetriken sind quantitative Maße, die erfassen, wie konsistent, vorhersagbar und sicher ein KI-System über die Zeit und unter variierenden Bedingungen funktioniert — über einfache Genauigkeit hinausgehend, um zu bewerten, ob man sich im Produktionseinsatz auf das System verlassen kann. Während Genauigkeit misst, wie oft das System bei einem Testdatensatz richtig liegt, messen Zuverlässigkeitsmetriken, ob es auch unter Verteilungsverschiebungen korrekt bleibt, Unsicherheit ehrlich kommuniziert, katastrophale Ausfälle vermeidet und ein konsistentes Verhalten beibehält. Für juristische KI-Systeme, bei denen Fachleute sich für ihre Mandantenberatung auf die Ergebnisse verlassen, ist Zuverlässigkeit ebenso wichtig wie reine Genauigkeit.
+
+## Warum es wichtig ist
+
+- **Professionelle Verlässlichkeit** — Steuerberater müssen nicht nur wissen, dass das System normalerweise richtig liegt, sondern dass es im Fehlerfall angemessen reagiert — Unsicherheit signalisiert, anstatt fehlerhafte Antworten selbstbewusst zu präsentieren
+- **Regulatorische Compliance** — die KI-Verordnung der EU verlangt, dass Hochrisiko-KI-Systeme über ihren gesamten Lebenszyklus hinweg „angemessene Genauigkeit, Robustheit und Cybersicherheit" aufrechterhalten; Zuverlässigkeitsmetriken liefern den Nachweis für diese fortlaufende Compliance
+- **Betriebliche Stabilität** — Metriken wie Verfügbarkeit, Latenzkonsistenz und Fehlerquoten erfassen, ob das System betrieblich zuverlässig ist, nicht nur inhaltlich korrekt
+- **Vertrauen über die Zeit** — ein System mit 90 % Genauigkeit, das aber unvorhersehbar ist (manchmal brillant, manchmal katastrophal falsch), ist weniger nützlich als eines mit 85 % Genauigkeit, das aber konsistent zuverlässig arbeitet
+
+## Wie es funktioniert
+
+Zuverlässigkeitsmetriken umfassen mehrere Dimensionen:
+
+**Kalibrierungsmetriken** — Expected Calibration Error (ECE) und Brier-Score messen, ob die Konfidenzwerte des Systems mit den tatsächlichen Korrektheitsraten übereinstimmen. Ein gut kalibriertes System mit 80 % Konfidenz liegt in etwa 80 % der Fälle richtig.
+
+**Robustheitsmetriken** — Genauigkeit unter Störungen (wie stark sinkt die Leistung bei verrauschten oder adversarialen Eingaben?), Leistung bei Verteilungsverschiebungen (behält das System die Qualität bei neuer Gesetzgebung bei?) und Konsistenz (liefert dieselbe Frage bei mehrfacher Abfrage dieselbe Antwort?).
+
+**Abdeckungsmetriken** — Abstinenzquote (wie oft lehnt das System eine Antwort ab?), Coverage-at-Accuracy (welchen Prozentsatz der Anfragen kann das System beantworten und dabei ein Zielgenauigkeitsniveau halten?) und Lückenerkennungsrate (wie oft erkennt das System korrekt, dass seiner Wissensbasis die benötigte Information fehlt?).
+
+**Betriebsmetriken** — Verfügbarkeit (wie viel Prozent der Zeit ist das System erreichbar?), Latenz-Perzentile (P50, P95, P99 Antwortzeiten), Fehlerquote (welcher Prozentsatz der Anfragen schlägt fehl?) und Durchsatz (wie viele Anfragen pro Sekunde kann das System verarbeiten?).
+
+**Sicherheitsmetriken** — Halluzinationsrate (wie oft erfindet das System Informationen?), Rate schädlicher Ausgaben (wie oft erzeugt das System irreführende oder gefährliche Inhalte?) und Guardrail-Verletzungsrate (wie oft bricht das System seine eigenen Regeln, z. B. verbindliche Rechtsberatung zu erteilen, obwohl es dazu angewiesen wurde, dies nicht zu tun?).
+
+Diese Metriken werden über die Zeit in Dashboards verfolgt, mit Warnmeldungen, wenn eine Metrik einen vordefinierten Schwellenwert überschreitet. Die Kombination liefert eine mehrdimensionale Sicht auf die Systemzuverlässigkeit, die keine einzelne Metrik allein erfassen kann.
+
+## Häufige Fragen
+
+**F: Ist ein zuverlässiges System immer genau?**
+
+A: Nicht unbedingt, aber Zuverlässigkeit schließt ein, zu wissen, wann es nicht genau ist. Ein zuverlässiges System mit 80 % Genauigkeit, das die unsicheren 20 % kennzeichnet, ist verlässlicher als ein unzuverlässiges System mit 90 % Genauigkeit, das keinen Hinweis gibt, wann es falsch liegen könnte.
+
+**F: Welche Zuverlässigkeitsmetriken sind am wichtigsten?**
+
+A: Das hängt vom Anwendungsfall ab. Für juristische KI sind Kalibrierungsqualität und Halluzinationsrate in der Regel am kritischsten — sie bestimmen, ob Fachleute den Konfidenzsignalen des Systems vertrauen können und ob die Ausgaben auf realen Quellen basieren.
+
 ## References
 
 - Vilone & Longo (2021), "[Notions of explainability and evaluation approaches for explainable artificial intelligence](https://doi.org/10.1016/j.inffus.2021.05.009)", Information Fusion.

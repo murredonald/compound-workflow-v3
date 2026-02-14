@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Embedding Drift entsteht, wenn derselbe Text im Laufe der Zeit andere Vektoren liefert – etwa nach einem Modell‑Update –, wodurch alte und neue [Embeddings](/de/glossary/embeddings/) schlechter vergleichbar werden.
+Embedding Drift ist das Phänomen, bei dem die Beziehung zwischen Embedding-Vektoren und ihrem zugrunde liegenden semantischen Inhalt im Laufe der Zeit nachlässt, wodurch die Ähnlichkeitssuche ungenauer wird. Dies tritt auf, wenn sich die Verteilung der eingebetteten Inhalte ändert (neue Terminologie, neue Dokumentstile, neue Themen), während das Embedding-Modell unverändert bleibt, oder wenn das Embedding-Modell aktualisiert wird, die gespeicherten Vektoren aber nicht neu berechnet werden. Embedding Drift ist eine Form des Modell-Drifts, die spezifisch für die Vektordarstellungen ist, die die semantische Suche antreiben.
+
+## Warum es wichtig ist
+
+- **Stille Verschlechterung des Retrievals** — Embedding Drift verringert die Suchqualität schleichend; das System liefert im Laufe der Zeit etwas weniger relevante Ergebnisse, ohne dass ein offensichtlicher Fehler auftritt, was die Erkennung erschwert
+- **Fehldarstellung neuer Inhalte** — wenn neue Gesetzgebung Konzepte oder Terminologie einführt, die nicht in den Trainingsdaten des Embedding-Modells enthalten waren, spiegeln die Vektoren dieser neuen Dokumente deren Bedeutung möglicherweise nicht korrekt wider
+- **Indexinkonsistenz** — wenn das Embedding-Modell aktualisiert wird, aber vorhandene Vektoren nicht neu berechnet werden, existieren alte und neue [Embeddings](/de/glossary/embeddings/) in unterschiedlichen Räumen und sind nicht vergleichbar; eine Abfrage kann auf Basis von Unterschieden im Embedding-Raum statt auf Basis der tatsächlichen Relevanz bevorzugt alte oder neue Dokumente zuordnen
+- **Kaskadeneffekte** — Embedding Drift beeinflusst das Retrieval, das die Generierungsqualität beeinflusst, die wiederum das Vertrauen der Nutzer beeinflusst; ein geringer Drift bei Embeddings kann überproportionale Auswirkungen auf die End-to-End-Systemqualität haben
+
+## So funktioniert es
+
+Embedding Drift manifestiert sich über mehrere Mechanismen:
+
+**Verschiebung der Datenverteilung** — die eingebetteten Inhalte verändern sich im Laufe der Zeit. Neue Gesetzgebung führt Terminologie ein (z. B. „Pillar Two globale Mindeststeuer", „DAC-8-Meldung"), die nicht in den Trainingsdaten des Embedding-Modells enthalten war. Das Modell erzeugt zwar weiterhin Vektoren für diesen Text, aber diese Vektoren erfassen die Bedeutung möglicherweise nicht korrekt, da das Modell keine Vorerfahrung mit diesen Konzepten hat.
+
+**Modell-Update ohne Neuberechnung** — wenn das Embedding-Modell auf eine neuere Version aktualisiert wird, erzeugt das neue Modell Vektoren in einem anderen Raum als das alte. Wenn vorhandene Dokumente nicht mit dem neuen Modell neu eingebettet werden, enthält der Index Vektoren aus zwei inkompatiblen Räumen. Abfragen (mit dem neuen Modell eingebettet) passen möglicherweise nicht gut zu alten Dokumenten (mit dem alten Modell eingebettet).
+
+**Konzeptevolution** — die Bedeutung juristischer Konzepte ändert sich im Laufe der Zeit durch neue Gesetzgebung, Rechtsprechung und Verwaltungspraxis. Ein Embedding-Modell, das auf Daten von 2023 trainiert wurde, erfasst möglicherweise nicht die weiterentwickelte Bedeutung von Konzepten, die sich bis 2025 verschoben haben.
+
+**Erkennung** beruht auf der Überwachung von Retrieval-Qualitätsmetriken über die Zeit. Sinkende Precision-, Recall- oder Relevanzwerte auf einem festen Evaluierungsset können auf Embedding Drift hinweisen. Eine direktere Erkennung besteht darin, periodisch eine Stichprobe von Dokumenten neu einzubetten und die neuen Embeddings mit den gespeicherten zu vergleichen — signifikante Abweichungen deuten auf Drift hin.
+
+**Gegenmaßnahmen** umfassen: periodisches Neueinbetten des gesamten Korpus (aufwendig, aber gründlich), kontinuierliches Finetuning des Embedding-Modells auf aktuellen Inhalten (adressiert die Verschiebung der Datenverteilung) und die Überwachung von Retrieval-Qualitätsmetriken zur Früherkennung.
+
+## Häufige Fragen
+
+**F: Wie schnell tritt Embedding Drift auf?**
+
+A: Das hängt davon ab, wie schnell sich die Inhaltsdomäne entwickelt. Im Steuerrecht bedeutet jedes Jahr wesentliche neue Gesetzgebung, sodass ein spürbarer Drift innerhalb von 12–18 Monaten auftreten kann. In stabileren Domänen kann es Jahre dauern, bis der Drift signifikant wird.
+
+**F: Ist Neueinbettung die einzige Lösung?**
+
+A: Sie ist die zuverlässigste Lösung. Alternativen umfassen die Angleichung alter und neuer Embedding-Räume (wenn das Modell aktualisiert wurde) oder die Ergänzung des Index durch zusätzliche Embeddings für neue Terminologie. Aber periodisches vollständiges Neueinbetten bleibt der Goldstandard.
 
 ## References
 

@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Taxonomie und Information Architecture legen fest, wie Inhalte gruppiert, benannt und navigiert werden – etwa in Kategorien und Menüs –, damit Suche und Navigation logisch und vorhersagbar bleiben.
+Eine Taxonomie in der Informationsarchitektur ist ein hierarchisches Klassifikationsschema, das Inhalte in Kategorien und Unterkategorien organisiert und so einen strukturierten Rahmen für Navigation, Auffindbarkeit und Filterung bietet. Im Gegensatz zu flachen Tags oder Freitext-Labels erzwingt eine Taxonomie ein kontrolliertes, einheitliches Vokabular mit expliziten Eltern-Kind-Beziehungen. In einem juristischen KI-System definiert die Taxonomie, wie rechtliche Inhalte kategorisiert werden — nach Steuerart (Einkommensteuer, Mehrwertsteuer, Registrierungsgebühren), nach Zuständigkeit (föderal, flämisch, wallonisch), nach Dokumenttyp (Gesetzgebung, Rechtsprechung, administrative Anleitung) und nach Themengebiet (abzugsfähige Ausgaben, internationale Besteuerung, verfahrensrechtliche Pflichten).
+
+## Warum das wichtig ist
+
+- **Einheitliche Kategorisierung** — eine Taxonomie stellt sicher, dass dasselbe Thema immer gleich bezeichnet wird, und verhindert Inkonsistenzen wie die Behandlung von „corporate tax", „vennootschapsbelasting" und „impôt des sociétés" als getrennte Kategorien
+- **Navigationsstruktur** — Taxonomien bilden das Rückgrat der Browse-Navigation: Nutzer können von „Steuerarten" → „Einkommensteuer" → „Körperschaftsteuer" → „Abzugsfähige Ausgaben" zu relevanten Inhalten navigieren
+- **Facettierte Filterung** — Taxonomien ermöglichen strukturierte Filter in Suchergebnissen: nach Steuerart, Zuständigkeit, Dokumenttyp oder Zeitraum filtern, um Ergebnisse einzugrenzen, ohne die Suchanfrage zu ändern
+- **Erkennung von Wissenslücken** — eine gut gepflegte Taxonomie zeigt, wo Inhalte spärlich sind (Kategorien mit wenigen Dokumenten) oder wo neue Kategorien benötigt werden (aufkommende Themen, die noch nicht klassifiziert sind)
+
+## So funktioniert es
+
+Eine Taxonomie besteht aus drei Elementen:
+
+**Begriffe** — das kontrollierte Vokabular der Kategorienamen. Jeder Begriff hat eine bevorzugte Bezeichnung (den kanonischen Namen), alternative Bezeichnungen (Synonyme in verschiedenen Sprachen oder gängige Varianten) und eine Definition. Begriffe sind sprachbewusst: Dasselbe Konzept hat niederländische, französische und deutsche Bezeichnungen.
+
+**Hierarchie** — die Eltern-Kind-Beziehungen zwischen Begriffen. „Einkommensteuer" ist ein Kind von „Steuerarten". „Körperschaftsteuer" ist ein Kind von „Einkommensteuer". Die Hierarchie kann mehrere Tiefenebenen haben, wobei praktische Taxonomien selten mehr als 4–5 Ebenen umfassen.
+
+**Beziehungen** — über die Hierarchie hinaus können Taxonomien assoziative Beziehungen („verwandt mit"), Äquivalenzbeziehungen („identisch mit") und Anmerkungen zum Geltungsbereich (die erklären, was ein Begriff ein- und ausschließt) enthalten. Diese helfen Nutzern, zwischen verwandten, aber nicht hierarchischen Themen zu navigieren.
+
+Taxonomien werden von Fachexperten gepflegt, die neue Begriffe hinzufügen, wenn sich die Rechtslandschaft entwickelt (z. B. durch Hinzufügen einer Kategorie für neue Steuerarten, die durch Gesetzgebung eingeführt werden), Kategorien bei Bedarf zusammenführen oder aufteilen und die sprachübergreifende Konsistenz sicherstellen.
+
+In einem juristischen KI-System erfüllt die Taxonomie einen doppelten Zweck: Sie organisiert die nutzerseitige Navigation und liefert Metadaten-Kategorien für die Dokumenten-Verschlagwortung bei der Aufnahme. Automatische Klassifikation weist neuen Dokumenten Taxonomie-Kategorien zu, indem Textklassifikatoren verwendet werden, die auf der Struktur der Taxonomie trainiert wurden.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich eine Taxonomie von einer Ontologie?**
+
+A: Eine Taxonomie ist eine hierarchische Klassifikation — sie ordnet Konzepte in Eltern-Kind-Beziehungen. Eine [Ontologie](/de/glossary/ontology/) ist reichhaltiger — sie definiert Typen von Entitäten, deren Eigenschaften und die Beziehungen zwischen ihnen und ermöglicht logisches Schlussfolgern. Eine Taxonomie sagt „Körperschaftsteuer ist eine Art Einkommensteuer". Eine Ontologie definiert darüber hinaus, dass die Körperschaftsteuer einen Steuersatz hat, für bestimmte Einheiten gilt und mit bestimmten Abzügen interagiert.
+
+**F: Wie viele Kategorien sollte eine Taxonomie haben?**
+
+A: Genug, um für Navigation und Filterung nützlich zu sein, aber nicht so viele, dass die Kategorien fragmentiert oder überlappend werden. Für ein belgisches Steuer-KI-System bieten 50–200 Blattkategorien (gruppiert unter 10–20 Oberkategorien) typischerweise ausreichende Granularität, ohne die Nutzer zu überfordern.

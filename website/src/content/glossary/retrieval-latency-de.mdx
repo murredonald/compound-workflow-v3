@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Retrieval-Latenz ist die verstrichene Zeit zwischen dem Absenden einer Anfrage und dem Empfang gerankter Ergebnisse eines Retrieval- oder [Suchsystems](/de/glossary/information-retrieval-system/), häufig in Millisekunden gemessen.
+Retrieval-Latenz ist die verstrichene Zeit zwischen dem Absenden einer Anfrage an ein Retrievalsystem und dem Empfang der gerankten Ergebnisse, gemessen in Millisekunden. Sie umfasst alle Verarbeitungsstufen: Query-Parsing, Embedding-Berechnung, Index-Abfrage, Scoring, Filterung, Reranking und Ergebnisformatierung. In einem RAG-System ist die Retrieval-Latenz ein wesentlicher Bestandteil der gesamten Antwortzeit — dauert das Retrieval zu lange, leidet die gesamte Nutzererfahrung, unabhängig davon, wie gut die generierte Antwort ist.
+
+## Warum es wichtig ist
+
+- **Nutzererfahrung** — Fachleute erwarten nahezu sofortige Suchergebnisse; eine Latenz über 500 ms fühlt sich träge an, über 2 Sekunden wirkt das System defekt; die Retrieval-Latenz muss innerhalb enger Grenzen gehalten werden
+- **Ende-zu-Ende-Antwortzeit** — RAG-Systeme addieren die Retrieval-Latenz zur Generierungslatenz (LLM-Inferenz); dauert das Retrieval 500 ms und die Generierung 2 Sekunden, beträgt die Gesamtzeit 2,5 Sekunden; jede eingesparte Millisekunde beim Retrieval verbessert das Gesamterlebnis
+- **Skalierbarkeitsindikator** — steigende Latenz bei zunehmender Last weist auf Infrastruktur-Engpässe hin, die sich mit wachsender Nutzerbasis verschärfen
+- **Architekturentscheidungen** — Latenzbudgets bestimmen, welche Retrieval-Komponenten realisierbar sind; aufwendiges Reranking oder mehrere Retrieval-Durchläufe sind nur möglich, wenn das Latenzbudget dies zulässt
+
+## So funktioniert es
+
+Die Retrieval-Latenz ist die Summe der in jeder Pipeline-Stufe verbrachten Zeit:
+
+**Query-Encoding** (5–50 ms) — Umwandlung des Anfragetexts in einen Embedding-Vektor mithilfe des Embedding-Modells. Dies geschieht typischerweise auf einer GPU und skaliert mit der Modellgröße.
+
+**Index-Suche** (1–20 ms) — Abfrage des Vektorindex und/oder lexikalischen Index nach Kandidatentreffern. ANN-Algorithmen wie HNSW schließen typischerweise in unter 10 ms ab, selbst bei Millionen von Vektoren. BM25-Suche ist mit gut optimierten invertierten Indizes ähnlich schnell.
+
+**Metadaten-Filterung** (1–10 ms) — Anwendung strukturierter Einschränkungen (Datum, Rechtsgebiet, Dokumenttyp), um die Kandidatenmenge einzugrenzen. Vorfilterung reduziert den Suchbereich; Nachfilterung entfernt nicht zutreffende Ergebnisse.
+
+**Reranking** (50–200 ms) — die besten Kandidaten werden durch einen Cross-Encoder für eine genauere Bewertung geleitet. Dies ist die aufwendigste Stufe, da der Cross-Encoder jedes Anfrage-Dokument-Paar einzeln verarbeitet. Die Anzahl der re-gerankten Kandidaten steuert diese Kosten direkt.
+
+**Nachbearbeitung** (1–5 ms) — Deduplizierung, Gruppierung und Formatierung der endgültigen Ergebnisse.
+
+Latenz wird typischerweise in Perzentilen angegeben: P50 (Median), P95 (95. Perzentil) und P99 (99. Perzentil). P50 spiegelt die typische Leistung wider; P95 und P99 zeigen das Worst-Case-Verhalten. Ein System mit 50 ms P50, aber 2 Sekunden P99 hat ein Tail-Latency-Problem, das 1 von 100 Nutzern betrifft.
+
+Optimierungsstrategien umfassen: Reduzierung der an den Reranker übergebenen Kandidaten, Caching häufiger Anfragen, Verwendung kleinerer Embedding-Modelle für das Query-Encoding und Hardwarebeschleunigung (GPU-Inferenz, optimierte Vektorindizes).
+
+## Häufige Fragen
+
+**F: Was ist eine akzeptable Retrieval-Latenz?**
+
+A: Für interaktive Anwendungen ist eine Gesamtlatenz beim Retrieval unter 200 ms ideal. Unter 500 ms ist akzeptabel. Über 1 Sekunde bemerken Nutzer die Verzögerung. Diese Zielwerte müssen die gesamte Retrieval-Pipeline berücksichtigen, nicht nur die Index-Suche.
+
+**F: Beeinflusst die Korpusgröße die Latenz erheblich?**
+
+A: Mit ANN-Indizes wächst die Retrieval-Latenz logarithmisch mit der Korpusgröße — eine Verdoppelung des Korpus fügt nur wenige Millisekunden hinzu. Die Reranking-Stufe ist empfindlicher gegenüber der Anzahl der Kandidaten als gegenüber der Korpusgröße. Lexikalische Indizes (BM25) skalieren mit modernen Implementierungen ebenfalls gut.
 
 ## References
 

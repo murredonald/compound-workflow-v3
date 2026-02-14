@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-La document normalization harmonise l’encodage, les espaces, les formats de date ou les noms de champs, afin que les composants de recherche et d’IA en aval travaillent sur une entrée cohérente.
+La normalisation de documents est le processus de standardisation de la structure, de l'encodage, du formatage et des métadonnées de documents provenant de sources diverses afin qu'ils puissent être traités de manière cohérente par les systèmes en aval. Les documents juridiques arrivent de différents éditeurs dans différents formats, avec des conventions différentes pour les dates, les références, les titres et l'encodage des caractères. La normalisation transforme cette entrée hétérogène en une représentation uniforme que les composants d'indexation, de découpage et de récupération peuvent traiter de manière fiable.
+
+## Pourquoi c'est important
+
+- **Traitement cohérent** — sans normalisation, la même date pourrait apparaître sous les formes « 15/03/2025 », « March 15, 2025 », « 15 maart 2025 » et « 2025-03-15 » selon les sources ; la normalisation convertit toutes ces formes en un format unique
+- **Déduplication précise** — des documents avec un formatage différent mais un contenu identique doivent être reconnus comme des doublons ; la normalisation supprime les différences superficielles qui empêcheraient la correspondance
+- **Qualité des embeddings** — les modèles d'embedding produisent de meilleurs vecteurs à partir de texte propre et formaté de manière cohérente ; les artefacts de formatage, les espaces incohérents et les erreurs d'encodage dégradent la qualité des embeddings
+- **Comparabilité inter-sources** — les documents normalisés provenant de différents éditeurs peuvent être recherchés et comparés comme s'ils provenaient d'une source unique
+
+## Comment ça fonctionne
+
+La normalisation de documents traite généralement plusieurs dimensions :
+
+**Encodage des caractères** — tout le texte est converti en un encodage cohérent (UTF-8). Les caractères spéciaux, les ligatures et les variantes typographiques sont normalisés : guillemets courbes en guillemets droits, tirets cadratins en tirets standards, espaces insécables en espaces normaux.
+
+**Normalisation des dates** — les dates dans tous les formats sont converties en une représentation standard (ISO 8601 : AAAA-MM-JJ). C'est crucial pour les textes juridiques où les dates déterminent quelle version d'une disposition était en vigueur.
+
+**Normalisation des références** — les citations et renvois sont standardisés. « Art. 215 WIB92 », « article 215 du CIR92 » et « Artikel 215 WIB92 » font tous référence à la même disposition et doivent être normalisés vers une forme canonique que le système reconnaît comme identique.
+
+**Normalisation des titres et de la structure** — les titres de sections, les numéros d'articles et les marqueurs de paragraphes sont mappés vers un schéma structurel cohérent. Cela garantit que le découpage sensible à la structure produit des résultats cohérents indépendamment des conventions de formatage du document source.
+
+**Espaces et formatage** — les espaces multiples consécutifs, les tabulations et les lignes vides sont réduits. Les entités HTML sont décodées. Le Markdown ou tout autre balisage est soit supprimé, soit standardisé selon l'utilisation en aval.
+
+**Détection de la langue** — chaque document ou section est étiqueté avec sa langue (néerlandais, français, allemand) sur la base d'une détection automatisée, permettant un traitement et un routage adaptés à la langue.
+
+La normalisation est idempotente — l'appliquer deux fois produit le même résultat que l'appliquer une seule fois. Cette propriété est importante pour la fiabilité du pipeline : le retraitement d'un document ne doit pas modifier sa forme normalisée.
+
+## Questions fréquentes
+
+**Q : La normalisation peut-elle changer le sens d'un texte juridique ?**
+
+R : Elle ne devrait pas. La normalisation cible le formatage et l'encodage, pas le contenu. Cependant, une normalisation agressive (par exemple, la suppression de tous les caractères spéciaux) pourrait involontairement affecter le sens dans des cas limites. La normalisation de textes juridiques doit être conservatrice, préservant tout le contenu substantiel tout en ne standardisant que le formatage.
+
+**Q : La normalisation doit-elle intervenir avant ou après l'analyse syntaxique ?**
+
+R : Après l'analyse syntaxique. L'analyse convertit les formats bruts (PDF, HTML) en texte ; la normalisation standardise ensuite ce texte. Certaines étapes de normalisation (comme les corrections d'encodage) peuvent être nécessaires pendant l'analyse pour gérer les entrées corrompues.

@@ -10,6 +10,39 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le relevance scoring combine des signaux comme le chevauchement de mots‑clés, la [similarité sémantique](/fr/glossary/semantic-similarity/), la qualité des sources et le comportement utilisateur pour classer les documents dans une liste de résultats.
+Le relevance scoring est le processus de calcul d'un score composite qui reflète dans quelle mesure un résultat de recherche correspond à la requête et à l'intention de l'utilisateur, en combinant souvent plusieurs signaux au-delà de la simple correspondance textuelle. Alors que le scoring de récupération se concentre sur la similarité requête-document, le relevance scoring peut en outre intégrer des signaux comportementaux (taux de clics, temps de consultation), des facteurs contextuels (le domaine de pratique de l'utilisateur, l'historique récent des requêtes) et des règles spécifiques au domaine (classement par autorité, priorité temporelle) pour produire un score qui reflète mieux ce dont l'utilisateur a réellement besoin.
+
+## Pourquoi c'est important
+
+- **Classement centré sur l'utilisateur** — la simple [similarité sémantique](/fr/glossary/semantic-similarity/) textuelle ne prédit pas toujours ce dont l'utilisateur a besoin ; le relevance scoring intègre des signaux supplémentaires pour combler l'écart entre la similarité textuelle et l'utilité pratique
+- **Différenciation par autorité** — dans la recherche juridique, toutes les correspondances ne font pas également autorité ; le relevance scoring peut favoriser la législation par rapport aux commentaires, ou les décisions de la Cour de cassation par rapport aux jugements de première instance, reflétant leur importance réelle
+- **Priorité temporelle** — les dispositions et décisions plus récentes sont souvent plus pertinentes que les anciennes ; le relevance scoring peut pondérer la récence parallèlement à la similarité sémantique
+- **Personnalisation** — le relevance scoring peut s'adapter au contexte de l'utilisateur : un spécialiste de l'impôt des sociétés voit les dispositions relatives à l'impôt des sociétés classées plus haut, même pour des requêtes générales
+
+## Comment ça fonctionne
+
+Le relevance scoring combine généralement plusieurs catégories de caractéristiques en un seul score :
+
+**Pertinence textuelle** — la similarité de base entre la requête et le document, calculée par correspondance lexicale (BM25), similarité sémantique (cosinus d'embedding) ou scoring par cross-encoder. C'est le fondement qui garantit que les résultats sont thématiquement liés à la requête.
+
+**Caractéristiques d'autorité** — des poids spécifiques au domaine qui reflètent l'autorité juridique de la source. La législation primaire obtient un score plus élevé que les circulaires administratives. Les décisions de la Cour constitutionnelle obtiennent un score plus élevé que les jugements de première instance. Ces poids encodent la hiérarchie juridique dans le classement.
+
+**Caractéristiques temporelles** — des signaux de récence qui favorisent les documents plus récents lorsque c'est approprié. La législation en vigueur est plus pertinente que les dispositions abrogées. Cependant, la pertinence temporelle doit être contextuelle : une requête sur les taux d'imposition historiques devrait privilégier la période historique pertinente, et non l'année la plus récente.
+
+**Caractéristiques comportementales** — dans les systèmes disposant de suffisamment de données d'utilisation, les taux de clics et les métriques d'engagement indiquent quels résultats les utilisateurs trouvent les plus utiles. Les documents qui sont systématiquement sélectionnés et consultés reçoivent un bonus de pertinence pour des requêtes similaires.
+
+**Caractéristiques contextuelles** — le profil de l'utilisateur, son domaine de pratique ou son historique récent de requêtes peuvent éclairer la pertinence. Un utilisateur qui a recherché des informations sur la TVA toute la journée souhaite probablement des résultats liés à la TVA, même pour des requêtes ambiguës.
+
+Ces caractéristiques sont combinées à l'aide de modèles de learning-to-rank (LambdaMART, modèles de classement neuronal) ou de combinaisons pondérées plus simples. Les poids sont calibrés sur des jugements de pertinence humains : des annotateurs évaluent la pertinence des résultats de recherche pour des requêtes de test, et le modèle de scoring est entraîné à reproduire ces évaluations.
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre le relevance scoring et le scoring de récupération ?**
+
+R : Les termes se chevauchent considérablement. Le scoring de récupération fait généralement référence au calcul de similarité requête-document au sein du pipeline de récupération. Le relevance scoring est plus large — il peut intégrer des signaux supplémentaires au-delà de la similarité textuelle (autorité, récence, contexte utilisateur) pour produire un jugement de pertinence plus holistique.
+
+**Q : Le relevance scoring peut-il être manipulé ?**
+
+R : Dans la recherche web, oui — les techniques de SEO manipulent les signaux de pertinence. Dans les systèmes d'IA juridique fermés où le corpus est organisé, la manipulation n'est pas un problème car le contenu est du texte juridique faisant autorité, et non du contenu généré par les utilisateurs optimisé pour le classement.

@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Die Dot-Product-Similarität bewertet die Ähnlichkeit zweier [Embeddings](/de/glossary/embeddings/), indem ihr Skalarprodukt berechnet wird, was hohe Werte liefert, wenn die Vektoren in eine ähnliche Richtung zeigen.
+Die Dot-Product-Similarität ist ein Ähnlichkeitsmaß zwischen zwei Vektoren, das durch Multiplikation ihrer entsprechenden Dimensionen und Summierung der Ergebnisse berechnet wird. Das Skalarprodukt spiegelt sowohl den Winkel zwischen den Vektoren (Richtungsähnlichkeit) als auch ihre Beträge (Längen) wider. Höhere Werte zeigen eine größere Ähnlichkeit an — Vektoren, die in dieselbe Richtung zeigen und größere Beträge haben, erzeugen größere Skalarprodukte. Es ist eine der drei Standard-Distanzmetriken in der Vektorsuche neben [Kosinus-Similarität](/de/glossary/cosine-similarity/) und euklidischem Abstand.
+
+## Warum es wichtig ist
+
+- **Effiziente Berechnung** — das Skalarprodukt ist eine der schnellsten Ähnlichkeitsoperationen und erfordert nur elementweise Multiplikation und Summierung; hardwarebeschleunigte SIMD-Instruktionen können es über Hunderte von Dimensionen in Mikrosekunden berechnen
+- **Betragssensitivität** — im Gegensatz zur Kosinus-Similarität berücksichtigt das Skalarprodukt den Vektorbetrag, was bedeutsam sein kann, wenn das Embedding-Modell Wichtigkeit oder Konfidenz in der Vektorlänge kodiert
+- **Äquivalenz zur Kosinus-Similarität bei normalisierten Vektoren** — wenn Vektoren L2-normalisiert sind (wie es viele Embedding-Modelle erzeugen), liefern Skalarprodukt und Kosinus-Similarität identische Rankings, sodass das einfachere Skalarprodukt verwendet werden kann
+- **Grundlage für Attention** — das Skalarprodukt ist die Kernberechnung im Transformer-Attention-Mechanismus (Query-Key-Skalarprodukt), was es fundamental dafür macht, wie Sprachmodelle Text verarbeiten
+
+## So funktioniert es
+
+Für zwei Vektoren **a** und **b** der Dimension *d* ist das Skalarprodukt:
+
+**a · b = Σ(aᵢ × bᵢ)** für i von 1 bis d
+
+Jede Dimension trägt unabhängig bei: Wenn beide Vektoren in derselben Dimension große positive Werte haben, fügt diese Dimension einen großen positiven Beitrag hinzu. Wenn sie sich im Vorzeichen unterscheiden, ist der Beitrag negativ.
+
+**Beziehung zur Kosinus-Similarität**: Die Kosinus-Similarität ist definiert als das Skalarprodukt geteilt durch das Produkt der Vektorbeträge: cos(θ) = (a · b) / (‖a‖ × ‖b‖). Wenn beide Vektoren auf Einheitslänge normalisiert sind (‖a‖ = ‖b‖ = 1), entspricht das Skalarprodukt der Kosinus-Similarität. Viele Embedding-Modelle normalisieren ihre Ausgabevektoren, wodurch die beiden Metriken austauschbar werden.
+
+**Wenn der Betrag eine Rolle spielt**: Wenn Vektoren nicht normalisiert sind, bevorzugt das Skalarprodukt Vektoren mit größerem Betrag. Bei manchen Embedding-Modellen korreliert der Vektorbetrag mit der Konfidenz des Modells oder dem Informationsgehalt des Dokuments. In solchen Fällen erfasst das Skalarprodukt diese Information, während die Kosinus-Similarität sie verwirft.
+
+**In Vektordatenbanken**: Die meisten [Vektordatenbanken](/de/glossary/vector-database/) unterstützen das Skalarprodukt als eingebaute Ähnlichkeitsmetrik. Bei der Konfiguration eines Index sollte die Wahl zwischen Skalarprodukt und Kosinus-Similarität zum Design des Embedding-Modells passen — Modelle, die normalisierte Vektoren erzeugen, können beides verwenden; Modelle, die unnormalisierte Vektoren erzeugen, sollten die Metrik verwenden, für die ihr Trainingsziel optimiert wurde.
+
+## Häufige Fragen
+
+**F: Sollte ich Skalarprodukt oder Kosinus-Similarität verwenden?**
+
+A: Prüfen Sie die Dokumentation des Embedding-Modells. Wenn das Modell L2-normalisierte Vektoren erzeugt (was bei den meisten modernen Text-Embedding-Modellen der Fall ist), sind die beiden äquivalent und das Skalarprodukt ist geringfügig schneller. Wenn Vektoren nicht normalisiert sind und der Betrag eine Bedeutung trägt, kann das Skalarprodukt geeigneter sein.
+
+**F: Kann das Skalarprodukt negativ sein?**
+
+A: Ja. Ein negatives Skalarprodukt zeigt an, dass die Vektoren in ungefähr entgegengesetzte Richtungen im Embedding-Raum zeigen, was auf Unähnlichkeit hindeutet. Null bedeutet Orthogonalität (keine Beziehung).
 
 ## References
 

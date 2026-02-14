@@ -10,6 +10,45 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+L'analyse d'erreurs est l'examen systématique des échecs d'un système d'IA visant à comprendre leurs schémas, causes profondes et implications. Plutôt que de traiter les erreurs comme des incidents isolés, l'analyse d'erreurs les catégorise par type (échec de récupération, hallucination de génération, erreur de citation), identifie quels types de requêtes ou sujets sont les plus touchés, et retrace chaque erreur jusqu'à sa cause profonde dans le pipeline. Cette compréhension structurée des échecs guide des améliorations ciblées qui traitent les problèmes systémiques plutôt que les symptômes individuels.
+
+## Pourquoi c'est important
+
+- **Amélioration ciblée** — l'analyse d'erreurs révèle quel composant (récupération, génération ou données sources) cause le plus d'échecs, orientant l'effort d'ingénierie là où il aura le plus grand impact
+- **Détection de schémas** — les erreurs individuelles peuvent sembler aléatoires, mais l'analyse révèle souvent des schémas : le système échoue systématiquement sur les requêtes temporelles, ou hallucine toujours lorsque la base de connaissances ne couvre pas un sujet
+- **Priorisation** — la catégorisation des erreurs par fréquence et gravité permet à l'équipe de prioriser : un type d'erreur rare mais dangereux (citer une législation fabriquée) peut justifier une attention plus urgente qu'un problème courant mais mineur (citations imprécises)
+- **Suivi de la progression** — l'analyse d'erreurs continue permet de vérifier si les améliorations réduisent effectivement les taux d'erreur, fournissant un retour d'information fondé sur les preuves pour le développement du système
+
+## Comment ça fonctionne
+
+L'analyse d'erreurs suit un processus structuré :
+
+**Collecte des erreurs** — les erreurs sont recueillies à partir de multiples sources : évaluation automatisée sur des jeux de test, retours et corrections des utilisateurs, examen manuel d'échantillons de sorties, et résultats de tests adverses. Chaque enregistrement d'erreur inclut la requête, la réponse du système, la réponse correcte attendue, et tout contexte disponible (sources récupérées, score de confiance).
+
+**Catégorisation** — les erreurs sont classées par type :
+- **Échecs de récupération** — la source pertinente n'a pas été trouvée (problème de rappel) ou des sources non pertinentes ont été renvoyées (problème de précision)
+- **Hallucinations de génération** — le modèle a fabriqué des informations absentes du contexte récupéré
+- **Erreurs de citation** — la réponse est correcte mais cite la mauvaise source, ou les citations sont imprécises (citation d'une loi entière au lieu de l'article spécifique)
+- **Erreurs de périmètre** — le système a répondu à une question hors de son périmètre au lieu de décliner
+- **Erreurs temporelles** — le système a cité des dispositions abrogées ou pas encore en vigueur
+- **Erreurs de complétude** — la réponse a traité une partie de la question mais a manqué des aspects importants
+
+**Analyse des causes profondes** — pour chaque catégorie, l'analyse remonte à la cause sous-jacente. Les échecs de récupération peuvent provenir d'un décalage de vocabulaire, d'un filtrage de métadonnées insuffisant ou de lacunes dans la base de connaissances. Les hallucinations peuvent résulter de prompts système ambigus ou d'un contexte insuffisant.
+
+**Planification des actions** — chaque cause profonde correspond à une amélioration spécifique : meilleure expansion de requête pour le décalage de vocabulaire, filtrage temporel plus strict pour les erreurs temporelles, contenu supplémentaire dans la base de connaissances pour les lacunes de couverture, ou affinement des prompts pour les schémas d'hallucination.
+
+## Questions fréquentes
+
+**Q : Combien d'erreurs faut-il analyser pour obtenir des informations utiles ?**
+
+R : Des schémas significatifs émergent généralement à partir de 50 à 100 erreurs. Pour des conclusions statistiquement robustes sur les taux d'erreur par catégorie, 200 à 500 erreurs sont nécessaires. L'analyse doit se poursuivre périodiquement à mesure que le système évolue.
+
+**Q : L'analyse d'erreurs doit-elle être automatisée ?**
+
+R : Partiellement. La catégorisation des erreurs peut être semi-automatisée à l'aide de classifieurs, mais l'analyse des causes profondes et la planification des actions nécessitent un jugement humain. La surveillance automatisée signale les erreurs ; l'analyse humaine identifie leurs causes et solutions.
+
 ## References
 
 > Alice S. Horning et al. (1981), "[Principles of Language Learning and Teaching](https://doi.org/10.2307/327392)", Modern Language Journal.

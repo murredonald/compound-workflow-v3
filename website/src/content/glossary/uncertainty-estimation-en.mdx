@@ -12,7 +12,41 @@ draft: false
 
 ## Definition
 
-Uncertainty estimation produces measures—such as variances, confidence scores, or ensembles—that indicate when a model might be wrong or should defer to humans.
+Uncertainty estimation is the process of quantifying how confident an AI system is in its predictions or answers, distinguishing between cases where the system is reliably correct and cases where it might be wrong. Rather than presenting every answer with equal conviction, a system with uncertainty estimation communicates its level of certainty — enabling users to decide when to trust the output directly and when to verify independently. In legal AI, uncertainty estimation is essential because the consequences of acting on an incorrect answer (wrong tax filing, missed deadline, regulatory penalty) demand that professionals know when additional verification is warranted.
+
+## Why it matters
+
+- **Informed decision-making** — tax advisors can prioritise their verification effort: high-confidence answers can be used with a quick check, while low-confidence answers require thorough independent research
+- **Honest system behaviour** — a system that acknowledges its uncertainty is more trustworthy than one that presents every answer with false confidence; professionals quickly lose trust in systems that are confidently wrong
+- **Deferral to humans** — uncertainty estimation enables automatic escalation: when the system's confidence falls below a threshold, it can flag the question for human review rather than providing a potentially incorrect answer
+- **Quality monitoring** — tracking uncertainty distributions over time reveals system health; a sudden increase in average uncertainty may indicate knowledge base gaps, model degradation, or new types of queries the system cannot handle well
+
+## How it works
+
+Uncertainty in AI systems comes from two sources:
+
+**Epistemic uncertainty** (model uncertainty) reflects what the model does not know — gaps in training data, unseen concepts, or ambiguous inputs. This type of uncertainty can, in principle, be reduced by providing more data or better training. In a RAG system, epistemic uncertainty is high when the retrieval layer cannot find relevant sources or when the available sources do not clearly address the question.
+
+**Aleatoric uncertainty** (data uncertainty) reflects inherent ambiguity in the input or the task. Some legal questions genuinely have multiple valid interpretations, conflicting authoritative sources, or depend on facts not stated in the query. This uncertainty cannot be reduced by improving the model — it requires clarification from the user or acknowledgement that the question is inherently ambiguous.
+
+Common estimation techniques include:
+
+- **Ensemble methods** — running the same query through multiple models or multiple retrieval configurations and measuring agreement; high disagreement indicates high uncertainty
+- **Monte Carlo dropout** — running the model multiple times with random dropout at inference time and measuring output variance
+- **Token-level probabilities** — using the language model's output logits to assess how confident it is about each generated token; low-probability tokens in critical positions suggest uncertainty
+- **Retrieval quality signals** — measuring the relevance scores of retrieved documents; if the best-matching documents have low relevance scores, the system should express lower confidence
+
+In production RAG systems, these signals are typically combined into a composite confidence score that reflects both retrieval quality and generation certainty.
+
+## Common questions
+
+**Q: Is uncertainty estimation the same as confidence scoring?**
+
+A: They are closely related. Uncertainty estimation is the broader discipline of quantifying what the model does not know. Confidence scoring is a specific output — a score presented to the user — that is derived from uncertainty estimates. A well-calibrated confidence score is the user-facing product of uncertainty estimation.
+
+**Q: Can a system be uncertain but correct?**
+
+A: Yes. The system might produce the correct answer while honestly flagging that it is not fully confident — for example, when only one marginally relevant source was found. This is desirable behaviour: it alerts the user to verify, even though verification would confirm the answer.
 
 ## References
 

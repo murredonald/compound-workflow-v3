@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-L’injection de contexte consiste à insérer dans un [prompt](/fr/glossary/prompt/) LLM des documents, extraits ou métadonnées pertinents afin que le modèle conditionne sa réponse sur ces informations externes.
+L'injection de contexte est la pratique consistant à insérer des documents récupérés, des passages, des métadonnées ou d'autres informations externes dans le [prompt](/fr/glossary/prompt/) d'un modèle de langage afin que celui-ci fonde sa réponse sur ce contenu spécifique plutôt que de s'appuyer uniquement sur ses connaissances d'entraînement. C'est le mécanisme qui relie la couche de récupération à la couche générative dans un système [RAG](/fr/glossary/rag/) : une fois les documents pertinents trouvés, ils sont « injectés » dans le prompt aux côtés de la question de l'utilisateur. La qualité de l'injection de contexte — ce qui est inclus, comment c'est formaté et où c'est placé — affecte significativement la qualité des réponses.
+
+## Pourquoi c'est important
+
+- **Génération ancrée** — en fournissant au modèle des documents sources spécifiques, l'injection de contexte garantit que les réponses sont basées sur des textes juridiques faisant autorité plutôt que sur les données d'entraînement potentiellement obsolètes ou inexactes du modèle
+- **Possibilité de citation** — le contexte injecté est accompagné de métadonnées (numéros d'articles, dates de publication, identifiants de source) que le modèle peut utiliser pour produire des citations vérifiables dans sa réponse
+- **Contrôle du périmètre** — l'injection de contexte définit les limites de ce que le modèle doit prendre en compte ; le prompt système peut instruire le modèle de n'utiliser que le contexte injecté, l'empêchant de générer des affirmations non fondées
+- **Connaissances dynamiques** — contrairement au fine-tuning, qui intègre les connaissances dans les poids du modèle, l'injection de contexte fournit des informations fraîches au moment de la requête, rendant le système immédiatement réactif aux nouvelles législations ou décisions
+
+## Comment ça fonctionne
+
+L'injection de contexte suit l'étape de récupération et précède la génération :
+
+**Sélection** — le pipeline de récupération produit une liste classée de passages pertinents. Les top-k passages (typiquement 5 à 20) sont sélectionnés pour l'injection. Trop peu de passages risquent de manquer un contexte important ; trop nombreux, ils risquent de dépasser la fenêtre de contexte du modèle ou de diluer la pertinence.
+
+**Formatage** — les passages sélectionnés sont mis en forme pour plus de clarté. Chaque passage est typiquement présenté avec ses métadonnées sources (titre du document, numéro d'article, date de publication, juridiction) et clairement délimité des autres passages. Un formatage cohérent aide le modèle à distinguer les différentes sources et à les citer avec précision.
+
+**Placement** — le contexte injecté est placé dans le prompt, généralement entre les instructions système et la question de l'utilisateur. Le prompt système inclut des instructions sur la manière d'utiliser le contexte : « Répondez uniquement sur la base des sources suivantes », « Citez l'article spécifique pour chaque affirmation », « Si les sources fournies ne traitent pas la question, dites-le. »
+
+**Gestion de la fenêtre de contexte** — le prompt total (instructions système + contexte injecté + question de l'utilisateur) doit tenir dans la fenêtre de contexte du modèle. Lorsque le contexte récupéré est trop volumineux, les stratégies incluent la troncation des passages moins bien classés, le résumé des passages avant injection, ou le découpage de la requête en sous-requêtes chacune avec une charge de contexte plus réduite.
+
+Le principal risque de l'injection de contexte est l'**empoisonnement du contexte** — si des passages non pertinents ou incorrects sont injectés (en raison d'erreurs de récupération), le modèle peut produire des réponses basées sur ce contexte erroné. C'est pourquoi la qualité de la récupération est la dépendance amont pour une injection de contexte efficace.
+
+## Questions fréquentes
+
+**Q : L'injection de contexte est-elle la même chose que le RAG ?**
+
+R : L'injection de contexte est une étape au sein du processus [RAG](/fr/glossary/rag/). Le RAG comprend la récupération (trouver les documents pertinents), l'injection de contexte (les insérer dans le prompt) et la génération (produire la réponse). L'injection de contexte est le pont entre la récupération et la génération.
+
+**Q : En quoi l'injection de contexte diffère-t-elle de l'injection de prompt ?**
+
+R : L'injection de contexte est un patron de conception légitime — l'application fournit intentionnellement du contexte au modèle. L'injection de prompt est une attaque de sécurité où du contenu malveillant dans l'entrée utilisateur ou les données externes tente de contourner les instructions du modèle. Elles utilisent un mécanisme similaire (ajouter du texte au prompt) mais avec une intention opposée.
 
 ## References
 

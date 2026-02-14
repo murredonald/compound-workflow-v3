@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Function calling is a pattern where a language model outputs a structured payload that specifies which external function or tool to call and with what arguments, enabling integration with APIs, databases, or other systems.
+Function calling is a capability of modern language models in which the model selects an appropriate external function from a predefined set, generates the required arguments in a structured format (typically JSON), and the system executes the function and returns the result to the model. This enables LLMs to interact with external APIs, databases, calculators, and other tools through a structured interface rather than generating free-form text. In legal AI, function calling allows the model to query legislation databases, perform tax calculations, look up filing deadlines, and verify citation accuracy — tasks that require precise structured interactions with external systems.
+
+## Why it matters
+
+- **Precise external interactions** — function calling provides a typed, validated interface between the model and external systems, reducing the risk of malformed requests that free-form text generation would produce
+- **Reliable tool selection** — the model chooses from a defined set of functions with documented parameters, making tool use predictable and auditable
+- **Computation offloading** — tasks that LLMs perform poorly (arithmetic, database queries, date calculations) are delegated to specialised tools that produce exact results
+- **Agentic workflows** — function calling is the mechanism that enables AI agents to take actions in the world: searching, calculating, writing, and coordinating across multiple systems
+
+## How it works
+
+Function calling operates through a defined protocol:
+
+**Function definitions** — the developer provides the model with descriptions of available functions, including their name, purpose, parameters (with types and descriptions), and return values. For a legal AI system, functions might include `search_legislation(query, jurisdiction, date)`, `calculate_tax(income, deductions, year)`, and `verify_citation(article, law_code)`.
+
+**Model decision** — during response generation, the model determines that it needs to call a function to answer the user's question. It generates a structured function call specifying the function name and argument values. For example: `{"function": "calculate_tax", "arguments": {"income": 75000, "deductions": 12500, "year": 2025}}`.
+
+**Execution** — the application layer validates the function call, executes it against the appropriate backend, and returns the result to the model. The model never executes functions directly — the system mediates, enforcing security, access controls, and input validation.
+
+**Response integration** — the model receives the function result and incorporates it into its response to the user, typically combining the structured result with explanatory text.
+
+Multiple function calls may occur in a single response (parallel calling), or calls may be chained (the result of one informing the arguments of the next). Modern LLM APIs from Anthropic, OpenAI, and others provide built-in support for function calling with automatic structured output generation.
+
+## Common questions
+
+**Q: How is function calling different from tool use?**
+
+A: Function calling is the specific mechanism — the model outputs structured JSON matching a function signature. Tool use is the broader concept — any pattern where the model interacts with external capabilities. Function calling is the most common implementation of tool use in production systems.
+
+**Q: Can models call the wrong function?**
+
+A: Yes. Models may select an inappropriate function or generate incorrect arguments, particularly for ambiguous queries. Clear function descriptions, parameter validation, and confirmation steps for high-stakes actions mitigate this risk.
 
 ## References
 

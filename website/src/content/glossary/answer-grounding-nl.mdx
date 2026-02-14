@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Antwoord-[grounding](/nl/glossary/grounding/) eist dat uitspraken in een AI-antwoord ondersteund worden door geciteerde passages of data.
+Antwoord-grounding is de praktijk om ervoor te zorgen dat elke inhoudelijke bewering in een AI-gegenereerd antwoord direct herleidbaar is tot een specifiek brondocument of -passage. Een gegrond antwoord verwijst niet alleen in het algemeen naar Bronnen — het koppelt elke individuele bewering aan de specifieke Tekst die deze onderbouwt, zodat de Gebruiker elke Uitspraak onafhankelijk kan verifiëren. In juridische AI transformeert antwoord-grounding de Output van het Model van een ongestaafde Mening naar een verifieerbare Analyse ondersteund door specifieke Wetsartikelen, Uitspraken of administratieve Richtlijnen.
+
+## Waarom het belangrijk is
+
+- **Verifieerbaarheid** — gegronde Antwoorden kunnen worden gecontroleerd: de Gebruiker kan de geciteerde Bron lezen en bevestigen of de Bewering correct is weergegeven; ongegronde Antwoorden vereisen dat de Gebruiker elke Uitspraak zelfstandig onderzoekt
+- **Professionele Veiligheid** — Belastingadviseurs die vertrouwen op AI-gegenereerde Analyses moeten de Nauwkeurigheid verifiëren voordat ze Cliënten adviseren; grounding biedt de Citaten die nodig zijn voor efficiënte Verificatie
+- **Hallucinatiedetectie** — Beweringen die niet in een Bron gegrond kunnen worden zijn per Definitie Hallucinaties; grounding-vereisten dwingen het Systeem om onderscheid te maken tussen onderbouwde en ononderbouwde Uitspraken
+- **Auditspoor** — gegronde Antwoorden creëren een volledig Overzicht van welke Bronnen elk Deel van het Antwoord hebben onderbouwd, wat professionele Verantwoording en naleving van Regelgeving ondersteunt
+
+## Hoe het werkt
+
+Antwoord-grounding functioneert door Coördinatie tussen de retrieval- en Generatielagen:
+
+**Bronbewuste Generatie** — de systeemprompt instrueert het Taalmodel om alleen Beweringen te doen die worden onderbouwd door de aangeleverde Context, en om voor elke Bewering de specifieke Bron te citeren. De Instructie stuurt het Model expliciet aan om Lacunes te erkennen in plaats van deze op te vullen met ononderbouwde Inhoud.
+
+**Inline Citaten** — terwijl het Model zijn Antwoord genereert, neemt het Verwijzingen op naar specifieke Bronpassages (Artikelnummers, Publicatiedata, Bronidentificatoren) naast elke inhoudelijke Bewering. Dit creëert een directe Koppeling tussen elke Uitspraak en het ondersteunende Bewijs.
+
+**Verificatie na Generatie** — na de Generatie controleert een Verificatiestap of elke geciteerde Bewering daadwerkelijk wordt onderbouwd door de verwezen Bronpassage. Natural language inference (NLI)-Modellen of een tweede LLM kunnen de logische Gevolgtrekking beoordelen tussen de Bewering en de geciteerde Tekst. Beweringen die niet logisch volgen worden gemarkeerd voor Beoordeling of verwijderd.
+
+**Onthouding bij onvoldoende Bewijs** — wanneer de opgehaalde Context niet genoeg Informatie bevat om de Vraag volledig te beantwoorden, geeft een gegrond Systeem expliciet aan wat het niet kan vaststellen in plaats van plausibele maar ononderbouwde Inhoud te genereren. Dit is cruciaal in juridische AI, waar een onvolledig Antwoord dat als zodanig wordt erkend veel veiliger is dan een verzonnen volledig Antwoord.
+
+De Kwaliteit van grounding wordt gemeten via faithfulness-Metrics: welk Percentage van de Beweringen in het gegenereerde Antwoord logisch volgt uit de geciteerde Bronnen. Hoge faithfulness (>95%) wijst op sterke grounding; lage faithfulness wijst erop dat het Model ononderbouwde Inhoud toevoegt.
+
+## Veelgestelde vragen
+
+**V: Elimineert antwoord-grounding Hallucinaties volledig?**
+
+A: Het vermindert ze aanzienlijk maar elimineert ze niet volledig. Modellen kunnen nog steeds Beweringen aan verkeerde Bronnen toeschrijven, subtiel verkeerd weergeven wat een Bron zegt, of belangrijke Kanttekeningen missen. Grounding is de meest effectieve Mitigatie maar moet worden aangevuld met [confidence scoring](/nl/glossary/confidence-scoring/) en menselijke Beoordeling.
+
+**V: Kan een gegrond Antwoord toch onjuist zijn?**
+
+A: Ja, als de Bron zelf onjuist of verouderd is. Grounding garandeert dat het Antwoord zijn Bronnen nauwkeurig weergeeft, niet dat de Bronnen zelf correct zijn. Daarom zijn Bronkwaliteit (Autoriteit, Actualiteit, Volledigheid) en grounding complementaire Aandachtspunten.
 
 ## References
 

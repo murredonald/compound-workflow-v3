@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Index Refresh umfasst das erneute Einbetten von Inhalten, den Wiederaufbau des Index oder das Hinzufügen neuer Segmente, damit Retrieval mit aktuellen Daten und Embedding‑Modellen im Einklang bleibt.
+Index Refresh ist der Prozess der Aktualisierung von Such- und Vektorindizes, um Änderungen in der zugrunde liegenden Wissensbasis abzubilden — neue Dokumente hinzufügen, geänderte aktualisieren und gelöschte oder ersetzte Inhalte entfernen. Ohne regelmäßige Index-Aktualisierungen liefert das Retrieval-System veraltete Ergebnisse, die auf aufgehobene Gesetzgebung, überholte Steuersätze oder ersetzte Verwaltungsanweisungen verweisen können. In der juristischen KI bestimmt die Frequenz der Indexaktualisierung direkt, wie schnell neue Gesetze und Urteile im System auffindbar werden.
+
+## Warum es wichtig ist
+
+- **Rechtliche Aktualität** — das belgische Steuerrecht ändert sich laufend durch Programmgesetze, königliche Erlasse und Rundschreiben; ein Index, der hinter diesen Änderungen zurückbleibt, gibt veraltete Bestimmungen aus, als wären sie aktuell gültig
+- **Korrektheit** — wenn eine Bestimmung geändert wurde, der Index aber noch die alte Fassung enthält, kann das System Antworten auf Basis aufgehobenen Rechts liefern, was ein ernstes Berufshaftungsrisiko darstellt
+- **Vollständigkeit** — neue Gerichtsentscheidungen und Verwaltungsentscheide müssen zeitnah indiziert werden, um für das Retrieval verfügbar zu sein; Verzögerungen erzeugen Abdeckungslücken
+- **Konsistenz** — der Index muss denselben Stand widerspiegeln wie der zugrunde liegende Dokumentenspeicher; Inkonsistenzen zwischen beiden führen zu verwirrenden Ergebnissen (z. B. ein Dokument erscheint in der Suche, ist aber beim Zugriff nicht vorhanden)
+
+## Wie es funktioniert
+
+Index Refresh kann in verschiedenen Modi arbeiten:
+
+**Inkrementelle Aktualisierung** verarbeitet nur neue oder geänderte Dokumente seit der letzten Aktualisierung. Wenn ein neues Rundschreiben aufgenommen wird, werden nur die Chunks dieses Rundschreibens eingebettet und dem Index hinzugefügt. Dies ist effizient, erfordert aber eine zuverlässige Änderungserkennung — das System muss wissen, welche Dokumente neu oder geändert sind.
+
+**Vollständiger Neuaufbau** rekonstruiert den gesamten Index von Grund auf. Dies garantiert Konsistenz, ist aber bei großen Wissensbasen aufwändig (Millionen von Chunks müssen erneut eingebettet werden). Vollständige Neuaufbauten werden typischerweise periodisch (wöchentlich oder monatlich) als Konsistenzprüfung eingeplant, während inkrementelle Aktualisierungen die täglichen Updates übernehmen.
+
+**Echtzeit-Indizierung** fügt Dokumente sofort bei der Aufnahme zum Index hinzu, ohne Verzögerung. Dies bietet die geringste Aktualisierungslatenz, erfordert aber, dass die Indexstruktur gleichzeitige Lese- und Schreibzugriffe ohne Leistungseinbußen unterstützt.
+
+**Versionierte Aktualisierung** pflegt mehrere Indexversionen und baut einen neuen Index im Hintergrund auf, während der alte weiterhin Abfragen bedient. Sobald der neue Index fertig und validiert ist, wird der Datenverkehr atomar umgeschaltet. So wird jede Phase, in der der Index nur teilweise aktualisiert ist, vermieden.
+
+Wichtige betriebliche Aspekte umfassen:
+
+- **Embedding-Konsistenz** — wenn das Embedding-Modell aktualisiert wird, müssen alle Dokumente erneut eingebettet werden; eine teilweise Neueinbettung erzeugt einen inkonsistenten Index, in dem alte und neue Embeddings nicht vergleichbar sind
+- **Löschbehandlung** — wenn ein Dokument aufgehoben oder ersetzt wird, müssen seine Chunks aus dem Index entfernt werden, nicht nur im Dokumentenspeicher als inaktiv markiert
+- **Validierung** — nach jeder Aktualisierung prüfen automatisierte Checks, ob der Index die erwartete Anzahl an Dokumenten enthält, ob Schlüsseldokumente abrufbar sind und ob keine Korruption während des Updates aufgetreten ist
+
+## Häufige Fragen
+
+**F: Wie schnell sollte neue Gesetzgebung im Index erscheinen?**
+
+A: Für ein professionelles juristisches KI-Tool wird eine Indizierung am selben Tag der Veröffentlichung im Belgischen Staatsblatt erwartet. Dies bedeutet typischerweise tägliche Aufnahme- und Indexaktualisierungszyklen, mit der Möglichkeit, bei dringenden Aktualisierungen Ad-hoc-Aktualisierungen auszulösen.
+
+**F: Kann das System während einer Indexaktualisierung Abfragen bedienen?**
+
+A: Ja, mit der richtigen Architektur. Inkrementelle Updates und versionierte Aktualisierungen ermöglichen es dem System, Abfragen weiterhin über den aktuellen Index zu bedienen, während die Aktualisierung läuft. Nur vollständige Neuaufbauten ohne Versionierung erfordern eine vorübergehende Beeinträchtigung.
 
 ## References
 

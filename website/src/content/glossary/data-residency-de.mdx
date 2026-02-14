@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Anforderungen an den Datenspeicherort legen fest, in welchen Rechtsgebieten Daten gespeichert oder verarbeitet werden müssen, und beeinflussen Cloud-, Hosting- und Anbieterwahl für KI-Systeme.
+Data Residency bezeichnet die geografischen und rechtlichen Anforderungen, die regeln, wo Daten physisch gespeichert und verarbeitet werden. Vorschriften, Verträge und organisatorische Richtlinien können vorschreiben, dass bestimmte Datenkategorien — insbesondere personenbezogene Daten, Finanzdaten oder vertrauliche Mandanteninformationen — innerhalb bestimmter Rechtsgebiete verbleiben müssen. Für KI-Systeme, die sensible Steuerdaten in Belgien verarbeiten, bestimmt Data Residency, welche Cloud-Anbieter, Hosting-Regionen und Verarbeitungsarchitekturen zulässig sind, und beeinflusst direkt die Anbieterauswahl und das Systemdesign.
+
+## Warum es wichtig ist
+
+- **DSGVO-Konformität** — die DSGVO schränkt die Übermittlung personenbezogener Daten außerhalb des Europäischen Wirtschaftsraums (EWR) ein, es sei denn, es bestehen angemessene Schutzmaßnahmen; KI-Systeme, die belgische Steuerzahlerdaten verarbeiten, müssen sicherstellen, dass die Daten innerhalb zulässiger Rechtsgebiete verbleiben
+- **Berufliche Pflichten** — Steuerberater und Wirtschaftsprüfer unterliegen Berufsgeheimnisgesetzen, die zusätzliche geografische Einschränkungen für die Speicherung oder Verarbeitung von Mandantendaten vorsehen können
+- **Kundenanforderungen** — Unternehmenskunden nehmen häufig Data-Residency-Klauseln in ihre Verträge auf und verlangen, dass ihre Daten bestimmte Länder oder Regionen niemals verlassen
+- **Souveränität und Kontrolle** — die Aufbewahrung von Daten innerhalb der EU stellt sicher, dass sie dem EU-Recht und der regulatorischen Aufsicht unterliegen, was stärkeren Rechtsschutz bietet als die Speicherung in Rechtsgebieten mit schwächerem Datenschutzrahmen
+
+## Wie es funktioniert
+
+Data Residency wirkt auf mehreren Systemebenen:
+
+**Speicherebene** — Datenbanken, Objektspeicher und Dateisysteme müssen in genehmigten geografischen Regionen bereitgestellt werden. Große Cloud-Anbieter (AWS, Azure, GCP) bieten regionsspezifische Bereitstellung an, sodass Organisationen EU-Rechenzentren auswählen können. Die spezifische Region (z. B. eu-west-1 in Irland vs. eu-central-1 in Frankfurt) kann je nach den geltenden Anforderungen relevant sein.
+
+**Verarbeitungsebene** — Data Residency betrifft nicht nur den Speicherort der Daten im Ruhezustand, sondern auch den Ort ihrer Verarbeitung. Wenn ein KI-Modell in einem US-Rechenzentrum läuft und belgische Mandantendaten für die Inferenz erhält, haben die Daten die EU verlassen, selbst wenn sie in Europa gespeichert sind. Das bedeutet, dass LLM-API-Aufrufe, Embedding-Berechnungen und Retrieval-Operationen alle in genehmigten Regionen stattfinden müssen.
+
+**Transitebene** — Daten im Transit (bei der Übertragung zwischen Diensten) müssen verschlüsselt und über genehmigte Netzwerkpfade geleitet werden. Einige Organisationen verlangen, dass selbst verschlüsselte Daten nicht durch nicht genehmigte Rechtsgebiete geleitet werden.
+
+**Anbieterbewertung** — bei der Nutzung von KI-Diensten Dritter (Embedding-APIs, LLM-Anbieter, Vektordatenbanken) müssen Organisationen überprüfen, dass die Datenverarbeitung des Anbieters in konformen Rechtsgebieten erfolgt. Dies umfasst die Prüfung von Unterauftragsverarbeitern — Anbietern, die Daten im Auftrag des Hauptanbieters verarbeiten.
+
+Die Anforderungen an Data Residency variieren je nach Verordnung und Kontext. Die DSGVO gilt allgemein für personenbezogene Daten von EU-Einwohnern. Belgische Berufsgeheimnisgesetze ergänzen die Einschränkungen für juristische und finanzielle Berufe. Sektorspezifische Regulierungen (z. B. Finanzdienstleistungen) können zusätzliche Anforderungen stellen. Organisationen müssen alle Datenflüsse abbilden und die Residency-Konformität an jedem Punkt überprüfen.
+
+## Häufige Fragen
+
+**F: Gilt Data Residency für anonymisierte Daten?**
+
+A: Wenn Daten tatsächlich und irreversibel anonymisiert sind (nicht pseudonymisiert), findet die DSGVO keine Anwendung mehr und auf der DSGVO basierende Data-Residency-Beschränkungen gelten nicht. Eine echte Anonymisierung ist jedoch schwer zu erreichen, und viele „anonymisierte" Datensätze können re-identifiziert werden. Pseudonymisierte Daten bleiben personenbezogene Daten im Sinne der DSGVO und unterliegen den Residency-Anforderungen.
+
+**F: Können wir US-basierte KI-APIs nutzen, wenn wir EU-Data-Residency-Anforderungen haben?**
+
+A: Nur wenn der API-Anbieter Verarbeitung in EU-Regionen und angemessene Datenschutzgarantien bietet. Viele LLM-Anbieter bieten inzwischen EU-gehostete Endpunkte speziell zu diesem Zweck an. Ohne Verarbeitung in der EU-Region würde das Senden personenbezogener oder mandantenvertraulicher Daten an eine US-basierte API gegen die DSGVO-Übermittlungsbeschränkungen verstoßen.

@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le retrieval orchestration est la logique qui décide quelles actions de récupération exécuter et dans quel ordre – éventuellement sur plusieurs index ou outils – pour assembler le meilleur contexte pour un système d’IA.
+L'orchestration de récupération est la couche de coordination qui décide quelles actions de récupération exécuter, dans quel ordre, et comment combiner leurs résultats pour assembler le contexte optimal pour une requête donnée. Pour les questions complexes, une seule requête de recherche sur un seul index est rarement suffisante. L'orchestration de récupération gère plusieurs étapes de récupération — interrogation de différents index, application de différentes stratégies, suivi de références croisées et intégration de recherches structurées — dans un processus cohérent qui fournit un contexte complet et bien organisé à la couche de génération.
+
+## Pourquoi c'est important
+
+- **Traitement de requêtes complexes** — de nombreuses questions juridiques nécessitent des informations provenant de plusieurs types de sources (législation, jurisprudence, instructions administratives) qui peuvent être stockées dans différents index ou bases de données ; l'orchestration coordonne ces sources
+- **Sélection de stratégie** — différents types de requêtes bénéficient de différentes stratégies de récupération ; l'orchestration oriente chaque requête vers la stratégie la plus appropriée (recherche exacte pour les références d'articles, recherche sémantique pour les questions conceptuelles, requête structurée pour les barèmes et seuils)
+- **Efficacité** — l'orchestration peut paralléliser les étapes de récupération indépendantes, mettre en cache les résultats fréquemment consultés et s'arrêter prématurément lorsqu'un contexte suffisant a été rassemblé, optimisant à la fois la latence et l'utilisation des ressources
+- **Contrôle qualité** — l'orchestration évalue les résultats intermédiaires et décide si des étapes de récupération supplémentaires sont nécessaires, évitant à la fois un contexte insuffisant (trop peu de sources) et une pollution du contexte (trop de sources non pertinentes)
+
+## Comment ça fonctionne
+
+L'orchestration de récupération opère via une boucle de décision :
+
+**Analyse de la requête** — l'orchestrateur examine la requête entrante pour déterminer son type, sa complexité et ses besoins probables en information. Une question factuelle simple (« Quel est le taux de TVA actuel ? ») nécessite une stratégie de récupération différente d'une question analytique complexe (« Comment le nouvel impôt minimum interagit-il avec les règles de déduction existantes ? »).
+
+**Sélection de la stratégie** — sur la base de l'analyse de la requête, l'orchestrateur sélectionne une ou plusieurs stratégies de récupération : recherche par mots-clés pour les références précises, recherche sémantique pour la correspondance conceptuelle, requêtes de base de données structurées pour les taux et seuils, ou récupération multi-sauts pour les questions à références croisées.
+
+**Exécution** — les stratégies sélectionnées sont exécutées, potentiellement en parallèle. Chacune renvoie un ensemble de résultats candidats avec des scores de pertinence. L'orchestrateur peut émettre des requêtes supplémentaires en fonction des résultats initiaux (suivi de références croisées, approfondissement de sujets identifiés, recherche de preuves contradictoires).
+
+**Assemblage des résultats** — les résultats de toutes les étapes de récupération sont fusionnés, dédupliqués, classés par pertinence et assemblés en un ensemble de contexte cohérent. L'orchestrateur assure la diversité (différents types de sources représentés), la complétude (aspects clés de la question couverts) et la qualité (résultats peu pertinents filtrés).
+
+**Vérification de suffisance** — l'orchestrateur évalue si le contexte assemblé est suffisant pour répondre à la question. Si des aspects clés ne sont pas couverts, une récupération ciblée supplémentaire peut être déclenchée. Si le contexte est suffisant, il est transmis à la couche de génération.
+
+Dans les systèmes avancés, l'orchestration est pilotée par un modèle : un LLM décide quoi chercher ensuite en fonction de ce qui a été trouvé jusqu'à présent (récupération agentique). Dans les systèmes plus simples, l'orchestration suit des règles prédéfinies basées sur la classification de la requête.
+
+## Questions fréquentes
+
+**Q : En quoi l'orchestration diffère-t-elle du pipeline de récupération ?**
+
+R : Le pipeline de récupération est la séquence d'étapes (récupération, filtrage, reclassement) pour une seule requête. L'orchestration opère au-dessus du pipeline, décidant quand invoquer le pipeline, avec quelles requêtes, et comment combiner les résultats de plusieurs invocations du pipeline.
+
+**Q : L'orchestration ajoute-t-elle de la latence ?**
+
+R : Oui — des étapes de récupération supplémentaires prennent du temps supplémentaire. L'orchestration gère cela via la parallélisation, l'arrêt anticipé et la mise en cache. Le coût en latence est justifié lorsqu'il produit un contexte significativement meilleur qu'un seul passage de récupération.
 
 ## References
 

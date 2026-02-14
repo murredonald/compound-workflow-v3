@@ -12,7 +12,40 @@ draft: false
 
 ## Définition
 
-L'usage d'outils par les [LLM](/fr/glossary/llm/) décrit des architectures dans lesquelles le modèle est autorisé ou encouragé à appeler des outils externes—comme la recherche, des bases de données ou des calculateurs—pour obtenir des informations ou effectuer des actions plutôt que de s'appuyer uniquement sur ses poids internes.
+L'usage d'outils par les [LLM](/fr/glossary/llm/) est le patron de conception dans lequel un modèle de langage peut invoquer des outils externes — tels que des moteurs de recherche, des bases de données, des calculateurs, des API ou des interpréteurs de code — pour collecter des informations ou effectuer des actions qui complètent ses propres capacités. Au lieu de s'appuyer uniquement sur les connaissances stockées dans ses poids, le modèle reconnaît quand il a besoin de données ou de calculs externes, génère un appel d'outil structuré, reçoit la sortie de l'outil et l'intègre dans sa réponse. Dans l'IA juridique, l'usage d'outils permet aux modèles d'effectuer des calculs fiscaux précis, d'interroger des bases de données législatives actuelles et de vérifier des citations auprès de sources faisant autorité.
+
+## Pourquoi c'est important
+
+- **Précision des calculs** — les modèles de langage sont peu fiables en arithmétique ; l'usage d'outils leur permet de déléguer les calculs fiscaux, les calculs d'intérêts et les comparaisons de seuils à un calculateur ou un interpréteur de code qui produit des résultats exacts
+- **Informations actualisées** — les données d'entraînement des modèles ont une date limite ; l'usage d'outils leur permet d'interroger des bases de données en temps réel pour les taux d'imposition en vigueur, les décisions récentes ou les dernières modifications législatives
+- **Accès aux données structurées** — les bases de données juridiques, les tables de taux d'imposition et les calendriers d'échéances fiscales sont des données structurées auxquelles les modèles ne peuvent pas accéder depuis leurs poids ; les outils comblent ce fossé
+- **Capacité d'action** — au-delà de la récupération d'informations, l'usage d'outils permet aux modèles d'agir : générer des documents, soumettre des formulaires ou planifier des tâches dans le cadre d'un flux de travail agentique
+
+## Comment ça fonctionne
+
+L'usage d'outils fonctionne via une boucle d'interaction structurée :
+
+**Définition des outils** — le système fournit au modèle des descriptions des outils disponibles : leurs noms, ce qu'ils font, quels paramètres ils acceptent et ce qu'ils retournent. Pour un système d'IA juridique, les outils peuvent inclure une API de recherche de législation, une table de consultation de taux d'imposition, un calculateur d'intérêts et un vérificateur de citations.
+
+**Sélection de l'outil** — pendant la génération de la réponse, le modèle détermine qu'il a besoin d'informations ou de calculs dépassant ses propres capacités. Il génère un appel d'outil structuré spécifiant quel outil utiliser et quels paramètres transmettre. Par exemple : `search_legislation(query="article 215 WIB92", jurisdiction="federal", date="2025-01-01")`.
+
+**Exécution de l'outil** — le système exécute l'appel d'outil, récupère le résultat et le retransmet au modèle. Le modèle n'exécute jamais directement les outils — la couche système assure la médiation, en appliquant les contrôles d'accès et en validant les entrées.
+
+**Intégration de la réponse** — le modèle incorpore la sortie de l'outil dans la génération en cours de sa réponse, utilisant les données récupérées pour produire une réponse exacte et ancrée.
+
+Plusieurs appels d'outils peuvent avoir lieu dans une même réponse. Le modèle peut d'abord rechercher la législation pertinente, puis consulter un taux d'imposition spécifique dans une table structurée, puis utiliser un calculateur pour calculer l'impôt dû, le tout au sein d'un seul flux de génération de réponse.
+
+**Les considérations de sécurité** incluent : la validation des paramètres d'appel d'outil pour prévenir les attaques par injection, la limitation des outils disponibles selon les contextes, la journalisation de tous les appels d'outils pour les pistes d'audit, et la garantie que les sorties des outils proviennent de sources faisant autorité.
+
+## Questions fréquentes
+
+**Q : En quoi l'usage d'outils diffère-t-il du [RAG](/fr/glossary/rag/) ?**
+
+R : Le RAG est une instance spécifique de l'usage d'outils où l'outil est un système de recherche/récupération. L'usage d'outils est le patron plus large — il inclut tout outil externe, pas uniquement la récupération. Un modèle utilisant à la fois un moteur de recherche et un calculateur utilise deux outils, dont l'un est une récupération de type RAG.
+
+**Q : Les modèles peuvent-ils utiliser des outils sur lesquels ils n'ont pas été entraînés ?**
+
+R : Oui, dans une certaine mesure. Les LLM modernes entraînés avec des capacités d'usage d'outils peuvent se généraliser à de nouveaux outils décrits dans le prompt, à condition que les descriptions soient claires. Toutefois, un fine-tuning sur des outils spécifiques améliore la fiabilité.
 
 ## References
 

@@ -12,4 +12,36 @@ draft: false
 
 ## Definition
 
-An audit trail is a chronological log that shows who did what and when in an AI system, supporting investigations, compliance, and [accountability](/en/glossary/model-accountability/).
+An audit trail is a chronological, tamper-evident record of all actions, decisions, and events within a system. In AI systems, audit trails capture who queried the system, what data was retrieved, how the model generated its response, and what confidence scores were assigned. This record enables post-hoc investigation, regulatory compliance, and accountability when AI-assisted decisions are questioned.
+
+## Why it matters
+
+- **Regulatory compliance** — the EU AI Act requires high-risk AI systems to maintain logs that allow traceability of decisions; audit trails are the primary mechanism for meeting this obligation
+- **Professional accountability** — when a tax advisor relies on AI-generated analysis, the audit trail documents exactly which sources were consulted and what the system produced, protecting both the advisor and the client
+- **Error investigation** — when an incorrect answer is discovered, the audit trail allows tracing back through the retrieval pipeline, identifying whether the error originated from missing data, poor retrieval, or generation failure
+- **Continuous improvement** — aggregated audit data reveals patterns in query types, failure modes, and user behaviour that inform system improvements
+
+## How it works
+
+An audit trail in a legal AI system typically captures events at multiple levels:
+
+- **Query level** — the user's original question, any query transformations (expansion, rewriting), and the final search query sent to the index
+- **Retrieval level** — which documents and passages were retrieved, their relevance scores, and any filters applied (jurisdiction, date range, authority)
+- **Generation level** — the prompt sent to the language model, the generated response, token-level confidence scores, and any citations produced
+- **User level** — who accessed the system, when, and what actions they took (accepted, edited, or rejected the AI's output)
+
+These events are stored with timestamps, user identifiers, and system version information. Tamper-evidence is ensured through append-only storage, cryptographic hashing, or write-once-read-many (WORM) storage backends. Retention periods are governed by data retention policies that balance compliance requirements against storage costs.
+
+## Common questions
+
+**Q: How is an audit trail different from a regular application log?**
+
+A: Application logs are primarily for debugging and monitoring — they may be rotated, overwritten, or partially captured. Audit trails are designed for compliance and accountability — they must be complete, tamper-evident, and retained for defined periods. They also capture business-level events (user decisions, system recommendations) rather than just technical operations.
+
+**Q: What does the EU AI Act require for audit trails?**
+
+A: The EU AI Act requires high-risk AI systems to generate logs that enable traceability of the system's operation throughout its lifecycle. This includes recording inputs, outputs, and the conditions under which the system operated. The specific retention period and format depend on the risk classification and applicable sectoral regulations.
+
+**Q: How long should audit trail data be retained?**
+
+A: Retention depends on the domain and jurisdiction. Tax-related records in Belgium are typically retained for 7-10 years to align with tax administration prescription periods. The retention policy must also comply with GDPR data minimisation principles — personal data in audit trails should not be kept longer than necessary.

@@ -12,4 +12,36 @@ draft: false
 
 ## Definitie
 
-Een audittrail is een chronologisch logboek dat toont wie wat heeft gedaan en wanneer in een AI-systeem, ter ondersteuning van onderzoeken, compliance en verantwoording.
+Een audittrail is een chronologisch, manipulatieresistent overzicht van alle acties, beslissingen en events binnen een systeem. In AI-systemen legt de audittrail vast wie het systeem bevroeg, welke data werden opgehaald, hoe het model zijn antwoord genereerde en welke betrouwbaarheidsscores werden toegekend. Dit overzicht maakt onderzoek achteraf, naleving van regelgeving en verantwoording mogelijk wanneer AI-ondersteunde beslissingen in vraag worden gesteld.
+
+## Waarom het belangrijk is
+
+- **Naleving van regelgeving** — de EU AI Act vereist dat AI-systemen met hoog risico logboeken bijhouden die traceerbaarheid van beslissingen mogelijk maken; audittrails zijn het primaire mechanisme om aan deze verplichting te voldoen
+- **Professionele verantwoording** — wanneer een fiscaal adviseur vertrouwt op AI-gegenereerde analyse, documenteert de audittrail precies welke bronnen werden geraadpleegd en wat het systeem produceerde, wat zowel de adviseur als de cliënt beschermt
+- **Foutonderzoek** — wanneer een foutief antwoord wordt ontdekt, maakt de audittrail het mogelijk om terug te traceren door de retrieval pipeline en te identificeren of de fout is ontstaan door ontbrekende data, slechte ophaling of een generatiefout
+- **Continue verbetering** — geaggregeerde auditdata onthullen patronen in querytypes, foutmodi en gebruikersgedrag die systeemverbeteringen sturen
+
+## Hoe het werkt
+
+Een audittrail in een juridisch AI-systeem legt doorgaans events vast op meerdere niveaus:
+
+- **Queryniveau** — de oorspronkelijke vraag van de gebruiker, eventuele querytransformaties (uitbreiding, herschrijving), en de uiteindelijke zoekopdracht die naar de index is gestuurd
+- **Ophaalniveau** — welke documenten en passages zijn opgehaald, hun relevantiescores, en eventuele toegepaste filters (rechtsgebied, datumbereik, autoriteit)
+- **Generatieniveau** — de prompt die naar het taalmodel is gestuurd, het gegenereerde antwoord, betrouwbaarheidsscores op tokenniveau, en eventuele geproduceerde citaties
+- **Gebruikersniveau** — wie het systeem heeft geraadpleegd, wanneer, en welke acties zijn ondernomen (de output van de AI geaccepteerd, bewerkt of afgewezen)
+
+Deze events worden opgeslagen met tijdstempels, gebruikersidentificaties en systeemversie-informatie. Manipulatieresistentie wordt gewaarborgd door append-only-opslag, cryptografische hashing of write-once-read-many (WORM)-opslagbackends. Bewaartermijnen worden bepaald door dataretentiebeleid dat compliancevereisten afweegt tegen opslagkosten.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt een audittrail van een gewoon applicatielogboek?**
+
+A: Applicatielogs zijn primair bedoeld voor debugging en monitoring — ze kunnen worden geroteerd, overschreven of gedeeltelijk vastgelegd. Audittrails zijn ontworpen voor compliance en verantwoording — ze moeten volledig, manipulatieresistent zijn en gedurende vastgelegde perioden worden bewaard. Ze leggen ook events op bedrijfsniveau vast (gebruikersbeslissingen, systeemaanbevelingen) in plaats van alleen technische operaties.
+
+**V: Wat vereist de EU AI Act voor audittrails?**
+
+A: De EU AI Act vereist dat AI-systemen met hoog risico logboeken genereren die traceerbaarheid van de werking van het systeem gedurende zijn levenscyclus mogelijk maken. Dit omvat het vastleggen van invoer, uitvoer en de omstandigheden waaronder het systeem werkte. De specifieke bewaartermijn en het formaat hangen af van de risicoclassificatie en de toepasselijke sectorale regelgeving.
+
+**V: Hoe lang moeten audittrailgegevens worden bewaard?**
+
+A: De bewaartermijn hangt af van het domein en het rechtsgebied. Fiscaal gerelateerde documenten in België worden doorgaans 7 tot 10 jaar bewaard om aan te sluiten bij de verjaringstermijnen van de belastingadministratie. Het retentiebeleid moet ook voldoen aan de AVG-beginselen van dataminimalisatie — persoonsgegevens in audittrails mogen niet langer worden bewaard dan noodzakelijk.

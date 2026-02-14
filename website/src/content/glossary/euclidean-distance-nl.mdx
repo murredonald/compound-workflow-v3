@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Euclidische afstand meet hoe ver twee [embeddings](/nl/glossary/embeddings/) van elkaar liggen in een [vectorruimte](/nl/glossary/embedding-space/) en wordt vaak gebruikt als basis voor nearest‑neighbour‑zoekalgoritmen.
+Euclidische afstand (ook wel L2-afstand genoemd) is de rechte-lijnafstand tussen twee punten in een vectorruimte, berekend als de vierkantswortel van de som van de gekwadrateerde verschillen over alle dimensies. Het is een van de drie standaard afstandsmaten die worden gebruikt bij similariteitszoekopdrachten, naast cosinusgelijkenis en het inproduct. Bij informatie-retrieval meet Euclidische afstand hoe ver twee [embeddings](/nl/glossary/embeddings/) in absolute geometrische termen van elkaar liggen — kleinere afstanden duiden op meer gelijkende inhoud.
+
+## Waarom het belangrijk is
+
+- **Intuïtieve geometrie** — Euclidische afstand komt overeen met het alledaagse begrip van "rechte-lijnafstand", waardoor het conceptueel toegankelijk is om embeddingrelaties te begrijpen
+- **Metrische-ruimte-eigenschappen** — Euclidische afstand voldoet aan de driehoeksongelijkheid, wat betekent dat de afstand van A naar C nooit groter is dan de afstand van A naar B plus B naar C; deze eigenschap maakt efficiënte indexstructuren mogelijk
+- **Complementair aan cosinus** — terwijl cosinusgelijkenis de hoekovereenkomst (richting) meet, houdt Euclidische afstand rekening met zowel richting als magnitude, wat betekenisvol kan zijn wanneer vectornormen informatie bevatten
+- **Gestandaardiseerde meting** — als een wiskundig goed gedefinieerde grootheid biedt Euclidische afstand een consistente, vergelijkbare maat voor gelijkenis over verschillende experimenten en systemen heen
+
+## Hoe het werkt
+
+Voor twee vectoren **a** en **b** van dimensie *d* wordt de Euclidische afstand als volgt berekend:
+
+**d(a, b) = √(Σ(aᵢ - bᵢ)²)** voor i van 1 tot d.
+
+Elke dimensie draagt onafhankelijk bij aan de totale afstand. Dimensies waarin de twee vectoren sterk verschillen dragen meer bij dan dimensies waarin ze gelijkend zijn.
+
+In de praktijk wordt vaak de gekwadrateerde Euclidische afstand (zonder de vierkantswortel) gebruikt, omdat deze de rangorde van resultaten behoudt — als d(a,b) < d(a,c), dan geldt d²(a,b) < d²(a,c) — terwijl de rekenkundige kosten van de vierkantsworteltrekking worden vermeden.
+
+**Relatie met cosinusgelijkenis**: wanneer vectoren zijn genormaliseerd naar eenheidslengte (L2-genormaliseerd), zijn Euclidische afstand en cosinusgelijkenis monotoon gerelateerd. Het minimaliseren van Euclidische afstand is equivalent aan het maximaliseren van cosinusgelijkenis. Veel embeddingmodellen produceren genormaliseerde vectoren, in welk geval de keuze tussen de twee maten geen invloed heeft op de rangorde van resultaten.
+
+**Gevoeligheid voor magnitude**: in tegenstelling tot cosinusgelijkenis wordt Euclidische afstand beïnvloed door vectormagnitude. Twee vectoren die in dezelfde richting wijzen maar een verschillende lengte hebben, hebben nul cosinusafstand maar een niet-nul Euclidische afstand. Of dit uitmaakt hangt af van het embeddingmodel — als vectormagnitude betekenisvolle informatie codeert (zoals documentlengte of betrouwbaarheid), vangt Euclidische afstand dit op; als magnitude willekeurige ruis is, heeft cosinusgelijkenis de voorkeur.
+
+De meeste vectordatabases ondersteunen Euclidische afstand als ingebouwde metriek. ANN-algoritmen zoals HNSW werken efficiënt met Euclidische afstand omdat deze voldoet aan de driehoeksongelijkheid, wat effectief snoeien tijdens graaftraversering mogelijk maakt.
+
+## Veelgestelde vragen
+
+**V: Moet ik Euclidische afstand of cosinusgelijkenis gebruiken voor tekstembeddings?**
+
+A: Voor de meeste tekstembeddingmodellen heeft cosinusgelijkenis de voorkeur omdat deze richtingsgelijkenis meet ongeacht de magnitude. Als het model echter L2-genormaliseerde vectoren produceert (zoals veel modellen doen), leveren de twee maten identieke rangschikkingen op. Raadpleeg de documentatie van het embeddingmodel voor de aanbevolen metriek.
+
+**V: Werkt Euclidische afstand goed in hoge dimensies?**
+
+A: In zeer hoge dimensies convergeren alle paarsgewijze afstanden (de "vloek van dimensionaliteit"), waardoor het moeilijker wordt om nabije buren van verre buren te onderscheiden. Dit treft alle afstandsmaten, niet alleen Euclidische. Dimensionaliteitsreductie en ANN-algoritmen beperken dit effect.
 
 ## References
 

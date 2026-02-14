@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Log-Wahrscheinlichkeiten sind die natürlichen Logarithmen der Wahrscheinlichkeiten, die ein Sprachmodell für mögliche nächste Tokens berechnet, und werden häufig über APIs für Debugging, [Kalibrierung](/de/glossary/calibration/) und benutzerdefinierte Dekodierstrategien bereitgestellt.
+Log-Wahrscheinlichkeiten (Logprobs) sind die natürlichen Logarithmen der Wahrscheinlichkeitswerte, die ein Sprachmodell jedem möglichen nächsten Token bei jedem Generierungsschritt zuweist. Wenn ein Modell Text erzeugt, berechnet es intern eine Wahrscheinlichkeitsverteilung über sein gesamtes Vokabular — Log-Wahrscheinlichkeiten sind die logarithmisch transformierte Version dieser Wahrscheinlichkeiten. Sie bieten einen Einblick in die Konfidenz des Modells auf Token-Ebene: hohe Log-Wahrscheinlichkeiten (nahe 0) zeigen an, dass das Modell bei diesem Token sicher ist; niedrige Log-Wahrscheinlichkeiten (große negative Zahlen) deuten auf Unsicherheit hin. In der juristischen KI können Log-Wahrscheinlichkeiten verwendet werden, um zu erkennen, wann das Modell rät, anstatt sicher aus seinem Kontext zu generieren.
+
+## Warum es wichtig ist
+
+- **Konfidenzsignale** — Log-Wahrscheinlichkeiten zeigen, ob das Modell beim Generieren kritischer Antwortteile (Artikelnummern, Steuersätze, Daten) sicher war oder faktisch zwischen Alternativen geraten hat
+- **Halluzinationserkennung** — Tokens, die mit ungewöhnlich niedriger Wahrscheinlichkeit generiert werden, können darauf hindeuten, dass das Modell Inhalte fabriziert, anstatt aus seinem Kontext zu schöpfen; die Überwachung von Log-Wahrscheinlichkeiten kann potenzielle Halluzinationen kennzeichnen
+- **[Kalibrierungsanalyse](/de/glossary/calibration/)** — Log-Wahrscheinlichkeiten sind das Rohmaterial für die Kalibrierung: Durch den Vergleich vorhergesagter Wahrscheinlichkeiten mit tatsächlicher Korrektheit können Entwickler beurteilen, ob die Konfidenz des Modells gut kalibriert ist
+- **Benutzerdefinierte Dekodierung** — Log-Wahrscheinlichkeiten ermöglichen fortgeschrittene Generierungsstrategien: Beam Search, Nucleus Sampling und Constrained Decoding arbeiten alle mit der Logprob-Verteilung, um die Ausgabequalität zu steuern
+
+## Wie es funktioniert
+
+Bei jedem Generierungsschritt erzeugt das Sprachmodell einen Vektor von Scores (Logits) über sein Vokabular. Diese Logits werden über die Softmax-Funktion in Wahrscheinlichkeiten umgewandelt, und Log-Wahrscheinlichkeiten sind der Logarithmus dieser Wahrscheinlichkeiten.
+
+**Interpretation von Log-Wahrscheinlichkeiten**: Eine Log-Wahrscheinlichkeit von -0,01 bedeutet, dass das Modell diesem Token ungefähr 99 % Wahrscheinlichkeit zuweist. Eine Log-Wahrscheinlichkeit von -2,3 entspricht etwa 10 % Wahrscheinlichkeit. Eine Log-Wahrscheinlichkeit von -6,9 bedeutet ungefähr 0,1 %. In der Praxis liegen die meisten Tokens in flüssigem Text zwischen -0,001 und -1,0.
+
+**Analyse auf Token-Ebene** — durch die Untersuchung der Log-Wahrscheinlichkeiten für jedes Token in einer generierten Antwort können Entwickler genau identifizieren, wo die Konfidenz des Modells sinkt. Wenn das Modell „Artikel" mit hoher Konfidenz generiert, aber „215" mit niedriger Konfidenz, ist es möglicherweise unsicher über die konkrete Artikelnummer — eine entscheidende Unterscheidung in Rechtstexten.
+
+**Bewertung auf Sequenzebene** — die gesamte Log-Wahrscheinlichkeit einer Sequenz (Summe aller Token-Log-Wahrscheinlichkeiten) zeigt die Gesamtkonfidenz des Modells für die vollständige Ausgabe. Dies kann verwendet werden, um verschiedene generierte Antworten zu vergleichen und die konfidenteste auszuwählen, oder um Schwellenwerte festzulegen, unterhalb derer Antworten zur Überprüfung markiert werden.
+
+**API-Zugriff** — die meisten LLM-APIs (OpenAI, Anthropic usw.) bieten Log-Wahrscheinlichkeiten als optionalen Parameter an. Wenn aktiviert, gibt die API Log-Wahrscheinlichkeiten zusammen mit dem generierten Text zurück, typischerweise für die k wahrscheinlichsten Tokens an jeder Position.
+
+Log-Wahrscheinlichkeiten befinden sich im logarithmischen Raum (negative Zahlen), weil Wahrscheinlichkeiten extrem klein sein können und die Multiplikation vieler kleiner Wahrscheinlichkeiten zu numerischem Unterlauf führt. Die Arbeit im logarithmischen Raum wandelt Multiplikation in Addition um und gewährleistet so numerische Stabilität.
+
+## Häufige Fragen
+
+**F: Können Log-Wahrscheinlichkeiten Halluzinationen zuverlässig erkennen?**
+
+A: Sie liefern nützliche Signale, sind aber keine vollständige Lösung. Modelle können mit hoher Konfidenz halluzinieren (hohe Log-Wahrscheinlichkeiten für fabrizierte Inhalte), weil der halluzinierte Text sprachlich flüssig ist. Log-Wahrscheinlichkeiten sind am nützlichsten für die Erkennung oberflächlicher Unsicherheit (falsche Zahlen, unbekannte Begriffe) und weniger für tiefgreifende faktische Fehler.
+
+**F: Warum verwendet man Logarithmen statt roher Wahrscheinlichkeiten?**
+
+A: Rohe Wahrscheinlichkeiten für einzelne Tokens können extrem klein sein (z. B. 0,000001), was die rechnerische Verarbeitung erschwert. Log-Wahrscheinlichkeiten wandeln diese in handhabbare negative Zahlen um und ermöglichen die Berechnung von Sequenzwahrscheinlichkeiten durch Addition statt Multiplikation.
 
 ## References
 

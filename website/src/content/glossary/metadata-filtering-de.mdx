@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Metadata Filtering nutzt explizite Felder im Index, um Ergebnisse ein- oder auszuschließen, etwa nur aktuelle, deutschsprachige oder öffentlich zugängliche Dokumente abzurufen.
+Metadata Filtering ist der Prozess, bei dem Retrieval-Ergebnisse auf Dokumente beschränkt werden, die bestimmte strukturierte Attribute erfüllen — etwa Dokumenttyp, Veröffentlichungsdatum, Zuständigkeitsbereich, Autoritätsstufe oder Sprache — vor oder während der Ähnlichkeitssuche. Anstatt sich ausschließlich auf semantische Relevanz zu verlassen, wendet Metadata Filtering harte Einschränkungen an, die sicherstellen, dass Ergebnisse kontextuelle Anforderungen erfüllen. Im belgischen Steuerrecht bedeutet dies beispielsweise, dass eine Anfrage zu aktuellen wallonischen Registrierungsgebühren nur wallonische Regionalgesetzgebung zurückgibt, die derzeit in Kraft ist — und keine abgelaufenen föderalen Bestimmungen oder flämische Entsprechungen.
+
+## Warum es wichtig ist
+
+- **Jurisdiktionelle Präzision** — Belgiens drei Regionen und die föderale Ebene haben jeweils eigene Steuerregeln; Metadata Filtering verhindert, dass das System Gesetzgebung aus dem falschen Zuständigkeitsbereich zurückgibt
+- **Zeitliche Genauigkeit** — Steuerrecht ändert sich häufig; die Filterung nach Datum stellt sicher, dass das System die Version einer Bestimmung zurückgibt, die zum relevanten Zeitpunkt in Kraft war, und nicht einen aufgehobenen Vorgänger
+- **Autoritätsrangfolge** — die Filterung nach Dokumenttyp (Gesetzgebung, Rundschreiben, Ruling, parlamentarische Anfrage) ermöglicht es dem System, verbindliche Quellen gegenüber interpretativer Orientierung zu priorisieren, wenn dies angemessen ist
+- **Rauschreduzierung** — ohne Metadata Filtering kann die semantische Suche thematisch relevante, aber praktisch irrelevante Dokumente zurückgeben, wie Entwürfe, ausländische Gesetzgebung oder ersetzte Bestimmungen
+
+## Wie es funktioniert
+
+Metadata Filtering arbeitet innerhalb der Retrieval-Pipeline, typischerweise an einem von zwei Punkten:
+
+**Pre-Filtering** schränkt den Suchraum ein, bevor die Ähnlichkeitssuche durchgeführt wird. Die Vektordatenbank erhält sowohl den Abfragevektor als auch die Metadaten-Einschränkungen und durchsucht nur die Teilmenge von Dokumenten, die den Einschränkungen entsprechen. Dies ist effizient, weil es die Anzahl der zu vergleichenden Vektoren reduziert, kann aber relevante Dokumente verfehlen, wenn die Filter zu restriktiv sind.
+
+**Post-Filtering** führt zuerst die vollständige Ähnlichkeitssuche durch und entfernt dann Ergebnisse, die den Metadaten-Einschränkungen nicht entsprechen. Dies stellt sicher, dass keine semantisch relevanten Dokumente durch zu enge Filter verpasst werden, kann aber verschwenderisch sein — viele abgerufene Kandidaten werden nach der Bewertung verworfen.
+
+Die meisten Produktionssysteme verwenden eine Kombination. Gängige Filtertypen in juristischer KI umfassen:
+
+- **Datumsbereich** — nur Dokumente, die zwischen bestimmten Daten veröffentlicht wurden, oder Dokumente, die an einem bestimmten Datum in Kraft sind
+- **Zuständigkeitsbereich** — föderales, flämisches, wallonisches, Brüssel-Hauptstadtregion oder Deutschsprachige Gemeinschaft
+- **Dokumenttyp** — Gesetz, königlicher Erlass, Ministerialerlass, Rundschreiben, Verwaltungsurteil, Gerichtsentscheidung, parlamentarische Anfrage
+- **Autoritätsstufe** — Verfassungsbestimmungen, Primärgesetzgebung, Sekundärgesetzgebung, Verwaltungsleitlinien
+- **Sprache** — niederländische, französische oder deutsche Version des Textes
+
+Metadata Filtering ist auf genaue, vollständige Metadaten zum Zeitpunkt der Indexierung angewiesen. Wenn ein Dokument nicht mit dem korrekten Zuständigkeitsbereich oder Veröffentlichungsdatum versehen ist, wird kein Filter es korrekt finden oder ausschließen. Dies macht die Metadaten-Anreicherung während der Dokumentenaufnahme zu einer kritischen Voraussetzung.
+
+## Häufige Fragen
+
+**F: Können Metadaten-Filter zu streng sein?**
+
+A: Ja. Überfilterung kann relevante Ergebnisse ausschließen — beispielsweise würde eine strenge Filterung nach „Flämisch" föderale Gesetzgebung verfehlen, die einheitlich in allen Regionen gilt. Intelligente Standardwerte und Filterlockerung (Erweiterung der Filter, wenn zu wenige Ergebnisse zurückgegeben werden) helfen, dies zu verhindern.
+
+**F: Wie interagiert Metadata Filtering mit semantischer Suche?**
+
+A: Sie sind komplementär. Die semantische Suche findet Dokumente, die thematisch relevant sind; Metadata Filtering stellt sicher, dass sie aus dem richtigen Zuständigkeitsbereich, Zeitraum und der richtigen Autoritätsstufe stammen. Keines allein reicht für juristische Recherche aus — die Kombination beider liefert genaue, kontextuell angemessene Ergebnisse.
 
 ## References
 

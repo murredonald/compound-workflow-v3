@@ -12,7 +12,34 @@ draft: false
 
 ## Definition
 
-Embedding Space ist der hochdimensionale Raum, den ein Embedding‑Modell definiert, in dem semantisch ähnliche Elemente nahe beieinander liegen und zu Clustern werden.
+Der Embedding Space ist der hochdimensionale mathematische Raum, in dem Vektoreinbettungen existieren. Jede Dimension dieses Raums erfasst einen gelernten Bedeutungsaspekt, und die geometrischen Beziehungen zwischen Punkten — ihre Abstände und Winkel — kodieren semantische Ähnlichkeit und konzeptuelle Zusammenhänge. Texte mit ähnlicher Bedeutung werden auf nahe beieinander liegende Punkte abgebildet; nicht verwandte Texte werden weit voneinander entfernt platziert. Der Embedding Space ist das, was [semantische Suche](/de/glossary/semantic-search/) ermöglicht: relevante Dokumente zu finden wird zur Aufgabe, nahe gelegene Punkte in diesem Raum zu finden.
+
+## Warum es wichtig ist
+
+- **Semantische Organisation** — der Embedding Space organisiert alle Inhalte der Wissensbasis nach Bedeutung statt nach alphabetischer Reihenfolge oder Dateispeicherort und ermöglicht so einen Abruf basierend auf konzeptueller Relevanz
+- **Sprachübergreifende Abbildung** — mehrsprachige Embedding-Modelle bilden Text aus verschiedenen Sprachen in einen gemeinsamen Raum ab, sodass eine niederländische Anfrage relevante französische Gesetzgebung finden kann, weil beide benachbarte Regionen belegen
+- **Clustering und Exploration** — die geometrische Struktur des Embedding Space offenbart natürliche Gruppierungen in den Daten — etwa Cluster von Dokumenten zum selben Steuerthema — was explorative Recherche und Themenfindung unterstützt
+- **Qualitätsdiagnose** — die Visualisierung des Embedding Space deckt Probleme auf wie kollabierte Regionen (in denen verschiedene Konzepte zu nah beieinander abgebildet werden) oder Lücken (in denen wichtige Themen keine Abdeckung haben)
+
+## So funktioniert es
+
+Ein Embedding-Modell definiert den Embedding Space durch seinen Trainingsprozess. Während des Trainings lernt das Modell, Vektoren so zuzuweisen, dass semantisch ähnliche Eingaben nahe beieinander und unähnliche Eingaben weit voneinander entfernt liegen. Die Anzahl der Dimensionen (typischerweise 384 bis 1536) bestimmt die Kapazität des Raums, feinkörnige Unterscheidungen zu erfassen.
+
+**Abstandsmetriken** definieren, wie „Nähe" im Raum gemessen wird. Kosinusähnlichkeit misst den Winkel zwischen zwei Vektoren (unter Vernachlässigung der Magnitude) und ist damit die gebräuchlichste Wahl für Texteinbettungen. Das Skalarprodukt berücksichtigt sowohl Winkel als auch Magnitude. Der euklidische Abstand misst die Luftliniendistanz zwischen Punkten. Die Wahl der Metrik sollte zum Trainingsziel des Embedding-Modells passen.
+
+**Geometrische Eigenschaften** des Raums kodieren bedeutungsvolle Beziehungen. In gut trainierten Räumen können analogische Beziehungen als konsistente Vektorverschiebungen erscheinen — die Richtung von „belasting" zu „tarief" könnte der Richtung von „tax" zu „rate" ähneln. Cluster bilden sich natürlich um Themen: Steuerrechtliche Bestimmungen clustern getrennt von Verfahrensrecht, das wiederum getrennt von Rechtsprechung clustert.
+
+**Einschränkungen** sind jedem Raum mit fester Dimensionalität inhärent. Der Embedding Space erfasst die Beziehungen, die das Modell während des Trainings gelernt hat; Konzepte, die in den Trainingsdaten fehlen, werden schlecht positioniert. Fachspezifisches Feintuning formt den Raum um, damit spezialisierte Inhalte besser repräsentiert werden — beispielsweise, damit verschiedene Arten belgischer Steuergesetzgebung distinkte, gut getrennte Regionen belegen, anstatt in ein generisches „Rechts"-Cluster komprimiert zu werden.
+
+## Häufige Fragen
+
+**F: Kann man einen Embedding Space visualisieren?**
+
+A: Nicht direkt — Embedding Spaces haben typischerweise Hunderte von Dimensionen. [Dimensionsreduktionstechniken](/de/glossary/dimensionality-reduction/) wie t-SNE oder UMAP projizieren den Raum auf 2 oder 3 Dimensionen zur Visualisierung. Diese Projektionen erhalten die lokale Nachbarschaftsstruktur (nahe Punkte bleiben nah), verzerren aber globale Abstände, sodass sie nützlich sind, um Cluster und Ausreißer zu erkennen, aber nicht um absolute Distanzen zu messen.
+
+**F: Erzeugen verschiedene Embedding-Modelle unterschiedliche Räume?**
+
+A: Ja. Jedes Modell definiert seinen eigenen Embedding Space mit eigener geometrischer Struktur. Vektoren verschiedener Modelle sind nicht vergleichbar — ein 768-dimensionaler Vektor eines Modells kann nicht sinnvoll mit einem 768-dimensionalen Vektor eines anderen Modells verglichen werden. Ein Modellwechsel erfordert die erneute Einbettung aller Dokumente.
 
 ## References
 

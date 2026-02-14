@@ -10,6 +10,41 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Modellrobustheit beschreibt den Grad, in dem ein KI-Modell zuverlässige Leistung erbringt, wenn es mit Eingaben konfrontiert wird, die von seinen Trainingsbedingungen abweichen — darunter verrauschte Daten, Verteilungsverschiebungen, Randfälle und adversariale Manipulation. Ein robustes Modell liefert konsistente, genaue Ergebnisse, selbst wenn die Eingabe leicht falsch geschrieben, ungewöhnlich formuliert oder gezielt darauf ausgelegt ist, es zu verwirren. In der juristischen KI ist Robustheit unerlässlich, weil Anfragen aus der Praxis unordentlich sind: Nutzer mischen Sprachen, kürzen Verweise ab und stellen mehrdeutige Fragen, die ein fragiles Modell schlecht verarbeiten würde.
+
+## Warum es wichtig ist
+
+- **Zuverlässigkeit in der Praxis** — Steuerexperten formulieren Fragen auf viele verschiedene Arten; ein robustes Modell bewältigt natürliche Variationen in Terminologie, Sprache und Anfragestruktur ohne Leistungseinbußen
+- **Widerstandsfähigkeit gegen Angriffe** — Modelle, die als öffentlich zugängliche Dienste eingesetzt werden, müssen Prompt-Injection und andere Angriffe abwehren, die darauf abzielen, Trainingsdaten zu extrahieren, Sicherheitsfilter zu umgehen oder irreführende Ausgaben zu erzeugen
+- **Umgang mit Verteilungsverschiebungen** — Steuerrecht ändert sich regelmäßig; ein robustes Modell behält seine Leistung bei, wenn neue Gesetzgebung Konzepte oder Terminologie einführt, die in den Trainingsdaten nicht vorhanden waren
+- **Vertrauen und Akzeptanz** — Fachleute verlassen sich nicht auf ein Werkzeug, das bei leicht umformulierten Versionen derselben Frage völlig unterschiedliche Antworten liefert
+
+## So funktioniert es
+
+Robustheit wird über mehrere Dimensionen bewertet und verbessert:
+
+**Eingabestörungstests** messen, wie stark sich die Modellausgabe verändert, wenn Eingaben leicht modifiziert werden — durch Tippfehler, Umformulierungen oder Übersetzungen zwischen Sprachen. Ein robustes Modell liefert im Wesentlichen dieselbe Antwort unabhängig von oberflächlichen Variationen.
+
+**Tests bei Verteilungsverschiebungen** bewerten die Leistung an Daten, die systematisch vom Trainingsset abweichen. Für ein juristisches KI-System könnte dies das Testen an neu erlassener Gesetzgebung, anderen Rechtsordnungen oder Dokumenttypen bedeuten, die während des Trainings nicht vorkamen. Techniken wie Domänenanpassung und kontinuierliches Lernen helfen Modellen, Verteilungsverschiebungen elegant zu bewältigen.
+
+**Adversariales Testen** erstellt gezielt Eingaben, die Fehler provozieren sollen — Prompts, die versuchen, Systemanweisungen zu überschreiben, Anfragen, die Mehrdeutigkeiten in juristischer Terminologie ausnutzen, oder Eingaben mit versteckten Anweisungen in scheinbar normalem Text. Adversariales Training, bei dem das Modell mit Beispielen solcher Angriffe feinabgestimmt wird, verbessert die Widerstandsfähigkeit.
+
+**Ensemble-Methoden** verbessern die Robustheit, indem sie Vorhersagen mehrerer Modelle oder Abrufstrategien kombinieren. Wenn eine Komponente bei einer bestimmten Eingabe versagt, können andere dies ausgleichen. In RAG-Systemen zeigt sich dies als [hybride Suche](/de/glossary/hybrid-search/) (Kombination von sparsamer und dichter Suche) und Antwortverifizierung anhand mehrerer Quellen.
+
+Robustheit steht oft in Spannung mit der Leistung bei sauberen, wohlgeformten Eingaben. Eine Überoptimierung für adversariale Fälle kann die Genauigkeit bei normalen Anfragen verringern. Das Ziel ist ein Modell, das das gesamte Spektrum realer Eingaben zuverlässig verarbeitet, nicht eines, das bei Benchmarks perfekt abschneidet, aber in der Praxis brüchig ist.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Robustheit von Genauigkeit?**
+
+A: Genauigkeit misst die Leistung auf einem Standard-Testset. Robustheit misst, wie stark die Genauigkeit nachlässt, wenn sich die Bedingungen ändern. Ein Modell kann 95 % Genauigkeit auf sauberen Daten erreichen, aber auf verrauschte oder adversariale Eingaben auf 60 % abfallen — dieses Modell ist genau, aber nicht robust.
+
+**F: Kann Robustheit mit einer einzigen Metrik gemessen werden?**
+
+A: Nein. Robustheit ist mehrdimensional — ein Modell kann robust gegenüber Tippfehlern sein, aber anfällig für Verteilungsverschiebungen. Die Evaluation umfasst typischerweise mehrere Testsets, die verschiedene Störungstypen abdecken, wobei die Leistung für jeden einzeln verfolgt wird.
+
 ## References
 
 > Yinpeng Dong et al. (2018), "[Boosting Adversarial Attacks with Momentum](https://doi.org/10.1109/cvpr.2018.00957)", .

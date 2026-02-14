@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-In information architecture, a taxonomy is a structured set of categories and subcategories used to organize content and support navigation and search.
+A taxonomy in information architecture is a hierarchical classification scheme that organises content into categories and subcategories, providing a structured framework for navigation, discovery, and filtering. Unlike flat tags or free-text labels, a taxonomy imposes a controlled, consistent vocabulary with explicit parent-child relationships. In a legal AI system, the taxonomy defines how legal content is categorised — by tax type (income tax, VAT, registration duties), by jurisdiction (federal, Flemish, Walloon), by document type (legislation, case law, administrative guidance), and by topic area (deductible expenses, international taxation, procedural obligations).
+
+## Why it matters
+
+- **Consistent categorisation** — a taxonomy ensures that the same topic is always labelled the same way, preventing inconsistencies like "corporate tax", "vennootschapsbelasting", and "impôt des sociétés" being treated as separate categories
+- **Navigational structure** — taxonomies provide the backbone for browse-based navigation: users can drill down from "Tax types" → "Income tax" → "Corporate income tax" → "Deductible expenses" to find relevant content
+- **Faceted filtering** — taxonomies enable structured filters in search results: filter by tax type, jurisdiction, document type, or time period to narrow results without changing the search query
+- **Knowledge gap identification** — a well-maintained taxonomy reveals where content is sparse (categories with few documents) or where new categories are needed (emerging topics not yet classified)
+
+## How it works
+
+A taxonomy consists of three elements:
+
+**Terms** — the controlled vocabulary of category names. Each term has a preferred label (the canonical name), alternative labels (synonyms in different languages or common variations), and a definition. Terms are language-aware: the same concept has Dutch, French, and German labels.
+
+**Hierarchy** — the parent-child relationships between terms. "Income tax" is a child of "Tax types". "Corporate income tax" is a child of "Income tax". The hierarchy can have multiple levels of depth, though practical taxonomies rarely exceed 4-5 levels.
+
+**Relationships** — beyond hierarchy, taxonomies may include associative relationships ("related to"), equivalence relationships ("same as"), and scope notes (explaining what a term includes and excludes). These help users navigate between related but non-hierarchical topics.
+
+Taxonomies are maintained by domain experts who add new terms as the legal landscape evolves (e.g., adding a category for new tax types introduced by legislation), merge or split categories as needed, and ensure cross-language consistency.
+
+In a legal AI system, the taxonomy serves dual purposes: it organises the user-facing navigation and it provides metadata categories for document tagging during ingestion. Automated classification assigns taxonomy categories to new documents using text classifiers trained on the taxonomy's structure.
+
+## Common questions
+
+**Q: How is a taxonomy different from an ontology?**
+
+A: A taxonomy is a hierarchical classification — it organises concepts into parent-child relationships. An ontology is richer — it defines types of entities, their properties, and the relationships between them, enabling logical reasoning. A taxonomy says "corporate income tax is a type of income tax". An ontology additionally defines that corporate income tax has a rate, applies to specific entities, and interacts with specific deductions.
+
+**Q: How many categories should a taxonomy have?**
+
+A: Enough to be useful for navigation and filtering, but not so many that the categories become fragmented or overlapping. For a Belgian tax AI system, 50-200 leaf categories (grouped under 10-20 top-level categories) typically provides sufficient granularity without overwhelming users.

@@ -10,6 +10,41 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Calibratie is de mate waarin de voorspelde betrouwbaarheidsscores van een model de werkelijke correctheidskansen weerspiegelen. Een perfect gecalibreerd systeem betekent dat wanneer het 80% betrouwbaarheid rapporteert, het antwoord in ongeveer 80% van de gevallen daadwerkelijk correct is. In juridische AI is calibratie cruciaal omdat professionals op betrouwbaarheidssignalen vertrouwen om te beslissen of ze de output van het systeem kunnen vertrouwen of onafhankelijk moeten verifiëren. Een overmoedig systeem dat onzekere antwoorden als zeer betrouwbaar aanduidt, is gevaarlijker dan een systeem dat eerlijk zijn onzekerheid rapporteert.
+
+## Waarom het belangrijk is
+
+- **Vertrouwenssignalen** — belastingadviseurs gebruiken betrouwbaarheidsscores om te bepalen hoeveel onafhankelijke verificatie een AI-gegenereerd antwoord vereist; slecht gecalibreerde scores ondermijnen deze werkwijze
+- **Risicobeheer** — overmoedige voorspellingen bij dubbelzinnige belastingvragen kunnen leiden tot onjuiste aangiften of gemiste bezwaren; calibratie zorgt ervoor dat onzekerheid zichtbaar wordt
+- **Afstemming op regelgeving** — de EU AI Act verwacht dat AI-systemen met hoog risico hun beperkingen duidelijk communiceren; gecalibreerde betrouwbaarheidsscores zijn een concreet mechanisme om aan deze vereiste te voldoen
+- **Systeemvergelijking** — calibratiemetrieken maken objectieve vergelijking mogelijk tussen verschillende modellen of systeemversies, voorbij ruwe nauwkeurigheid
+
+## Hoe het werkt
+
+Calibratie wordt gemeten door voorspelde kansen te vergelijken met waargenomen uitkomsten over een testset. De standaardaanpak is om voorspellingen in bins te groeperen op betrouwbaarheidsniveau (bijv. 0-10%, 10-20%, ..., 90-100%) en te controleren of het aandeel correcte voorspellingen in elke bin overeenkomt met het betrouwbaarheidsbereik van de bin. Het verschil tussen voorspelde en waargenomen nauwkeurigheid is de **calibratiefout**.
+
+De meest gebruikte metriek is **Expected Calibration Error (ECE)**: het gewogen gemiddelde van het absolute verschil tussen betrouwbaarheid en nauwkeurigheid over alle bins. Een perfect gecalibreerd model heeft een ECE van nul.
+
+Moderne neurale netwerken, inclusief grote taalmodellen, zijn standaard vaak slecht gecalibreerd — ze zijn vaak overmoedig en kennen hoge waarschijnlijkheden toe, zelfs wanneer ze fout zitten. Verschillende technieken pakken dit aan:
+
+- **Temperature scaling** — een eenvoudige post-hoc methode die de softmax-temperatuur op de output-logits van het model aanpast om de kansverdeling te spreiden of te verscherpen. Eén enkele temperatuurparameter wordt geleerd op een validatieset.
+- **Platt scaling** — past een logistische regressie toe op de ruwe scores van het model om gecalibreerde kansen te produceren.
+- **Ensemblemethoden** — het middelen van voorspellingen over meerdere modellen of meerdere runs verbetert van nature de calibratie, omdat individuele overmoedige fouten worden gedempt.
+
+In retrieval-augmented generation systemen is calibratie niet alleen van toepassing op de token-niveau kansen van het taalmodel, maar ook op de systeemniveau-betrouwbaarheidsscore die retrievalkwaliteit, bronautoriteit en generatiezekerheid combineert tot één enkel gebruikersgericht signaal.
+
+## Veelgestelde vragen
+
+**V: Kan een model nauwkeurig zijn maar slecht gecalibreerd?**
+
+A: Ja. Een model kan 95% van de vragen correct beantwoorden, maar 99% betrouwbaarheid toekennen aan elk antwoord. De nauwkeurigheid is hoog, maar de betrouwbaarheidsscores zijn betekenisloos — de gebruiker kan de 5% van de gevallen waarin het model fout zit niet onderscheiden.
+
+**V: Hoe verschilt calibratie van nauwkeurigheid?**
+
+A: Nauwkeurigheid meet hoe vaak het model correct is. Calibratie meet of het model weet hoe vaak het correct is. Een goed gecalibreerd model met 70% nauwkeurigheid is nuttiger dan een slecht gecalibreerd model met 80% nauwkeurigheid, omdat het eerlijk zijn onzekere gevallen signaleert.
+
 ## References
 
 - Guo et al. (2017), "[On Calibration of Modern Neural Networks](https://arxiv.org/abs/1706.04599)", ICML.

@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Dot-product similarity berekent de gelijkenis tussen twee [embeddings](/nl/glossary/embeddings/) door hun inwendig product te nemen, wat hoge scores geeft als vectoren in dezelfde richting wijzen.
+Dot-product similarity is een maat voor gelijkenis tussen twee vectoren, berekend door hun overeenkomstige dimensies te vermenigvuldigen en de resultaten op te tellen. Het inwendig product weerspiegelt zowel de hoek tussen de vectoren (richtingsgelijkenis) als hun grootte (lengte). Hogere waarden duiden op grotere gelijkenis — vectoren die in dezelfde richting wijzen met grotere magnitudes produceren grotere inwendige producten. Het is een van de drie standaard afstandsmaten in vectorzoekopdrachten, naast [cosine similarity](/nl/glossary/cosine-similarity/) en Euclidische afstand.
+
+## Waarom het belangrijk is
+
+- **Efficiënte berekening** — het inwendig product is een van de snelste gelijkenisoperaties, waarbij alleen elementgewijze vermenigvuldiging en optelling nodig zijn; hardware-versnelde SIMD-instructies kunnen het in microseconden berekenen over honderden dimensies
+- **Gevoeligheid voor magnitude** — in tegenstelling tot cosine similarity houdt het inwendig product rekening met de vectorgrootte, wat zinvol kan zijn als het embeddingmodel belang of betrouwbaarheid codeert in de vectorlengte
+- **Equivalentie met cosine bij genormaliseerde vectoren** — wanneer vectoren L2-genormaliseerd zijn (zoals veel embeddingmodellen produceren), leveren inwendig product en cosine similarity identieke rangschikkingen op, waardoor het eenvoudigere inwendig product gebruikt kan worden
+- **Basis voor attention** — het inwendig product is de kernberekening in het transformer-attentiemechanisme (query-key dot product), waardoor het fundamenteel is voor hoe taalmodellen tekst verwerken
+
+## Hoe het werkt
+
+Voor twee vectoren **a** en **b** van dimensie *d* is het inwendig product:
+
+**a · b = Σ(aᵢ × bᵢ)** voor i van 1 tot d
+
+Elke dimensie draagt onafhankelijk bij: als beide vectoren grote positieve waarden hebben in dezelfde dimensie, levert die dimensie een grote positieve bijdrage. Als ze van teken verschillen, is de bijdrage negatief.
+
+**Relatie met cosine similarity**: cosine similarity wordt gedefinieerd als het inwendig product gedeeld door het product van de vectorgroottes: cos(θ) = (a · b) / (‖a‖ × ‖b‖). Wanneer beide vectoren genormaliseerd zijn tot eenheidslengte (‖a‖ = ‖b‖ = 1), is het inwendig product gelijk aan cosine similarity. Veel embeddingmodellen normaliseren hun outputvectoren, waardoor de twee maten uitwisselbaar zijn.
+
+**Wanneer magnitude ertoe doet**: als vectoren niet genormaliseerd zijn, geeft het inwendig product de voorkeur aan vectoren met een grotere magnitude. Bij sommige embeddingmodellen correleert de vectorgrootte met de betrouwbaarheid van het model of de informatiewaarde van het document. In zulke gevallen vangt het inwendig product deze informatie op, terwijl cosine similarity deze verwerpt.
+
+**In vectordatabases**: de meeste [vectordatabases](/nl/glossary/vector-database/) ondersteunen het inwendig product als ingebouwde gelijkenismaat. Bij het configureren van een index moet de keuze tussen inwendig product en cosine similarity overeenkomen met het ontwerp van het embeddingmodel — modellen die genormaliseerde vectoren produceren kunnen beide gebruiken; modellen die niet-genormaliseerde vectoren produceren moeten de maat gebruiken waarvoor hun trainingsdoel is geoptimaliseerd.
+
+## Veelgestelde vragen
+
+**V: Moet ik inwendig product of cosine similarity gebruiken?**
+
+A: Raadpleeg de documentatie van het embeddingmodel. Als het model L2-genormaliseerde vectoren produceert (wat bij de meeste moderne tekstembeddingmodellen het geval is), zijn de twee equivalent en is het inwendig product iets sneller. Als vectoren niet genormaliseerd zijn en magnitude betekenisvol is, kan het inwendig product geschikter zijn.
+
+**V: Kan het inwendig product negatief zijn?**
+
+A: Ja. Een negatief inwendig product geeft aan dat de vectoren in ruwweg tegengestelde richtingen wijzen in de embeddingsruimte, wat wijst op ongelijkenis. Nul duidt op orthogonaliteit (geen relatie).
 
 ## References
 

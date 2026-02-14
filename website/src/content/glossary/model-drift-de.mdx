@@ -10,6 +10,46 @@ locale: "de"
 draft: false
 ---
 
+## Definition
+
+Modelldrift ist die allmähliche Verschlechterung der Leistung eines KI-Modells im Laufe der Zeit, wenn die realen Daten, auf die es trifft, von den Daten abweichen, auf denen es trainiert wurde. Ein Modell, das auf dem Steuerrecht des Jahres 2024 trainiert wurde, wird zunehmend unzuverlässiger, wenn neue Gesetze erlassen, Urteile gefällt und Verwaltungspraktiken weiterentwickelt werden. Modelldrift ist kein plötzliches Versagen, sondern eine langsame Erosion — das Modell liefert weiterhin Antworten, aber diese werden zunehmend ungenau, veraltet oder nicht mehr im Einklang mit der aktuellen Praxis.
+
+## Warum es wichtig ist
+
+- **Schleichende Verschlechterung** — Modelldrift kündigt sich nicht an; das Modell liefert weiterhin selbstbewusst klingende Antworten, auch wenn deren Genauigkeit abnimmt, was es in Hochrisikobereichen wie dem Steuerrecht gefährlich macht
+- **Rechtliche Aktualität** — das belgische Steuerrecht ändert sich jedes Jahr durch jährliche Programmgesetze, Indexanpassungen und neue Rundschreiben; ein Modell, das diese Änderungen nicht berücksichtigt, wird veraltete Sätze, Schwellenwerte oder Bestimmungen zitieren
+- **Embedding-Veralterung** — wenn das Embedding-Modell oder das Retrieval-Modell auf einem Korpus-Snapshot trainiert wurde, sind neue Terminologie, Konzepte oder Dokumentstile im Embedding-Raum möglicherweise nicht gut repräsentiert
+- **Regulatorische Pflicht** — der EU AI Act verlangt eine fortlaufende Überwachung der KI-Systemleistung; das Erkennen und Beheben von Drift ist Teil dieser Pflicht
+
+## Wie es funktioniert
+
+Modelldrift zeigt sich in mehreren Formen:
+
+**Datendrift** (auch Covariate Shift genannt) tritt auf, wenn sich die Verteilung der eingehenden Anfragen ändert — Benutzer beginnen, nach Themen oder auf eine Weise zu fragen, die in den Trainingsdaten nicht vertreten war. Beispielsweise könnte eine große Steuerreform Anfragen zu neuen Konzepten auslösen, die das Modell noch nie gesehen hat.
+
+**Concept Drift** tritt auf, wenn sich die korrekte Antwort auf eine bestimmte Anfrage im Laufe der Zeit ändert. Die Frage „Wie hoch ist der normale Mehrwertsteuersatz?" hat heute eine stabile Antwort, aber wenn sich der Satz ändert, werden die Trainingsdaten des Modells falsch. In der juristischen KI ist Concept Drift die kritischste Form, da sich Gesetzgebung planmäßig ändert.
+
+**Modellveralterung** tritt in RAG-Systemen auf, wenn das Retrieval-Modell oder der Reranker auf einem festen Datensatz feinabgestimmt wurde. Wenn die Wissensbasis um neue Dokumenttypen oder -stile wächst, kann die Fähigkeit des Modells, diese korrekt zu ranken, nachlassen, da es für die Eigenschaften des ursprünglichen Korpus optimiert wurde.
+
+**Erkennung** basiert auf kontinuierlicher Evaluation: regelmäßiges Testen des Systems gegen bekannt korrekte Antworten und Überwachung der Leistungsmetriken im Zeitverlauf. Statistische Tests vergleichen aktuelle Leistungsverteilungen mit Baseline-Verteilungen. Signifikante Abweichungen lösen Warnungen aus.
+
+**Gegenmaßnahmen** umfassen:
+
+- **Wissensbasis-Updates** — regelmäßige Aufnahme neuer Gesetze, Urteile und Rundschreiben, damit das Retrieval-System über aktuelle Quellen verfügt
+- **Periodisches Retraining** — Aktualisierung des Embedding-Modells oder Rerankers auf aktuellen Daten, um die Ausrichtung auf aktuelle Inhalte beizubehalten
+- **Kontinuierliche Evaluation** — automatisierte Tests, die Drift erkennen, bevor sie Benutzer betrifft
+- **Temporales Bewusstsein** — Metadatenfilterung, die sicherstellt, dass das System aktuelle Bestimmungen gegenüber historischen priorisiert
+
+## Häufige Fragen
+
+**F: Ist Modelldrift dasselbe wie ein Bug?**
+
+A: Nein. Bugs werden durch Codeänderungen eingeführt und können durch Rückgängigmachen dieser Änderungen behoben werden. Drift entsteht, weil sich die Welt ändert, während das Modell gleich bleibt. Sie erfordert fortlaufendes Monitoring und periodische Updates statt einer einmaligen Korrektur.
+
+**F: Wie schnell tritt Modelldrift in der juristischen KI auf?**
+
+A: Das hängt vom Rechtsgebiet ab. Das Steuerrecht ändert sich jedes Jahr erheblich durch Programmgesetze, Satzanpassungen und neue Rundschreiben. Ein Modell ohne Wissensbasis-Updates zeigt innerhalb von Monaten merkliche Drift. Verfassungs- oder Verfahrensrecht ändert sich langsamer.
+
 ## References
 
 > Zhe Yang et al. (2019), "[A Novel Concept Drift Detection Method for Incremental Learning in Nonstationary Environments](https://doi.org/10.1109/tnnls.2019.2900956)", IEEE Transactions on Neural Networks and Learning Systems.

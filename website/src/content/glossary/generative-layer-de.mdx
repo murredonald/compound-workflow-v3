@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-In einer [RAG](/de/glossary/rag/)-Pipeline nimmt die generative Schicht den abgerufenen Kontext und die Benutzerfrage und verwendet ein Sprachmodell, um eine endgültige Antwort, Erklärung oder einen Entwurf zu erzeugen.
+Die generative Schicht ist die Komponente innerhalb eines [RAG](/de/glossary/rag/)-Systems, in der das Sprachmodell die abgerufenen Kontextdokumente und die Frage des Benutzers entgegennimmt und eine synthetisierte Antwort erzeugt. Sie steht in der Pipeline nach der Retrieval-Schicht: das Retrieval findet die relevanten Quellen, und die Generierung verwandelt sie in eine kohärente, präzise Antwort. In der generativen Schicht wird aus Rohmaterial eine nutzbare Antwort — mit Quellenangaben, strukturierter Formatierung und angemessener Zurückhaltung bei unsicheren Punkten.
+
+## Warum es wichtig ist
+
+- **Antwortsynthese** — abgerufene Dokumente sind Rohmaterial; die generative Schicht verwandelt mehrere Passagen aus verschiedenen Quellen in eine einzige kohärente Antwort, die die Frage des Benutzers direkt adressiert
+- **Quellenintegration** — eine gut konzipierte generative Schicht verwebt Quellenangaben in die Antwort, sodass der Benutzer jede Aussage anhand ihres Ursprungs verifizieren kann
+- **Unsicherheitskommunikation** — die generative Schicht kann Konfidenzniveaus ausdrücken, widersprüchliche Quellen kennzeichnen und zwischen klaren Gesetzesbestimmungen und Bereichen interpretativer Unsicherheit unterscheiden
+- **Formatflexibilität** — derselbe abgerufene Kontext kann je nach Bedarf des Benutzers als kurze Antwort, ausführliche Analyse, Vergleichstabelle oder Memoentwurf formatiert werden
+
+## Wie es funktioniert
+
+Die generative Schicht erhält zwei Eingaben: die ursprüngliche Frage des Benutzers und eine kuratierte Auswahl abgerufener Passagen (typischerweise 5-20 Chunks, die von der Retrieval-Schicht ausgewählt wurden). Diese werden zu einem Prompt zusammengestellt, der das Sprachmodell anweist, die Frage auf Basis des bereitgestellten Kontexts zu beantworten.
+
+**Prompt-Konstruktion** kombiniert den System-Prompt (der Rolle, Verhaltensregeln und Ausgabeformat definiert), die abgerufenen Passagen (typischerweise mit Quellmetadaten wie Artikelnummern und Veröffentlichungsdaten) und die Frage des Benutzers. Der Prompt weist das Modell an, seine Antwort ausschließlich auf den bereitgestellten Kontext zu stützen, Quellen für jede Aussage zu zitieren und zu kennzeichnen, wenn der Kontext die Frage nicht vollständig beantwortet.
+
+**Generierung** — das Sprachmodell erzeugt die Antwort Token für Token, konditioniert auf den gesamten Prompt. Während der Generierung muss das Modell Informationen aus mehreren Passagen synthetisieren, scheinbare Widersprüche zwischen Quellen auflösen und die Antwort gemäß dem vorgegebenen Format strukturieren.
+
+**Nachbearbeitung** validiert die generierte Ausgabe: Es wird geprüft, ob zitierte Quellen tatsächlich im abgerufenen Kontext existieren, ob Artikelnummern und Daten korrekt sind, und es werden Formatierungsregeln angewendet. Einige Systeme verwenden ein zweites, kleineres Modell, um die Faithfulness der generierten Antwort gegenüber den Quellpassagen zu verifizieren.
+
+Die Qualität der generativen Schicht hängt von der Fähigkeit des Sprachmodells ab, Anweisungen präzise zu befolgen, dem Drang zu widerstehen, Informationen über den bereitgestellten Kontext hinaus hinzuzufügen (Halluzination), und die Nuancen juristischer Sprache zu beherrschen. Domänenspezifisches Fine-Tuning oder Few-Shot-Beispiele im Prompt können die Leistung bei spezialisierten Inhalten verbessern.
+
+## Häufige Fragen
+
+**F: Kann die generative Schicht auch mit abgerufenem Kontext halluzinieren?**
+
+A: Ja. Das Modell kann Details erfinden, Aussagen falschen Quellen zuordnen oder über das hinaus extrapolieren, was der Kontext stützt. Zu den Gegenmaßnahmen gehören explizite Anweisungen, nur den bereitgestellten Kontext zu verwenden, Faithfulness-Verifizierung und Confidence Scoring.
+
+**F: Was ist der Unterschied zwischen der generativen Schicht und dem LLM?**
+
+A: Das LLM ist das Modell selbst. Die generative Schicht ist die architektonische Komponente, die das LLM sowie die Prompt-Konstruktion, die Kontextassemblierung und die Nachbearbeitungslogik umfasst. Die generative Schicht ist das System; das LLM ist ein Teil davon.
 
 ## References
 

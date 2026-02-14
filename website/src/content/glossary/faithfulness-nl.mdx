@@ -12,7 +12,41 @@ draft: false
 
 ## Definitie
 
-Faithfulness kijkt of een gegenereerde uitleg het werkelijke gedrag en de bewijsbasis van het model weerspiegelt, en niet slechts een plausibel verhaal is.
+Faithfulness is de eigenschap dat de output van een AI-systeem nauwkeurig de informatie in de brondocumenten weerspiegelt — zonder onondersteunde beweringen toe te voegen of verkeerd weer te geven wat de bronnen zeggen. Bij retrieval-augmented generation betekent faithfulness dat elke bewering in het gegenereerde antwoord herleidbaar is tot een specifieke passage in de opgehaalde context. Een faithful systeem verzint geen feiten, schrijft beweringen niet toe aan de verkeerde bron en presenteert eigen gevolgtrekkingen niet alsof het directe citaten zijn. Faithfulness verschilt van feitelijke nauwkeurigheid: een antwoord kan faithful zijn aan zijn bronnen, zelfs als die bronnen verouderd zijn, en een antwoord kan feitelijk correct zijn maar unfaithful als het feiten vermeldt die niet in de verstrekte context voorkomen.
+
+## Waarom het belangrijk is
+
+- **Bronverifieerbaarheid** — faithful antwoorden kunnen worden gecontroleerd aan de hand van hun bronnen; unfaithful antwoorden niet, omdat de beweringen die ze doen niet in de geciteerde documenten voorkomen
+- **Professioneel vertrouwen** — belastingadviseurs gebruiken AI-gegenereerde analyses als uitgangspunt voor hun eigen werk; als de AI zijn bronnen verkeerd weergeeft, is de downstream-analyse van de adviseur gebouwd op een vals fundament
+- **Hallucinatiemeting** — faithfulness is de primaire metriek voor het detecteren van hallucinatie in RAG-systemen; unfaithful beweringen zijn per definitie hallucinaties
+- **Regulatoir vertrouwen** — het aantonen van faithfulness — dat het systeem alleen informatie presenteert die het kan herleiden tot gezaghebbende bronnen — is fundamenteel voor de inzet van AI in gereguleerde professionele omgevingen
+
+## Hoe het werkt
+
+Faithfulness wordt beoordeeld op het niveau van individuele beweringen. Elke bewering in het gegenereerde antwoord wordt geëxtraheerd en gecontroleerd aan de hand van de opgehaalde brondocumenten:
+
+**Entailment-controle** maakt gebruik van natural language inference (NLI)-modellen om te bepalen of elke bewering wordt ondersteund door (logisch volgt uit) de bronpassages. Beweringen die als "entailed" worden geclassificeerd zijn faithful; beweringen die als "contradiction" of "neutral" (niet ondersteund) worden geclassificeerd zijn unfaithful.
+
+**LLM-als-beoordelaar**-benaderingen gebruiken een tweede taalmodel om het gegenereerde antwoord te vergelijken met de brondocumenten en beweringen te identificeren die verder gaan dan wat de bronnen ondersteunen. Dit is flexibeler dan NLI maar introduceert eigen biases.
+
+**Menselijke evaluatie** blijft de gouden standaard. Beoordelaars lezen zowel het gegenereerde antwoord als de brondocumenten en markeren elke bewering die niet kan worden geverifieerd aan de hand van de bronnen. Dit is duur en traag maar levert de meest betrouwbare faithfulness-beoordelingen op.
+
+**Faithfulness verbeteren** omvat interventies op meerdere punten in de pijplijn:
+
+- **Systeempromptinstructies** die het model expliciet opdragen alleen de verstrekte context te gebruiken en "ik weet het niet" te zeggen wanneer de context ontoereikend is
+- **Beperkte decoding**-technieken die de tokengeneratie van het model sturen richting woorden en zinnen die in de brondocumenten voorkomen
+- **Naverificatie** met een apart model of regelgebaseerd systeem om elke bewering te controleren aan de hand van de bronpassages voordat het antwoord aan de gebruiker wordt teruggegeven
+- **Bronmarkering** die het antwoord presenteert naast de specifieke passages waarop het steunt, waardoor unfaithful toevoegingen zichtbaar worden voor de gebruiker
+
+## Veelgestelde vragen
+
+**V: Is faithfulness hetzelfde als feitelijke nauwkeurigheid?**
+
+A: Nee. Faithfulness meet of de output overeenkomt met zijn bronnen. Nauwkeurigheid meet of de output overeenkomt met de werkelijkheid. Een faithful antwoord op verouderde bronnen kan onnauwkeurig zijn. Een nauwkeurig antwoord dat ware feiten toevoegt die niet in de bronnen staan is unfaithful. Beide eigenschappen zijn belangrijk, maar ze worden anders gemeten.
+
+**V: Kan een systeem te faithful zijn?**
+
+A: In principe zou extreme faithfulness ertoe kunnen leiden dat een systeem weigert informatie uit meerdere bronnen te synthetiseren of voor de hand liggende gevolgtrekkingen te maken. In de praktijk is het grotere risico onvoldoende faithfulness (hallucinatie). Systemen moeten faithful zijn aan hun bronnen en tegelijkertijd informatie over passages heen synthetiseren en verbinden.
 
 ## References
 

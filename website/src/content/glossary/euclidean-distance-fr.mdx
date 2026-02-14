@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La distance euclidienne mesure à quel point deux [embeddings](/fr/glossary/embeddings/) sont éloignés dans un [espace vectoriel](/fr/glossary/embedding-space/) et sert souvent de base aux algorithmes de plus proches voisins.
+La distance euclidienne (aussi appelée distance L2) est la distance en ligne droite entre deux points dans un espace vectoriel, calculée comme la racine carrée de la somme des différences au carré sur toutes les dimensions. C'est l'une des trois métriques de distance standard utilisées en recherche par similarité, aux côtés de la similarité cosinus et du produit scalaire. En recherche d'information, la distance euclidienne mesure l'écart absolu entre deux embeddings en termes géométriques — des distances plus petites indiquent un contenu plus similaire.
+
+## Pourquoi c'est important
+
+- **Géométrie intuitive** — la distance euclidienne correspond à la notion courante de « distance en ligne droite », ce qui la rend conceptuellement accessible pour comprendre les relations entre embeddings
+- **Propriétés d'espace métrique** — la distance euclidienne satisfait l'inégalité triangulaire, ce qui signifie que la distance de A à C n'est jamais supérieure à la distance de A à B plus celle de B à C ; cette propriété permet des structures d'index efficaces
+- **Complémentaire à la similarité cosinus** — alors que la similarité cosinus mesure la similarité angulaire (direction), la distance euclidienne prend en compte à la fois la direction et la magnitude, ce qui peut être significatif lorsque les normes des vecteurs portent une information
+- **Mesure standardisée** — en tant que quantité mathématique bien définie, la distance euclidienne fournit une mesure de similarité cohérente et comparable entre différentes expériences et systèmes
+
+## Comment ça fonctionne
+
+Pour deux vecteurs **a** et **b** de dimension *d*, la distance euclidienne est calculée comme suit :
+
+**d(a, b) = √(Σ(aᵢ - bᵢ)²)** pour i de 1 à d.
+
+Chaque dimension contribue indépendamment à la distance totale. Les dimensions où les deux vecteurs diffèrent substantiellement contribuent davantage que les dimensions où ils sont similaires.
+
+En pratique, la distance euclidienne au carré (sans la racine carrée) est souvent utilisée à la place car elle préserve l'ordre des résultats — si d(a,b) < d(a,c), alors d²(a,b) < d²(a,c) — tout en évitant le coût computationnel de l'opération de racine carrée.
+
+**Relation avec la similarité cosinus** : lorsque les vecteurs sont normalisés à une longueur unitaire (normalisation L2), la distance euclidienne et la similarité cosinus sont liées de manière monotone. Minimiser la distance euclidienne équivaut à maximiser la similarité cosinus. De nombreux modèles d'embedding produisent des vecteurs normalisés, auquel cas le choix entre les deux métriques n'affecte pas le classement des résultats.
+
+**Sensibilité à la magnitude** : contrairement à la similarité cosinus, la distance euclidienne est affectée par la magnitude des vecteurs. Deux vecteurs pointant dans la même direction mais de longueurs différentes auront une distance cosinus nulle mais une distance euclidienne non nulle. L'importance de ce facteur dépend du modèle d'embedding — si la magnitude du vecteur encode une information significative (comme la longueur du document ou la confiance), la distance euclidienne la capture ; si la magnitude est un bruit arbitraire, la similarité cosinus est préférable.
+
+La plupart des bases de données vectorielles prennent en charge la distance euclidienne comme métrique intégrée. Les algorithmes ANN comme HNSW fonctionnent efficacement avec la distance euclidienne car elle satisfait l'inégalité triangulaire, permettant un élagage efficace lors du parcours du graphe.
+
+## Questions fréquentes
+
+**Q : faut-il utiliser la distance euclidienne ou la similarité cosinus pour les embeddings textuels ?**
+
+R : pour la plupart des modèles d'embedding textuel, la similarité cosinus est préférée car elle mesure la similarité directionnelle indépendamment de la magnitude. Cependant, si le modèle produit des vecteurs normalisés L2 (comme c'est le cas pour beaucoup), les deux métriques produisent des classements identiques. Consultez la documentation du modèle d'embedding pour connaître la métrique recommandée.
+
+**Q : la distance euclidienne fonctionne-t-elle bien en haute dimension ?**
+
+R : en très haute dimension, toutes les distances entre paires tendent à converger (la « malédiction de la dimensionnalité »), ce qui rend plus difficile la distinction entre voisins proches et éloignés. Cela affecte toutes les métriques de distance, pas seulement la distance euclidienne. La réduction de dimensionnalité et les algorithmes ANN atténuent cet effet.
 
 ## References
 

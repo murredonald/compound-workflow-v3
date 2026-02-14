@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Privacy by design means embedding privacy safeguards—such as minimisation, [access control](/en/glossary/access-control/), and transparency—into architectures and processes rather than treating them as afterthoughts.
+Privacy by design is the principle that data protection and privacy safeguards should be built into the architecture, design, and operations of a system from the outset — not bolted on as an afterthought. Enshrined in Article 25 of the GDPR as "data protection by design and by default", it requires organisations to consider privacy implications at every stage of system development: from choosing what data to collect, to how it is stored and processed, to when and how it is deleted. For AI systems handling sensitive tax data, privacy by design determines fundamental architectural decisions about data flows, storage, access, and retention.
+
+## Why it matters
+
+- **Legal obligation** — GDPR Article 25 makes privacy by design a legal requirement, not a best practice; non-compliance can result in significant fines
+- **Professional secrecy** — tax advisors and accountants are bound by professional secrecy obligations; the AI system must be designed to uphold these obligations at the architectural level
+- **Trust foundation** — clients share sensitive financial information with the expectation that it is protected; privacy by design provides structural assurance rather than relying on procedural promises
+- **Cost efficiency** — retrofitting privacy into an existing system is expensive and error-prone; designing it in from the start is cheaper, more reliable, and produces a more coherent architecture
+
+## How it works
+
+Privacy by design is implemented through seven foundational principles applied to the AI system's architecture:
+
+**Data minimisation** — collect and process only the data strictly necessary for the system's purpose. If the AI system does not need to store user queries after generating an answer, it should not. If aggregated usage statistics are sufficient for system improvement, individual query logs should be anonymised or deleted.
+
+**Purpose limitation** — data collected for one purpose should not be repurposed without a separate legal basis. User queries collected for generating answers should not be used for marketing without explicit consent.
+
+**Access control** — implement technical controls (role-based access, encryption, tenant isolation) that enforce privacy policies at the system level, not just the policy level. User data should be inaccessible to anyone without a legitimate need, including system administrators where feasible.
+
+**Encryption** — protect data at rest and in transit using appropriate encryption. Client data stored in databases should be encrypted. Data transmitted between system components should use TLS. Encryption keys should be managed according to established key management practices.
+
+**Retention limits** — define and enforce retention periods for all data types. User session data, query logs, and temporary processing artifacts should be automatically deleted after their retention period expires. Automated deletion prevents accumulation of unnecessary personal data.
+
+**Transparency** — provide clear documentation about what data is collected, how it is processed, where it is stored, and how long it is retained. Privacy notices should be specific and understandable, not generic legal boilerplate.
+
+**Default privacy** — the system's default configuration should be the most privacy-protective option. Features that involve additional data collection or sharing should require explicit opt-in rather than opt-out.
+
+## Common questions
+
+**Q: How does privacy by design apply to AI model training?**
+
+A: If user interaction data is used to improve the model, privacy by design requires informed consent, anonymisation where possible, purpose limitation, and the ability for users to opt out. Some organisations avoid using client data for training entirely, relying on synthetic or public data instead.
+
+**Q: Does privacy by design conflict with AI system improvement?**
+
+A: Not necessarily, but it constrains how improvement happens. Aggregated, anonymised usage patterns can inform system improvements without exposing individual data. The key is designing data collection and processing pipelines that separate system improvement signals from personal data.

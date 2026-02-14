@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Adversarial testing exposes AI systems to challenging, out-of-distribution, or intentionally harmful inputs to uncover vulnerabilities and failure modes before deployment.
+Adversarial testing (also called red teaming) is the systematic practice of probing an AI system with deliberately difficult, misleading, or malicious inputs to discover vulnerabilities, failure modes, and safety gaps before they are encountered in production. Unlike standard evaluation that tests normal performance, adversarial testing specifically seeks to make the system fail — finding the inputs that cause incorrect answers, safety violations, or unexpected behaviour. In legal AI, adversarial testing checks whether the system can be tricked into citing non-existent legislation, providing incorrect tax rates, or bypassing its guardrails against giving binding legal advice.
+
+## Why it matters
+
+- **Pre-deployment safety** — discovering vulnerabilities through adversarial testing is vastly preferable to discovering them through user complaints or regulatory action after deployment
+- **Robustness validation** — adversarial testing reveals how the system handles edge cases that normal evaluation does not cover: ambiguous queries, contradictory prompts, and inputs designed to confuse
+- **Safety guardrail verification** — testing confirms that the system's safety mechanisms (refusing to provide binding advice, flagging uncertainty, declining out-of-scope queries) actually work under adversarial pressure
+- **Regulatory compliance** — the EU AI Act requires risk assessment and testing for high-risk AI systems; adversarial testing is a primary method for fulfilling this requirement
+
+## How it works
+
+Adversarial testing is conducted by specialised testers (red team) who attempt to make the system fail:
+
+**Prompt injection testing** — crafting inputs that attempt to override the system's instructions, extract its system prompt, or cause it to ignore its safety guidelines. In legal AI, this might involve queries that try to make the system present non-binding guidance as binding law.
+
+**Factual accuracy attacks** — queries designed to elicit hallucinations: asking about obscure provisions, using plausible but incorrect legal terminology, or presenting false premises ("given that the VAT rate was reduced to 15% in 2024...") to test whether the system corrects or accepts them.
+
+**Boundary probing** — testing the system's scope boundaries: queries about foreign law when the system only covers Belgian law, medical or financial advice that falls outside the legal domain, and ambiguous queries that could be interpreted as in-scope or out-of-scope.
+
+**Consistency attacks** — asking the same question multiple ways to check whether the system gives contradictory answers, or presenting the same facts from different angles to test reasoning consistency.
+
+**Information extraction** — attempting to extract the system prompt, training data details, or confidential information about the system's architecture through carefully crafted queries.
+
+Adversarial testing produces a catalogue of discovered vulnerabilities, classified by severity and exploitability. Each vulnerability is addressed through system improvements (better guardrails, improved prompts, additional training data) and re-tested to confirm the fix.
+
+## Common questions
+
+**Q: How is adversarial testing different from stress testing?**
+
+A: Stress testing evaluates system behaviour under extreme load or degraded conditions. Adversarial testing evaluates system behaviour under deliberately crafted malicious inputs. Stress testing pushes the system beyond capacity; adversarial testing tries to make the system produce wrong or dangerous outputs.
+
+**Q: Who should perform adversarial testing?**
+
+A: Ideally, people who were not involved in building the system — they approach it without assumptions about how it should be used and are more likely to discover unexpected failure modes. Domain experts (tax professionals) and security specialists each bring different adversarial perspectives.
 
 ## References
 

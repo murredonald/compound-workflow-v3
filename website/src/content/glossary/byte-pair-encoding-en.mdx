@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Byte Pair Encoding (BPE) is a data-driven [tokenization](/en/glossary/tokenization/) method that starts from individual characters and repeatedly merges the most frequent adjacent symbol pairs to create a compact subword vocabulary for language models.
+Byte Pair Encoding (BPE) is a subword tokenisation algorithm that builds a vocabulary by iteratively merging the most frequently occurring pairs of adjacent symbols in a training corpus. Starting from individual characters, BPE repeatedly finds the pair that appears most often, merges it into a new token, and repeats until the vocabulary reaches a target size. The result is a vocabulary of subword units that balances between character-level granularity (handling any word, including unseen ones) and word-level efficiency (common words become single tokens). BPE is the foundation of tokenisation in most modern language models.
+
+## Why it matters
+
+- **Open-vocabulary handling** — BPE can represent any word, including rare legal terms, foreign-language names, and newly coined terminology, by decomposing it into known subword pieces; the model never encounters a truly "unknown" word
+- **Multilingual efficiency** — in Belgium's trilingual legal system, BPE naturally shares subword units across Dutch, French, and German (e.g., common Latin roots), enabling efficient multilingual processing without separate vocabularies
+- **Compression** — common words and phrases are encoded as single tokens while rare words are split into multiple tokens, optimising the context window for frequently used language
+- **Model input foundation** — every text processed by a language model or embedding model is first tokenised; BPE's tokenisation directly determines how text is segmented and therefore how the model interprets it
+
+## How it works
+
+BPE operates in two phases:
+
+**Training** — the algorithm processes a large text corpus to build the vocabulary. It starts with a base vocabulary of individual characters (or bytes). It then scans the corpus for the most frequent pair of adjacent tokens, merges that pair into a new single token, adds it to the vocabulary, and repeats. For example, the pair "t" + "h" might be merged into "th", then "th" + "e" into "the". Each merge step is recorded as a merge rule. Training continues until the vocabulary reaches a predefined size (commonly 30,000 to 100,000 tokens).
+
+**Encoding** — to tokenise a new text, the algorithm applies the learned merge rules in the same order they were learned during training. Starting from characters, it merges pairs according to the priority established by training frequency. Common words like "the" or "belasting" will be encoded as single tokens; rare words like "dubbelbelastingverdrag" will be split into familiar subword pieces.
+
+The vocabulary size is a design choice that balances competing concerns. Larger vocabularies produce shorter token sequences (more words become single tokens) but increase model memory requirements. Smaller vocabularies produce longer sequences (more words are split into pieces) but keep the model compact. Most modern LLMs use vocabularies of 32,000 to 128,000 tokens.
+
+Variants of BPE include byte-level BPE (which operates on raw bytes rather than Unicode characters, avoiding encoding issues) and SentencePiece (which treats the input as a raw character stream and includes whitespace as a regular character rather than a word boundary).
+
+## Common questions
+
+**Q: Why not just use whole words as tokens?**
+
+A: A word-level vocabulary cannot handle words not seen during training — they become "unknown" tokens, losing all information. Legal text regularly contains rare compound words, case references, and technical terms. BPE handles these by splitting them into known subword pieces, preserving partial meaning.
+
+**Q: Does BPE tokenisation affect multilingual models?**
+
+A: Yes. If BPE is trained primarily on English text, it may split Dutch or French words into more tokens than English words of equivalent length, making these languages less efficient to process. Multilingual models use BPE trained on balanced multilingual corpora to ensure roughly equal efficiency across languages.
 
 ## References
 

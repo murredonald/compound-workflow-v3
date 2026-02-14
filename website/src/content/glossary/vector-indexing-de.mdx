@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Vektor-Indexierung organisiert [Embeddings](/de/glossary/embeddings/) in Datenstrukturen wie IVF, [HNSW](/de/glossary/hnsw/) oder flachen Indizes, um ähnliche Vektoren zur Query‑Zeit effizient wiederzufinden.
+Vektor-Indexierung ist der Prozess, Embedding-Vektoren in spezialisierte Datenstrukturen zu organisieren, die eine schnelle approximative Nächster-Nachbar-Suche (ANN) ermöglichen, ohne den Query-Vektor mit jedem Vektor in der Sammlung vergleichen zu müssen. So wie ein Buchindex es ermöglicht, ein Thema zu finden, ohne jede Seite zu lesen, ermöglicht ein Vektorindex das Auffinden der ähnlichsten Vektoren, ohne die Distanz zu jedem gespeicherten Vektor zu berechnen. Die Wahl des Indextyps, seine Konfigurationsparameter und die zugrundeliegende Hardware bestimmen gemeinsam die Geschwindigkeit, Genauigkeit und Speicheranforderungen der semantischen Suche.
+
+## Warum es wichtig ist
+
+- **Suchgeschwindigkeit** — ohne Index erfordert die Suche in 10 Millionen Vektoren 10 Millionen Distanzberechnungen pro Anfrage; mit einem Index wird dieselbe Suche in Millisekunden abgeschlossen, da nur ein Bruchteil der Vektoren untersucht wird
+- **Skalierbarkeit** — Vektorindizes ermöglichen semantische Suche im großen Maßstab; juristische Wissensbasen mit Millionen von Dokumentfragmenten bleiben in Echtzeit durchsuchbar
+- **Kosteneffizienz** — effiziente Indizes reduzieren die für einen bestimmten Abfragedurchsatz benötigte Hardware und senken die Betriebskosten
+- **Recall-Geschwindigkeits-Kompromiss** — die Indexkonfiguration steuert das Gleichgewicht zwischen dem Finden aller relevanten Ergebnisse (Recall) und schneller Antwort (Latenz); dieser Kompromiss ist eine zentrale Architekturentscheidung
+
+## So funktioniert es
+
+Die gängigsten Vektorindextypen sind:
+
+**HNSW (Hierarchical Navigable Small World Graphs)** baut einen geschichteten Graphen auf, in dem jeder Vektor ein Knoten ist, der mit seinen nächsten Nachbarn verbunden ist. Die Suche beginnt in der obersten (dünn besetzten) Schicht und navigiert durch zunehmend dichtere Schichten nach unten, wobei sie sich gierig dem Query-Vektor nähert. HNSW bietet exzellenten Recall (95–99 %) bei Sub-Millisekunden-Suchzeiten und ist die beliebteste Wahl für Produktionssysteme.
+
+**IVF (Inverted File Index)** unterteilt den Vektorraum mittels k-means in Cluster. Jeder Vektor wird dem nächstgelegenen Cluster-Zentroid zugewiesen. Zur Suchzeit werden nur die nächstgelegenen Cluster durchsucht, nicht die gesamte Sammlung. Die Anzahl der abgefragten Cluster (nprobe) steuert den Recall-Geschwindigkeits-Kompromiss.
+
+**Produktquantisierung (PQ)** komprimiert Vektoren, indem sie in Subvektoren aufgeteilt und jeweils auf eine kleine Menge von Zentroiden quantisiert werden. Dies reduziert den Speicherbedarf drastisch (z. B. 768-dimensionale Float-Vektoren komprimiert auf 48 Bytes), allerdings auf Kosten einer gewissen Genauigkeit. PQ wird häufig mit IVF kombiniert, um speichereffiziente Suche auf sehr großen Datensätzen zu ermöglichen.
+
+**Flat Index** speichert Vektoren ohne jede Indexstruktur und führt eine exakte (Brute-Force) Nächster-Nachbar-Suche durch. Dies garantiert perfekten Recall, skaliert jedoch linear mit der Datensatzgröße. Nur für kleine Datensätze (unter 100.000 Vektoren) oder als Baseline zur Messung der ANN-Indexqualität geeignet.
+
+Die Indexerstellung erfolgt zum Zeitpunkt der Aufnahme — wenn ein Dokument eingebettet und zur Wissensbasis hinzugefügt wird. Die meisten Vektordatenbanken (FAISS, Milvus, Qdrant, Pinecone) übernehmen Indexerstellung und -abfrage transparent. Wichtige Konfigurationsparameter sind die Anzahl der Nachbarn pro Knoten (HNSW), die Anzahl der Cluster (IVF) und die Quantisierungsauflösung (PQ).
+
+## Häufige Fragen
+
+**F: Welchen Indextyp sollte ich wählen?**
+
+A: HNSW ist die Standardwahl für die meisten Anwendungen — es bietet hohen Recall, schnelle Suche und relativ einfache Konfiguration. IVF+PQ ist vorzuziehen, wenn der Speicher begrenzt ist (sehr große Datensätze, die in den RAM passen müssen). Flat Indexes sind für Datensätze unter 100.000 Vektoren geeignet, bei denen eine exakte Suche praktikabel ist.
+
+**F: Kann ein Vektorindex inkrementell aktualisiert werden?**
+
+A: Die meisten Indextypen unterstützen das Hinzufügen neuer Vektoren, ohne den gesamten Index neu aufzubauen. Einige (wie IVF) benötigen jedoch ein periodisches Neutraining der Cluster-Zentroide, wenn sich die Datenverteilung verändert. HNSW unterstützt effizientes inkrementelles Einfügen nativ.
 
 ## References
 

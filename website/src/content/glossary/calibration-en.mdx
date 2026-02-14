@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Calibration adjusts or evaluates how well predicted probabilities match observed frequencies—for example, whether answers given with 80% confidence are correct about 80% of the time.
+Calibration is the degree to which a model's predicted confidence scores reflect actual correctness probabilities. A perfectly calibrated system means that when it reports 80% confidence, it is correct approximately 80% of the time. In legal AI, calibration is critical because professionals rely on confidence signals to decide whether to trust a system's output or verify it independently. An overconfident system that flags uncertain answers as highly reliable is more dangerous than one that honestly reports its uncertainty.
+
+## Why it matters
+
+- **Trust signals** — tax advisors use confidence scores to decide how much independent verification an AI-generated answer requires; miscalibrated scores undermine this workflow
+- **Risk management** — overconfident predictions on ambiguous tax questions can lead to incorrect filings or missed objections; calibration ensures uncertainty is surfaced
+- **Regulatory alignment** — the EU AI Act expects high-risk AI systems to communicate their limitations clearly; calibrated confidence scores are a concrete mechanism for meeting this requirement
+- **System comparison** — calibration metrics allow objective comparison between different models or system versions, beyond raw accuracy
+
+## How it works
+
+Calibration is measured by comparing predicted probabilities against observed outcomes across a test set. The standard approach is to group predictions into bins by confidence level (e.g., 0-10%, 10-20%, ..., 90-100%) and check whether the proportion of correct predictions in each bin matches the bin's confidence range. The gap between predicted and observed accuracy is the **calibration error**.
+
+The most common metric is **Expected Calibration Error (ECE)**: the weighted average of the absolute difference between confidence and accuracy across all bins. A perfectly calibrated model has an ECE of zero.
+
+Modern neural networks, including large language models, tend to be poorly calibrated out of the box — they are often overconfident, assigning high probabilities even when wrong. Several techniques address this:
+
+- **Temperature scaling** — a simple post-hoc method that adjusts the softmax temperature on the model's output logits to spread or sharpen the probability distribution. A single temperature parameter is learned on a validation set.
+- **Platt scaling** — fits a logistic regression on the model's raw scores to produce calibrated probabilities.
+- **Ensemble methods** — averaging predictions across multiple models or multiple runs naturally improves calibration because individual overconfident errors are dampened.
+
+In retrieval-augmented generation systems, calibration applies not only to the language model's token-level probabilities but also to the system-level confidence score that combines retrieval quality, source authority, and generation certainty into a single user-facing signal.
+
+## Common questions
+
+**Q: Can a model be accurate but poorly calibrated?**
+
+A: Yes. A model might answer 95% of questions correctly but assign 99% confidence to every answer. Its accuracy is high, but its confidence scores are meaningless — the user cannot distinguish the 5% of cases where the model is wrong.
+
+**Q: How is calibration different from accuracy?**
+
+A: Accuracy measures how often the model is correct. Calibration measures whether the model knows how often it is correct. A well-calibrated model with 70% accuracy is more useful than a miscalibrated model with 80% accuracy because it honestly flags its uncertain cases.
 
 ## References
 

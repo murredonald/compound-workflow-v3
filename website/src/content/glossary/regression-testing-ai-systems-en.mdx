@@ -12,7 +12,45 @@ draft: false
 
 ## Definition
 
-Regression testing for AI compares new model or pipeline versions against baselines on fixed eval suites to detect unintended drops in quality.
+Regression testing for AI systems is the practice of running a fixed set of evaluation queries against a system after any change — model update, prompt revision, knowledge base expansion, configuration change — to verify that the change did not unintentionally degrade existing behaviour. Unlike traditional software regression testing, which checks for binary pass/fail outcomes, AI regression testing must detect subtle quality degradation: slightly worse relevance rankings, minor drops in citation accuracy, or shifts in confidence calibration that individually seem small but cumulatively erode system quality.
+
+## Why it matters
+
+- **Change safety** — every system change carries risk; regression testing catches unintended degradation before it reaches users, enabling confident iteration
+- **Quality baseline** — maintaining a fixed evaluation set creates a stable reference point against which all changes are measured, preventing gradual quality erosion that might not be noticed without systematic measurement
+- **Interaction effects** — a prompt change that improves answers in one topic area may unexpectedly degrade answers in another; regression testing across the full evaluation set catches these cross-domain effects
+- **Compliance evidence** — demonstrating that system updates maintain quality levels provides regulatory evidence for EU AI Act compliance, which requires ongoing monitoring throughout the system lifecycle
+
+## How it works
+
+AI regression testing operates through a structured process:
+
+**Baseline establishment** — the current system's performance is measured across a comprehensive evaluation dataset, producing baseline scores for all tracked metrics (accuracy, precision, recall, faithfulness, calibration). These baselines represent the quality floor that must be maintained.
+
+**Change application** — a modification is made to the system: a new model version, an updated prompt, additional documents in the knowledge base, or a configuration change.
+
+**Re-evaluation** — the same evaluation dataset is run against the modified system, producing a new set of metric scores.
+
+**Comparison** — new scores are compared against baselines, both in aggregate (overall accuracy) and disaggregated (accuracy by topic, by query type, by difficulty level). Statistically significant degradation in any category triggers investigation.
+
+**Decision** — if no regressions are detected, the change is approved for production. If regressions are detected, they are investigated: is the degradation expected and acceptable (a trade-off for improvements elsewhere)? Is it a genuine bug? Does it affect critical use cases? The team decides whether to deploy, fix, or roll back.
+
+Key practices for effective AI regression testing include:
+
+- **Stratified evaluation sets** that cover all important dimensions (topics, jurisdictions, question types, difficulty levels) to catch localised regressions
+- **Statistical significance testing** to distinguish real regressions from normal variance in model outputs
+- **Automated execution** integrated into the deployment pipeline, blocking changes that fail regression thresholds
+- **Version tracking** that links each test run to the specific system state, enabling root cause analysis when regressions are detected
+
+## Common questions
+
+**Q: How is AI regression testing different from software regression testing?**
+
+A: Software regression tests check deterministic, binary outcomes (the function returns the correct value or it does not). AI regression tests deal with probabilistic, graded outcomes — a slightly worse ranking or a marginally less accurate answer. This requires statistical analysis and threshold-based decisions rather than simple pass/fail checks.
+
+**Q: How often should regression tests run?**
+
+A: After every system change that could affect output quality. For actively developed systems, this means daily or per-deployment. Automated integration into the CI/CD pipeline ensures no change is deployed without regression verification.
 
 ## References
 

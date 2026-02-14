@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-L'ancrage des réponses impose que les affirmations d'une IA soient appuyées par des passages ou données cités.
+L'ancrage des réponses est la pratique consistant à garantir que chaque affirmation substantielle dans une réponse générée par l'IA est directement traçable vers un document ou un passage source spécifique. Une réponse ancrée ne se contente pas de citer des sources de manière générale — elle relie chaque affirmation individuelle au texte précis qui la soutient, permettant à l'utilisateur de vérifier chaque énoncé de manière indépendante. Dans le domaine de l'IA juridique, l'ancrage des réponses transforme la sortie du modèle d'une opinion non étayée en une analyse vérifiable appuyée par des articles législatifs, des décisions de justice ou des instructions administratives spécifiques.
+
+## Pourquoi c'est important
+
+- **Vérifiabilité** — les réponses ancrées peuvent être contrôlées : l'utilisateur peut lire la source citée et confirmer si l'affirmation est correctement formulée ; les réponses non ancrées obligent l'utilisateur à rechercher indépendamment chaque énoncé
+- **Sécurité professionnelle** — les conseillers fiscaux qui s'appuient sur une analyse générée par l'IA doivent en vérifier l'exactitude avant de conseiller leurs clients ; l'ancrage fournit les citations nécessaires à une vérification efficace
+- **Détection des hallucinations** — les affirmations qui ne peuvent être ancrées dans aucune source sont, par définition, des hallucinations ; les exigences d'ancrage obligent le système à distinguer les énoncés étayés de ceux qui ne le sont pas
+- **Piste d'audit** — les réponses ancrées créent un historique complet indiquant quelles sources ont alimenté chaque partie de la réponse, contribuant à la responsabilité professionnelle et à la conformité réglementaire
+
+## Comment ça fonctionne
+
+L'ancrage des réponses repose sur la coordination entre les couches de récupération et de génération :
+
+**Génération guidée par les sources** — le prompt système instruit le modèle de langage à ne formuler que des affirmations étayées par le contexte fourni, et à citer la source spécifique pour chaque affirmation. L'instruction oriente explicitement le modèle vers la reconnaissance des lacunes plutôt que de les combler par du contenu non étayé.
+
+**Citations en ligne** — au fil de la génération de sa réponse, le modèle inclut des références à des passages sources spécifiques (numéros d'articles, dates de publication, identifiants de source) aux côtés de chaque affirmation substantielle. Cela crée un lien direct entre chaque énoncé et la preuve qui le soutient.
+
+**Vérification post-génération** — après la génération, une étape de vérification contrôle si chaque affirmation citée est effectivement soutenue par le passage source référencé. Des modèles d'inférence en langage naturel (NLI) ou un second LLM peuvent évaluer l'implication entre l'affirmation et le texte cité. Les affirmations non impliquées sont signalées pour examen ou supprimées.
+
+**Abstention en cas de preuves insuffisantes** — lorsque le contexte récupéré ne contient pas suffisamment d'informations pour répondre pleinement à la question, un système ancré indique explicitement ce qu'il ne peut pas déterminer plutôt que de générer un contenu plausible mais non étayé. C'est essentiel en IA juridique, où une réponse incomplète reconnue comme telle est bien plus sûre qu'une réponse complète mais fabriquée.
+
+La qualité de l'ancrage se mesure via des métriques de fidélité : quel pourcentage des affirmations de la réponse générée est impliqué par les sources citées. Une fidélité élevée (>95 %) indique un ancrage solide ; une fidélité faible indique que le modèle ajoute du contenu non étayé.
+
+## Questions fréquentes
+
+**Q : L'ancrage des réponses élimine-t-il les hallucinations ?**
+
+R : Il les réduit considérablement, mais ne les élimine pas entièrement. Les modèles peuvent encore attribuer des affirmations à de mauvaises sources, reformuler subtilement ce que dit une source, ou omettre des réserves importantes. L'ancrage est la mesure d'atténuation la plus efficace, mais il doit être complété par un score de confiance et une relecture humaine.
+
+**Q : Une réponse ancrée peut-elle tout de même être erronée ?**
+
+R : Oui, si la source elle-même est erronée ou obsolète. L'ancrage garantit que la réponse reflète fidèlement ses sources, et non que les sources elles-mêmes sont correctes. C'est pourquoi la qualité des sources (autorité, actualité, exhaustivité) et l'ancrage sont des préoccupations complémentaires.
 
 ## References
 

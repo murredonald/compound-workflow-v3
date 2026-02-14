@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Le confidence scoring combine des facteurs comme la qualité des sources, la couverture des preuves et l’incertitude du modèle dans un score numérique qui reflète la fiabilité d’une proposition ou réponse.
+Le confidence scoring est la pratique consistant à attribuer un indicateur numérique à chaque prédiction, réponse ou résultat de recherche, reflétant sa probabilité d'être correct. Un score de confiance bien calibré permet aux systèmes en aval et aux utilisateurs humains de définir des seuils — acceptant automatiquement les résultats à haute confiance tout en signalant ceux à faible confiance pour une révision manuelle. En IA juridique et fiscale, où des réponses incorrectes peuvent avoir des conséquences matérielles, le confidence scoring est un mécanisme de sécurité critique.
+
+## Pourquoi c'est important
+
+- **Gestion du risque** — les réponses à faible confiance peuvent être escaladées vers des experts humains plutôt que servies directement, réduisant le risque que des erreurs atteignent les utilisateurs finaux
+- **Transparence** — afficher les niveaux de confiance aux côtés des réponses aide les professionnels à évaluer dans quelle mesure ils peuvent se fier au résultat de l'IA
+- **Conformité réglementaire** — l'AI Act européen attend des systèmes à haut risque qu'ils communiquent l'incertitude ; les scores de confiance sont un mécanisme naturel pour cela
+- **Efficacité** — en automatisant les réponses à haute confiance et en n'acheminant que les cas incertains vers les humains, le confidence scoring optimise l'équilibre entre vitesse et précision
+
+## Comment ça fonctionne
+
+Les scores de confiance peuvent être dérivés de multiples signaux dans le pipeline de recherche et de génération :
+
+- **Scores de recherche** — la distance de similarité entre les embeddings de la requête et du document fournit un signal brut de pertinence ; les documents éloignés de la requête reçoivent des scores bas
+- **Scores de reranking** — les rerankers cross-encoder produisent des scores de pertinence calibrés pour les paires requête-document
+- **Probabilités de génération** — les log-probabilités au niveau des tokens du modèle de langage indiquent à quel point il était certain de chaque mot généré
+- **Accord des sources** — lorsque plusieurs sources retrouvées convergent sur une réponse, la confiance est plus élevée ; des sources contradictoires la diminuent
+- **Vérifications de cohérence** — poser la même question de plusieurs façons et comparer les réponses (auto-cohérence) fournit un signal de confiance supplémentaire
+
+Ces signaux peuvent être combinés en un score composite unique par pondération apprise ou agrégation basée sur des règles. La calibration garantit qu'un score de 0,9 correspond effectivement à un taux de correction d'environ 90 %.
+
+## Questions fréquentes
+
+**Q : Qu'est-ce qui rend un score de confiance « bien calibré » ?**
+
+R : Un score est bien calibré lorsque sa probabilité prédite correspond à la précision observée. Si le système attribue une confiance de 80 % à un ensemble de réponses, environ 80 % de ces réponses doivent effectivement être correctes. La calibration est mesurée à l'aide de diagrammes de fiabilité et de métriques comme l'Expected Calibration Error (ECE).
+
+**Q : Le confidence scoring peut-il éliminer les hallucinations ?**
+
+R : Pas entièrement, mais il peut les signaler. Le contenu halluciné a souvent des scores de recherche plus faibles (pas de correspondance forte avec une source) et peut montrer des incohérences entre des requêtes reformulées. Le confidence scoring aide à faire remonter ces signaux pour que les utilisateurs ou les systèmes automatisés puissent détecter les fabrications potentielles.
+
+**Q : Quelle est la différence entre le confidence scoring et le classement par pertinence ?**
+
+R : Le classement par pertinence ordonne les résultats du plus au moins pertinent. Le confidence scoring attribue un score absolu reflétant la probabilité de correction. Un système peut classer le résultat A au-dessus du résultat B tout en signalant les deux comme étant à faible confiance si aucun ne correspond étroitement à la requête.

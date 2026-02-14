@@ -10,9 +10,38 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Vector-[embeddings](/nl/glossary/embeddings/) zetten woorden, zinnen of documenten om in numerieke vectoren zodat systemen [semantische gelijkenis](/nl/glossary/semantic-similarity/) kunnen inschatten via afstands‑ of gelijkenismaten.
+Vector-[embeddings](/nl/glossary/embeddings/) zijn numerieke arrays (vectoren) die de betekenis van tekst, afbeeldingen of andere data voorstellen in een hoogdimensionale ruimte. Elke dimensie vangt een aspect van de semantiek van de invoer op, en de geometrische relaties tussen vectoren — hun afstanden en hoeken — coderen gelijkenis. Twee teksten met een vergelijkbare betekenis produceren vectoren die dicht bij elkaar liggen; ongerelateerde teksten produceren vectoren die ver uit elkaar liggen.
+
+## Waarom het belangrijk is
+
+- **Basis van semantisch zoeken** — vector-embeddings maken ophaling op basis van betekenis mogelijk in plaats van op trefwoorden, wat essentieel is wanneer juridische terminologie verschilt tussen talen en contexten
+- **Meertalige capaciteit** — cross-linguale embeddingmodellen brengen Nederlandse, Franse en Duitse tekst onder in dezelfde vectorruimte, waardoor een query in de ene taal documenten in een andere taal kan ophalen
+- **Schaalbare gelijkenis** — eenmaal ingebed kunnen miljoenen documenten efficiënt worden vergeleken met behulp van approximate nearest-neighbour-algoritmen, met resultaten in milliseconden
+- **Downstream-flexibiliteit** — dezelfde embeddings kunnen zoeken, clustering, deduplicatie, classificatie en anomaliedetectie aandrijven
+
+## Hoe het werkt
+
+Een embeddingmodel (doorgaans een op transformers gebaseerd neuraal netwerk) verwerkt een invoertekst en produceert een vector met een vaste lengte, gewoonlijk variërend van 384 tot 1536 dimensies. Tijdens de training leert het model om semantisch vergelijkbare invoer naar nabijgelegen punten te mappen en ongelijke invoer naar verre punten.
+
+Bij het ophalen worden zowel de query van de gebruiker als alle documenten in het corpus voorgesteld als vectoren. Het systeem vindt documenten waarvan de vectoren het dichtst bij de queryvector liggen met behulp van een afstandsmetriek — meestal cosinusgelijkenis of het inwendig product. Deze berekening wordt op schaal efficiënt gemaakt door gespecialiseerde vectorindexen (HNSW, IVF) die zijn opgeslagen in [vectordatabases](/nl/glossary/vector-database/).
+
+De kwaliteit van vector-embeddings hangt sterk af van het gebruikte model. Modellen voor algemeen gebruik werken breed maar presteren mogelijk ondermaats in gespecialiseerde domeinen. Finetuning op domeinspecifieke tekstparen — bijvoorbeeld fiscale vragen gekoppeld aan relevante wetgeving — kan de relevantie voor juridische en fiscale toepassingen aanzienlijk verbeteren.
+
+## Veelgestelde vragen
+
+**V: Hoe verschillen vector-embeddings van traditionele TF-IDF-vectoren?**
+
+A: TF-IDF-vectoren zijn sparse (voornamelijk nullen) en gebaseerd op woordfrequentiestatistieken — ze kunnen geen synoniemen of betekenis vastleggen. Vector-embeddings zijn dense (elke dimensie heeft een waarde) en geleerd uit grote tekstdatasets, waarbij semantische relaties worden vastgelegd. "Corporate tax" en "vennootschapsbelasting" zouden zeer verschillende TF-IDF-vectoren hebben maar vergelijkbare dense embeddings.
+
+**V: Hoeveel dimensies hebben vector-embeddings doorgaans?**
+
+A: Veelvoorkomende groottes zijn 384 (kleinere, snellere modellen), 768 (BERT-klasse) en 1536 (grotere modellen zoals OpenAI's ada-002). Meer dimensies kunnen fijnere onderscheidingen vastleggen maar vereisen meer opslag en rekenkracht. Voor de meeste juridische ophaaltaken bieden 768-dimensionale embeddings een goede balans.
+
+**V: Moeten vector-embeddings opnieuw berekend worden wanneer het model verandert?**
+
+A: Ja. Elk embeddingmodel definieert zijn eigen vectorruimte. Als je van model wisselt of naar een nieuwere versie bijwerkt, moeten alle documenten opnieuw worden ingebed. Daarom is modelkeuze een belangrijke architecturale beslissing — het opnieuw inbedden van een groot corpus is rekenintensief.
 
 ## References
 

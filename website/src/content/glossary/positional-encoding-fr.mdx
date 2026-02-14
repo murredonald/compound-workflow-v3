@@ -12,7 +12,38 @@ draft: false
 
 ## Définition
 
-L'encodage positionnel ajoute ou concatène un vecteur supplémentaire aux [embeddings](/fr/glossary/embeddings/) de tokens afin qu'un modèle de type transformeur puisse distinguer l'ordre et la position relative des tokens dans une séquence.
+L'encodage positionnel est une technique qui injecte des informations sur la position de chaque token au sein d'une séquence dans la représentation de ce token, permettant ainsi aux modèles de type transformeur de comprendre l'ordre des mots. Les transformeurs traitent tous les tokens en parallèle plutôt que séquentiellement, ce qui les rend rapides mais signifie qu'ils n'ont aucune notion intrinsèque de position — sans encodage positionnel, les phrases « la taxe s'applique au revenu » et « le revenu s'applique à la taxe » produiraient des représentations identiques. L'encodage positionnel résout ce problème en ajoutant un signal dépendant de la position à l'[embedding](/fr/glossary/embeddings/) de chaque token.
+
+## Pourquoi c'est important
+
+- **Sensibilité à l'ordre** — dans un texte juridique, l'ordre des mots change radicalement le sens ; « l'exception ne s'applique pas » signifie le contraire de « l'exception s'applique » ; l'encodage positionnel garantit que le modèle distingue ces formulations
+- **Traitement de contextes longs** — les systèmes d'IA juridique modernes traitent de longs documents (statuts entiers, décisions de plusieurs pages) ; le choix de la méthode d'encodage positionnel détermine dans quelle mesure le modèle gère des positions au-delà de sa longueur d'entraînement
+- **Résolution de renvois** — comprendre la position relative aide le modèle à déterminer à quoi font référence des expressions comme « le paragraphe précédent » ou « l'article susmentionné » dans un texte juridique
+- **Fondement architectural** — l'encodage positionnel est un composant fondamental de chaque modèle basé sur les transformeurs, y compris les modèles de langage et les modèles d'embedding utilisés dans les systèmes [RAG](/fr/glossary/retrieval-augmented-generation/)
+
+## Comment ça fonctionne
+
+Plusieurs approches d'encodage positionnel existent, chacune avec des compromis différents :
+
+**Encodage sinusoïdal** (utilisé dans l'article original sur le Transformer) génère des vecteurs de position à l'aide de fonctions sinus et cosinus à différentes fréquences. Chaque position reçoit un motif unique, et la relation mathématique continue entre les positions permet au modèle d'apprendre la distance relative. Cette approche est fixe et déterministe — aucun paramètre supplémentaire n'est appris.
+
+**Embeddings positionnels appris** attribuent un vecteur d'embedding entraînable à chaque position (position 1, position 2, …, jusqu'à la longueur maximale de séquence). Le modèle apprend ces embeddings pendant l'entraînement. C'est simple et efficace, mais cela limite le modèle à des séquences ne dépassant pas la position maximale vue pendant l'entraînement.
+
+**Rotary Position Embedding (RoPE)** encode la position en faisant tourner le vecteur d'embedding dans des sous-espaces bidimensionnels. L'angle de rotation est proportionnel à la position, de sorte que les positions relatives sont capturées par l'angle entre les vecteurs tournés. RoPE est devenu l'approche dominante dans les LLM modernes car il gère naturellement les positions relatives et peut extrapoler vers des longueurs de séquence au-delà de celles vues pendant l'entraînement.
+
+**ALiBi (Attention with Linear Biases)** adopte une approche différente : au lieu de modifier les embeddings, il ajoute un biais linéaire aux scores d'attention en fonction de la distance entre les tokens. Les tokens éloignés reçoivent une pénalité, orientant le modèle vers l'attention au contexte proche. ALiBi extrapole bien vers des séquences plus longues et ne nécessite aucun paramètre supplémentaire.
+
+Le choix de l'encodage positionnel affecte directement la [fenêtre de contexte](/fr/glossary/context-window/) du modèle — la longueur maximale de séquence qu'il peut traiter efficacement. Des méthodes comme RoPE et ALiBi permettent des fenêtres de contexte plus longues que les embeddings appris fixes, ce qui est important pour le traitement de documents juridiques volumineux.
+
+## Questions fréquentes
+
+**Q : Que se passe-t-il si l'entrée est plus longue que les positions sur lesquelles le modèle a été entraîné ?**
+
+R : Avec des embeddings positionnels appris, le modèle ne peut tout simplement pas traiter de séquences plus longues. Avec les encodages sinusoïdaux, RoPE ou ALiBi, le modèle peut extrapoler dans une certaine mesure, bien que les performances se dégradent généralement pour les positions très éloignées de la plage d'entraînement. Des techniques comme l'interpolation de position ou le scaling NTK-aware aident à étendre la longueur de contexte effective.
+
+**Q : L'encodage positionnel affecte-t-il la qualité des embeddings pour la récupération ?**
+
+R : Oui. Les modèles d'embedding pour la récupération utilisent l'encodage positionnel en interne, et cela affecte la qualité de représentation des passages longs. Les modèles avec un meilleur encodage positionnel produisent des embeddings plus précis pour les documents longs, améliorant ainsi la qualité de la récupération.
 
 ## References
 

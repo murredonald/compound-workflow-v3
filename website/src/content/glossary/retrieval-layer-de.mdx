@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-In einer [RAG](/de/glossary/rag/)-Architektur ist die Retrieval-Schicht dafür zuständig, einen Index zu durchsuchen und die für eine Benutzeranfrage oder modellgenerierte Teilanfrage relevantesten Dokumente oder [Chunks](/de/glossary/document-chunk/) zurückzugeben.
+Die Retrieval-Schicht ist die Komponente innerhalb einer retrieval-augmentierten Generierungs-Architektur (RAG), die dafür verantwortlich ist, relevante Dokumente oder Passagen aus einer Wissensbasis als Antwort auf eine Anfrage zu finden und zu ranken. Sie befindet sich zwischen der Frage des Benutzers und dem Generierungsschritt des Sprachmodells und bestimmt, welchen Kontext das Modell sieht. Die Qualität der Retrieval-Schicht setzt eine Obergrenze für die Antwortqualität — das Sprachmodell kann nicht über Dokumente schlussfolgern, die es nie erhalten hat.
+
+## Warum es wichtig ist
+
+- **Obergrenze der Antwortgenauigkeit** — wenn die Retrieval-Schicht ein relevantes Gesetz übersieht oder eine veraltete Bestimmung zurückgibt, wird die generierte Antwort falsch sein, unabhängig davon, wie leistungsfähig das Sprachmodell ist
+- **Latenzbudget** — die Retrieval-Schicht muss Ergebnisse in wenigen Millisekunden liefern, um die Gesamtantwortzeiten akzeptabel zu halten; ihre Architektur beeinflusst direkt die Benutzererfahrung
+- **Domänenanpassbarkeit** — eine gut konzipierte Retrieval-Schicht kann auf rechtsspezifische Anforderungen abgestimmt werden (temporale Filterung, Autoritätsranking, jurisdiktionelle Eingrenzung), ohne das Generierungsmodell zu ändern
+- **Modularität** — die Trennung von Retrieval und Generierung ermöglicht es, jede Komponente unabhängig zu verbessern, zu testen und zu skalieren
+
+## Wie es funktioniert
+
+Die Retrieval-Schicht kombiniert typischerweise mehrere Retrieval-Strategien in einer Pipeline:
+
+**Sparse Retrieval** verwendet traditionelle Schlüsselwort-Matching-Algorithmen wie BM25, um Dokumente zu finden, die die exakten Terme der Anfrage enthalten. Dies ist schnell und effektiv für präzise juristische Terminologie — wenn ein Benutzer nach „Artikel 215 WIB92" sucht, findet Sparse Retrieval exakte Treffer effizient.
+
+**Dense Retrieval** wandelt sowohl die Anfrage als auch alle Dokumente in Vektor-Embeddings um und findet dann die nächsten Vektoren nach Ähnlichkeit. Dies erfasst die semantische Bedeutung und ermöglicht es, dass eine Anfrage zu „Körperschaftsteuerabzüge" auch Dokumente findet, die andere Terminologie wie „aftrekbare beroepskosten" verwenden.
+
+Die meisten Produktionssysteme kombinieren beide Ansätze im **hybriden Retrieval** und führen Sparse- und Dense-Ergebnisse zusammen, um die Präzision des Schlüsselwort-Matchings und den Recall der semantischen Suche zu erhalten.
+
+Nach der anfänglichen Kandidatengenerierung wendet die Retrieval-Schicht **Metadatenfilter** an (Rechtsordnung, Datumsbereich, Dokumenttyp, Autoritätsstufe), um irrelevante Ergebnisse zu entfernen. Ein **Reranker** — typischerweise ein Cross-Encoder-Modell — bewertet die verbleibenden Kandidaten dann mit tieferer Analyse neu und erzeugt die endgültige Rangliste, die an die Generierungsschicht übergeben wird.
+
+Die Retrieval-Schicht übernimmt auch die Anfrageverarbeitung: Erweiterung von Abkürzungen, Hinzufügen juristischer Synonyme, Zerlegung komplexer mehrteiliger Fragen in Teilanfragen und Weiterleitung von Anfragen an den entsprechenden Index basierend auf der erkannten Absicht.
+
+## Häufige Fragen
+
+**F: Wie viele Dokumente sollte die Retrieval-Schicht zurückgeben?**
+
+A: Typischerweise 5–20 Passagen, abhängig vom Kontextfenster des Sprachmodells und der Komplexität der Frage. Zu wenige bergen das Risiko, relevante Quellen zu übersehen; zu viele verwässern den Kontext mit nur marginal relevantem Material und erhöhen die Kosten. Die Rolle des Rerankers besteht darin, sicherzustellen, dass die Top-k-Ergebnisse die relevantesten sind.
+
+**F: Was ist der Unterschied zwischen der Retrieval-Schicht und der Retrieval-Pipeline?**
+
+A: Die Begriffe werden oft synonym verwendet. Streng genommen bezieht sich die Retrieval-Schicht auf die architektonische Komponente innerhalb eines RAG-Systems, während die Retrieval-Pipeline die aufeinanderfolgenden Stufen betont (Anfrageverarbeitung, Kandidatenabfrage, Filterung, Reranking), aus denen diese Komponente besteht.
 
 ## References
 

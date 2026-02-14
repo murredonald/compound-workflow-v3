@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-Access control enforces permissions for users, services, and processes, ensuring only authorised parties can read or modify particular resources.
+Access control is the set of policies, mechanisms, and technical implementations that determine who can access which data, systems, or actions within a software environment. It governs authentication (verifying identity), authorisation (checking permissions), and enforcement (blocking unauthorised operations). In legal AI systems that handle sensitive tax data, access control ensures that client information is only visible to authorised advisors, that administrative functions are restricted to appropriate roles, and that the system maintains the confidentiality obligations inherent to professional practice.
+
+## Why it matters
+
+- **Client confidentiality** — tax advisors have professional secrecy obligations; access control ensures that one client's data is never exposed to another client or unauthorised staff
+- **Regulatory compliance** — GDPR requires appropriate technical measures to protect personal data; the EU AI Act adds transparency and access requirements for high-risk systems; access control is foundational to both
+- **Multi-tenancy** — when multiple firms or practitioners use the same AI platform, access control isolates their data, queries, and results from each other
+- **Audit readiness** — access control logs document who accessed what and when, supporting both internal governance and external regulatory audits
+
+## How it works
+
+Access control operates at multiple layers in an AI system:
+
+**Authentication** verifies identity — confirming that a user is who they claim to be. This typically involves credentials (username and password), multi-factor authentication (a second verification step like a code or biometric), or single sign-on (SSO) integration with an organisation's identity provider.
+
+**Authorisation** determines what an authenticated user may do. The most common model is **role-based access control (RBAC)**, where permissions are assigned to roles (administrator, advisor, junior analyst, read-only auditor) and users are assigned to roles. More granular systems use **attribute-based access control (ABAC)**, where permissions depend on a combination of user attributes, resource attributes, and environmental conditions (e.g., time of day, location).
+
+**Enforcement** happens at every system boundary: API endpoints check authorisation before processing requests, database queries are filtered by tenant, and the retrieval layer applies permission-based filters so that search results only include documents the user is authorised to see.
+
+In a legal AI context, access control extends to the knowledge base itself. Some documents may be restricted to specific practice areas or seniority levels. Privileged legal opinions or internal firm memoranda require tighter controls than publicly available legislation.
+
+## Common questions
+
+**Q: How does access control interact with AI-generated answers?**
+
+A: The retrieval layer should filter source documents by the user's permissions before passing context to the language model. This prevents the model from seeing — and potentially citing — documents the user is not authorised to access. The access check happens at retrieval time, not after generation.
+
+**Q: What is the difference between authentication and authorisation?**
+
+A: Authentication answers "who are you?" — it verifies identity. Authorisation answers "what are you allowed to do?" — it checks permissions. Both are required: authentication without authorisation lets everyone in with full access; authorisation without authentication cannot verify who is requesting access.

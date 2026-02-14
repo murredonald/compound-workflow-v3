@@ -12,7 +12,40 @@ draft: false
 
 ## Définition
 
-La validation [human-in-the-loop](/fr/glossary/human-oversight/) introduit un contrôle humain explicite dans le cycle d'évaluation pour les cas sensibles.
+La validation human-in-the-loop (HITL) est la pratique consistant à intégrer la révision par un expert humain dans le flux de travail du système d'IA — soit comme étape d'approbation obligatoire avant la finalisation des résultats, soit comme processus d'assurance qualité basé sur l'échantillonnage. Plutôt que de faire confiance aveuglément aux résultats de l'IA, la HITL garantit qu'un professionnel qualifié examine, corrige ou approuve les résultats du système, en particulier dans les scénarios à enjeux élevés où les erreurs ont des conséquences significatives. Dans l'IA juridique, la HITL reflète la réalité professionnelle selon laquelle le conseil fiscal nécessite en fin de compte un jugement et une responsabilité humains.
+
+## Pourquoi c'est important
+
+- **Détection des erreurs** — les systèmes d'IA hallucinent, interprètent mal les requêtes et manquent des nuances qu'un expert du domaine repérerait ; la HITL fournit un filet de sécurité qui empêche les résultats incorrects d'atteindre les utilisateurs finaux sans vérification
+- **Responsabilité professionnelle** — dans les professions réglementées comme le conseil fiscal, un professionnel humain est en fin de compte responsable des conseils donnés ; la HITL maintient cette chaîne de responsabilité plutôt que de la déléguer à un système d'IA
+- **Amélioration continue** — les corrections humaines génèrent des données étiquetées qui peuvent être utilisées pour améliorer le système : combler les lacunes de recherche, affiner les prompts et mettre à jour les jeux de données d'évaluation
+- **Alignement réglementaire** — le règlement européen sur l'IA (AI Act) met l'accent sur la supervision humaine pour les systèmes d'IA à haut risque ; la validation HITL fournit un mécanisme concret pour cette supervision
+
+## Comment ça fonctionne
+
+La validation HITL opère à différents niveaux selon le risque et la faisabilité :
+
+**Révision obligatoire** — chaque résultat de l'IA est examiné par un expert humain avant d'être transmis. Cela est approprié pour les scénarios à enjeux élevés (avis fiscaux contraignants, conseils destinés aux clients) mais ne passe pas à l'échelle pour les requêtes à haut volume et faible risque. Le réviseur vérifie l'exactitude factuelle, la justesse des sources et l'exhaustivité.
+
+**Révision par échantillonnage** — un échantillon aléatoire des résultats de l'IA est examiné périodiquement (par exemple, 10 % des requêtes quotidiennes). Cela fournit un suivi statistique de la qualité sans nécessiter l'examen de chaque résultat. Les tendances dans les erreurs détectées orientent les améliorations du système.
+
+**Révision déclenchée par la confiance** — les résultats en dessous d'un seuil de confiance sont automatiquement acheminés vers un réviseur humain, tandis que les résultats à haute confiance sont transmis directement. Cela concentre l'effort humain sur les cas les plus susceptibles de contenir des erreurs.
+
+**Intégration du feedback** — lorsque les réviseurs corrigent un résultat de l'IA, la correction est capturée comme signal d'entraînement : la requête originale, le résultat incorrect et la version corrigée forment un point de données qui peut être utilisé pour améliorer la recherche, affiner les prompts ou enrichir le jeu de données d'évaluation.
+
+Une HITL efficace nécessite des flux de travail clairs : ce que le réviseur voit (le résultat de l'IA, les sources citées, le score de confiance), ce qu'il doit vérifier (exactitude, exhaustivité, justesse des citations), comment il enregistre son évaluation (approuver, corriger, rejeter) et comment son feedback alimente l'amélioration du système.
+
+La tension clé de la HITL se situe entre la rigueur et l'efficacité. Examiner chaque résultat garantit la qualité mais élimine le gain de temps offert par l'IA. Les approches basées sur le risque, qui concentrent la révision humaine sur les résultats incertains ou à enjeux élevés, équilibrent l'assurance qualité avec l'efficacité pratique.
+
+## Questions fréquentes
+
+**Q : La HITL signifie-t-elle que l'IA n'est pas fiable ?**
+
+R : Pas exactement. La HITL signifie que l'IA est digne de confiance proportionnellement à sa fiabilité démontrée. À mesure que le système fait ses preuves au fil du temps (qualité systématiquement élevée sur les résultats examinés), le périmètre de la révision obligatoire peut être réduit. La confiance se gagne par les preuves, et la HITL fournit ces preuves.
+
+**Q : Dans quelle mesure la HITL ralentit-elle le flux de travail ?**
+
+R : Pour la révision déclenchée par la confiance, la plupart des résultats (haute confiance) sont transmis immédiatement. Seuls les résultats incertains attendent une révision. Le délai global dépend de la proportion de résultats incertains et du temps de réponse du réviseur.
 
 ## References
 

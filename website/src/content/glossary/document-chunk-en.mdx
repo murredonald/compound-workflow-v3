@@ -12,4 +12,33 @@ draft: false
 
 ## Definition
 
-A document chunk is a slice of a larger document—such as a paragraph or section—that is indexed and retrieved independently to give finer-grained context to [RAG](/en/glossary/rag/) systems.
+A document chunk is a segment of a larger document — typically a paragraph, section, or fixed-length passage — that serves as the atomic unit for indexing and retrieval. Rather than indexing an entire 50-page law as a single item, the system splits it into chunks that can be individually embedded, stored, and returned as context. Chunk design is one of the most consequential architectural decisions in any retrieval-augmented generation system because it directly determines what the language model sees when generating an answer.
+
+## Why it matters
+
+- **Retrieval granularity** — embedding an entire law produces a single vector that averages over all topics; chunking allows individual articles or sections to be retrieved precisely when relevant
+- **Context window efficiency** — language models have limited context windows; well-sized chunks deliver focused, relevant context without wasting tokens on surrounding irrelevant text
+- **Relevance scoring** — smaller, topically coherent chunks receive more accurate relevance scores because their embeddings represent a single concept rather than a blend of many
+- **Citation precision** — when a chunk maps to a specific article or paragraph, the system can cite the exact provision rather than pointing to an entire document
+
+## How it works
+
+Chunking operates during the document ingestion phase. The simplest approach is **fixed-size chunking**: splitting text into segments of a set token count (e.g., 256 or 512 tokens) with overlap between consecutive chunks to avoid losing context at boundaries. This is fast and predictable but ignores document structure.
+
+**Structure-aware chunking** uses the document's own organisation — headings, article numbers, paragraph breaks — to define chunk boundaries. In legislation, this often means one chunk per article or per numbered paragraph. This preserves semantic coherence and produces chunks that align with how legal professionals think about the text.
+
+**Sliding-window chunking** creates overlapping segments that step through the document at regular intervals. The overlap ensures that sentences split across chunk boundaries appear in at least one chunk in full, reducing information loss.
+
+The choice of chunk size involves a trade-off. Smaller chunks improve retrieval precision (each chunk is topically focused) but may lose context that spans multiple paragraphs. Larger chunks preserve context but dilute embedding quality and consume more of the language model's context window. Most legal retrieval systems settle on chunks of 200-500 tokens, adjusted by document type.
+
+After chunking, each segment is embedded and stored with metadata linking it back to its parent document, position, and structural context (article number, section heading). This metadata enables the system to reconstruct the broader context when needed.
+
+## Common questions
+
+**Q: What happens if important context spans two chunks?**
+
+A: Overlap between chunks is the primary mitigation — consecutive chunks share a portion of text so boundary-spanning information appears in at least one chunk. Some systems also retrieve neighbouring chunks when a match is found, reassembling the local context before passing it to the model.
+
+**Q: Does chunk size affect embedding quality?**
+
+A: Yes. Very short chunks (under 50 tokens) may lack enough context for the embedding model to capture meaning. Very long chunks (over 1000 tokens) average over too many topics, producing vague embeddings. The optimal size depends on the embedding model and the nature of the content.

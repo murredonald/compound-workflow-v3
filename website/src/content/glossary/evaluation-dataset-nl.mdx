@@ -12,7 +12,38 @@ draft: false
 
 ## Definitie
 
-Een evaluation dataset is een verzameling input–outputparen waarmee je modellen en systemen systematisch beoordeelt.
+Een evaluation dataset (evaluatieset) is een samengestelde verzameling input-outputparen waarbij het correcte antwoord voor elke input vooraf bekend is. Het dient als benchmark waaraan de prestaties van een AI-systeem worden afgemeten: het systeem verwerkt elke input en de output wordt vergeleken met het bekende correcte antwoord om kwaliteitsmetrieken te berekenen. In juridische AI bevatten evaluatiedatasets fiscaalrechtelijke vragen gekoppeld aan geverifieerde correcte antwoorden, bronvermeldingen en relevantieoordelen die systematische meting van retrieval- en generatiekwaliteit mogelijk maken.
+
+## Waarom het belangrijk is
+
+- **Objectieve meting** — zonder een evaluatiedataset is kwaliteitsbeoordeling subjectief; met een evaluatieset kunnen teams nauwkeurige metrieken berekenen (nauwkeurigheid, precisie, recall, getrouwheid) die de systeemkwaliteit in de tijd volgen
+- **Regressiedetectie** — het uitvoeren van de evaluatiedataset na elke systeemwijziging laat zien of de wijziging de prestaties heeft verbeterd of verslechterd, waardoor regressies worden opgespoord voordat ze gebruikers raken
+- **Vergelijking van modellen en configuraties** — evaluatiedatasets maken eerlijke vergelijking mogelijk tussen verschillende modellen, retrievalstrategieën of promptconfiguraties onder identieke omstandigheden
+- **Domeindekkking** — een goed ontworpen evaluatiedataset bestrijkt de verwachte use cases, randgevallen en bekende moeilijkheden van het systeem, zodat kwaliteitsclaims de werkelijke prestaties weerspiegelen
+
+## Hoe het werkt
+
+Het opbouwen van een evaluatiedataset voor juridische AI omvat verschillende stappen:
+
+**Queryverzameling** — representatieve vragen worden verzameld uit meerdere bronnen: echte gebruikersvragen (geanonimiseerd), vragen ontworpen door domeinexperts om specifieke capaciteiten te testen, en randgevallen die bekende faalscenario's onderzoeken. Voor een Belgisch fiscaal AI-systeem omvat dit vragen over verschillende belastingtypes (inkomstenbelasting, btw, registratierechten), jurisdicties (federaal, Vlaams, Waals, Brussels) en complexiteitsniveaus.
+
+**Antwoordannotatie** — domeinexperts leveren het correcte antwoord voor elke query, inclusief de specifieke brondocumenten en artikelen die het ondersteunen. Annotatierichtlijnen zorgen voor consistentie: wat telt als "correct", hoe om te gaan met ambigue vragen en hoe gedeeltelijk correcte antwoorden te scoren.
+
+**Relevantieoordelen** — voor retrievalevaluatie identificeren annotatoren alle documenten in het corpus die relevant zijn voor elke query. Dit maakt de berekening mogelijk van recall (heeft het systeem alle relevante documenten gevonden?) en precisie (waren de geretourneerde documenten daadwerkelijk relevant?).
+
+**Onderhoud van de dataset** — naarmate de kennisbank evolueert (nieuwe wetgeving, gewijzigde bepalingen), moet de evaluatiedataset worden bijgewerkt om de actuele correcte antwoorden weer te geven. Een antwoord dat correct was in 2024 kan onjuist zijn in 2025 na een wetswijziging.
+
+Kwalitatieve evaluatiedatasets bevatten doorgaans 200-1000 vraag-antwoordparen, gestratificeerd over onderwerpgebieden, moeilijkheidsniveaus en vraagtypes (feitelijke opzoeking, meerstapsredenering, vergelijking, temporeel). De dataset moet groot genoeg zijn voor statistische significantie maar behapbaar genoeg voor regelmatige menselijke review en bijwerking.
+
+## Veelgestelde vragen
+
+**V: Kunnen evaluatiedatasets automatisch worden gegenereerd?**
+
+A: Gedeeltelijk. LLM's kunnen kandidaatvragen genereren en semi-geautomatiseerde pipelines kunnen antwoorden voorstellen. Maar verificatie door domeinexperts blijft essentieel — de gouden standaard moet daadwerkelijk correct zijn, anders produceert de evaluatie misleidende metrieken.
+
+**V: Hoe vaak moet de evaluatiedataset worden bijgewerkt?**
+
+A: Na elke significante wijziging in de kennisbank (nieuwe wetgeving, belangrijke amendementen) en minstens elk kwartaal. Verouderde evaluatiedatasets produceren kunstmatig lage scores omdat het systeem mogelijk correct antwoordt op basis van het huidige recht, terwijl de dataset antwoorden verwacht op basis van het oude recht.
 
 ## References
 

@@ -12,7 +12,41 @@ draft: false
 
 ## Definition
 
-In evaluation, a confidence interval gives an estimated range for a [metric](/en/glossary/distance-metric/)—such as accuracy or [hallucination rate](/en/glossary/hallucination-rate/)—reflecting sampling variability in the test set.
+A confidence interval is a statistical range within which a measured metric (such as accuracy, hallucination rate, or precision) is expected to fall with a specified probability, given the sampling variability of the evaluation data. When a system reports "92% accuracy with a 95% confidence interval of 89-95%", it means that if the evaluation were repeated with different representative samples, the true accuracy would fall between 89% and 95% in 95% of cases. Confidence intervals communicate the uncertainty inherent in any metric computed from a finite test set, preventing overinterpretation of point estimates.
+
+## Why it matters
+
+- **Meaningful comparisons** — without confidence intervals, it is impossible to tell whether a 2% accuracy improvement is statistically significant or just sampling noise; confidence intervals make this distinction clear
+- **Honest reporting** — publishing a point metric like "94% accuracy" without a confidence interval overstates certainty; the true performance could reasonably be 91% or 97% depending on the test set
+- **Decision support** — when comparing two system configurations, overlapping confidence intervals indicate that the difference may not be meaningful; non-overlapping intervals provide stronger evidence for choosing one over the other
+- **Sample size planning** — confidence intervals reveal how precise the evaluation is; wide intervals indicate the test set is too small for reliable conclusions, guiding investment in larger evaluation datasets
+
+## How it works
+
+Confidence intervals are computed from the metric value, the sample size, and the desired confidence level (typically 95%):
+
+**For proportions** (accuracy, hallucination rate): a common approach uses the normal approximation or the Wilson score interval. For an accuracy of 92% on 500 test queries, the 95% confidence interval is approximately 89.5% to 94.1%. On 50 test queries, the same 92% accuracy produces a much wider interval: 81% to 97%.
+
+**For means** (average latency, mean confidence score): the interval is computed from the sample mean, standard deviation, and sample size using the t-distribution.
+
+**Bootstrap confidence intervals** provide a more general approach: resample the test set with replacement many times, compute the metric on each resample, and use the distribution of results to establish the interval. This works for any metric, including complex ones like nDCG or F1 score.
+
+The width of a confidence interval depends on three factors:
+- **Sample size** — larger evaluation sets produce narrower intervals (more precision)
+- **Variance** — metrics with high variability across test cases produce wider intervals
+- **Confidence level** — a 99% confidence interval is wider than a 95% interval for the same data
+
+In AI evaluation, confidence intervals are particularly important because test sets are often small (200-500 queries). On such datasets, metric fluctuations of 2-3% are common due to sampling alone.
+
+## Common questions
+
+**Q: Does a 95% confidence interval mean there is a 95% chance the true value is in the interval?**
+
+A: Technically, no — the frequentist interpretation is that if the evaluation were repeated many times, 95% of the computed intervals would contain the true value. But in practice, the interval provides a reasonable range of plausible values for the metric.
+
+**Q: How large should the evaluation set be for narrow confidence intervals?**
+
+A: For proportions near 90%, a test set of 500 queries gives a 95% confidence interval width of about ±3%. For ±1% precision, you need approximately 3,500 queries. The required size depends on the metric value and desired precision.
 
 ## References
 

@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Retrieval-Recall misst, wie viele der relevanten Elemente in einem [Korpus](/de/glossary/corpus/) vom System für eine gegebene Anfrage oder ein Testset gefunden werden, häufig mit einem Cutoff wie Recall@k berechnet.
+Retrieval-Recall ist der Anteil aller tatsächlich relevanten Dokumente in einer Sammlung, die das System für eine gegebene Anfrage erfolgreich abruft. Wenn es 10 relevante Dokumente im [Korpus](/de/glossary/corpus/) gibt und das System 7 davon abruft, beträgt der Recall 70 %. Recall wird typischerweise an einem Cutoff-Punkt gemessen — Recall@10 (wie viele der 10 relevanten Dokumente erscheinen in den Top-10-Ergebnissen?) oder Recall@100 (für die anfängliche Kandidatengenerierung). In der juristischen KI ist hoher Recall entscheidend, weil eine fehlende relevante Bestimmung — eine Ausnahme, eine Gesetzesänderung oder ein widersprüchliches Urteil — die korrekte Antwort grundlegend verändern kann.
+
+## Warum es wichtig ist
+
+- **Vollständigkeit der juristischen Analyse** — das Steuerrecht ist voller Ausnahmen, Sonderregelungen und widersprüchlicher Bestimmungen über Rechtsgebiete hinweg; das Fehlen auch nur einer relevanten Quelle kann zu einer unvollständigen oder falschen Antwort führen
+- **Qualitätsobergrenze für RAG-Antworten** — das Sprachmodell kann nur über das schlussfolgern, was die Retrieval-Schicht bereitstellt; wenn ein relevantes Dokument nicht abgerufen wird, kann es nicht in die generierte Antwort einfließen
+- **Risikomanagement** — in der professionellen Steuerberatung ist das Übersehen einer relevanten Bestimmung ein Haftungsrisiko; hoher Recall reduziert die Wahrscheinlichkeit, kritische Quellen zu übersehen
+- **Komplementär zur Precision** — Precision misst die Ergebnisqualität (wie viele der zurückgegebenen Dokumente sind relevant); Recall misst die Abdeckung (wie viele relevante Dokumente wurden gefunden); beide werden für effektives Retrieval benötigt
+
+## Wie es funktioniert
+
+Recall wird berechnet, indem die Anzahl der abgerufenen relevanten Dokumente durch die Gesamtzahl der relevanten Dokumente im Korpus geteilt wird:
+
+**Recall@k = (relevante Dokumente in den Top k) / (Gesamtzahl relevanter Dokumente)**
+
+Die Berechnung von Recall erfordert die Kenntnis der vollständigen Menge relevanter Dokumente für jede Anfrage, die durch menschliche Annotation eines Testdatensatzes ermittelt wird. Annotatoren überprüfen den Korpus und identifizieren alle für jede Testanfrage relevanten Dokumente und schaffen so die Ground Truth, an der das System gemessen wird.
+
+**Recall-Precision-Abwägung** — die Erhöhung des Recall (mehr relevante Dokumente finden) erfordert typischerweise die Rückgabe von mehr Ergebnissen insgesamt, was auch mehr irrelevante Ergebnisse enthalten kann (was die Precision verringert). Die Retrieval-Pipeline steuert diese Abwägung durch ihre mehrstufige Architektur: frühe Stufen (BM25, Dense Retrieval) werfen ein weites Netz für hohen Recall, während spätere Stufen (Reranking, Filterung) für Precision verfeinern.
+
+**Recall in verschiedenen Pipeline-Stufen** — Recall wird oft in jeder Stufe gemessen, um Engpässe zu identifizieren. Wenn das anfängliche Kandidaten-Retrieval 95 % Recall@100 erreicht, aber das Reranking auf 70 % Recall@10 fällt, ist der Reranker der Engpass. Wenn das anfängliche Retrieval nur 60 % Recall@100 erreicht, muss die grundlegende Retrieval-Strategie verbessert werden.
+
+**Die Verbesserung des Recall** umfasst mehrere Strategien:
+- Hybride Suche (Kombination von lexikalischem und semantischem Retrieval) deckt mehr Matching-Strategien ab
+- Query Expansion (Hinzufügen von Synonymen und verwandten Begriffen) erweitert die Suche
+- Cross-linguales Retrieval (Suche über Sprachgrenzen hinweg) findet Quellen in allen drei belgischen Sprachen
+- Kleinere Chunk-Größen können den Recall verbessern, indem sie ein feineres Matching ermöglichen
+
+## Häufige Fragen
+
+**F: Was ist ein guter Recall-Wert für juristische Suche?**
+
+A: Recall@100 über 90 % wird für das anfängliche Kandidaten-Retrieval allgemein erwartet. Recall@10 (nach Reranking) über 80 % gilt als stark. Der akzeptable Schwellenwert hängt vom Risikoprofil ab — Anwendungen mit höherem Risiko erfordern höheren Recall.
+
+**F: Warum ist Recall schwieriger zu messen als Precision?**
+
+A: Die Messung von Recall erfordert die Kenntnis aller relevanten Dokumente im Korpus für jede Anfrage, was aufwändig und arbeitsintensiv zu annotieren ist. Precision erfordert nur die Beurteilung der zurückgegebenen Ergebnisse. Deshalb basiert die Recall-Evaluierung auf sorgfältig kuratierten Testdatensätzen statt auf Ad-hoc-Tests.
 
 ## References
 

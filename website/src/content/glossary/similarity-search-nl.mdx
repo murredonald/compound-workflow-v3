@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Similarity search vergelijkt een query‑embedding met een grote verzameling vectoren en rangschikt items op basis van een gekozen afstands‑ of [gelijkenismetriek](/nl/glossary/distance-metric/) om de meest relevante context te vinden.
+Similarity search is het proces van het vinden van items in een dataset waarvan de vectorvoorstellingen het dichtst bij een gegeven queryvector liggen onder een gekozen [afstandsmetriek](/nl/glossary/distance-metric/). In plaats van op exacte trefwoorden te matchen, werkt similarity search in de embeddingsruimte — het geeft resultaten terug die semantisch gerelateerd zijn aan de query, zelfs wanneer ze geheel andere bewoordingen gebruiken. Deze mogelijkheid vormt de basis van modern semantisch zoeken, aanbevelingssystemen en deduplicatieworkflows.
+
+## Waarom het belangrijk is
+
+- **Semantische matching** — juridische professionals kunnen vragen anders formuleren dan hoe de wetgeving is geschreven; similarity search overbrugt dat verschil door op betekenis te matchen in plaats van op exacte termen
+- **Cross-linguale ontdekking** — in meertalige rechtssystemen zoals dat van België kan similarity search over cross-linguale embeddings relevante Franstalige wetgeving opleveren vanuit een Nederlandstalige query
+- **Schaal** — approximate similarity search-algoritmen verwerken miljarden vectoren in milliseconden, waardoor grootschalige semantische ophaling praktisch haalbaar wordt
+- **Deduplicatie** — het identificeren van bijna-dubbele documenten of bepalingen over verschillende bronnen heen voorkomt overbodige resultaten
+
+## Hoe het werkt
+
+Similarity search werkt in drie fasen:
+
+1. **Codering** — zowel de query als alle items in de dataset worden omgezet naar vector-embeddings met behulp van een embeddingmodel. Voor een documentencorpus wordt deze codering eenmalig bij indexering gedaan; alleen de query wordt op zoektijd gecodeerd.
+
+2. **Indexraadpleging** — de queryvector wordt vergeleken met opgeslagen vectoren via een afstandsmetriek (cosinusgelijkenis, inwendig product of Euclidische afstand). Exacte vergelijking met elke vector zou te traag zijn voor grote datasets, dus worden approximate nearest-neighbour (ANN)-algoritmen zoals HNSW of IVF gebruikt. Deze bouwen graaf- of clusterstructuren over de vectoren op om sub-lineaire zoektijd mogelijk te maken.
+
+3. **Rangschikking** — de k dichtstbijzijnde vectoren worden geretourneerd, gerangschikt op gelijkenisscore. Deze kunnen verder worden verfijnd door reranking of metadatafiltering voordat ze aan de gebruiker worden gepresenteerd.
+
+De afweging bij similarity search ligt tussen recall (alle werkelijk relevante items vinden) en snelheid. Exact zoeken garandeert perfecte recall maar is traag op schaal. ANN-algoritmen ruilen een klein beetje recall in voor drastisch sneller zoeken, wat voor de meeste toepassingen acceptabel is.
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt similarity search van zoeken op trefwoorden?**
+
+A: Zoeken op trefwoorden (lexicaal zoeken) matcht documenten die de exacte woorden in de query bevatten. Similarity search matcht op betekenis — het kan documenten over "corporate income tax" vinden wanneer de query "vennootschapsbelasting" zegt, omdat hun embeddings dicht bij elkaar liggen in de vectorruimte. De meeste moderne systemen combineren beide benaderingen in hybride zoeken.
+
+**V: Hoe snel is similarity search op grote datasets?**
+
+A: Met ANN-indexen duurt similarity search over 100 miljoen vectoren doorgaans 1-10 milliseconden. De exacte snelheid hangt af van het indextype, de vectordimensionaliteit en de hardware. Vectordatabases zoals FAISS, Pinecone en Milvus zijn geoptimaliseerd voor deze werkbelasting.
+
+**V: Wat bepaalt de kwaliteit van similarity search-resultaten?**
+
+A: Drie factoren: het embeddingmodel (hoe goed het semantische betekenis vastlegt), de afstandsmetriek (of deze overeenkomt met de trainingsdoelstelling van het model) en de indexconfiguratie (hoe agressief recall wordt ingeruild voor snelheid). Van deze heeft het embeddingmodel de grootste impact.
 
 ## References
 

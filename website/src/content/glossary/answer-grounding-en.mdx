@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-Answer [grounding](/en/glossary/grounding/) requires that each important claim in an AI-generated answer is supported by cited [passages](/en/glossary/document-chunk/) or data, enabling verification and auditability.
+Answer grounding is the practice of ensuring that every substantive claim in an AI-generated response is directly traceable to a specific source document or passage. A grounded answer does not merely cite sources in general — it ties each individual claim to the specific text that supports it, enabling the user to verify each statement independently. In legal AI, answer grounding transforms the model's output from an unsupported opinion into a verifiable analysis backed by specific legislative articles, rulings, or administrative guidance.
+
+## Why it matters
+
+- **Verifiability** — grounded answers can be checked: the user can read the cited source and confirm whether the claim is accurately stated; ungrounded answers require the user to independently research every statement
+- **Professional safety** — tax advisors who rely on AI-generated analysis need to verify its accuracy before advising clients; grounding provides the citations necessary for efficient verification
+- **Hallucination detection** — claims that cannot be grounded in any source are, by definition, hallucinations; grounding requirements force the system to distinguish between supported and unsupported statements
+- **Audit trail** — grounded answers create a complete record of which sources informed each part of the response, supporting professional accountability and regulatory compliance
+
+## How it works
+
+Answer grounding operates through coordination between the retrieval and generation layers:
+
+**Source-aware generation** — the system prompt instructs the language model to only make claims that are supported by the provided context, and to cite the specific source for each claim. The instruction explicitly directs the model to acknowledge gaps rather than fill them with unsupported content.
+
+**Inline citations** — as the model generates its response, it includes references to specific source passages (article numbers, publication dates, source identifiers) alongside each substantive claim. This creates a direct link between each statement and its supporting evidence.
+
+**Post-generation verification** — after generation, a verification step checks whether each cited claim is actually supported by the referenced source passage. Natural language inference (NLI) models or a second LLM can assess entailment between the claim and the cited text. Claims that are not entailed are flagged for review or removed.
+
+**Abstention on insufficient evidence** — when the retrieved context does not contain enough information to fully answer the question, a grounded system explicitly states what it cannot determine rather than generating plausible but unsupported content. This is critical in legal AI where an incomplete answer acknowledged as such is far safer than a fabricated complete answer.
+
+Grounding quality is measured through faithfulness metrics: what percentage of claims in the generated answer are entailed by the cited sources. High faithfulness (>95%) indicates strong grounding; low faithfulness indicates the model is adding unsupported content.
+
+## Common questions
+
+**Q: Does answer grounding eliminate hallucination?**
+
+A: It significantly reduces it but does not eliminate it entirely. Models can still misattribute claims to wrong sources, subtly misstate what a source says, or fail to flag important caveats. Grounding is the most effective mitigation but should be complemented with confidence scoring and human review.
+
+**Q: Can a grounded answer still be wrong?**
+
+A: Yes, if the source itself is wrong or outdated. Grounding ensures the answer accurately reflects its sources, not that the sources themselves are correct. This is why source quality (authority, currency, completeness) and grounding are complementary concerns.
 
 ## References
 

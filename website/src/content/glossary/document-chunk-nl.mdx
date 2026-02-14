@@ -10,6 +10,35 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Een document chunk bevat meestal één logisch stuk inhoud – zoals een paragraaf of sectie – zodat retrieval en generatie zich op dat niveau kunnen richten in plaats van op volledige documenten.
+Een document chunk is een segment van een groter document — doorgaans een paragraaf, sectie of passage van vaste lengte — dat dient als de atomaire eenheid voor indexering en retrieval. In plaats van een volledige wet van 50 pagina's als één geheel te indexeren, splitst het systeem deze op in chunks die individueel geëmbed, opgeslagen en als context geretourneerd kunnen worden. Het chunkontwerp is een van de meest bepalende architecturale beslissingen in elk retrieval-augmented generation systeem, omdat het rechtstreeks bepaalt wat het taalmodel te zien krijgt bij het genereren van een antwoord.
+
+## Waarom het belangrijk is
+
+- **Retrievalgranulariteit** — het embedden van een volledige wet levert één enkele vector op die een gemiddelde vormt over alle onderwerpen; chunking maakt het mogelijk om individuele artikelen of secties precies op te halen wanneer ze relevant zijn
+- **Efficiëntie van het contextvenster** — taalmodellen hebben beperkte contextvensters; goed gedimensioneerde chunks leveren gerichte, relevante context zonder tokens te verspillen aan omliggende irrelevante tekst
+- **Relevantiescorebepaling** — kleinere, thematisch coherente chunks krijgen nauwkeurigere relevantiescores omdat hun embeddings één enkel concept vertegenwoordigen in plaats van een mix van vele
+- **Citatieprecisie** — wanneer een chunk overeenkomt met een specifiek artikel of paragraaf, kan het systeem de exacte bepaling citeren in plaats van naar een heel document te verwijzen
+
+## Hoe het werkt
+
+Chunking vindt plaats tijdens de documentingestiefase. De eenvoudigste aanpak is **chunking met vaste grootte**: tekst opsplitsen in segmenten van een vastgesteld aantal tokens (bijv. 256 of 512 tokens) met overlap tussen opeenvolgende chunks om contextverlies bij grenzen te voorkomen. Dit is snel en voorspelbaar, maar negeert de documentstructuur.
+
+**Structuurbewuste chunking** gebruikt de eigen organisatie van het document — koppen, artikelnummers, alinea-afbrekingen — om chunkgrenzen te bepalen. Bij wetgeving betekent dit vaak één chunk per artikel of per genummerde paragraaf. Dit behoudt semantische samenhang en levert chunks op die aansluiten bij hoe juridische professionals over de tekst denken.
+
+**Sliding-window chunking** creëert overlappende segmenten die met regelmatige intervallen door het document stappen. De overlap zorgt ervoor dat zinnen die over chunkgrenzen heen vallen in ten minste één chunk volledig voorkomen, waardoor informatieverlies wordt beperkt.
+
+De keuze van chunkgrootte brengt een afweging met zich mee. Kleinere chunks verbeteren de retrievalprecisie (elke chunk is thematisch gefocust), maar kunnen context verliezen die meerdere paragrafen omspant. Grotere chunks behouden context, maar verdunnen de embeddingkwaliteit en nemen meer van het contextvenster van het taalmodel in beslag. De meeste juridische retrievalsystemen komen uit op chunks van 200-500 tokens, aangepast per documenttype.
+
+Na het chunken wordt elk segment geëmbed en opgeslagen met metadata die het terugkoppelt naar het brondocument, de positie en de structurele context (artikelnummer, sectiekop). Deze metadata stelt het systeem in staat om de bredere context te reconstrueren wanneer nodig.
+
+## Veelgestelde vragen
+
+**V: Wat gebeurt er als belangrijke context over twee chunks verdeeld is?**
+
+A: Overlap tussen chunks is de belangrijkste oplossing — opeenvolgende chunks delen een deel van de tekst, zodat informatie die over grenzen heen loopt in ten minste één chunk volledig voorkomt. Sommige systemen halen ook aangrenzende chunks op wanneer een match wordt gevonden en stellen zo de lokale context samen voordat deze aan het model wordt doorgegeven.
+
+**V: Beïnvloedt de chunkgrootte de embeddingkwaliteit?**
+
+A: Ja. Zeer korte chunks (minder dan 50 tokens) bevatten mogelijk onvoldoende context voor het embeddingmodel om de betekenis vast te leggen. Zeer lange chunks (meer dan 1000 tokens) middelen over te veel onderwerpen, wat vage embeddings oplevert. De optimale grootte hangt af van het embeddingmodel en de aard van de inhoud.

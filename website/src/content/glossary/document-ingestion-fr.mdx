@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La document ingestion couvre la collecte, la validation et le stockage de fichiers sources – pdf, e‑mails, etc. – comme première étape du [pipeline de contenu](/fr/glossary/data-pipeline/) d’un système de recherche ou d’IA.
+L'ingestion de documents est le processus de collecte de documents bruts depuis leurs sources, de conversion dans un format exploitable, d'extraction des métadonnées et d'enregistrement dans la base de connaissances. C'est la première étape du pipeline de données — le point d'entrée où le contenu juridique externe entre dans le système d'IA et devient recherchable. La qualité de l'ingestion détermine la qualité de la base de connaissances : des documents mal analysés, avec des métadonnées incorrectes ou des extractions incomplètes produiront une récupération et une génération inexactes en aval.
+
+## Pourquoi c'est important
+
+- **Complétude de la base de connaissances** — si le pipeline d'ingestion ne capture pas une nouvelle loi, circulaire ou décision, le système d'IA ne peut pas la référencer dans ses réponses, créant une lacune dangereuse
+- **Origine de la qualité des données** — la plupart des problèmes de qualité des données trouvent leur origine lors de l'ingestion : erreurs d'OCR, extraction de dates incorrectes, étiquetage juridictionnel erroné ou références croisées manquantes ; détecter les erreurs à l'ingestion est bien moins coûteux que de les corriger après l'indexation
+- **Diversité des sources** — le droit fiscal belge provient de nombreuses sources (Moniteur belge, SPF Finances, bases de données judiciaires, éditeurs régionaux) dans de nombreux formats (PDF, HTML, XML, images numérisées) ; le pipeline d'ingestion doit gérer cette diversité de manière fiable
+- **Fraîcheur** — l'ingestion automatisée permet au système d'incorporer de nouvelles sources juridiques dans les heures suivant leur publication, maintenant l'actualité sans intervention manuelle
+
+## Comment ça fonctionne
+
+Un pipeline d'ingestion de documents procède généralement par les étapes suivantes :
+
+**Acquisition** — les documents sont collectés depuis leurs sources. Cela peut impliquer le scraping planifié de sites web de journaux officiels, des appels API à des fournisseurs de bases de données juridiques, des transferts SFTP depuis des éditeurs, ou le téléchargement manuel de sources ponctuelles. Chaque source a sa propre méthode d'accès, son format et son calendrier de livraison.
+
+**Traitement des formats** — les documents bruts sont convertis de leur format natif en texte propre. L'extraction PDF gère les mises en page multi-colonnes, les tableaux et les images intégrées. L'analyse HTML supprime la navigation, le style et le contenu standard. Les documents numérisés passent par l'OCR avec un score de confiance pour signaler les extractions peu fiables. Les documents XML (courants pour les publications officielles) sont analysés selon leur schéma.
+
+**Extraction des métadonnées** — les champs structurés clés sont identifiés et extraits : date de publication, type de document (loi, décret, circulaire, décision), juridiction (fédérale, régionale), version linguistique, numéros d'articles et références croisées vers d'autres documents. Certaines métadonnées sont explicites (dans les en-têtes de documents ou les balises XML) ; d'autres doivent être inférées du contenu à l'aide d'extraction d'entités ou de correspondance de motifs.
+
+**Vérification de déduplication** — le document est comparé au contenu existant pour déterminer s'il est nouveau, s'il constitue une mise à jour d'un document existant ou s'il est un doublon. Le hachage de contenu et la détection de quasi-doublons empêchent l'indexation multiple du même document.
+
+**Enregistrement** — le document se voit attribuer un identifiant unique, ses métadonnées sont validées par rapport au schéma, et il est mis en file d'attente pour les étapes suivantes du pipeline (découpage, embedding, indexation). Les documents en échec sont mis en quarantaine avec les détails de l'erreur pour examen manuel.
+
+## Questions fréquentes
+
+**Q : À quelle fréquence l'ingestion doit-elle s'exécuter ?**
+
+R : Pour les sources avec des calendriers de publication réguliers (gazette quotidienne, circulaires hebdomadaires), l'ingestion doit s'exécuter à une fréquence correspondante. L'ingestion événementielle (déclenchée par des notifications de publication) offre une couverture plus rapide que le polling planifié.
+
+**Q : Que se passe-t-il lorsque l'ingestion échoue pour un document ?**
+
+R : Les documents en échec doivent être mis en quarantaine, enregistrés avec la raison spécifique de l'échec (échec OCR, erreur de format, échec d'extraction de métadonnées), et soit réessayés automatiquement, soit signalés pour examen manuel. Le système doit continuer à traiter les autres documents plutôt que d'interrompre l'ensemble du pipeline.

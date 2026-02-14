@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Context injection betekent dat relevante documenten, snippets of metadata in een [LLM](/nl/glossary/llm/)-[prompt](/nl/glossary/prompt/) worden geplaatst zodat het model zijn antwoord op die externe informatie kan baseren.
+Context-injectie is de praktijk waarbij opgehaalde documenten, passages, metadata of andere externe informatie in de prompt van een taalmodel worden ingevoegd, zodat het model zijn antwoord op die specifieke inhoud kan baseren in plaats van uitsluitend te vertrouwen op zijn trainingskennis. Het is het mechanisme dat de ophaallaag verbindt met de generatielaag in een [RAG](/nl/glossary/rag/)-systeem: nadat relevante documenten zijn gevonden, worden ze samen met de vraag van de gebruiker in de [prompt](/nl/glossary/prompt/) "geïnjecteerd". De kwaliteit van context-injectie — wat wordt opgenomen, hoe het wordt opgemaakt en waar het wordt geplaatst — heeft een aanzienlijke invloed op de antwoordkwaliteit.
+
+## Waarom het ertoe doet
+
+- **Gegronde generatie** — door het model specifieke brondocumenten te bieden, zorgt context-injectie ervoor dat antwoorden gebaseerd zijn op gezaghebbende juridische teksten in plaats van op de mogelijk verouderde of onnauwkeurige trainingsdata van het model
+- **Bronvermelding mogelijk maken** — geïnjecteerde context bevat metadata (artikelnummers, publicatiedata, bronidentificaties) die het model kan gebruiken om verifieerbare bronvermeldingen in zijn antwoord op te nemen
+- **Scopecontrole** — context-injectie bepaalt de grenzen van wat het model in overweging moet nemen; de systeemprompt kan het model instrueren om alleen de geïnjecteerde context te gebruiken, zodat het geen ongegronde beweringen genereert
+- **Dynamische kennis** — in tegenstelling tot fine-tuning, waarbij kennis in de modelgewichten wordt ingebakken, biedt context-injectie verse informatie op het moment van de query, waardoor het systeem onmiddellijk kan reageren op nieuwe wetgeving of uitspraken
+
+## Hoe het werkt
+
+Context-injectie volgt op de ophaalfase en gaat vooraf aan de generatie:
+
+**Selectie** — de ophaalpijplijn produceert een gerangschikte lijst van relevante passages. De top-k passages (doorgaans 5-20) worden geselecteerd voor injectie. Te weinig passages riskeert het missen van belangrijke context; te veel passages riskeert het overschrijden van het contextvenster van het model of het verdunnen van de relevantie.
+
+**Opmaak** — geselecteerde passages worden opgemaakt voor duidelijkheid. Elke passage wordt doorgaans gepresenteerd met de bijbehorende bronmetadata (documenttitel, artikelnummer, publicatiedatum, jurisdictie) en duidelijk gescheiden van andere passages. Consistente opmaak helpt het model onderscheid te maken tussen verschillende bronnen en deze nauwkeurig te citeren.
+
+**Plaatsing** — de geïnjecteerde context wordt in de prompt geplaatst, meestal tussen de systeeminstructies en de vraag van de gebruiker. De systeemprompt bevat instructies over hoe de context te gebruiken: "Antwoord uitsluitend op basis van de volgende bronnen", "Vermeld het specifieke artikel bij elke bewering", "Geef aan als de beschikbare bronnen de vraag niet beantwoorden."
+
+**Beheer van het contextvenster** — de volledige prompt (systeeminstructies + geïnjecteerde context + gebruikersvraag) moet binnen het contextvenster van het model passen. Wanneer de opgehaalde context te groot is, omvatten strategieën het afkappen van lager gerangschikte passages, het samenvatten van passages vóór injectie, of het opsplitsen van de query in subquery's, elk met een kleinere contextlading.
+
+Het grootste risico van context-injectie is **contextvergiftiging** — als irrelevante of onjuiste passages worden geïnjecteerd (door ophaalfouten), kan het model antwoorden produceren op basis van die incorrecte context. Daarom is de kwaliteit van het ophalen de upstream-afhankelijkheid voor effectieve context-injectie.
+
+## Veelgestelde vragen
+
+**V: Is context-injectie hetzelfde als RAG?**
+
+A: Context-injectie is één stap binnen het RAG-proces. RAG omvat ophalen (relevante documenten vinden), context-injectie (deze in de prompt invoegen) en generatie (het antwoord produceren). Context-injectie is de brug tussen ophalen en generatie.
+
+**V: Hoe verschilt context-injectie van prompt-injectie?**
+
+A: Context-injectie is een legitiem systeemontwerppatroon — de applicatie biedt bewust context aan het model. Prompt-injectie is een beveiligingsaanval waarbij kwaadaardige inhoud in gebruikersinvoer of externe data probeert de instructies van het model te overschrijven. Ze gebruiken een vergelijkbaar mechanisme (tekst toevoegen aan de prompt), maar met een tegengestelde intentie.
 
 ## References
 

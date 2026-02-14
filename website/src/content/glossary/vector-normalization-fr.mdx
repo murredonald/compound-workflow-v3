@@ -10,9 +10,44 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-La vector normalization applique une norme – par exemple la normalisation L2 – afin que tous les [embeddings](/fr/glossary/embeddings/) aient la même longueur et que les comparaisons par [similarité cosinus](/fr/glossary/cosine-similarity/) ou produit scalaire soient plus cohérentes.
+La normalisation de vecteurs (normalisation L2) est le processus de mise à l'échelle d'un vecteur pour que sa longueur (norme L2) soit exactement égale à un, sans modifier sa direction. Cela se fait en divisant chaque dimension du vecteur par sa magnitude totale. Les vecteurs normalisés se situent à la surface d'une hypersphère unitaire, et les relations angulaires entre eux sont préservées tandis que les différences de magnitude sont supprimées. Dans le contexte de la recherche par [embeddings](/fr/glossary/embeddings/), la normalisation garantit que les comparaisons de similarité reposent uniquement sur l'alignement directionnel (similarité de sens) plutôt que d'être influencées par des différences arbitraires de magnitude.
+
+## Pourquoi c'est important
+
+- **Équivalence des métriques** — lorsque les vecteurs sont normalisés, la [similarité cosinus](/fr/glossary/cosine-similarity/), le produit scalaire et la distance euclidienne au carré produisent des classements équivalents ; cela simplifie l'implémentation et permet d'utiliser la métrique la plus rapide disponible
+- **Comparaison équitable** — sans normalisation, les documents avec des embeddings plus longs ou plus denses en information pourraient avoir des vecteurs de plus grande magnitude et recevoir des scores de similarité artificiellement élevés ; la normalisation met tout le monde sur un pied d'égalité
+- **Compatibilité des index** — de nombreuses implémentations d'index vectoriels (HNSW, IVF) sont optimisées pour les vecteurs normalisés ; utiliser des vecteurs normalisés assure une performance optimale de l'index
+- **Stabilité numérique** — les vecteurs normalisés ont des valeurs bornées (chaque dimension entre -1 et 1), ce qui prévient les problèmes de dépassement numérique dans les calculs de distance
+
+## Comment ça fonctionne
+
+Pour un vecteur **v** de dimensions (v₁, v₂, ..., vd), la norme L2 est :
+
+**‖v‖ = √(v₁² + v₂² + ... + vd²)**
+
+Le vecteur normalisé **v̂** est :
+
+**v̂ = v / ‖v‖**
+
+Après normalisation, ‖v̂‖ = 1 par construction. La direction est préservée — les vecteurs normalisés pointent dans la même direction que les originaux — mais la magnitude devient uniforme pour tous les vecteurs.
+
+**Quand normaliser** : la plupart des modèles d'embedding de texte (E5, BGE, Cohere Embed) produisent des vecteurs normalisés ou quasi normalisés par conception. Certains modèles (comme les anciens embeddings OpenAI) produisent des vecteurs non normalisés où la magnitude peut contenir de l'information. Consultez la documentation du modèle pour déterminer si la normalisation est appropriée.
+
+**Quand ne pas normaliser** : si le modèle d'embedding encode intentionnellement de l'information dans la magnitude du vecteur (par exemple, en utilisant la magnitude pour représenter la confiance ou l'importance d'un document), la normalisation supprimerait cette information. C'est peu courant mais existe dans certains modèles spécialisés.
+
+**Implémentation** : la normalisation est une opération simple et rapide — un passage à travers le vecteur pour calculer la norme L2, suivi d'une division élément par élément. La plupart des bibliothèques d'embedding et des bases de données vectorielles gèrent automatiquement la normalisation lorsqu'elles sont configurées pour utiliser la similarité cosinus.
+
+## Questions fréquentes
+
+**Q : Faut-il normaliser avant ou après le stockage dans la base de données vectorielle ?**
+
+R : Normalisez avant le stockage. Cela garantit que tous les vecteurs stockés ont une longueur unitaire, permettant à la base de données d'utiliser le produit scalaire, plus rapide (qui est équivalent à la similarité cosinus sur des vecteurs normalisés), au lieu de calculer explicitement la similarité cosinus.
+
+**Q : La normalisation est-elle réversible ?**
+
+R : Uniquement si la magnitude originale est stockée séparément. Une fois qu'un vecteur est normalisé, sa magnitude d'origine est perdue. Si la magnitude contient une information significative, stockez-la comme champ de métadonnées séparé avant de normaliser.
 
 ## References
 

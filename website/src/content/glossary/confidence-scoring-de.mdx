@@ -12,4 +12,37 @@ draft: false
 
 ## Definition
 
-Confidence Scoring vereint Faktoren wie Quellenqualität, Belegabdeckung und Modellunsicherheit in einem numerischen Wert, der ausdrückt, wie verlässlich ein Vorschlag oder eine Antwort ist.
+Confidence Scoring ist die Praxis, jeder Vorhersage, Antwort oder jedem Retrieval-Ergebnis einen numerischen Indikator zuzuweisen, der angibt, wie wahrscheinlich es korrekt ist. Ein gut kalibrierter Confidence Score ermöglicht es nachgelagerten Systemen und menschlichen Nutzern, Schwellenwerte zu setzen — Ergebnisse mit hoher Konfidenz automatisch zu akzeptieren und solche mit niedriger Konfidenz zur manuellen Überprüfung zu markieren. In der Legal- und Steuer-KI, wo fehlerhafte Antworten erhebliche Konsequenzen haben können, ist Confidence Scoring ein kritischer Sicherheitsmechanismus.
+
+## Warum es wichtig ist
+
+- **Risikomanagement** — Antworten mit niedriger Konfidenz können an menschliche Experten eskaliert werden, anstatt direkt ausgegeben zu werden, was das Risiko verringert, dass Fehler die Endnutzer erreichen
+- **Transparenz** — die Anzeige von Konfidenzstufen neben den Antworten hilft Fachleuten einzuschätzen, wie sehr sie sich auf die KI-Ausgabe verlassen können
+- **Regulatorische Konformität** — die EU-KI-Verordnung erwartet von Hochrisikosystemen, dass sie Unsicherheit kommunizieren; Confidence Scores sind ein natürlicher Mechanismus dafür
+- **Effizienz** — durch die Automatisierung von Antworten mit hoher Konfidenz und die Weiterleitung nur unsicherer Fälle an Menschen optimiert Confidence Scoring die Balance zwischen Geschwindigkeit und Genauigkeit
+
+## Wie es funktioniert
+
+Confidence Scores können aus mehreren Signalen in der Retrieval- und Generierungspipeline abgeleitet werden:
+
+- **Retrieval-Scores** — die Ähnlichkeitsdistanz zwischen Abfrage- und Dokument-Embeddings liefert ein rohes Relevanzsignal; Dokumente, die weit von der Abfrage entfernt sind, erhalten niedrige Scores
+- **Reranker-Scores** — Cross-Encoder-Reranker erzeugen kalibrierte Relevanzwerte für Abfrage-Dokument-Paare
+- **Generierungswahrscheinlichkeiten** — Token-Level-Log-Wahrscheinlichkeiten des Sprachmodells zeigen an, wie sicher es sich bei jedem generierten Wort war
+- **Quellenübereinstimmung** — wenn mehrere abgerufene Quellen bei einer Antwort übereinstimmen, ist die Konfidenz höher; widersprüchliche Quellen senken sie
+- **Konsistenzprüfungen** — dieselbe Frage auf verschiedene Weisen zu stellen und die Antworten zu vergleichen (Selbstkonsistenz) liefert ein zusätzliches Konfidenzsignal
+
+Diese Signale können durch gelernte Gewichtung oder regelbasierte Aggregation zu einem einzigen zusammengesetzten Score kombiniert werden. Die Kalibrierung stellt sicher, dass ein Score von 0,9 tatsächlich einer Korrektheit von etwa 90 % der Fälle entspricht.
+
+## Häufige Fragen
+
+**F: Was macht einen Confidence Score „gut kalibriert"?**
+
+A: Ein Score ist gut kalibriert, wenn seine vorhergesagte Wahrscheinlichkeit mit der beobachteten Genauigkeit übereinstimmt. Wenn das System einer Reihe von Antworten 80 % Konfidenz zuweist, sollten etwa 80 % dieser Antworten tatsächlich korrekt sein. Die Kalibrierung wird mittels Reliability-Diagrammen und Metriken wie dem Expected Calibration Error (ECE) gemessen.
+
+**F: Kann Confidence Scoring Halluzinationen eliminieren?**
+
+A: Nicht vollständig, aber es kann sie erkennen. Halluzinierte Inhalte haben oft niedrigere Retrieval-Scores (keine starke Quellenübereinstimmung) und können bei umformulierten Abfragen Inkonsistenzen aufweisen. Confidence Scoring hilft, diese Signale sichtbar zu machen, damit Nutzer oder automatisierte Systeme potenzielle Fabrikationen erkennen können.
+
+**F: Wie unterscheidet sich Confidence Scoring von Relevanz-Ranking?**
+
+A: Relevanz-Ranking ordnet Ergebnisse von am relevantesten bis am wenigsten relevant. Confidence Scoring weist einen absoluten Score zu, der die Wahrscheinlichkeit der Korrektheit widerspiegelt. Ein System könnte Ergebnis A über Ergebnis B ranken, aber trotzdem beide als niedrig-konfident kennzeichnen, wenn keines genau zur Abfrage passt.

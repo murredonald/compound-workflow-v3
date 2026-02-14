@@ -10,9 +10,40 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Dans une architecture [RAG](/fr/glossary/rag/), la couche de récupération recherche dans un index et renvoie les documents ou passages les plus pertinents pour une [requête](/fr/glossary/prompt/) utilisateur ou une sous-requête générée par le modèle.
+La couche de récupération est le composant au sein d'une architecture de [génération augmentée par la récupération (RAG)](/fr/glossary/rag/) responsable de la recherche et du classement des documents ou passages pertinents d'une base de connaissances en réponse à une requête. Elle se situe entre la question de l'utilisateur et l'étape de génération du modèle de langage, déterminant quel contexte le modèle verra. La qualité de la couche de récupération fixe un plafond pour la qualité des réponses — le modèle de langage ne peut pas raisonner sur des documents qu'il n'a jamais reçus.
+
+## Pourquoi c'est important
+
+- **Plafond de précision des réponses** — si la couche de récupération manque une loi pertinente ou renvoie une disposition obsolète, la réponse générée sera erronée, quelle que soit la capacité du modèle de langage
+- **Budget de latence** — la couche de récupération doit renvoyer des résultats en quelques dizaines de millisecondes pour maintenir des temps de réponse globaux acceptables ; son architecture affecte directement l'expérience utilisateur
+- **Adaptabilité au domaine** — une couche de récupération bien conçue peut être ajustée pour des exigences spécifiques au juridique (filtrage temporel, classement par autorité, périmètre juridictionnel) sans modifier le modèle de génération
+- **Modularité** — séparer la récupération de la génération permet d'améliorer, tester et mettre à l'échelle chaque composant indépendamment
+
+## Comment ça fonctionne
+
+La couche de récupération combine généralement plusieurs stratégies de récupération dans un pipeline :
+
+La **récupération sparse** utilise des algorithmes traditionnels de correspondance par mots-clés comme BM25 pour trouver des documents contenant les termes exacts de la requête. C'est rapide et efficace pour la terminologie juridique précise — lorsqu'un utilisateur recherche « article 215 WIB92 », la récupération sparse trouve les correspondances exactes efficacement.
+
+La **récupération dense** convertit à la fois la requête et tous les documents en embeddings vectoriels, puis trouve les vecteurs les plus proches par similarité. Cela capture le sens sémantique, permettant à une requête sur les « déductions fiscales des entreprises » de correspondre à des documents utilisant une terminologie différente comme « aftrekbare beroepskosten ».
+
+La plupart des systèmes en production combinent les deux approches dans une **récupération hybride**, fusionnant les résultats sparse et denses pour obtenir la précision de la correspondance par mots-clés et le rappel de la recherche sémantique.
+
+Après la génération initiale de candidats, la couche de récupération applique des **filtres de métadonnées** (juridiction, plage de dates, type de document, niveau d'autorité) pour éliminer les résultats non pertinents. Un **reranker** — généralement un modèle cross-encoder — réévalue ensuite les candidats restants avec une analyse plus approfondie, produisant la liste classée finale transmise à la couche de génération.
+
+La couche de récupération gère également le prétraitement des requêtes : développer les abréviations, ajouter des synonymes juridiques, décomposer les questions complexes en sous-requêtes et router les requêtes vers l'index approprié en fonction de l'intention détectée.
+
+## Questions fréquentes
+
+**Q : Combien de documents la couche de récupération doit-elle renvoyer ?**
+
+R : Généralement 5 à 20 passages, selon la fenêtre de contexte du modèle de langage et la complexité de la question. Trop peu risque de manquer des sources pertinentes ; trop dilue le contexte avec du matériel marginalement pertinent et augmente le coût. Le rôle du reranker est de s'assurer que les top-k résultats sont les plus pertinents.
+
+**Q : Quelle est la différence entre la couche de récupération et le pipeline de récupération ?**
+
+R : Les termes sont souvent utilisés de manière interchangeable. Strictement, la couche de récupération désigne le composant architectural au sein d'un système RAG, tandis que le pipeline de récupération met l'accent sur les étapes séquentielles (traitement de la requête, récupération des candidats, filtrage, reclassement) qui composent ce composant.
 
 ## References
 

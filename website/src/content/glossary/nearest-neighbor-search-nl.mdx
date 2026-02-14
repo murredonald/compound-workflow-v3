@@ -10,9 +10,42 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Nearest-neighbor search zoekt in een index naar de k vectoren die het dichtst bij een query‑embedding liggen volgens een gekozen [afstandsmaat](/nl/glossary/distance-metric/), en vormt zo de basis van [vector search](/nl/glossary/similarity-search/).
+Nearest-neighbor search (k-NN search) is de taak om de k items in een dataset te vinden waarvan de vectorrepresentaties het dichtst bij een gegeven queryvector liggen onder een gekozen [afstandsmaat](/nl/glossary/distance-metric/). Het is de rekenkundige motor achter [semantisch zoeken](/nl/glossary/similarity-search/): wanneer een gebruiker een vraag stelt, codeert het systeem die als een vector en haalt de k dichtstbijzijnde documentvectoren op uit de index. De uitdaging is om dit efficiënt te doen — exacte nearest-neighbor search wordt onpraktisch traag op grote datasets, waardoor benaderende algoritmen productiesystemen domineren.
+
+## Waarom het belangrijk is
+
+- **Kern van semantisch zoeken** — elke semantische zoekopdracht resulteert uiteindelijk in een nearest-neighbor lookup in vectorruimte; de snelheid en nauwkeurigheid van het Algoritme bepalen direct de systeemprestaties
+- **Schaalbeperkingen** — juridische kennisbanken bevatten miljoenen documentfragmenten; naïeve vergelijking met elke vector zou seconden per query duren, veel te traag voor interactief gebruik
+- **Recall-snelheid afweging** — de keuze van het nearest-neighbor algoritme bepaalt of het systeem alle relevante documenten vindt (recall) of snel reageert (latentie), een cruciale ontwerpbeslissing voor juridische AI
+- **Hardwarebenutting** — efficiënte nearest-neighbor algoritmen benutten SIMD-instructies, GPU-parallellisme en geheugenhiërarchie om de doorvoer op beschikbare hardware te maximaliseren
+
+## Hoe het werkt
+
+**Exacte nearest-neighbor search** vergelijkt de queryvector met elke vector in de dataset en berekent voor elk een afstandsscore. Dit garandeert het vinden van de ware dichtstbijzijnde buren, maar schaalt lineair met de datasetgrootte — zoeken in 10 miljoen vectoren duurt 10 keer langer dan zoeken in 1 miljoen. Voor kleine datasets (minder dan 100.000 vectoren) is dit vaak snel genoeg.
+
+**Approximate nearest-neighbor (ANN) search** ruilt een kleine hoeveelheid nauwkeurigheid in voor dramatisch sneller zoeken. De meest voorkomende benaderingen zijn:
+
+- **HNSW (Hierarchical Navigable Small World graphs)** — bouwt een gelaagde grafiekstructuur over de vectoren. Het zoeken begint in de bovenste laag en navigeert door progressief dichtere lagen, waarbij de dichtstbijzijnde buren in logaritmische tijd worden gevonden. HNSW biedt uitstekende recall (doorgaans 95-99%) met zoektijden onder de milliseconde.
+
+- **IVF (Inverted File Index)** — verdeelt de vectorruimte in clusters met behulp van k-means. Bij het zoeken worden alleen de dichtstbijzijnde clusters gescand in plaats van de hele dataset. Dit is bijzonder effectief voor zeer grote datasets.
+
+- **Product Quantisation (PQ)** — comprimeert vectoren door ze op te splitsen in subvectoren en elk onafhankelijk te quantiseren. Dit vermindert het geheugengebruik en versnelt de afstandsberekening, ten koste van enige precisie.
+
+Productie-vectordatabases combineren doorgaans deze technieken — bijvoorbeeld IVF voor grove partitionering gevolgd door PQ voor gecomprimeerd scannen binnen elke partitie, of HNSW met PQ voor geheugenefficiënt zoeken in grafieken.
+
+De belangrijkste parameters om af te stemmen zijn het aantal terug te geven buren (k), het aantal te verkennen kandidaat-clusters of grafiekknooppunten (die de recall-snelheid afweging bepalen) en de afstandsmaat (cosinusgelijkenis, inproduct of Euclidische afstand).
+
+## Veelgestelde vragen
+
+**V: Hoeveel recall gaat er verloren bij benadering?**
+
+A: Goed afgestemde ANN-indexen behalen 95-99% recall — wat betekent dat ze 95-99 van de werkelijke 100 dichtstbijzijnde buren vinden. Voor de meeste retrieval-toepassingen is dit in de praktijk niet te onderscheiden van exact zoeken, omdat downstream [reranking](/nl/glossary/reranking/) compenseert voor de incidenteel gemiste kandidaat.
+
+**V: Welk ANN-algoritme is het beste?**
+
+A: HNSW is de populairste keuze vanwege de combinatie van hoge recall, snel zoeken en relatief eenvoudige afstemming. IVF+PQ heeft de voorkeur wanneer geheugen beperkt is. De beste keuze hangt af van datasetgrootte, dimensionaliteit, latentievereisten en beschikbare hardware.
 
 ## References
 

@@ -10,6 +10,48 @@ locale: "fr"
 draft: false
 ---
 
+## Définition
+
+Le test de régression pour les systèmes d'IA est la pratique consistant à exécuter un ensemble fixe de requêtes d'évaluation sur un système après tout changement — mise à jour du modèle, révision du prompt, extension de la base de connaissances, modification de configuration — afin de vérifier que le changement n'a pas dégradé involontairement le comportement existant. Contrairement aux tests de régression logiciels traditionnels, qui vérifient des résultats binaires réussite/échec, les tests de régression IA doivent détecter des dégradations subtiles de qualité : des classements de pertinence légèrement moins bons, de légères baisses d'exactitude des citations, ou des décalages dans la [calibration](/fr/glossary/calibration/) de la confiance qui, pris individuellement, semblent mineurs mais qui, cumulés, érodent la qualité du système.
+
+## Pourquoi c'est important
+
+- **Sécurité des changements** — chaque modification du système comporte des risques ; les tests de régression détectent les dégradations involontaires avant qu'elles n'atteignent les utilisateurs, permettant une itération confiante
+- **Base de qualité** — maintenir un ensemble d'évaluation fixe crée un point de référence stable par rapport auquel tous les changements sont mesurés, empêchant une érosion progressive de la qualité qui pourrait passer inaperçue sans mesure systématique
+- **Effets d'interaction** — un changement de prompt qui améliore les réponses dans un domaine peut dégrader de manière inattendue les réponses dans un autre ; les tests de régression sur l'ensemble complet d'évaluation capturent ces effets inter-domaines
+- **Preuves de conformité** — démontrer que les mises à jour du système maintiennent les niveaux de qualité fournit des preuves réglementaires pour la conformité à l'AI Act européen, qui exige un suivi continu tout au long du cycle de vie du système
+
+## Comment ça fonctionne
+
+Les tests de régression IA fonctionnent selon un processus structuré :
+
+**Établissement de la base de référence** — la performance actuelle du système est mesurée sur un jeu de données d'évaluation complet, produisant des scores de référence pour toutes les métriques suivies (exactitude, précision, rappel, fidélité, calibration). Ces références représentent le plancher de qualité qui doit être maintenu.
+
+**Application du changement** — une modification est apportée au système : une nouvelle version du modèle, un prompt mis à jour, des documents supplémentaires dans la base de connaissances, ou un changement de configuration.
+
+**Réévaluation** — le même jeu de données d'évaluation est exécuté sur le système modifié, produisant un nouveau jeu de scores métriques.
+
+**Comparaison** — les nouveaux scores sont comparés aux références, à la fois de manière agrégée (exactitude globale) et désagrégée (exactitude par sujet, par type de requête, par niveau de difficulté). Une dégradation statistiquement significative dans n'importe quelle catégorie déclenche une investigation.
+
+**Décision** — si aucune régression n'est détectée, le changement est approuvé pour la production. Si des régressions sont détectées, elles sont investiguées : la dégradation est-elle attendue et acceptable (un compromis pour des améliorations ailleurs) ? Est-ce un véritable bug ? Cela affecte-t-il des cas d'usage critiques ? L'équipe décide de déployer, corriger ou revenir en arrière.
+
+Les bonnes pratiques pour des tests de régression IA efficaces incluent :
+
+- **Des jeux d'évaluation stratifiés** couvrant toutes les dimensions importantes (sujets, juridictions, types de questions, niveaux de difficulté) pour capturer les régressions localisées
+- **Des tests de significativité statistique** pour distinguer les véritables régressions de la variance normale dans les sorties du modèle
+- **Une exécution automatisée** intégrée au pipeline de déploiement, bloquant les changements qui échouent aux seuils de régression
+- **Un suivi de version** liant chaque exécution de test à l'état spécifique du système, permettant une analyse des causes racines lorsque des régressions sont détectées
+
+## Questions fréquentes
+
+**Q : En quoi les tests de régression IA diffèrent-ils des tests de régression logiciels ?**
+
+R : Les tests de régression logiciels vérifient des résultats déterministes et binaires (la fonction retourne la bonne valeur ou non). Les tests de régression IA traitent de résultats probabilistes et gradués — un classement légèrement moins bon ou une réponse marginalement moins exacte. Cela nécessite une analyse statistique et des décisions basées sur des seuils plutôt que de simples vérifications réussite/échec.
+
+**Q : À quelle fréquence faut-il exécuter les tests de régression ?**
+
+R : Après chaque changement du système susceptible d'affecter la qualité des sorties. Pour les systèmes en développement actif, cela signifie quotidiennement ou à chaque déploiement. L'intégration automatisée dans le pipeline CI/CD garantit qu'aucun changement n'est déployé sans vérification de régression.
+
 ## References
 
 - Breck et al. (2017), "[The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction](https://research.google/pubs/pub46555/)", IEEE Big Data.

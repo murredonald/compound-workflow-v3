@@ -10,9 +10,38 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Les vector [embeddings](/fr/glossary/embeddings/) transforment des mots, phrases ou documents en vecteurs numériques afin que les systèmes puissent estimer la [similarité sémantique](/fr/glossary/semantic-similarity/) via des mesures de distance ou de similarité.
+Les vector embeddings sont des tableaux numériques (vecteurs) qui représentent la signification de texte, d'images ou d'autres données dans un espace à haute dimension. Chaque dimension capture un aspect de la sémantique de l'entrée, et les relations géométriques entre les vecteurs — leurs distances et angles — encodent la similarité. Deux textes de sens similaire produisent des vecteurs proches l'un de l'autre ; des textes sans rapport produisent des vecteurs éloignés.
+
+## Pourquoi c'est important
+
+- **Fondement de la recherche sémantique** — les vector [embeddings](/fr/glossary/embeddings/) permettent une recherche basée sur le sens plutôt que sur la correspondance de mots-clés, ce qui est essentiel lorsque la terminologie juridique varie selon les langues et les contextes
+- **Capacité multilingue** — les modèles d'embeddings cross-lingues projettent le néerlandais, le français et l'allemand dans le même espace vectoriel, permettant à une requête dans une langue de retrouver des documents dans une autre
+- **Similarité à grande échelle** — une fois les embeddings créés, des millions de documents peuvent être comparés efficacement à l'aide d'algorithmes de plus proches voisins approximatifs, renvoyant des résultats en millisecondes
+- **Flexibilité en aval** — les mêmes embeddings peuvent alimenter la recherche, le clustering, la déduplication, la classification et la détection d'anomalies
+
+## Comment ça fonctionne
+
+Un modèle d'embedding (généralement un réseau de neurones basé sur un [transformer](/fr/glossary/transformer-architecture/)) traite un texte d'entrée et produit un vecteur de longueur fixe, généralement de 384 à 1536 dimensions. Pendant l'entraînement, le modèle apprend à projeter les entrées sémantiquement similaires vers des points proches et les entrées dissemblables vers des points éloignés.
+
+Au moment de la recherche, la requête de l'utilisateur et tous les documents du corpus sont représentés sous forme de vecteurs. Le système trouve les documents dont les vecteurs sont les plus proches du vecteur de requête en utilisant une métrique de distance — généralement la [similarité cosinus](/fr/glossary/semantic-similarity/) ou le produit scalaire. Ce calcul est rendu efficace à grande échelle grâce à des index vectoriels spécialisés (HNSW, IVF) stockés dans des [bases de données vectorielles](/fr/glossary/vector-database/).
+
+La qualité des vector embeddings dépend fortement du modèle utilisé. Les modèles à usage général fonctionnent largement mais peuvent être moins performants sur des domaines spécialisés. L'ajustement fin sur des paires de textes spécifiques au domaine — par exemple, des requêtes fiscales associées à la législation pertinente — peut améliorer considérablement la pertinence pour les applications juridiques et fiscales.
+
+## Questions fréquentes
+
+**Q : En quoi les vector embeddings diffèrent-ils des vecteurs TF-IDF traditionnels ?**
+
+R : Les vecteurs TF-IDF sont creux (principalement des zéros) et basés sur des statistiques de fréquence de mots — ils ne peuvent pas capturer les synonymes ou le sens. Les vector embeddings sont denses (chaque dimension a une valeur) et appris à partir de grands ensembles de données textuelles, capturant les relations sémantiques. « Impôt des sociétés » et « vennootschapsbelasting » auraient des vecteurs TF-IDF très différents mais des embeddings denses similaires.
+
+**Q : Combien de dimensions les vector embeddings ont-ils généralement ?**
+
+R : Les tailles courantes sont 384 (modèles plus petits et plus rapides), 768 (classe BERT) et 1536 (modèles plus grands comme ada-002 d'OpenAI). Plus de dimensions permettent de capturer des distinctions plus fines mais nécessitent plus de stockage et de calcul. Pour la plupart des tâches de recherche juridique, des embeddings de 768 dimensions offrent un bon équilibre.
+
+**Q : Les vector embeddings doivent-ils être recalculés lorsque le modèle change ?**
+
+R : Oui. Chaque modèle d'embedding définit son propre espace vectoriel. Si vous changez de modèle ou passez à une version plus récente, tous les documents doivent être ré-intégrés. C'est pourquoi le choix du modèle est une décision architecturale importante — ré-intégrer un grand corpus est coûteux en calcul.
 
 ## References
 

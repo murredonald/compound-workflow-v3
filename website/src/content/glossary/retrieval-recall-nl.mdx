@@ -10,9 +10,44 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Retrieval recall meet hoeveel van de relevante items in een [corpus](/nl/glossary/corpus/) door het systeem worden opgehaald voor een bepaalde query of testset, vaak berekend met een afkapwaarde zoals Recall@k.
+Retrieval recall is het Deel van alle werkelijk relevante Documenten in een Collectie dat het Systeem met succes ophaalt voor een gegeven Zoekopdracht. Als er 10 relevante Documenten in het [Corpus](/nl/glossary/corpus/) zitten en het Systeem er 7 ophaalt, is de Recall 70%. Recall wordt doorgaans gemeten bij een Afkappunt — Recall@10 (van de 10 relevante Documenten, hoeveel verschijnen in de top 10 Resultaten?) of Recall@100 (voor initiële Kandidaatgeneratie). Bij juridische AI is een hoge Recall cruciaal omdat een ontbrekende relevante Bepaling — een Uitzondering, een Wijziging of een tegenstrijdige Uitspraak — het correcte Antwoord fundamenteel kan veranderen.
+
+## Waarom het ertoe doet
+
+- **Volledigheid van juridische analyse** — het Belastingrecht zit vol Uitzonderingen, bijzondere Regelingen en tegenstrijdige Bepalingen tussen Rechtsgebieden; het missen van zelfs één relevante Bron kan tot een onvolledig of onjuist Antwoord leiden
+- **Plafond voor RAG-antwoordkwaliteit** — het Taalmodel kan alleen redeneren over wat de Retrievallaag aanlevert; als een relevant Document niet wordt opgehaald, kan het niet in het gegenereerde Antwoord worden opgenomen
+- **Risicobeheer** — bij professioneel Belastingadvies is het niet in overweging nemen van een relevante Bepaling een Aansprakelijkheidsrisico; hoge Recall verkleint de Kans op het over het hoofd zien van kritieke Bronnen
+- **Complementair aan Precisie** — Precisie meet de Kwaliteit van Resultaten (hoeveel teruggegeven Documenten zijn relevant); Recall meet de Dekking (hoeveel relevante Documenten zijn gevonden); beide zijn nodig voor effectieve Retrieval
+
+## Hoe het werkt
+
+Recall wordt berekend door het Aantal opgehaalde relevante Documenten te delen door het totale Aantal relevante Documenten in het Corpus:
+
+**Recall@k = (relevante Documenten in top k) / (totaal aantal relevante Documenten)**
+
+Het berekenen van Recall vereist kennis van de volledige Set relevante Documenten voor elke Zoekopdracht, die wordt vastgesteld door menselijke Annotatie van een Testset. Annotators beoordelen het Corpus en identificeren alle Documenten die relevant zijn voor elke Testzoekopdracht, waarmee de Grondwaarheid wordt gecreëerd waaraan het Systeem wordt gemeten.
+
+**Recall-precisie-afweging** — het verhogen van Recall (meer relevante Documenten vinden) vereist doorgaans het retourneren van meer Resultaten in totaal, waaronder mogelijk meer irrelevante (waardoor Precisie daalt). De Retrievalpijplijn beheert deze Afweging via zijn gefaseerde Architectuur: vroege Stadia (BM25, dense Retrieval) werpen een breed Net uit voor hoge Recall, terwijl latere Stadia (Reranking, Filtering) verfijnen voor Precisie.
+
+**Recall in verschillende pijplijnstadia** — Recall wordt vaak in elk Stadium gemeten om Knelpunten te identificeren. Als initiële Kandidaatretrieval 95% Recall@100 behaalt maar Reranking zakt naar 70% Recall@10, is de Reranker het Knelpunt. Als initiële Retrieval slechts 60% Recall@100 behaalt, moet de fundamentele Retrievalstrategie worden verbeterd.
+
+**Recall verbeteren** omvat meerdere Strategieën:
+- Hybride Zoeken (combinatie van lexicale en semantische Retrieval) dekt meer Matchingstrategieën
+- Query-expansie (toevoegen van Synoniemen en verwante Termen) verbreedt de Zoekopdracht
+- Crosslinguale Retrieval (zoeken over Taalgrenzen heen) vindt Bronnen in alle drie de Belgische Talen
+- Het verkleinen van Chunkgrootte kan Recall verbeteren door fijnmazigere Matching mogelijk te maken
+
+## Veelgestelde vragen
+
+**V: Wat is een goede Recallscore voor juridisch Zoeken?**
+
+A: Recall@100 boven 90% wordt over het algemeen verwacht voor initiële Kandidaatretrieval. Recall@10 (na Reranking) boven 80% wordt als sterk beschouwd. De aanvaardbare Drempel hangt af van het Risicoprofiel — Toepassingen met hoger Risico vereisen hogere Recall.
+
+**V: Waarom is Recall moeilijker te meten dan Precisie?**
+
+A: Het meten van Recall vereist kennis van alle relevante Documenten in het Corpus voor elke Zoekopdracht, wat duur en arbeidsintensief is om te annoteren. Precisie vereist alleen het beoordelen van de geretourneerde Resultaten. Daarom steunt Recallevaluatie op zorgvuldig samengestelde Testsets in plaats van ad-hoctesting.
 
 ## References
 

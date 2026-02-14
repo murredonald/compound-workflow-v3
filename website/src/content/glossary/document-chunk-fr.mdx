@@ -10,6 +10,35 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Un document chunk contient généralement une unité logique de contenu – paragraphe ou section – afin que la récupération et la génération opèrent à ce niveau plutôt qu’au niveau du document entier.
+Un document chunk est un segment d'un document plus large — généralement un paragraphe, une section ou un passage de longueur fixe — qui sert d'unité atomique pour l'indexation et la récupération. Plutôt que d'indexer une loi entière de 50 pages comme un seul élément, le système la découpe en chunks qui peuvent être individuellement intégrés dans un embedding, stockés et renvoyés comme contexte. La conception des chunks est l'une des décisions architecturales les plus déterminantes dans tout système de génération augmentée par la récupération, car elle détermine directement ce que le modèle de langage voit lorsqu'il génère une réponse.
+
+## Pourquoi c'est important
+
+- **Granularité de la récupération** — intégrer une loi entière dans un embedding produit un vecteur unique qui fait la moyenne de tous les sujets ; le chunking permet de récupérer précisément les articles ou sections individuels lorsqu'ils sont pertinents
+- **Efficacité de la fenêtre de contexte** — les modèles de langage ont des fenêtres de contexte limitées ; des chunks bien dimensionnés fournissent un contexte ciblé et pertinent sans gaspiller de tokens sur du texte environnant non pertinent
+- **Évaluation de la pertinence** — des chunks plus petits et thématiquement cohérents obtiennent des scores de pertinence plus précis parce que leurs embeddings représentent un concept unique plutôt qu'un mélange de plusieurs
+- **Précision des citations** — lorsqu'un chunk correspond à un article ou un paragraphe spécifique, le système peut citer la disposition exacte plutôt que de pointer vers un document entier
+
+## Comment ça fonctionne
+
+Le chunking s'effectue pendant la phase d'ingestion des documents. L'approche la plus simple est le **chunking à taille fixe** : diviser le texte en segments d'un nombre de tokens défini (par exemple 256 ou 512 tokens) avec un chevauchement entre les chunks consécutifs pour éviter de perdre du contexte aux frontières. C'est rapide et prévisible, mais cela ignore la structure du document.
+
+Le **chunking structurel** utilise l'organisation propre du document — titres, numéros d'articles, sauts de paragraphe — pour définir les limites des chunks. Dans la législation, cela signifie souvent un chunk par article ou par paragraphe numéroté. Cela préserve la cohérence sémantique et produit des chunks qui correspondent à la façon dont les professionnels du droit pensent le texte.
+
+Le **chunking par fenêtre glissante** crée des segments chevauchants qui parcourent le document à intervalles réguliers. Le chevauchement garantit que les phrases réparties entre les limites des chunks apparaissent dans au moins un chunk en entier, réduisant la perte d'information.
+
+Le choix de la taille des chunks implique un compromis. Des chunks plus petits améliorent la précision de la récupération (chaque chunk est thématiquement ciblé) mais peuvent perdre le contexte qui s'étend sur plusieurs paragraphes. Des chunks plus grands préservent le contexte mais diluent la qualité de l'embedding et consomment davantage de la fenêtre de contexte du modèle de langage. La plupart des systèmes de récupération juridique optent pour des chunks de 200 à 500 tokens, ajustés selon le type de document.
+
+Après le chunking, chaque segment est intégré dans un embedding et stocké avec des métadonnées le reliant à son document parent, sa position et son contexte structurel (numéro d'article, titre de section). Ces métadonnées permettent au système de reconstituer le contexte plus large si nécessaire.
+
+## Questions fréquentes
+
+**Q : Que se passe-t-il si un contexte important s'étend sur deux chunks ?**
+
+R : Le chevauchement entre les chunks est la principale atténuation — les chunks consécutifs partagent une partie du texte, de sorte que les informations traversant les frontières apparaissent dans au moins un chunk. Certains systèmes récupèrent également les chunks voisins lorsqu'une correspondance est trouvée, reconstituant le contexte local avant de le transmettre au modèle.
+
+**Q : La taille des chunks affecte-t-elle la qualité de l'embedding ?**
+
+R : Oui. Des chunks très courts (moins de 50 tokens) peuvent manquer de contexte suffisant pour que le modèle d'embedding saisisse le sens. Des chunks très longs (plus de 1 000 tokens) font la moyenne de trop de sujets, produisant des embeddings vagues. La taille optimale dépend du modèle d'embedding et de la nature du contenu.

@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le semantic clustering applique des algorithmes comme k‑means ou le clustering hiérarchique aux [embeddings](/fr/glossary/embeddings/) pour regrouper des documents ou concepts liés en segments significatifs.
+Le clustering sémantique est le processus de regroupement de documents, passages ou autres éléments textuels en clusters basés sur leur similarité sémantique dans l'espace d'embedding, de sorte que les éléments au sein de chaque cluster partagent un sujet ou concept cohérent. Contrairement à la catégorisation par mots-clés, le clustering sémantique capture le sens — regroupant des documents sur « l'impôt des sociétés » et « vennootschapsbelasting » même s'ils ne partagent aucun mot-clé. Cela permet la découverte automatique de sujets, l'organisation du contenu et l'analyse des lacunes dans de grandes collections de documents.
+
+## Pourquoi c'est important
+
+- **Organisation du corpus** — le clustering révèle la structure thématique naturelle d'une base de connaissances juridiques, aidant à identifier quels domaines du droit fiscal sont bien couverts et lesquels présentent des lacunes
+- **Déduplication** — les clusters de documents très similaires peuvent contenir des doublons ou quasi-doublons qui devraient être consolidés
+- **Navigation** — présenter les résultats de recherche ou les termes du glossaire en clusters sémantiques aide les utilisateurs à explorer des concepts connexes plutôt que de parcourir des listes alphabétiques plates
+- **Analyse de qualité** — l'examen des clusters révèle si le modèle d'embedding regroupe correctement les concepts liés ; des clusters mélangeant des sujets sans rapport indiquent des problèmes de qualité des embeddings
+
+## Comment ça fonctionne
+
+Le clustering sémantique opère sur les embeddings vectoriels des éléments à regrouper :
+
+**Embedding** — chaque document ou passage est converti en vecteur d'embedding à l'aide d'un modèle d'embedding. Ces vecteurs positionnent chaque élément dans un espace de haute dimension où la proximité reflète la similarité sémantique.
+
+**Algorithme de clustering** — un algorithme de clustering regroupe les vecteurs en clusters. Les algorithmes courants comprennent :
+
+- **K-means** — partitionne les vecteurs en exactement k clusters en minimisant la distance intra-cluster au centre du cluster. Nécessite de spécifier k à l'avance, ce qui peut être estimé par l'analyse de silhouette ou la méthode du coude.
+- **HDBSCAN** — un algorithme basé sur la densité qui trouve des clusters de formes et tailles variées sans nécessiter la spécification de k. Il identifie également les points de bruit (éléments n'appartenant à aucun cluster), ce qui est utile pour signaler les documents atypiques.
+- **Clustering agglomératif** — construit une hiérarchie de clusters en fusionnant itérativement les paires les plus similaires, produisant un dendrogramme qui peut être coupé à différents niveaux pour obtenir différentes granularités de clustering.
+
+**Interprétation** — chaque cluster est caractérisé en examinant ses membres et en identifiant le thème commun. Les méthodes automatisées comprennent l'extraction des termes les plus fréquents, la sélection du document le plus proche du centre du cluster comme représentatif, ou l'utilisation d'un modèle de langage pour générer une étiquette de cluster.
+
+**Réduction de dimensionnalité** — pour la visualisation, les embeddings de haute dimension sont projetés en 2D à l'aide de t-SNE ou UMAP. Le nuage de points résultant montre la structure des clusters et les relations inter-clusters, révélant comment les différents domaines du droit fiscal sont liés les uns aux autres dans la représentation des connaissances du système.
+
+## Questions fréquentes
+
+**Q : Combien de clusters faut-il utiliser ?**
+
+R : Il n'y a pas de réponse universelle — le bon nombre dépend du corpus et de la granularité souhaitée. Trop peu de clusters fusionnent des sujets distincts ; trop de clusters créent des groupes fragmentés avec peu de cohérence sémantique. Les algorithmes comme HDBSCAN déterminent le nombre automatiquement en fonction de la densité des données, tandis que k-means nécessite un choix explicite guidé par des métriques.
+
+**Q : Le clustering sémantique fonctionne-t-il à travers les langues ?**
+
+R : Oui, lors de l'utilisation de modèles d'embedding multilingues. Les documents en néerlandais, français et allemand portant sur le même sujet fiscal se retrouveront dans le même cluster car leurs embeddings sont proches dans l'espace vectoriel partagé. Ceci est particulièrement utile pour l'analyse de corpus juridiques multilingues belges.
 
 ## References
 

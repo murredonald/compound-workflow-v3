@@ -10,9 +10,44 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le metadata filtering exploite des champs explicites dans l’index pour inclure ou exclure des résultats, par exemple ne récupérer que des documents récents, en français ou accessibles au public.
+Le metadata filtering est le processus qui consiste à restreindre les résultats de récupération aux documents correspondant à des attributs structurés spécifiques — comme le type de document, la date de publication, la juridiction, le niveau d'autorité ou la langue — avant ou pendant la recherche par similarité. Plutôt que de se fier uniquement à la pertinence sémantique, le filtrage par métadonnées applique des contraintes strictes garantissant que les résultats répondent aux exigences contextuelles. En droit fiscal belge, cela signifie qu'une requête portant sur les droits d'enregistrement wallons en vigueur ne renvoie que la législation régionale wallonne actuellement applicable, et non des dispositions fédérales expirées ou des équivalents flamands.
+
+## Pourquoi c'est important
+
+- **Précision juridictionnelle** — les trois régions belges et le niveau fédéral disposent chacun de règles fiscales distinctes ; le filtrage par métadonnées empêche le système de renvoyer de la législation provenant de la mauvaise juridiction
+- **Exactitude temporelle** — le droit fiscal évolue fréquemment ; le filtrage par date garantit que le système renvoie la version d'une disposition qui était en vigueur au moment pertinent, et non un prédécesseur abrogé
+- **Hiérarchie des sources** — le filtrage par type de document (législation, circulaire, ruling, question parlementaire) permet au système de privilégier les sources contraignantes par rapport aux orientations interprétatives lorsque c'est approprié
+- **Réduction du bruit** — sans filtrage par métadonnées, la recherche sémantique peut renvoyer des documents thématiquement pertinents mais pratiquement inutiles, comme des projets de loi, de la législation étrangère ou des dispositions remplacées
+
+## Comment ça fonctionne
+
+Le filtrage par métadonnées opère au sein du pipeline de récupération, généralement à l'un de deux stades :
+
+**Le pré-filtrage** réduit l'espace de recherche avant l'exécution de la recherche par similarité. La base de données vectorielle reçoit à la fois le vecteur de requête et les contraintes de métadonnées, et ne cherche que dans le sous-ensemble de documents correspondant aux contraintes. C'est efficace car cela réduit le nombre de vecteurs à comparer, mais cela peut manquer des documents pertinents si les filtres sont trop restrictifs.
+
+**Le post-filtrage** exécute d'abord la recherche par similarité complète, puis supprime les résultats qui ne correspondent pas aux contraintes de métadonnées. Cela garantit qu'aucun document sémantiquement pertinent n'est manqué par des filtres trop étroits, mais cela peut être coûteux — de nombreux candidats récupérés peuvent être écartés après le scoring.
+
+La plupart des systèmes en production utilisent une combinaison des deux. Les types de filtres courants en IA juridique comprennent :
+
+- **Plage de dates** — uniquement les documents publiés entre des dates spécifiques, ou les documents en vigueur à une date donnée
+- **Juridiction** — fédéral, flamand, wallon, Bruxelles-Capitale ou Communauté germanophone
+- **Type de document** — loi, arrêté royal, arrêté ministériel, circulaire, ruling administratif, décision de justice, question parlementaire
+- **Niveau d'autorité** — dispositions constitutionnelles, législation primaire, législation secondaire, orientations administratives
+- **Langue** — version néerlandaise, française ou allemande du texte
+
+Le filtrage par métadonnées dépend de métadonnées exactes et complètes au moment de l'indexation. Si un document n'est pas étiqueté avec la bonne juridiction ou la bonne date de publication, aucun filtre ne pourra le trouver ou l'exclure correctement. Cela fait de l'enrichissement des métadonnées lors de l'ingestion des documents un prérequis essentiel.
+
+## Questions fréquentes
+
+**Q : les filtres de métadonnées peuvent-ils être trop stricts ?**
+
+R : oui. Un filtrage excessif peut exclure des résultats pertinents — par exemple, filtrer strictement par juridiction « flamande » exclurait la législation fédérale qui s'applique uniformément à toutes les régions. Des valeurs par défaut intelligentes et un relâchement des filtres (élargissement des filtres lorsque trop peu de résultats sont renvoyés) permettent d'éviter ce problème.
+
+**Q : comment le filtrage par métadonnées interagit-il avec la recherche sémantique ?**
+
+R : ils sont complémentaires. La recherche sémantique trouve des documents portant sur le bon sujet ; le filtrage par métadonnées garantit qu'ils proviennent de la bonne juridiction, de la bonne période et du bon niveau d'autorité. Aucun des deux n'est suffisant seul pour la recherche juridique — leur combinaison produit des résultats précis et contextuellement appropriés.
 
 ## References
 

@@ -10,9 +10,44 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Le recall de récupération mesure combien d’éléments pertinents dans un [corpus](/fr/glossary/corpus/) sont renvoyés par le système pour une requête ou un [jeu de test](/fr/glossary/evaluation-dataset/) donné, souvent calculé avec un seuil comme Recall@k.
+Le recall de récupération est la fraction de tous les documents réellement pertinents dans une collection que le système parvient à récupérer pour une requête donnée. S'il existe 10 documents pertinents dans le [corpus](/fr/glossary/corpus/) et que le système en récupère 7, le recall est de 70 %. Le recall est généralement mesuré à un point de coupure — Recall@10 (parmi les 10 documents pertinents, combien apparaissent dans les 10 premiers résultats ?) ou Recall@100 (pour la génération initiale de candidats). Dans le domaine de l'IA juridique, un recall élevé est essentiel car une disposition pertinente manquante — une exception, un amendement ou une décision contradictoire — peut fondamentalement changer la réponse correcte.
+
+## Pourquoi c'est important
+
+- **Exhaustivité de l'analyse juridique** — le droit fiscal regorge d'exceptions, de régimes spéciaux et de dispositions contradictoires entre juridictions ; manquer une seule source pertinente peut conduire à une réponse incomplète ou incorrecte
+- **Plafond de qualité des réponses RAG** — le modèle de langue ne peut raisonner que sur ce que la couche de récupération lui fournit ; si un document pertinent n'est pas récupéré, il ne peut pas être inclus dans la réponse générée
+- **Gestion des risques** — dans le conseil fiscal professionnel, ne pas prendre en compte une disposition pertinente constitue un risque de responsabilité ; un recall élevé réduit le risque de négliger des sources critiques
+- **Complémentaire à la précision** — la précision mesure la qualité des résultats (combien de documents renvoyés sont pertinents) ; le recall mesure la couverture (combien de documents pertinents ont été trouvés) ; les deux sont nécessaires pour une récupération efficace
+
+## Comment ça fonctionne
+
+Le recall se calcule en divisant le nombre de documents pertinents récupérés par le nombre total de documents pertinents dans le corpus :
+
+**Recall@k = (documents pertinents dans le top k) / (total des documents pertinents)**
+
+Le calcul du recall nécessite de connaître l'ensemble complet des documents pertinents pour chaque requête, ce qui est établi par annotation humaine d'un [jeu de test](/fr/glossary/evaluation-dataset/). Les annotateurs examinent le corpus et identifient tous les documents pertinents pour chaque requête de test, créant la vérité terrain par rapport à laquelle le système est mesuré.
+
+**Compromis recall-précision** — augmenter le recall (trouver plus de documents pertinents) nécessite généralement de renvoyer plus de résultats au total, ce qui peut inclure davantage de résultats non pertinents (réduisant la précision). Le pipeline de récupération gère ce compromis grâce à son architecture en étapes : les étapes initiales (BM25, récupération dense) ratissent large pour un recall élevé, tandis que les étapes ultérieures (reranking, filtrage) affinent pour la précision.
+
+**Recall aux différentes étapes du pipeline** — le recall est souvent mesuré à chaque étape pour identifier les goulots d'étranglement. Si la récupération initiale des candidats atteint 95 % de Recall@100 mais que le reranking tombe à 70 % de Recall@10, le reranker est le goulot d'étranglement. Si la récupération initiale n'atteint que 60 % de Recall@100, la stratégie de récupération fondamentale doit être améliorée.
+
+**Améliorer le recall** implique plusieurs stratégies :
+- La recherche hybride (combinaison de récupération lexicale et sémantique) couvre plus de stratégies de correspondance
+- L'expansion de requête (ajout de synonymes et de termes associés) élargit la recherche
+- La récupération translinguistique (recherche au-delà des frontières linguistiques) trouve des sources dans les trois langues belges
+- La réduction de la taille des chunks peut améliorer le recall en permettant une correspondance plus fine
+
+## Questions fréquentes
+
+**Q : Quel est un bon score de recall pour la recherche juridique ?**
+
+R : Un Recall@100 supérieur à 90 % est généralement attendu pour la récupération initiale de candidats. Un Recall@10 (après reranking) supérieur à 80 % est considéré comme solide. Le seuil acceptable dépend du profil de risque — les applications à enjeux élevés exigent un recall plus élevé.
+
+**Q : Pourquoi le recall est-il plus difficile à mesurer que la précision ?**
+
+R : Mesurer le recall nécessite de connaître tous les documents pertinents dans le corpus pour chaque requête, ce qui est coûteux et laborieux à annoter. La précision ne nécessite que de juger les résultats renvoyés. C'est pourquoi l'évaluation du recall repose sur des jeux de tests soigneusement élaborés plutôt que sur des tests ponctuels.
 
 ## References
 

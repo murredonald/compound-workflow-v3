@@ -12,7 +12,43 @@ draft: false
 
 ## Definition
 
-Model drift occurs when a model that once performed well starts failing because the real-world inputs or [labels](/en/glossary/ground-truth/) evolve away from the training distribution.
+Model drift is the gradual degradation of an AI model's performance over time as the real-world data it encounters diverges from the data it was trained on. A model trained on tax law as it existed in 2024 will become progressively less reliable as new legislation is enacted, rulings are issued, and administrative practices evolve. Model drift is not a sudden failure but a slow erosion — the model still produces answers, but they become increasingly inaccurate, outdated, or misaligned with current practice.
+
+## Why it matters
+
+- **Silent degradation** — model drift does not announce itself; the model continues to produce confident-sounding answers even as their accuracy declines, making it dangerous in high-stakes domains like tax law
+- **Legal currency** — Belgian tax law changes every year through annual programme laws, index adjustments, and new circulars; a model that does not account for these changes will cite outdated rates, thresholds, or provisions
+- **Embedding staleness** — if the embedding model or retrieval model was trained on a corpus snapshot, new terminology, concepts, or document styles may not be represented well in the embedding space
+- **Regulatory obligation** — the EU AI Act requires ongoing monitoring of AI system performance; detecting and addressing drift is part of this obligation
+
+## How it works
+
+Model drift manifests in several forms:
+
+**Data drift** (also called covariate shift) occurs when the distribution of incoming queries changes — users start asking about topics or in ways that were not represented in the training data. For example, a major tax reform might generate queries about new concepts that the model has never seen.
+
+**Concept drift** occurs when the correct answer to a given query changes over time. The question "What is the standard VAT rate?" has a stable answer today, but if the rate changes, the model's training data becomes wrong. In legal AI, concept drift is the most critical form because legislation changes by design.
+
+**Model staleness** occurs in RAG systems when the retrieval model or reranker was fine-tuned on a fixed dataset. As the knowledge base grows with new document types or styles, the model's ability to rank them correctly may degrade because it was optimised for the original corpus characteristics.
+
+**Detection** relies on continuous evaluation: regularly testing the system against known-correct answers and monitoring performance metrics over time. Statistical tests compare recent performance distributions against baseline distributions. Significant deviations trigger alerts.
+
+**Mitigation** strategies include:
+
+- **Knowledge base updates** — regularly ingesting new legislation, rulings, and circulars so that the retrieval system has current sources available
+- **Periodic retraining** — updating the embedding model or reranker on recent data to maintain alignment with current content
+- **Continuous evaluation** — automated testing that catches drift before it affects users
+- **Temporal awareness** — metadata filtering that ensures the system prioritises current provisions over historical ones
+
+## Common questions
+
+**Q: Is model drift the same as a bug?**
+
+A: No. Bugs are introduced by code changes and can be fixed by reverting those changes. Drift happens because the world changes while the model stays the same. It requires ongoing monitoring and periodic updates rather than a one-time fix.
+
+**Q: How fast does model drift happen in legal AI?**
+
+A: It depends on the legal domain. Tax law changes significantly every year through programme laws, rate adjustments, and new circulars. A model without knowledge base updates will show noticeable drift within months. Constitutional or procedural law changes more slowly.
 
 ## References
 

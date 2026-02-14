@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-[Nearest neighbor search](/en/glossary/similarity-search/) is the task of retrieving the k items whose [embeddings](/en/glossary/embeddings/) are closest to a query embedding, forming the core of many similarity and recommendation systems.
+Nearest neighbour search (k-NN search) is the task of finding the k items in a dataset whose vector representations are closest to a given query vector under a chosen distance metric. It is the computational engine behind semantic search: when a user asks a question, the system encodes it as a vector and retrieves the k nearest document vectors from the index. The challenge is doing this efficiently — exact nearest neighbour search becomes impractically slow on large datasets, which is why approximate algorithms dominate production systems.
+
+## Why it matters
+
+- **Core of semantic retrieval** — every semantic search query ultimately resolves to a nearest neighbour lookup in vector space; the algorithm's speed and accuracy directly determine system performance
+- **Scale constraints** — legal knowledge bases contain millions of document chunks; naive comparison against every vector would take seconds per query, far too slow for interactive use
+- **Recall-speed trade-off** — the choice of nearest neighbour algorithm determines whether the system finds all relevant documents (recall) or responds quickly (latency), a critical design decision for legal AI
+- **Hardware utilisation** — efficient nearest neighbour algorithms exploit SIMD instructions, GPU parallelism, and memory hierarchy to maximise throughput on available hardware
+
+## How it works
+
+**Exact nearest neighbour search** compares the query vector against every vector in the dataset, computing a distance score for each. This guarantees finding the true nearest neighbours but scales linearly with dataset size — searching 10 million vectors takes 10 times longer than searching 1 million. For small datasets (under 100,000 vectors) this is often fast enough.
+
+**Approximate nearest neighbour (ANN) search** trades a small amount of accuracy for dramatically faster search. The most common approaches are:
+
+- **HNSW (Hierarchical Navigable Small World graphs)** — builds a layered graph structure over the vectors. Search starts at the top layer and navigates through progressively denser layers, finding the nearest neighbours in logarithmic time. HNSW offers excellent recall (typically 95-99%) with sub-millisecond search times.
+
+- **IVF (Inverted File Index)** — partitions the vector space into clusters using k-means. At search time, only the nearest clusters are scanned rather than the entire dataset. This is particularly effective for very large datasets.
+
+- **Product Quantisation (PQ)** — compresses vectors by splitting them into subvectors and quantising each independently. This reduces memory usage and speeds up distance computation at the cost of some precision.
+
+Production vector databases typically combine these techniques — for example, IVF for coarse partitioning followed by PQ for compressed scanning within each partition, or HNSW with PQ for memory-efficient graph search.
+
+The key parameters to tune are the number of neighbours to return (k), the number of candidate clusters or graph nodes to explore (controlling the recall-speed trade-off), and the distance metric (cosine similarity, dot product, or Euclidean distance).
+
+## Common questions
+
+**Q: How much recall is lost with approximate search?**
+
+A: Well-tuned ANN indexes achieve 95-99% recall — meaning they find 95-99 of the true 100 nearest neighbours. For most retrieval applications, this is indistinguishable from exact search in practice, because downstream reranking compensates for the occasional missed candidate.
+
+**Q: Which ANN algorithm is best?**
+
+A: HNSW is the most popular choice for its combination of high recall, fast search, and relatively simple tuning. IVF+PQ is preferred when memory is constrained. The best choice depends on dataset size, dimensionality, latency requirements, and available hardware.
 
 ## References
 

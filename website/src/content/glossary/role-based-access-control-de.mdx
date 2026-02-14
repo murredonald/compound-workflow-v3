@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Rollenbasierte [Zugriffskontrolle](/de/glossary/access-control/) gewährt oder verweigert Zugriff basierend auf der Rolle eines Benutzers — wie Administrator, Prüfer oder Betrachter — und vereinfacht die Berechtigungsverwaltung in komplexen KI-Systemen.
+Rollenbasierte [Zugriffskontrolle](/de/glossary/access-control/) (RBAC) ist ein Sicherheitsmodell, bei dem Berechtigungen Rollen zugewiesen werden statt einzelnen Nutzern, und Nutzer dann einer oder mehreren Rollen zugeordnet werden. Anstatt den Zugriff für jede Person einzeln zu konfigurieren, definiert ein Administrator Rollen (z. B. Senior-Berater, Junior-Analyst, Administrator, Nur-Lesen-Prüfer) mit bestimmten Berechtigungen, und Nutzer erben die Berechtigungen ihrer zugewiesenen Rolle. RBAC vereinfacht die Berechtigungsverwaltung, reduziert Fehler und erleichtert die Prüfung, wer auf was Zugriff hat — alles entscheidend für KI-Systeme, die vertrauliche Steuerdaten verarbeiten.
+
+## Warum es wichtig ist
+
+- **Skalierbarkeit** — mit wachsender Nutzerzahl wird die Verwaltung individueller Berechtigungen unhandhabbar; RBAC skaliert, indem Nutzer bestehenden Rollen zugewiesen werden, anstatt jeden einzeln zu konfigurieren
+- **Prinzip der geringsten Berechtigung** — RBAC macht es einfach, das Least-Privilege-Prinzip umzusetzen: jede Rolle hat nur die für ihre Funktion notwendigen Berechtigungen, was die Angriffsfläche reduziert
+- **Compliance** — DSGVO und belgische Vorschriften zum Berufsgeheimnis verlangen, dass persönliche und vertrauliche Daten nur für autorisierte Personen zugänglich sind; RBAC liefert den Mechanismus und die Dokumentation, um dies nachzuweisen
+- **Einfache Prüfbarkeit** — Prüfer können Rollendefinitionen und Rollenzuweisungen überprüfen statt individueller Nutzerberechtigungen, was Compliance-Audits schneller und zuverlässiger macht
+
+## Wie es funktioniert
+
+RBAC basiert auf drei Kernkonzepten:
+
+**Rollen** definieren eine Reihe von Berechtigungen, die für eine bestimmte Arbeitsfunktion relevant sind. In einem juristischen KI-System könnten typische Rollen umfassen:
+- **Administrator** — verwaltet Nutzer, Rollen, Systemkonfiguration und Wissensbasis-Updates
+- **Senior-Berater** — voller Zugriff auf alle Anfragen, Quellen und Mandantendaten innerhalb seines Fachbereichs
+- **Junior-Analyst** — Zugriff auf Anfragen und Quellen, aber nicht auf mandantenvertrauliche Dateien oder administrative Funktionen
+- **Prüfer** — Nur-Lesen-Zugriff auf Systemprotokolle, Nutzungsstatistiken und Compliance-Berichte
+
+**Berechtigungen** definieren bestimmte Aktionen auf bestimmten Ressourcen: ein Dokument lesen, eine Anfrage ausführen, Audit-Protokolle einsehen, Systemkonfiguration ändern, auf Mandantendaten zugreifen. Berechtigungen sind granular genug, um sinnvolle Zugriffsgrenzen durchzusetzen, aber nicht so granular, dass die Rollenverwaltung genauso komplex wird wie die individuelle Berechtigungsverwaltung.
+
+**Zuweisung** ordnet Nutzer Rollen zu. Ein Nutzer kann mehrere Rollen innehaben (z. B. Senior-Berater und Administrator), wobei seine effektiven Berechtigungen die Vereinigung aller Berechtigungen der zugewiesenen Rollen sind. Rollenzuweisungen werden von Administratoren verwaltet und für Prüfzwecke protokolliert.
+
+In mandantenfähigen KI-Systemen (bei denen mehrere Kanzleien dieselbe Plattform nutzen) wird RBAC mit Mandantenisolierung kombiniert, um sicherzustellen, dass Rollen nur Zugriff innerhalb der Daten einer einzelnen Organisation gewähren. Ein Administrator bei Kanzlei A kann die Daten von Kanzlei B nicht einsehen, unabhängig von seiner Rolle.
+
+RBAC wird häufig um zusätzliche Einschränkungen erweitert: zeitlich begrenzte Rollen (temporärer Zugriff, der abläuft), kontextbezogene Rollen (Berechtigungen, die von Standort oder Gerät abhängen) und hierarchische Rollen (übergeordnete Rollen erben alle Berechtigungen untergeordneter Rollen).
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich RBAC von attributbasierter Zugriffskontrolle (ABAC)?**
+
+A: RBAC weist Berechtigungen basierend auf der Rolle eines Nutzers zu. ABAC weist Berechtigungen basierend auf einer Kombination von Attributen zu — Nutzerattribute (Abteilung, Dienstalter), Ressourcenattribute (Klassifizierung, Eigentümer) und Umgebungsattribute (Zeit, Standort). ABAC ist flexibler, aber komplexer zu verwalten. Viele Systeme verwenden RBAC als Hauptmodell mit ABAC für bestimmte feinkörnige Regeln.
+
+**F: Wie viele Rollen sollte ein System haben?**
+
+A: So wenige wie nötig, um sinnvolle Zugriffsunterschiede auszudrücken. Eine Überproliferation von Rollen (eine einzigartige Rolle für jeden Nutzer) verfehlt den Zweck von RBAC. Die meisten juristischen KI-Systeme benötigen 4–8 Rollen, um die relevanten Zugriffsstufen abzudecken.

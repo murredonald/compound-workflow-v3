@@ -10,6 +10,37 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Une [ontologie](/fr/glossary/knowledge-graph/) décrit les entités, leurs propriétés et leurs relations dans un domaine, afin que les humains et les systèmes puissent partager un modèle de connaissance explicite pour la recherche et le raisonnement.
+Une ontologie est une spécification formelle et explicite des concepts, entités, propriétés et relations au sein d'un domaine, structurée de manière à permettre aux humains comme aux machines de raisonner de façon cohérente sur les connaissances. Contrairement à un simple glossaire (qui définit des termes) ou à une [taxonomie](/fr/glossary/taxonomy-information-architecture/) (qui les classe hiérarchiquement), une ontologie définit les types de choses qui existent, leurs attributs et la manière dont elles interagissent. En IA juridique, une ontologie du droit fiscal pourrait définir qu'un « contribuable » est une entité qui possède une « résidence fiscale », est soumis à des « obligations fiscales » et peut réclamer des « déductions » — avec des définitions précises pour chaque concept et des règles formelles régissant leurs interactions.
+
+## Pourquoi c'est important
+
+- **Raisonnement cohérent** — une ontologie fournit un vocabulaire partagé et non ambigu qui empêche le système d'IA de confondre des concepts liés mais distincts (par ex., « exonération fiscale » vs. « déduction fiscale » vs. « réduction d'impôt »)
+- **Requêtes structurées** — les ontologies permettent des requêtes relationnelles qui vont au-delà de la recherche textuelle : « quelles déductions sont disponibles pour les contribuables non-résidents en Région wallonne ? » nécessite de comprendre les types d'entités et leurs relations
+- **Fondation du [knowledge graph](/fr/glossary/knowledge-graph/)** — les ontologies définissent le schéma des graphes de connaissances, en spécifiant quels types de nœuds et d'arêtes sont valides et quelles propriétés ils peuvent avoir
+- **Interopérabilité entre systèmes** — une ontologie partagée permet à différents systèmes (gestion documentaire, recherche, gestion de dossiers) d'échanger des données avec une sémantique cohérente
+
+## Comment ça fonctionne
+
+Une ontologie se compose de plusieurs éléments :
+
+**Les classes** définissent les types d'entités dans le domaine : Législation, Article, DécisionJudiciaire, Contribuable, TypeImpôt, Juridiction. Les classes peuvent avoir des sous-classes : DécisionJudiciaire peut avoir pour sous-classes DécisionCourConstitutionnelle, DécisionCassation, DécisionAppel.
+
+**Les propriétés** définissent les attributs des entités et les relations entre elles. Un Article possède des propriétés comme numéroArticle, dateEffet et codeLégislatif. Une DécisionJudiciaire possède des propriétés comme dateDecision, tribunal et articlesCités (lien vers les articles qu'elle interprète).
+
+**Les contraintes** définissent les règles sur les combinaisons valides : chaque Article doit appartenir à exactement une Législation ; un TauxImposition doit avoir à la fois une valeur et une dateEffet ; une DécisionJudiciaire doit référencer au moins une disposition légale.
+
+**Les instances** sont les entités réelles dans la base de connaissances : l'article 215 du CIR92, l'arrêt de la Cour constitutionnelle du 15 mars 2024, la Région flamande en tant que Juridiction.
+
+Les ontologies sont généralement exprimées dans des langages formels comme OWL (Web Ontology Language) ou RDF Schema, qui permettent le raisonnement automatisé — déduire de nouveaux faits à partir de faits existants en se basant sur les règles de l'ontologie. Par exemple, si l'ontologie définit que la législation fédérale s'applique à toutes les régions, et qu'une déduction spécifique est définie dans la législation fédérale, le système peut en déduire que la déduction s'applique dans les trois régions sans que cela soit explicitement mentionné.
+
+## Questions fréquentes
+
+**Q : en quoi une ontologie diffère-t-elle d'un schéma de base de données ?**
+
+R : un schéma de base de données définit les structures de tables et les types de colonnes pour le stockage. Une ontologie définit des entités conceptuelles, leurs propriétés et leurs relations pour le raisonnement. Un schéma de base de données dit « cette table a une colonne date » ; une ontologie dit « un Article a une dateEffet, qui est une propriété temporelle déterminant quand l'article est en vigueur ».
+
+**Q : construire une ontologie en vaut-il la peine ?**
+
+R : pour des domaines complexes comme le droit fiscal, avec de nombreux concepts interdépendants, oui. L'investissement initial dans la conception ontologique est rentabilisé par une recherche plus précise, un meilleur raisonnement et une organisation cohérente des connaissances. Pour des domaines plus simples, une taxonomie peut suffire.

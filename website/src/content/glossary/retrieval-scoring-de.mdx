@@ -12,7 +12,36 @@ draft: false
 
 ## Definition
 
-Retrieval-Scoring ist der Prozess der Zuweisung numerischer Werte, die schätzen, wie relevant jedes Kandidatendokument oder jeder [Chunk](/de/glossary/document-chunk/) für eine gegebene [Anfrage](/de/glossary/prompt/) ist, unter Verwendung von Modellen wie [BM25](/de/glossary/bm25/), Dense Encoders oder Rerankern.
+Retrieval-Scoring ist der Prozess der Berechnung eines numerischen Relevanzwerts für jedes Kandidatendokument oder jede Passage zu einer gegebenen Nutzeranfrage, um das System in die Lage zu versetzen, Ergebnisse vom relevantesten zum am wenigsten relevanten zu sortieren. Jedes Retrieval-System muss entscheiden, welche Dokumente zurückgegeben werden und in welcher Reihenfolge — Scoring ist der Mechanismus, der diese Entscheidung trifft. Verschiedene Scoring-Methoden erfassen unterschiedliche Aspekte der Relevanz: lexikalische Überlappung, semantische Ähnlichkeit oder feinkörnige Cross-Attention zwischen Query- und Dokument-Tokens.
+
+## Warum es wichtig ist
+
+- **Ergebnisreihenfolge** — Nutzer verlassen sich darauf, dass die obersten Ergebnisse am relevantesten sind; Scoring bestimmt diese Reihenfolge und beeinflusst direkt, ob die richtige Bestimmung an erster Stelle erscheint oder auf Seite drei vergraben ist
+- **RAG-Kontextauswahl** — bei Retrieval-Augmented Generation bestimmt das Scoring, welche Passagen in das Kontextfenster des Sprachmodells gelangen; schlechtes Scoring bedeutet, dass das Modell weniger relevanten Kontext erhält und schlechtere Antworten produziert
+- **Multi-Signal-Fusion** — moderne Systeme kombinieren mehrere Scoring-Signale ([BM25](/de/glossary/bm25/), Dense Similarity, Metadaten, Autoritätsstufe); die Scoring-Architektur bestimmt, wie diese Signale gewichtet und zusammengeführt werden
+- **Schwellwert-Entscheidungen** — Scoring ermöglicht Cut-off-Entscheidungen: nur Passagen über einem Mindestrelevanzwert werden zurückgegeben, wodurch qualitativ minderwertige Ergebnisse weder den Nutzer noch die Generierungsebene erreichen
+
+## Wie es funktioniert
+
+Retrieval-Scoring arbeitet auf verschiedenen Stufen der Pipeline, mit zunehmend aufwendigen, aber genaueren Methoden auf jeder Stufe:
+
+**Sparse Scoring** (BM25 und Varianten) berechnet die Relevanz basierend auf der Termüberlappung zwischen Anfrage und Dokument. BM25 berücksichtigt die Termhäufigkeit (wie oft der Anfrageterm im Dokument vorkommt), die inverse Dokumenthäufigkeit (wie selten der Term im gesamten Korpus ist) und die Dokumentlängen-Normalisierung. Es ist schnell, interpretierbar und effektiv für Anfragen mit spezifischer Terminologie.
+
+**Dense Scoring** berechnet die Kosinusähnlichkeit oder das Skalarprodukt zwischen dem Embedding-Vektor der Anfrage und dem Embedding-Vektor jedes Dokuments. Dies erfasst semantische Relevanz — eine Anfrage zu „vennootschapsbelasting" erzielt einen hohen Score gegenüber einem Dokument über „Körperschaftsteuer", selbst ohne gemeinsame Terme. Dense Scoring hängt von der Qualität des Embedding-Modells ab.
+
+**Cross-Encoder-Scoring** (Reranking) verarbeitet die Anfrage und jedes Kandidatendokument gemeinsam durch ein Transformer-Modell und ermöglicht so tiefe Token-Level-Interaktion. Dies erzeugt die genauesten Relevanzwerte, ist aber zu aufwendig, um auf Millionen von Dokumenten angewendet zu werden — daher wird es nur auf die Top-Kandidaten früherer Stufen angewendet. Cross-Encoder können Nuancen erfassen, die Bi-Encoder (Dense) Scoring übersieht, wie Negation, Bedingungssätze und komplexe Query-Dokument-Beziehungen.
+
+**Score-Fusion** kombiniert Scores aus mehreren Methoden. Reciprocal Rank Fusion (RRF) ist ein gängiger Ansatz: Er wandelt die Rangliste jeder Scoring-Methode in einen einheitlichen Score basierend auf der Rangposition um und summiert dann über die Methoden. Diese einfache Technik übertrifft oft komplexere gelernte Fusionsmethoden.
+
+## Häufige Fragen
+
+**F: Welche Scoring-Methode ist die beste?**
+
+A: Keine einzelne Methode ist für alle Anfragen die beste. BM25 eignet sich hervorragend für exakten Termabgleich (Artikelnummern, spezifische Verweise). Dense Scoring eignet sich hervorragend für semantischen Abgleich (konzeptuelle Anfragen). Cross-Encoder-Reranking liefert die höchste Genauigkeit, aber nur auf einer kleinen Kandidatenmenge. Die besten Systeme kombinieren alle drei in einer Pipeline.
+
+**F: Haben Relevanzwerte eine absolute Bedeutung?**
+
+A: Im Allgemeinen nein. Scores sind relativ — nützlich für das Ranking von Dokumenten untereinander für eine bestimmte Anfrage, aber nicht direkt vergleichbar über verschiedene Anfragen oder Scoring-Methoden hinweg. Ein BM25-Score von 15 bei einer Anfrage ist nicht vergleichbar mit einem Score von 15 bei einer anderen Anfrage.
 
 ## References
 

@@ -12,7 +12,42 @@ draft: false
 
 ## Definition
 
-Retrieval latency is the elapsed time between issuing a query and receiving ranked results from a retrieval or [search system](/en/glossary/information-retrieval-system/), often measured in milliseconds.
+Retrieval latency is the elapsed time between submitting a query to a retrieval system and receiving the ranked results, measured in milliseconds. It encompasses all processing stages: query parsing, embedding computation, index lookup, scoring, filtering, reranking, and result formatting. In a RAG system, retrieval latency is a major component of overall response time — if retrieval takes too long, the entire user experience suffers regardless of how good the generated answer is.
+
+## Why it matters
+
+- **User experience** — professionals expect near-instant search results; latency above 500ms feels sluggish, and above 2 seconds feels broken; retrieval latency must be managed within tight budgets
+- **End-to-end response time** — RAG systems add retrieval latency on top of generation latency (LLM inference); if retrieval takes 500ms and generation takes 2 seconds, the total is 2.5 seconds; every millisecond saved in retrieval improves the overall experience
+- **Scalability indicator** — rising latency under increasing load indicates infrastructure bottlenecks that will worsen as the user base grows
+- **Architecture decisions** — latency budgets constrain which retrieval components are feasible; expensive reranking or multiple retrieval passes are only possible if the latency budget accommodates them
+
+## How it works
+
+Retrieval latency is the sum of time spent in each pipeline stage:
+
+**Query encoding** (5-50ms) — converting the user's query text into an embedding vector using the embedding model. This is typically done on GPU and scales with model size.
+
+**Index search** (1-20ms) — querying the vector index and/or lexical index for candidate matches. ANN algorithms like HNSW typically complete in under 10ms even for millions of vectors. BM25 search is similarly fast with well-optimised inverted indexes.
+
+**Metadata filtering** (1-10ms) — applying structured constraints (date, jurisdiction, document type) to narrow the candidate set. Pre-filtering reduces search scope; post-filtering removes ineligible results.
+
+**Reranking** (50-200ms) — passing the top candidates through a cross-encoder for more accurate scoring. This is the most expensive stage because the cross-encoder processes each query-document pair independently. The number of candidates reranked directly controls this cost.
+
+**Post-processing** (1-5ms) — deduplication, grouping, and formatting of final results.
+
+Latency is typically reported in percentiles: P50 (median), P95 (95th percentile), and P99 (99th percentile). P50 reflects typical performance; P95 and P99 reveal worst-case behaviour. A system with 50ms P50 but 2-second P99 has a tail latency problem affecting 1 in 100 users.
+
+Optimization strategies include: reducing the number of candidates passed to the reranker, caching frequent queries, using smaller embedding models for query encoding, and hardware acceleration (GPU inference, optimised vector indexes).
+
+## Common questions
+
+**Q: What is an acceptable retrieval latency?**
+
+A: For interactive applications, total retrieval latency under 200ms is ideal. Under 500ms is acceptable. Above 1 second, users notice the delay. These targets must account for the entire retrieval pipeline, not just the index search component.
+
+**Q: Does corpus size significantly affect latency?**
+
+A: With ANN indexes, retrieval latency grows logarithmically with corpus size — doubling the corpus adds only a few milliseconds. The reranking stage is more sensitive to the number of candidates than to corpus size. Lexical indexes (BM25) also scale well with modern implementations.
 
 ## References
 

@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Version control in knowledge systems ensures that changes to documents and configurations are tracked, recoverable, and attributable, often with metadata about who changed what and when.
+Version control in knowledge systems is the practice of tracking, storing, and managing different versions of documents, configurations, and data artefacts as they change over time. Every modification is recorded with metadata about what changed, when, and why, enabling the system to retrieve any historical version, compare versions, and roll back to previous states. In legal AI, version control is essential because legislation changes through amendments, knowledge base configurations evolve, and the ability to reproduce a past system state — to explain what answer the system would have given on a specific date — is both a professional and regulatory requirement.
+
+## Why it matters
+
+- **Temporal queries** — tax advisors often need to know what the law said on a specific past date; version control enables the system to retrieve the exact version of a provision that was in force at any point in time
+- **Auditability** — when a past AI-generated answer is questioned, version control allows reconstruction of the exact system state (knowledge base content, model version, prompt configuration) that produced that answer
+- **Safe updates** — version control enables rollback when a knowledge base update introduces errors or when a new configuration degrades system quality
+- **Regulatory compliance** — the EU AI Act requires documentation of system changes throughout the lifecycle; version control provides this documentation automatically
+
+## How it works
+
+Version control operates at several levels in a legal AI system:
+
+**Document versioning** — each legal document is stored with its full version history. When an article of the WIB92 is amended, the new version is added alongside the old, with effective dates marking which version applied during which period. The system can retrieve the version in force on any given date.
+
+**Knowledge base versioning** — the state of the entire knowledge base (all documents, metadata, and index configurations) is tracked over time. Each ingestion run, metadata correction, or structural change creates a new version. This enables the system to answer the question "what would you have told me last month?" by replaying a query against the historical knowledge base state.
+
+**Configuration versioning** — prompt templates, system instructions, model selections, and retrieval parameters are version-controlled alongside the content. When system behaviour changes, the configuration change that caused it can be identified by comparing versions.
+
+**Index versioning** — vector indexes can be snapshotted or versioned so that a specific index state can be restored. This supports A/B testing (comparing two index versions), rollback (reverting a problematic update), and historical replay.
+
+Implementation typically uses a combination of tools: document management systems for legal text versioning, git or similar systems for configuration versioning, and database-level mechanisms (append-only tables, soft deletes, temporal tables) for knowledge base and index versioning.
+
+## Common questions
+
+**Q: How does version control relate to temporal indexing?**
+
+A: Version control stores the different versions of documents. Temporal indexing makes those versions searchable by their effective dates. Together, they enable time-aware retrieval: the system can find the version of a provision that was in force on a specific date and use it to answer temporal queries.
+
+**Q: How much storage does version control require?**
+
+A: For text documents, version control overhead is modest — legal documents are small, and storing historical versions adds limited storage. For vector indexes, storing multiple versions can be significant, so systems typically retain only key snapshots rather than every intermediate state.

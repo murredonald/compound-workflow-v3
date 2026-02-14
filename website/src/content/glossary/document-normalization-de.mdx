@@ -12,4 +12,39 @@ draft: false
 
 ## Definition
 
-Document Normalization harmonisiert unter anderem Kodierung, Leerzeichen, Datumsformate und Feldnamen, damit nachgelagerte Such‑ und KI‑Komponenten mit konsistenten Eingaben arbeiten.
+Document Normalization ist der Prozess der Vereinheitlichung von Struktur, Kodierung, Formatierung und Metadaten von Dokumenten aus verschiedenen Quellen, damit diese von nachgelagerten Systemen konsistent verarbeitet werden können. Juristische Dokumente stammen von unterschiedlichen Herausgebern in unterschiedlichen Formaten, mit unterschiedlichen Konventionen für Datumsangaben, Verweise, Überschriften und Zeichenkodierung. Die Normalisierung transformiert diese heterogenen Eingaben in eine einheitliche Darstellung, die von Indexierungs-, Chunking- und Retrieval-Komponenten zuverlässig verarbeitet werden kann.
+
+## Warum es wichtig ist
+
+- **Konsistente Verarbeitung** — ohne Normalisierung könnte dasselbe Datum als „15/03/2025", „March 15, 2025", „15 maart 2025" und „2025-03-15" in verschiedenen Quellen erscheinen; die Normalisierung konvertiert alle in ein einziges Format
+- **Präzise Deduplizierung** — Dokumente mit unterschiedlicher Formatierung aber identischem Inhalt sollten als Duplikate erkannt werden; die Normalisierung entfernt oberflächliche Unterschiede, die einen Abgleich verhindern würden
+- **Embedding-Qualität** — Embedding-Modelle erzeugen bessere Vektoren aus sauberem, konsistent formatiertem Text; Formatierungsartefakte, inkonsistente Leerzeichen und Kodierungsfehler verschlechtern die Embedding-Qualität
+- **Quellenübergreifende Vergleichbarkeit** — normalisierte Dokumente verschiedener Herausgeber können durchsucht und verglichen werden, als stammten sie aus einer einzigen Quelle
+
+## So funktioniert es
+
+Document Normalization adressiert typischerweise mehrere Dimensionen:
+
+**Zeichenkodierung** — aller Text wird in eine einheitliche Kodierung (UTF-8) konvertiert. Sonderzeichen, Ligaturen und typografische Varianten werden normalisiert: geschwungene Anführungszeichen zu geraden, Geviertstriche zu Standardstrichen, geschützte Leerzeichen zu regulären Leerzeichen.
+
+**Datumsnormalisierung** — Datumsangaben in allen Formaten werden in eine Standarddarstellung konvertiert (ISO 8601: JJJJ-MM-TT). Dies ist für juristische Texte entscheidend, da Datumsangaben bestimmen, welche Fassung einer Bestimmung in Kraft war.
+
+**Referenznormalisierung** — Zitate und Querverweise werden vereinheitlicht. „Art. 215 WIB92", „article 215 du CIR92" und „Artikel 215 WIB92" verweisen alle auf dieselbe Bestimmung und sollten in eine kanonische Form normalisiert werden, die das System als identisch erkennt.
+
+**Überschriften- und Strukturnormalisierung** — Abschnittsüberschriften, Artikelnummern und Absatzmarkierungen werden auf ein konsistentes Strukturschema abgebildet. Dies stellt sicher, dass strukturbewusstes Chunking unabhängig von den Formatierungskonventionen des Quelldokuments konsistente Ergebnisse liefert.
+
+**Leerzeichen und Formatierung** — mehrfache aufeinanderfolgende Leerzeichen, Tabulatoren und Leerzeilen werden zusammengefasst. HTML-Entitäten werden dekodiert. Markdown oder anderes Markup wird je nach nachgelagertem Verwendungszweck entweder entfernt oder vereinheitlicht.
+
+**Spracherkennung** — jedes Dokument oder jeder Abschnitt wird mit seiner Sprache (Niederländisch, Französisch, Deutsch) auf Basis automatischer Erkennung versehen, was sprachbewusste Verarbeitung und Weiterleitung ermöglicht.
+
+Die Normalisierung ist idempotent — zweimaliges Anwenden liefert dasselbe Ergebnis wie einmaliges Anwenden. Diese Eigenschaft ist für die Zuverlässigkeit der Pipeline wichtig: die erneute Verarbeitung eines Dokuments sollte seine normalisierte Form nicht verändern.
+
+## Häufige Fragen
+
+**F: Kann die Normalisierung die Bedeutung juristischer Texte verändern?**
+
+A: Das sollte sie nicht. Die Normalisierung betrifft Formatierung und Kodierung, nicht den Inhalt. Allerdings könnte eine aggressive Normalisierung (z. B. das Entfernen aller Sonderzeichen) in Grenzfällen die Bedeutung unbeabsichtigt beeinflussen. Die Normalisierung juristischer Texte sollte konservativ sein und allen substanziellen Inhalt bewahren, während nur die Formatierung vereinheitlicht wird.
+
+**F: Sollte die Normalisierung vor oder nach dem Parsing erfolgen?**
+
+A: Nach dem Parsing. Das Parsing konvertiert Rohformate (PDF, HTML) in Text; die Normalisierung vereinheitlicht dann diesen Text. Einige Normalisierungsschritte (wie Kodierungskorrekturen) können bereits während des Parsings erforderlich sein, um fehlerhafte Eingaben zu behandeln.

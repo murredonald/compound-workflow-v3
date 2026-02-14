@@ -12,7 +12,38 @@ draft: false
 
 ## Definition
 
-The system prompt is the underlying [instruction](/en/glossary/prompt/) text provided to a language model to define its role, tone, and safety constraints, which users typically cannot see or modify directly.
+The system prompt is the foundational instruction block provided to a large language model at the start of every interaction, defining its role, behaviour, constraints, and output format. Unlike user prompts, which vary with each query, the system prompt is fixed by the application developer and typically hidden from the end user. It acts as the "personality and rulebook" layer — telling the model what it is (e.g., a Belgian tax research assistant), what it should do (cite sources, flag uncertainty), and what it must never do (fabricate legislation, provide binding advice).
+
+## Why it matters
+
+- **Behavioural consistency** — the system prompt ensures the model responds consistently across all user queries, maintaining the same level of formality, citation discipline, and domain focus
+- **Safety and compliance** — guardrails encoded in the system prompt prevent the model from producing harmful, misleading, or out-of-scope outputs; in a legal AI context, this includes disclaimers about professional advice and jurisdictional limitations
+- **Output formatting** — the system prompt can specify structured output requirements: always include source citations, always flag confidence levels, always present answers in a specific format
+- **Domain grounding** — by instructing the model to only answer based on retrieved context and to acknowledge uncertainty when sources are insufficient, the system prompt is a key mechanism for reducing hallucination
+
+## How it works
+
+The system prompt is prepended to every conversation with the language model, typically in a dedicated "system" message role that the model is trained to follow with high priority. Its contents usually include:
+
+**Role definition** — a description of what the model is and what domain it operates in. For example: "You are a Belgian tax research assistant specialising in income tax, VAT, and registration duties."
+
+**Behavioural rules** — specific instructions about how to handle various scenarios: always cite the source article, never invent legislation, flag when multiple conflicting sources exist, decline questions outside the tax domain.
+
+**Output format** — structured requirements for the response: use bullet points for multi-part answers, include a confidence indicator, cite sources with article numbers and publication dates.
+
+**Context instructions** — how to handle the retrieved documents that accompany each query: treat them as the authoritative source of truth, do not rely on training knowledge for legal facts, explicitly state when the retrieved context does not address the question.
+
+System prompt engineering is an iterative process. The prompt is refined through testing: examining where the model fails (hallucinating a non-existent article, giving overly confident answers to ambiguous questions) and adding or adjusting instructions to prevent those failures. Prompt robustness against injection attempts — where malicious user inputs try to override system instructions — is an active area of concern.
+
+## Common questions
+
+**Q: Can users override the system prompt?**
+
+A: In a well-designed system, no. However, prompt injection attacks attempt to include instructions in user input that override or modify the system prompt's rules. Defences include input sanitisation, instruction hierarchy enforcement in the model, and monitoring for anomalous outputs.
+
+**Q: How long should a system prompt be?**
+
+A: Long enough to cover the necessary rules and constraints, but not so long that it consumes a significant portion of the model's context window. Most production system prompts are 500-2000 tokens. Excessively long prompts can also cause the model to lose focus on specific instructions buried in the middle.
 
 ## References
 

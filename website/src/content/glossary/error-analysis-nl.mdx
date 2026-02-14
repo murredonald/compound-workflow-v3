@@ -10,6 +10,45 @@ locale: "nl"
 draft: false
 ---
 
+## Definitie
+
+Foutenanalyse is het systematisch onderzoeken van de Fouten van een AI-systeem om hun Patronen, Oorzaken en Implicaties te begrijpen. In plaats van Fouten als individuele Incidenten te behandelen, categoriseert Foutenanalyse ze op Type (Retrievalfout, Generatiehallucinatie, Citatiefout), identificeert welke Querytypes of Onderwerpen het meest getroffen worden, en traceert elke Fout terug naar de Oorzaak in de Pipeline. Dit gestructureerde Inzicht in Fouten stuurt gerichte Verbeteringen aan die systemische Problemen aanpakken in plaats van individuele Symptomen.
+
+## Waarom het belangrijk is
+
+- **Gerichte Verbetering** — Foutenanalyse onthult welk Onderdeel (Retrieval, Generatie of Brondata) de meeste Fouten veroorzaakt, waardoor technische Inspanning wordt gericht waar deze de grootste Impact heeft
+- **Patroondetectie** — individuele Fouten lijken misschien willekeurig, maar Analyse onthult vaak Patronen: het Systeem faalt consequent bij temporele Queries, of hallucineert altijd wanneer de Kennisbank geen Dekking heeft voor een Onderwerp
+- **Prioriteitstelling** — het categoriseren van Fouten naar Frequentie en Ernst stelt het Team in staat te prioriteren: een zeldzaam maar gevaarlijk Foutentype (verwijzen naar verzonnen Wetgeving) kan urgentere Aandacht vereisen dan een veelvoorkomend maar klein Probleem (onprecieze Citaten)
+- **Voortgangsbewaking** — doorlopende Foutenanalyse volgt of Verbeteringen daadwerkelijk de Foutenpercentages verlagen, wat evidencebased Feedback biedt over de Systeemontwikkeling
+
+## Hoe het werkt
+
+Foutenanalyse volgt een gestructureerd Proces:
+
+**Foutenverzameling** — Fouten worden verzameld uit meerdere Bronnen: geautomatiseerde Evaluatie tegen Testsets, Gebruikersfeedback en Correcties, handmatige Beoordeling van steekproeven, en Resultaten van adversarial testing. Elk Foutenrecord bevat de Query, het Antwoord van het Systeem, het verwachte correcte Antwoord, en alle beschikbare Context (opgehaalde Bronnen, [confidence score](/nl/glossary/confidence-scoring/)).
+
+**Categorisering** — Fouten worden geclassificeerd op Type:
+- **Retrievalfouten** — de relevante Bron werd niet gevonden (recall-probleem) of irrelevante Bronnen werden geretourneerd (precision-probleem)
+- **Generatiehallucinaties** — het Model verzon Informatie die niet aanwezig is in de opgehaalde Context
+- **Citatiefouten** — het Antwoord is correct maar verwijst naar de verkeerde Bron, of Citaten zijn onprecies (verwijzen naar een hele Wet in plaats van het specifieke Artikel)
+- **Scopefouten** — het Systeem beantwoordde een Vraag buiten zijn Bereik in plaats van te weigeren
+- **Temporele Fouten** — het Systeem citeerde achterhaalde of nog niet in werking getreden Bepalingen
+- **Volledigheidsfouten** — het Antwoord behandelde een deel van de Vraag maar miste belangrijke Aspecten
+
+**Oorzaakanalyse** — voor elke Categorie traceert de Analyse terug naar de onderliggende Oorzaak. Retrievalfouten kunnen voortkomen uit Vocabulairemismatch, onvoldoende Metadatafiltering of Lacunes in de Kennisbank. Hallucinaties kunnen het Gevolg zijn van ambigue Systeemprompts of onvoldoende Context.
+
+**Actieplan** — elke Oorzaak wordt gekoppeld aan een specifieke Verbetering: betere Query-expansie voor Vocabulairemismatch, strengere temporele Filtering voor temporele Fouten, aanvullende Kennisbankinhoud voor Dekkingslacunes, of Promptverfijning voor Hallucinatiepatronen.
+
+## Veelgestelde vragen
+
+**V: Hoeveel Fouten moeten worden geanalyseerd voor bruikbare Inzichten?**
+
+A: Betekenisvolle Patronen komen doorgaans naar voren uit 50-100 Fouten. Voor statistisch robuuste Conclusies over Foutenpercentages per Categorie zijn 200-500 Fouten nodig. De Analyse moet periodiek worden voortgezet naarmate het Systeem evolueert.
+
+**V: Moet Foutenanalyse geautomatiseerd worden?**
+
+A: Gedeeltelijk. Foutencategorisering kan semi-automatisch worden uitgevoerd met Classifiers, maar Oorzaakanalyse en Actieplanning vereisen menselijk Oordeelsvermogen. Geautomatiseerde Monitoring markeert Fouten; menselijke Analyse identificeert hun Oorzaken en Oplossingen.
+
 ## References
 
 > Alice S. Horning et al. (1981), "[Principles of Language Learning and Teaching](https://doi.org/10.2307/327392)", Modern Language Journal.

@@ -10,9 +10,42 @@ locale: "fr"
 draft: false
 ---
 
-## Definition
+## Définition
 
-Une knowledge retrieval strategy définit comment le contenu est découpé, indexé, filtré et combiné afin que les systèmes d’IA en aval puissent accéder de manière fiable à la bonne information au bon moment.
+Une stratégie de récupération de connaissances est le plan de conception de haut niveau qui définit comment un système d'IA organise, indexe, recherche et délivre la connaissance au modèle de langage pour la génération de réponses. Elle englobe l'ensemble des décisions : comment les documents sont découpés, quels modèles d'embedding sont utilisés, si la recherche est lexicale, sémantique ou hybride, comment les résultats sont filtrés et reclassés, et comment le contexte est assemblé pour la couche de génération. La stratégie de récupération est un choix architectural qui façonne chaque aspect des performances du système — précision, latence, couverture et explicabilité.
+
+## Pourquoi c'est important
+
+- **Fondement de la précision** — la stratégie de récupération détermine ce que le modèle de langage voit ; une stratégie qui manque des documents pertinents ou en inclut des non pertinents dégrade directement la qualité des réponses
+- **Adéquation au domaine** — les stratégies de récupération génériques ne prennent pas en compte les exigences spécifiques au droit, comme le versionnement temporel, les hiérarchies d'autorité et le filtrage juridictionnel ; une stratégie adaptée au domaine répond à ces besoins
+- **Architecture de performance** — la stratégie définit le budget de latence : combien d'étapes le pipeline comporte, combien chaque étape coûte, et quels compromis entre exhaustivité et rapidité sont acceptables
+- **Évolutivité** — une stratégie bien conçue est modulaire, permettant de mettre à jour des composants individuels (modèle d'embedding, reranker, règles de filtrage) sans reconcevoir l'ensemble du système
+
+## Comment ça fonctionne
+
+Une stratégie de récupération de connaissances aborde plusieurs dimensions de conception interconnectées :
+
+**Stratégie de découpage** — comment les documents sont divisés en unités de récupération. Les options vont des fenêtres glissantes de taille fixe au découpage tenant compte de la structure (un chunk par article ou section) jusqu'au découpage hiérarchique (différentes granularités pour différents usages). Ce choix affecte la qualité des embeddings, la granularité de la récupération et la précision des citations.
+
+**Stratégie d'indexation** — quels types d'index sont maintenus et comment ils sont configurés. La plupart des systèmes utilisent une approche hybride : un index lexical (BM25) pour la correspondance exacte de termes et un index vectoriel (HNSW) pour la correspondance sémantique. Les index peuvent être complétés par un magasin de métadonnées pour le filtrage structuré et un graphe de connaissances pour les requêtes relationnelles.
+
+**Stratégie de recherche** — comment les requêtes sont traitées et mises en correspondance avec les index. Cela inclut la compréhension de la requête (expansion, réécriture, décomposition), le mode de récupération (sparse, dense ou hybride) et les paramètres de génération de candidats (combien de candidats récupérer de chaque index).
+
+**Stratégie de classement** — comment les candidats sont notés, filtrés et reclassés. Cela inclut le filtrage par métadonnées (juridiction, date, autorité), le reclassement par cross-encoder et la fusion de scores entre plusieurs méthodes de récupération.
+
+**Assemblage du contexte** — comment l'ensemble final de passages est formaté et injecté dans le prompt du modèle de langage. Cela inclut la sélection du nombre de passages, leur ordonnancement par pertinence ou type de source, et l'inclusion de métadonnées pour la génération de citations.
+
+La stratégie doit également traiter les cas limites : que se passe-t-il quand aucun document pertinent n'est trouvé (s'abstenir vs. répondre à partir des connaissances d'entraînement), comment les contradictions entre sources sont gérées, et comment le système se comporte quand la question est hors de son périmètre.
+
+## Questions fréquentes
+
+**Q : La stratégie de récupération peut-elle être modifiée après le déploiement ?**
+
+R : Oui, si le système est modulaire. Les composants individuels (modèle d'embedding, reranker, règles de filtrage) peuvent être mis à jour indépendamment. Cependant, modifier des décisions fondamentales (granularité du découpage, type d'index) peut nécessiter le retraitement de l'ensemble de la base de connaissances.
+
+**Q : Quel est le composant le plus important d'une stratégie de récupération ?**
+
+R : Le modèle d'embedding et la stratégie de découpage ont généralement le plus grand impact sur la qualité de la récupération. Le modèle d'embedding détermine si la correspondance sémantique fonctionne bien ; la stratégie de découpage détermine la granularité et la cohérence de ce qui est récupéré.
 
 ## References
 

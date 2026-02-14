@@ -12,7 +12,40 @@ draft: false
 
 ## Definition
 
-Adversariales Testen konfrontiert KI-Systeme mit herausfordernden oder absichtlich schädlichen Inputs, um Verwundbarkeiten vor dem Einsatz zu finden.
+Adversariales Testen (auch Red Teaming genannt) ist die systematische Praxis, ein KI-System mit absichtlich schwierigen, irreführenden oder bösartigen Eingaben zu konfrontieren, um Schwachstellen, Fehlermodi und Sicherheitslücken aufzudecken, bevor sie im Produktivbetrieb auftreten. Anders als bei der Standardevaluation, die die normale Leistung prüft, versucht adversariales Testen gezielt, das System zum Scheitern zu bringen — es sucht nach Eingaben, die falsche Antworten, Sicherheitsverstöße oder unerwartetes Verhalten auslösen. Im Bereich Legal AI wird geprüft, ob das System dazu verleitet werden kann, nicht existierende Gesetzgebung zu zitieren, falsche Steuersätze anzugeben oder seine Schutzmaßnahmen gegen verbindliche Rechtsberatung zu umgehen.
+
+## Warum es wichtig ist
+
+- **Sicherheit vor dem Einsatz** — Schwachstellen durch adversariales Testen zu entdecken ist weitaus besser, als sie erst durch Nutzerbeschwerden oder behördliche Maßnahmen nach dem Deployment zu erfahren
+- **Robustheitsvalidierung** — adversariales Testen zeigt, wie das System mit Grenzfällen umgeht, die eine normale Evaluation nicht abdeckt: mehrdeutige Anfragen, widersprüchliche Prompts und Eingaben, die gezielt verwirren sollen
+- **Überprüfung von Sicherheitsmaßnahmen** — Tests bestätigen, dass die Sicherheitsmechanismen des Systems (Ablehnung verbindlicher Beratung, Kennzeichnung von Unsicherheit, Abweisung nicht zuständiger Anfragen) auch unter adversarialem Druck tatsächlich funktionieren
+- **Regulatorische Compliance** — der EU AI Act verlangt Risikobewertung und Tests für KI-Systeme mit hohem Risiko; adversariales Testen ist eine primäre Methode zur Erfüllung dieser Anforderung
+
+## So funktioniert es
+
+Adversariales Testen wird von spezialisierten Testern (Red Team) durchgeführt, die versuchen, das System zum Scheitern zu bringen:
+
+**Prompt-Injection-Tests** — Erstellung von Eingaben, die versuchen, die Anweisungen des Systems zu überschreiben, den System-Prompt zu extrahieren oder das System dazu zu bringen, seine Sicherheitsrichtlinien zu ignorieren. Im Bereich Legal AI könnten dies Anfragen sein, die das System dazu verleiten, unverbindliche Hinweise als geltendes Recht darzustellen.
+
+**Angriffe auf die Faktengenauigkeit** — Anfragen, die darauf abzielen, Halluzinationen auszulösen: Fragen zu obskuren Vorschriften, Verwendung plausibler, aber falscher Rechtstermini oder Darstellung falscher Prämissen („angesichts der Tatsache, dass der Mehrwertsteuersatz 2024 auf 15 % gesenkt wurde …"), um zu testen, ob das System diese korrigiert oder akzeptiert.
+
+**Grenzbereichstests** — Prüfung der Zuständigkeitsgrenzen des Systems: Anfragen zu ausländischem Recht, wenn das System nur belgisches Recht abdeckt, medizinische oder finanzielle Beratung außerhalb des juristischen Bereichs und mehrdeutige Anfragen, die als innerhalb oder außerhalb des Zuständigkeitsbereichs interpretiert werden könnten.
+
+**Konsistenzangriffe** — dieselbe Frage auf verschiedene Arten stellen, um zu prüfen, ob das System widersprüchliche Antworten gibt, oder dieselben Fakten aus verschiedenen Blickwinkeln präsentieren, um die Konsistenz der Argumentation zu testen.
+
+**Informationsextraktion** — Versuche, den System-Prompt, Details zu Trainingsdaten oder vertrauliche Informationen über die Systemarchitektur durch geschickt formulierte Anfragen zu extrahieren.
+
+Adversariales Testen erstellt einen Katalog entdeckter Schwachstellen, klassifiziert nach Schweregrad und Ausnutzbarkeit. Jede Schwachstelle wird durch Systemverbesserungen behoben (bessere Schutzmaßnahmen, verbesserte Prompts, zusätzliche Trainingsdaten) und erneut getestet, um die Behebung zu bestätigen.
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich adversariales Testen von Stresstests?**
+
+A: Stresstests bewerten das Systemverhalten unter extremer Last oder verschlechterten Bedingungen. Adversariales Testen bewertet das Systemverhalten unter absichtlich bösartigen Eingaben. Stresstests bringen das System an seine Kapazitätsgrenzen; adversariales Testen versucht, das System zu falschen oder gefährlichen Ausgaben zu bewegen.
+
+**F: Wer sollte adversariales Testen durchführen?**
+
+A: Idealerweise Personen, die nicht am Bau des Systems beteiligt waren — sie nähern sich ihm ohne Annahmen darüber, wie es verwendet werden sollte, und entdecken eher unerwartete Fehlermodi. Fachexperten (Steuerberater) und Sicherheitsspezialisten bringen jeweils unterschiedliche adversariale Perspektiven ein.
 
 ## References
 

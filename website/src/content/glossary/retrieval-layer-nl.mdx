@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-De retrievallaag in een [RAG](/nl/glossary/rag/)-architectuur is verantwoordelijk voor het doorzoeken van een index en het teruggeven van de meest relevante documenten of [chunks](/nl/glossary/document-chunk/) bij een gebruikersvraag of modelgegenereerde subquery.
+De retrievallaag is het onderdeel binnen een [retrieval-augmented generation (RAG)](/nl/glossary/rag/)-architectuur dat verantwoordelijk is voor het vinden en rangschikken van relevante documenten of passages uit een kennisbank als reactie op een zoekvraag. Het bevindt zich tussen de vraag van de gebruiker en de generatiestap van het taalmodel, en bepaalt welke context het model te zien krijgt. De kwaliteit van de retrievallaag stelt een bovengrens aan de antwoordkwaliteit — het taalmodel kan niet redeneren over documenten die het nooit heeft ontvangen.
+
+## Waarom het belangrijk is
+
+- **Plafond voor antwoordnauwkeurigheid** — als de retrievallaag een relevant wetsartikel mist of een verouderde bepaling retourneert, zal het gegenereerde antwoord fout zijn, ongeacht hoe capabel het taalmodel is
+- **Latentiebudget** — de retrievallaag moet resultaten retourneren in tientallen milliseconden om de totale responstijden acceptabel te houden; de architectuur beïnvloedt rechtstreeks de gebruikerservaring
+- **Domeinaanpasbaarheid** — een goed ontworpen retrievallaag kan worden afgestemd op juridisch-specifieke vereisten (temporele filtering, autoriteitsrangschikking, jurisdictionele afbakening) zonder het generatiemodel aan te passen
+- **Modulariteit** — het scheiden van retrieval en generatie maakt het mogelijk om elk onderdeel onafhankelijk te verbeteren, te testen en te schalen
+
+## Hoe het werkt
+
+De retrievallaag combineert doorgaans meerdere retrievalstrategieën in een pipeline:
+
+**Sparse retrieval** gebruikt traditionele trefwoordmatchingalgoritmen zoals BM25 om documenten te vinden die de exacte termen van de zoekvraag bevatten. Dit is snel en effectief voor precieze juridische terminologie — wanneer een gebruiker zoekt op "artikel 215 WIB92", vindt sparse retrieval exacte overeenkomsten efficiënt.
+
+**Dense retrieval** converteert zowel de zoekvraag als alle documenten naar vectorembeddings en vindt vervolgens de dichtstbijzijnde vectoren op basis van gelijkenis. Dit vangt semantische betekenis, waardoor een zoekvraag over "vennootschapsbelastingaftrekken" overeenkomt met documenten die andere terminologie gebruiken, zoals "aftrekbare beroepskosten".
+
+De meeste productiesystemen combineren beide benaderingen in **hybride retrieval**, waarbij sparse en dense resultaten worden samengevoegd om de precisie van trefwoordmatching en het bereik van semantisch zoeken te verkrijgen.
+
+Na de initiële kandidaatgeneratie past de retrievallaag **metadatafilters** toe (rechtsgebied, datumbereik, documenttype, autoriteitsniveau) om irrelevante resultaten te verwijderen. Een **reranker** — doorgaans een cross-encodermodel — herschoort vervolgens de resterende kandidaten met diepere analyse en produceert de uiteindelijke gerangschikte lijst die aan de generatielaag wordt doorgegeven.
+
+De retrievallaag verzorgt ook queryvoorverwerking: afkortingen uitbreiden, juridische synoniemen toevoegen, complexe meervoudige vragen ontleden in subquery's, en query's routeren naar de juiste index op basis van gedetecteerde intentie.
+
+## Veelgestelde vragen
+
+**V: Hoeveel documenten moet de retrievallaag retourneren?**
+
+A: Doorgaans 5-20 passages, afhankelijk van het contextvenster van het taalmodel en de complexiteit van de vraag. Te weinig riskeert het missen van relevante bronnen; te veel verdunt de context met marginaal relevant materiaal en verhoogt de kosten. De rol van de reranker is om ervoor te zorgen dat de top-k resultaten de meest relevante zijn.
+
+**V: Wat is het verschil tussen de retrievallaag en de retrievalpipeline?**
+
+A: De termen worden vaak door elkaar gebruikt. Strikt genomen verwijst de retrievallaag naar het architecturele onderdeel binnen een RAG-systeem, terwijl de retrievalpipeline de nadruk legt op de opeenvolgende stadia (queryverwerking, kandidaatretrieval, filtering, reranking) die dat onderdeel vormen.
 
 ## References
 

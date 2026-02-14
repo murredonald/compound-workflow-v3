@@ -12,4 +12,35 @@ draft: false
 
 ## Definition
 
-Structured data is information stored in a fixed schema—like columns in a table or keys in a JSON object—that makes it easy to query and join.
+Structured data is information organised into a predefined schema with explicit fields, data types, and relationships — such as rows and columns in a database table, key-value pairs in JSON, or fields in a form. Unlike unstructured data (free text, PDFs, images), structured data can be directly queried, filtered, sorted, and joined without requiring natural language processing or interpretation. In legal AI systems, structured data captures the metadata that makes unstructured legal text searchable and filterable: article numbers, publication dates, jurisdictional codes, authority levels, and tax rate tables.
+
+## Why it matters
+
+- **Precise filtering** — structured fields like jurisdiction, date, and document type enable exact-match filtering that semantic search alone cannot provide; a query for "Flemish registration duties in 2025" requires structured date and jurisdiction fields to answer precisely
+- **Knowledge graph foundation** — structured data provides the typed entities and relationships that form knowledge graph nodes and edges, enabling relational queries across the legal corpus
+- **Integration with business systems** — tax calculations, filing deadlines, and rate tables are inherently structured; the AI system must consume and produce structured data to integrate with existing professional tools
+- **Validation and consistency** — schemas enforce data integrity: a date field cannot contain a name, a tax rate must be a number; this prevents data quality issues that would propagate into AI outputs
+
+## How it works
+
+Structured data in a legal AI system appears in several forms:
+
+**Document metadata** — every ingested document is tagged with structured fields: publication source, publication date, document type (law, decree, circular, ruling), jurisdiction (federal, Flemish, Walloon, Brussels-Capital), language, and authority level. These fields are stored alongside the document's vector embeddings and enable metadata filtering during retrieval.
+
+**Tax tables and rates** — tax brackets, rates, thresholds, and exemption amounts are inherently structured. They are stored as typed records that can be queried precisely: "What is the corporate tax rate for SMEs in 2025?" resolves to a structured lookup, not a semantic search.
+
+**Entity-relationship data** — knowledge graphs store structured relationships between entities: which articles cite which other articles, which rulings interpret which provisions, which amendments modified which original texts. These relationships are stored as structured triples (subject, predicate, object) or property graphs.
+
+**Schema validation** ensures that all structured data conforms to expected formats. A publication date must be a valid date. A jurisdiction code must be one of the defined values. A tax rate must be a positive number. Validation catches errors at ingestion time before they can affect downstream retrieval or generation.
+
+The challenge in legal AI is bridging structured and unstructured data. Legislation arrives as prose (unstructured) but contains embedded structured information (article numbers, dates, amounts). Entity extraction and document parsing convert unstructured legal text into structured metadata, while the original text is preserved for semantic search.
+
+## Common questions
+
+**Q: Can an AI system work with only structured data?**
+
+A: For legal research, no. The reasoning, context, and nuance in legal text is unstructured. Structured data provides the scaffolding — metadata, relationships, and precise values — but the substance of legal analysis requires understanding prose. The most effective systems combine both.
+
+**Q: How is structured data different from a knowledge graph?**
+
+A: Structured data is the broader category — any data with a defined schema. A knowledge graph is a specific type of structured data that represents entities and their relationships as a graph. Knowledge graphs are built from structured data (and from entity extraction on unstructured data).

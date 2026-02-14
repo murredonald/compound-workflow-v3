@@ -10,9 +10,40 @@ locale: "nl"
 draft: false
 ---
 
-## Definition
+## Definitie
 
-Embedding [alignment](/nl/glossary/alignment/) gebruikt transformaties of gezamenlijke training om embeddingruimtes zo te verschuiven dat vectoren met dezelfde betekenis uit verschillende bronnen bij elkaar terechtkomen.
+Embedding alignment is het Proces van het afbeelden van Embeddingvectoren uit verschillende Modellen, Talen of Domeinen naar een gedeelde Vectorruimte waar ze op een zinvolle manier kunnen worden vergeleken. Wanneer twee Embeddingmodellen Vectoren produceren in verschillende Ruimten, kan een Document dat is geëmbed met Model A niet worden vergeleken met een Zoekopdracht die is geëmbed met Model B — Alignmenttechnieken leren een Transformatie die deze Kloof overbrugt. In meertalige juridische AI maakt embedding [alignment](/nl/glossary/alignment/) het mogelijk dat één enkel Retrievalsysteem Nederlandstalige Zoekopdrachten koppelt aan Franstalige Documenten door de Embeddingruimten van beide Talen op elkaar af te stemmen.
+
+## Waarom het belangrijk is
+
+- **Taaloverschrijdende Retrieval** — Belgische juridische Bronnen bestaan in het Nederlands, Frans en Duits; embedding alignment maakt het mogelijk dat een Zoekopdracht in één Taal Documenten in alle drie de Talen ophaalt, zonder Vertaling nodig te hebben
+- **Modelmigratie** — bij het upgraden naar een nieuwer Embeddingmodel kan alignment oude en nieuwe Embeddings overbruggen tijdens de Overgang, waardoor het niet nodig is om het volledige Corpus tegelijkertijd opnieuw te embedden
+- **Multi-model Fusie** — verschillende Embeddingmodellen kunnen gespecialiseerd zijn in verschillende Aspecten (het ene beter voor korte Zoekopdrachten, het andere voor lange Documenten); alignment maakt het mogelijk hun Sterke punten te combineren
+- **Domeinaanpassing** — het afstemmen van algemene Embeddings op domeinspecifieke Embeddings draagt de Breedte van het algemene Model over op de Precisie van het gespecialiseerde Model
+
+## Hoe het werkt
+
+Embedding alignment omvat doorgaans het leren van een Transformatiematrix die Vectoren van de ene Ruimte naar de andere afbeeldt:
+
+**Lineaire Alignment** leert een Rotatie- en/of Schaalmatrix W zodat het transformeren van Vectoren uit Ruimte A met W deze dicht bij corresponderende Vectoren in Ruimte B brengt. De Matrix wordt geleerd uit een set gepaarde Voorbeelden — Items die dicht bij elkaar moeten liggen in de afgestemde Ruimte (bijv. hetzelfde juridische Concept uitgedrukt in het Nederlands en het Frans). Dit is rekenkundig eenvoudig en vaak verrassend effectief.
+
+**Orthogonale Alignment** (Procrustes-alignment) beperkt de Transformatie tot een orthogonale Matrix (Rotatie zonder Schaling), die Afstanden en Hoeken binnen elke Ruimte behoudt. Dit werkt goed wanneer de twee Ruimten een vergelijkbare Structuur hebben maar een verschillende Oriëntatie.
+
+**Niet-lineaire Alignment** gebruikt neurale Netwerken om complexere Afbeeldingen tussen Ruimten te leren. Dit kan Gevallen aan waarin de Ruimten structureel verschillende Representaties van Betekenis hebben, maar vereist meer Trainingsdata en brengt het Risico van Overfitting met zich mee.
+
+**Trainingsdata** voor alignment bestaan uit parallelle Paren: hetzelfde Document of Concept weergegeven in beide Ruimten. Voor taaloverschrijdende Alignment bieden tweetalige Woordenboeken, parallelle juridische Teksten (Belgische Wetten bestaan in officiële Nederlands- en Franstalige Versies) of vertaalde Zinsparen het Trainingssignaal. Zelfs enkele duizenden parallelle Paren kunnen effectieve Alignment opleveren.
+
+**Gezamenlijke Training** vermijdt het Alignmentprobleem volledig door een enkel meertalig Embeddingmodel te trainen dat alle Talen van nature naar een gedeelde Ruimte afbeeldt. Modellen zoals multilingual E5 en SONAR zijn getraind op Tekst uit vele Talen tegelijk, waardoor ze van meet af aan een uniforme Ruimte produceren.
+
+## Veelgestelde vragen
+
+**V: Is alignment even goed als een van nature meertalig Model?**
+
+A: Over het algemeen niet — een van nature meertalig Model produceert een coherentere gedeelde Ruimte omdat het taaloverschrijdende Relaties leert tijdens de Training. Post-hoc alignment is een nuttig Alternatief wanneer een meertalig Model niet beschikbaar is of bij het overbruggen van bestaande gespecialiseerde Modellen.
+
+**V: Hoeveel parallelle Paren zijn er nodig voor alignment?**
+
+A: Lineaire alignment kan werken met slechts 1.000 tot 5.000 parallelle Paren van hoge Kwaliteit. Meer Data verbetert de Kwaliteit, maar de Winst neemt af na ongeveer 10.000 tot 20.000 Paren. De Paren moeten het volledige Scala aan Onderwerpen dekken die het Systeem verwerkt.
 
 ## References
 

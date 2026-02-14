@@ -57,7 +57,7 @@ Wenn Sie Vektorsuche machen, verwenden Sie wahrscheinlich FAISS direkt oder indi
 │  │  • IndexFlatIP - Inner Product (für Cosine Sim)   │   │
 │  │  • Brute Force - vergleicht mit ALLEN Vektoren    │   │
 │  │  • 100% genau aber O(n×d) pro Anfrage            │   │
-│  │  • Verwenden für: <100K Vektoren oder Ground Truth│   │
+│  │  • Verwenden für: &lt;100K Vektoren oder Ground Truth│   │
 │  │                                                     │   │
 │  │  IVF (Inverted File Index)                         │   │
 │  │  ═════════════════════════                         │   │
@@ -166,7 +166,7 @@ A: Verwenden Sie FAISS direkt für Forschung/Prototyping, Single-Node-Anwendunge
 
 **F: Wie wähle ich den richtigen FAISS-Index?**
 
-A: Beginnen Sie mit IndexFlatL2/IP für <100K Vektoren (exakt, einfach). Für 100K-10M verwenden Sie IndexIVFFlat oder IndexHNSWFlat. Für 10M-1B verwenden Sie IndexIVFPQ. Für >1B erwägen Sie verteilte Lösungen. Benchmarken Sie immer auf Ihren tatsächlichen Daten.
+A: Beginnen Sie mit IndexFlatL2/IP für &lt;100K Vektoren (exakt, einfach). Für 100K-10M verwenden Sie IndexIVFFlat oder IndexHNSWFlat. Für 10M-1B verwenden Sie IndexIVFPQ. Für >1B erwägen Sie verteilte Lösungen. Benchmarken Sie immer auf Ihren tatsächlichen Daten.
 
 **F: Was ist der Unterschied zwischen IndexFlatIP und IndexFlatL2?**
 

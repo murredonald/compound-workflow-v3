@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layout/Section.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { t } from "@/i18n/utils";
 
 const locale = "en";
+
+export const prerender = true;
 
 export async function getStaticPaths() {
   const topics = await getCollection("topics", ({ data }) => data.locale === "en");
@@ -15,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { topic } = Astro.props;
-const { Content } = await topic.render();
+const { Content } = await render(topic);
 
 const slug = topic.id.replace(/\.mdx?$|\.md$/, "");
 const topicUrl = `https://auryth.ai/${locale}/topics/${slug}/`;

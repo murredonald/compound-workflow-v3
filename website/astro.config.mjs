@@ -7,7 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   site: "https://auryth.ai",
-  output: "static",
+  output: "server",
   adapter: vercel(),
   integrations: [
     react(),

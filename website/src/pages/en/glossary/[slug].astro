@@ -2,10 +2,12 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layout/Section.astro";
 import Card from "@/components/ui/Card.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { t } from "@/i18n/utils";
 
 const locale = "en";
+
+export const prerender = true;
 
 export async function getStaticPaths() {
   const terms = (await getCollection("glossary", ({ data }) => data.locale === "en" && !data.draft))
@@ -22,7 +24,7 @@ export async function getStaticPaths() {
 }
 
 const { term, prevTerm, nextTerm } = Astro.props;
-const { Content } = await term.render();
+const { Content } = await render(term);
 
 // Get related terms
 const allTerms = await getCollection("glossary", ({ data }) => data.locale === locale && !data.draft);

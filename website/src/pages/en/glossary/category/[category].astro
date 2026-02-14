@@ -7,6 +7,8 @@ import { t } from "@/i18n/utils";
 
 const locale = "en";
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const allTerms = await getCollection("glossary", ({ data }) => data.locale === "en" && !data.draft);
   

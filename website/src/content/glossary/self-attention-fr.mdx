@@ -1,0 +1,91 @@
+---
+term: "Auto-Attention"
+termSlug: "self-attention"
+short: "Un mécanisme où chaque élément d'une séquence calcule des poids d'attention avec tous les autres éléments de la même séquence."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["attention-mechanism", "transformer-architecture", "multi-head-attention", "llm"]
+synonyms: ["Self-attention", "Intra-attention", "Mécanisme d'auto-attention"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'auto-attention (également appelée intra-attention ou self-attention) est un mécanisme où chaque position dans une séquence s'attend à toutes les positions de la même séquence pour calculer une représentation. Contrairement à l'attention croisée, qui relie deux séquences différentes, l'auto-attention capture les relations et dépendances entre différentes parties d'une seule entrée, permettant au modèle de comprendre comment les mots se rapportent les uns aux autres dans une phrase.
+
+## Pourquoi c'est important
+
+L'auto-attention est le mécanisme fondamental des architectures Transformer :
+
+- **Compréhension contextuelle** — la représentation de chaque mot incorpore des informations de tous les autres mots de la séquence
+- **Dépendances à longue distance** — capture les relations entre mots distants sans dégradation de l'information
+- **Contexte bidirectionnel** — dans les modèles encodeur, chaque mot voit le contexte précédent et suivant
+- **Parallélisable** — tous les calculs d'attention peuvent s'exécuter simultanément, contrairement aux approches récurrentes
+
+Cela permet aux modèles de langage de comprendre le sens en contexte plutôt que de traiter les mots isolément.
+
+## Comment ça fonctionne
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                      AUTO-ATTENTION                      │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  Séquence: [Le] [chat] [était] [sur] [le] [tapis]       │
+│             │     │      │      │     │     │            │
+│             ▼     ▼      ▼      ▼     ▼     ▼            │
+│  Chaque token: Q ────────────────────────────┐           │
+│                K ◄───────────────────────────┤           │
+│                V ◄───────────────────────────┘           │
+│                                                          │
+│  "chat" s'attend à: Le(0.1) chat(0.3) était(0.4) sur... │
+│                                                          │
+│  Sortie: représentation contextualisée pour chaque token │
+└──────────────────────────────────────────────────────────┘
+```
+
+1. **Projeter en Q, K, V** — chaque token génère des vecteurs Query, Key et Value
+2. **Calculer les scores** — chaque Query s'attend à toutes les Keys de la séquence
+3. **Appliquer softmax** — normaliser les scores en poids d'attention
+4. **Agréger les values** — la somme pondérée de toutes les Values donne la sortie contextualisée
+5. **Résultat** — la représentation de chaque position incorpore maintenant le contexte global
+
+## Questions fréquentes
+
+**Q : Quelle différence entre auto-attention et attention croisée ?**
+
+R : L'auto-attention calcule les relations au sein d'une séquence (Q, K, V viennent tous de la même entrée). L'attention croisée relie deux séquences—typiquement les queries du décodeur s'attendent aux sorties de l'encodeur.
+
+**Q : Qu'est-ce que l'auto-attention causale/masquée ?**
+
+R : Dans les modèles décodeur (comme GPT), les tokens ne peuvent s'attendre qu'aux tokens précédents, pas aux futurs. Ceci est imposé en masquant les positions futures, permettant la génération autorégressive.
+
+**Q : L'auto-attention évolue-t-elle quadratiquement ?**
+
+R : Oui, la complexité est O(n²) où n est la [longueur de séquence](/fr/glossary/context-window/), puisque chaque token s'attend à tous les autres. Cela limite les tailles pratiques de fenêtre de contexte et a stimulé la recherche sur les variantes d'attention efficaces.
+
+## Termes associés
+
+- [Mécanisme d'Attention](/fr/glossary/attention-mechanism/) — la technique générale sur laquelle l'auto-attention se construit
+- [Architecture Transformer](/fr/glossary/transformer-architecture/) — utilise l'auto-attention comme composant central
+- [Attention Multi-Têtes](/fr/glossary/multi-head-attention/) — exécute plusieurs opérations d'auto-attention en parallèle
+- [LLM](/fr/glossary/llm/) — modèles de langage construits sur l'auto-attention
+
+---
+
+## Références
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130 000+ [citations](/fr/glossary/citation/)]
+
+> Cheng et al. (2016), "[Long Short-Term Memory-Networks for Machine Reading](https://arxiv.org/abs/1601.06733)", EMNLP. [1 800+ citations]
+
+> Lin et al. (2017), "[A Structured Self-Attentive Sentence Embedding](https://arxiv.org/abs/1703.03130)", ICLR. [3 200+ citations]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Cheng et al. (2016), "[Long Short-Term Memory-Networks for Machine Reading](https://arxiv.org/abs/1601.06733)", EMNLP. [1,800+ citations]
+
+> Lin et al. (2017), "[A Structured Self-Attentive Sentence Embedding](https://arxiv.org/abs/1703.03130)", ICLR. [3,200+ citations]

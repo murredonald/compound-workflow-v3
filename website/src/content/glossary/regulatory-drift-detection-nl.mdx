@@ -1,0 +1,68 @@
+---
+term: "Detectie van regelgevingsdrift"
+termSlug: "regulatory-drift-detection"
+short: "Detectie van regelgevingsdrift monitort wijzigingen in wetgeving en guidance die retrieval, output of controls van een AI-systeem verouderen."
+category: "ai-regulation"
+category_name: "AI-regelgeving"
+related: ["source-freshness-tracking", "ai-risk-management", "eu-ai-act", "ai-documentation-requirements", "compliance-aware-retrieval"]
+synonyms: ["Regulation change monitoring", "Legal change detection", "Policy drift detection"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Detectie van regelgevingsdrift is het proces om te identificeren wanneer relevante wetten, regels, administratieve guidance of interne policies wijzigen op een manier die een AI-systeem beïnvloedt. In tax en legal betekent "drift" vaak: een eerder correct antwoord, citaat of workflow is niet langer geldig omdat de onderliggende bron veranderde.
+
+## Waarom het belangrijk is
+
+- **Actualiteit**: regels wijzigen sneller dan modellen en [contentpipelines](/nl/glossary/data-pipeline/).
+- **Risicobeheersing**: drift kan stilletjes compliance-risico creëren als je het niet detecteert.
+- **Traceerbaarheid**: ondersteunt documentatie van wanneer en waarom updates gebeurden.
+- **Operational discipline**: maakt "up-to-date blijven" meetbaar.
+
+## Hoe het werkt
+
+Meestal combineer je bronmonitoring met downstream triggers:
+
+```
+Monitor autoritatieve bronnen -> detecteer wijzigingen -> bepaal impact -> update index/prompts -> documenteer + review
+```
+
+Signalen: nieuwe versies van wetsartikelen, wijzigingen/opheffingen, nieuwe circulaires, rechtspraak die interpretaties wijzigt, of updates in interne policies die retrieval en disclosure beperken.
+
+## Praktisch voorbeeld
+
+Een tarief of meldingsdrempel wijzigt op een officiële website. Drift detection detecteert de wijziging, triggert herindexering en maakt een review-taak voor FAQ-antwoorden die naar de oude regel verwijzen.
+
+## Veelgestelde vragen
+
+**Q: Is dit hetzelfde als [model drift](/nl/glossary/model-drift/)?**
+
+A: Nee. Model drift gaat over veranderingen in data of performance. Regelgevingsdrift gaat over veranderingen in de *regels* die je moet volgen en citeren.
+
+**Q: Wat moet er gebeuren na detectie?**
+
+A: Minimaal: bronnen updaten, retrieval/answer-evaluaties herhalen voor getroffen topics, en de wijziging vastleggen in documentatie/logs.
+
+## Gerelateerde termen
+
+- [Source Freshness Tracking](/nl/glossary/source-freshness-tracking/) - bronactualiteit opvolgen
+- [AI-risicobeheer](/nl/glossary/ai-risk-management/) - risico beheren doorheen lifecycle
+- [EU AI Act](/nl/glossary/eu-ai-act/) - vereisten die monitoring en controls beïnvloeden
+- [AI-documentatievereisten](/nl/glossary/ai-documentation-requirements/) - bewijs voor audits en gebruikers
+- [Compliance-bewuste retrieval](/nl/glossary/compliance-aware-retrieval/) - retrieval binnen policy- en regelgrenzen
+
+---
+
+## Referenties
+
+> Verordening (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.

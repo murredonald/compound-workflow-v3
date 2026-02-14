@@ -1,0 +1,186 @@
+---
+term: "Adapter"
+termSlug: "adapter"
+short: "Kleine trainbare modules ingevoegd in bevroren voorgetrainde modellen, voor efficiënte taakspecifieke fine-tuning met minimale parameters."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["lora", "fine-tuning", "transfer-learning", "llm"]
+synonyms: ["Adapter modules", "Adapter lagen", "Bottleneck adapters"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Adapters zijn kleine neurale netwerkmodules die tussen lagen van een voorgetraind model worden ingevoegd. Tijdens fine-tuning worden de originele modelgewichten bevroren en alleen de adapter-parameters getraind. Deze aanpak maakt efficiënte transfer learning mogelijk—grote modellen aanpassen aan nieuwe taken met een fractie van de parameters (typisch 1-5% van het originele model). Meerdere taakspecifieke adapters kunnen hetzelfde basismodel delen, wat opslag- en deploymentkosten drastisch verlaagt.
+
+## Waarom het belangrijk is
+
+Adapters transformeerden hoe we grote modellen aanpassen:
+
+- **Parameter-efficiëntie** — train 1-5% van parameters vs 100% bij volledige fine-tuning
+- **Multi-task deployment** — één basismodel + vele lichtgewicht adapters
+- **Verminderd catastrofaal vergeten** — bevroren basis behoudt originele capaciteiten
+- **Lagere opslagkosten** — adapters zijn MB's vs GB's voor volledige modelkopieën
+- **Snel taak wisselen** — wissel adapters tijdens runtime voor verschillende taken
+
+Adapters maken praktische multi-tenant deployment van foundation modellen mogelijk.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    ADAPTER ARCHITECTUUR                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  BOTTLENECK ADAPTER ONTWERP (Origineel 2019):              │
+│  ────────────────────────────────────────────              │
+│                                                            │
+│  Ingevoegd na elke Transformer sublaag:                    │
+│                                                            │
+│  ┌─────────────────────────────────────┐                  │
+│  │         Transformer Blok            │                  │
+│  │                                      │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │   Self-Attention (bevroren)  │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  │                 ▼                    │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │    Adapter Module           │    │                  │
+│  │  │    (TRAINBAAR)              │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  │                 ▼                    │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │   Feed-Forward (bevroren)    │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  │                 ▼                    │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │    Adapter Module           │    │                  │
+│  │  │    (TRAINBAAR)              │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  └─────────────────┼────────────────────┘                  │
+│                    ▼                                       │
+│                                                            │
+│  ADAPTER MODULE INTERNALS:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  Input (hidden_dim = 768)                                  │
+│         │                                                  │
+│         ▼                                                  │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Down-project: 768 → 64 (bottleneck)     │             │
+│  │  [W_down: 768 × 64 = 49K params]         │             │
+│  └─────────────────┬────────────────────────┘             │
+│                    │                                       │
+│                    ▼                                       │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Non-lineariteit (GELU/ReLU)             │             │
+│  └─────────────────┬────────────────────────┘             │
+│                    │                                       │
+│                    ▼                                       │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Up-project: 64 → 768                    │             │
+│  │  [W_up: 64 × 768 = 49K params]           │             │
+│  └─────────────────┬────────────────────────┘             │
+│                    │                                       │
+│                    ▼                                       │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Residuele connectie: output + input     │             │
+│  └──────────────────────────────────────────┘             │
+│                                                            │
+│  Totaal per adapter: ~98K params (vs miljoenen in laag)   │
+│                                                            │
+│                                                            │
+│  ADAPTER FAMILIE VERGELIJKING:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │ Methode       │ Waar ingevoegd    │ Trainbaar %    │  │
+│  ├─────────────────────────────────────────────────────┤  │
+│  │ Bottleneck    │ Na sublagen       │ 2-5%           │  │
+│  │ LoRA          │ Parallel aan W    │ 0.1-1%         │  │
+│  │ Prefix-tuning │ Voor input        │ 0.1%           │  │
+│  │ Prompt-tuning │ Input embeddings  │ <0.1%          │  │
+│  │ (IA)³         │ Schaal activaties │ <0.1%          │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│  MULTI-TASK DEPLOYMENT:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│              ┌──────────────────┐                         │
+│              │Bevroren Basismodel│                         │
+│              │    (7B params)   │                         │
+│              └────────┬─────────┘                         │
+│                       │                                    │
+│       ┌───────────────┼───────────────┐                   │
+│       │               │               │                    │
+│       ▼               ▼               ▼                    │
+│  ┌─────────┐    ┌─────────┐    ┌─────────┐               │
+│  │Adapter A│    │Adapter B│    │Adapter C│               │
+│  │ (Code)  │    │(Medisch)│    │(Juridisch)│              │
+│  │  ~50MB  │    │  ~50MB  │    │  ~50MB  │               │
+│  └─────────┘    └─────────┘    └─────────┘               │
+│                                                            │
+│  vs. Volledige fine-tuning: 3 × 14GB = 42GB modellen nodig│
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Adapter efficiëntievergelijking:**
+| Aanpak | Trainbare Params | Opslag per Taak | Trainsnelheid |
+|--------|------------------|-----------------|---------------|
+| Volledige fine-tuning | 100% | Volledig model | Langzaam |
+| Bottleneck adapters | 2-5% | ~50-200MB | Snel |
+| LoRA | 0.1-1% | ~10-100MB | Zeer snel |
+| Prompt tuning | `<0.1%` | ~1MB | Snelst |
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt LoRA van bottleneck adapters?**
+
+A: Bottleneck adapters voegen nieuwe lagen toe (down-project → non-lineariteit → up-project) in serie. LoRA voegt parallelle low-rank updates toe aan bestaande gewichtsmatrices. LoRA is nog parameter-efficiënter en is populairder geworden, maar bottleneck adapters bereiken soms betere resultaten op complexe taken door hun grotere expressiviteit.
+
+**V: Kan ik meerdere adapters combineren?**
+
+A: Ja! AdapterFusion en vergelijkbare technieken maken het combineren van meerdere taakspecifieke adapters mogelijk. Je kunt ook adapters stapelen (bijv. taaladapter + taakadapter) voor cross-linguïstische transfer of domeinaanpassing. Sommige frameworks ondersteunen gewogen combinaties tijdens inference.
+
+**V: Schaden adapters de inferentiesnelheid?**
+
+A: Minimaal. Bottleneck adapters voegen sequentiële berekening toe, wat latency met 2-5% verhoogt. LoRA-stijl adapters kunnen worden samengevoegd met basisgewichten bij deployment, zonder inference overhead. De multi-task opslagbesparing weegt meestal op tegen de kleine snelheidskosten.
+
+**V: Wanneer moet ik adapters vs. volledige fine-tuning gebruiken?**
+
+A: Gebruik adapters wanneer: (1) je beperkt GPU-geheugen hebt, (2) je meerdere taakspecifieke modellen nodig hebt, (3) je basismodelcapaciteiten wilt behouden, of (4) je fine-tuning data beperkt is (adapters regulariseren beter). Gebruik volledige fine-tuning wanneer je overvloedige resources hebt en maximale taakprestaties nodig hebt.
+
+## Gerelateerde termen
+
+- [LoRA](/nl/glossary/lora/) — populaire adapter variant met low-rank decompositie
+- [Fine-tuning](/nl/glossary/fine-tuning/) — volledige parametertraining die adapters verbeteren
+- Transfer learning — breder concept dat adapters mogelijk maken
+- [LLM](/nl/glossary/llm/) — modellen die profiteren van adapters
+
+---
+
+## Referenties
+
+> Houlsby et al. (2019), "[Parameter-Efficient Transfer Learning for NLP](https://arxiv.org/abs/1902.00751)", ICML. [Originele adapter paper]
+
+> Pfeiffer et al. (2020), "[AdapterHub: A Framework for Adapting Transformers](https://arxiv.org/abs/2007.07779)", EMNLP. [Adapter ecosysteem en fusie]
+
+> He et al. (2022), "[Towards a Unified View of Parameter-Efficient Transfer Learning](https://arxiv.org/abs/2110.04366)", ICLR. [Vergelijking van adapter methoden]
+
+> Hu et al. (2021), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [LoRA als adapter alternatief]
+
+## References
+
+> Houlsby et al. (2019), "[Parameter-Efficient Transfer Learning for NLP](https://arxiv.org/abs/1902.00751)", ICML. [Original adapter paper]
+
+> Pfeiffer et al. (2020), "[AdapterHub: A Framework for Adapting Transformers](https://arxiv.org/abs/2007.07779)", EMNLP. [Adapter ecosystem and fusion]
+
+> He et al. (2022), "[Towards a Unified View of Parameter-Efficient Transfer Learning](https://arxiv.org/abs/2110.04366)", ICLR. [Comparison of adapter methods]
+
+> Hu et al. (2021), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [LoRA as adapter alternative]

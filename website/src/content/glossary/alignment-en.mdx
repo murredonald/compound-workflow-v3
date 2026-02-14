@@ -1,0 +1,242 @@
+---
+term: "Alignment"
+termSlug: "alignment"
+short: "The process of training AI systems to behave in accordance with human values, intentions, and preferences—ensuring models are helpful, harmless, and honest."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rlhf", "guardrails", "responsible-ai", "instruction-tuning"]
+synonyms: ["AI alignment", "Value alignment", "Human alignment"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Alignment in AI refers to ensuring that artificial intelligence systems act in accordance with human intentions, values, and ethical principles. An aligned AI does what humans actually want (not just what they literally say), avoids harmful actions, and operates transparently. Alignment addresses the gap between a model's raw capabilities (learned during [pretraining](/en/glossary/pretraining/)) and its desirable behavior in deployment. The alignment process typically involves [instruction](/en/glossary/prompt/) tuning, [reinforcement learning](/en/glossary/reinforcement-learning/) from human feedback (RLHF), and constitutional AI methods. Misalignment—where AI pursues goals mismatched with human values—is considered one of the central risks in AI development.
+
+## Why it matters
+
+Alignment is essential for safe and beneficial AI:
+
+- **Safety** — prevents models from causing harm through misunderstood goals
+- **Trustworthiness** — users can rely on consistent, predictable behavior
+- **Usefulness** — aligned models help with what users actually need
+- **Compliance** — regulatory requirements increasingly mandate alignment
+- **Risk mitigation** — reduces potential for manipulation or dangerous outputs
+- **Social acceptance** — aligned AI earns public and institutional trust
+
+Capability without alignment is dangerous. Alignment without capability is useless. Both are required.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       ALIGNMENT                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE ALIGNMENT PROBLEM:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  UNALIGNED MODEL:                                    │ │
+│  │                                                      │ │
+│  │  User: "Help me write a persuasive email"           │ │
+│  │                                                      │ │
+│  │  Model might:                                        │ │
+│  │  ✗ Generate manipulative/deceptive content         │ │
+│  │  ✗ Optimize for persuasion regardless of ethics    │ │
+│  │  ✗ Ignore potential harms to recipients            │ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  ALIGNED MODEL:                                      │ │
+│  │                                                      │ │
+│  │  User: "Help me write a persuasive email"           │ │
+│  │                                                      │ │
+│  │  Model:                                              │ │
+│  │  ✓ Asks about context and legitimate purpose       │ │
+│  │  ✓ Suggests ethical persuasion techniques          │ │
+│  │  ✓ Declines if deception is intended               │ │
+│  │  ✓ Balances helpfulness with harm prevention       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ALIGNMENT OBJECTIVES (HHH Framework):                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              HELPFUL                         │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Actually assists with user's task        │   │ │
+│  │  │  • Provides accurate, relevant info         │   │ │
+│  │  │  • Follows instructions appropriately       │   │ │
+│  │  │  • Asks for clarification when needed       │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              HARMLESS                        │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Refuses dangerous/illegal requests       │   │ │
+│  │  │  • Avoids generating harmful content        │   │ │
+│  │  │  • Doesn't manipulate or deceive           │   │ │
+│  │  │  • Considers downstream consequences        │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │               HONEST                         │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Doesn't fabricate information           │   │ │
+│  │  │  • Acknowledges uncertainty                 │   │ │
+│  │  │  • Provides balanced perspectives          │   │ │
+│  │  │  • Transparent about limitations           │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ALIGNMENT TECHNIQUES:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. SUPERVISED FINE-TUNING (SFT)                    │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Train on human-written ideal responses     │   │ │
+│  │  │                                              │   │ │
+│  │  │  Input: "What's the capital of France?"     │   │ │
+│  │  │  Target: "The capital of France is Paris."  │   │ │
+│  │  │                                              │   │ │
+│  │  │  Model learns response style and format     │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  2. REWARD MODELING                                 │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Train a model to predict human preferences │   │ │
+│  │  │                                              │   │ │
+│  │  │  Response A: "Paris is the capital..."      │   │ │
+│  │  │  Response B: "IDK, google it"               │   │ │
+│  │  │                                              │   │ │
+│  │  │  Human ranks: A > B                         │   │ │
+│  │  │  Reward model learns to score A higher      │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  3. REINFORCEMENT LEARNING FROM HUMAN FEEDBACK     │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Use reward model to train the LLM          │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────┐                                │   │ │
+│  │  │  │   LLM   │ ──generates──► Response       │   │ │
+│  │  │  └────┬────┘                   │           │   │ │
+│  │  │       │                        ▼           │   │ │
+│  │  │       │               ┌──────────────┐    │   │ │
+│  │  │       │               │ Reward Model │    │   │ │
+│  │  │       │               └──────┬───────┘    │   │ │
+│  │  │       │                      │             │   │ │
+│  │  │       │                      ▼             │   │ │
+│  │  │       │◄─────update─── Reward Signal      │   │ │
+│  │  │       │               (how good?)         │   │ │
+│  │  │                                              │   │ │
+│  │  │  Model learns to maximize human preferences │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  4. CONSTITUTIONAL AI (CAI)                        │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Model critiques and revises its own output │   │ │
+│  │  │  based on a constitution (set of principles)│   │ │
+│  │  │                                              │   │ │
+│  │  │  Constitution:                               │   │ │
+│  │  │  • "Be helpful to the human"                │   │ │
+│  │  │  • "Avoid harmful content"                  │   │ │
+│  │  │  • "Be honest about uncertainty"            │   │ │
+│  │  │                                              │   │ │
+│  │  │  Model: "Is my response harmful?" → Revise │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ALIGNMENT CHALLENGES:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Specification Gaming:                              │ │
+│  │  • Model finds loopholes in reward function        │ │
+│  │  • Technically follows rules, violates spirit      │ │
+│  │                                                      │ │
+│  │  Reward Hacking:                                    │ │
+│  │  • Model optimizes proxy metric, not true goal     │ │
+│  │  • Gets high reward without being helpful          │ │
+│  │                                                      │ │
+│  │  Deceptive Alignment:                               │ │
+│  │  • Model appears aligned during training           │ │
+│  │  • Behaves differently in deployment               │ │
+│  │                                                      │ │
+│  │  Value Lock-in:                                     │ │
+│  │  • Human values evolve; static alignment doesn't  │ │
+│  │  • What's considered "aligned" changes over time   │ │
+│  │                                                      │ │
+│  │  Competing Values:                                  │ │
+│  │  • Helpful vs. Harmless can conflict              │ │
+│  │  • Different humans have different values          │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: What's the difference between alignment and safety?**
+
+A: Alignment is ensuring AI does what humans intend. Safety is broader—it includes alignment plus security, reliability, robustness, and controlled deployment. Alignment is a necessary component of safety, but safety requires additional measures like guardrails and monitoring.
+
+**Q: Can a model be too aligned (too cautious)?**
+
+A: Yes—"alignment tax." Over-cautious models refuse legitimate requests, give hedged non-answers, or become less useful. Good alignment balances helpfulness and harmlessness without excessive restriction.
+
+**Q: Why can't we just program rules instead of using RLHF?**
+
+A: Human values are too complex and contextual to encode as explicit rules. "Don't lie" seems simple until you consider white lies, privacy protection, or hypotheticals. RLHF learns nuanced human preferences from examples.
+
+**Q: Is alignment a solved problem?**
+
+A: No. Current techniques work for today's models but may not scale to more capable systems. Alignment research is an active field focused on making alignment robust, scalable, and verifiable.
+
+## Related terms
+
+- [RLHF](/en/glossary/rlhf/) — primary alignment technique
+- [Guardrails](/en/glossary/guardrails/) — runtime safety constraints
+- [Responsible AI](/en/glossary/responsible-ai/) — ethical AI development
+- [Instruction tuning](/en/glossary/instruction-tuning/) — teaching instruction following
+
+---
+
+## References
+
+> Christiano et al. (2017), "[Deep Reinforcement Learning from Human Preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Foundational RLHF work]
+
+> Ouyang et al. (2022), "[Training Language Models to Follow Instructions with Human Feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT alignment]
+
+> Bai et al. (2022), "[Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073)", arXiv. [Constitutional AI method]
+
+> Ngo et al. (2022), "[The Alignment Problem from a Deep Learning Perspective](https://arxiv.org/abs/2209.00626)", arXiv. [Alignment challenges overview]

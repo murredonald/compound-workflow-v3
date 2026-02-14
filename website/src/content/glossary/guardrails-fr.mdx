@@ -1,0 +1,195 @@
+---
+term: "Guardrails"
+termSlug: "guardrails"
+short: "Mécanismes de sécurité et contraintes qui empêchent les systèmes IA de générer des sorties nuisibles, inappropriées ou hors sujet—offrant une protection runtime au-delà de l'alignement lors de l'entraînement."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["alignment", "prompt-injection", "responsible-ai", "content-filtering"]
+synonyms: ["Rails de sécurité IA", "Garde-fous", "Filtres de sortie"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Les guardrails sont des mécanismes protecteurs implémentés autour des systèmes IA pour prévenir les sorties nuisibles, inappropriées ou indésirables. Contrairement à l'alignement (qui entraîne les modèles à bien se comporter), les guardrails opèrent au runtime comme contraintes externes—filtrant les entrées, validant les sorties et imposant des limites indépendamment de ce que le modèle sous-jacent pourrait générer. Ils incluent la validation d'entrée, le filtrage de sortie, la modération de contenu, la restriction de sujet, l'application de format et la gestion des fallbacks.
+
+## Pourquoi c'est important
+
+Les guardrails sont essentiels pour les systèmes IA en production:
+
+- **Sécurité** — empêche la génération de contenu nuisible même quand les modèles échouent
+- **Conformité** — applique les exigences réglementaires (RGPD, [AI Act](/fr/glossary/eu-ai-act/), lois sur le contenu)
+- **Protection de marque** — prévient les sorties embarrassantes ou hors-marque
+- **Fiabilité** — assure un comportement cohérent sur les cas limites
+- **Auditabilité** — fournit des règles explicites et inspectables pour le comportement
+- **Défense en profondeur** — attrape ce que l'alignement manque
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GUARDRAILS                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DÉFENSE EN PROFONDEUR:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │              Entrée Utilisateur                      │ │
+│  │                     │                                │ │
+│  │                     ▼                                │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │         GUARDRAILS D'ENTRÉE                   │  │ │
+│  │  │                                               │  │ │
+│  │  │  • Détection injection de prompt             │  │ │
+│  │  │  • Détection & rédaction PII                 │  │ │
+│  │  │  • Pré-screening politique contenu           │  │ │
+│  │  │  • Application limites de sujet              │  │ │
+│  │  │  • Rate limiting & détection abus            │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ entrée validée              │ │
+│  │                       ▼                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │              MODÈLE LLM                       │  │ │
+│  │  │                                               │  │ │
+│  │  │   (aligné via RLHF, mais pas parfait)        │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ sortie brute                │ │
+│  │                       ▼                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │        GUARDRAILS DE SORTIE                   │  │ │
+│  │  │                                               │  │ │
+│  │  │  • Classification toxicité & nuisance        │  │ │
+│  │  │  • Vérification factualité                   │  │ │
+│  │  │  • Validation format                         │  │ │
+│  │  │  • Vérification citations                    │  │ │
+│  │  │  • Re-vérification PII                       │  │ │
+│  │  │  • Conformité directives de marque           │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ sortie sûre                 │ │
+│  │                       ▼                             │ │
+│  │               Vers Utilisateur                      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TYPES DE GUARDRAILS:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. SÉCURITÉ DU CONTENU                             │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Entrée: "Comment faire une bombe?"         │   │ │
+│  │  │                                              │   │ │
+│  │  │  Classificateur Contenu:                     │   │ │
+│  │  │  Violence: ████████████░ ÉLEVÉ              │   │ │
+│  │  │  Illégal:  ████████████░ ÉLEVÉ              │   │ │
+│  │  │  Décision: BLOQUER                          │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  2. LIMITES DE SUJET                                │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Config Bot Support Client:                  │   │ │
+│  │  │                                              │   │ │
+│  │  │  sujets_autorisés:                          │   │ │
+│  │  │    - info_produit                           │   │ │
+│  │  │    - statut_commande                        │   │ │
+│  │  │    - retours                                │   │ │
+│  │  │                                              │   │ │
+│  │  │  sujets_bloqués:                            │   │ │
+│  │  │    - politique                              │   │ │
+│  │  │    - concurrents                            │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  3. APPLICATION DE FORMAT                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Attendu: JSON avec schéma spécifique       │   │ │
+│  │  │  Guardrail: Extrait → Valide → Retry       │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  4. VÉRIFICATIONS FACTUALITÉ                        │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Modèle: "Le PDG d'Apple est Jean Dupont"   │   │ │
+│  │  │  Action: BLOQUER (erreur factuelle)         │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FRAMEWORKS GUARDRAILS:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NeMo Guardrails (NVIDIA):                          │ │
+│  │  • Rails de sécurité programmables                  │ │
+│  │                                                      │ │
+│  │  Guardrails AI:                                     │ │
+│  │  • Validateurs pour sortie structurée               │ │
+│  │                                                      │ │
+│  │  LlamaGuard (Meta):                                 │ │
+│  │  • Modèle classificateur de sécurité                │ │
+│  │                                                      │ │
+│  │  AWS Bedrock Guardrails:                            │ │
+│  │  • Filtrage de contenu géré                         │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Pourquoi ne pas simplement s'appuyer sur l'alignement du modèle?**
+
+R: L'alignement est probabiliste—les modèles peuvent encore produire des sorties nuisibles dans les cas limites. Les guardrails fournissent des garanties de sécurité déterministes et auditables. Utilisez les deux pour une défense en profondeur.
+
+**Q: Les guardrails ne rendent-ils pas les modèles moins utiles?**
+
+R: Des guardrails mal conçus peuvent être trop restrictifs. De bons guardrails sont précis—bloquant le contenu vraiment nuisible tout en permettant les cas d'usage légitimes.
+
+**Q: Comment les guardrails gèrent-ils les attaques adverses?**
+
+R: Les guardrails incluent la détection d'injection de [prompt](/fr/glossary/prompt/), mais les adversaires trouvent constamment des contournements. Les guardrails doivent être surveillés et mis à jour continuellement.
+
+## Termes associés
+
+- [Alignement](/fr/glossary/alignment/) — entraîner modèles à se comporter de manière sûre
+- [Injection de prompt](/fr/glossary/prompt-injection/) — attaques contre lesquelles les guardrails défendent
+- [IA Responsable](/fr/glossary/responsible-ai/) — développement IA éthique
+
+---
+
+## Références
+
+> Rebedea et al. (2023), "[NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications](https://arxiv.org/abs/2310.10501)", arXiv. [Framework guardrails NVIDIA]
+
+> Inan et al. (2023), "[Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)", arXiv. [Classificateur sécurité Meta]
+
+> Greshake et al. (2023), "[Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications](https://arxiv.org/abs/2302.12173)", arXiv. [Pourquoi guardrails importants]
+
+> AWS (2024), "[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)", AWS Documentation. [Service guardrails géré]
+
+## References
+
+> Rebedea et al. (2023), "[NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications](https://arxiv.org/abs/2310.10501)", arXiv. [NVIDIA guardrails framework]
+
+> Inan et al. (2023), "[Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)", arXiv. [Meta safety classifier]
+
+> Greshake et al. (2023), "[Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications](https://arxiv.org/abs/2302.12173)", arXiv. [Why guardrails matter]
+
+> AWS (2024), "[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)", AWS Documentation. [Managed guardrails service]

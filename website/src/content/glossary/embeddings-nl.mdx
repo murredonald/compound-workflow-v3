@@ -1,0 +1,103 @@
+---
+term: "Embeddings"
+termSlug: "embeddings"
+short: "Dichte vectorrepresentaties van data (tekst, afbeeldingen, etc.) die semantische betekenis vastleggen in een continue numerieke ruimte."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "vector-database", "semantic-similarity", "llm"]
+synonyms: ["Vector embeddings", "Dense embeddings", "Neurale embeddings"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Embeddings zijn dichte, continue [vectorrepresentaties](/nl/glossary/vector-embeddings/) van discrete data (woorden, zinnen, afbeeldingen, etc.) in een hoogdimensionale ruimte. In tegenstelling tot sparse representaties zoals one-hot encoding, comprimeren embeddings informatie naar vectoren van vaste grootte waarbij vergelijkbare items dicht bij elkaar liggen in de embedding-ruimte. Dit maakt wiskundige bewerkingen op semantische concepten mogelijk.
+
+## Waarom het belangrijk is
+
+Embeddings zijn fundamenteel voor moderne AI-systemen:
+
+- **Semantische gelijkenis** — vergelijkbare betekenissen worden naar nabije vectoren gemapt, wat similariteitszoeken mogelijk maakt
+- **Transfer learning** — voorgetrainde embeddings leggen algemene kennis vast die herbruikbaar is voor diverse taken
+- **Dimensionaliteitsreductie** — miljoenen mogelijke woorden worden gecomprimeerd naar honderden dimensies
+- **Wiskundige bewerkingen** — vectorrekenkunde onthult semantische relaties (koning - man + vrouw ≈ koningin)
+
+Elk RAG-systeem, zoekmachine en aanbevelingssysteem vertrouwt op embeddings om content te begrijpen.
+
+## Hoe het werkt
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   EMBEDDING PROCES                      │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  Input Tekst ────→ Tokeniseer ────→ Model ────→ Vector  │
+│                                                         │
+│  "fiscaal recht" → [123, 456]   →  Neuraal   → [0.12,  │
+│                                    Netwerk      0.45,  │
+│                                                -0.23,  │
+│                                                 ...]   │
+│                                                (768-D) │
+│                                                         │
+│  Semantische ruimte:                                    │
+│     "fiscaal recht" ●────────● "belastingregeling"     │
+│                         dichtbij                        │
+│     "weer" ●                                            │
+│            ver                                          │
+└─────────────────────────────────────────────────────────┘
+```
+
+1. **[Tokenisatie](/nl/glossary/tokenization/)** — invoertekst wordt opgesplitst in tokens
+2. **Model-encoding** — [neuraal netwerk](/nl/glossary/neural-network/) verwerkt tokens
+3. **Pooling** — tokenrepresentaties worden gecombineerd (gemiddelde, CLS token, etc.)
+4. **Outputvector** — dichte vector van vaste grootte (bijv. 384, 768 of 1536 dimensies)
+
+Het embedding-model wordt getraind zodat semantisch vergelijkbare invoer vectoren produceert met hoge cosinus-similariteit.
+
+## Veelgestelde vragen
+
+**V: Welke embedding-dimensies zijn gangbaar?**
+
+A: Typische groottes variëren van 384 (lichtgewicht) tot 1536 (OpenAI) tot 4096 (grote modellen). Hogere dimensies kunnen meer nuance vastleggen maar vereisen meer opslag en rekenkracht.
+
+**V: Hoe verschillen zinsembeddings van woordembeddings?**
+
+A: Woordembeddings (Word2Vec, GloVe) representeren individuele woorden. Zinsembeddings (van modellen zoals sentence-[transformers](/nl/glossary/transformer-architecture/)) leggen de betekenis van hele zinnen vast en verwerken context en woordvolgorde.
+
+**V: Wat zijn tweetalige/meertalige embeddings?**
+
+A: Deze modellen mappen meerdere talen naar een gedeelde embedding-ruimte, zodat "legal advice" en "juridisch advies" vergelijkbare vectoren produceren, wat cross-linguaal zoeken mogelijk maakt.
+
+**V: Driften embeddings na verloop van tijd?**
+
+A: Embedding-modellen zijn statisch zodra getraind, maar als je je embedding-model bijwerkt, moeten alle vectoren opnieuw gegenereerd worden aangezien verschillende modellen incompatibele ruimtes produceren.
+
+## Gerelateerde termen
+
+- [RAG](/nl/glossary/rag/) — gebruikt embeddings voor retrieval
+- [Vector Database](/nl/glossary/vector-database/) — slaat embeddings op en doorzoekt ze
+- [Semantic Similarity](/nl/glossary/semantic-similarity/) — gemeten via embedding-afstand
+- [LLM](/nl/glossary/llm/) — gebruikt embeddings intern
+
+---
+
+## Referenties
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [40.000+ [citaties](/nl/glossary/citation/)]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [8.000+ citaties]
+
+> Pennington et al. (2014), "[GloVe: Global Vectors for Word Representation](https://nlp.stanford.edu/pubs/glove.pdf)", EMNLP. [35.000+ citaties]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [700+ citaties]
+
+## References
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [40,000+ citations]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [8,000+ citations]
+
+> Pennington et al. (2014), "[GloVe: Global Vectors for Word Representation](https://nlp.stanford.edu/pubs/glove.pdf)", EMNLP. [35,000+ citations]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [700+ citations]

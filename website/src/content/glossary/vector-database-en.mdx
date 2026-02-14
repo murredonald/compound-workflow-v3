@@ -1,0 +1,93 @@
+---
+term: "Vector Database"
+termSlug: "vector-database"
+short: "A specialized database optimized for storing and searching high-dimensional vector embeddings using similarity metrics."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["embeddings", "rag", "semantic-similarity", "approximate-nearest-neighbor"]
+synonyms: ["Vector store", "Vector DB", "Embedding database", "Similarity search database"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A vector database is a specialized data store designed to efficiently index, store, and query high-dimensional vector embeddings. Unlike traditional databases that match exact values, vector databases find items similar to a query vector using distance metrics like [cosine similarity](/en/glossary/cosine-similarity/) or [Euclidean distance](/en/glossary/euclidean-distance/). They enable semantic search at scale through approximate nearest neighbor (ANN) algorithms.
+
+## Why it matters
+
+Vector databases are essential infrastructure for modern AI applications:
+
+- **Semantic search** — find conceptually similar content regardless of exact keywords
+- **RAG systems** — retrieve relevant context for language model responses
+- **Recommendation engines** — find similar products, content, or users
+- **Anomaly detection** — identify outliers in embedding space
+- **Scalability** — search billions of vectors in milliseconds
+
+Any system that needs to find "similar" rather than "exact" answers relies on vector databases.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    VECTOR DATABASE                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  INDEXING:                                                 │
+│  Documents → Embed → [0.1, 0.4, ...] → Index (HNSW/IVF)   │
+│                                                            │
+│  ┌─────────────────────────────────────────┐               │
+│  │  Vector Index (graphs/clusters)         │               │
+│  │    ●──●──●                              │               │
+│  │   /│\   \                               │               │
+│  │  ● ● ●   ●──●                           │               │
+│  └─────────────────────────────────────────┘               │
+│                                                            │
+│  QUERYING:                                                 │
+│  Query → Embed → [0.2, 0.3, ...] → ANN Search → Top K     │
+│                                            │               │
+│                                            ▼               │
+│                                    Similar documents       │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Embedding** — documents are converted to vectors via embedding model
+2. **Indexing** — vectors are organized into efficient search structures (HNSW, IVF, etc.)
+3. **Query embedding** — search query is converted to same embedding space
+4. **ANN search** — index is traversed to find [approximate nearest neighbors](/en/glossary/ann/)
+5. **Results** — top K most similar vectors returned with metadata
+
+## Common questions
+
+**Q: How is a vector database different from a traditional database?**
+
+A: Traditional databases use exact matching (WHERE name = 'John'). Vector databases use similarity search—finding vectors closest to your query in high-dimensional space. They complement rather than replace traditional databases.
+
+**Q: What indexing algorithms are used?**
+
+A: Common algorithms include HNSW ([Hierarchical Navigable Small World](/en/glossary/hnsw/)), IVF (Inverted File Index), and PQ (Product Quantization). HNSW is most popular for its speed/accuracy tradeoff.
+
+**Q: What are popular vector databases?**
+
+A: Purpose-built options include Pinecone, Weaviate, Milvus, Qdrant, and Chroma. Traditional databases like PostgreSQL (pgvector) and Elasticsearch also support vector search.
+
+**Q: How do I handle [metadata filtering](/en/glossary/metadata-filtering/)?**
+
+A: Most vector databases support hybrid search combining vector similarity with metadata filters (e.g., "similar to query AND category = 'legal'"). This is critical for production RAG systems.
+
+## Related terms
+
+- [Embeddings](/en/glossary/embeddings/) — the vectors stored in vector databases
+- [RAG](/en/glossary/rag/) — retrieval architecture powered by vector search
+- [Semantic Similarity](/en/glossary/semantic-similarity/) — the measure used for ranking
+- Approximate Nearest Neighbor — core search algorithm
+
+---
+
+## References
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2,600+ citations]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1,800+ citations]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ citations]

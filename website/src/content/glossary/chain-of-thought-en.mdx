@@ -1,0 +1,267 @@
+---
+term: "Chain-of-Thought"
+termSlug: "chain-of-thought"
+short: "A prompting technique that elicits step-by-step reasoning from language models, improving performance on complex tasks by making the model's reasoning process explicit and verifiable."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["few-shot", "zero-shot", "in-context-learning", "prompt-engineering"]
+synonyms: ["CoT prompting", "Step-by-step reasoning", "Reasoning chain"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Chain-of-thought (CoT) prompting is a technique that encourages [large language models](/en/glossary/llm/) to generate intermediate reasoning steps before arriving at a final answer. Instead of directly outputting an answer, the model produces a series of logical steps that lead to the conclusion. This approach significantly improves performance on tasks requiring multi-step reasoning, mathematical computation, logical [inference](/en/glossary/inference/), and complex problem-solving. CoT can be elicited through few-shot examples with reasoning traces or simply by adding "Let's think step by step" to [prompts](/en/glossary/prompt/).
+
+## Why it matters
+
+Chain-of-thought transforms LLM capabilities:
+
+- **Accuracy boost** — 50-90% improvement on reasoning benchmarks
+- **Transparency** — shows HOW the model reached its answer
+- **Error detection** — intermediate steps reveal faulty logic
+- **Complex tasks** — enables math, logic, and multi-hop reasoning
+- **Debugging** — identify exactly where reasoning goes wrong
+- **Trust building** — verifiable reasoning for high-stakes decisions
+
+CoT is essential for deploying LLMs in applications requiring reliable reasoning.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   CHAIN-OF-THOUGHT                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STANDARD PROMPTING vs CHAIN-OF-THOUGHT:                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  Problem: "If John has 3 apples and buys 2 more bags      │
+│           with 4 apples each, how many apples total?"     │
+│                                                            │
+│                                                            │
+│  STANDARD PROMPTING:                                       │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  User: [problem]                                     │ │
+│  │                                                      │ │
+│  │  Model: 11 apples  ← Direct answer (often wrong)    │ │
+│  │                                                      │ │
+│  │  Why it fails:                                       │ │
+│  │  • Model may miss multi-step nature                 │ │
+│  │  • No intermediate computation                      │ │
+│  │  • Cannot verify reasoning                          │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CHAIN-OF-THOUGHT PROMPTING:                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  User: [problem]                                     │ │
+│  │        Let's think step by step.                    │ │
+│  │                                                      │ │
+│  │  Model:                                              │ │
+│  │  Step 1: John starts with 3 apples                  │ │
+│  │  Step 2: He buys 2 bags                             │ │
+│  │  Step 3: Each bag has 4 apples                      │ │
+│  │  Step 4: Apples from bags = 2 × 4 = 8              │ │
+│  │  Step 5: Total = 3 + 8 = 11 apples                 │ │
+│  │                                                      │ │
+│  │  Answer: 11 apples ✓                                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  COT VARIANTS:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  1. ZERO-SHOT COT:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Just add "Let's think step by step" to any prompt │ │
+│  │                                                      │ │
+│  │  Prompt: "What is 17 × 24?"                         │ │
+│  │          "Let's think step by step."               │ │
+│  │                                                      │ │
+│  │  Model: "First, I'll break this down:              │ │
+│  │          17 × 24 = 17 × (20 + 4)                   │ │
+│  │                  = 17 × 20 + 17 × 4                │ │
+│  │                  = 340 + 68                         │ │
+│  │                  = 408"                             │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  2. FEW-SHOT COT (with examples):                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Example 1:                                          │ │
+│  │  Q: A store has 5 boxes. Each box has 3 items.      │ │
+│  │     2 items are sold. How many remain?              │ │
+│  │  A: Let's think step by step.                       │ │
+│  │     Step 1: Total items = 5 × 3 = 15               │ │
+│  │     Step 2: After selling 2: 15 - 2 = 13           │ │
+│  │     Answer: 13 items                                │ │
+│  │                                                      │ │
+│  │  Example 2:                                          │ │
+│  │  Q: [similar problem with reasoning]                │ │
+│  │  A: [step by step solution]                         │ │
+│  │                                                      │ │
+│  │  Now solve:                                          │ │
+│  │  Q: [new problem]                                    │ │
+│  │                                                      │ │
+│  │  Model follows demonstrated reasoning pattern!      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  REASONING VISUALIZATION:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Complex problem decomposition:                           │
+│                                                            │
+│  ┌──────────────┐                                         │
+│  │   Problem    │                                         │
+│  └──────┬───────┘                                         │
+│         │                                                  │
+│         ↓                                                  │
+│  ┌──────────────┐      ┌──────────────┐                  │
+│  │   Step 1     │──────│  Result 1    │                  │
+│  │ Identify     │      │  3 apples    │                  │
+│  │ initial      │      │  (initial)   │                  │
+│  └──────┬───────┘      └──────────────┘                  │
+│         │                     │                           │
+│         ↓                     │                           │
+│  ┌──────────────┐             │                           │
+│  │   Step 2     │             │                           │
+│  │ Calculate    │             │                           │
+│  │ bags × items │             │                           │
+│  └──────┬───────┘             │                           │
+│         │                     │                           │
+│         ↓                     │                           │
+│  ┌──────────────┐      ┌──────────────┐                  │
+│  │   Result 2   │      │              │                  │
+│  │  2 × 4 = 8   │      │              │                  │
+│  └──────┬───────┘      │              │                  │
+│         │              │              │                   │
+│         └──────────────┴──────────────┘                  │
+│                   │                                        │
+│                   ↓                                        │
+│            ┌──────────────┐                               │
+│            │   Step 3     │                               │
+│            │  Add totals  │                               │
+│            │  3 + 8 = 11  │                               │
+│            └──────┬───────┘                               │
+│                   │                                        │
+│                   ↓                                        │
+│            ┌──────────────┐                               │
+│            │ Final Answer │                               │
+│            │  11 apples   │                               │
+│            └──────────────┘                               │
+│                                                            │
+│                                                            │
+│  ADVANCED COT TECHNIQUES:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  SELF-CONSISTENCY:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Generate multiple reasoning paths, vote on answer  │ │
+│  │                                                      │ │
+│  │  Path 1: 3 + (2×4) = 3 + 8 = 11 ←─┐                │ │
+│  │  Path 2: 3 + 4 + 4 = 11          ←─┼─ Vote: 11 ✓   │ │
+│  │  Path 3: 3×2 + 4 = 10 (wrong)   ←─┘                │ │
+│  │                                                      │ │
+│  │  Majority voting filters out reasoning errors       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  TREE OF THOUGHTS:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Explore multiple reasoning branches, backtrack     │ │
+│  │                                                      │ │
+│  │           ┌─────┐                                    │ │
+│  │           │Start│                                    │ │
+│  │           └──┬──┘                                    │ │
+│  │        ┌────┴────┐                                  │ │
+│  │    ┌───┴───┐ ┌───┴───┐                             │ │
+│  │    │Path A │ │Path B │                             │ │
+│  │    └───┬───┘ └───┬───┘                             │ │
+│  │    ┌───┴───┐     │                                  │ │
+│  │  ┌─┴─┐ ┌─┴─┐   Dead                                │ │
+│  │  │A1 │ │A2 │   end                                  │ │
+│  │  └───┘ └───┘                                        │ │
+│  │    ✓                                                │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARK IMPROVEMENTS WITH COT:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  ┌────────────────────┬─────────────┬───────────────────┐│
+│  │ Benchmark          │ Standard    │ With CoT          ││
+│  ├────────────────────┼─────────────┼───────────────────┤│
+│  │ GSM8K (math)       │ ~18%        │ ~57% (+217%)      ││
+│  │ MultiArith         │ ~35%        │ ~93% (+166%)      ││
+│  │ StrategyQA         │ ~65%        │ ~75% (+15%)       ││
+│  │ CommonsenseQA      │ ~73%        │ ~80% (+10%)       ││
+│  └────────────────────┴─────────────┴───────────────────┘│
+│                                                            │
+│  (Results vary by model size—larger models benefit more)  │
+│                                                            │
+│                                                            │
+│  CODE EXAMPLE:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  # Zero-shot CoT                                           │
+│  prompt = """                                              │
+│  Question: A car travels 60 mph for 2 hours,              │
+│  then 40 mph for 3 hours. Total distance?                 │
+│                                                            │
+│  Let's think step by step.                                 │
+│  """                                                       │
+│                                                            │
+│  # Few-shot CoT                                            │
+│  prompt = """                                              │
+│  Q: If x = 5 and y = x + 3, what is y × 2?                │
+│  A: Let's solve step by step:                              │
+│  1. x = 5 (given)                                          │
+│  2. y = x + 3 = 5 + 3 = 8                                  │
+│  3. y × 2 = 8 × 2 = 16                                     │
+│  Answer: 16                                                │
+│                                                            │
+│  Q: If a = 10 and b = a / 2, what is b + 7?               │
+│  A: Let's solve step by step:                              │
+│  """                                                       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: When should I use chain-of-thought prompting?**
+
+A: Use CoT for: (1) math problems, (2) multi-step reasoning, (3) logical inference, (4) tasks requiring explanation, (5) complex decision-making. Skip CoT for simple factual questions, classification, or creative tasks where step-by-step reasoning isn't needed.
+
+**Q: Does CoT work with smaller models?**
+
+A: CoT benefits increase dramatically with model size. Models under ~10B parameters show minimal improvement—they may generate reasoning text but it's often incorrect or disconnected from the answer. CoT "emerges" as an ability in larger models (62B+). For smaller models, [fine-tuning](/en/glossary/fine-tuning/) on reasoning traces helps.
+
+**Q: How do I handle CoT errors when the reasoning is wrong but confident?**
+
+A: Use self-consistency (generate 5-10 paths, vote on answer), add verification steps ("Check: does this make sense?"), or implement explicit verification with a second model. Also consider few-shot examples that demonstrate error-checking behavior.
+
+**Q: Is CoT just prompting or can models be trained for it?**
+
+A: Both. Prompting extracts latent reasoning ability. Training on reasoning traces (like OpenAI's o1 model) significantly improves CoT quality. Fine-tuning on step-by-step solutions creates models that reason better by default without special prompting.
+
+## Related terms
+
+- [Few-shot learning](/en/glossary/few-shot/) — providing examples for CoT
+- [Zero-shot learning](/en/glossary/zero-shot/) — CoT without examples
+- [In-context learning](/en/glossary/in-context-learning/) — learning pattern CoT uses
+- Prompt engineering — broader prompting techniques
+
+---
+
+## References
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [Original CoT paper]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT "Let's think step by step"]
+
+> Wang et al. (2022), "[Self-Consistency Improves Chain of Thought Reasoning](https://arxiv.org/abs/2203.11171)", ICLR. [Self-consistency for CoT]
+
+> Yao et al. (2023), "[Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601)", NeurIPS. [Tree of Thoughts extension]

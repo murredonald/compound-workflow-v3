@@ -1,0 +1,69 @@
+---
+term: "Auflösung von Quellenkonflikten"
+termSlug: "source-conflict-resolution"
+short: "Quellenkonflikt-Auflösung beschreibt, wie ein Such- oder RAG-System widersprüchliche Quellen erkennt und behandelt, mit Fokus auf kontrollierende Autorität und explizite Unsicherheit."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["authority-ranking-model", "source-reliability-weighting", "human-oversight", "algorithmic-transparency", "compliance-aware-retrieval"]
+synonyms: ["Conflict handling", "Contradiction management", "Source disagreement resolution"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Quellenkonflikt-Auflösung umfasst Regeln und Workflows, mit denen ein Retrieval- oder [RAG](/de/glossary/rag/)-System umgeht, wenn relevante Quellen einander widersprechen. In juristischen Kontexten sind Konflikte oft real (unterschiedliche Regeln je Zeit/Jurisdiktion) oder scheinbar (abweichende Auslegung, fehlender Kontext, überholte Version).
+
+## Warum es wichtig ist
+
+- **Korrektheit**: Antworten müssen kontrollierende Autorität und Anwendbarkeit berücksichtigen.
+- **Sicherheit**: Konflikte zu verstecken erzeugt falsche Sicherheit und Compliance-Risiko.
+- **Vertrauen**: Transparenz über Unsicherheit steigert Glaubwürdigkeit.
+- **Triage**: echte Ambiguitäten können zu Human Review eskaliert werden.
+
+## Wie es funktioniert
+
+Üblich ist die Kombination aus Erkennung + Policy:
+
+```
+Retrieve -> Konflikte erkennen -> Hierarchie + Anwendbarkeit anwenden -> mit Zitationen darstellen -> bei Ambiguität eskalieren
+```
+
+Typische Strategien:
+
+- Höhere Autorität und klare Anwendbarkeit bevorzugen (Jurisdiktion, Daten)
+- "ersetzt" vs "koexistiert" unterscheiden (z.B. unterschiedliche Zeiträume)
+- Beide Positionen mit Bedingungen zeigen, nicht alles zu einer Aussage verschmelzen
+- Menschliche Aufsicht bei High-Impact oder unaufgelösten Konflikten
+
+## Praktisches Beispiel
+
+Zwei Quellen nennen unterschiedliche Steuersätze. Eine gilt nur vor einem Änderungsdatum. Das System hebt die Geltungsdaten hervor, zitiert beide Fassungen und nutzt die in Kraft befindliche Norm für den angefragten Zeitraum.
+
+## Häufige Fragen
+
+**Q: Kann ein [LLM](/de/glossary/llm/) Konflikte allein lösen?**
+
+A: Es kann vergleichen und zusammenfassen, aber Authority-/Applicability-Policies sollten systemseitig erzwungen werden, mit Eskalation bei verbleibender Unsicherheit.
+
+**Q: Sollte man Konflikte immer anzeigen?**
+
+A: Für Legal/Tax ist es meist sicherer, Konflikte (oder zumindest Unsicherheit) sichtbar zu machen, statt sie zu verstecken.
+
+## Verwandte Begriffe
+
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - kontrollierende Quellen priorisieren
+- [Gewichtung der Quellenzuverlässigkeit](/de/glossary/source-reliability-weighting/) - Einfluss schwacher Quellen reduzieren
+- [Menschliche Aufsicht](/de/glossary/human-oversight/) - Eskalationspfad bei Ambiguität
+- [Algorithmische Transparenz](/de/glossary/algorithmic-transparency/) - Behandlung erklärbar machen
+- [Compliance-bewusstes Retrieval](/de/glossary/compliance-aware-retrieval/) - Policies und Restriktionen durchsetzen
+
+---
+
+## Referenzen
+
+> Verordnung (EU) 2024/1689 ([EU AI Act](/de/glossary/eu-ai-act/)).
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).

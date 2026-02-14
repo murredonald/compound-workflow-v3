@@ -1,0 +1,145 @@
+---
+term: "Apprentissage Non Supervisé"
+termSlug: "unsupervised-learning"
+short: "Une approche de machine learning où les modèles découvrent des patterns et structures dans les données sans exemples étiquetés."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["machine-learning", "supervised-learning", "embeddings", "clustering"]
+synonyms: ["ML non supervisé", "Auto-organisation", "Découverte de patterns", "Apprentissage non étiqueté"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'apprentissage non supervisé est un paradigme de machine learning où les algorithmes découvrent des patterns cachés, des structures et des relations dans les données sans la guidance d'exemples étiquetés. Contrairement à l'apprentissage supervisé où les réponses correctes sont fournies pendant l'entraînement, les méthodes non supervisées doivent trouver une organisation significative dans les données par elles-mêmes—identifier des clusters naturels, réduire la dimensionnalité, détecter des anomalies, ou apprendre des représentations utiles.
+
+## Pourquoi c'est important
+
+L'apprentissage non supervisé débloque la valeur des données non étiquetées :
+
+- **Pas d'étiquetage requis** — fonctionne avec des données brutes (moins cher, abondant)
+- **Découverte de patterns** — trouve des structures que les humains pourraient manquer
+- **Prétraitement des données** — réduction dimensionnelle, apprentissage de features
+- **Détection d'anomalies** — identifie les valeurs aberrantes sans exemples
+- **Fondement des [embeddings](/fr/glossary/vector-embeddings/)** — apprend des représentations pour la [recherche sémantique](/fr/glossary/semantic-search/)
+
+Beaucoup de percées modernes en IA, y compris les embeddings textuels, reposent sur l'apprentissage non supervisé ou auto-supervisé.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               APPRENTISSAGE NON SUPERVISÉ                  │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SUPERVISÉ VS NON SUPERVISÉ:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  SUPERVISÉ:                    NON SUPERVISÉ:              │
+│  "Voici les données ET         "Voici les données.        │
+│   les bonnes réponses"          Trouve les patterns"       │
+│                                                            │
+│  Entrée → ÉTIQUETTE            Entrée → ???               │
+│  [Image] → "Chat"              [Points] → Groupes?        │
+│                                                            │
+│  TÂCHES PRINCIPALES NON SUPERVISÉES:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  1. CLUSTERING                                             │
+│     Grouper les éléments similaires                        │
+│                                                            │
+│     Avant:               Après:                            │
+│       ●  ○  ●              ┌───────┐  ┌───────┐           │
+│     ○    ●    ○            │ ● ● ● │  │ ○ ○ ○ │           │
+│       ●  ○  ●              │ ● ● ● │  │ ○ ○ ○ │           │
+│                            └───────┘  └───────┘           │
+│                            Cluster A   Cluster B           │
+│                                                            │
+│  2. RÉDUCTION DE DIMENSIONNALITÉ                           │
+│     Compresser données en préservant structure             │
+│                                                            │
+│     Espace haute-D         Espace basse-D                 │
+│     (100 features)    →    (2-3 features)                 │
+│                                                            │
+│     ┌─────────────┐        ┌─────────────┐                │
+│     │ x₁,x₂,...x₁₀₀│   →   │   x'₁, x'₂  │                │
+│     └─────────────┘        └─────────────┘                │
+│          ACP, t-SNE, UMAP, Auto-encodeurs                 │
+│                                                            │
+│  3. DÉTECTION D'ANOMALIES                                  │
+│     Trouver patterns inhabituels                           │
+│                                                            │
+│          ●●●●●●                                            │
+│        ●●●●●●●●●                                           │
+│          ●●●●●●         ○ ← Anomalie!                     │
+│                                                            │
+│  4. APPRENTISSAGE DE REPRÉSENTATIONS                       │
+│     Apprendre features automatiquement                     │
+│                                                            │
+│     Données Brutes → Encodeur → Embedding → Représentation│
+│                                                            │
+│  ALGORITHMES COURANTS:                                     │
+│  ─────────────────────                                     │
+│  Clustering:      K-Means, DBSCAN, Hiérarchique           │
+│  Réd. Dim.:       ACP, t-SNE, UMAP                        │
+│  Basé densité:    Modèles de Mélange Gaussien             │
+│  Neuronal:        Auto-encodeurs, VAEs                    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Comparaison des méthodes non supervisées:**
+| Méthode | But | Sortie | Exemple d'usage |
+|---------|-----|--------|-----------------|
+| K-Means | Clustering | K groupes | Segmentation clients |
+| ACP | Réduction dimensionnelle | Données basse-D | Compression features |
+| Auto-encodeurs | Apprentissage représentation | Embeddings | Compression images |
+| DBSCAN | Clustering par densité | Groupes variables | Détection anomalies |
+
+## Questions fréquentes
+
+**Q : Comment évaluer l'apprentissage non supervisé sans étiquettes ?**
+
+R : Plusieurs approches : (1) Métriques intrinsèques comme le score silhouette pour le clustering, (2) Erreur de reconstruction pour auto-encodeurs, (3) Performance sur tâche en aval (utiliser représentations apprises pour tâche supervisée), (4) Évaluation humaine des patterns découverts, (5) Comparaison avec [vérité terrain](/fr/glossary/ground-truth/) connue si disponible.
+
+**Q : Qu'est-ce que l'apprentissage auto-supervisé ?**
+
+R : L'apprentissage auto-supervisé est une forme d'apprentissage non supervisé où l'algorithme crée ses propres étiquettes à partir des données. Le [pré-entraînement](/fr/glossary/pretraining/) des LLMs est auto-supervisé : prédire le prochain token utilise le texte lui-même comme étiquettes. C'est techniquement non supervisé (pas d'étiquettes humaines) mais le processus d'entraînement ressemble à du supervisé.
+
+**Q : Quand utiliser non supervisé vs supervisé ?**
+
+R : Utilisez non supervisé quand : (1) Vous n'avez pas d'étiquettes, (2) Vous voulez explorer/comprendre la structure des données, (3) Vous avez besoin de prétraitement (réduction dimensionnelle), (4) Vous voulez trouver des anomalies. Utilisez supervisé quand vous avez des étiquettes et une tâche de [prédiction](/fr/glossary/inference/) spécifique.
+
+**Q : Comment le non supervisé se rapporte aux embeddings ?**
+
+R : Beaucoup de méthodes d'embedding utilisent l'apprentissage non supervisé ou auto-supervisé. Word2Vec apprend des embeddings de mots sans étiquettes en prédisant les mots de contexte. Les auto-encodeurs apprennent des représentations compressées. Ces embeddings non supervisés permettent ensuite la recherche sémantique, le clustering, et plus.
+
+## Termes associés
+
+- [Machine Learning](/fr/glossary/machine-learning/) — le domaine plus large
+- [Apprentissage Supervisé](/fr/glossary/supervised-learning/) — apprentissage avec étiquettes
+- [Embeddings](/fr/glossary/embeddings/) — souvent appris de façon non supervisée
+- Clustering — grouper éléments similaires
+
+---
+
+## Références
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Chapitres 13-14. [Texte fondateur]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapitre 15. [Apprentissage de représentation non supervisé]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20 000+ [citations](/fr/glossary/citation/)]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Article VAE fondateur, 15 000+ citations]
+
+## References
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Chapters 13-14. [Foundational text]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 15. [Unsupervised representation learning]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20,000+ citations]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Foundational VAE paper, 15,000+ citations]

@@ -1,0 +1,104 @@
+---
+term: "Context Window"
+termSlug: "context-window"
+short: "De maximale hoeveelheid tekst (gemeten in tokens) die een taalmodel in één interactie kan verwerken."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "tokenization", "rag", "transformer-architecture"]
+synonyms: ["Contextlengte", "Contextgrootte", "Max tokens", "Sequentielengte"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een context window is het maximale aantal tokens dat een groot taalmodel tegelijk kan overwegen tijdens [inferentie](/nl/glossary/inference/)—inclusief zowel de [invoerprompt](/nl/glossary/prompt/) als de gegenereerde output. Het vertegenwoordigt het "werkgeheugen" van het model: alles buiten dit venster is onzichtbaar voor het model tijdens die interactie. Context windows zijn gegroeid van 2.048 tokens in vroege modellen tot 128.000+ tokens in moderne systemen.
+
+## Waarom het belangrijk is
+
+De grootte van het context window beïnvloedt direct wat AI-systemen kunnen bereiken:
+
+- **Documentanalyse** — grotere windows maken verwerking van hele documenten mogelijk zonder chunking
+- **RAG-relevantie** — meer context maakt het ophalen en verwerken van meer bronmateriaal mogelijk
+- **Conversationeel geheugen** — langere contexts behouden coherente multi-turn dialogen
+- **Complex redeneren** — meer ruimte voor [chain-of-thought](/nl/glossary/chain-of-thought/) en voorbeelden
+
+Echter, grotere contexts verhogen de rekenkosten kwadratisch met [self-attention](/nl/glossary/self-attention/), wat innovatie in efficiënte architecturen stimuleert.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    CONTEXT WINDOW                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ◄──────────────── 128K tokens ──────────────────────────► │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ Systeem │  Opgehaalde │  Gebruiker │  Gegenereerde  │  │
+│  │ Prompt  │  Context    │  Query     │  Respons       │  │
+│  │ (500)   │  (50.000)   │  (500)     │  (4.000)       │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  Alle tokens concurreren om attention ←→                   │
+│  Tokens buiten window: onzichtbaar                         │
+│                                                            │
+│  Model context windows:                                    │
+│  GPT-3.5:     4K / 16K                                    │
+│  GPT-4:       8K / 32K / 128K                             │
+│  Claude:      100K / 200K                                 │
+│  Gemini:      32K / 1M+                                   │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Token tellen** — alle invoer ([systeemprompt](/nl/glossary/system-prompt/), gebruikersinvoer, opgehaalde docs) verbruikt tokens
+2. **Toewijzing** — resterende tokens beschikbaar voor modeloutput
+3. **Attention** — elk token kan attenderen aan alle andere binnen het window
+4. **Afkapping** — content die het window overschrijdt wordt afgeknipt (typisch vanaf het begin)
+
+## Veelgestelde vragen
+
+**V: Wat gebeurt er als invoer het context window overschrijdt?**
+
+A: De meeste systemen kappen af—oudste content wordt verwijderd om te passen. Goed ontworpen applicaties voorkomen dit via chunking, samenvatting of RAG-strategieën die alleen relevante passages selecteren.
+
+**V: Beïnvloedt het gebruik van het volledige context window de kwaliteit?**
+
+A: Onderzoek toont "lost in the middle" effecten—modellen attenderen beter aan content aan het begin en eind van lange contexts. Strategische plaatsing van belangrijke informatie is belangrijk.
+
+**V: Hoe worden tokens geteld?**
+
+A: Hangt af van de tokenizer. Ruwweg: 1 token ≈ 4 tekens of ≈ 0,75 woorden in het Engels. Niet-Engelse tekst en code kunnen anders tokeniseren.
+
+**V: Is een groter context window altijd beter?**
+
+A: Niet noodzakelijk. Grotere windows kosten meer, verwerken langzamer en kunnen attention verdunnen. RAG-systemen presteren vaak beter dan ruw context vullen door alleen relevante content op te halen.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — de modellen die context windows hebben
+- [Tokenization](/nl/glossary/tokenization/) — hoe tekst naar tokens wordt omgezet
+- [RAG](/nl/glossary/rag/) — techniek voor het beheren van beperkte context
+- [Transformer-architectuur](/nl/glossary/transformer-architecture/) — waarom context windows bestaan
+
+---
+
+## Referenties
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ [citaties](/nl/glossary/citation/)]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ citaties]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Anthropic Documentatie.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3.500+ citaties]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ citations]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Anthropic Documentation.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3,500+ citations]

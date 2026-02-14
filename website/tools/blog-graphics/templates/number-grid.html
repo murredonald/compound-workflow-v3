@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* ── Number Grid ── */
+  .number-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .number-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .number-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .ng-cell {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 24px;
+    text-align: center;
+    background: var(--muted);
+  }
+
+  .ng-cell.highlight {
+    border-color: var(--primary);
+    border-width: 2px;
+    background: hsla(36 32% 38% / 0.08);
+  }
+
+  .ng-number {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .ng-number.primary { color: var(--primary-text); }
+  .ng-number.danger { color: var(--destructive); }
+  .ng-number.success { color: var(--success); }
+  .ng-number.warning { color: var(--warning); }
+  .ng-number.default { color: var(--fg); }
+
+  .ng-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 6px;
+  }
+
+  .ng-desc {
+    font-size: 14px;
+    color: var(--muted-fg);
+    line-height: 1.4;
+  }
+
+  .ng-source {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    color: var(--muted-fg);
+    font-style: italic;
+    opacity: 0.6;
+    text-align: right;
+    padding-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">Belgian tax complexity: by the numbers</div>
+  <div class="number-grid">
+    <div class="ng-cell">
+      <div class="ng-number primary">3</div>
+      <div class="ng-label">Regions</div>
+      <div class="ng-desc">Each with distinct tax codes for succession, registration, and local taxes</div>
+    </div>
+    <div class="ng-cell highlight">
+      <div class="ng-number danger">58–88%</div>
+      <div class="ng-label">ChatGPT Error Rate</div>
+      <div class="ng-desc">Hallucination rate on legal questions (Stanford HAI, 2024)</div>
+    </div>
+    <div class="ng-cell">
+      <div class="ng-number success">17–33%</div>
+      <div class="ng-label">Specialized AI Errors</div>
+      <div class="ng-desc">RAG-based tools still hallucinate, but far less often</div>
+    </div>
+    <div class="ng-cell">
+      <div class="ng-number warning">5</div>
+      <div class="ng-label">Tax Domains</div>
+      <div class="ng-desc">A single TAK 23 product touches income tax, premium tax, TOB, succession, and effectentaks</div>
+    </div>
+    <div class="ng-cell">
+      <div class="ng-number primary">0,15%</div>
+      <div class="ng-label">Securities Tax</div>
+      <div class="ng-desc">Annual tax on securities accounts above &euro;1M — with TAK 23 exemption conditions</div>
+    </div>
+    <div class="ng-cell">
+      <div class="ng-number default">11&times;</div>
+      <div class="ng-label">TOB Rate Spread</div>
+      <div class="ng-desc">Difference between 0.12% and 1.32% depending on ETF registration and type</div>
+    </div>
+    <div class="ng-source">Sources: Dahl et al. (2024), Stanford HAI; Belgian tax code (WIB 92, VCF)</div>
+  </div>
+</div>
+</body>
+</html>

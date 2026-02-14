@@ -1,0 +1,97 @@
+---
+term: "Prompt"
+termSlug: "prompt"
+short: "The input text or instruction given to a language model to guide its response generation."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "system-prompt", "prompt-engineering", "context-window"]
+synonyms: ["Input prompt", "Query", "Instruction"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A prompt is the text input provided to a language model that instructs it what to do or respond to. It can range from a simple question to complex multi-part instructions including context, examples, and formatting requirements. The art of crafting effective prompts—prompt engineering—is crucial for getting high-quality outputs from language models.
+
+## Why it matters
+
+Prompts are the primary interface between users and language models:
+
+- **Output quality** — well-crafted prompts dramatically improve response accuracy and relevance
+- **Task definition** — prompts tell the model what task to perform (summarize, translate, analyze)
+- **Behavior control** — prompts can set tone, format, length, and constraints
+- **[Zero-shot learning](/en/glossary/zero-shot/)** — good prompts enable models to perform tasks without [fine-tuning](/en/glossary/fine-tuning/)
+
+The same model can produce vastly different outputs depending on how it's prompted.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     PROMPT STRUCTURE                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ SYSTEM PROMPT (sets behavior/persona)               │   │
+│  │ "You are a helpful tax advisor..."                  │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ CONTEXT (retrieved documents, prior conversation)   │   │
+│  │ "Based on the following tax regulations..."         │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ USER PROMPT (the actual question/task)              │   │
+│  │ "Explain the deduction rules for home offices"      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│                          ▼                                 │
+│                    MODEL RESPONSE                          │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Key prompt components:**
+1. **System prompt** — persistent instructions that define model behavior
+2. **Context** — background information or retrieved documents
+3. **Examples** — demonstrations of desired input/output pairs (few-shot)
+4. **User query** — the specific question or task
+5. **Output format** — specification of how to structure the response
+
+## Common questions
+
+**Q: What is prompt engineering?**
+
+A: Prompt engineering is the practice of designing and optimizing prompts to get better results from language models. It includes techniques like chain-of-thought, few-shot examples, and structured formatting.
+
+**Q: What's the difference between zero-shot and [few-shot prompting](/en/glossary/few-shot/)?**
+
+A: Zero-shot gives no examples—just instructions. Few-shot includes examples of the desired input/output pattern. Few-shot typically improves accuracy for complex tasks.
+
+**Q: How long should a prompt be?**
+
+A: As long as needed for clarity, but within context limits. More context isn't always better—focused, well-structured prompts often outperform verbose ones.
+
+**Q: Can prompts be "jailbroken"?**
+
+A: Adversarial users sometimes craft prompts to bypass safety guidelines. This is why production systems need robust [prompt injection](/en/glossary/prompt-injection/) defenses and content filtering.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — models that respond to prompts
+- [System Prompt](/en/glossary/system-prompt/) — persistent configuration prompt
+- [Context Window](/en/glossary/context-window/) — limits total prompt size
+- [Chain-of-Thought](/en/glossary/chain-of-thought/) — prompting technique for reasoning
+
+---
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25,000+ citations]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5,000+ citations]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3,000+ citations]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ citations]

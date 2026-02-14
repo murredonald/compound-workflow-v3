@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@plugin "@tailwindcss/typography";
 
 /* ── Tailwind theme extensions (CSS-first config for v4) ── */
 
@@ -26,6 +27,8 @@
   --color-warning-foreground: hsl(var(--warning-foreground));
   --color-info: hsl(var(--info));
   --color-info-foreground: hsl(var(--info-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -43,24 +46,28 @@
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  --text-display: 2.441rem;
-  --text-display--line-height: 1.1;
+  --text-display: 2rem;
+  --text-display--line-height: 1.15;
   --text-display--font-weight: 700;
 
-  --text-h1: 1.953rem;
-  --text-h1--line-height: 1.2;
+  --text-display-sm: 1.75rem;
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--font-weight: 700;
+
+  --text-h1: 1.75rem;
+  --text-h1--line-height: 1.25;
   --text-h1--font-weight: 700;
 
-  --text-h2: 1.563rem;
-  --text-h2--line-height: 1.25;
+  --text-h2: 1.375rem;
+  --text-h2--line-height: 1.3;
   --text-h2--font-weight: 600;
 
-  --text-h3: 1.25rem;
-  --text-h3--line-height: 1.3;
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.35;
   --text-h3--font-weight: 600;
 
-  --text-h4: 1.125rem;
-  --text-h4--line-height: 1.35;
+  --text-h4: 1rem;
+  --text-h4--line-height: 1.4;
   --text-h4--font-weight: 600;
 
   --text-body-lg: 1.125rem;
@@ -71,6 +78,9 @@
 
   --text-body-sm: 0.875rem;
   --text-body-sm--line-height: 1.5;
+
+  --text-body-xs: 0.75rem;
+  --text-body-xs--line-height: 1.5;
 
   --text-caption: 0.75rem;
   --text-caption--line-height: 1.4;
@@ -128,6 +138,11 @@ dd {
   max-width: 75ch;
 }
 
+/* Center max-width-constrained blocks when parent uses text-center */
+.text-center > p {
+  margin-inline: auto;
+}
+
 /* Links: primary-text with dotted underline */
 a:not([class]) {
   color: hsl(var(--primary-text));
@@ -180,4 +195,132 @@ a:not([class]):hover {
 * {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+
+/* ── Prose (markdown content) — token-aware ── */
+
+.prose {
+  --tw-prose-body: hsl(var(--foreground));
+  --tw-prose-headings: hsl(var(--foreground));
+  --tw-prose-lead: hsl(var(--muted-foreground));
+  --tw-prose-links: hsl(var(--primary-text));
+  --tw-prose-bold: hsl(var(--foreground));
+  --tw-prose-counters: hsl(var(--muted-foreground));
+  --tw-prose-bullets: hsl(var(--muted-foreground));
+  --tw-prose-hr: hsl(var(--border));
+  --tw-prose-quotes: hsl(var(--foreground));
+  --tw-prose-quote-borders: hsl(var(--border));
+  --tw-prose-captions: hsl(var(--muted-foreground));
+  --tw-prose-code: hsl(var(--foreground));
+  --tw-prose-pre-code: hsl(var(--foreground));
+  --tw-prose-pre-bg: hsl(var(--card));
+  --tw-prose-th-borders: hsl(var(--border));
+  --tw-prose-td-borders: hsl(var(--border));
+
+  /* Readable typography — smaller font, taller line-height */
+  font-size: 1rem; /* 16px instead of 18px default prose */
+  line-height: 1.7; /* roomier for long-form reading */
+}
+
+.prose :where(p) {
+  margin-bottom: 1.5em; /* generous paragraph spacing for scanability */
+}
+
+.prose :where(h2) {
+  font-size: 1.375rem;
+  margin-top: 2.25em;
+  margin-bottom: 0.75em;
+}
+
+.prose :where(h3) {
+  font-size: 1.125rem;
+  margin-top: 1.75em;
+  margin-bottom: 0.5em;
+}
+
+.prose :where(h4) {
+  font-size: 1rem;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose :where(ul, ol) {
+  margin-bottom: 1.5em;
+}
+
+.prose :where(li) {
+  margin-bottom: 0.5em;
+}
+
+/* ── Blog content ── */
+
+/* 1. Remove prose's 65ch cap — let the outer <main> padding control width */
+.blog-content {
+  max-width: none;
+}
+
+/* 2. Override global p/li/dd 75ch cap inside blog articles */
+.blog-content :where(p, li, dd) {
+  max-width: none;
+}
+
+/* 3. Full-width images */
+.blog-content img {
+  max-width: 100%;
+  width: 100%;
+  border-radius: 0.5rem;
+}
+
+/* 4. Full-width tables with distinct styling */
+.blog-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.5em 0;
+  font-size: 0.9375rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+}
+
+.blog-content thead {
+  background: hsl(var(--muted));
+}
+
+.blog-content th {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  border-bottom: 2px solid hsl(var(--border));
+}
+
+.blog-content td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+}
+
+.blog-content tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.blog-content tbody tr:nth-child(even) {
+  background: hsl(var(--muted) / 0.3);
+}
+
+.blog-content tbody tr:hover {
+  background: hsl(var(--muted) / 0.5);
+}
+
+/* First column in tables — often labels/dimensions */
+.blog-content td:first-child {
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+/* 5. Styled blockquotes */
+.blog-content blockquote {
+  border-left-color: hsl(var(--primary-text));
+  font-style: normal;
 }

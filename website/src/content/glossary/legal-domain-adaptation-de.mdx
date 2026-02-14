@@ -1,0 +1,68 @@
+---
+term: "Anpassung an die Rechtsdomäne"
+termSlug: "legal-domain-adaptation"
+short: "Rechtsdomänen-Anpassung stimmt ein KI- oder Retrieval-System auf juristische Sprache, Quellen und Korrektheitskriterien ab, für präzisere, belastbare Ergebnisse."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["authority-ranking-model", "rag", "embeddings", "prompt", "inference"]
+synonyms: ["Legal-domain adaptation", "Domain adaptation for law", "Legal specialization"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Rechtsdomänen-Anpassung ist das Anpassen eines KI-Systems (LLM, Klassifikator oder Retrieval-Stack) an juristische Texte und Workflows. Im Fokus stehen juristische Terminologie, Zitationen, Dokumentstruktur sowie domänenspezifische Korrektheitskriterien (z.B. Jurisdiktion, zeitliche Geltung und [Quellenhierarchie](/de/glossary/source-hierarchy/)).
+
+## Warum es wichtig ist
+
+- **Präzision**: juristische Sprache ist dicht und nuancenabhängig.
+- **[Grounding](/de/glossary/grounding/)**: Antworten müssen an autoritative Quellen gebunden sein.
+- **Hohe Fehlerkosten**: kleine Fehler können große Compliance-Folgen haben.
+- **Besseres Retrieval + Generation**: verbessert sowohl Finden als auch Zusammenfassen.
+
+## Wie es funktioniert
+
+Domänen-Anpassung kombiniert typischerweise Daten-, Retrieval- und Evaluationsarbeit:
+
+```
+Juristische Quellen + Labels -> Retrieval + Prompts + Evaluation anpassen -> deployen -> Fehler monitoren
+```
+
+Typische Maßnahmen: autoritative Korpora kuratieren, Metadaten ergänzen (Jurisdiktion, Inkrafttreten), Autoritätsranking aufbauen, juristische Evaluationssets erstellen und Prompts auf "citation-first" ausrichten.
+
+## Praktisches Beispiel
+
+Ein generischer Assistent behandelt "Rundschreiben" und "Gesetz" möglicherweise ähnlich. Ein angepasstes System erkennt die oft nicht-bindende Natur von Rundschreiben, priorisiert die bindende Norm und liefert eine Antwort mit Zitationen und Anwendungsgrenzen.
+
+## Häufige Fragen
+
+**Q: Ist das dasselbe wie [Fine-Tuning](/de/glossary/fine-tuning/)?**
+
+A: Nicht unbedingt. Fine-Tuning ist nur eine mögliche Methode. Häufig reichen Verbesserungen in Retrieval, Autoritätsranking, Prompt-Design und Evaluation ohne Gewichtsänderung.
+
+**Q: Was ist der größte Fehlermodus?**
+
+A: "Klingt plausibel" als Korrektheit zu behandeln. Es braucht Checks für Zeit/Geltung, Jurisdiktion und Quellenwahl.
+
+## Verwandte Begriffe
+
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - Autorität in Ranking abbilden
+- [RAG](/de/glossary/rag/) - Quellen vor der Generierung abrufen
+- [Embeddings](/de/glossary/embeddings/) - semantisches Retrieval über Rechtstexte
+- [Prompt](/de/glossary/prompt/) - Antworten Richtung Zitationen und Constraints steuern
+- [Inference](/de/glossary/inference/) - Runtime-Verhalten, das überwacht werden muss
+
+---
+
+## Referenzen
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

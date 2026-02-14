@@ -1,0 +1,69 @@
+---
+term: "Cartographie des dépendances juridiques"
+termSlug: "legal-dependency-mapping"
+short: "La cartographie des dépendances juridiques construit un graphe de citations et relations entre sources afin que retrieval et analyse suivent ce qui dépend de quoi."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["knowledge-graph", "semantic-expansion", "authority-ranking-model", "source-conflict-resolution", "multi-jurisdictional-indexing"]
+synonyms: ["Legal citation graph", "Dependency graph for law", "Legal reference mapping"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La cartographie des dépendances juridiques consiste à extraire et modéliser les relations entre sources : citations, renvois, amendements, mesures d’exécution et liens hiérarchiques. Le résultat est souvent un graphe qui aide à comprendre comment les textes se connectent et quelles sources contrôlent ou priment.
+
+## Pourquoi c'est important
+
+- **Meilleur retrieval** : une question sur un article nécessite souvent définitions ou mesures d’exécution liées.
+- **Analyse d’impact** : en cas de changement, le graphe indique ce qui peut être affecté.
+- **[Explicabilité](/fr/glossary/explainability/)** : rend la pertinence visible via citations et chemins.
+- **Gestion des conflits** : aide à repérer des sources contradictoires ou dépassées.
+
+## Comment ça fonctionne
+
+On combine extraction de citations et normalisation :
+
+```
+Parser documents -> extraire références -> normaliser identifiants -> construire graphe -> utiliser en retrieval et UI
+```
+
+Types de relations :
+
+- "cite" / "est cité par"
+- "amende" / "est amendé par"
+- "met en œuvre" / "est mis en œuvre par"
+- "définit" / "est défini dans"
+
+## Exemple pratique
+
+Un utilisateur interroge un article fiscal. Le système récupère aussi l’article de définition, l’arrêté d’exécution et le dernier amendement. La réponse inclut des citations et un court "chemin de dépendance" expliquant pourquoi ces sources sont incluses.
+
+## Questions fréquentes
+
+**Q: Est-ce la même chose qu’un knowledge graph ?**
+
+R: Cela peut en faire partie, mais c’est plus ciblé : la cartographie des dépendances se concentre sur les relations document-à-document et les [références](/fr/glossary/citation/) qui influencent l’applicabilité.
+
+**Q: Faut-il une extraction parfaite ?**
+
+R: Non. Même un graphe partiel apporte de la valeur si les références sont normalisées et si le système indique clairement son niveau de confiance.
+
+## Termes associés
+
+- [Knowledge Graph](/fr/glossary/knowledge-graph/) - modélisation plus large d’entités et relations
+- [Expansion sémantique](/fr/glossary/semantic-expansion/) - les dépendances guident une expansion plus sûre
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - la structure de citations alimente les signaux d’autorité
+- [Source Conflict Resolution](/fr/glossary/source-conflict-resolution/) - repérer conflits via overrides/amendements
+- [Indexation multi-juridictionnelle](/fr/glossary/multi-jurisdictional-indexing/) - les dépendances diffèrent par juridiction
+
+---
+
+## Références
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

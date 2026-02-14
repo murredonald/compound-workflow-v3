@@ -4,6 +4,7 @@ import Section from "@/components/layout/Section.astro";
 import Card from "@/components/ui/Card.astro";
 import ScarcityBanner from "@/components/marketing/ScarcityBanner.astro";
 import WaitlistCounter from "@/components/marketing/WaitlistCounter";
+import ScreenshotPlaceholder from "@/components/ui/ScreenshotPlaceholder.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "en";
@@ -16,10 +17,10 @@ const locale = "en";
   path="/"
 >
   <main id="main-content">
-    {/* Hero — UIX-02: value prop + scarcity + CTA + counter */}
-    <Section class="py-24 md:py-32">
+    {/* Hero */}
+    <Section>
       <div class="mx-auto max-w-3xl text-center">
-        <h1 class="text-display text-foreground">
+        <h1 class="text-display font-bold tracking-tight text-foreground">
           {t("hero.headline", locale)}
         </h1>
         <p class="mt-6 text-body-lg text-muted-foreground">
@@ -51,13 +52,69 @@ const locale = "en";
             text={t("waitlist.counter", locale)}
           />
         </div>
+
+        {/* Product screenshot */}
+        <div class="mt-12 max-w-4xl mx-auto">
+          <ScreenshotPlaceholder label="Screenshot: Product interface" suggestion="Show a research answer card with confidence score badge (e.g. 87%), jurisdiction tag, cited article excerpts, and 'View sources' expandable. Use a real Belgian tax law question." />
+        </div>
       </div>
     </Section>
 
-    {/* Trust pillars — BRAND-02: Transparency, Precision, Built for Belgium */}
+    {/* Problem */}
     <Section muted>
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">The problem with AI tax tools today</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          General-purpose AI gives you confident answers to tax questions. That's exactly what makes it dangerous.
+        </p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Fabricated sources</strong> — cites rulings and articles that don't exist, with no way to verify</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Outdated knowledge</strong> — training data months or years behind, while tax law changes constantly</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">No hierarchy awareness</strong> — treats a blog post and a Court of Cassation judgment the same way</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Jurisdiction-blind</strong> — mixes Flemish, Walloon, and Brussels rules, as well as Netherlands and France, without distinction</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Temporal blindness</strong> — Ask "What was the deduction limit in 2019?" and get today's answer. No ability to reason about the law as it existed at a specific point in time.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">False confidence</strong> — Presents every answer with equal certainty, whether backed by 10 sources or pure speculation. No way to know when to dig deeper.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+
+    {/* Trust pillars */}
+    <Section>
+      <div class="mx-auto max-w-4xl text-center mb-12">
+        <p class="text-body-sm font-medium text-primary uppercase tracking-wider mb-2">Built for</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Tax lawyers</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Tax advisors</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Accountants</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">In-house counsel</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Single family offices</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Multi family offices</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Private banks</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Estate planners</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Notaries</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Corporate tax departments</span>
+        </div>
+      </div>
       <div class="mx-auto max-w-3xl text-center">
-        <h2 class="text-h2 text-foreground">{t("trust.transparency", locale)}</h2>
+        <h2 class="text-h2 font-bold text-foreground">{t("trust.section_title", locale)}</h2>
         <p class="mt-2 text-body text-muted-foreground">{t("site.tagline", locale)}</p>
       </div>
       <div class="mt-12 grid gap-6 sm:grid-cols-3">
@@ -76,10 +133,80 @@ const locale = "en";
       </div>
     </Section>
 
-    {/* Secondary CTA — UIX-03: waitlist path on every page */}
+    {/* How it works teaser */}
+    <Section muted>
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Purpose-built for Belgian tax law</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Not a general AI with a tax plugin. A specialist research platform engineered from the ground up.
+        </p>
+        <div class="mt-8 space-y-6">
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">13</span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Authority hierarchy</p>
+              <p class="text-body-sm text-muted-foreground">Constitution &gt; Laws &gt; Royal Decrees &gt; Circulars &gt; Doctrine — the system knows which source wins when they conflict.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Temporal versioning</p>
+              <p class="text-body-sm text-muted-foreground">"What was the corporate tax rate in 2019?" — answered with the law as it was then, not as it is today.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
+            </span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Trilingual NL/FR/EN</p>
+              <p class="text-body-sm text-muted-foreground">Query in Dutch, French, or English — find provisions in any language. With legally correct terminology across all three.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Source transparency</p>
+              <p class="text-body-sm text-muted-foreground">Every answer shows its sources. Every claim can be verified. If we're not sure, we say so.</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8">
+          <a href={`/${locale}/how-it-works/`} class="text-body-sm font-medium text-primary hover:underline">
+            See how it works &rarr;
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    {/* Promise */}
     <Section>
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-h2 text-foreground">{t("waitlist.title", locale)}</h2>
+        <blockquote class="border-l-4 border-primary pl-6 py-2 text-left">
+          <p class="text-h3 font-semibold text-foreground">
+            "In tax, 'probably right' isn't good enough."
+          </p>
+        </blockquote>
+        <p class="mt-6 text-body text-muted-foreground">
+          We'd rather give you an honest "we're not sure" than a convincing answer built on thin evidence. That's our promise — not that we're always right, but that you'll always know where you stand.
+        </p>
+        <div class="mt-6">
+          <a href={`/${locale}/about/`} class="text-body-sm font-medium text-primary hover:underline">
+            Read our story &rarr;
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    {/* CTA */}
+    <Section muted>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-h2 font-bold text-foreground">{t("waitlist.title", locale)}</h2>
         <p class="mt-4 text-body text-muted-foreground">{t("waitlist.subtitle", locale)}</p>
         <div class="mt-8">
           <a

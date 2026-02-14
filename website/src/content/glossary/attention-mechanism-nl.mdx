@@ -1,0 +1,95 @@
+---
+term: "Attention-mechanisme"
+termSlug: "attention-mechanism"
+short: "Een neurale netwerktechniek waarmee modellen zich kunnen richten op relevante delen van de invoer bij het produceren van uitvoer."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["transformer-architecture", "self-attention", "multi-head-attention", "llm"]
+synonyms: ["Attention", "Neurale attention", "Attention-laag"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een attention-mechanisme is een component in neurale netwerken die modellen in staat stelt om dynamisch te focussen op relevante delen van de invoersequentie bij het genereren van elk deel van de uitvoer. In plaats van alle invoer te comprimeren tot één enkele representatie van vaste grootte, maakt attention het mogelijk om selectief "aandacht te besteden" aan verschillende invoerelementen op basis van hun relevantie voor de huidige taak.
+
+## Waarom het belangrijk is
+
+Attention-mechanismen lossen fundamentele beperkingen van eerdere sequentiemodellen op:
+
+- **Verwerking van lange sequenties** — attention verbindt verre elementen direct zonder informatieverlies door vele stappen
+- **[Interpreteerbaarheid](/nl/glossary/explainability/)** — attention-gewichten onthullen welke invoer elke uitvoer beïnvloedde, wat helpt bij debugging en vertrouwen
+- **Parallellisatie** — attention-berekeningen kunnen gelijktijdig worden uitgevoerd, in tegenstelling tot sequentiële RNN's
+- **Dynamische context** — het model leert waar het op moet focussen in plaats van vaste patronen te gebruiken
+
+Attention is de kerninnovatie achter Transformers en moderne taalmodellen.
+
+## Hoe het werkt
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  ATTENTION-MECHANISME                │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  Query (Q) ─────┐                                    │
+│                 ├──→ Score ──→ Softmax ──→ Gewichten │
+│  Key (K) ───────┘                           │        │
+│                                             ▼        │
+│  Value (V) ─────────────────────────→ Gewogen Som    │
+│                                             │        │
+│                                             ▼        │
+│                                         Output       │
+└──────────────────────────────────────────────────────┘
+```
+
+1. **Query, Key, Value** — invoer wordt getransformeerd naar drie representaties
+2. **Scoring** — queries worden vergeleken met keys om relevantie-scores te berekenen
+3. **Softmax** — scores worden genormaliseerd zodat ze optellen tot 1 (attention-gewichten)
+4. **Gewogen combinatie** — values worden gecombineerd met attention-gewichten
+5. **Uitvoer** — contextueel geïnformeerde representatie voor elke positie
+
+De formule: `Attention(Q,K,V) = softmax(QK^T / √d_k) × V`
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen attention en self-attention?**
+
+A: Standaard attention berekent relevantie tussen twee verschillende sequenties (bijv. encoder-outputs en decoder-toestand). Self-attention berekent relevantie binnen één enkele sequentie—elk element attendeert aan alle andere in dezelfde sequentie.
+
+**V: Waarom delen door √d_k in de attention-formule?**
+
+A: Deze "scaled dot-product attention" voorkomt dat dot-producten te groot worden in hoge dimensies, wat softmax zou duwen naar gebieden met verdwijnende gradiënten.
+
+**V: Kan attention worden gevisualiseerd?**
+
+A: Ja, attention-gewichten kunnen worden weergegeven als heatmaps die tonen op welke invoertokens elke uitvoertoken attendeerde, wat interpreteerbaarheid biedt.
+
+## Gerelateerde termen
+
+- [Transformer-architectuur](/nl/glossary/transformer-architecture/) — volledig gebouwd op attention-mechanismen
+- [Self-Attention](/nl/glossary/self-attention/) — attention binnen één enkele sequentie
+- [Multi-Head Attention](/nl/glossary/multi-head-attention/) — parallelle attention voor diverse representaties
+- [LLM](/nl/glossary/llm/) — taalmodellen aangedreven door attention
+
+---
+
+## Referenties
+
+> Bahdanau et al. (2015), "[Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)", ICLR. [35.000+ [citaties](/nl/glossary/citation/)]
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ citaties]
+
+> Luong et al. (2015), "[Effective Approaches to Attention-based Neural Machine Translation](https://arxiv.org/abs/1508.04025)", EMNLP. [12.000+ citaties]
+
+> Galassi et al. (2020), "[Attention in Natural Language Processing](https://arxiv.org/abs/1902.02181)", IEEE TNNLS. [1.000+ citaties]
+
+## References
+
+> Bahdanau et al. (2015), "[Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)", ICLR. [35,000+ citations]
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Luong et al. (2015), "[Effective Approaches to Attention-based Neural Machine Translation](https://arxiv.org/abs/1508.04025)", EMNLP. [12,000+ citations]
+
+> Galassi et al. (2020), "[Attention in Natural Language Processing](https://arxiv.org/abs/1902.02181)", IEEE TNNLS. [1,000+ citations]

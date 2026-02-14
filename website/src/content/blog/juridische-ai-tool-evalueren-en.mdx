@@ -1,0 +1,142 @@
+---
+title: "How to evaluate a legal AI tool: 10 questions that actually matter"
+description: "Most firms start by asking 'how accurate is it?' That's question 10 on this list. Here are the nine questions you should ask first — and why they matter more for professional tax work."
+publishDate: 2026-02-14
+author: "Auryth Team"
+category: "strategy-decision"
+category_name: "Strategy & decision"
+tags: ["AI evaluation", "legal AI", "tax technology", "due diligence", "professional liability"]
+locale: "en"
+draft: false
+---
+
+The first question most firms ask when evaluating a legal AI tool is "how accurate is it?" It sounds reasonable. It's also the least useful question on this list.
+
+Accuracy without transparency is a liability. A tool that's 95% accurate but can't show you which 5% is wrong is more dangerous than one that's 90% accurate and shows its sources on every answer. You can manage a known risk. You can't manage a hidden one.
+
+This checklist works for any legal AI tool — Auryth, a competitor, or a general-purpose model your associates are already using in secret. If a vendor can't answer these questions clearly, that tells you something. If they can, verify the answers.
+
+## 1. Where do the sources come from?
+
+**What to ask:** Does the tool [query](/en/glossary/prompt/) a curated legal [corpus](/en/glossary/corpus/), or does it search the open internet? Who maintains the corpus? How is it structured?
+
+**Why it matters:** A tool that searches the internet will find blog posts, outdated legislation, and foreign jurisdictions mixed in with current law. A tool with a curated corpus — WIB 92, VCF, Fisconetplus, DVB advance rulings, case law — has a defined boundary of knowledge. You know what it can search and what it can't.
+
+**Red flag:** "We use the largest dataset available" without specifying what's in it. Size is not quality. A corpus of 10 million unstructured web pages is worse than 50,000 carefully structured legal documents with metadata.
+
+## 2. Can you verify every citation?
+
+**What to ask:** When the tool cites a source, can you click through to the original document? Is the citation verifiable, or is it just a [reference](/en/glossary/citation/) string the model generated?
+
+**Why it matters:** Stanford researchers found that even dedicated legal AI tools — Westlaw AI, Lexis+ AI — hallucinate on 17–33% of queries. The [hallucinations](/en/glossary/hallucination/) aren't random garbage. They're plausible-sounding citations to provisions that don't say what the model claims. The only defense is verification.
+
+**Red flag:** Citations without clickable links to the original text. If you can't verify a citation in under 30 seconds, it's not a citation — it's a suggestion.
+
+## 3. Does it know when it doesn't know?
+
+**What to ask:** Does the tool provide confidence scores? When evidence is thin or absent, does it tell you explicitly — or does it answer with the same confidence regardless?
+
+**Why it matters:** In professional tax practice, knowing that no authority exists on a specific point is valuable intelligence. It means you're in interpretation territory and should proceed accordingly. A tool that always answers with uniform confidence — whether backed by three Hof van Cassatie rulings or by nothing at all — is training you to stop paying attention to certainty.
+
+**Red flag:** Every answer delivered with the same authoritative tone, regardless of the strength of the underlying evidence.
+
+## 4. How current is the knowledge base?
+
+**What to ask:** When the law changes, how quickly is the tool updated? Is it updated within hours, days, weeks, or months? When was the last update?
+
+**Why it matters:** Belgian tax law changes constantly. Two major program laws per year. Regional divergence across Flanders, Wallonia, and Brussels. The July 2025 program law restructured the investment deduction regime. If a tool still reflects the pre-July rules, it's not just outdated — it's confidently wrong about current law.
+
+**Red flag:** Vague answers like "regularly updated" without a specific update frequency. Ask for the date of the last corpus update. If they can't tell you, that's your answer.
+
+## 5. Does it understand legal hierarchy?
+
+**What to ask:** When the tool retrieves multiple sources, does it rank them by legal authority? Does a Hof van Cassatie ruling outweigh a Fisconetplus circular? Does a constitutional provision outweigh a ministerial decision?
+
+**Why it matters:** Legal hierarchy isn't a nice-to-have — it's how legal reasoning works. A Fisconetplus circular that contradicts case law is the circular that's wrong, not the case law. A tool that treats all sources as equally weighted text chunks will occasionally surface the wrong authority as the primary answer.
+
+**Red flag:** Flat search results with no indication of source authority or legal weight.
+
+## 6. Can it handle temporal questions?
+
+**What to ask:** If you ask about a transaction in 2019, does the tool retrieve 2019 law or current law? Can it distinguish between temporal versions of the same provision?
+
+**Why it matters:** The Belgian corporate tax rate was 29.58% in 2019 and 25% today. Both are correct — for different assessment periods. A tool without temporal versioning will retrieve whichever version its search surfaces first. For a tax professional advising on a historical period, that's not a minor inconvenience — it's malpractice risk.
+
+**Red flag:** No ability to specify a reference date. If the tool can't distinguish "what was the law in 2019?" from "what is the law today?", it fails this test.
+
+## 7. How is your data handled?
+
+**What to ask:** Where is client data stored? Is it used to train the model? Who has access? Does the tool comply with GDPR Article 22 on automated decision-making? What happens to your queries after the session ends?
+
+**Why it matters:** 56% of law firms cite data privacy as their top concern when evaluating AI tools. Professional confidentiality isn't optional — it's a legal obligation. If client queries are used to improve the model, your client's data is in the training set. If the data leaves the EU without adequate safeguards, you have a GDPR compliance problem.
+
+**Red flag:** Terms of service that grant the vendor broad rights to use "input data" for "service improvement." Read the data processing agreement. If there isn't one, walk away.
+
+## 8. What happens when it's wrong?
+
+**What to ask:** Does the tool maintain an [audit trail](/en/glossary/audit-trail/)? Can you reconstruct what sources were retrieved, what was rejected, and how the answer was generated? What disclaimers or liability limitations apply?
+
+**Why it matters:** Professional liability in Belgian tax practice doesn't disappear because you used a tool. Bar associations across Europe are converging on a clear principle: AI cannot replace independent research, analysis, and judgment. When a tool gives wrong advice and you pass it to a client, you need to demonstrate your verification process. An audit trail makes that possible. A chat transcript doesn't.
+
+**Red flag:** No logging, no audit trail, no ability to review past queries. If you can't reconstruct your research process, you can't defend it.
+
+## 9. Can you export for professional use?
+
+**What to ask:** Can you export results in a structured format suitable for professional documentation — citations formatted, sources linked, confidence noted? Or are you limited to copying chat text?
+
+**Why it matters:** A tool that produces structured, exportable research accelerates your workflow. A tool that produces chat-style text creates a formatting step between research and work product. The difference between these two is the difference between a research tool and a chatbot.
+
+**Red flag:** Output limited to unformatted text in a chat window, with no export or integration options.
+
+## 10. Does it publish accuracy metrics?
+
+**What to ask:** What is the tool's measured [hallucination rate](/en/glossary/hallucination-rate/)? Who measured it — the vendor or an independent party? Are the [metrics](/en/glossary/distance-metric/) published, or do you have to take their word for it?
+
+**Why it matters:** This is last on the list for a reason. Accuracy matters, but it's the metric vendors optimize for in marketing and the metric professionals over-index on when evaluating. A tool that's 95% accurate and opaque is more dangerous than one that's 90% accurate and transparent — because you can verify and correct the 10%, but you can't identify the 5%.
+
+**Red flag:** "99% accuracy" claims without published methodology, test sets, or independent validation. If the vendor measured their own accuracy, ask how. If they can't explain the methodology, the number is marketing.
+
+![Ten questions for evaluating a legal AI tool — scored checklist for tax professionals](/blog/juridische-ai-tool-evalueren/evaluation-checklist-en-dark.png)
+
+---
+
+## The uncomfortable truth
+
+Only 26% of law firms have actively integrated AI as of 2025. But 31% of individual lawyers are already using generative AI at work — many without their firm's knowledge or approval. The question isn't whether your firm will use AI. It's whether you'll choose a tool that meets professional standards, or whether your associates will keep using ChatGPT in a browser tab and hoping for the best.
+
+These ten questions give you a framework for the former. Print them out. Use them in your next vendor meeting. Use them to evaluate the tools your team is already using. The answers will tell you everything you need to know.
+
+---
+
+## Related articles
+
+- [What is RAG — and why it's not enough for legal AI on its own](/en/blog/wat-is-rag-en/)
+- [Fine-tuning vs. RAG: two ways to make AI smart — and why it matters which one your tax tool chose](/en/blog/fine-tuning-vs-rag-en/)
+- [Why transparency matters more than accuracy in legal AI](/en/blog/transparantie-vs-nauwkeurigheid-en/)
+
+---
+
+## How Auryth TX scores on these 10 questions
+
+We built Auryth TX to answer every question on this list. Not because we wrote the list — but because these are the questions any professional should ask, and we'd rather you ask them than not.
+
+1. **Sources:** Belgian legal corpus — WIB 92, VCF, Fisconetplus, DVB advance rulings, case law, doctrinal publications — all curated and structured.
+2. **Citation verification:** Every citation links to the original source. Every claim is independently validated post-generation.
+3. **Uncertainty:** [Confidence scoring](/en/glossary/confidence-scoring/) per claim. When evidence is thin, we tell you explicitly.
+4. **Currency:** Corpus updated within hours of legal changes. The July 2025 program law was searchable the same day.
+5. **Legal hierarchy:** 13-tier authority ranking across the Belgian legal system — Constitution through doctrine.
+6. **Temporal queries:** Point-in-time retrieval with temporal metadata on every provision.
+7. **Data handling:** EU [data residency](/en/glossary/data-residency/). No training on client queries. Full GDPR compliance with published DPA.
+8. **Audit trail:** Every query logged with retrieved sources, rejected sources, confidence scores, and generation metadata.
+9. **Export:** Structured output with formatted citations, authority weights, and confidence indicators.
+10. **Accuracy:** Published methodology. Independent validation. And transparent enough that you can verify every answer yourself.
+
+[Try these 10 questions on a real Belgian tax question — join the waitlist →](/en/waitlist/)
+
+---
+
+*Sources:*
+*1. Magesh, V. et al. (2025). "[Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362)." Journal of Empirical Legal Studies.*
+*2. AffiniPay (2025). [Legal Industry Report: AI Adoption in Law Firms](https://www.mycase.com/blog/ai/ai-adoption-in-law-firms/).*
+*3. Bar Council of England and Wales (2025). "[Considerations when using ChatGPT and generative artificial intelligence](https://www.barcouncil.org.uk/resource/updated-guidance-on-generative-ai-for-the-bar.html)." Updated November 2025.*
+*4. Thomson Reuters Institute (2025). "Generative AI in Professional Services."*

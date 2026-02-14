@@ -1,0 +1,144 @@
+---
+title: "Waarom wij onze nauwkeurigheid publiceren — en waarom bijna niemand anders dat doet"
+description: "Nauwkeurigheidsclaims zonder gepubliceerde cijfers zijn marketing. Dit is wat eerlijke meting van juridische AI vereist, en waarom de sector het vermijdt."
+publishDate: 2026-03-05
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Vertrouwen & Transparantie"
+tags: ["nauwkeurigheid", "transparantie", "benchmarking", "juridische AI", "vertrouwen"]
+locale: "nl"
+draft: false
+---
+
+Elke juridische AI-leverancier claimt hoge nauwkeurigheid. Vraag om de data, en het gesprek valt stil.
+
+Dat is geen vergissing. Het is een strategie. Nauwkeurigheidsclaims die niet geverifieerd kunnen worden, zijn geen claims — het zijn slogans. En de juridische AI-sector heeft een compleet verkooptraject gebouwd op slogans die geen enkele koper kan controleren.
+
+Wij vinden dat dit moet veranderen. Niet omdat wij moediger zijn dan anderen, maar omdat professionals die hun reputatie verbinden aan AI-ondersteund onderzoek het rapport moeten kunnen inzien voordat ze de docent vertrouwen.
+
+## De nauwkeurigheidsillusie
+
+De kloof tussen wat juridische AI-leveranciers beloven en wat ze kunnen bewijzen is groter dan de meeste kopers beseffen.
+
+Stanford-onderzoekers testten de toonaangevende [RAG](/nl/glossary/rag/)-gebaseerde juridische onderzoekstools — Lexis+ AI, Westlaw AI-Assisted Research en Ask Practical Law AI — in de eerste gepreregistreerde empirische evaluatie in zijn soort. Ondanks marketingclaims van "hallucinatievrije" resultaten hallucineerde elke tool 17% tot 33% van de tijd. Lexis+ AI presteerde het beste met 65% correcte antwoorden. Westlaw's AI-onderzoek was slechts in 42% van de gevallen correct, maar hallucineerde bijna twee keer zo vaak als de andere geteste tools (Magesh et al., 2024).
+
+Dit zijn geen obscure onderzoeksprototypes. Dit zijn de tools waarvoor de grootste advocatenkantoren ter wereld premiumabonnementen betalen. En tot Stanford ze onafhankelijk testte, had geen enkele koper enige manier om de marketing te verifiëren.
+
+> Nauwkeurigheid zonder methodologie is slechts een getal. Methodologie zonder publicatie is slechts een belofte.
+
+## Waarom de sector meting vermijdt
+
+Nauwkeurigheidsmetrieken publiceren is duur, oncomfortabel en competitief riskant. Daarom kiezen de meeste leveranciers voor stilte:
+
+| Barrière | Waarom het meting blokkeert |
+|---|---|
+| **Geen standaard benchmark** | Juridische AI heeft geen equivalent van ImageNet of GLUE. Elke leverancier definieert "nauwkeurigheid" anders — sommigen tellen citatiebestaan, anderen inhoudelijke correctheid, weer anderen gebruikerstevredenheid |
+| **Meting is domeinspecifiek** | Een benchmark die werkt voor Amerikaans caselaw is betekenisloos voor Belgisch fiscaal recht. Een valide testset bouwen vereist domeinexperts, niet alleen ingenieurs |
+| **Resultaten onthullen zwaktes** | Een gepubliceerde nauwkeurigheid van 87% lokt de vraag uit: "En die andere 13%?" Leveranciers verkiezen vage claims boven specifieke cijfers die onder de loep genomen kunnen worden |
+| **Temporeel verval** | Juridische nauwkeurigheid is niet statisch. Een systeem dat in januari 92% scoort, kan in juni 84% scoren na een programmawet die tientallen bepalingen wijzigt. Continue meting vereist continue investering |
+| **Competitief risico** | Publiceer jij wel en je concurrent niet, dan vergelijken kopers jouw eerlijke 88% met hun geïmpliceerde "bijna perfect." De eerlijke leverancier ziet er slechter uit |
+
+Dit creëert een race naar de bodem van transparantie. De rationele leveranciersstrategie is: claim nauwkeurigheid luid, meet het nooit.
+
+## De transparantierecessie
+
+Het probleem reikt ver voorbij juridische AI. De Stanford Foundation Model Transparency Index — de meest uitgebreide beoordeling van AI-bedrijfstransparantie — stelde vast dat transparantie in de hele sector daalde van gemiddeld 58 op 100 in 2024 naar slechts 40 in 2025, waarmee de vooruitgang van het voorgaande jaar volledig werd teruggedraaid (Wan et al., 2025).
+
+Meta's score daalde van 60 naar 31. Mistral ging van 55 naar 18. De bedrijven die de basismodellen bouwen waarop juridische AI-tools steunen, worden minder transparant — niet meer.
+
+![De nauwkeurigheidskloof: zes bevindingen uit onderzoek naar transparantie en hallucinaties in juridische AI](/blog/waarom-wij-nauwkeurigheid-publiceren/accuracy-gap-research-findings-dark.png "Bronnen: Magesh et al. (2024), Wan et al. (2025), Vals AI (2025), SEC (2024)")
+
+Voor juridische professionals doet dit er direct toe. Wanneer de basismodellen ondoorzichtiger worden, erven de tools die erop gebouwd zijn die ondoorzichtigheid. U vertrouwt niet alleen op de nauwkeurigheidsclaims van uw juridische AI-leverancier — u vertrouwt op een keten van claims die niemand in de keten volledig kan verifiëren.
+
+## Hoe eerlijke meting eruitziet
+
+Nauwkeurigheid publiceren is niet simpelweg een percentage op een webpagina zetten. Het vereist infrastructuur die de meeste leveranciers niet hebben gebouwd:
+
+**1. Een gouden dataset gebouwd door domeinexperts**
+
+Niet gegenereerd door AI. Niet geschraapt van bestaande benchmarks. Handmatig samengestelde vragen met geverifieerde antwoorden, die de volledige complexiteit van het doeldomein bestrijken. Voor Belgisch fiscaal recht betekent dat: temporele vragen (wat was de wet in 2019?), regionale vergelijkingen (hoe verschilt Vlaanderen van Brussel?), cross-domeinanalyse (wat zijn alle fiscale gevolgen van een TAK 23 product?), en randgevallen waar de wet oprecht dubbelzinnig of tegenstrijdig is.
+
+**2. [Continue evaluatie](/nl/glossary/continuous-evaluation/), niet eenmalige testing**
+
+Een enkele benchmarkrun is een momentopname, geen systeem. Wetten veranderen. Modellen worden bijgewerkt. Corpusinhoud evolueert. Eerlijke meting betekent evaluaties continu uitvoeren en de trend publiceren, niet de piek.
+
+**3. Meerdimensionale scoring**
+
+"Nauwkeurigheid" is niet één getal. Het zijn er minstens drie:
+
+| Dimensie | Wat het meet |
+|---|---|
+| **Citatieaccuratesse** | Bestaan de geciteerde bronnen? Zeggen ze wat het systeem beweert? |
+| **Inhoudelijke correctheid** | Is de juridische conclusie juist, gegeven de geciteerde bronnen? |
+| **Volledigheid** | Heeft het systeem alle relevante bepalingen gevonden, of alleen de voor de hand liggende? |
+
+Een systeem dat 95% scoort op citatieaccuratesse maar 60% op volledigheid is gevaarlijk — het geeft u correct maar onvolledig advies met hoge zekerheid.
+
+**4. Gepubliceerde methodologie**
+
+De methodologie doet er evenveel toe als de score. Hoe werden vragen geselecteerd? Wie verifieerde de antwoorden? Wat telt als "correct"? Zonder gepubliceerde methodologie is een score onfalsifieerbaar — en onfalsifieerbare claims zijn precies niets waard.
+
+## De Vals-benchmark en wat die onthult
+
+Het Vals Legal AI Report (VLAIR) — de eerste onafhankelijke benchmark van juridische AI-tools — biedt een nuttig precedent. In de evaluatie van februari 2025 behaalde Harvey Assistant 94,8% nauwkeurigheid op document-Q&A en overtrof het de controlegroep van juristen op vier van de zeven taken. In de evaluatie van juridisch onderzoek in oktober 2025 scoorden alle geteste AI-tools circa 80% nauwkeurigheid tegenover 71% voor juristen (Vals AI, 2025).
+
+Maar de VLAIR onthulde ook een cruciaal verschil: hoewel generieke AI gespecialiseerde juridische AI evenaarde op ruwe nauwkeurigheid, scoorde het significant lager op **gezaghebbendheid** — 70% tegenover gemiddeld 76% voor juridische AI. Toegang tot gecureerde juridische databases en gestructureerde bronnen maakt nog steeds het verschil.
+
+Het grotere verhaal is echter wie deelnam. Harvey nam deel. Alexi nam deel. Counsel Stack nam deel. Diverse grote spelers — waaronder Thomson Reuters en LexisNexis — deden dat niet. Wanneer de grootste leveranciers in de sector zich onttrekken aan onafhankelijke evaluatie, blijft de kloof tussen marketing en meting breed.
+
+## Veelgestelde vragen
+
+**Waarom publiceren niet meer juridische AI-bedrijven hun nauwkeurigheidsmetrieken?**
+
+Nauwkeurigheid publiceren vereist het bouwen van evaluatie-infrastructuur, het accepteren van publieke kritiek, en investeren in continue meting. De meeste leveranciers berekenen dat vage claims minder commercieel risico met zich meebrengen dan specifieke cijfers — want specifieke cijfers kunnen worden aangevochten. Die berekening verandert zodra kopers om bewijs beginnen te vragen.
+
+**Wat is een goede nauwkeurigheidsgraad voor juridische AI?**
+
+Er is geen universeel antwoord, omdat "nauwkeurigheid" citatiebestaan, inhoudelijke correctheid en volledigheid omvat. Een systeem dat het juiste antwoord geeft maar relevante uitzonderingen mist, is technisch "accuraat" op de gestelde vraag maar professioneel gevaarlijk. Meerdimensionale meting — die correctheid, volledigheid en temporele validiteit bestrijkt — is belangrijker dan welk enkel getal ook.
+
+**Hoe kan ik de nauwkeurigheidsclaims van een leverancier zelf verifiëren?**
+
+Stel drie vragen: (1) Welke benchmarkmethodologie gebruikt u? (2) Wie heeft de testset gebouwd en geverifieerd? (3) Kan ik de historische trend zien, niet alleen de huidige score? Als de leverancier niet alle drie kan beantwoorden, is de claim marketing.
+
+## Waarom wij voor publicatie kozen
+
+Wij publiceren onze nauwkeurigheidsmetrieken om een simpele reden: wij vinden dat u de claims moet kunnen verifiëren van elke tool waaraan u uw professionele reputatie verbindt.
+
+Ons [evaluatiekader](/nl/glossary/evals-framework/) omvat meer dan 70 door experts geverifieerde vragen over Belgisch fiscaal recht — temporele vragen, regionale vergelijkingen, cross-domeinanalyse, bewustzijn van de juridische hiërarchie, en bewuste randgevallen waar de wet dubbelzinnig of tegenstrijdig is. We voeren deze continu uit, niet eenmalig. We publiceren de trend, niet de piek.
+
+Wanneer onze nauwkeurigheid daalt — en dat zal gebeuren, want programmawetten wijzigen tientallen bepalingen tegelijk — is die daling zichtbaar. Wij beschouwen dat als een feature, geen bug. Een publieke daling in nauwkeurigheid na een ingrijpende wetswijziging bewijst dat de meting echt is. Een score die nooit verandert, bewijst alleen dat niemand controleert.
+
+Elk foutrapport dat we ontvangen wordt een nieuwe testcase. Het systeem wordt elke week meetbaar beter. Dat is het punt: transparantie is geen marketinggebaar. Het is een verbeteringsmotor.
+
+De SEC heeft bedrijven beboet voor "AI-washing" — het maken van valse of misleidende claims over AI-capaciteiten. In 2024 betaalden Delphia en Global Predictions $400.000 aan boetes voor het overdrijven van de rol van hun AI. In 2025 werd de handhaving uitgebreid naar beursgenoteerde bedrijven (SEC, 2024). De regulatoire richting is duidelijk: onverifieerbare AI-claims zullen steeds vaker juridische gevolgen hebben.
+
+Wij tonen u liever een eerlijke score en leggen de hiaten uit, dan dat we perfectie claimen en hopen dat u niet controleert.
+
+---
+
+## Gerelateerde artikelen
+
+- [Waarom transparantie belangrijker is dan nauwkeurigheid in juridische AI](/nl/blog/transparantie-vs-nauwkeurigheid-nl/)
+- [Wat is confidence scoring — en waarom het eerlijker is dan een zelfverzekerd antwoord](/nl/blog/confidence-scoring-uitgelegd-nl/)
+- [Wat de Stanford-hallucinatiestudie werkelijk onthulde](/nl/blog/stanford-hallucination-study-juridische-ai-nl/)
+- [Hoe evalueert u een juridische AI-tool? 10 vragen die er echt toe doen](/nl/blog/juridische-ai-tool-evalueren-nl/)
+
+---
+
+## Hoe Auryth TX dit toepast
+
+Auryth TX publiceert een live nauwkeurigheidsdashboard dat citatieaccuratesse, inhoudelijke correctheid en cross-domeinvolledigheid meet over het Belgisch fiscaal recht. De evaluatieset is gebouwd en geverifieerd door fiscalisten — niet gegenereerd door AI of geleend van generieke benchmarks.
+
+Elke metriek wordt continu bijgewerkt. Wanneer een programmawet het juridische [corpus](/nl/glossary/corpus/) wijzigt, weerspiegelen onze scores de verstoring in realtime. Wanneer een gebruiker een fout meldt, wordt die permanent opgenomen in de testsuite. Het resultaat is een systeem dat meetbaar, verifieerbaar beter wordt — en een dashboard dat het bewijst.
+
+Wij geloven dat dit de minimumstandaard moet zijn voor elke tool die om professioneel vertrouwen vraagt. Als uw AI-leverancier u geen nauwkeurigheidsdata wil tonen, vraag uzelf dan af waarvoor ze optimaliseren.
+
+*Bekijk onze nauwkeurigheidsmetrieken zelf — en oordeel of uw huidige tool dezelfde transparantie kan bieden.*
+
+---
+
+*Bronnen:*
+*1. Magesh, V. et al. (2024). "[Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362)." Journal of Empirical Legal Studies.*
+*2. Wan, A. et al. (2025). "[The 2025 Foundation Model Transparency Index](https://crfm.stanford.edu/fmti/December-2025/paper.pdf)." Stanford CRFM.*
+*3. Vals AI (2025). "[Vals Legal AI Report — Legal Research](https://www.vals.ai/industry-reports/vlair-10-14-25)." VLAIR oktober 2025.*
+*4. U.S. Securities and Exchange Commission (2024). "[SEC Charges Two Investment Advisers with Making False and Misleading Statements About Their Use of Artificial Intelligence](https://www.sec.gov/newsroom/press-releases/2024-36)." Persbericht 2024-36.*

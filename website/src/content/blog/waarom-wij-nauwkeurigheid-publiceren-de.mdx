@@ -1,0 +1,144 @@
+---
+title: "Warum wir unsere Genauigkeit veröffentlichen — und warum fast niemand sonst das tut"
+description: "Genauigkeitsbehauptungen ohne veröffentlichte Metriken sind Marketing. Das erfordert ehrliche Messung juristischer KI, und deshalb vermeidet die Branche es."
+publishDate: 2026-03-05
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Vertrauen & Transparenz"
+tags: ["Genauigkeit", "Transparenz", "Benchmarking", "juristische KI", "Vertrauen"]
+locale: "de"
+draft: false
+---
+
+Jeder Anbieter juristischer KI behauptet hohe Genauigkeit. Fragen Sie nach den Daten, und das Gespräch verstummt.
+
+Das ist kein Versehen. Es ist eine Strategie. Genauigkeitsbehauptungen, die nicht überprüft werden können, sind keine Behauptungen — es sind Slogans. Und die Branche der juristischen KI hat einen kompletten Verkaufszyklus auf Slogans aufgebaut, die kein Käufer prüfen kann.
+
+Wir denken, das muss sich ändern. Nicht weil wir mutiger sind als andere, sondern weil Fachleute, die ihre Reputation an KI-gestützte Recherche knüpfen, das Zeugnis sehen sollten, bevor sie dem Lehrer vertrauen.
+
+## Die Genauigkeitsillusion
+
+Die Kluft zwischen dem, was Anbieter juristischer KI versprechen, und dem, was sie beweisen können, ist größer als die meisten Käufer ahnen.
+
+Stanford-Forscher testeten die führenden [RAG](/de/glossary/rag/)-basierten juristischen Recherchetools — Lexis+ AI, Westlaw AI-Assisted Research und Ask Practical Law AI — in der ersten präregistrierten empirischen Evaluation dieser Art. Trotz Marketingbehauptungen „halluzinationsfreier" Ergebnisse halluzinierte jedes Tool 17 % bis 33 % der Zeit. Lexis+ AI war das leistungsstärkste System mit 65 % korrekten Antworten. Westlaws KI-Recherche war nur in 42 % der Fälle korrekt, halluzinierte aber fast doppelt so häufig wie die anderen getesteten Tools (Magesh et al., 2024).
+
+Das sind keine obskuren Forschungsprototypen. Das sind die Tools, für die die größten Anwaltskanzleien der Welt Premiumabonnements bezahlen. Und bis Stanford sie unabhängig testete, hatte kein Käufer eine Möglichkeit, das Marketing zu überprüfen.
+
+> Genauigkeit ohne Methodik ist nur eine Zahl. Methodik ohne Veröffentlichung ist nur ein Versprechen.
+
+## Warum die Branche Messung vermeidet
+
+Genauigkeitsmetriken zu veröffentlichen ist teuer, unbequem und wettbewerblich riskant. Deshalb wählen die meisten Anbieter das Schweigen:
+
+| Barriere | Warum sie Messung blockiert |
+|---|---|
+| **Kein Standardbenchmark** | Juristische KI hat kein Äquivalent zu ImageNet oder GLUE. Jeder Anbieter definiert „Genauigkeit" anders — manche zählen Zitatexistenz, andere inhaltliche Korrektheit, wieder andere Nutzerzufriedenheit |
+| **Messung ist domänenspezifisch** | Ein Benchmark für US-Rechtsprechung ist bedeutungslos für belgisches Steuerrecht. Eine valide Testmenge aufzubauen erfordert Domänenexperten, nicht nur Ingenieure |
+| **Ergebnisse entblößen Schwächen** | Eine veröffentlichte Genauigkeit von 87 % provoziert die Frage: „Und die anderen 13 %?" Anbieter ziehen vage Behauptungen konkreten Zahlen vor, die hinterfragt werden können |
+| **Zeitlicher Verfall** | Juristische Genauigkeit ist nicht statisch. Ein System, das im Januar 92 % erreicht, kann im Juni 84 % erzielen, nachdem ein Programmgesetz Dutzende Bestimmungen ändert. Kontinuierliche Messung erfordert kontinuierliche Investition |
+| **Wettbewerbsrisiko** | Veröffentlichen Sie, aber Ihr Konkurrent nicht, vergleichen Käufer Ihre ehrlichen 88 % mit deren impliziertem „nahezu perfekt." Der ehrliche Anbieter sieht schlechter aus |
+
+Dies erzeugt einen Wettlauf nach unten bei der Transparenz. Die rationale Anbieterstrategie lautet: Genauigkeit laut behaupten, sie niemals messen.
+
+## Die Transparenzrezession
+
+Das Problem reicht weit über juristische KI hinaus. Der Stanford Foundation Model Transparency Index — die umfassendste Bewertung der Offenlegungspraxis von KI-Unternehmen — stellte fest, dass die Transparenz branchenweit von durchschnittlich 58 von 100 Punkten in 2024 auf nur 40 in 2025 sank und damit den Fortschritt des Vorjahres vollständig umkehrte (Wan et al., 2025).
+
+Metas Score fiel von 60 auf 31. Mistrals von 55 auf 18. Die Unternehmen, die die Grundlagenmodelle bauen, auf denen juristische KI-Tools aufsetzen, werden weniger transparent — nicht mehr.
+
+![Die Genauigkeitslücke: sechs Erkenntnisse aus der Forschung zu Transparenz und Halluzinationen juristischer KI](/blog/waarom-wij-nauwkeurigheid-publiceren/accuracy-gap-research-findings-dark.png "Quellen: Magesh et al. (2024), Wan et al. (2025), Vals AI (2025), SEC (2024)")
+
+Für juristische Fachleute ist dies unmittelbar relevant. Wenn die Grundlagenmodelle undurchsichtiger werden, erben die darauf aufbauenden Tools diese Undurchsichtigkeit. Sie vertrauen nicht nur den Genauigkeitsbehauptungen Ihres juristischen KI-Anbieters — Sie vertrauen einer Kette von Behauptungen, die niemand in der Kette vollständig verifizieren kann.
+
+## Wie ehrliche Messung aussieht
+
+Genauigkeit zu veröffentlichen bedeutet nicht einfach, einen Prozentsatz auf eine Webseite zu setzen. Es erfordert Infrastruktur, die die meisten Anbieter nicht aufgebaut haben:
+
+**1. Ein [Goldstandard](/de/glossary/ground-truth/)-Datensatz, erstellt von Domänenexperten**
+
+Nicht von KI generiert. Nicht von bestehenden Benchmarks übernommen. Manuell erstellte Fragen mit verifizierten Antworten, die die volle Komplexität der Zieldomäne abdecken. Für belgisches Steuerrecht bedeutet das: temporale Fragen (wie war das Gesetz 2019?), regionale Vergleiche (wie unterscheidet sich Flandern von Brüssel?), domänenübergreifende Analyse (welche steuerlichen Folgen hat ein TAK-23-Produkt?), und Grenzfälle, in denen das Gesetz tatsächlich mehrdeutig oder widersprüchlich ist.
+
+**2. [Kontinuierliche Evaluation](/de/glossary/continuous-evaluation/), kein einmaliger Test**
+
+Ein einzelner Benchmark-Durchlauf ist eine Momentaufnahme, kein System. Gesetze ändern sich. Modelle werden aktualisiert. Korpusinhalte entwickeln sich weiter. Ehrliche Messung bedeutet, Evaluationen kontinuierlich durchzuführen und den Trend zu veröffentlichen, nicht den Spitzenwert.
+
+**3. Mehrdimensionale Bewertung**
+
+„Genauigkeit" ist nicht eine Zahl. Es sind mindestens drei:
+
+| Dimension | Was sie misst |
+|---|---|
+| **Zitatgenauigkeit** | Existieren die zitierten Quellen? Sagen sie, was das System behauptet? |
+| **Inhaltliche Korrektheit** | Ist die juristische Schlussfolgerung richtig, angesichts der zitierten Quellen? |
+| **Vollständigkeit** | Hat das System alle relevanten Bestimmungen gefunden, oder nur die offensichtlichen? |
+
+Ein System, das 95 % bei der Zitatgenauigkeit erreicht, aber 60 % bei der Vollständigkeit, ist gefährlich — es gibt Ihnen korrekte, aber unvollständige Beratung mit hohem Vertrauen.
+
+**4. Veröffentlichte Methodik**
+
+Die Methodik zählt genauso viel wie die Punktzahl. Wie wurden Fragen ausgewählt? Wer hat die Antworten verifiziert? Was zählt als „korrekt"? Ohne veröffentlichte Methodik ist eine Punktzahl unfalsifizierbar — und unfalsifizierbare Behauptungen sind exakt nichts wert.
+
+## Der Vals-Benchmark und was er zeigt
+
+Der Vals Legal AI Report (VLAIR) — der erste unabhängige Benchmark juristischer KI-Tools — bietet einen nützlichen Präzedenzfall. In seiner Evaluation vom Februar 2025 erreichte Harvey Assistant 94,8 % Genauigkeit bei Dokument-Q&A und übertraf die Kontrollgruppe von Anwälten bei vier von sieben Aufgaben. In der Evaluation der Rechtsrecherche im Oktober 2025 erzielten alle getesteten KI-Tools circa 80 % Genauigkeit gegenüber 71 % bei Anwälten (Vals AI, 2025).
+
+Doch der VLAIR offenbarte auch eine entscheidende Lücke: Während generische KI spezialisierte juristische KI bei der Rohgenauigkeit einholte, lag sie bei der **Quellenautorität** deutlich zurück — 70 % gegenüber durchschnittlich 76 % bei juristischer KI. Der Zugang zu kuratierten juristischen Datenbanken und strukturierten Zitatquellen macht weiterhin den Unterschied.
+
+Die größere Geschichte ist jedoch, wer teilnahm. Harvey nahm teil. Alexi nahm teil. Counsel Stack nahm teil. Mehrere große Akteure — darunter Thomson Reuters und LexisNexis — taten es nicht. Wenn sich die größten Anbieter der Branche einer unabhängigen Evaluation entziehen, bleibt die Kluft zwischen Marketing und Messung groß.
+
+## Häufige Fragen
+
+**Warum veröffentlichen nicht mehr juristische KI-Unternehmen ihre Genauigkeitsmetriken?**
+
+Genauigkeit zu veröffentlichen erfordert den Aufbau von Evaluationsinfrastruktur, die Akzeptanz öffentlicher Prüfung und Investitionen in kontinuierliche Messung. Die meisten Anbieter kalkulieren, dass vage Behauptungen weniger kommerzielles Risiko bergen als konkrete Zahlen — weil konkrete Zahlen angefochten werden können. Diese Kalkulation ändert sich, sobald Käufer beginnen, Belege zu fordern.
+
+**Was ist eine gute Genauigkeitsrate für juristische KI?**
+
+Es gibt keine universelle Antwort, weil „Genauigkeit" Zitatexistenz, inhaltliche Korrektheit und Vollständigkeit umfasst. Ein System, das die richtige Antwort gibt, aber relevante Ausnahmen übersieht, ist technisch „genau" auf die gestellte Frage, aber beruflich gefährlich. Mehrdimensionale Messung — die Korrektheit, Vollständigkeit und temporale Gültigkeit abdeckt — ist wichtiger als jede einzelne Zahl.
+
+**Wie kann ich die Genauigkeitsbehauptungen eines Anbieters selbst überprüfen?**
+
+Stellen Sie drei Fragen: (1) Welche Benchmark-Methodik verwenden Sie? (2) Wer hat die Testmenge erstellt und verifiziert? (3) Kann ich den historischen Trend sehen, nicht nur die aktuelle Punktzahl? Wenn der Anbieter nicht alle drei beantworten kann, ist die Behauptung Marketing.
+
+## Warum wir uns für Veröffentlichung entschieden haben
+
+Wir veröffentlichen unsere Genauigkeitsmetriken aus einem einfachen Grund: Wir denken, Sie sollten die Behauptungen jedes Tools überprüfen können, dem Sie Ihre berufliche Reputation anvertrauen.
+
+Unser Evaluationsrahmen umfasst über 70 von Experten verifizierte Fragen zum belgischen Steuerrecht — temporale Fragen, regionale Vergleiche, domänenübergreifende Analyse, Bewusstsein für die juristische Hierarchie und absichtliche Grenzfälle, in denen das Gesetz mehrdeutig oder widersprüchlich ist. Wir führen diese kontinuierlich durch, nicht einmalig. Wir veröffentlichen den Trend, nicht den Spitzenwert.
+
+Wenn unsere Genauigkeit sinkt — und das wird passieren, weil Programmgesetze Dutzende Bestimmungen auf einmal ändern — wird dieser Rückgang sichtbar sein. Wir betrachten das als Feature, nicht als Fehler. Ein öffentlicher Genauigkeitsrückgang nach einer großen Gesetzesänderung beweist, dass die Messung real ist. Eine Punktzahl, die sich nie ändert, beweist nur, dass niemand prüft.
+
+Jeder Fehlerbericht, den wir erhalten, wird zu einem neuen Testfall. Das System wird jede Woche messbar besser. Das ist der Punkt: Transparenz ist keine Marketinggeste. Sie ist ein Verbesserungsmotor.
+
+Die SEC hat Unternehmen wegen „AI Washing" bestraft — wegen falscher oder irreführender Behauptungen über KI-Fähigkeiten. 2024 zahlten Delphia und Global Predictions 400.000 $ Strafen für die Übertreibung der Rolle ihrer KI. 2025 wurde die Durchsetzung auf börsennotierte Unternehmen ausgeweitet (SEC, 2024). Die regulatorische Richtung ist klar: Nicht verifizierbare KI-Behauptungen werden zunehmend rechtliche Konsequenzen haben.
+
+Wir zeigen Ihnen lieber eine ehrliche Punktzahl und erklären die Lücken, als Perfektion zu behaupten und zu hoffen, dass Sie nicht nachprüfen.
+
+---
+
+## Verwandte Artikel
+
+- [Warum Transparenz wichtiger ist als Genauigkeit in juristischer KI](/de/blog/transparantie-vs-nauwkeurigheid-de/)
+- [Was ist Confidence Scoring — und warum es ehrlicher ist als eine selbstsichere Antwort](/de/blog/confidence-scoring-uitgelegd-de/)
+- [Was die Stanford-Halluzinationsstudie tatsächlich enthüllt hat](/de/blog/stanford-hallucination-study-juridische-ai-de/)
+- [Wie Sie ein juristisches KI-Tool bewerten: 10 Fragen, die wirklich zählen](/de/blog/juridische-ai-tool-evalueren-de/)
+
+---
+
+## Wie Auryth TX das umsetzt
+
+Auryth TX veröffentlicht ein Live-Genauigkeitsdashboard, das Zitatgenauigkeit, inhaltliche Korrektheit und domänenübergreifende Vollständigkeit im belgischen Steuerrecht abdeckt. Die Evaluationsmenge wird von Steuerexperten erstellt und verifiziert — nicht von KI generiert oder aus generischen Benchmarks übernommen.
+
+Jede Metrik wird kontinuierlich aktualisiert. Wenn ein Programmgesetz den juristischen [Korpus](/de/glossary/corpus/) ändert, spiegeln unsere Scores die Störung in Echtzeit wider. Wenn ein Nutzer eine Ungenauigkeit meldet, wird sie dauerhaft in die Testsuite aufgenommen. Das Ergebnis ist ein System, das messbar und nachweisbar besser wird — und ein Dashboard, das es beweist.
+
+Wir glauben, dies sollte der Mindeststandard für jedes Tool sein, das um professionelles Vertrauen bittet. Wenn Ihr KI-Anbieter Ihnen keine Genauigkeitsdaten zeigen will, fragen Sie sich, wofür er optimiert.
+
+*Sehen Sie unsere Genauigkeitsmetriken selbst ein — und urteilen Sie, ob Ihr aktuelles Tool die gleiche Transparenz bieten kann.*
+
+---
+
+*Quellen:*
+*1. Magesh, V. et al. (2024). „[Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362)." Journal of Empirical Legal Studies.*
+*2. Wan, A. et al. (2025). „[The 2025 Foundation Model Transparency Index](https://crfm.stanford.edu/fmti/December-2025/paper.pdf)." Stanford CRFM.*
+*3. Vals AI (2025). „[Vals Legal AI Report — Legal Research](https://www.vals.ai/industry-reports/vlair-10-14-25)." VLAIR Oktober 2025.*
+*4. U.S. Securities and Exchange Commission (2024). „[SEC Charges Two Investment Advisers with Making False and Misleading Statements About Their Use of Artificial Intelligence](https://www.sec.gov/newsroom/press-releases/2024-36)." Pressemitteilung 2024-36.*

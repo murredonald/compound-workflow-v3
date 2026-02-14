@@ -1,0 +1,76 @@
+---
+term: "Compliance-bewuste retrieval"
+termSlug: "compliance-aware-retrieval"
+short: "Compliance-bewuste retrieval dwingt governance- en regelconstraints af (toegang, provenance, logging) zodat bronnen verdedigbaar worden opgehaald en geciteerd."
+category: "ai-regulation"
+category_name: "AI-regelgeving"
+related: ["ai-governance-framework", "eu-ai-act", "ai-documentation-requirements", "human-oversight", "data-ethics", "authority-ranking-model"]
+synonyms: ["Policy-aware retrieval", "Governance-aware retrieval", "Constrained retrieval"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Compliance-bewuste retrieval is een retrieval-ontwerp waarbij juridische, privacy- en governancevereisten worden afgedwongen *vóór* en *tijdens* retrieval en [citatie](/nl/glossary/citation/). In plaats van "alles ophalen en hopen dat het antwoord veilig is", stuurt het systeem op policies die bepalen wat mag worden opgehaald, getoond, geciteerd of gelogd.
+
+## Waarom het belangrijk is
+
+- **Regelgevingsrisico**: het ophalen van verkeerde data kan al een incident zijn, zelfs als het antwoord klopt.
+- **Audit readiness**: policies en logs maken gedrag toetsbaar.
+- **Data-ethiek**: ondersteunt minimization, purpose limitation en [provenance](/nl/glossary/source-provenance/)-discipline.
+- **Vertrouwen**: gebruikers zien dat bronnen gecureerd, toegestaan en traceerbaar zijn.
+
+## Hoe het werkt
+
+Meestal voeg je een policylaag toe aan de [retrieval pipeline](/nl/glossary/retrieval-pipeline/):
+
+```
+Query -> policy checks -> retrieve toegelaten bronnen -> rank -> citeer -> log voor audit
+```
+
+Veelvoorkomende controls:
+
+- Toegangscontrole (rollen, tenant-grenzen)
+- Allowlists/denylists voor bronnen en domeinen
+- Jurisdictie- en taalconstraints
+- Filters voor PII en gevoelige data (wat mag opgehaald of getoond worden)
+- Verplichte citatie- en provenance-eisen
+- Logging- en retentiebeleid als bewijs
+
+## Praktisch voorbeeld
+
+Een gebruiker stelt een vraag die retrieval van interne klantdocumenten zou kunnen triggeren. Compliance-bewuste retrieval beperkt retrieval tot goedgekeurde publieke bronnen (wet, officiële guidance), logt de beslissing en voorkomt dat het systeem restricted materiaal citeert of blootlegt.
+
+## Veelgestelde vragen
+
+**Q: Is dit niet gewoon security?**
+
+A: Het overlapt met security, maar is breder: het gaat om voldoen aan juridische en governanceverplichtingen (welke bronnen mag je gebruiken, wat moet je loggen, wat moet je disclose).
+
+**Q: Gaat antwoordkwaliteit omlaag?**
+
+A: Recall kan dalen als policies te streng zijn. Het doel is een balans tussen bruikbaarheid en verdedigbaarheid, met expliciete constraints.
+
+## Gerelateerde termen
+
+- [AI-governanceframework](/nl/glossary/ai-governance-framework/) - policies en rollen die constraints sturen
+- [EU AI Act](/nl/glossary/eu-ai-act/) - compliance-eisen die retrieval-controls beïnvloeden
+- [AI-documentatievereisten](/nl/glossary/ai-documentation-requirements/) - bewijs voor audits en gebruikers
+- [Menselijk toezicht](/nl/glossary/human-oversight/) - escalation bij gevoelige of ambigue cases
+- [Data Ethics](/nl/glossary/data-ethics/) - principes zoals minimization en purpose limitation
+- [Autoriteitsrankingmodel](/nl/glossary/authority-ranking-model/) - voorkeur voor controlerende, toegelaten bronnen
+
+---
+
+## Referenties
+
+> Verordening (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *[AI Risk Management](/nl/glossary/ai-risk-management/) Framework (AI RMF 1.0)*.
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.

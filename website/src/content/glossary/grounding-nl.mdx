@@ -1,0 +1,147 @@
+---
+term: "Grounding"
+termSlug: "grounding"
+short: "De techniek om AI-modeloutputs te verankeren aan verifieerbare bronnen, feiten of opgehaalde documenten om hallucinaties te verminderen en nauwkeurigheid te verhogen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "hallucination", "citation", "factuality"]
+synonyms: ["Feitelijke verankering", "Kennisverankering", "Bronverankering"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Grounding is de praktijk van het verbinden van AI-gegenereerde antwoorden met verifieerbare externe informatiebronnen—documenten, databases, APIs, of kennisbanken—in plaats van uitsluitend te vertrouwen op informatie gecodeerd in modelparameters. In RAG (Retrieval-Augmented Generation) systemen betekent grounding het beperken van modeloutputs tot informatie daadwerkelijk aanwezig in opgehaalde documenten. Effectieve grounding vermindert hallucinaties, verhoogt feitelijke nauwkeurigheid, maakt verificatie mogelijk, en maakt AI-systemen betrouwbaarder voor enterprise en high-stakes toepassingen.
+
+## Waarom het belangrijk is
+
+Grounding is essentieel voor productie AI-systemen:
+
+- **Vermindert hallucinaties** — outputs gekoppeld aan echte bronnen
+- **Maakt verificatie mogelijk** — gebruikers kunnen claims controleren
+- **Verhoogt vertrouwen** — auditeerbare, traceerbare antwoorden
+- **Ondersteunt compliance** — vereist voor juridische, medische, financiële domeinen
+- **Verbetert nauwkeurigheid** — benut actuele, gezaghebbende informatie
+- **Ontsluit enterprise gebruik** — voorwaarde voor bedrijfskritische apps
+
+## Hoe het werkt
+
+**Niet-gegrond vs gegrond antwoord:**
+
+```
+NIET-GEGROND (pure LLM):
+  Gebruiker: "Wat is het restitutiebeleid?"
+  LLM → "We bieden 30 dagen geld-terug-garantie..."
+        ⚠️ Gehallucineerd — model heeft echt beleid nooit gezien
+
+GEGROND (RAG):
+  Gebruiker: "Wat is het restitutiebeleid?"
+  1. Ophalen: algemene-voorwaarden.pdf, p.12
+     "Abonnees kunnen binnen 14 dagen opzeggen voor
+      volledige restitutie..."
+  2. Genereer uit bron:
+     "Volgens onze Algemene Voorwaarden bieden wij een
+      14 dagen volledige restitutie venster." [1]
+      [1] algemene-voorwaarden.pdf, p.12
+      ✓ Verifieerbaar — gebruiker kan bron controleren
+```
+
+**Grounding-architectuur:**
+
+```
+       Gebruikersvraag
+              │
+              ▼
+  ┌──────────────────────┐
+  │   Queryverwerking    │
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐    ┌─────────────────┐
+  │   Retrieval-systeem  │───▶│ Kennisbank      │
+  │   (vind bronnen)     │◀───│ • Documenten    │
+  └──────────────────────┘    │ • Databases     │
+              │               │ • APIs          │
+              ▼               └─────────────────┘
+  ┌──────────────────────┐
+  │   LLM-generatie      │ ← beperkt tot opgehaalde context
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐
+  │  Verificatielaag     │ ← claims controleren tegen bronnen
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐
+  │  Gegrond antwoord    │
+  │  + broncitaties      │
+  └──────────────────────┘
+```
+
+**Types grounding:**
+
+| Type | Bron | Voorbeeld |
+|---|---|---|
+| Document | PDFs, webpagina's, kennisbanken | Enterprise RAG over interne documenten |
+| Database | SQL/NoSQL queryresultaten | "Toon Q4 omzet" → daadwerkelijke cijfers |
+| API | Live externe data | "AAPL koers?" → real-time koers |
+| Tool | Calculator/code-outputs | "15% van €2.340" → exact resultaat |
+
+**Kwaliteitsmetrieken:**
+
+| Metriek | Meet |
+|---|---|
+| Getrouwheid | Antwoord komt overeen met bronnen |
+| [Attributie](/nl/glossary/attribution/) | Claims gekoppeld aan bronnen |
+| Dekking | Belangrijke broninfo meegenomen |
+| Precisie | Geen extra ongegronde claims |
+| Citatiecorrectheid | Citaties wijzen naar juiste bron |
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt grounding van [fine-tuning](/nl/glossary/fine-tuning/)?**
+
+A: Fine-tuning bakt informatie permanent in modelparameters—het verandert wat het model "weet". Grounding geeft informatie tijdens [inferentie](/nl/glossary/inference/) via retrieval, het model onveranderd houdend. Grounding is flexibeler (update documenten wanneer dan ook), auditeerbaar (traceer antwoorden naar bronnen).
+
+**V: Kan grounding hallucinaties volledig elimineren?**
+
+A: Nee, maar het vermindert ze aanzienlijk. Modellen kunnen bronnen nog steeds verkeerd interpreteren of ongefundeerde claims genereren. Best practice combineert grounding met verificatielagen en citatievereisten.
+
+**V: Wat is de relatie tussen grounding en RAG?**
+
+A: RAG is de architectuur; grounding is het doel. RAG bereikt grounding door relevante documenten op te halen en in context op te nemen. Grounding kan ook via database queries of API calls.
+
+**V: Hoe meet ik grounding kwaliteit?**
+
+A: Belangrijke metrieken: getrouwheid (antwoord komt overeen met bronnen), attributie (claims gekoppeld aan bronnen), groundedness scores (geautomatiseerde evaluatie), en citatiecorrectheid.
+
+## Gerelateerde termen
+
+- [RAG](/nl/glossary/rag/) — retrieval-augmented generation architectuur
+- [Hallucinatie](/nl/glossary/hallucination/) — wat grounding voorkomt
+- [Citatie](/nl/glossary/citation/) — grounding transparant maken
+- [Feitelijkheid](/nl/glossary/factuality/) — nauwkeurigheidsdoel van grounding
+
+---
+
+## Referenties
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [Fundamenteel RAG paper]
+
+> Thoppilan et al. (2022), "[LaMDA: Language Models for Dialog Applications](https://arxiv.org/abs/2201.08239)", arXiv. [Grounding in dialoogsystemen]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attributie metrieken]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [Uitgebreid RAG/grounding overzicht]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [Foundational RAG paper]
+
+> Thoppilan et al. (2022), "[LaMDA: Language Models for Dialog Applications](https://arxiv.org/abs/2201.08239)", arXiv. [Grounding in dialog systems]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attribution metrics]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [Comprehensive RAG/grounding survey]

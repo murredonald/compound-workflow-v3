@@ -1,0 +1,69 @@
+---
+term: "Indexation multi-juridictionnelle"
+termSlug: "multi-jurisdictional-indexing"
+short: "L’indexation multi-juridictionnelle structure l’index sur plusieurs pays/régions afin que le retrieval respecte juridiction, langue et applicabilité."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["indexing-strategy", "query-understanding", "semantic-expansion", "authority-ranking-model", "legal-dependency-mapping"]
+synonyms: ["Cross-jurisdiction indexing", "Multi-country indexing", "Jurisdiction-aware indexing"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L’indexation multi-juridictionnelle est la conception d’un index et d’un modèle de métadonnées permettant la recherche sur plusieurs juridictions (pays, régions, systèmes juridiques) sans mélanger les résultats de façon trompeuse. La juridiction devient un signal explicite de retrieval et de ranking.
+
+## Pourquoi c'est important
+
+- **Applicabilité** : la "bonne" règle dépend de la juridiction (et parfois de sous-régions).
+- **Variantes linguistiques** : mêmes concepts, langues et styles de citation différents.
+- **Différences d’autorité** : poids des cours et autorités administratives selon la juridiction.
+- **Meilleure UX** : filtres, routing et regroupement des résultats par juridiction.
+
+## Comment ça fonctionne
+
+On combine généralement métadonnées, routing et ranking :
+
+```
+Requête -> détecter signaux de juridiction -> router/rechercher -> classer avec autorité -> afficher avec labels
+```
+
+Éléments clés :
+
+- Métadonnées obligatoires (juridiction, dates d’effet, type de source, autorité émettrice)
+- Partitions ou index séparés par juridiction/langue si nécessaire
+- Règles de compréhension de requête (abréviations, noms de traités, [références](/fr/glossary/citation/) locales)
+- Expansion sémantique inter-langues pour concepts et citations partagés
+
+## Exemple pratique
+
+Une [requête](/fr/glossary/prompt/) comme "retenue à la source dividende" n’a pas la même réponse en Belgique et aux Pays-Bas. L’indexation multi-juridictionnelle filtre ou route selon l’intention détectée et affiche clairement la juridiction des résultats.
+
+## Questions fréquentes
+
+**Q: Faut-il toujours des index séparés par juridiction ?**
+
+R: Pas forcément. Un index unique avec métadonnées solides et filtres peut suffire. Les partitions aident quand langues, schémas ou modèles d’autorité divergent fortement.
+
+**Q: Quel est le risque principal ?**
+
+R: Présenter une règle correcte pour la *mauvaise juridiction* sans le signaler clairement.
+
+## Termes associés
+
+- [Indexing Strategy](/fr/glossary/indexing-strategy/) - structure et maintenance de l’index
+- [Query Understanding](/fr/glossary/query-understanding/) - détecter juridiction et contraintes
+- [Expansion sémantique](/fr/glossary/semantic-expansion/) - relier variantes de langue et de mots
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - intégrer l’autorité au ranking
+- [Cartographie des dépendances juridiques](/fr/glossary/legal-dependency-mapping/) - modéliser références et applicabilité
+
+---
+
+## Références
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

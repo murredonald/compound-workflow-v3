@@ -1,0 +1,212 @@
+---
+term: "Dense Retrieval"
+termSlug: "dense-retrieval"
+short: "Informatieophaling met behulp van aangeleerde dense vectorrepresentaties, voor semantische matching voorbij trefwoordoverlap."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["semantic-search", "embedding", "sparse-retrieval", "rag"]
+synonyms: ["Dense passage retrieval", "Neurale retrieval", "Vector retrieval"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Dense retrieval is een informatie-ophaalbenadering die queries en documenten representeert als dense numerieke vectoren ([embeddings](/nl/glossary/embeddings/)) in een continue [vectorruimte](/nl/glossary/embedding-space/), en vervolgens relevante documenten vindt door gelijkenis tussen deze vectoren te berekenen. In tegenstelling tot sparse retrieval-methoden zoals [BM25](/nl/glossary/bm25/) die exacte termen matchen, vangt dense retrieval semantische betekenis—het vindt documenten over "automobielonderhoud" wanneer je zoekt naar "autoreparatie." De vectoren worden geleerd door neurale netwerken getraind op relevantiedata.
+
+## Waarom het belangrijk is
+
+Dense retrieval maakt semantische informatietoegang mogelijk:
+
+- **Semantische matching** — vind relevante content zonder exacte trefwoordoverlap
+- **Cross-taal retrieval** — [query](/nl/glossary/prompt/) in één taal, vind documenten in een andere
+- **RAG-systemen** — aandrijven van de retrieval-component van retrieval-augmented generation
+- **Enterprise search** — antwoorden vinden in bedrijfskennisbanken
+- **Conversationeel zoeken** — natuurlijke taalvragen afhandelen
+
+Dense retrieval is de ruggengraat van moderne zoek- en vraagbeantwoordingssystemen.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    DENSE RETRIEVAL                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SPARSE vs DENSE RETRIEVAL:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Query: "Wat veroorzaakt klimaatverandering?"             │
+│                                                            │
+│  SPARSE (BM25):                                            │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Representatie: Term frequentie vector          │       │
+│  │ [klimaat:1, verandering:1, veroorzaakt:1,0,0..]│       │
+│  │                                                 │       │
+│  │ Vooral nullen (sparse) - alleen matchende terms│       │
+│  │ Kan 30.000+ dimensies hebben (vocabulaireomvang)│      │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│  DENSE:                                                    │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Representatie: Geleerde semantische vector     │       │
+│  │ [0.23, -0.45, 0.89, 0.12, -0.67, 0.34, ...]   │       │
+│  │                                                 │       │
+│  │ Geen nullen (dense) - elke dimensie heeft bet. │       │
+│  │ Typisch 768-4096 dimensies                     │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│                                                            │
+│  DENSE RETRIEVAL ARCHITECTUUR:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                    BI-ENCODER                        │  │
+│  │                                                      │  │
+│  │      Query              Document                    │  │
+│  │        │                    │                       │  │
+│  │        ▼                    ▼                       │  │
+│  │  ┌──────────┐        ┌──────────┐                  │  │
+│  │  │  Query   │        │  Document│                  │  │
+│  │  │  Encoder │        │  Encoder │                  │  │
+│  │  │  (BERT)  │        │  (BERT)  │                  │  │
+│  │  └────┬─────┘        └────┬─────┘                  │  │
+│  │       │                   │                         │  │
+│  │       ▼                   ▼                         │  │
+│  │   q = [0.2, ...]      d = [0.3, ...]              │  │
+│  │                                                      │  │
+│  │   score = dot(q, d) of cosine(q, d)                │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  WAAROM BI-ENCODER? EFFICIËNTIE!                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  Document embeddings: EENMAAL berekend, opgeslagen in index│
+│                                                            │
+│  Bij query-tijd:                                           │
+│  1. Encodeer query (1 forward pass)                       │
+│  2. Zoek gelijksoortige vectoren in index op              │
+│                                                            │
+│  Met 1M documenten:                                        │
+│  Cross-encoder: 1M forward passes (minuten)               │
+│  Bi-encoder: 1 forward pass + ANN zoeken (milliseconden)  │
+│                                                            │
+│                                                            │
+│  TRAINEN VAN DENSE RETRIEVERS:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  CONTRASTIEF LEREN:                                 │  │
+│  │                                                      │  │
+│  │  Query: "klimaatverandering effecten"               │  │
+│  │                                                      │  │
+│  │  Positief (relevant):                               │  │
+│  │  "Opwarming impact op ecosystemen"                  │  │
+│  │                                                      │  │
+│  │  Negatieven (irrelevant):                           │  │
+│  │  • "Weersvoorspelling voor morgen"                  │  │
+│  │  • "Politiek klimaat in Europa" (hard negative)    │  │
+│  │  • "Random document over koken"                     │  │
+│  │                                                      │  │
+│  │  Loss: Duw query dichter bij positief,              │  │
+│  │        duw weg van negatieven                       │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  RETRIEVAL PIPELINE:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. OFFLINE: Indexeer documenten                    │  │
+│  │                                                      │  │
+│  │  Documenten ──► Encoder ──► Vectoren ──► ANN Index │  │
+│  │  [D1..Dn]                  [V1..Vn]    (FAISS/HNSW)│  │
+│  │                                                      │  │
+│  │  2. ONLINE: Zoeken                                  │  │
+│  │                                                      │  │
+│  │  Query ──► Encoder ──► Vector ──► ANN ──► Top-K    │  │
+│  │                                    Search  Results  │  │
+│  │                                                      │  │
+│  │  3. OPTIONEEL: Her-rank met cross-encoder           │  │
+│  │                                                      │  │
+│  │  Top-K ──► Cross-Encoder ──► Finale Ranking        │  │
+│  │  (100)                        (10)                  │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  POPULAIRE DENSE RETRIEVAL MODELLEN:                       │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  • DPR (Dense Passage Retrieval) - Facebook's origineel   │
+│  • Contriever - Ongesuperviseerd pre-trainen              │
+│  • E5 - Microsoft's state-of-the-art                      │
+│  • BGE - Beijing Academy of AI                            │
+│  • GTE - Alibaba                                          │
+│  • OpenAI text-embedding-3-small/large                    │
+│  • Cohere embed-v3                                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Dense vs sparse retrieval vergelijking:**
+| Aspect | Sparse (BM25) | Dense Retrieval |
+|--------|--------------|-----------------|
+| Matching | Lexicaal | Semantisch |
+| Synoniemen | Handmatige expansie | Automatisch |
+| Zero-shot | Werkt goed | Vereist training |
+| Latentie | Sneller | Iets langzamer |
+| Index grootte | [Inverted index](/nl/glossary/inverted-index/) | Vector index |
+| Nieuwe domeinen | Robuust | Kan [fine-tuning](/nl/glossary/fine-tuning/) nodig hebben |
+
+## Veelgestelde vragen
+
+**V: Wanneer moet ik dense retrieval vs BM25 gebruiken?**
+
+A: Gebruik hybride (beide samen) voor beste resultaten. BM25 blinkt uit bij exacte matching (product-SKU's, namen, technische termen) en werkt goed zero-shot. Dense retrieval blinkt uit wanneer query en document verschillende vocabulaire gebruiken voor hetzelfde concept. Voor RAG-systemen, begin met hybride en tune de balans.
+
+**V: Hoe kies ik een dense retrieval-model?**
+
+A: Check de MTEB (Massive Text Embedding Benchmark) ranglijst voor laatste rankings. Voor productie, balanceer kwaliteit vs latentie—OpenAI [embeddings](/nl/glossary/vector-embeddings/) zijn hoge kwaliteit maar hebben API-kosten, terwijl open modellen zoals E5 of BGE lokaal draaien.
+
+**V: Wat is het verschil tussen [bi-encoder](/nl/glossary/bi-encoder/) en [cross-encoder](/nl/glossary/cross-encoder/)?**
+
+A: Bi-encoders coderen queries en documenten onafhankelijk—snel maar benaderend. Cross-encoders coderen query-document paren samen—nauwkeuriger maar O(n) complexiteit. Best practice: gebruik bi-encoder voor initiële retrieval (top 100), her-rank dan met cross-encoder (top 10).
+
+**V: Hoe verbeteren hard negatives dense retrieval?**
+
+A: Hard negatives zijn documenten die relevant lijken maar niet zijn—ze delen termen of onderwerpen maar beantwoorden de query niet. Trainen met hard negatives dwingt het model subtiele onderscheidingen te leren.
+
+## Gerelateerde termen
+
+- [Semantic search](/nl/glossary/semantic-search/) — toepassing van dense retrieval
+- Embedding — vectoren gebruikt in dense retrieval
+- [Sparse retrieval](/nl/glossary/sparse-retrieval/) — term-gebaseerd alternatief
+- [RAG](/nl/glossary/rag/) — systemen die dense retrieval gebruiken
+
+---
+
+## Referenties
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [Originele DPR paper]
+
+> Xiong et al. (2020), "[Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval](https://arxiv.org/abs/2007.00808)", ICLR. [ANCE - hard negative mining]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [E5 embeddings]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarks]
+
+## References
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [Original DPR paper]
+
+> Xiong et al. (2020), "[Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval](https://arxiv.org/abs/2007.00808)", ICLR. [ANCE - hard negative mining]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [E5 embeddings]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarks]

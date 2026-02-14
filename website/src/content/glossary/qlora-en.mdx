@@ -1,0 +1,165 @@
+---
+term: "QLoRA"
+termSlug: "qlora"
+short: "Quantized LoRA - combines 4-bit quantization with LoRA adapters, enabling fine-tuning of 65B+ models on a single 48GB GPU."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["lora", "quantization", "fine-tuning", "llm"]
+synonyms: ["Quantized LoRA", "Quantized Low-Rank Adaptation", "4-bit LoRA"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+QLoRA (Quantized Low-Rank Adaptation) is a parameter-efficient fine-tuning technique that combines 4-bit quantization of the base model with LoRA [adapters](/en/glossary/adapter/). The frozen base model is compressed using a novel 4-bit NormalFloat (NF4) data type optimized for normally distributed weights, while trainable LoRA adapters remain in higher precision. This achieves memory savings of up to 12x compared to standard LoRA while maintaining full 16-bit fine-tuning performance.
+
+## Why it matters
+
+QLoRA made large model fine-tuning accessible to everyone:
+
+- **Dramatic memory reduction** — fine-tune 65B models on a single 48GB GPU
+- **Consumer hardware** — 33B models fit on 24GB gaming GPUs
+- **No quality loss** — matches full 16-bit fine-tuning performance
+- **Cost reduction** — cloud training costs drop by 10x
+- **Research democratization** — academia can now experiment with large models
+
+QLoRA removed the GPU barrier that kept large model customization enterprise-only.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    QLORA ARCHITECTURE                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  MEMORY COMPARISON (Fine-tuning LLaMA-65B):                │
+│  ──────────────────────────────────────────                │
+│                                                            │
+│  Full Fine-tuning:    ~780 GB  (impossible)               │
+│  Standard LoRA (16b): ~130 GB  (8× A100s)                 │
+│  QLoRA (4-bit + LoRA): ~48 GB  (1× A100)  ← breakthrough! │
+│                                                            │
+│  THREE KEY INNOVATIONS:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  1. NF4 (4-bit NormalFloat) Quantization                  │
+│     ────────────────────────────────────                   │
+│     Problem: Standard 4-bit loses too much precision      │
+│     Solution: Optimize quantization for normal distribution│
+│                                                            │
+│     Neural network weights distribution:                   │
+│     ┌────────────────────────────────────┐               │
+│     │      ╭───╮                          │               │
+│     │     ╱     ╲  Most weights near 0    │               │
+│     │    ╱       ╲ (bell curve)           │               │
+│     │   ╱         ╲                       │               │
+│     │  ╱           ╲                      │               │
+│     │ ╱             ╲                     │               │
+│     │───────────────────────────────────│               │
+│     │ -3σ  -2σ  -σ   0   +σ  +2σ  +3σ   │               │
+│     └────────────────────────────────────┘               │
+│                                                            │
+│     NF4: 16 quantization levels optimally placed          │
+│     for this distribution (information-theoretic optimal) │
+│                                                            │
+│  2. Double Quantization                                    │
+│     ───────────────────                                    │
+│     Quantize the quantization constants too!               │
+│                                                            │
+│     Standard Quant:                                        │
+│     Weight block + 32-bit scale → overhead                │
+│                                                            │
+│     Double Quant:                                          │
+│     Weight block + 8-bit scale → ~0.5 bit/param saved     │
+│                                                            │
+│  3. Paged Optimizers                                       │
+│     ─────────────────                                      │
+│     Use CPU memory for optimizer states                    │
+│     Page in/out as needed (like virtual memory)           │
+│     Prevents OOM from gradient checkpointing spikes       │
+│                                                            │
+│  QLORA DATA FLOW:                                          │
+│  ────────────────                                          │
+│                                                            │
+│                    ┌─────────────────────────┐            │
+│  Input ──────────►│ Dequantize NF4 → FP16   │            │
+│                    │ (on-the-fly, per layer) │            │
+│                    └──────────┬──────────────┘            │
+│                               │                            │
+│                               ▼                            │
+│                    ┌─────────────────────────┐            │
+│                    │   Frozen Base Model     │            │
+│                    │   (stored as 4-bit)     │            │
+│                    └──────────┬──────────────┘            │
+│                               │                            │
+│           ┌───────────────────┼───────────────────┐       │
+│           │                   │                   │       │
+│           ▼                   ▼                   ▼       │
+│    ┌──────────┐        ┌──────────┐        ┌──────────┐  │
+│    │ LoRA A,B │        │ LoRA A,B │        │ LoRA A,B │  │
+│    │ (16-bit) │        │ (16-bit) │        │ (16-bit) │  │
+│    └────┬─────┘        └────┬─────┘        └────┬─────┘  │
+│         │                   │                   │       │
+│         └───────────────────┼───────────────────┘       │
+│                             │                            │
+│                             ▼                            │
+│                    ┌─────────────────────────┐            │
+│                    │       Output            │            │
+│                    └─────────────────────────┘            │
+│                                                            │
+│  PRECISION BREAKDOWN:                                      │
+│  ────────────────────                                      │
+│  • Base model weights: NF4 (4-bit)                        │
+│  • Quantization scales: 8-bit (double quantized)          │
+│  • LoRA A and B matrices: BFloat16 (16-bit)               │
+│  • Computations: FP16/BF16 (dequantize on-the-fly)       │
+│  • Gradients: Full precision for LoRA only                │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**QLoRA memory requirements:**
+| Model Size | Full 16-bit | LoRA 16-bit | QLoRA 4-bit |
+|------------|-------------|-------------|-------------|
+| 7B | 28 GB | 14 GB | 6 GB |
+| 13B | 52 GB | 26 GB | 10 GB |
+| 33B | 132 GB | 66 GB | 24 GB |
+| 65B | 260 GB | 130 GB | 48 GB |
+
+## Common questions
+
+**Q: Does 4-bit quantization hurt fine-tuning quality?**
+
+A: Remarkably, no. The QLoRA paper showed that fine-tuning a 4-bit base model with 16-bit LoRA achieves the same performance as full 16-bit fine-tuning. The key insight is that LoRA adapters (which learn the task-specific changes) remain in high precision—only the frozen base weights are quantized.
+
+**Q: What hardware do I need for QLoRA?**
+
+A: A 24GB consumer GPU (like RTX 3090/4090) can fine-tune models up to ~33B parameters. For 65B+ models, you need 48GB (A100 or A6000). This is 10-100x less than traditional fine-tuning requirements.
+
+**Q: Can I use QLoRA models at [inference](/en/glossary/inference/) time?**
+
+A: Yes. You can either keep the model quantized (faster, slightly lower quality) or merge the LoRA weights into a dequantized model. For production, many people dequantize to 16-bit after training for maximum quality.
+
+**Q: How does QLoRA compare to GPTQ or other quantization methods?**
+
+A: GPTQ optimizes for inference speed on quantized models. QLoRA optimizes for fine-tuning efficiency. They solve different problems. You might train with QLoRA, then quantize the result with GPTQ for deployment.
+
+## Related terms
+
+- [LoRA](/en/glossary/lora/) — the adapter technique QLoRA builds on
+- [Quantization](/en/glossary/quantization/) — weight compression QLoRA uses
+- [Fine-tuning](/en/glossary/fine-tuning/) — what QLoRA makes more accessible
+- [LLM](/en/glossary/llm/) — models that benefit from QLoRA
+
+---
+
+## References
+
+> Dettmers et al. (2023), "[QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/abs/2305.14314)", NeurIPS. [Original QLoRA paper]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Foundational quantization work]
+
+> Hu et al. (2021), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [LoRA technique QLoRA extends]
+
+> Hugging Face (2023), "[bitsandbytes: 8-bit and 4-bit Quantization](https://github.com/TimDettmers/bitsandbytes)", GitHub. [QLoRA implementation library]

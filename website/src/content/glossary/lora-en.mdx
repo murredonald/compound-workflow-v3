@@ -1,0 +1,147 @@
+---
+term: "LoRA"
+termSlug: "lora"
+short: "Low-Rank Adaptation - an efficient fine-tuning technique that trains small adapter matrices instead of updating all model weights."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["fine-tuning", "qlora", "adapter", "llm"]
+synonyms: ["Low-Rank Adaptation", "Low-Rank Fine-tuning", "LoRA adapters"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+LoRA (Low-Rank Adaptation) is a parameter-efficient fine-tuning method that freezes original model weights and injects trainable low-rank decomposition matrices into each layer. Instead of updating billions of parameters, LoRA trains two small matrices (A and B) whose product approximates the weight updates. This reduces memory requirements by 10,000x while achieving performance comparable to full fine-tuning.
+
+## Why it matters
+
+LoRA revolutionized LLM customization:
+
+- **Dramatic efficiency** — fine-tune 65B models on consumer GPUs
+- **Storage savings** — adapters are just megabytes vs gigabytes for full models
+- **Easy switching** — swap LoRA adapters for different tasks at runtime
+- **No inference overhead** — merge adapters into base weights
+- **Foundation for hosting** — enables multi-tenant [model serving](/en/glossary/inference/)
+
+LoRA democratized access to custom LLMs by making fine-tuning affordable.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    LORA ARCHITECTURE                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FULL FINE-TUNING (Traditional):                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  Input ──► [W + ΔW] ──► Output                            │
+│            ▲                                               │
+│            │ Update ALL weights                            │
+│            │ (billions of parameters)                      │
+│            │ Memory: ~100+ GB                              │
+│                                                            │
+│  LORA (Efficient):                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Input ──┬──► [W frozen] ────┬──► Output                  │
+│          │                    │                            │
+│          └──► [A × B] ───────┘                            │
+│               ▲                                            │
+│               │ Train only A and B                         │
+│               │ (millions of parameters)                   │
+│               │ Memory: ~1-10 GB                           │
+│                                                            │
+│  LOW-RANK DECOMPOSITION:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  Original weight update ΔW ≈ A × B                        │
+│                                                            │
+│  W: [4096 × 4096] = 16.7M params (frozen)                 │
+│  ↓                                                        │
+│  A: [4096 × 16] = 65K params (trainable)                  │
+│  B: [16 × 4096] = 65K params (trainable)                  │
+│  ↓                                                        │
+│  Total trainable: 130K vs 16.7M = 0.78% of original       │
+│                                                            │
+│  RANK (r) = 16 is the "bottleneck dimension"              │
+│                                                            │
+│                                                            │
+│  DIMENSION VISUALIZATION:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Full ΔW:          LoRA Approximation:                    │
+│  ┌─────────┐       ┌──┐                                   │
+│  │         │       │  │   ┌─────────┐                     │
+│  │  4096   │   =   │A │ × │    B    │                     │
+│  │    ×    │       │  │   │ 16×4096 │                     │
+│  │  4096   │       │4096│ └─────────┘                     │
+│  │         │       │×16│                                  │
+│  └─────────┘       └──┘                                   │
+│   16.7M params     130K params total                      │
+│                                                            │
+│  INFERENCE TIME:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  Option 1: Keep separate (switch adapters)                 │
+│  Output = W×x + (A×B)×x                                   │
+│                                                            │
+│  Option 2: Merge (no overhead)                             │
+│  W_merged = W + A×B                                       │
+│  Output = W_merged × x                                    │
+│                                                            │
+│  TYPICAL HYPERPARAMETERS:                                  │
+│  ────────────────────────                                  │
+│  • Rank (r): 8-64 (higher = more capacity)                │
+│  • Alpha (α): scaling factor, often α = r                 │
+│  • Target modules: q_proj, v_proj (attention layers)      │
+│  • Learning rate: 1e-4 to 3e-4                            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**LoRA efficiency comparison:**
+| Metric | Full Fine-tune | LoRA |
+|--------|----------------|------|
+| Trainable params | 100% | 0.1-1% |
+| GPU memory (7B) | ~60GB | ~8GB |
+| Training time | Hours | Minutes |
+| Adapter size | Full model | ~100MB |
+
+## Common questions
+
+**Q: How do I choose the right rank (r)?**
+
+A: Start with r=8 or r=16 for most tasks. Higher ranks (32, 64) capture more complex adaptations but need more memory and risk overfitting on small datasets. For simple tasks (style adaptation), r=4 may suffice. For complex domain knowledge, try r=64+. Experiment and compare validation loss.
+
+**Q: Which layers should I apply LoRA to?**
+
+A: Typically query (q_proj) and value (v_proj) projections in [attention layers](/en/glossary/attention-mechanism/). Research shows these capture most task-specific information. You can add key (k_proj), output (o_proj), and MLP layers for more capacity. More layers = more trainable parameters = more memory.
+
+**Q: Can I combine multiple LoRA adapters?**
+
+A: Yes! You can add, subtract, or interpolate LoRA adapters. This enables combining skills (e.g., coding + German language), or interpolating between styles. Some frameworks support loading multiple adapters with different weights at inference time.
+
+**Q: How does LoRA compare to full fine-tuning quality?**
+
+A: For most tasks, LoRA achieves 90-100% of full fine-tuning performance. On some complex tasks requiring deep architectural changes, full fine-tuning may still win. But the efficiency gains (100x less memory) make LoRA the default choice for most applications.
+
+## Related terms
+
+- [Fine-tuning](/en/glossary/fine-tuning/) — traditional approach LoRA improves
+- [QLoRA](/en/glossary/qlora/) — LoRA with [quantization](/en/glossary/quantization/) for even more efficiency
+- [Adapter](/en/glossary/adapter/) — broader category of efficient tuning methods
+- [LLM](/en/glossary/llm/) — models that benefit from LoRA
+
+---
+
+## References
+
+> Hu et al. (2021), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [Original LoRA paper]
+
+> Dettmers et al. (2023), "[QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/abs/2305.14314)", NeurIPS. [LoRA + quantization]
+
+> Lialin et al. (2023), "[Scaling Down to Scale Up: A Guide to Parameter-Efficient Fine-Tuning](https://arxiv.org/abs/2303.15647)", arXiv. [Survey of efficient fine-tuning methods]
+
+> Hugging Face (2023), "[PEFT: Parameter-Efficient Fine-Tuning](https://github.com/huggingface/peft)", GitHub. [Popular LoRA implementation]

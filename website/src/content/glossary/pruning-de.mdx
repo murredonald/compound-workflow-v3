@@ -1,0 +1,173 @@
+---
+term: "Pruning"
+termSlug: "pruning"
+short: "Entfernen unnötiger Gewichte oder Neuronen aus neuronalen Netzen zur Reduzierung von Modellgröße und Rechenkosten ohne signifikanten Genauigkeitsverlust."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["model-compression", "quantization", "distillation", "neural-network"]
+synonyms: ["Neuronales Netzwerk Pruning", "Gewichtspruning", "Modell-Sparsifizierung"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Pruning ist eine Modellkomprimierungstechnik, die redundante oder weniger wichtige Gewichte, Neuronen oder ganze Strukturen aus neuronalen Netzen entfernt. Durch Identifizierung und Eliminierung von Parametern, die minimal zur Modellleistung beitragen, kann Pruning die Modellgröße um 50-90% reduzieren bei vernachlässigbarem Genauigkeitsverlust. Die resultierenden spärlichen Netze benötigen weniger Speicher und Rechenleistung, was schnellere [Inferenz](/de/glossary/inference/) ermöglicht.
+
+## Warum es wichtig ist
+
+Pruning macht neuronale Netze effizienter:
+
+- **Kleinere Modelle** — Größe um 50-90% reduzieren ohne signifikanten Genauigkeitsverlust
+- **Schnellere Inferenz** — weniger Operationen bedeuten schnellere Vorhersagen
+- **Weniger Speicher** — spärliche Gewichte brauchen weniger RAM
+- **Hardware-Effizienz** — spezialisierte Hardware beschleunigt spärliche Operationen
+- **Energieeinsparung** — weniger Berechnungen = geringerer Stromverbrauch
+
+Pruning ist essentiell für das Deployment von Modellen auf Edge-Geräten und Reduzierung von Serving-Kosten.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    PRUNING ÜBERBLICK                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE PRUNING-ERKENNTNIS:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  Die meisten neuronalen Netzwerk-Gewichte sind nahe Null!  │
+│                                                            │
+│  Gewichtsverteilung in trainiertem Netzwerk:              │
+│  ┌────────────────────────────────────────┐               │
+│  │         ╭─────╮                         │               │
+│  │        ╱       ╲    Meiste Gewichte     │               │
+│  │       ╱         ╲   clustern bei 0      │               │
+│  │      ╱           ╲                      │               │
+│  │     ╱             ╲                     │               │
+│  │    ╱               ╲                    │               │
+│  │ ──╱─────────────────╲──────────────────│               │
+│  │  -1    -0.5    0    0.5    1           │               │
+│  │        ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲                 │               │
+│  │        Diese können gepruned werden!    │               │
+│  └────────────────────────────────────────┘               │
+│                                                            │
+│                                                            │
+│  PRUNING-TYPEN:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  1. UNSTRUKTURIERTES PRUNING (Gewichtsebene)              │
+│     ────────────────────────────────────────               │
+│     Entferne einzelne Gewichte überall                     │
+│                                                            │
+│     Vorher:              Nachher:                          │
+│     ┌─────────────┐      ┌─────────────┐                  │
+│     │ 0.5  0.02 0.8│      │ 0.5  ·   0.8│                  │
+│     │ 0.01 0.7  0.03│      │ ·   0.7  ·  │                  │
+│     │ 0.9  0.05 0.4│      │ 0.9  ·   0.4│                  │
+│     └─────────────┘      └─────────────┘                  │
+│     (· = auf 0 gepruned)                                  │
+│                                                            │
+│     ✓ Hohe Kompressionsraten möglich (90%+)               │
+│     ✗ Unregelmäßige Spärlichkeit schwer zu beschleunigen  │
+│                                                            │
+│  2. STRUKTURIERTES PRUNING (Kanal/Schichtebene)           │
+│     ───────────────────────────────────────                │
+│     Entferne ganze Neuronen, Kanäle oder Schichten        │
+│                                                            │
+│     Vorher:                  Nachher:                      │
+│     ┌───┐  ┌───┐  ┌───┐     ┌───┐      ┌───┐             │
+│     │ ○ │──│ ○ │──│ ○ │     │ ○ │──────│ ○ │             │
+│     │ ○ │╲╱│ ○ │╲╱│ ○ │     │ ○ │ ╲ ╱  │ ○ │             │
+│     │ ○ │╱╲│ ○ │╱╲│ ○ │     └───┘  ╳   └───┘             │
+│     │ ○ │──│ ○ │──│ ○ │            ╱ ╲                     │
+│     └───┘  └───┘  └───┘    (mittlere Schicht entfernt)    │
+│                                                            │
+│     ✓ Kompatibel mit Standard-Hardware-Beschleunigung     │
+│     ✗ Niedrigere Kompressionsraten (50-70% typisch)       │
+│                                                            │
+│                                                            │
+│  PRUNING-PROZESS:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐            │
+│  │Trainiertes│───►│  Prune   │───►│ Fine-tune│            │
+│  │  Modell  │    │(entferne │    │(stelle   │            │
+│  │          │    │ Gewichte)│    │Genauigk.)│            │
+│  └──────────┘    └──────────┘    └──────────┘            │
+│       │                                │                   │
+│       │         ┌──────────────────────┘                   │
+│       │         │                                          │
+│       │         ▼                                          │
+│       │    Iterieren: mehr prunen → fine-tune → wiederholen│
+│       │    bis Ziel-Spärlichkeit erreicht                  │
+│       │                                                    │
+│       ▼                                                    │
+│  PRUNING-KRITERIEN (was entfernen):                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  • Magnitude: entferne kleinste |Gewichte|                │
+│  • Gradient: entferne Gewichte mit kleinsten Gradienten   │
+│  • Sensitivität: entferne am wenigsten verlustsensitive   │
+│  • Zufällig: Baseline-Vergleich                           │
+│                                                            │
+│                                                            │
+│  SPÄRLICHKEITSSTUFEN:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  Spärlichk. │ Gewichte Entfernt │ Typischer Genauigk.einfl.│
+│  ───────────┼───────────────────┼─────────────────────     │
+│    50%      │ Hälfte            │ ~0-0.5% Verlust         │
+│    80%      │ Meiste            │ ~0.5-1% Verlust         │
+│    90%      │ Fast alle         │ ~1-2% Verlust           │
+│    95%+     │ Extrem            │ ~2-5%+ Verlust          │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie viel kann ich prunen ohne Genauigkeit zu verlieren?**
+
+A: Typische Netzwerke können auf 50-80% Spärlichkeit gepruned werden mit `<1%` Genauigkeitsverlust. Mit iterativem Pruning und Fine-Tuning ist sogar 90%+ Spärlichkeit für einige Modelle erreichbar. Die genaue Grenze hängt von Modellarchitektur, Aufgabenkomplexität und Trainingsdaten ab.
+
+**F: Was ist der Unterschied zwischen strukturiertem und unstrukturiertem Pruning?**
+
+A: Unstrukturiertes Pruning entfernt einzelne Gewichte überall und erreicht höhere Kompression, erzeugt aber unregelmäßige Spärlichkeit, die auf Standard-Hardware schwer zu beschleunigen ist. Strukturiertes Pruning entfernt ganze Neuronen/Kanäle, gibt niedrigere Kompression, aber kleinere dichte Modelle, die auf jeder Hardware schnell laufen.
+
+**F: Funktioniert Pruning für LLMs?**
+
+A: Ja, aber es ist herausfordernder. LLMs wie GPT haben emergente Fähigkeiten, die an die Modellskala gebunden sind. Forschung zeigt, dass unstrukturiertes Pruning auf 50-70% Spärlichkeit gut funktioniert. Strukturiertes Pruning ist schwieriger—das Entfernen ganzer Attention-Heads oder Schichten kann spezifische Fähigkeiten beeinträchtigen.
+
+**F: Wie vergleicht sich Pruning mit Quantisierung?**
+
+A: Sie sind komplementär. Pruning entfernt Parameter vollständig; Quantisierung reduziert ihre Präzision. Für maximale Kompression beide nutzen: erst das Modell prunen, dann quantisieren. Ein geprunde + quantisiertes Modell kann 10-20x kleiner sein.
+
+## Verwandte Begriffe
+
+- [Model compression](/de/glossary/model-compression/) — breitere Kategorie einschließlich Pruning
+- [Quantization](/de/glossary/quantization/) — komplementäre Kompressionstechnik
+- [Distillation](/de/glossary/distillation/) — alternativer Ansatz mit Lehrer-Schüler
+- [Neural network](/de/glossary/neural-network/) — Modelle, die Pruning optimiert
+
+---
+
+## Referenzen
+
+> Han et al. (2015), "[Learning both Weights and Connections for Efficient Neural Networks](https://arxiv.org/abs/1506.02626)", NeurIPS. [Grundlegendes Pruning-Paper]
+
+> Frankle & Carlin (2019), "[The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)", ICLR. [Einflussreiche Sparse-Network-Theorie]
+
+> Frantar & Alistarh (2023), "[SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot](https://arxiv.org/abs/2301.00774)", ICML. [[LLM](/de/glossary/llm/)-Pruning]
+
+> Sun et al. (2023), "[A Simple and Effective Pruning Approach for Large Language Models](https://arxiv.org/abs/2306.11695)", arXiv. [Wanda-Methode für LLMs]
+
+## References
+
+> Han et al. (2015), "[Learning both Weights and Connections for Efficient Neural Networks](https://arxiv.org/abs/1506.02626)", NeurIPS. [Foundational pruning paper]
+
+> Frankle & Carlin (2019), "[The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)", ICLR. [Influential sparse network theory]
+
+> Frantar & Alistarh (2023), "[SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot](https://arxiv.org/abs/2301.00774)", ICML. [LLM pruning]
+
+> Sun et al. (2023), "[A Simple and Effective Pruning Approach for Large Language Models](https://arxiv.org/abs/2306.11695)", arXiv. [Wanda method for LLMs]

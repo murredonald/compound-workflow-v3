@@ -1,0 +1,222 @@
+---
+term: "Sparse Retrieval"
+termSlug: "sparse-retrieval"
+short: "Information retrieval using high-dimensional sparse vectors based on term frequencies, like BM25 and TF-IDF."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["dense-retrieval", "bm25", "tf-idf", "inverted-index"]
+synonyms: ["Lexical retrieval", "Term-based retrieval", "Keyword matching"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Sparse retrieval is an information retrieval approach that represents queries and documents as high-dimensional vectors where most values are zero. Each dimension corresponds to a term in the vocabulary, and non-zero values indicate term importance (frequency, TF-IDF weight, or BM25 score). With vocabulary sizes of 30,000+ terms, these vectors are extremely sparse—a typical document might have non-zero values in only 100-500 dimensions, making efficient storage and retrieval possible through inverted indexes.
+
+## Why it matters
+
+Sparse retrieval remains fundamental to [search systems](/en/glossary/information-retrieval-system/):
+
+- **Battle-tested reliability** — decades of optimization and well-understood behavior
+- **Zero-shot performance** — works well on any domain without training
+- **Exact matching** — essential for product SKUs, legal [citations](/en/glossary/citation/), technical identifiers
+- **[Interpretability](/en/glossary/explainability/)** — you can see exactly which terms matched
+- **Efficiency** — inverted indexes enable sub-millisecond search over billions of documents
+- **[Hybrid search](/en/glossary/hybrid-search/)** — combines with dense retrieval for best-of-both-worlds systems
+
+Most production search systems use sparse retrieval as a first-stage retriever or hybrid component.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    SPARSE RETRIEVAL                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SPARSE VECTOR REPRESENTATION:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  Vocabulary: [apple, banana, car, climate, document, ...]  │
+│  (30,000+ terms)                                           │
+│                                                            │
+│  Document: "Climate change affects global ecosystems"      │
+│                                                            │
+│  Sparse Vector (showing only non-zero):                    │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  Index:     142    387    912    1523   2891 ...   │   │
+│  │  Term:    climate change affects global ecosystem  │   │
+│  │  Value:    0.82   0.67   0.34   0.28   0.71 ...   │   │
+│  │                                                     │   │
+│  │  Dimensions: 30,000+                               │   │
+│  │  Non-zero:   ~50-200 (sparse!)                     │   │
+│  │  Storage:    Only store non-zero pairs             │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  SPARSE VS DENSE COMPARISON:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  SPARSE:                                                   │
+│  [0, 0, 0, 0.8, 0, 0, 0.5, 0, 0, 0, 0, 0.3, 0, 0, ...]   │
+│   ▲                                                        │
+│   │  Mostly zeros                                         │
+│   │  30,000+ dimensions (vocabulary size)                 │
+│   │  Human-interpretable (each dim = specific word)       │
+│                                                            │
+│  DENSE:                                                    │
+│  [0.23, -0.45, 0.89, 0.12, -0.67, 0.34, 0.91, -0.28...]  │
+│   ▲                                                        │
+│   │  No zeros (all dimensions used)                       │
+│   │  768-4096 dimensions (learned)                        │
+│   │  Not human-interpretable                              │
+│                                                            │
+│                                                            │
+│  COMMON SPARSE RETRIEVAL METHODS:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. TERM FREQUENCY (TF):                            │  │
+│  │     Count how many times term appears in document   │  │
+│  │     Simple but ignores rare vs common terms         │  │
+│  │                                                      │  │
+│  │  2. TF-IDF:                                         │  │
+│  │     TF × log(N / df)                                │  │
+│  │     Upweights rare terms, downweights common ones   │  │
+│  │                                                      │  │
+│  │  3. BM25:                                           │  │
+│  │     TF-IDF with saturation and length normalization │  │
+│  │     State-of-the-art sparse retrieval               │  │
+│  │                                                      │  │
+│  │  4. LEARNED SPARSE (SPLADE, etc):                   │  │
+│  │     Neural network predicts sparse weights          │  │
+│  │     Best of sparse (efficiency) + neural (semantic) │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  INVERTED INDEX - THE KEY DATA STRUCTURE:                  │
+│  ────────────────────────────────────────                  │
+│                                                            │
+│  Documents:                                                │
+│  D1: "climate change policy"                              │
+│  D2: "climate science research"                           │
+│  D3: "economic policy changes"                            │
+│                                                            │
+│  Inverted Index:                                           │
+│  ┌──────────────────────────────────────────────┐         │
+│  │ Term       │ Posting List (doc_id: score)    │         │
+│  ├────────────┼─────────────────────────────────┤         │
+│  │ climate    │ D1: 0.8, D2: 0.8               │         │
+│  │ change     │ D1: 0.6                         │         │
+│  │ changes    │ D3: 0.6                         │         │
+│  │ policy     │ D1: 0.5, D3: 0.5               │         │
+│  │ science    │ D2: 0.7                         │         │
+│  │ research   │ D2: 0.5                         │         │
+│  │ economic   │ D3: 0.7                         │         │
+│  └──────────────────────────────────────────────┘         │
+│                                                            │
+│  Query: "climate policy" → Look up climate, policy        │
+│         → Intersect/union posting lists                   │
+│         → D1 has both (highest score)                     │
+│                                                            │
+│                                                            │
+│  QUERY PROCESSING PIPELINE:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  Query: "What causes climate change?"               │  │
+│  │           │                                          │  │
+│  │           ▼                                          │  │
+│  │  ┌─────────────────┐                                │  │
+│  │  │ Preprocessing   │                                │  │
+│  │  │ • Tokenization  │                                │  │
+│  │  │ • Lowercasing   │                                │  │
+│  │  │ • Stopword rem. │ → [causes, climate, change]   │  │
+│  │  │ • Stemming      │                                │  │
+│  │  └────────┬────────┘                                │  │
+│  │           │                                          │  │
+│  │           ▼                                          │  │
+│  │  ┌─────────────────┐                                │  │
+│  │  │ Index Lookup    │                                │  │
+│  │  │ Per query term  │ → Get posting lists           │  │
+│  │  └────────┬────────┘                                │  │
+│  │           │                                          │  │
+│  │           ▼                                          │  │
+│  │  ┌─────────────────┐                                │  │
+│  │  │ Scoring         │                                │  │
+│  │  │ Aggregate BM25  │ → Ranked doc list             │  │
+│  │  │ scores per doc  │                                │  │
+│  │  └─────────────────┘                                │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  STRENGTHS AND WEAKNESSES:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ✓ Strengths:                                             │
+│    • Exact term matching                                  │
+│    • Fast (sub-millisecond)                              │
+│    • No training needed                                   │
+│    • Works on any domain                                  │
+│    • Interpretable results                               │
+│    • Mature tooling (Elasticsearch, Lucene)              │
+│                                                            │
+│  ✗ Weaknesses:                                            │
+│    • Vocabulary mismatch (car ≠ automobile)              │
+│    • No semantic understanding                            │
+│    • Needs query expansion for synonyms                   │
+│    • Struggles with natural language queries              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Sparse retrieval method comparison:**
+| Method | Formula | Characteristics |
+|--------|---------|-----------------|
+| TF | count(t,d) | Simple term counting |
+| TF-IDF | TF × log(N/df) | Upweights rare terms |
+| BM25 | IDF × (TF × (k+1))/(TF + k × (1 - b + b × len/avglen)) | Saturation + length norm |
+| SPLADE | Learned sparse | Neural sparse vectors |
+
+## Common questions
+
+**Q: Is sparse retrieval still relevant with dense retrieval?**
+
+A: Absolutely. Sparse retrieval is essential for exact matching (product IDs, legal citations, technical terms) and works well zero-shot. Most production systems use hybrid approaches combining sparse and dense retrieval—sparse handles exact matches and known patterns, dense handles [semantic similarity](/en/glossary/semantic-similarity/).
+
+**Q: When does sparse retrieval outperform dense?**
+
+A: Sparse retrieval excels when: exact terms matter (legal, medical, technical domains), you have no training data for dense models, [interpretability](/en/glossary/model-interpretability/) is required, or the query uses the same vocabulary as documents. It's also faster and more scalable for very large corpora.
+
+**Q: What's learned sparse retrieval (SPLADE)?**
+
+A: Learned sparse methods like SPLADE use [neural networks](/en/glossary/neural-network/) to predict sparse weights instead of fixed formulas. They can do vocabulary expansion (adding related terms) while maintaining sparse vector form. This combines neural semantic understanding with sparse retrieval efficiency—you still use inverted indexes but get better recall.
+
+**Q: How do I choose between BM25 and TF-IDF?**
+
+A: Use BM25. It's strictly better than TF-IDF because it adds term frequency saturation (a term appearing 10 times isn't 10x more important than once) and document length normalization. All major search engines default to BM25 variants.
+
+## Related terms
+
+- [Dense retrieval](/en/glossary/dense-retrieval/) — neural vector alternative
+- [BM25](/en/glossary/bm25/) — state-of-the-art sparse algorithm
+- [TF-IDF](/en/glossary/tf-idf/) — foundational weighting scheme
+- [Inverted index](/en/glossary/inverted-index/) — data structure enabling sparse search
+
+---
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [BM25 foundations]
+
+> Formal et al. (2021), "[SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking](https://arxiv.org/abs/2107.05720)", SIGIR. [Learned sparse retrieval]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [Neural vs sparse comparison]
+
+> Bajaj et al. (2016), "[MS MARCO: A Human Generated MAchine Reading COmprehension Dataset](https://arxiv.org/abs/1611.09268)", arXiv. [Major retrieval benchmark]

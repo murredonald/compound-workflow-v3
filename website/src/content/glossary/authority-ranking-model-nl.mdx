@@ -1,0 +1,74 @@
+---
+term: "Autoriteitsrankingmodel"
+termSlug: "authority-ranking-model"
+short: "Een autoriteitsrankingmodel rangschikt bronnen op juridische autoriteit en betrouwbaarheid zodat controlerende, sterke bronnen eerst verschijnen."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["source-reliability-weighting", "source-conflict-resolution", "relevance-tuning", "multi-jurisdictional-indexing", "compliance-aware-retrieval"]
+synonyms: ["Authority-aware ranking", "Legal authority ranking", "Source authority ranking"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een autoriteitsrankingmodel is een ranking-aanpak die opgehaalde documenten niet alleen scoort op inhoudelijke relevantie, maar ook op *juridische autoriteit* en betrouwbaarheid voor de concrete vraag. Het doel is controlerende bronnen (bv. bindende wetgeving en officiële guidance) hoger te plaatsen dan minder gezaghebbende commentaarbronnen.
+
+## Waarom het belangrijk is
+
+- **Hogere juridische kwaliteit**: laat bronnen met meer juridisch gewicht bovenaan verschijnen.
+- **Minder risico**: voorkomt dat zwakke of niet-bindende bronnen het antwoord domineren.
+- **Auditability**: maakt beter uitlegbaar waarom een bron bovenaan staat.
+- **Consistentie**: stabielere resultaten over vergelijkbare queries en jurisdicties.
+
+## Hoe het werkt
+
+Autoriteit wordt meestal gemodelleerd als extra score (of als harde regels) die je combineert met relevantie:
+
+```
+Query -> retrieve kandidaten -> score relevantie + autoriteit -> combineer -> rank -> toon citaties
+```
+
+Typische autoriteitssignalen zijn:
+
+- **Brontype** (wet, KB, officiële circulaire, rechtspraak, commentaar)
+- **Uitgevende instantie** (wetgever, ministerie, rechtbankniveau, regulator)
+- **Jurisdictie-match** (land/regio, taal, toepassingsgebied)
+- **Actualiteit en versioning** (inwerkingtreding, wijzigingen, geconsolideerde tekst)
+- **[Citaties](/nl/glossary/citation/) en afhankelijkheden** (wat een bron citeert en wie ernaar citeert)
+
+## Praktisch voorbeeld
+
+Iemand zoekt op "roerende voorheffing dividend België verdrag". Een puur relevantiemodel kan blogs bovenaan zetten. Een autoriteitsrankingmodel boost het verdrag, officiële administratieve guidance en geconsolideerde wetsartikelen boven commentaar, terwijl uitlegbronnen lager toch zichtbaar blijven.
+
+## Veelgestelde vragen
+
+**Q: Is dit hetzelfde als relevantie-afstemming?**
+
+A: Verwant, maar niet hetzelfde. Relevantie-afstemming optimaliseert de ranking als geheel; autoriteitsranking voegt domeinsignalen toe zodat juridisch controlerende bronnen niet ondergesneeuwd raken.
+
+**Q: Moet autoriteit via regels of via [ML](/nl/glossary/machine-learning/)?**
+
+A: Vaak is het een mix: harde constraints voor duidelijke hiërarchieën (bv. "officiële wet vóór commentaar") en gewichten/ML voor zachtere signalen (bv. actualiteit, citatiepatronen).
+
+## Gerelateerde termen
+
+- [Source Reliability Weighting](/nl/glossary/source-reliability-weighting/) - bronnen wegen op betrouwbaarheid
+- [Source Conflict Resolution](/nl/glossary/source-conflict-resolution/) - veilig omgaan met tegenstrijdige bronnen
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - ranking verbeteren met evaluatie
+- [Multi-jurisdictie-indexering](/nl/glossary/multi-jurisdictional-indexing/) - routering over jurisdicties
+- [Compliance-bewuste retrieval](/nl/glossary/compliance-aware-retrieval/) - retrieval binnen governance- en policygrenzen
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: [BM25](/nl/glossary/bm25/) and Beyond", *Foundations and Trends in Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: BM25 and Beyond", *Foundations and Trends in Information Retrieval*.

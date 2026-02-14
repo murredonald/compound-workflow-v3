@@ -1,0 +1,132 @@
+---
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import type { Locale } from "@/i18n/utils";
+import { t } from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+  path: string;
+}
+
+const { locale, path } = Astro.props;
+
+const navLinks = [
+  { href: `/${locale}/`, label: t("nav.home", locale) },
+  { href: `/${locale}/about/`, label: t("nav.about", locale) },
+  { href: `/${locale}/features/`, label: t("nav.features", locale) },
+  { href: `/${locale}/how-it-works/`, label: t("nav.how_it_works", locale) },
+  { href: `/${locale}/pricing/`, label: t("nav.pricing", locale) },
+  { href: `/${locale}/accuracy/`, label: t("nav.accuracy", locale) },
+  { href: `/${locale}/blog/`, label: t("nav.blog", locale) },
+];
+
+const currentPath = Astro.url.pathname;
+const normalizedCurrent = currentPath.endsWith("/") ? currentPath : currentPath + "/";
+
+const isActive = (href: string) => {
+  if (href === `/${locale}/`) {
+    return normalizedCurrent === href;
+  }
+  return normalizedCurrent.startsWith(href);
+};
+---
+
+<header class="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+    {/* Logo */}
+    <a href={`/${locale}/`} class="flex items-center gap-2 text-foreground no-underline" aria-label="Auryth TX AI — Home">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+        <rect width="32" height="32" rx="6" fill="currentColor" class="text-foreground" />
+        <text x="16" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" font-weight="700" class="fill-primary">A</text>
+      </svg>
+      <span class="text-body font-semibold">Auryth</span>
+    </a>
+
+    {/* Desktop links */}
+    <div class="hidden items-center gap-1 md:flex">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class={`rounded-lg px-3 py-2 text-body-sm transition-colors no-underline hover:bg-accent hover:text-accent-foreground ${isActive(link.href) ? "font-medium text-foreground" : "text-muted-foreground"}`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    {/* Right side */}
+    <div class="flex items-center gap-1">
+      <ThemeToggle client:load />
+      <LanguageSwitcher client:load locale={locale} path={path} />
+
+      {/* Desktop CTA */}
+      <a
+        href={`/${locale}/waitlist/`}
+        class="ml-2 hidden h-9 items-center justify-center rounded-lg bg-primary px-4 text-body-sm font-medium text-primary-foreground no-underline transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:inline-flex"
+      >
+        {t("nav.waitlist", locale)}
+      </a>
+
+      {/* Mobile menu button */}
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open menu"
+        class="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:hidden"
+      >
+        {/* Hamburger icon */}
+        <svg id="menu-icon-open" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        {/* Close icon */}
+        <svg id="menu-icon-close" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  {/* Mobile menu */}
+  <div id="mobile-menu" class="hidden border-t border-border bg-background md:hidden">
+    <div class="space-y-1 px-4 py-4">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class={`block rounded-lg px-3 py-2.5 text-body-sm transition-colors no-underline hover:bg-accent ${isActive(link.href) ? "font-medium text-foreground" : "text-muted-foreground"}`}
+        >
+          {link.label}
+        </a>
+      ))}
+      <div class="pt-2">
+        <a
+          href={`/${locale}/waitlist/`}
+          class="flex h-11 min-h-[44px] w-full items-center justify-center rounded-lg bg-primary text-body-sm font-medium text-primary-foreground no-underline transition-colors hover:bg-primary/90"
+        >
+          {t("nav.waitlist", locale)}
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById("mobile-menu-btn");
+    var menu = document.getElementById("mobile-menu");
+    var iconOpen = document.getElementById("menu-icon-open");
+    var iconClose = document.getElementById("menu-icon-close");
+    if (!btn || !menu || !iconOpen || !iconClose) return;
+
+    btn.addEventListener("click", function () {
+      var expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!expanded));
+      btn.setAttribute("aria-label", expanded ? "Open menu" : "Close menu");
+      menu.classList.toggle("hidden");
+      iconOpen.classList.toggle("hidden");
+      iconClose.classList.toggle("hidden");
+    });
+  })();
+</script>

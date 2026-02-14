@@ -1,0 +1,62 @@
+---
+term: "Ajustement de la pertinence"
+termSlug: "relevance-tuning"
+short: "Lâ€™ajustement de la pertinence est lâ€™amÃ©lioration systÃ©matique du classement en ajustant signaux, poids et rÃ¨gles Ã  partir de mesures et dâ€™Ã©valuations."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["full-text-search", "boolean-search", "semantic-expansion", "search-analytics", "query-intent"]
+synonyms: ["Ranking tuning", "Optimisation de pertinence", "Search tuning"]
+locale: "fr"
+draft: false
+---
+
+## DÃ©finition
+
+Lâ€™ajustement de la pertinence consiste Ã  amÃ©liorer la faÃ§on dont un moteur classe les rÃ©sultats pour des requÃªtes rÃ©elles. Cela inclut la pondÃ©ration des champs, les boosts de sources fiables, lâ€™[affinage](/fr/glossary/fine-tuning/) des analyseurs/synonymes et la validation via Ã©valuations offline et analytics.
+
+## Pourquoi c'est important
+
+- **Confiance**: de petites erreurs de ranking peuvent casser la confiance.
+- **CohÃ©rence**: rÃ©sultats moins "alÃ©atoires" pour des requÃªtes proches.
+- **Impact**: meilleure pertinence = plus de conversions et moins de support.
+- **SÃ©curitÃ©**: on peut privilÃ©gier des sources autoritatives et rÃ©duire le bruit.
+
+## Comment Ã§a fonctionne
+
+```
+Mesure -> hypothÃ¨se -> ajuste -> Ã©value -> dÃ©ploie -> surveille
+```
+
+Un bon tuning sâ€™appuie sur des mÃ©triques claires (temps pour trouver, satisfaction, rÃ©ussite de tÃ¢che) et un ensemble de requÃªtes reprÃ©sentatif.
+
+## Exemple pratique
+
+Si les utilisateurs qui cherchent "WIB92 article 26" cliquent surtout sur le texte officiel, vous pouvez booster les pages avec [citations](/fr/glossary/citation/) officielles et rÃ©duire le poids des commentaires gÃ©nÃ©riques pour cette intention.
+
+## Questions frÃ©quentes
+
+**Q: RÃ¨gles ou [machine learning](/fr/glossary/machine-learning/) pour tuner?**
+
+R: Les deux. Les rÃ¨gles sont transparentes et rapides; le ML capte des signaux complexes mais exige des donnÃ©es et une Ã©valuation rigoureuse.
+
+**Q: OÃ¹ trouver des opportunitÃ©s rapides?**
+
+R: Dans lâ€™analytique de recherche: requÃªtes sans rÃ©sultat, reformulations frÃ©quentes, faible satisfaction des clics.
+
+## Termes associÃ©s
+
+- [Recherche plein texte](/fr/glossary/full-text-search/) - scoring classique et champs
+- [Recherche boolÃ©enne](/fr/glossary/boolean-search/) - filtrage avant classement
+- [Expansion sÃ©mantique](/fr/glossary/semantic-expansion/) - lâ€™expansion change le ranking
+- [Analytique de recherche](/fr/glossary/search-analytics/) - mesurer lâ€™effet du tuning
+- [Intention de requÃªte](/fr/glossary/query-intent/) - tuner par intention
+
+---
+
+## RÃ©fÃ©rences
+
+> Manning, Raghavan & SchÃ¼tze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

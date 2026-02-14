@@ -1,0 +1,131 @@
+---
+term: "Recherche en Faisceau"
+termSlug: "beam-search"
+short: "Un algorithme de décodage qui explore plusieurs séquences candidates en parallèle, gardant les k chemins les plus prometteurs à chaque étape."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["top-p", "top-k", "temperature", "inference", "llm"]
+synonyms: ["Décodage en faisceau", "Beam search", "Recherche multi-chemins"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La recherche en faisceau est un algorithme de décodage qui génère du texte en explorant plusieurs séquences candidates simultanément. À chaque étape, il étend toutes les séquences actuelles avec les tokens suivants possibles, les score, et ne garde que les b candidats les mieux notés (où b est la largeur du faisceau). Cette approche en largeur d'abord trouve souvent de meilleures séquences globales que le [décodage glouton](/fr/glossary/greedy-decoding/) à chemin unique.
+
+## Pourquoi c'est important
+
+La recherche en faisceau équilibre qualité et coût computationnel :
+
+- **Meilleures séquences** — explore plusieurs chemins pour trouver des sorties de plus haute probabilité
+- **Évite les optima locaux** — ne s'engage pas tôt dans des choix de tokens sous-optimaux
+- **Exploration contrôlable** — la largeur du faisceau ajuste le compromis qualité vs. vitesse
+- **Standard de traduction** — défaut dans les systèmes de traduction automatique
+- **Sortie déterministe** — produit des résultats consistants pour la même entrée
+
+La recherche en faisceau est essentielle pour les tâches où la qualité au niveau séquence compte.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   RECHERCHE EN FAISCEAU                    │
+│                   (largeur faisceau = 2)                   │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Étape 0: Commencer avec token <début>                     │
+│                                                            │
+│                      [<début>]                             │
+│                          │                                 │
+│  Étape 1: Étendre au vocabulaire, garder top-2             │
+│                          │                                 │
+│          ┌───────────────┴───────────────┐                 │
+│          ▼                               ▼                 │
+│      ["Le"]                          ["Un"]                │
+│      p=0.40                          p=0.35                │
+│          │                               │                 │
+│  Étape 2: Étendre chacun, scorer tout, garder top-2        │
+│          │                               │                 │
+│    ┌─────┼─────┐                   ┌─────┼─────┐           │
+│    ▼     ▼     ▼                   ▼     ▼     ▼           │
+│  "Le    "Le    "Le              "Un    "Un    "Un          │
+│   chat"  chien" oiseau"          chat"  chien" homme"      │
+│  0.38   0.35   0.32             0.30   0.28   0.25         │
+│                                                            │
+│  SCORES (log-prob cumulative):                             │
+│  ─────────────────────────────                             │
+│  "Le chat"   = -0.97  ◄── GARDER (meilleur)               │
+│  "Le chien"  = -1.05  ◄── GARDER (2e meilleur)            │
+│  "Un chat"   = -1.20      élagué                           │
+│  "Le oiseau" = -1.14      élagué                           │
+│  ...                                                       │
+│                                                            │
+│  Étape 3: Continuer jusqu'au token <fin>...                │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  EFFETS LARGEUR FAISCEAU:                      │        │
+│  │                                                │        │
+│  │  b=1: Décodage glouton (rapide, qual. basse)  │        │
+│  │  b=4-5: Défaut courant (équilibré)            │        │
+│  │  b=10+: Haute qualité (plus lent)             │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Comparaison largeur faisceau:**
+| Largeur | Comportement | Compromis |
+|---------|--------------|-----------|
+| 1 | Décodage glouton | Rapide mais peut manquer meilleures séquences |
+| 2-3 | Exploration minimale | Léger gain qualité |
+| 4-5 | Standard | Bon équilibre pour plupart des tâches |
+| 10+ | Extensif | Rendements décroissants, plus lent |
+| 50+ | Exhaustif | Rarement nécessaire |
+
+## Questions fréquentes
+
+**Q : En quoi la recherche en faisceau diffère des méthodes d'échantillonnage ?**
+
+R : La recherche en faisceau est déterministe—elle choisit toujours les séquences les mieux notées. L'échantillonnage (top-k, top-p, température) introduit du hasard pour la diversité. La recherche en faisceau optimise pour la probabilité; l'échantillonnage échange de la probabilité contre variété et créativité.
+
+**Q : Quelle est une bonne largeur de faisceau ?**
+
+R : 4-5 est courant pour la plupart des tâches. La traduction automatique utilise souvent 4-10. Des valeurs plus hautes donnent des rendements décroissants tout en augmentant le calcul. Pour l'écriture créative, les méthodes d'échantillonnage sont généralement préférées.
+
+**Q : La recherche en faisceau garantit-elle de trouver la meilleure séquence ?**
+
+R : Non—c'est une approximation. La vraie recherche meilleur-d'abord est computationnellement infaisable pour les modèles de langage. La recherche en faisceau peut encore manquer la séquence globalement optimale à cause de son élagage à largeur fixe.
+
+**Q : Pourquoi la recherche en faisceau peut-elle produire du texte répétitif ?**
+
+R : La recherche en faisceau optimise pour la probabilité, et répéter des phrases communes peut avoir une haute probabilité locale. C'est pourquoi des pénalités de longueur et blocage n-gram sont souvent ajoutés en pratique.
+
+## Termes associés
+
+- [Échantillonnage Top-k](/fr/glossary/top-k/) — alternative stochastique
+- [Échantillonnage Top-p](/fr/glossary/top-p/) — échantillonnage adaptatif
+- [Température](/fr/glossary/temperature/) — reformage de probabilité
+- [Inférence](/fr/glossary/inference/) — processus de génération
+
+---
+
+## Références
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2 000+ [citations](/fr/glossary/citation/)]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2 500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]
+
+## References
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2,000+ citations]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]

@@ -1,0 +1,59 @@
+---
+term: "Indexing Strategy"
+termSlug: "indexing-strategy"
+short: "An indexing strategy is the plan for what content gets indexed, how it is structured, and how it is kept up to date for reliable search."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["full-text-search", "semantic-expansion", "relevance-tuning", "content-discoverability", "search-analytics"]
+synonyms: ["Search indexing strategy", "Indexing plan", "Index design"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+An indexing strategy is the set of decisions that determines what you index (and what you exclude), how you represent content in the index, and how you handle updates. It sits between your content layer (documents, pages, PDFs) and your retrieval layer (search results, recommendations, RAG).
+
+## Why it matters
+
+- **Search quality**: good indexing choices improve recall and reduce irrelevant matches.
+- **Freshness and trust**: clear update rules prevent stale or contradictory results.
+- **Performance and cost**: indexing everything is expensive; indexing the right things is efficient.
+- **Compliance**: [access controls](/en/glossary/access-control/) and retention rules often need to be enforced at index time.
+
+## How it works
+
+```
+Content -> parse/normalize -> choose fields -> build index -> rank -> measure -> iterate
+```
+
+Key strategy choices typically include: document boundaries (page vs section), fields (title/body/metadata), analyzers (stemming, synonyms), permissions, and an update cadence (batch vs near-real-time).
+
+## Practical example
+
+For a legal [knowledge base](/en/glossary/knowledge-base/), you might index legislation at the **article** level (not whole acts), store **effective dates** as metadata, and keep a separate field for **official [citations](/en/glossary/citation/)** to support precise filtering and ranking.
+
+## Common questions
+
+**Q: Should I index whole documents or smaller chunks?**
+
+A: Smaller units (sections/articles) usually improve precision and snippet quality, but require good metadata so results still have context.
+
+**Q: When do I need more than one index?**
+
+A: Use separate indexes when documents have different update cycles, access rules, or ranking logic (e.g., public pages vs client-only memos).
+
+## Related terms
+
+- [Full-Text Search](/en/glossary/full-text-search/) - keyword retrieval over text
+- [Semantic Expansion](/en/glossary/semantic-expansion/) - expand queries beyond exact keywords
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - improve ranking quality systematically
+- [Content Discoverability](/en/glossary/content-discoverability/) - ensure content can be found and indexed
+- [Search Analytics](/en/glossary/search-analytics/) - measure and improve search outcomes
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

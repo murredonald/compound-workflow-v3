@@ -1,0 +1,242 @@
+---
+term: "Ground Truth"
+termSlug: "ground-truth"
+short: "The authoritative, verified reference data used to train and evaluate machine learning models—the 'correct' answers against which model predictions are measured."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["training-data", "annotation", "labeling", "evaluation-metrics", "gold-standard"]
+synonyms: ["Gold standard", "Reference data", "Labels", "Annotated data"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Ground truth is the authoritative, verified data that represents the "correct" answers in [machine learning](/en/glossary/machine-learning/). It's the benchmark against which model [predictions](/en/glossary/inference/) are evaluated. Ground truth can be human-annotated labels (image classifications, entity tags, sentiment scores), sensor readings (GPS coordinates, [temperature](/en/glossary/temperature/) measurements), or domain expert assessments (medical diagnoses, legal interpretations). The quality of ground truth directly determines the ceiling for model performance—models cannot reliably exceed the accuracy of their training labels.
+
+## Why it matters
+
+Ground truth is the foundation of [supervised learning](/en/glossary/supervised-learning/):
+
+- **Model training** — learns patterns from labeled examples
+- **Evaluation** — measures accuracy against known correct answers
+- **[Benchmarking](/en/glossary/benchmarking/)** — enables comparison between different models
+- **Quality control** — identifies systematic model failures
+- **Regulatory compliance** — proves model validity for audits
+- **Debugging** — diagnoses where and why models fail
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GROUND TRUTH                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WHAT GROUND TRUTH IS:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │   RAW DATA                      GROUND TRUTH         │ │
+│  │   (Input)                       (Label)              │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │             │              │             │      │ │
+│  │   │  [Image of  │  ──────────► │  "Cat"      │      │ │
+│  │   │   a cat]    │   Human      │             │      │ │
+│  │   │             │   Annotator  │  (verified  │      │ │
+│  │   └─────────────┘              │   correct)  │      │ │
+│  │                                 └─────────────┘      │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │             │              │             │      │ │
+│  │   │ "Great      │  ──────────► │ POSITIVE    │      │ │
+│  │   │  product!"  │   Expert     │ sentiment   │      │ │
+│  │   │             │   Review     │ score: 0.9  │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │             │              │ Entity:     │      │ │
+│  │   │ "Apple Inc  │  ──────────► │ COMPANY     │      │ │
+│  │   │  announced" │   Linguist   │ Span: 0-9   │      │ │
+│  │   │             │              │             │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH SOURCES:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  1. HUMAN ANNOTATION                          │  │ │
+│  │  ├──────────────────────────────────────────────┤  │ │
+│  │  │                                               │  │ │
+│  │  │  ┌─────────┐    ┌─────────┐    ┌─────────┐  │  │ │
+│  │  │  │Annotator│    │Annotator│    │Annotator│  │  │ │
+│  │  │  │    A    │    │    B    │    │    C    │  │  │ │
+│  │  │  └────┬────┘    └────┬────┘    └────┬────┘  │  │ │
+│  │  │       │              │              │       │  │ │
+│  │  │       └──────────────┼──────────────┘       │  │ │
+│  │  │                      ▼                      │  │ │
+│  │  │               ┌───────────┐                 │  │ │
+│  │  │               │ Consensus │                 │  │ │
+│  │  │               │   Vote    │                 │  │ │
+│  │  │               └───────────┘                 │  │ │
+│  │  │                                               │  │ │
+│  │  │  Multiple annotators reduce bias              │  │ │
+│  │  │  Inter-annotator agreement = quality metric   │  │ │
+│  │  │                                               │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  2. EXPERT/AUTHORITATIVE SOURCE               │  │ │
+│  │  ├──────────────────────────────────────────────┤  │ │
+│  │  │                                               │  │ │
+│  │  │  • Medical diagnosis by licensed physician    │  │ │
+│  │  │  • Legal classification by qualified lawyer   │  │ │
+│  │  │  • Financial data from official filings       │  │ │
+│  │  │  • Scientific measurements from calibrated    │  │ │
+│  │  │    instruments                                │  │ │
+│  │  │                                               │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  3. PHYSICAL/SENSOR TRUTH                     │  │ │
+│  │  ├──────────────────────────────────────────────┤  │ │
+│  │  │                                               │  │ │
+│  │  │  • GPS coordinates (autonomous driving)       │  │ │
+│  │  │  • Temperature readings (IoT/predictive)      │  │ │
+│  │  │  • Actual click/conversion (ad models)        │  │ │
+│  │  │  • Time-series outcomes (forecasting)         │  │ │
+│  │  │                                               │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  4. PROGRAMMATIC/RULE-BASED                   │  │ │
+│  │  ├──────────────────────────────────────────────┤  │ │
+│  │  │                                               │  │ │
+│  │  │  • Regex patterns (email validation)          │  │ │
+│  │  │  • Mathematical correctness (calculator)      │  │ │
+│  │  │  • Database lookups (entity resolution)       │  │ │
+│  │  │  • Code compilation success/failure           │  │ │
+│  │  │                                               │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH IN ML WORKFLOW:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Raw Data                                           │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              ANNOTATION                      │   │ │
+│  │  │  (Create ground truth labels)               │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  ┌───────────────────────────────────────────┐     │ │
+│  │  │           LABELED DATASET                  │     │ │
+│  │  │    (Input, Ground Truth) pairs            │     │ │
+│  │  └───────────────────────────────────────────┘     │ │
+│  │     │                                               │ │
+│  │     ├───────────────────────────────────┐          │ │
+│  │     │                                    │          │ │
+│  │     ▼                                    ▼          │ │
+│  │  ┌────────────┐                    ┌────────────┐  │ │
+│  │  │ TRAIN SET  │                    │ TEST SET   │  │ │
+│  │  │ (80%)      │                    │ (20%)      │  │ │
+│  │  └─────┬──────┘                    └──────┬─────┘  │ │
+│  │        │                                   │        │ │
+│  │        ▼                                   │        │ │
+│  │  ┌────────────┐                           │        │ │
+│  │  │  TRAINING  │                           │        │ │
+│  │  │   Model    │                           │        │ │
+│  │  │  learns    │                           │        │ │
+│  │  │  patterns  │                           │        │ │
+│  │  └─────┬──────┘                           │        │ │
+│  │        │                                   │        │ │
+│  │        ▼                                   ▼        │ │
+│  │  ┌──────────────────────────────────────────────┐ │ │
+│  │  │              EVALUATION                       │ │ │
+│  │  │                                               │ │ │
+│  │  │  Model Prediction: "Cat"                     │ │ │
+│  │  │  Ground Truth:     "Cat"                     │ │ │
+│  │  │  Result:           ✓ Correct                 │ │ │
+│  │  │                                               │ │ │
+│  │  │  Accuracy = Correct / Total                  │ │ │
+│  │  │                                               │ │ │
+│  │  └──────────────────────────────────────────────┘ │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH QUALITY ISSUES:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Problem              │ Impact                       │ │
+│  │  ─────────────────────┼─────────────────────────────│ │
+│  │                       │                              │ │
+│  │  Label noise          │ Model learns wrong patterns │ │
+│  │  (incorrect labels)   │ "Garbage in, garbage out"   │ │
+│  │                       │                              │ │
+│  │  Subjective           │ Low inter-annotator         │ │
+│  │  disagreement         │ agreement, inconsistent     │ │
+│  │                       │ model behavior              │ │
+│  │                       │                              │ │
+│  │  Distribution         │ Model works in lab,         │ │
+│  │  shift                │ fails in production         │ │
+│  │                       │                              │ │
+│  │  Annotation           │ Systematically biased       │ │
+│  │  bias                 │ predictions                 │ │
+│  │                       │                              │ │
+│  │  Incomplete           │ Model can't handle          │ │
+│  │  coverage             │ edge cases                  │ │
+│  │                       │                              │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How much ground truth data do I need?**
+
+A: Depends on task complexity. Simple classification: 1,000-10,000 examples. Complex NLP/vision tasks: 100,000+. [Deep learning](/en/glossary/deep-learning/) generally needs more than traditional ML. Active learning can reduce requirements.
+
+**Q: What if ground truth is wrong?**
+
+A: Label noise directly limits model accuracy. Use multiple annotators, measure inter-annotator agreement, implement quality control workflows, and consider noise-robust training techniques.
+
+**Q: How do I handle subjective tasks?**
+
+A: Define clear guidelines, train annotators consistently, use multiple annotators per sample, report inter-annotator agreement as a quality [metric](/en/glossary/distance-metric/). Some subjectivity is inherent—capture it in confidence scores or distributions.
+
+**Q: Can I use [LLMs](/en/glossary/llm/) to generate ground truth?**
+
+A: For bootstrapping or augmentation, yes—but human verification is essential. LLM-generated labels inherit model biases. Use LLMs to assist annotators, not replace them entirely.
+
+## Related terms
+
+- Training data — the dataset used to train models
+- Annotation — the process of creating ground truth
+- Evaluation metrics — measures comparing predictions to ground truth
+
+---
+
+## References
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Weak supervision and programmatic labeling]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations for Natural Language Tasks](https://aclanthology.org/D08-1027/)", ACL. [Crowdsourced annotation quality]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets Destabilize Machine Learning Benchmarks](https://arxiv.org/abs/2103.14749)", NeurIPS. [Impact of label noise on benchmarks]

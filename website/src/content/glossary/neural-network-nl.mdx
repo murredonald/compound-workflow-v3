@@ -1,0 +1,135 @@
+---
+term: "Neuraal Netwerk"
+termSlug: "neural-network"
+short: "Een machine learning model dat bestaat uit onderling verbonden lagen van kunstmatige neuronen die patronen leren uit data."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["deep-learning", "backpropagation", "transformer-architecture", "llm"]
+synonyms: ["Artificieel neuraal netwerk", "ANN", "Neuraal net", "Connectionistisch model"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een neuraal netwerk is een rekenmodel losjes geïnspireerd op het menselijk brein, bestaande uit lagen van onderling verbonden kunstmatige neuronen (knooppunten). Elk neuron ontvangt inputs, past gewichten en een bias toe, stuurt het resultaat door een activeringsfunctie, en geeft output naar de volgende laag. Door training met backpropagation leren neurale netwerken patronen te herkennen, voorspellingen te doen en outputs te genereren uit data.
+
+## Waarom het belangrijk is
+
+Neurale netwerken zijn het fundament van moderne AI:
+
+- **Universele approximators** — kunnen elke continue functie leren met voldoende neuronen
+- **Feature learning** — ontdekken automatisch relevante patronen in data
+- **Schaalbaarheid** — prestaties verbeteren met meer data en rekenkracht
+- **Veelzijdigheid** — visie, taal, spraak, games, wetenschap en meer
+- **State-of-the-art** — drijven alle leidende AI-systemen inclusief LLMs
+
+Van beeldherkenning tot taalgeneratie, neurale netwerken domineren AI.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     NEURAAL NETWERK                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STRUCTUUR VAN EEN FEEDFORWARD NETWERK:                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  Input Laag       Hidden Lagen       Output Laag           │
+│      │                │               │                    │
+│      ○ ─────┬────► ○ ────┬────► ○ ────┬────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┼────► ○ ────┼────► ○ ────┼────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┴────► ○ ────┴────► ○ ────┴────► (output)      │
+│                                                            │
+│     x₁,x₂,x₃      h₁,h₂,h₃      h₄,h₅,h₆       ŷ          │
+│                                                            │
+│  ENKEL NEURON:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Inputs       Gewichten   Som + Bias  Activatie│        │
+│  │                                                 │        │
+│  │    x₁ ──────► w₁ ──┐                           │        │
+│  │                    │                           │        │
+│  │    x₂ ──────► w₂ ──┼──► Σ + b ──► f(·) ──► y  │        │
+│  │                    │                           │        │
+│  │    x₃ ──────► w₃ ──┘                           │        │
+│  │                                                 │        │
+│  │  y = f(w₁x₁ + w₂x₂ + w₃x₃ + b)                │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VEELGEBRUIKTE ACTIVERINGSFUNCTIES:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  ReLU:    f(x) = max(0, x)         ___/                   │
+│  Sigmoid: f(x) = 1/(1+e⁻ˣ)        _/⁻⁻                    │
+│  Tanh:    f(x) = (eˣ-e⁻ˣ)/(eˣ+e⁻ˣ)  _/‾                  │
+│  Softmax: Kansverdeling             (voor classificatie)   │
+│                                                            │
+│  NETWERKTYPEN:                                             │
+│  ─────────────                                             │
+│  Feedforward (MLP):   Data stroomt één richting           │
+│  Convolutioneel (CNN): Ruimtelijke patronen (afbeeldingen)│
+│  Recurrent (RNN):      Sequentiële data (tekst, tijd)     │
+│  Transformer:          Attention-gebaseerd (LLMs)         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Netwerkarchitectuur vergelijking:**
+| Type | Sterkte | Toepassingen |
+|------|---------|--------------|
+| MLP | Eenvoudige tabulaire data | Classificatie, regressie |
+| CNN | Ruimtelijke hiërarchiëen | Afbeeldingen, video, audio |
+| RNN/LSTM | Sequentiële patronen | Tijdreeksen, vroege NLP |
+| Transformer | Lange-afstand afhankelijkheden | LLMs, moderne NLP, visie |
+
+## Veelgestelde vragen
+
+**V: Hoe diep moet een neuraal netwerk zijn?**
+
+A: Het hangt af van taakcomplexiteit. Eenvoudige taken hebben weinig lagen nodig; complexe patronen (zoals taal) hebben er veel nodig. Moderne LLMs hebben 32-100+ lagen. Begin eenvoudig en voeg diepte toe bij underfitting.
+
+**V: Wat is het verschil tussen neuronen en parameters?**
+
+A: Neuronen zijn de rekeneenheden; parameters zijn de gewichten en biases die ze verbinden. Een netwerk met 1000 neuronen kan miljoenen parameters hebben (elk neuron verbindt met vele anderen).
+
+**V: Waarom hebben neurale netwerken activeringsfuncties nodig?**
+
+A: Zonder niet-lineaire activeringen zouden meerdere lagen samenvallen tot een enkele lineaire transformatie (ongeacht hoeveel lagen). Activeringsfuncties stellen netwerken in staat complexe, niet-lineaire patronen te leren.
+
+**V: Hoe verhouden neurale netwerken zich tot "deep learning"?**
+
+A: Deep learning verwijst specifiek naar neurale netwerken met veel lagen (diepe architecturen). Een 2-laags netwerk is een neuraal netwerk maar niet "diep." Moderne transformer LLMs zijn zeer diepe neurale netwerken.
+
+## Gerelateerde termen
+
+- [Deep Learning](/nl/glossary/deep-learning/) — neurale netwerken met veel lagen
+- [Transformer Architectuur](/nl/glossary/transformer-architecture/) — moderne neurale architectuur
+- [Backpropagation](/nl/glossary/backpropagation/) — trainingsalgoritme
+- [LLM](/nl/glossary/llm/) — taal-gefocuste diepe neurale netwerken
+
+---
+
+## Referenties
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40.000+ [citaties](/nl/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20.000+ citaties]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25.000+ citaties]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Fundamenteel paper]
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20,000+ citations]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25,000+ citations]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Foundational paper]

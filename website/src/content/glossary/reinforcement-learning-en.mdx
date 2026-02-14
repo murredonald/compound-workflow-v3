@@ -1,0 +1,140 @@
+---
+term: "Reinforcement Learning"
+termSlug: "reinforcement-learning"
+short: "A machine learning approach where agents learn optimal behavior through trial-and-error interactions with an environment."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["machine-learning", "rlhf", "deep-learning", "neural-network"]
+synonyms: ["RL", "Reward-based learning", "Trial-and-error learning", "Agent-based learning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Reinforcement learning (RL) is a machine learning paradigm where an agent learns to make decisions by interacting with an environment. The agent takes actions, receives feedback in the form of rewards or penalties, and learns a policy that maximizes cumulative reward over time. Unlike supervised learning (which needs labeled examples) or unsupervised learning (which finds patterns), RL learns from the consequences of actions through trial and error.
+
+## Why it matters
+
+Reinforcement learning enables AI to learn complex behaviors:
+
+- **Learns without [labels](/en/glossary/ground-truth/)** — only needs a reward signal, not labeled examples
+- **Handles sequential decisions** — optimizes long-term outcomes, not just immediate
+- **Superhuman performance** — AlphaGo, game-playing agents, robotics
+- **Real-world control** — autonomous vehicles, recommendation systems
+- **Foundation for RLHF** — key technique for aligning [LLMs](/en/glossary/llm/) with human preferences
+
+RL bridges the gap between AI and decision-making in complex environments.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  REINFORCEMENT LEARNING                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE RL LOOP:                                              │
+│  ────────────                                              │
+│                                                            │
+│         ┌─────────────────────────────────────┐           │
+│         │           ENVIRONMENT               │           │
+│         │    (Game, Robot World, Website)     │           │
+│         └──────────────┬──────────────────────┘           │
+│                        │                                   │
+│              State s   │   Reward r                        │
+│                ↓       │       ↓                           │
+│         ┌──────────────▼───────────────────┐              │
+│         │              AGENT               │              │
+│         │                                  │              │
+│         │  1. Observe state s             │              │
+│         │  2. Choose action a (via policy)│              │
+│         │  3. Receive reward r            │              │
+│         │  4. Update policy to maximize r │              │
+│         │                                  │              │
+│         └──────────────┬───────────────────┘              │
+│                        │                                   │
+│              Action a  ↓                                   │
+│         ┌──────────────▼──────────────────────┐           │
+│         │           ENVIRONMENT               │           │
+│         │    (responds to action, new state)  │           │
+│         └─────────────────────────────────────┘           │
+│                                                            │
+│  KEY CONCEPTS:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  State (s):    Current situation                          │
+│  Action (a):   Choice agent makes                         │
+│  Reward (r):   Feedback signal (+positive, -negative)     │
+│  Policy (π):   Strategy for choosing actions              │
+│  Value (V):    Expected future cumulative reward          │
+│                                                            │
+│  EXPLORATION VS EXPLOITATION:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────┐    ┌─────────────────┐               │
+│  │   EXPLORATION   │    │   EXPLOITATION  │               │
+│  │                 │    │                 │               │
+│  │  Try new things │    │  Use what works │               │
+│  │  to discover    │    │  to maximize    │               │
+│  │  better options │    │  known rewards  │               │
+│  │                 │    │                 │               │
+│  │   "Explore"     │    │    "Exploit"    │               │
+│  └─────────────────┘    └─────────────────┘               │
+│                                                            │
+│           Must BALANCE both for optimal learning           │
+│                                                            │
+│  COMMON RL ALGORITHMS:                                     │
+│  ─────────────────────                                     │
+│  Q-Learning:    Learn value of state-action pairs         │
+│  Policy Gradient: Directly optimize the policy            │
+│  Actor-Critic:  Combine value estimation + policy         │
+│  PPO:          Stable policy optimization (used in RLHF)  │
+│  DQN:          Deep Q-networks for complex states         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**RL paradigms:**
+| Approach | How it learns | Example |
+|----------|--------------|---------|
+| Value-based | Estimate value of states/actions | DQN playing Atari |
+| Policy-based | Directly learn action probabilities | Policy gradient in robotics |
+| Model-based | Learn environment dynamics | Planning in games |
+| Model-free | Learn directly from experience | Most game-playing agents |
+
+## Common questions
+
+**Q: How is RL different from [supervised learning](/en/glossary/supervised-learning/)?**
+
+A: In supervised learning, you tell the agent the correct answer for each input. In RL, the agent only gets reward signals—it must discover good behavior through exploration. RL handles sequential decisions where actions affect future states; supervised learning typically handles independent [predictions](/en/glossary/inference/).
+
+**Q: What is RLHF and how does it relate to RL?**
+
+A: RLHF (Reinforcement Learning from Human Feedback) uses RL to fine-tune LLMs. Human preferences become the reward signal—a separate model predicts how much humans would prefer one response over another, and RL optimizes the LLM to generate preferred responses.
+
+**Q: Why is exploration vs exploitation important?**
+
+A: If an agent only exploits known good actions, it might miss better options. If it only explores, it never takes advantage of what it's learned. Finding the right balance is crucial—too little exploration leads to suboptimal policies, too much wastes time on poor actions.
+
+**Q: Can RL solve any decision problem?**
+
+A: In theory, RL can optimize any system with definable rewards. In practice, RL struggles with: sparse rewards (rare feedback), sample efficiency (needs many trials), credit assignment (which action caused the reward?), and defining good reward signals.
+
+## Related terms
+
+- [Machine Learning](/en/glossary/machine-learning/) — the broader field
+- [RLHF](/en/glossary/rlhf/) — using RL to align LLMs with human preferences
+- [Deep Learning](/en/glossary/deep-learning/) — enables Deep RL
+- [Neural Network](/en/glossary/neural-network/) — function approximators in Deep RL
+
+---
+
+## References
+
+> Sutton & Barto (2018), "[Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html)", MIT Press. [The foundational RL textbook]
+
+> Mnih et al. (2015), "[Human-level control through deep reinforcement learning](https://www.nature.com/articles/nature14236)", Nature. [DQN paper, 20,000+ citations]
+
+> Silver et al. (2016), "[Mastering the game of Go with deep neural networks](https://www.nature.com/articles/nature16961)", Nature. [AlphaGo paper]
+
+> Schulman et al. (2017), "[Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)", arXiv. [PPO - used in RLHF]

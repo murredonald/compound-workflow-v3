@@ -1,0 +1,121 @@
+---
+term: "Échantillonnage Top-p"
+termSlug: "top-p"
+short: "Une méthode d'échantillonnage qui sélectionne parmi le plus petit ensemble de tokens dont la probabilité cumulative dépasse un seuil p."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["temperature", "top-k", "inference", "llm"]
+synonyms: ["Échantillonnage nucleus", "Décodage top-p", "Échantillonnage par masse de probabilité"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'échantillonnage top-p (aussi appelé échantillonnage nucleus) est une stratégie de génération de texte qui sélectionne dynamiquement parmi le plus petit ensemble possible de tokens dont la probabilité cumulative dépasse un seuil p. Contrairement à top-k qui utilise un compte fixe, top-p s'adapte à la confiance du modèle—sélectionnant moins de tokens quand le modèle est confiant, plus quand incertain.
+
+## Pourquoi c'est important
+
+Top-p fournit un contrôle intelligent sur la diversité des sorties :
+
+- **Sélection adaptative** — ajuste le pool de candidats selon la confiance du modèle
+- **Équilibre qualité** — exclut les tokens de faible probabilité causant l'incohérence
+- **Flexibilité** — fonctionne dans différents contextes sans ajustement manuel
+- **Complémentaire** — se combine bien avec la température pour un contrôle fin
+- **Standard de production** — méthode d'échantillonnage par défaut dans la plupart des APIs [LLM](/fr/glossary/llm/)
+
+Top-p produit souvent un texte plus naturel que l'échantillonnage top-k fixe.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   ÉCHANTILLONNAGE TOP-P (NUCLEUS)          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Probabilités des tokens (triées haut vers bas):           │
+│                                                            │
+│  Token    Prob    Cumulatif                                │
+│  ─────────────────────────────                             │
+│  "le"     0.35    0.35                                     │
+│  "un"     0.25    0.60                                     │
+│  "ce"     0.15    0.75                                     │
+│  "cet"    0.10    0.85  ◄── seuil p=0.9                   │
+│  "mon"    0.08    0.93  ◄── inclus (dépasse 0.9)          │
+│  "ton"    0.04    0.97      exclu                          │
+│  "son"    0.02    0.99      exclu                          │
+│  "leur"   0.01    1.00      exclu                          │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  TOP-P = 0.9                                   │        │
+│  │                                                │        │
+│  │  Nucleus sélectionné: [le, un, ce, cet, mon]  │        │
+│  │  Échantillonner parmi ces 5 tokens seulement  │        │
+│  │                                                │        │
+│  │  ████████████████████████░░░░░░░░             │        │
+│  │  ▲                      ▲                     │        │
+│  │  Inclus (93%)           Exclus (7%)           │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  COMPORTEMENT ADAPTATIF:                                   │
+│  • Prédiction confiante → sélectionne 2-3 tokens           │
+│  • Prédiction incertaine → sélectionne 10-20 tokens        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Valeurs top-p courantes:**
+| Valeur | Comportement | Cas d'usage |
+|--------|--------------|-------------|
+| 0.1 | Très restrictif | Tâches déterministes |
+| 0.5 | Modérément focalisé | Génération factuelle |
+| 0.9 | Équilibré (défaut) | Usage général |
+| 0.95 | Plus divers | Écriture créative |
+| 1.0 | Tous les tokens | Diversité maximale |
+
+## Questions fréquentes
+
+**Q : Quelle différence entre top-p et top-k ?**
+
+R : Top-k sélectionne toujours exactement k tokens peu importe leurs probabilités. Top-p sélectionne un nombre variable basé sur la probabilité cumulative. Top-p s'adapte : si un token a 95% de probabilité, il sélectionne seulement celui-là; si les probabilités sont réparties, il en sélectionne beaucoup.
+
+**Q : Quelle est une bonne valeur top-p par défaut ?**
+
+R : 0.9 est un défaut courant. Il inclut la plupart des tokens raisonnables tout en excluant la longue traîne d'options improbables. Pour une sortie plus focalisée, essayez 0.5-0.7; pour plus créatif, 0.95.
+
+**Q : Dois-je utiliser top-p avec la température ?**
+
+R : Oui, ils se complètent. La température reforme la distribution de probabilité; top-p échantillonne ensuite de la distribution ajustée. Une combinaison courante : température 0.7 + top-p 0.9.
+
+**Q : Est-ce que top-p = 1.0 signifie pas de filtrage ?**
+
+R : Effectivement oui—tous les tokens sont inclus puisque la probabilité cumulative atteint toujours 1.0. Cela donne une diversité maximale mais peut inclure des tokens absurdes de faible probabilité.
+
+## Termes associés
+
+- [Température](/fr/glossary/temperature/) — reforme la distribution de probabilité
+- [Échantillonnage Top-k](/fr/glossary/top-k/) — alternative à compte fixe
+- [Recherche en Faisceau](/fr/glossary/beam-search/) — stratégie de décodage différente
+- [Inférence](/fr/glossary/inference/) — processus de génération
+
+---
+
+## Références
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2 500+ [citations](/fr/glossary/citation/)]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1 000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10 000+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10,000+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]

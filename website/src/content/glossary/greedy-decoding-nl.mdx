@@ -1,0 +1,133 @@
+---
+term: "Greedy Decodering"
+termSlug: "greedy-decoding"
+short: "Een eenvoudige tekstgeneratiestrategie die altijd het token met de hoogste kans selecteert bij elke stap."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["beam-search", "top-k", "top-p", "inference", "llm"]
+synonyms: ["Greedy zoeken", "Argmax decodering", "Maximum likelihood decodering"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Greedy decodering is de eenvoudigste tekstgeneratiestrategie waarbij het model altijd het token met de hoogste kans selecteert bij elke generatiestap. Het maakt lokaal optimale keuzes zonder te overwegen hoe huidige beslissingen toekomstige tokenmogelijkheden beïnvloeden, resulterend in snelle maar potentieel suboptimale sequenties.
+
+## Waarom het belangrijk is
+
+Greedy decodering biedt belangrijke voordelen in specifieke scenario's:
+
+- **Snelheid** — snelste decoderingsmethode, enkele forward pass per token
+- **Deterministisch** — zelfde invoer produceert altijd zelfde uitvoer
+- **Eenvoud** — geen hyperparameters om af te stemmen
+- **Basislijn** — standaard vergelijkingspunt voor andere methoden
+- **Gestructureerde taken** — werkt goed voor feitelijke, beperkte outputs
+
+Echter, greedy decodering produceert vaak repetitieve of generieke tekst.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     GREEDY DECODERING                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Bij elke stap: Kies argmax(kans)                          │
+│                                                            │
+│  Stap 1: "De" → kansen:                                   │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  kat:  0.35  ◄── GESELECTEERD (hoogste)    │           │
+│  │  hond: 0.25                                 │           │
+│  │  man:  0.15                                 │           │
+│  │  auto: 0.10                                 │           │
+│  │  ...                                        │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Stap 2: "De kat" → kansen:                               │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  zat: 0.40  ◄── GESELECTEERD (hoogste)     │           │
+│  │  liep: 0.20                                 │           │
+│  │  is:   0.18                                 │           │
+│  │  was:  0.12                                 │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Resultaat: "De kat zat..."                               │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  PROBLEEM: LOKALE VS GLOBALE OPTIMA           │        │
+│  │                                                │        │
+│  │  Greedy: "De kat zat" (p=0.35 × 0.40 = 0.14) │        │
+│  │  Beter: "De hond liep" (p=0.25 × 0.55 = 0.14)│        │
+│  │                                                │        │
+│  │  Tweede pad kan tot betere sequentie leiden!  │        │
+│  │  Greedy ziet dit niet—committeert aan "kat"  │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  GREEDY VS ALTERNATIEVEN:                                  │
+│  ────────────────────────                                  │
+│  Greedy:     Kies altijd top-1   → deterministisch        │
+│  Top-k:      Sample uit top-k    → divers                 │
+│  Top-p:      Sample uit nucleus  → adaptief               │
+│  Beam:       Volg meerdere paden → betere sequenties      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wanneer greedy decodering gebruiken:**
+| Scenario | Aanbeveling |
+|----------|-------------|
+| Code generatie | Vaak goed (gestructureerde output) |
+| Vertaling | Meestal beam search verkozen |
+| Creatief schrijven | Gebruik sampling |
+| Feitelijke Q&A | Kan goed werken |
+| Classificatie | Geschikt |
+| Algemene chat | Gebruik sampling |
+
+## Veelgestelde vragen
+
+**V: Waarom produceert greedy decodering repetitieve tekst?**
+
+A: Zodra het model een veelvoorkomende zin genereert, heeft die zin vaak hoge kans om door te gaan. Het model kan vastlopen in lussen zoals "Ik denk dat ik denk dat ik denk..." omdat elke herhaling lokaal optimaal is.
+
+**V: Wanneer moet ik greedy decodering gebruiken?**
+
+A: Gebruik het voor gestructureerde taken met duidelijke correcte antwoorden: code-aanvulling, classificatie, eenvoudige extractie. Vermijd het voor creatieve of open generatie waar diversiteit belangrijk is.
+
+**V: Is greedy decodering equivalent aan temperatuur = 0?**
+
+A: Effectief ja. Temperatuur die naar 0 nadert maakt de kansverdeling steeds meer gepiekt op het hoogste-kans token, convergerend naar greedy selectie.
+
+**V: Hoe verhoudt greedy zich tot beam search?**
+
+A: Greedy is beam search met beam breedte 1. Beam search verkent meerdere paden en vindt vaak volledige sequenties met hogere kans, ten koste van meer berekening.
+
+## Gerelateerde termen
+
+- [Beam Search](/nl/glossary/beam-search/) — verkent meerdere sequenties
+- [Top-k Sampling](/nl/glossary/top-k/) — voegt willekeur toe
+- [Top-p Sampling](/nl/glossary/top-p/) — adaptieve sampling
+- [Temperatuur](/nl/glossary/temperature/) — controleert distributievorm
+- [Inferentie](/nl/glossary/inference/) — generatieproces
+
+---
+
+## Referenties
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ [citaties](/nl/glossary/citation/)]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citaties]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citaties]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3.500+ citaties]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3,500+ citations]

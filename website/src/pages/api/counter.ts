@@ -50,6 +50,13 @@ export const GET: APIRoute = async ({ request }) => {
   const BREVO_API_KEY = import.meta.env.BREVO_API_KEY;
   const BREVO_LIST_ID = import.meta.env.BREVO_LIST_ID || "2";
 
+  if (!BREVO_API_KEY) {
+    console.error("BREVO_API_KEY is not set");
+    return json({ success: true, count: null }, 200, {
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+    });
+  }
+
   const cacheHeaders = {
     "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
   };

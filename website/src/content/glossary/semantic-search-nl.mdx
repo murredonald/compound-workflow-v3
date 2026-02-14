@@ -1,0 +1,196 @@
+---
+term: "Semantisch Zoeken"
+termSlug: "semantic-search"
+short: "Zoektechnologie die betekenis en intentie begrijpt in plaats van alleen trefwoorden te matchen, voor relevantere en intelligentere resultaten."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["embedding", "dense-retrieval", "rag", "knowledge-graph"]
+synonyms: ["Neurale zoekopdracht", "AI zoeken", "Vectorzoeken"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Semantisch zoeken is een zoekbenadering die de betekenis en intentie achter zoekopdrachten begrijpt in plaats van simpelweg trefwoorden te matchen. Met technieken zoals [embeddings](/nl/glossary/embeddings/) en neurale netwerken legt semantisch zoeken conceptuele relaties tussen termen vast. Wanneer je zoekt naar "hoe repareer ik een lekkende kraan," begrijpt semantisch zoeken dat je loodgietersgidsen wilt, zelfs als documenten die exacte woorden niet bevatten—het vindt resultaten over "druppelende kraan stoppen" of "waterverspilling tegengaan."
+
+## Waarom het belangrijk is
+
+Semantisch zoeken transformeert hoe we informatie vinden:
+
+- **Intentiebegrip** — "goedkope vluchten naar Parijs" vindt budgetreisopties, niet documenten met die letterlijke woorden
+- **Synoniemafhandeling** — "auto" matcht "automobiel," "voertuig," "wagen"
+- **Contextbewustzijn** — "Apple" in tech-context versus fruit-context
+- **Natuurlijke taalqueries** — zoek conversationeel, niet met trefwoordsyntax
+- **Meertalig zoeken** — vind relevante documenten ongeacht taal
+
+Semantisch zoeken drijft moderne zoekmachines, e-commerce, enterprise search en RAG-systemen aan.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   SEMANTISCH ZOEKEN                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TREFWOORD ZOEKEN vs SEMANTISCH ZOEKEN:                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  Query: "Hoe maak ik mijn laptop sneller?"                │
+│                                                            │
+│  TREFWOORD ZOEKEN:                                         │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Zoekt documenten met:                           │       │
+│  │ "maak" EN "laptop" EN "sneller"                │       │
+│  │                                                 │       │
+│  │ ❌ Mist: "Versnel je notebook"                 │       │
+│  │ ❌ Mist: "Verbeter PC-prestaties"             │       │
+│  │ ❌ Mist: "Boost computerspeed"                 │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│  SEMANTISCH ZOEKEN:                                        │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Begrijpt de BETEKENIS:                          │       │
+│  │ "Verbeter computerprestaties"                   │       │
+│  │                                                 │       │
+│  │ ✓ Vindt: "Versnel je notebook"                 │       │
+│  │ ✓ Vindt: "Verbeter PC-prestaties"             │       │
+│  │ ✓ Vindt: "Boost computerspeed"                 │       │
+│  │ ✓ Vindt: "Optimaliseer Windows opstarten"      │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│                                                            │
+│  HOE SEMANTISCH ZOEKEN WERKT:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  Stap 1: Codeer alles in vectoren                         │
+│                                                            │
+│      ┌─────────────┐         ┌─────────────────────┐      │
+│      │   Query     │         │    Documenten       │      │
+│      │  "laptop    │         │  "Versnel je        │      │
+│      │   sneller"  │         │   notebook"         │      │
+│      └──────┬──────┘         └──────────┬──────────┘      │
+│             │                           │                  │
+│             ▼                           ▼                  │
+│      ┌─────────────┐         ┌─────────────────────┐      │
+│      │  Embedding  │         │     Embedding       │      │
+│      │   Model     │         │      Model          │      │
+│      │  (BERT etc) │         │   (zelfde model)    │      │
+│      └──────┬──────┘         └──────────┬──────────┘      │
+│             │                           │                  │
+│             ▼                           ▼                  │
+│      [0.2, 0.8, ...]         [0.21, 0.79, ...]            │
+│       Query Vector            Document Vectors             │
+│                                                            │
+│                                                            │
+│  Stap 2: Vind gelijksoortige vectoren                     │
+│                                                            │
+│                    Vectorruimte                            │
+│           ┌────────────────────────────┐                  │
+│           │         ●                  │                  │
+│           │       Query     ● Doc A     │                  │
+│           │                     (dichtbij)│                │
+│           │              ● Doc B        │                  │
+│           │                  (dichtbij) │                  │
+│           │                             │                  │
+│           │  ● Doc C                    │                  │
+│           │    (ver)                    │                  │
+│           │                             │                  │
+│           └────────────────────────────┘                  │
+│                                                            │
+│  Gelijke betekenis = Dichtbij in vectorruimte             │
+│                                                            │
+│                                                            │
+│  Stap 3: Rangschik op gelijkenisscore                     │
+│                                                            │
+│  Resultaten:                                               │
+│  1. Doc A: "Versnel notebook"       [score: 0.94]         │
+│  2. Doc B: "Optimaliseer PC"        [score: 0.89]         │
+│  3. Doc C: "Koop nieuwe computer"   [score: 0.45]         │
+│                                                            │
+│                                                            │
+│  HYBRIDE ZOEKEN (Best Practice):                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  Combineer trefwoord + semantisch voor beste resultaten:  │
+│                                                            │
+│  Query: "tesla model 3 bereik"                            │
+│                                                            │
+│  ┌──────────────┐    ┌──────────────┐                     │
+│  │  Trefwoord   │    │  Semantisch  │                     │
+│  │   Zoeken     │    │   Zoeken     │                     │
+│  │  (BM25)      │    │  (Vectoren)  │                     │
+│  └──────┬───────┘    └──────┬───────┘                     │
+│         │                   │                              │
+│         └───────┬───────────┘                              │
+│                 ▼                                          │
+│         ┌──────────────┐                                  │
+│         │   Fusie/     │                                  │
+│         │  Her-ranking │                                  │
+│         └──────┬───────┘                                  │
+│                │                                           │
+│                ▼                                           │
+│          Eindresultaten                                    │
+│                                                            │
+│  Waarom hybride? Trefwoorden vangen exacte matches        │
+│  (productcodes, namen), semantisch vangt betekenis        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Semantisch vs trefwoord zoeken:**
+| Aspect | Trefwoord Zoeken | Semantisch Zoeken |
+|--------|-----------------|------------------|
+| Matching | Exacte termen | Betekenis/concepten |
+| Synoniemen | Vereist uitbreiding | Automatisch |
+| Spelfouten | Faalt meestal | Vangt vaak op |
+| [Query](/nl/glossary/prompt/) begrip | Letterlijk | Contextueel |
+| Setup complexiteit | Eenvoudig | Vereist [embeddings](/nl/glossary/vector-embeddings/) |
+| Latentie | Zeer snel | Iets langzamer |
+
+## Veelgestelde vragen
+
+**V: Welke embedding-modellen moet ik gebruiken voor semantisch zoeken?**
+
+A: Voor Engels, begin met OpenAI text-embedding-3-small of sentence-[transformers](/nl/glossary/transformer-architecture/)/all-MiniLM-L6-v2 (open source). Voor meertalig, gebruik multilingual-e5-large of mBERT-varianten. Voor domeinspecifiek zoeken (juridisch, medisch), overweeg [fine-tuning](/nl/glossary/fine-tuning/) of domeinspecifieke modellen. Balanceer kwaliteit vs snelheid.
+
+**V: Hoeveel verbetert semantisch zoeken de resultaten?**
+
+A: Hangt sterk af van use case. Voor queries met duidelijke trefwoordmatches ("iPhone 15 specs"), is verbetering marginaal. Voor natuurlijke taalqueries ("Welke telefoon heeft de beste camera onder €500"), kan verbetering 30-50% in relevantie zijn.
+
+**V: Moet ik semantisch of trefwoord zoeken gebruiken?**
+
+A: Gebruik hybride zoeken—combineer beide. Trefwoord zoeken ([BM25](/nl/glossary/bm25/)) blinkt uit bij exacte matches: productcodes, namen, technische termen. Semantisch zoeken blinkt uit bij conceptueel begrip. Moderne systemen gebruiken reciprocal rank fusion om resultaten van beide benaderingen te combineren.
+
+**V: Hoe ga ik om met het cold start-probleem?**
+
+A: Semantisch zoeken vereist het genereren van embeddings voor alle documenten voordat queries werken. Voor grote datasets kan dit uren/dagen duren. Oplossingen: pre-compute embeddings tijdens daluren, gebruik incrementele indexering voor nieuwe documenten, begin met een eenvoudiger trefwoord-systeem en voeg semantisch zoeken geleidelijk toe.
+
+## Gerelateerde termen
+
+- Embedding — vectoren die semantisch zoeken aandrijven
+- [Dense retrieval](/nl/glossary/dense-retrieval/) — de onderliggende techniek
+- [RAG](/nl/glossary/rag/) — gebruik van semantisch zoeken voor [LLM](/nl/glossary/llm/)-context
+- [Knowledge graph](/nl/glossary/knowledge-graph/) — gestructureerde kennis voor zoeken
+
+---
+
+## Referenties
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Fundamentele zin-embeddings]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR voor semantisch zoeken]
+
+> Neelakantan et al. (2022), "[Text and Code Embeddings by Contrastive Pre-Training](https://arxiv.org/abs/2201.10005)", arXiv. [OpenAI embedding-modellen]
+
+> Muennighoff et al. (2022), "[SGPT: GPT Sentence Embeddings for Semantic Search](https://arxiv.org/abs/2202.08904)", arXiv. [GPT-gebaseerd semantisch zoeken]
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Foundational sentence embeddings]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR for semantic search]
+
+> Neelakantan et al. (2022), "[Text and Code Embeddings by Contrastive Pre-Training](https://arxiv.org/abs/2201.10005)", arXiv. [OpenAI embedding models]
+
+> Muennighoff et al. (2022), "[SGPT: GPT Sentence Embeddings for Semantic Search](https://arxiv.org/abs/2202.08904)", arXiv. [GPT-based semantic search]

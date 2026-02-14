@@ -1,0 +1,186 @@
+---
+term: "Zero-Shot Learning"
+termSlug: "zero-shot"
+short: "Eine Machine-Learning-Fähigkeit, bei der Modelle Aufgaben ohne aufgabenspezifische Beispiele ausführen, nur basierend auf vortrainiertem Wissen und natürlichsprachlichen Instruktionen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["few-shot", "in-context-learning", "chain-of-thought", "prompt-engineering"]
+synonyms: ["Zero-Shot Prompting", "Zero-Shot-Inferenz", "Zero-Shot-Klassifikation"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Zero-Shot Learning ist die Fähigkeit von Machine-Learning-Modellen, Aufgaben auszuführen, für die sie nicht explizit trainiert wurden, ohne Beispiele dieser spezifischen Aufgabe zu sehen. Bei großen Sprachmodellen wird Zero-Shot Learning durch natürlichsprachliche Instruktionen erreicht, die die gewünschte Aufgabe beschreiben. Das Modell nutzt sein vortrainiertes Wissen, um nur basierend auf der Beschreibung auf neue Aufgaben zu generalisieren. Dies steht im Gegensatz zu Few-Shot Learning (nutzt Beispiele) und traditionellem Supervised Learning (erfordert umfangreiche Trainingsdaten).
+
+## Warum es wichtig ist
+
+Zero-Shot Learning repräsentiert einen Paradigmenwechsel in KI:
+
+- **Keine Beispiele nötig** — beschreibe was du willst in einfacher Sprache
+- **Sofortiges Deployment** — nutze Modelle sofort für neue Aufgaben
+- **Maximale Flexibilität** — anpassbar an jede in Sprache beschreibbare Aufgabe
+- **Kosteneffizienz** — keine Datensammlung oder Training erforderlich
+- **Demokratisierung** — jeder kann KI ohne [ML](/de/glossary/machine-learning/)-Expertise nutzen
+- **Schnelle Iteration** — teste Ideen in Sekunden, nicht Wochen
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    ZERO-SHOT LEARNING                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ZERO-SHOT vs FEW-SHOT VERGLEICH:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  ZERO-SHOT (keine Beispiele):                             │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt:                                             │ │
+│  │  "Klassifiziere den Text als Positiv,               │ │
+│  │   Negativ, oder Neutral:                            │ │
+│  │                                                      │ │
+│  │   Text: 'Dieses Produkt übertraf meine Erwartungen!'│ │
+│  │                                                      │ │
+│  │   Klassifikation:"                                  │ │
+│  │                                                      │ │
+│  │  Modell-Ausgabe: "Positiv"                          │ │
+│  │                                                      │ │
+│  │  ✓ Keine Beispiele gegeben                          │ │
+│  │  ✓ Beschreibt nur die Aufgabe                       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  FEW-SHOT (mit Beispielen):                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt:                                             │ │
+│  │  "Klassifiziere als Positiv, Negativ, oder Neutral: │ │
+│  │                                                      │ │
+│  │   Text: 'Super Service!' → Positiv                  │ │
+│  │   Text: 'Schreckliche Qualität' → Negativ           │ │
+│  │   Text: 'War okay' → Neutral                        │ │
+│  │                                                      │ │
+│  │   Text: 'Dieses Produkt übertraf meine Erwartungen!'│ │
+│  │   Klassifikation:"                                  │ │
+│  │                                                      │ │
+│  │  ✗ Brauchte erst 3 Beispiele                        │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WIE ZERO-SHOT FUNKTIONIERT:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Pre-Training-Phase (bereits geschehen):                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Massiver Textkorpus:                               │ │
+│  │  • Bücher, Websites, Paper, Code                    │ │
+│  │  • Milliarden von Tokens                            │ │
+│  │  • Diverse Aufgaben erscheinen natürlich im Text   │ │
+│  │                                                      │ │
+│  │  Modell lernt:                                       │ │
+│  │  • Sprachverständnis                                │ │
+│  │  • Weltwissen                                        │ │
+│  │  • Aufgabenmuster (Klassifikation, Zusammenfass.,  │ │
+│  │    Übersetzung, Q&A, etc.)                         │ │
+│  │  • Instruktionen befolgen                           │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                        │                                   │
+│                        ↓                                   │
+│  Zero-Shot-Inferenz:                                       │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Benutzer gibt:                                      │ │
+│  │  ┌───────────────────────────────────────┐         │ │
+│  │  │ Natürlichsprachliche Aufgabenbeschr.  │         │ │
+│  │  │ "Übersetze ins Französische: Hallo"  │         │ │
+│  │  └───────────────────────────────────────┘         │ │
+│  │                        │                            │ │
+│  │                        ↓                            │ │
+│  │  Modell erkennt:                                    │ │
+│  │  ┌───────────────────────────────────────┐         │ │
+│  │  │ Aufgabentyp: Übersetzung              │         │ │
+│  │  │ Quelle: Deutsch                       │         │ │
+│  │  │ Ziel: Französisch                     │         │ │
+│  │  │ Eingabe: "Hallo"                      │         │ │
+│  │  └───────────────────────────────────────┘         │ │
+│  │                        │                            │ │
+│  │                        ↓                            │ │
+│  │  Modell wendet gelerntes Wissen an:                │ │
+│  │  ┌───────────────────────────────────────┐         │ │
+│  │  │ Ausgabe: "Bonjour"                    │         │ │
+│  │  └───────────────────────────────────────┘         │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WANN ZERO-SHOT GUT FUNKTIONIERT:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  ✓ Häufige Aufgaben (Klassifikation, Zusammenfassung)    │
+│  ✓ Klare, gut definierte Instruktionen                   │
+│  ✓ Aufgaben ähnlich Pre-Training-Datenmustern            │
+│  ✓ Große, fähige Modelle (GPT-4, Claude, etc.)          │
+│  ✓ Allgemeines Wissen erforderlich (nicht domänenspez.) │
+│                                                            │
+│  WANN ZERO-SHOT KÄMPFT:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ✗ Ungewöhnliche Ausgabeformate nicht gut beschrieben   │
+│  ✗ Domänenspezifisches Jargon oder Konventionen         │
+│  ✗ Komplexe Mehrstufenaufgaben                          │
+│  ✗ Aufgaben die Beispiele für Nuancen brauchen          │
+│  ✗ Kleinere Modelle (entsteht bei Skala)                │
+│                                                            │
+│  → Wechsle zu Few-Shot für diese Fälle                  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie wähle ich zwischen Zero-Shot und Few-Shot?**
+
+A: Starte mit Zero-Shot—es ist einfacher und funktioniert oft gut für häufige Aufgaben. Wechsle zu Few-Shot wenn: (1) Zero-Shot-Genauigkeit unzureichend, (2) Aufgabe ungewöhnliche Formate hat, (3) domänenspezifische Ausgabe nötig.
+
+**F: Warum funktioniert Zero-Shot überhaupt ohne Beispiele?**
+
+A: Große Modelle werden auf massiven Textkorpora trainiert, die unzählige Beispiele verschiedener Aufgaben enthalten. Während Pre-Training lernen Modelle implizit Aufgabenmuster. Zero-Shot-[Prompts](/de/glossary/prompt/) aktivieren dieses gelernte Wissen.
+
+**F: Beeinflusst Modellgröße Zero-Shot-Fähigkeit?**
+
+A: Dramatisch. Zero-Shot-Fähigkeiten "entstehen" bei Skala—Modelle unter ~10B Parametern scheitern oft bei Aufgaben, die größere Modelle leicht handhaben.
+
+**F: Kann ich Zero-Shot-Leistung verbessern ohne Beispiele hinzuzufügen?**
+
+A: Ja. Techniken: (1) klarere Instruktionen, (2) strukturierte Ausgabeformat-Beschreibungen, (3) "Lass uns Schritt für Schritt denken" hinzufügen, (4) Rolle spezifizieren ("Du bist Experte für...").
+
+## Verwandte Begriffe
+
+- [Few-Shot Learning](/de/glossary/few-shot/) — Lernen mit wenigen Beispielen
+- [In-Context Learning](/de/glossary/in-context-learning/) — breiteres Lernparadigma
+- [Chain-of-thought](/de/glossary/chain-of-thought/) — Zero-Shot-Reasoning-Technik
+- Prompt Engineering — effektive Instruktionen erstellen
+
+---
+
+## Referenzen
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 Zero-Shot/Few-Shot-Analyse]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-Shot-CoT-Entdeckung]
+
+> Wei et al. (2022), "[Emergent Abilities of Large Language Models](https://arxiv.org/abs/2206.07682)", TMLR. [Zero-Shot-Entstehung bei Skala]
+
+> Sanh et al. (2022), "[Multitask Prompted Training Enables Zero-Shot Task Generalization](https://arxiv.org/abs/2110.08207)", ICLR. [T0 Zero-Shot-Fähigkeiten]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 zero-shot/few-shot analysis]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT discovery]
+
+> Wei et al. (2022), "[Emergent Abilities of Large Language Models](https://arxiv.org/abs/2206.07682)", TMLR. [Zero-shot emergence at scale]
+
+> Sanh et al. (2022), "[Multitask Prompted Training Enables Zero-Shot Task Generalization](https://arxiv.org/abs/2110.08207)", ICLR. [T0 zero-shot capabilities]

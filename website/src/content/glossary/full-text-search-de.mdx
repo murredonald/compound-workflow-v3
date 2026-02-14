@@ -1,0 +1,59 @@
+---
+term: "Volltextsuche"
+termSlug: "full-text-search"
+short: "Volltextsuche findet Dokumente, indem Suchbegriffe mit indexiertem Text (oft über einen invertierten Index) abgeglichen und die Treffer gerankt werden."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["indexing-strategy", "boolean-search", "relevance-tuning", "content-discoverability"]
+synonyms: ["Textsuche", "Keyword-Suche", "Inverted-Index-Suche"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Volltextsuche ist keyword-basierte Suche über Textfelder wie Titel, Fließtext und Metadaten. Meist wird ein **[invertierter Index](/de/glossary/inverted-index/)** aufgebaut, der Begriffe auf Dokumente (und Positionen) abbildet und so schnelle Abfragen und Scoring ermöglicht.
+
+## Warum es wichtig ist
+
+- **Präzision**: exakte Begriffe, Phrasen und Filter sind in Recht/Steuer oft entscheidend.
+- **Geschwindigkeit**: invertierte Indizes skalieren gut.
+- **Transparenz**: Matches sind erklärbar (Begriffe, Felder, Boosts).
+- **Kontrolle**: Feldgewichtung, Phrasensuche und Boolesche Operatoren.
+
+## Wie es funktioniert
+
+```
+Text -> tokenisieren/normalisieren -> invertierter Index -> Query -> Scoring -> Ranking
+```
+
+## Praktisches Beispiel
+
+Eine Query wie `"Kapitalertragsteuer" AND Belgien` liefert zuverlässig Dokumente, die die Phrase und das Land explizit enthalten.
+
+## Häufige Fragen
+
+**Q: Ist Volltextsuche dasselbe wie [semantische Suche](/de/glossary/semantic-search/)?**
+
+A: Nein. Volltextsuche matcht Tokens/Phrasen. Semantische Suche matcht Bedeutung (oft über [Embeddings](/de/glossary/embeddings/)). Viele Systeme kombinieren beides.
+
+**Q: Warum fehlen manchmal erwartete Treffer?**
+
+A: Häufige Ursachen sind Analyzer-Einstellungen (Stemming, Stopwörter), nicht indexierte Felder oder Inhalte, die durch die Indexierungsstrategie ausgeschlossen wurden.
+
+## Verwandte Begriffe
+
+- [Indexierungsstrategie](/de/glossary/indexing-strategy/) - was und wie indexieren
+- [Boolesche Suche](/de/glossary/boolean-search/) - AND/OR/NOT
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Ranking verbessern
+- [Auffindbarkeit von Inhalten](/de/glossary/content-discoverability/) - Inhalte indexierbar machen
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

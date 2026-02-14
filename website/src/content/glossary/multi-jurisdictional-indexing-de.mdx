@@ -1,0 +1,69 @@
+---
+term: "Multijurisdiktionale Indexierung"
+termSlug: "multi-jurisdictional-indexing"
+short: "Multijurisdiktionale Indexierung strukturiert einen Index über Länder/Regionen hinweg, sodass Retrieval Jurisdiktion, Sprache und Anwendbarkeit berücksichtigt."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["indexing-strategy", "query-understanding", "semantic-expansion", "authority-ranking-model", "legal-dependency-mapping"]
+synonyms: ["Cross-jurisdiction indexing", "Multi-country indexing", "Jurisdiction-aware indexing"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Multijurisdiktionale Indexierung ist die Gestaltung eines Index- und Metadatenmodells, das Suche über mehrere Jurisdiktionen (Länder, Regionen, Rechtsordnungen) ermöglicht, ohne Ergebnisse irreführend zu vermischen. Jurisdiktion wird zu einem expliziten Retrieval- und Ranking-Signal.
+
+## Warum es wichtig ist
+
+- **Anwendbarkeit**: die "richtige" Regel hängt von der Jurisdiktion (und teils Sub-Regionen) ab.
+- **Sprachvariation**: gleiche Konzepte treten in mehreren Sprachen und Zitierstilen auf.
+- **Autoritätsunterschiede**: Gerichte und Behörden haben je Jurisdiktion anderes Gewicht.
+- **Bessere UX**: klare Filter, Routing und Ergebnisgruppen nach Jurisdiktion.
+
+## Wie es funktioniert
+
+Typischerweise werden Metadaten, Routing und Ranking kombiniert:
+
+```
+Query -> Jurisdiktionssignale erkennen -> routen/suchen -> mit Autorität ranken -> mit Labels anzeigen
+```
+
+Bausteine:
+
+- Pflichtmetadaten (Jurisdiktion, Geltungsdaten, Quellentyp, herausgebende Stelle)
+- Partitionen oder separate Indexe je Jurisdiktion/Sprache bei Bedarf
+- Query Understanding für Jurisdiktionshinweise (Abkürzungen, Abkommensnamen, lokale Referenzen)
+- Sprachübergreifende semantische Expansion für gemeinsame Konzepte und Zitationen
+
+## Praktisches Beispiel
+
+Eine Query wie "Quellensteuer Dividende" ist in Belgien und den Niederlanden unterschiedlich. Multijurisdiktionale Indexierung filtert/route nach erkannter Jurisdiktionsintention und kennzeichnet Ergebnisse klar, wenn mehrere Jurisdiktionen plausibel sind.
+
+## Häufige Fragen
+
+**Q: Braucht man immer separate Indexe pro Jurisdiktion?**
+
+A: Nicht zwingend. Ein Index mit starken Metadaten und Filtern kann reichen. Partitionen helfen, wenn Sprachen, Schemata oder Autoritätsmodelle stark differieren.
+
+**Q: Was ist das größte Risiko?**
+
+A: Eine korrekte Regel für die *falsche Jurisdiktion* zu zeigen, ohne das deutlich zu machen.
+
+## Verwandte Begriffe
+
+- [Indexing Strategy](/de/glossary/indexing-strategy/) - Struktur und Pflege des Index
+- [Query-Verständnis](/de/glossary/query-understanding/) - Jurisdiktion und Constraints erkennen
+- [Semantische Erweiterung](/de/glossary/semantic-expansion/) - Sprach- und Wortvarianten verbinden
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - Autorität in Ranking abbilden
+- [Mapping rechtlicher Abhängigkeiten](/de/glossary/legal-dependency-mapping/) - Referenzen und Anwendbarkeit modellieren
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

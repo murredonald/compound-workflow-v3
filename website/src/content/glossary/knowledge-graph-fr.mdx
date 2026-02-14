@@ -1,0 +1,192 @@
+---
+term: "Graphe de Connaissances"
+termSlug: "knowledge-graph"
+short: "Un réseau structuré d'entités et leurs relations permettant aux machines de comprendre et raisonner sur des concepts du monde réel."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["ner", "semantic-search", "embedding", "rag"]
+synonyms: ["Graphe sémantique", "Ontologie", "Base de connaissances"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Un graphe de connaissances est une représentation structurée d'informations sous forme d'un réseau d'entités interconnectées (nœuds) et de leurs relations (arêtes). Chaque entité représente un concept du monde réel—une personne, un lieu, une organisation ou une idée—et les relations capturent comment les entités sont liées entre elles ("travaille pour", "situé à", "inventé par"). Les graphes de connaissances permettent aux machines de comprendre le contexte, faire des [inférences](/fr/glossary/inference/) et répondre à des requêtes complexes en parcourant ces connexions.
+
+## Pourquoi c'est important
+
+Les graphes de connaissances alimentent les systèmes intelligents :
+
+- **Recherche améliorée** — le Knowledge Graph de Google a révolutionné la recherche web
+- **Recommandations** — comprendre les préférences utilisateur via les connexions
+- **Réponse aux questions** — permettre le raisonnement multi-étapes complexe
+- **Intégration de données** — unifier l'information de sources disparates
+- **Amélioration RAG** — fournir un contexte structuré pour les [LLMs](/fr/glossary/llm/)
+
+Les grandes entreprises tech maintiennent des graphes de connaissances massifs : Google (500B+ faits), Facebook, Amazon, Microsoft et LinkedIn.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               GRAPHE DE CONNAISSANCES                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STRUCTURE DE BASE:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  Entités (Nœuds) + Relations (Arêtes) = Connaissance      │
+│                                                            │
+│                  ┌──────────────┐                         │
+│                  │   Einstein   │                         │
+│                  │  (Personne)  │                         │
+│                  └──────┬───────┘                         │
+│                         │                                  │
+│       ┌─────────────────┼─────────────────┐               │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  a_développé        né_à              travaillé_à         │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  ┌─────────┐       ┌─────────┐     ┌───────────────┐     │
+│  │Relativité│      │  Ulm,   │     │   Princeton   │     │
+│  │ Théorie │       │Allemagne│     │  Université   │     │
+│  └─────────┘       └─────────┘     └───────────────┘     │
+│   (Théorie)          (Ville)         (Organisation)       │
+│                                                            │
+│                                                            │
+│  REPRÉSENTATION EN TRIPLETS:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Sujet ──relation──▶ Objet                                │
+│                                                            │
+│  (Einstein, a_développé, Théorie de la Relativité)        │
+│  (Einstein, né_à, Ulm)                                    │
+│  (Einstein, travaillé_à, Princeton)                       │
+│  (Ulm, situé_en, Allemagne)                               │
+│  (Allemagne, membre_de, Union Européenne)                 │
+│                                                            │
+│                                                            │
+│  RAISONNEMENT MULTI-ÉTAPES:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Question: "Quel pays a développé la relativité?"         │
+│                                                            │
+│  Parcours du chemin:                                      │
+│                                                            │
+│  Relativité ◄──développé── Einstein                       │
+│                               │                            │
+│                            né_à                            │
+│                               ▼                            │
+│                             Ulm ──situé_en──▶ Allemagne   │
+│                                                            │
+│  Réponse: Allemagne (Einstein, qui a développé la         │
+│          relativité, est né à Ulm, en Allemagne)          │
+│                                                            │
+│                                                            │
+│  SCHÉMA/ONTOLOGIE:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Définit les types d'entités et relations valides:        │
+│                                                            │
+│  Types d'Entités:     Relations:                           │
+│  ┌─────────────┐      ┌────────────────────────┐          │
+│  │ Personne    │      │ né_à: Personne → Lieu  │          │
+│  │ Lieu        │      │ travaille: Personne→Org│          │
+│  │ Organisation│      │ situé_en: Lieu → Lieu  │          │
+│  │ Événement   │      │ fondé: Personne → Org  │          │
+│  │ Concept     │      │ inventé: Personne→Chose│          │
+│  └─────────────┘      └────────────────────────┘          │
+│                                                            │
+│                                                            │
+│  GRAPHE DE CONNAISSANCES + LLMs (GraphRAG):                │
+│  ──────────────────────────────────────────                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  Requête: "Comment Einstein est-il lié à l'All?"│      │
+│  │                                                  │      │
+│  │        ┌────────────┐      ┌────────────────┐  │      │
+│  │        │  Graphe de │      │    LLM         │  │      │
+│  │ Requête│Connaissances│─────►│  (Génération  │  │      │
+│  │  ─────►│  Recherche │      │  de Réponse)  │  │      │
+│  │        └────────────┘      └────────────────┘  │      │
+│  │              │                     │           │      │
+│  │              ▼                     ▼           │      │
+│  │        Faits                  Réponse en       │      │
+│  │        Structurés:            Langage Naturel: │      │
+│  │        (Einstein,né_à,        "Einstein est né │      │
+│  │         Ulm,Allemagne)        à Ulm..."        │      │
+│  │                                                │      │
+│  └─────────────────────────────────────────────────┘      │
+│                                                            │
+│                                                            │
+│  GRAPHES DE CONNAISSANCES MAJEURS:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  • Google Knowledge Graph: 500B+ faits, alimente Search   │
+│  • Wikidata: 100M+ items, communauté ouverte             │
+│  • DBpedia: Extraction structurée de Wikipédia           │
+│  • YAGO: KG académique de haute précision                │
+│  • Microsoft Academic Graph: Littérature scientifique     │
+│  • Amazon Product Graph: Relations e-commerce            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Applications des graphes de connaissances:**
+| Domaine | Application | Exemple |
+|---------|-------------|---------|
+| Recherche | Résultats améliorés | Panneaux info Google |
+| E-commerce | Recommandations | "Les clients ont aussi acheté" |
+| Santé | Interactions médicamenteuses | Aide à la décision médicale |
+| Finance | Détection de fraude | Réseaux de transactions |
+| Juridique | Connexions jurisprudentielles | Recherche de précédents |
+
+## Questions fréquentes
+
+**Q : Quelle différence entre un graphe de connaissances et une base de données ?**
+
+R : Les bases de données traditionnelles stockent les données dans des tables rigides avec des schémas prédéfinis. Les graphes de connaissances stockent les données comme réseaux flexibles de relations, permettant des [requêtes](/fr/glossary/prompt/) à travers des connexions non anticipées lors de la création des données. Ils sont optimisés pour parcourir les relations (requêtes de graphe) plutôt qu'agréger des lignes (requêtes SQL).
+
+**Q : Comment construit-on un graphe de connaissances ?**
+
+R : Par plusieurs approches : curation manuelle par experts, extraction automatisée du texte avec NER et extraction de relations, import de sources structurées comme Wikipédia/Wikidata, et crowdsourcing. Les approches modernes combinent ces méthodes—utilisant des LLMs pour extraire entités et relations du texte non structuré, puis des humains valident les résultats.
+
+**Q : Les LLMs peuvent-ils remplacer les graphes de connaissances ?**
+
+R : Non, ils sont complémentaires. Les LLMs stockent la connaissance implicitement dans les paramètres mais hallucinent et ont des limites de connaissances. Les graphes stockent la connaissance explicitement et vérifiablement mais manquent de compréhension du langage naturel. Les meilleurs systèmes combinent les deux—c'est l'approche GraphRAG.
+
+**Q : Comment interroger un graphe de connaissances ?**
+
+R : Avec des langages de requête de graphe comme SPARQL (pour graphes RDF), Cypher (pour Neo4j), ou Gremlin. Les systèmes modernes supportent aussi les requêtes en langage naturel automatiquement traduites en requêtes de graphe.
+
+## Termes associés
+
+- [NER](/fr/glossary/ner/) — extraction d'entités pour graphes de connaissances
+- [Semantic search](/fr/glossary/semantic-search/) — recherche améliorée par graphes
+- Embedding — [représentations vectorielles](/fr/glossary/vector-embeddings/) d'entités
+- [RAG](/fr/glossary/rag/) — utilisation de graphes pour génération fondée
+
+---
+
+## Références
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Enquête académique complète]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Annonce originale de Google]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [Enquête sur intégration LLM + KG]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Plongée technique approfondie]
+
+## References
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Comprehensive academic survey]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Google's original announcement]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [LLM + KG integration survey]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Technical deep dive]

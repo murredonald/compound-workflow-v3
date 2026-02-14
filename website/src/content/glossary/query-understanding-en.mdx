@@ -1,0 +1,58 @@
+---
+term: "Query Understanding"
+termSlug: "query-understanding"
+short: "Query understanding is how a search system interprets a query’s meaning (entities, intent, ambiguity) before retrieving and ranking results."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["query-intent", "semantic-expansion", "full-text-search", "boolean-search"]
+synonyms: ["Query interpretation", "Query parsing", "Entity recognition"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Query understanding is the set of techniques a search system uses to interpret what a query means. It covers parsing, language detection, spelling normalization, [entity recognition](/en/glossary/entity-extraction/), and disambiguation so retrieval can match meaning, not just keywords.
+
+## Why it matters
+
+- **Less ambiguity**: "CIR 92" and "CIR 1992" should resolve to the same concept.
+- **Better matching**: entity-aware search finds the right documents even with short queries.
+- **Safer expansion**: understanding prevents "helpful" expansions that change intent.
+- **Better UX**: enables suggestions, filters, and result grouping.
+
+## How it works
+
+```
+Query -> normalize -> extract entities -> resolve ambiguity -> build retrieval query
+```
+
+The output is typically a structured representation (tokens, entities, intent, filters) used by the ranking pipeline.
+
+## Practical example
+
+A user types "VAT deadline Belgium Q4". Good query understanding detects the jurisdiction (Belgium), the topic (VAT), and the period (Q4) and boosts authoritative guidance for the correct filing period.
+
+## Common questions
+
+**Q: Is query understanding only for semantic/vector search?**
+
+A: No. Even classic full-text systems benefit from normalization, synonyms, and [entity extraction](/en/glossary/ner/).
+
+**Q: How do you measure improvements?**
+
+A: Use [search analytics](/en/glossary/search-analytics/) to track zero-result rate, reformulations, click satisfaction, and offline relevance judgments.
+
+## Related terms
+
+- [Query Intent](/en/glossary/query-intent/) - infer the user’s goal
+- [Semantic Expansion](/en/glossary/semantic-expansion/) - expand queries carefully
+- [Full-Text Search](/en/glossary/full-text-search/) - keyword retrieval layer
+- [Boolean Search](/en/glossary/boolean-search/) - strict operator-based queries
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

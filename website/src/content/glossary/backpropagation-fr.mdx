@@ -1,0 +1,134 @@
+---
+term: "Rétropropagation"
+termSlug: "backpropagation"
+short: "Un algorithme qui calcule efficacement les gradients en propageant les erreurs en arrière à travers un réseau neuronal couche par couche."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["gradient-descent", "loss-function", "neural-network", "deep-learning"]
+synonyms: ["Backprop", "Propagation arrière", "Autodiff en mode inverse"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La rétropropagation (propagation arrière des erreurs) est l'algorithme qui permet aux réseaux neuronaux d'apprendre en calculant efficacement combien chaque paramètre contribue à l'erreur totale. Il fonctionne en utilisant la règle de chaîne du calcul pour propager le gradient de la perte en arrière à travers le réseau, couche par couche, de la sortie à l'entrée. Cela permet à la descente de gradient de mettre à jour des millions de paramètres efficacement.
+
+## Pourquoi c'est important
+
+La rétropropagation rend possible l'apprentissage profond :
+
+- **Efficacité** — calcule tous les gradients en une seule passe arrière
+- **Évolutivité** — gère des réseaux avec des milliards de paramètres
+- **Fondamental** — algorithme central derrière tout entraînement de réseau neuronal
+- **Automatique** — les frameworks modernes le gèrent automatiquement (autograd)
+- **Universel** — fonctionne pour tout graphe de calcul différentiable
+
+Sans rétropropagation, entraîner des réseaux profonds serait computationnellement infaisable.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    RÉTROPROPAGATION                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PASSE AVANT: Calculer les prédictions                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  Entrée → [Couche 1] → [Couche 2] → [Couche 3] → Sortie   │
+│    x         h₁           h₂           h₃         ŷ       │
+│           (cachée)     (cachée)     (cachée)               │
+│                                                            │
+│  CALCUL DE LA PERTE:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  L = Loss(ŷ, y)    # Comparer prédiction à cible          │
+│                                                            │
+│  PASSE ARRIÈRE: Propager les gradients                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  Entrée ← [Couche 1] ← [Couche 2] ← [Couche 3] ← Perte    │
+│          ∂L/∂W₁      ∂L/∂W₂      ∂L/∂W₃      ∂L/∂ŷ        │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  RÈGLE DE CHAÎNE EN ACTION:                   │        │
+│  │                                                │        │
+│  │  ∂L/∂W₁ = ∂L/∂ŷ × ∂ŷ/∂h₃ × ∂h₃/∂h₂ × ∂h₂/∂W₁│        │
+│  │                                                │        │
+│  │  Chaque couche multiplie le gradient entrant  │        │
+│  │  par sa dérivée locale                        │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VUE GRAPHE DE CALCUL:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│       Avant ──►                                            │
+│       ◄── Arrière                                          │
+│                                                            │
+│    x ──┬──► W₁·x ──┬──► σ(·) ──┬──► W₂·h ──► Perte        │
+│        │           │           │                           │
+│        └─── ∂/∂W₁ ─┴─── ∂/∂h ──┴─── ∂/∂W₂                 │
+│                                                            │
+│  COMPLEXITÉ TEMPORELLE:                                    │
+│  ──────────────────────                                    │
+│  Avant:   O(n)  où n = nombre d'opérations                │
+│  Arrière: O(n)  pareil qu'avant (efficace!)               │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Concepts clés:**
+| Concept | Description |
+|---------|-------------|
+| Règle de chaîne | Dérivée de composition = produit des dérivées |
+| Gradient local | Chaque nœud calcule sa propre dérivée partielle |
+| Flux de gradient | Les gradients se multiplient en se propageant |
+| Autograd | Différentiation automatique dans frameworks (PyTorch, TensorFlow) |
+
+## Questions fréquentes
+
+**Q : Pourquoi la rétropropagation est efficace ?**
+
+R : Elle calcule tous les gradients de paramètres en une seule passe arrière (même coût que la passe avant), plutôt que de calculer chaque gradient séparément. Pour N paramètres, c'est O(N) au lieu de O(N²).
+
+**Q : Que sont les gradients disparaissants et explosifs ?**
+
+R : Quand les gradients se multiplient à travers beaucoup de couches, ils peuvent devenir extrêmement petits (disparaissants) ou grands (explosifs). Cela rend l'entraînement de réseaux profonds difficile. Les solutions incluent les connexions résiduelles, la normalisation de couche, et l'initialisation soigneuse.
+
+**Q : Dois-je implémenter la rétropropagation manuellement ?**
+
+R : Non—les frameworks modernes comme PyTorch et TensorFlow implémentent la différentiation automatique (autograd). Vous définissez le calcul avant et le framework gère les gradients automatiquement.
+
+**Q : Quelle est la relation entre rétropropagation et descente de gradient ?**
+
+R : La rétropropagation calcule les gradients; la descente de gradient utilise ces gradients pour mettre à jour les paramètres. Ce sont des algorithmes séparés qui travaillent ensemble: backprop calcule, descente de gradient applique.
+
+## Termes associés
+
+- [Descente de Gradient](/fr/glossary/gradient-descent/) — utilise les gradients de backprop
+- [Fonction de Perte](/fr/glossary/loss-function/) — ce que backprop différencie
+- [Réseau Neuronal](/fr/glossary/neural-network/) — entraîné via backprop
+- [Apprentissage Profond](/fr/glossary/deep-learning/) — rendu possible par backprop
+
+---
+
+## Références
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30 000+ [citations](/fr/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapitre 6. [20 000+ citations]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2 000+ citations]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40 000+ citations]
+
+## References
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2,000+ citations]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]

@@ -1,0 +1,302 @@
+---
+term: "Factuality"
+termSlug: "factuality"
+short: "The degree to which AI-generated content accurately reflects verifiable truth, distinguishing correct statements from fabrications, errors, and hallucinations."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["grounding", "citation", "attribution", "hallucination"]
+synonyms: ["Factual accuracy", "Truthfulness", "Factual correctness"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Factuality in AI refers to the accuracy and truthfulness of generated content—whether statements correspond to verifiable facts. A factual AI response contains claims that can be validated against authoritative sources or established knowledge. Factuality differs from fluency (how natural text sounds) and relevance (how well it answers the question); a response can be perfectly fluent and relevant yet factually wrong. In the era of [LLMs](/en/glossary/llm/) that generate plausible-sounding text, factuality has become the critical reliability [metric](/en/glossary/distance-metric/). Factuality evaluation answers: "Is what the AI said actually true?"
+
+## Why it matters
+
+Factuality is non-negotiable for [trustworthy AI](/en/glossary/responsible-ai/):
+
+- **Prevents misinformation** — factual errors spread when AI is trusted
+- **Enables safe deployment** — critical in medical, legal, financial domains
+- **Builds user trust** — repeated inaccuracies destroy credibility
+- **Supports compliance** — regulations require accurate information
+- **Reduces liability** — factual errors can have legal consequences
+- **Distinguishes quality** — factuality separates useful AI from dangerous AI
+
+All other AI capabilities become worthless if the fundamental content is false.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      FACTUALITY                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FACTUALITY SPECTRUM:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  FACTUAL ◄────────────────────────────► FABRICATED │ │
+│  │     │                                        │       │ │
+│  │     │                                        │       │ │
+│  │     ▼                                        ▼       │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │ │
+│  │  │ Verified │ │ Accurate │ │ Mistaken │ │ Hallu- │ │ │
+│  │  │ Correct  │ │ (likely  │ │ (wrong   │ │ cinated│ │ │
+│  │  │ (proven) │ │  true)   │ │  facts)  │ │(made up│ │ │
+│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘ │ │
+│  │                                                      │ │
+│  │  Examples:                                           │ │
+│  │  • Verified: "Water boils at 100°C at sea level"   │ │
+│  │  • Accurate: "The project was completed in Q3"     │ │
+│  │  • Mistaken: "Einstein discovered gravity" (wrong)  │ │
+│  │  • Hallucinated: "The 2025 Olympics in Mars" (made) │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TYPES OF FACTUAL ERRORS:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ERROR TYPE     │  DESCRIPTION        │  EXAMPLE    │ │
+│  │  ───────────────┼─────────────────────┼───────────  │ │
+│  │  Entity Error   │  Wrong names,       │  "Microsoft │ │
+│  │                 │  dates, places      │  founded    │ │
+│  │                 │                     │  in 1976"   │ │
+│  │                 │                     │  (was 1975) │ │
+│  │  ───────────────┼─────────────────────┼───────────  │ │
+│  │  Relation Error │  Wrong connections  │  "Einstein  │ │
+│  │                 │  between entities   │  discovered │ │
+│  │                 │                     │  penicillin"│ │
+│  │  ───────────────┼─────────────────────┼───────────  │ │
+│  │  Numeric Error  │  Wrong numbers,     │  "The Earth │ │
+│  │                 │  stats, quantities  │  is 4 bill- │ │
+│  │                 │                     │  ion years  │ │
+│  │                 │                     │  old" (4.5B)│ │
+│  │  ───────────────┼─────────────────────┼───────────  │ │
+│  │  Temporal Error │  Wrong timing,      │  "WW2 ended │ │
+│  │                 │  sequence           │  in 1944"   │ │
+│  │                 │                     │  (was 1945) │ │
+│  │  ───────────────┼─────────────────────┼───────────  │ │
+│  │  Fabrication    │  Entirely invented  │  "The Smith │ │
+│  │                 │  entities/events    │  Act of     │ │
+│  │                 │                     │  2022..."   │ │
+│  │                 │                     │  (doesn't   │ │
+│  │                 │                     │  exist)     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FACTUALITY EVALUATION PIPELINE:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. CLAIM EXTRACTION                                 │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  AI Response: "Apple was founded in 1976 by │  │ │
+│  │  │  Steve Jobs and Bill Gates in California.   │  │ │
+│  │  │  The company's first product was the Apple I│  │ │
+│  │  │  personal computer."                         │  │ │
+│  │  │                                              │  │ │
+│  │  │  Extracted Claims:                           │  │ │
+│  │  │  C1: "Apple was founded in 1976"            │  │ │
+│  │  │  C2: "Steve Jobs founded Apple"             │  │ │
+│  │  │  C3: "Bill Gates founded Apple"             │  │ │
+│  │  │  C4: "Apple was founded in California"      │  │ │
+│  │  │  C5: "First product was Apple I"            │  │ │
+│  │  │  C6: "Apple I was personal computer"        │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  2. FACT VERIFICATION (per claim)                   │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  C1: "Apple was founded in 1976" ✓          │  │ │
+│  │  │      Source: Wikipedia, SEC filings         │  │ │
+│  │  │      → FACTUAL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C2: "Steve Jobs founded Apple" ✓           │  │ │
+│  │  │      Source: Company history                │  │ │
+│  │  │      → FACTUAL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C3: "Bill Gates founded Apple" ✗           │  │ │
+│  │  │      Contradiction: Gates → Microsoft       │  │ │
+│  │  │      → NON-FACTUAL (wrong relation)         │  │ │
+│  │  │                                              │  │ │
+│  │  │  C4: "Apple founded in California" ✓        │  │ │
+│  │  │      Source: Incorporation records          │  │ │
+│  │  │      → FACTUAL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C5: "First product was Apple I" ✓          │  │ │
+│  │  │      Source: Product history                │  │ │
+│  │  │      → FACTUAL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C6: "Apple I was personal computer" ✓      │  │ │
+│  │  │      Source: Technical classification       │  │ │
+│  │  │      → FACTUAL                               │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  3. FACTUALITY SCORING                              │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  Total claims: 6                             │  │ │
+│  │  │  Factual claims: 5                           │  │ │
+│  │  │  Non-factual claims: 1                       │  │ │
+│  │  │                                              │  │ │
+│  │  │  Factuality Score: 5/6 = 83.3%              │  │ │
+│  │  │                                              │  │ │
+│  │  │  Error analysis:                             │  │ │
+│  │  │  • 1 entity/relation error (Bill Gates)     │  │ │
+│  │  │  • Severity: HIGH (wrong co-founder)        │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FACTUALITY VERIFICATION METHODS:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  Knowledge Base Lookup:                                    │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Query structured knowledge bases (Wikidata, etc.) │ │
+│  │                                                      │ │
+│  │  Claim: "Paris is capital of France"                │ │
+│  │  Query: capital_of(Paris, ?) or capital_of(?, France)│ │
+│  │  KB Result: capital_of(Paris, France) = TRUE        │ │
+│  │  → FACTUAL ✓                                        │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Web Search Verification:                                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Search for supporting/contradicting evidence       │ │
+│  │                                                      │ │
+│  │  Claim: "Product X won 2023 Innovation Award"      │ │
+│  │  Search: "Product X" "2023 Innovation Award"        │ │
+│  │  Results: Multiple sources confirm → FACTUAL       │ │
+│  │       or: No evidence found → UNVERIFIED           │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  LLM Cross-Verification:                                   │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Ask separate LLM to evaluate claim truthfulness   │ │
+│  │                                                      │ │
+│  │  "Is the following claim factually accurate?      │ │
+│  │   Claim: [claim text]                               │ │
+│  │   Respond: TRUE / FALSE / UNCERTAIN                │ │
+│  │   Reasoning: [explanation]"                        │ │
+│  │                                                      │ │
+│  │  Note: Limited by LLM's own knowledge cutoff       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  NLI for Retrieval-Based Verification:                    │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Retrieve relevant passages, use NLI to verify    │ │
+│  │                                                      │ │
+│  │  Claim: "Company revenue grew 15%"                 │ │
+│  │  Retrieved: "Q4 report shows 15.2% revenue growth" │ │
+│  │  NLI: Entailment → FACTUAL ✓                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FACTUALITY METRICS:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Claim-Level Accuracy:                              │ │
+│  │  • % of claims that are factually correct          │ │
+│  │  • Most granular, can identify patterns            │ │
+│  │                                                      │ │
+│  │  Response-Level Factuality:                         │ │
+│  │  • Binary: Is entire response factual? (strict)    │ │
+│  │  • Any error → non-factual response                │ │
+│  │                                                      │ │
+│  │  Severity-Weighted Score:                           │ │
+│  │  • Weight errors by consequence severity           │ │
+│  │  • Wrong name: low weight                          │ │
+│  │  • Wrong medication dose: critical weight          │ │
+│  │                                                      │ │
+│  │  Domain-Specific Benchmarks:                        │ │
+│  │  • TruthfulQA (general knowledge)                  │ │
+│  │  • FEVER (fact verification)                       │ │
+│  │  • FactScore (detailed factuality)                 │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  IMPROVING FACTUALITY:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  RAG (Retrieval-Augmented Generation):             │ │
+│  │  ├── Ground responses in retrieved documents       │ │
+│  │  └── Reduces reliance on parametric knowledge     │ │
+│  │                                                      │ │
+│  │  Chain-of-Thought Verification:                    │ │
+│  │  ├── Model shows reasoning step-by-step           │ │
+│  │  └── Each step can be fact-checked                │ │
+│  │                                                      │ │
+│  │  Uncertainty Expression:                           │ │
+│  │  ├── Model expresses confidence levels            │ │
+│  │  └── "I'm uncertain about..." reduces errors      │ │
+│  │                                                      │ │
+│  │  Post-Generation Fact-Checking:                    │ │
+│  │  ├── Verify claims after generation               │ │
+│  │  └── Filter or flag non-factual content           │ │
+│  │                                                      │ │
+│  │  RLHF for Truthfulness:                            │ │
+│  │  ├── Train model to prefer truthful responses     │ │
+│  │  └── Punish confident but wrong statements        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How is factuality different from hallucination?**
+
+A: Hallucination is a type of factuality failure—specifically, generating content that has no basis in training data or provided context. Factuality is the broader concept encompassing all types of truthfulness, including mistaken facts (where there WAS a basis, but the model got it wrong) and fabrications (hallucinations with no basis).
+
+**Q: How do I measure factuality in my AI system?**
+
+A: Common approaches: (1) Use benchmarks like FactScore, TruthfulQA, or FEVER to assess general factuality, (2) Create domain-specific test sets with verified facts, (3) Implement claim extraction + verification pipelines, (4) Use human evaluation for high-stakes applications.
+
+**Q: Can [RAG](/en/glossary/rag/) guarantee factuality?**
+
+A: RAG improves factuality by grounding in retrieved sources but doesn't guarantee it. The model can still: misinterpret sources, combine sources incorrectly, add information not in sources, or retrieve inaccurate sources. RAG + attribution + verification provides stronger factuality guarantees.
+
+**Q: What's an acceptable factuality rate?**
+
+A: Depends on domain risk. Medical/legal/financial: 99%+ (errors can harm). General knowledge: 90-95% acceptable with uncertainty expression. Creative/exploratory: Lower thresholds acceptable if clearly marked as speculative.
+
+## Related terms
+
+- [Grounding](/en/glossary/grounding/) — anchoring to source documents
+- [Citation](/en/glossary/citation/) — adding source references
+- [Attribution](/en/glossary/attribution/) — verifying source support
+- [Hallucination](/en/glossary/hallucination/) — fabricated content
+
+---
+
+## References
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation](https://arxiv.org/abs/2305.14251)", EMNLP. [Factuality evaluation method]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Truthfulness benchmark]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Fact verification dataset]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Recent factuality research]

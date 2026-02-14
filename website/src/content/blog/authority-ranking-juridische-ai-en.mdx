@@ -1,0 +1,153 @@
+---
+title: "What is authority ranking — and why your legal AI tool probably ignores it"
+description: "A ministerial circular and a Court of Cassation ruling look the same to most AI search systems. That's not a minor flaw — it's a fundamental gap that makes every answer unreliable."
+publishDate: 2026-02-16
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "AI explained"
+tags: ["authority ranking", "legal hierarchy", "RAG", "Belgian tax", "search architecture"]
+locale: "en"
+draft: false
+---
+
+Ask a generic AI tool about a Belgian tax provision and it will return documents. Possibly the right ones. The problem is which document it puts first — and why.
+
+Standard AI search systems rank results by [semantic similarity](/en/glossary/semantic-similarity/): how closely the retrieved text matches your query's meaning. The document that uses the most similar language wins. This works well for restaurant reviews. For legal research, it's a structural failure.
+
+A ministerial circular might use almost identical language to the statute it interprets — but carry zero binding legal force. A Court of Cassation ruling might use different terminology entirely but constitute the definitive interpretation. [Semantic search](/en/glossary/semantic-search/) can't tell the difference.
+
+This isn't a minor ranking inconvenience. It's the difference between citing binding law and citing an administrative interpretation that a court can disregard.
+
+## The Belgian hierarchy of norms
+
+Every Belgian tax professional learns the hierarchy of norms (hiërarchie der normen) in their first year. It's the foundation of legal reasoning:
+
+| Level | Source type | Example | Binding force |
+|-------|-----------|---------|---------------|
+| 1 | Constitution | Grondwet, Art. 159, 170, 172 | Supreme — all other norms must conform |
+| 2 | International/EU law | EU regulations, directives, treaties | Takes precedence over national law |
+| 3 | Special acts | Bijzondere wetten (special majority) | Higher than ordinary legislation |
+| 4 | Federal/regional legislation | WIB 92, WBTW, VCF, regional tax codes | Binding on all |
+| 5 | Royal decrees | KB/AR — executive implementation | Binding, but must conform to statutes |
+| 6 | Ministerial decrees | MB/AM — departmental implementation | Narrower scope than royal decrees |
+| 7 | Administrative circulars | Omzendbrieven/Circulaires | Not binding on courts or taxpayers |
+| 8 | Case law | Cass., Grondwettelijk Hof, hoven van beroep | Interpretive authority varies by court level |
+| 9 | Doctrine | Academic commentary, legal treatises | No binding force |
+
+This hierarchy isn't academic trivia. Article 159 of the Belgian Constitution explicitly empowers courts to set aside any administrative act — including circulars — that contradicts higher-ranking norms. When a circular conflicts with the statute it purports to interpret, the statute wins. Always.
+
+## What your AI tool actually does
+
+Standard RAG ([retrieval-augmented generation](/en/glossary/rag/)) systems work in two steps: retrieve relevant documents, then generate an answer from them. The retrieval step uses embedding similarity — converting your question and the [document corpus](/en/glossary/corpus/) into vectors and finding the closest match.
+
+The ranking formula is roughly: **relevance = semantic similarity to query**.
+
+Notice what's missing. There's no concept of:
+- Which document outranks another in the legal hierarchy
+- Whether a circular contradicts the statute it interprets
+- Whether a Court of Cassation ruling has established a different interpretation
+- Whether the source is binding law, interpretive guidance, or academic opinion
+
+Research confirms this gap is fundamental, not cosmetic. A study published in Artificial Intelligence and Law notes that "[information retrieval systems](/en/glossary/information-retrieval-system/) must be aware of the authority of the jurisdiction, as a case from a binding authority is typically more valuable than one from a non-binding authority." The legal domain "defines a hierarchical organization with regard to the type of documents and their authority" — but standard retrieval systems treat all documents as equal-weight text.
+
+The result: your AI tool might rank a 2019 circular above the 2020 statute that modified the provision the circular was interpreting. It has no way to know the circular is now partially obsolete. It found the most similar text and put it first.
+
+## When flat ranking fails: a Belgian example
+
+Consider a question about the statute of limitations for Belgian withholding tax reclaims.
+
+In December 2023, the Court of Cassation ruled on whether taxpayers must exhaust administrative remedies before initiating court proceedings — contradicting prior case law from 2018. In response, the tax administration issued Circular letter 2025/C/56, maintaining its previous position despite the Court of Cassation ruling.
+
+A flat-ranked AI system might retrieve:
+1. The 2025 circular (most recent, most semantically similar to the query)
+2. The 2018 case law (supports the administration's position)
+3. The 2023 Court of Cassation ruling (buried below the circular)
+
+The user gets the administration's view as the primary answer. But the Court of Cassation's interpretation — which is hierarchically authoritative — sits third. The circular, which binds nobody outside the administration, sits first.
+
+This isn't a hypothetical. It's how semantic search actually works. And it's why relying on generic AI for questions where circulars and statutes diverge is professionally dangerous.
+
+## How authority-aware ranking changes the answer
+
+An authority-ranked system doesn't just find relevant documents. It weights them by their position in the legal hierarchy before presenting results.
+
+The ranking formula becomes: **relevance = (semantic similarity × authority weight × temporal recency)**.
+
+In practice, this means:
+
+| Source type | Authority weight | Effect |
+|------------|-----------------|--------|
+| Constitutional provisions | Highest | Always surfaces above subordinate norms |
+| Federal/regional legislation | High | Outranks executive and administrative acts |
+| Royal decrees | Medium-high | Outranks circulars, conforms to statutes |
+| Court of Cassation rulings | High (interpretive) | Definitive interpretation — outranks admin. guidance |
+| Administrative circulars | Low | Useful context, never treated as binding |
+| Doctrine | Lowest | Background only |
+
+![The Belgian legal hierarchy and how it maps to authority-weighted search](/blog/authority-ranking-juridische-ai/legal-hierarchy-en-dark.png)
+
+For the withholding tax question, an authority-ranked system would present:
+1. The relevant statutory provisions (binding)
+2. The 2023 Court of Cassation ruling (authoritative interpretation)
+3. The 2025 circular (administrative position — flagged as non-binding context)
+
+Same documents. Completely different presentation. And a completely different professional risk profile for the user.
+
+## The cross-encoder upgrade
+
+Authority ranking works best when combined with [cross-encoder reranking](/en/glossary/reranking/) — a two-stage retrieval architecture.
+
+**Stage 1: Broad retrieval.** An [embedding model](/en/glossary/embedding-model/) retrieves the top 50-100 semantically relevant documents. Fast, broad, but authority-blind.
+
+**Stage 2: [Cross-encoder](/en/glossary/cross-encoder/) reranking.** A specialized model re-evaluates each query-document pair with full attention to both texts. This is where authority metadata gets injected: the reranker boosts or penalizes based on source type, court level, temporal status, and jurisdictional scope.
+
+Research from [Pinecone](/en/glossary/pinecone/) shows that cross-encoder reranking is "much more accurate than embedding models" for retrieval quality. Databricks research demonstrates reranking can boost retrieval accuracy by an average of 15 percentage points on enterprise benchmarks.
+
+But the key insight isn't just better reranking — it's what you rerank *on*. Standard rerankers optimize for topical relevance. Legal rerankers need to optimize for **authoritative relevance**: is this the highest-ranking source that addresses this question?
+
+## Why this matters more in Belgium
+
+Belgium's legal structure makes authority ranking especially critical:
+
+**Three regional tax regimes.** Flemish, Brussels, and Walloon inheritance tax, registration duties, and property taxes follow different rules. A flat-ranked system might surface Flemish rules for a Brussels question because the text is more similar to the query.
+
+**No hierarchy between federal and regional law.** Unlike other federal states, Belgian law doesn't rank federal above regional legislation. Each operates in defined competence domains. The AI needs jurisdictional metadata — not just authority level — to know which body of law applies.
+
+**Circulars carry outsized practical weight.** In Belgian tax practice, circulars from the FOD Financiën are heavily relied upon despite having no binding force. Fisconetplus — the tax administration's [knowledge base](/en/glossary/knowledge-base/) with approximately 180,000 documents — contains a significant proportion of circulars and administrative commentaries. An AI system without authority ranking treats these the same as binding legislation.
+
+**The administration sometimes disagrees with the courts.** As the withholding tax example shows, the Belgian tax administration sometimes maintains positions in circulars that contradict Court of Cassation rulings. Without authority ranking, the AI presents the administration's view without flagging that a hierarchically superior source has ruled differently.
+
+---
+
+## Related articles
+
+- [What is RAG — and why it's the only architecture that makes legal AI defensible](/en/blog/wat-is-rag-en/)
+- [5 Belgian tax questions where generic AI is guaranteed to fail](/en/blog/5-vragen-generieke-ai-faalt-en/)
+- [Why transparency matters more than accuracy in legal AI](/en/blog/transparantie-vs-nauwkeurigheid-en/)
+- [What is confidence scoring — and why it's more honest than a confident answer](/en/blog/confidence-scoring-uitgelegd-en/)
+
+---
+
+## How Auryth TX implements authority ranking
+
+Every document in the Auryth TX corpus carries structured metadata including source type, authority tier, jurisdiction, and temporal validity.
+
+During retrieval, our cross-encoder reranking stage applies authority weighting: a statute outranks a circular, a Court of Cassation ruling outranks a court of appeal decision, and binding law always surfaces above interpretive guidance.
+
+When a circular and a statute diverge, both are presented — but clearly labeled with their respective authority levels. You see the hierarchy, not just the similarity.
+
+This isn't about filtering out lower-authority sources. Circulars are useful — they reflect how the administration applies the law in practice. But they should never be the primary source when binding law says something different.
+
+Authority ranking is how a search system earns professional trust: not by finding the most similar text, but by finding the most authoritative text.
+
+[See authority ranking in action — join the waitlist →](/en/waitlist/)
+
+---
+
+*Sources:*
+*1. Belgian Constitution, Art. 159: courts may only apply administrative acts conforming to the law.*
+*2. European e-Justice Portal, "National legislation — Belgium": formal hierarchy of norms.*
+*3. van Opijnen, M. & Santos, C. (2017). "[On the concept of relevance in legal information retrieval](https://doi.org/10.1007/s10506-017-9195-8)." Artificial Intelligence and Law, 25, 65-87.*
+*4. Pinecone, "[Rerankers and Two-Stage Retrieval](https://www.pinecone.io/learn/series/rag/rerankers/)": cross-encoder reranking architecture.*
+*5. EY Belgium, "[Recent case law creates uncertainty regarding statute of limitations for Belgian WHT reclaims](https://www.ey.com/en_be/technical/financial-services/financial-services-alerts/recent-case-law-creates-uncertainty-regarding-statute-of-limitations-for-belgian-wht-reclaims)" (2025): circular vs. Court of Cassation divergence.*
+*6. Fisconetplus, SPF Finances: ~180,000 documents, serves 21,000+ civil servants plus external professionals.*

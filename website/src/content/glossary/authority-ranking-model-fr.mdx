@@ -1,0 +1,74 @@
+---
+term: "Modèle de classement par autorité"
+termSlug: "authority-ranking-model"
+short: "Un modèle de classement par autorité ordonne les sources par autorité juridique et fiabilité afin de faire remonter les sources contrôlantes en premier."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["source-reliability-weighting", "source-conflict-resolution", "relevance-tuning", "multi-jurisdictional-indexing", "compliance-aware-retrieval"]
+synonyms: ["Authority-aware ranking", "Legal authority ranking", "Source authority ranking"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Un modèle de classement par autorité est une approche de ranking qui note les documents récupérés non seulement selon la pertinence, mais aussi selon leur *autorité* pour la question juridique. L’objectif est de faire apparaître les sources contrôlantes (texte légal, guidance officielle) avant la doctrine ou des explications non contraignantes.
+
+## Pourquoi c'est important
+
+- **Qualité juridique** : privilégie les sources ayant un poids juridique plus élevé.
+- **Réduction du risque** : limite la dépendance à des sources faibles ou non contraignantes.
+- **Auditabilité** : facilite l’explication du "pourquoi" d’un classement.
+- **Cohérence** : résultats plus stables entre [requêtes](/fr/glossary/prompt/) et juridictions similaires.
+
+## Comment ça fonctionne
+
+L’autorité est généralement modélisée comme un score additionnel (ou des règles) combiné à la pertinence :
+
+```
+Requête -> récupérer candidats -> score pertinence + autorité -> combiner -> classer -> citer
+```
+
+Signaux d’autorité fréquents :
+
+- **Type de source** (loi, règlement, circulaire officielle, jurisprudence, doctrine)
+- **Autorité émettrice** (législateur, ministère, niveau de juridiction, régulateur)
+- **Adéquation de juridiction** (pays/région, langue, champ d’application)
+- **Fraîcheur et version** (date d’entrée en vigueur, modifications, texte consolidé)
+- **[Citations](/fr/glossary/citation/) et dépendances** (ce qu’une source cite et qui la cite)
+
+## Exemple pratique
+
+Un utilisateur cherche "précompte mobilier dividende Belgique traité". Un ranking purement "pertinence" peut mettre des articles de blog en premier. Un modèle par autorité remonte le traité, la guidance administrative officielle et les articles consolidés avant les commentaires, tout en laissant des explications utiles plus bas.
+
+## Questions fréquentes
+
+**Q: Est-ce la même chose que l’ajustement de la pertinence ?**
+
+R: C’est lié, mais différent. L’ajustement de pertinence optimise la qualité globale du classement ; le ranking par autorité ajoute des signaux juridiques pour éviter d’enterrer les sources contrôlantes.
+
+**Q: Règles fixes ou [apprentissage automatique](/fr/glossary/machine-learning/) ?**
+
+R: Souvent les deux : des contraintes dures pour les hiérarchies claires (ex. "source officielle avant doctrine") et des poids/ML pour des signaux plus souples (fraîcheur, citations).
+
+## Termes associés
+
+- [Source Reliability Weighting](/fr/glossary/source-reliability-weighting/) - pondérer la fiabilité des sources
+- [Source Conflict Resolution](/fr/glossary/source-conflict-resolution/) - gérer des sources contradictoires
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - améliorer le ranking via l’évaluation
+- [Indexation multi-juridictionnelle](/fr/glossary/multi-jurisdictional-indexing/) - router et segmenter par juridiction
+- [Retrieval sensible à la conformité](/fr/glossary/compliance-aware-retrieval/) - retrieval contraint par gouvernance et policy
+
+---
+
+## Références
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: [BM25](/fr/glossary/bm25/) and Beyond", *Foundations and Trends in Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: BM25 and Beyond", *Foundations and Trends in Information Retrieval*.

@@ -1,0 +1,105 @@
+---
+term: "Hybrid Search"
+termSlug: "hybrid-search"
+short: "A retrieval approach combining keyword-based and semantic vector search to leverage the strengths of both methods."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["semantic-search", "bm25", "embeddings", "rag", "reranking"]
+synonyms: ["Combined search", "Multi-modal retrieval", "Hybrid retrieval"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Hybrid search combines traditional keyword-based search (like BM25) with modern semantic [vector search](/en/glossary/ann/) to find relevant documents. By fusing these two approaches, it captures both exact keyword matches and [conceptual similarity](/en/glossary/semantic-similarity/), providing more robust retrieval than either method alone.
+
+## Why it matters
+
+Hybrid search addresses the limitations of pure approaches:
+
+- **Best of both worlds** — catches exact terms AND conceptual matches
+- **Failure mode coverage** — when one method misses, the other often succeeds
+- **Domain flexibility** — works across technical and natural language queries
+- **Production reliability** — more consistent results across [query](/en/glossary/prompt/) types
+- **RAG quality** — improves document retrieval for generation pipelines
+
+Pure vector search can miss exact terms; pure [keyword search](/en/glossary/full-text-search/) misses synonyms—hybrid catches both.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      HYBRID SEARCH                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│                      User Query                            │
+│               "VAT rules article 15bis"                    │
+│                          │                                 │
+│              ┌───────────┴───────────┐                     │
+│              ▼                       ▼                     │
+│  ┌───────────────────┐   ┌───────────────────┐             │
+│  │  KEYWORD SEARCH   │   │  VECTOR SEARCH    │             │
+│  │  (BM25/TF-IDF)    │   │  (Embeddings)     │             │
+│  │                   │   │                   │             │
+│  │  Exact matches:   │   │  Semantic matches:│             │
+│  │  - "article 15bis"│   │  - VAT regulations│             │
+│  │  - "VAT rules"    │   │  - Tax exemptions │             │
+│  │                   │   │  - Related tax law│             │
+│  └─────────┬─────────┘   └─────────┬─────────┘             │
+│            │                       │                       │
+│            └───────────┬───────────┘                       │
+│                        ▼                                   │
+│            ┌───────────────────────┐                       │
+│            │   SCORE FUSION        │                       │
+│            │   • Reciprocal Rank   │                       │
+│            │   • Weighted Sum      │                       │
+│            │   • Convex Combination│                       │
+│            └───────────┬───────────┘                       │
+│                        ▼                                   │
+│               Combined Results                             │
+│            (Best of both methods)                          │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Fusion methods:**
+1. **Reciprocal Rank Fusion (RRF)** — ranks based on position in each result list
+2. **Weighted sum** — combines normalized scores with configurable weights
+3. **Convex combination** — α × keyword_score + (1-α) × vector_score
+
+## Common questions
+
+**Q: What ratio of keyword to vector search works best?**
+
+A: Start with 50/50, then tune based on your queries. Technical domains (legal, medical) often benefit from higher keyword weight (60-70%) for precise terminology. Conversational queries favor vector search (60-70%).
+
+**Q: When does hybrid search help most?**
+
+A: When queries mix specific terms with conceptual questions. For example, "Article 15bis VAT exemptions for digital services"—needs exact article match AND semantic understanding of exemptions.
+
+**Q: Does hybrid search add latency?**
+
+A: Slightly—you're running two searches. But both can execute in parallel, so overhead is minimal (~10-50ms). The quality improvement usually justifies this cost.
+
+**Q: What's Reciprocal Rank Fusion (RRF)?**
+
+A: RRF combines rankings without needing comparable scores. For each document, it computes 1/(k + rank) for both methods and sums them. It's robust because it only uses position, not score magnitude.
+
+## Related terms
+
+- [Semantic Search](/en/glossary/semantic-search/) — vector-only [retrieval component](/en/glossary/retrieval-layer/)
+- [BM25](/en/glossary/bm25/) — classic [keyword search](/en/glossary/lexical-search/) algorithm
+- [Embeddings](/en/glossary/embeddings/) — vectors for semantic search
+- [Reranking](/en/glossary/reranking/) — often follows hybrid search
+
+---
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)", Foundations and Trends in Information Retrieval. [3,000+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Cormack et al. (2009), "[Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)", SIGIR. [500+ citations]
+
+> Ma et al. (2021), "[A Replication Study of Dense Passage Retriever](https://arxiv.org/abs/2104.05740)", arXiv. [200+ citations]

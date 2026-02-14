@@ -1,0 +1,102 @@
+---
+term: "Fine-Tuning"
+termSlug: "fine-tuning"
+short: "The process of further training a pre-trained model on domain-specific data to improve performance on specialized tasks."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "transfer-learning", "prompt-engineering", "lora"]
+synonyms: ["Model fine-tuning", "Domain adaptation", "Task-specific training"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Fine-tuning is the process of taking a pre-trained language model and training it further on a smaller, task-specific dataset. This adapts the model's general capabilities to excel at specific tasks or domains—like legal document analysis, tax advice, or medical diagnosis—without training from scratch.
+
+## Why it matters
+
+Fine-tuning bridges the gap between general-purpose models and specialized applications:
+
+- **Domain expertise** — models learn industry-specific terminology and patterns
+- **Task optimization** — improves performance on specific workflows (classification, extraction, summarization)
+- **Efficiency** — requires far less data and compute than [pre-training](/en/glossary/pretraining/)
+- **Customization** — aligns model behavior with organizational requirements
+- **Reduced [hallucination](/en/glossary/hallucination/)** — domain-focused training improves [factual accuracy](/en/glossary/factuality/)
+
+Fine-tuning is often the difference between a capable demo and a production-ready system.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   FINE-TUNING PIPELINE                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌──────────────────────┐    ┌──────────────────────┐      │
+│  │   PRE-TRAINED MODEL  │    │  DOMAIN DATASET      │      │
+│  │   (GPT, LLaMA, etc.) │    │  (1K-100K examples)  │      │
+│  │   Billions of params │    │  Task-specific data  │      │
+│  └──────────┬───────────┘    └──────────┬───────────┘      │
+│             │                           │                  │
+│             └───────────┬───────────────┘                  │
+│                         ▼                                  │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │              TRAINING PROCESS                      │    │
+│  │  • Low learning rate (avoid catastrophic forget)   │    │
+│  │  • Few epochs (1-5 typically)                      │    │
+│  │  • Optional: LoRA, QLoRA (parameter-efficient)     │    │
+│  └────────────────────────────────────────────────────┘    │
+│                         │                                  │
+│                         ▼                                  │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │              FINE-TUNED MODEL                      │    │
+│  │  General knowledge + Domain expertise              │    │
+│  │  Optimized for specific task/style                 │    │
+│  └────────────────────────────────────────────────────┘    │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Fine-tuning approaches:**
+1. **Full fine-tuning** — updates all model parameters (expensive, powerful)
+2. **LoRA/QLoRA** — trains small [adapter layers](/en/glossary/adapter/), freezes base model
+3. **[Instruction](/en/glossary/prompt/) tuning** — trains on instruction-response pairs
+4. **RLHF** — uses human feedback to align model behavior
+5. **Prefix tuning** — learns task-specific soft prompts
+
+## Common questions
+
+**Q: When should I fine-tune vs. use prompt engineering?**
+
+A: Start with prompt engineering—it's faster and cheaper. Fine-tune when: you need consistent output formatting, have domain-specific terminology, require better accuracy than prompting achieves, or want to reduce token usage.
+
+**Q: How much data do I need for fine-tuning?**
+
+A: Typically 500-10,000 high-quality examples. Quality matters more than quantity. For LoRA, even 100-500 examples can show improvement on specific tasks.
+
+**Q: What is catastrophic forgetting?**
+
+A: When a model loses its original capabilities while learning new ones. Prevented by using low learning rates, limited epochs, and parameter-efficient methods like LoRA.
+
+**Q: Is fine-tuning expensive?**
+
+A: Full fine-tuning of large models requires significant GPU resources. Parameter-efficient methods (LoRA, QLoRA) reduce costs by 10-100x, making fine-tuning accessible on consumer hardware.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — base models that get fine-tuned
+- [LoRA](/en/glossary/lora/) — parameter-efficient fine-tuning method
+- Transfer Learning — broader concept fine-tuning implements
+- [Instruction Tuning](/en/glossary/instruction-tuning/) — specific fine-tuning approach
+
+---
+
+## References
+
+> Howard & Ruder (2018), "[Universal Language Model Fine-tuning for Text Classification](https://arxiv.org/abs/1801.06146)", ACL. [5,000+ citations]
+
+> Hu et al. (2022), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [4,000+ citations]
+
+> Wei et al. (2022), "[Finetuned Language Models Are Zero-Shot Learners](https://arxiv.org/abs/2109.01652)", ICLR. [3,500+ citations]
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [6,000+ citations]

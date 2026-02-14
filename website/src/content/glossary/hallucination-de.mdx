@@ -1,0 +1,109 @@
+---
+term: "Halluzination"
+termSlug: "hallucination"
+short: "Wenn ein KI-Modell falsche, erfundene oder unbelegte Informationen als Fakten präsentiert."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["llm", "rag", "faithfulness", "source-grounding"]
+synonyms: ["KI-Halluzination", "Modell-Halluzination", "Konfabulation", "Fabrikation"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Halluzination tritt auf, wenn ein Sprachmodell Inhalte generiert, die faktisch falsch, unsinnig oder nicht durch seine Trainingsdaten oder den bereitgestellten Kontext gestützt sind—während sie mit derselben Zuversicht wie akkurate Informationen präsentiert werden. Das Modell „erfindet" im Wesentlichen Fakten, Zitate, Ereignisse oder Details, die nicht existieren oder falsch sind.
+
+## Warum es wichtig ist
+
+Halluzinationen sind eine kritische Herausforderung für den KI-Einsatz in risikoreichen Bereichen:
+
+- **Vertrauenserosion** — Benutzer können Modellausgaben nicht blind vertrauen ohne Überprüfung
+- **Rechtliches Risiko** — erfundene Zitate oder falsche Beratung können rechtliche Konsequenzen haben
+- **Fehlinformation** — KI-generierte Unwahrheiten können sich schnell verbreiten
+- **Domänensensitivität** — Steuer-, Rechts- und Medizin-Anwendungen erfordern [faktische Genauigkeit](/de/glossary/factuality/)
+
+Das Verstehen und Mindern von Halluzinationen ist essentiell für verantwortungsvollen KI-Einsatz.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  HALLUZINATIONSTYPEN                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  1. FAKTISCHE HALLUZINATION                                │
+│     "Der Eiffelturm wurde 1887 gebaut"                     │
+│     (Tatsächlich 1889)                                     │
+│                                                            │
+│  2. ERFUNDENE ZITATE                                       │
+│     "Laut Smith et al. (2020)..."                          │
+│     (Paper existiert nicht)                                │
+│                                                            │
+│  3. KONTEXTWIDERSPRUCH                                     │
+│     Gegeben: "Firmenumsatz: 10M€"                          │
+│     Ausgabe: "Umsatz überstieg 15M€"                       │
+│                                                            │
+│  4. LOGISCHE INKONSISTENZ                                  │
+│     Dieselbe Antwort enthält widersprüchliche Behauptungen │
+│                                                            │
+│  WARUM ES PASSIERT:                                        │
+│  ┌─────────────┐     ┌─────────────────────────┐           │
+│  │ Statistische│ ──► │ Plausibel ≠ Akkurat    │           │
+│  │ Vorhersage  │     │ Zuversichtlich ≠ Korrekt│          │
+│  └─────────────┘     └─────────────────────────┘           │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Grundursachen:**
+1. **Trainingsdaten-Lücken** — Modell füllt Lücken mit plausibel klingenden Vervollständigungen
+2. **[Mustererkennung](/de/glossary/machine-learning/)** — sagt wahrscheinliche Tokens ohne [faktische Verankerung](/de/glossary/grounding/) vorher
+3. **Keine Wahrheitsverifikation** — Modelle optimieren für Flüssigkeit, nicht Genauigkeit
+4. **Wissens-Stichtag** — Trainingsdaten haben ein Datum-Limit
+
+## Häufige Fragen
+
+**F: Wie reduziert RAG Halluzinationen?**
+
+A: RAG verankert Antworten in abgerufenen Dokumenten und gibt dem Modell faktischen Kontext, anstatt sich ausschließlich auf parametrisches Gedächtnis zu verlassen. Das Modell generiert aus bereitgestellten Quellen, was Behauptungen überprüfbar macht.
+
+**F: Können Halluzinationen vollständig eliminiert werden?**
+
+A: Derzeit nicht. Halluzinationen können durch RAG, [Fine-Tuning](/de/glossary/fine-tuning/), bessere Prompts und Konfidenzschwellen reduziert, aber nicht vollständig eliminiert werden. Menschliche Überprüfung bleibt wichtig.
+
+**F: Wie erkennt man Halluzinationen?**
+
+A: Methoden umfassen Faktenprüfung gegen Wissensbasen, Zitatverifikation, semantische Implikationsprüfung und Selbstkonsistenztests, bei denen mehrere Ausgaben verglichen werden.
+
+**F: Halluzinieren größere Modelle weniger?**
+
+A: Größere Modelle haben möglicherweise besseres faktisches Wissen, können aber immer noch zuversichtlich halluzinieren. Modellgröße allein löst das Problem nicht—Architektur und Trainingsansatz sind wichtiger.
+
+## Verwandte Begriffe
+
+- [LLM](/de/glossary/llm/) — Modelle, die halluzinieren können
+- [RAG](/de/glossary/rag/) — Technik zur Reduzierung von Halluzinationen durch Verankerung
+- [Faithfulness](/de/glossary/faithfulness/) — Maß für die Ausgabetreue zu Quellen
+- Source Grounding — Ausgaben an abgerufene Dokumente verankern
+
+---
+
+## Referenzen
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1.500+ Zitationen]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ Zitationen]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1.100+ Zitationen]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ Zitationen]
+
+## References
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1,500+ citations]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ citations]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1,100+ citations]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ citations]

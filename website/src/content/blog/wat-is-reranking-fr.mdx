@@ -1,0 +1,99 @@
+---
+title: "Qu'est-ce que le reranking — et pourquoi c'est la différence entre trouver des documents et trouver des réponses"
+description: "La première étape de recherche trouve 100 correspondances. Le reranking identifie les 5 qui répondent réellement à votre question."
+publishDate: 2026-03-01
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "IA expliquée"
+tags: ["reranking", "cross-encoder", "IA juridique", "retrieval", "qualité de recherche"]
+locale: "fr"
+draft: false
+---
+
+Votre outil d'IA a trouvé 100 documents correspondant à votre requête. Il vous en a montré 5. Comment a-t-il décidé lesquels ?
+
+Cette question compte plus que la plupart des professionnels ne le réalisent. La différence entre le document qui contient les bons mots-clés et celui qui répond réellement à votre question est la différence entre la recherche et le [reranking](/fr/glossary/reranking/) — et c'est là que la plupart des outils d'IA juridique prennent des raccourcis.
+
+Les benchmarks de l'étude Elastic montrent l'écart clairement : sur la suite BEIR, le reranking des résultats BM25 améliore la pertinence de 39 % en moyenne. Sur Natural Questions spécifiquement, l'amélioration atteint 90 %. La technologie qui se situe entre « j'ai trouvé des documents correspondants » et « voici les pertinents » n'est pas un luxe — c'est la couche de qualité qui rend la sortie de l'IA fiable.
+
+## Le problème des bons mots, mauvaise réponse
+
+Imaginez un fiscaliste belge recherchant les règles actuelles sur les droits de succession en Région flamande. La recherche de première étape — qu'elle soit basée sur les mots-clés (BM25) ou sémantique — jette un filet large. Elle retourne chaque document traitant des droits de succession flamands : les dispositions VCF actuelles, une proposition de réforme de 2018, une circulaire dépassée de 2015, un commentaire académique de 2020.
+
+Tous ces documents contiennent les bons mots. Seuls certains contiennent la bonne réponse.
+
+C'est le **problème des bons mots, mauvaise réponse**. Un document sur la réforme des taux de succession flamands de 2018 et un document sur les taux actuels de 2024 correspondent à la même [requête](/fr/glossary/prompt/). Mais un seul répond à la question « quels sont les taux actuels ? » La recherche de première étape ne peut pas faire la différence car elle évalue les requêtes et les documents séparément.
+
+## Comment fonctionne le reranking : lire requête et document ensemble
+
+L'insight clé derrière le reranking est architectural. Les retrievers de première étape encodent requêtes et documents indépendamment. La requête devient un vecteur. Chaque document devient un vecteur. La similarité est calculée en comparant les vecteurs, sans jamais « lire » la requête et le document côte à côte.
+
+Un **[cross-encoder](/fr/glossary/cross-encoder/) reranker** fait l'inverse. Il prend la requête et un document candidat, les concatène et les passe à travers un [modèle transformer](/fr/glossary/transformer-architecture/) qui peut porter attention à chaque token des deux textes simultanément.
+
+![Recherche en deux étapes : comment le reranking filtre 100 candidats vers les résultats les plus pertinents](/blog/wat-is-reranking/reranking-pipeline-dark.png)
+
+Le compromis est vitesse contre précision. Les bi-encodeurs traitent des millions de documents en millisecondes. Les cross-encodeurs nécessitent un passage complet pour chaque paire requête-document — impraticable pour des corpus entiers, mais idéal pour réévaluer une liste restreinte de 50 à 100 candidats. Le pipeline en deux étapes combine les deux.
+
+> Un moteur de recherche qui trouve des documents contenant les bons mots est une base de données. Un moteur de recherche qui trouve des documents répondant à la bonne question est un outil de recherche.
+
+## Ce que montrent les benchmarks
+
+| Étape | nDCG@10 (moyenne BEIR) | Ce que cela signifie |
+|---|---|---|
+| BM25 seul | 0,426 | Correspondances par mots-clés — termes pertinents, classement imprécis |
+| [Bi-encoder](/fr/glossary/bi-encoder/) seul | ~0,45 | Correspondances sémantiques — meilleurs concepts, encore imprécis |
+| BM25 + reranker | 0,565 | +39 % — les documents répondant réellement à la question montent en tête |
+
+Le schéma est clair : plus la requête est complexe, plus le reranking aide. Les recherches factuelles simples bénéficient modestement. Les questions transversales bénéficient dramatiquement.
+
+## Pourquoi la recherche juridique exige plus qu'un reranking générique
+
+Les rerankers génériques traitent tous les documents comme égaux. Un article de blog et un arrêt de la Cour de cassation reçoivent le même traitement. Pour la recherche juridique, c'est une lacune critique.
+
+**Hiérarchie d'autorité.** Un arrêt de la Cour de cassation doit surpasser une décision de tribunal inférieur sur le même point de droit. Une disposition légale doit surpasser le commentaire sur cette disposition.
+
+**Validité temporelle.** Une décision de 2024 sur les droits de succession flamands remplace une décision de 2019. Les rerankers génériques voient les deux comme également pertinents.
+
+**Pertinence juridictionnelle.** Pour une question sur les droits de succession flamands, les dispositions VCF flamandes sont l'autorité contraignante. Les dispositions fédérales et wallonnes sont du contexte.
+
+## La limitation honnête : le rappel borné
+
+Le reranking ne peut réordonner que les documents que la première étape a déjà récupérés. Si un document pertinent n'a pas fait partie de l'ensemble initial, aucun reranking ne le fera apparaître. C'est pourquoi la [recherche hybride](/fr/glossary/hybrid-search/) en première étape est si importante.
+
+## Questions fréquentes
+
+**Quelle est la différence entre un bi-encoder et un cross-encoder ?**
+
+Un bi-encoder encode requête et document séparément en vecteurs de taille fixe. Rapide mais imprécis. Un cross-encoder lit requête et document ensemble à travers un transformer partagé. Plus lent mais beaucoup plus précis — il comprend la relation entre la requête spécifique et le document spécifique.
+
+**Le reranking ajoute-t-il un délai perceptible ?**
+
+Pour une liste de 50 à 100 candidats, le reranking par cross-encoder ajoute environ 100 à 150 millisecondes. Le temps de réponse total reste bien en dessous d'une seconde.
+
+**Le reranking peut-il éliminer les [hallucinations](/fr/glossary/hallucination/) dans l'IA juridique ?**
+
+Pas directement, mais il les réduit considérablement. Les hallucinations surviennent souvent quand le modèle reçoit des documents marginalement pertinents. Quand le reranking assure que les documents les plus pertinents et autoritaires atteignent la [couche de génération](/fr/glossary/generative-layer/), le modèle a moins de raison de fabriquer.
+
+---
+
+## Articles connexes
+
+- [Comment fonctionne la recherche hybride → /fr/blog/hybride-zoektechnologie-fr/](/fr/blog/hybride-zoektechnologie-fr/)
+- [Qu'est-ce que le classement par autorité → /fr/blog/authority-ranking-juridische-ai-fr/](/fr/blog/authority-ranking-juridische-ai-fr/)
+- [Qu'est-ce que le RAG → /fr/blog/wat-is-rag-fr/](/fr/blog/wat-is-rag-fr/)
+
+---
+
+## Comment Auryth TX applique ceci
+
+Auryth TX utilise un [pipeline de recherche](/fr/glossary/retrieval-pipeline/) en deux étapes avec un reranking spécifique au domaine juridique. La première étape combine la correspondance BM25 par mots-clés avec la [recherche vectorielle](/fr/glossary/ann/) dense pour maximiser le rappel. L'étape de reranking évalue chaque candidat contre la requête réelle, intégrant la hiérarchie d'autorité et la validité temporelle, de sorte que les sources dépassées sont automatiquement dépriorisées.
+
+Les résultats qu'un professionnel voit ne sont pas seulement pertinents par correspondance de mots-clés. Ils sont pertinents par le sens, classés par autorité et actuels selon le droit en vigueur.
+
+---
+
+*Sources :*
+*1. Nogueira, R. & Cho, K. (2019). « [Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085) ». arXiv preprint.*
+*2. Thakur, N. et al. (2021). « [BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663) ». NeurIPS 2021.*
+*3. Khattab, O. & Zaharia, M. (2020). « [ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT](https://arxiv.org/abs/2004.12832) ». SIGIR '20.*
+*4. Pipitone, N. & Houir Alami, G. (2024). « [LegalBench-RAG: A Benchmark for Retrieval-Augmented Generation in the Legal Domain](https://arxiv.org/abs/2408.10343) ». arXiv preprint.*

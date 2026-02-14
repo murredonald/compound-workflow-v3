@@ -1,0 +1,247 @@
+---
+term: "Query Expansion"
+termSlug: "query-expansion"
+short: "Techniques that automatically reformulate or augment search queries to improve retrieval by adding synonyms, related terms, or rephrased versions."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["dense-retrieval", "sparse-retrieval", "rag", "hyde"]
+synonyms: ["Query reformulation", "Query augmentation", "Query rewriting"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Query expansion refers to techniques that enhance search queries by adding additional terms, synonyms, or alternative phrasings to improve [retrieval recall](/en/glossary/retrieval-recall/). In traditional search, this meant adding synonyms from WordNet or co-occurring terms from the [corpus](/en/glossary/corpus/). In modern RAG systems, [LLMs](/en/glossary/llm/) can generate multiple [query](/en/glossary/prompt/) variants, hypothetical answers, or decompose complex questions. The goal is bridging the vocabulary gap between how users phrase questions and how relevant documents are written, ultimately retrieving more relevant context.
+
+## Why it matters
+
+Query expansion addresses fundamental search challenges:
+
+- **Vocabulary mismatch** — users say "car" but documents say "vehicle" or "automobile"
+- **Query ambiguity** — short queries lack context, expansion clarifies intent
+- **Improved recall** — find relevant documents that exact queries miss
+- **RAG enhancement** — better retrieval leads to better LLM responses
+- **Multi-faceted queries** — decompose complex questions into searchable parts
+- **Underspecified queries** — add implicit context users didn't express
+
+Without query expansion, retrieval systems miss relevant content due to surface-level lexical mismatches.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    QUERY EXPANSION                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE PROBLEM:                                              │
+│  ────────────                                              │
+│                                                            │
+│  User query: "cheap flights to NYC"                        │
+│                                                            │
+│  Documents might say:                                      │
+│  • "affordable airfare to New York"                       │
+│  • "budget airline tickets to JFK"                        │
+│  • "low-cost travel to Manhattan"                         │
+│                                                            │
+│  Exact match misses all of these!                         │
+│                                                            │
+│                                                            │
+│  CLASSICAL QUERY EXPANSION METHODS:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  1. SYNONYM EXPANSION (WordNet/Thesaurus)                 │
+│  ─────────────────────────────────────────                │
+│                                                            │
+│     Original: "cheap flights NYC"                          │
+│                 ↓   ↓      ↓                               │
+│     Expanded:                                              │
+│     • cheap → inexpensive, affordable, budget, low-cost   │
+│     • flights → airfare, air travel, plane tickets        │
+│     • NYC → New York, New York City, JFK, LaGuardia       │
+│                                                            │
+│  2. CORPUS-BASED EXPANSION                                │
+│  ─────────────────────────                                │
+│                                                            │
+│     Find terms that co-occur with query terms:            │
+│                                                            │
+│     "flights" often appears with:                         │
+│     [airline, booking, departure, arrival, layover]       │
+│                                                            │
+│     Add statistically associated terms                    │
+│                                                            │
+│  3. PSEUDO-RELEVANCE FEEDBACK (PRF)                       │
+│  ──────────────────────────────────                       │
+│                                                            │
+│     ┌─────────────────────────────────────────────────┐  │
+│     │  1. Run initial query                            │  │
+│     │  2. Assume top-k results are relevant           │  │
+│     │  3. Extract terms from those documents          │  │
+│     │  4. Add extracted terms to query                │  │
+│     │  5. Re-run expanded query                       │  │
+│     └─────────────────────────────────────────────────┘  │
+│                                                            │
+│     Original query: "machine learning"                    │
+│     Top results contain: neural, network, training, model│
+│     Expanded: "machine learning neural network training"  │
+│                                                            │
+│                                                            │
+│  MODERN LLM-BASED EXPANSION:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  1. MULTI-QUERY GENERATION                                │
+│  ─────────────────────────                                │
+│                                                            │
+│     Prompt: "Generate 3 alternative versions of this     │
+│              question that might retrieve relevant        │
+│              documents: {original_query}"                 │
+│                                                            │
+│     Original: "What causes diabetes?"                      │
+│                                                            │
+│     Generated queries:                                     │
+│     • "Risk factors and etiology of diabetes mellitus"   │
+│     • "How does insulin resistance develop?"             │
+│     • "Genetic and lifestyle causes of type 2 diabetes"  │
+│                                                            │
+│     ┌─────────────────────────────────────────────────┐  │
+│     │  Search each variant → Union of results          │  │
+│     │  OR                                               │  │
+│     │  Embed all variants → Use mean embedding         │  │
+│     └─────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  2. HyDE: HYPOTHETICAL DOCUMENT EMBEDDINGS                │
+│  ─────────────────────────────────────────                │
+│                                                            │
+│     Instead of expanding query, generate hypothetical    │
+│     answer document and search for similar real docs:    │
+│                                                            │
+│     Query: "How does CRISPR work?"                        │
+│                    ↓                                       │
+│     LLM generates hypothetical answer:                    │
+│     ┌──────────────────────────────────────────────────┐ │
+│     │ "CRISPR (Clustered Regularly Interspaced Short   │ │
+│     │  Palindromic Repeats) is a gene editing          │ │
+│     │  technology that uses Cas9 protein to cut DNA    │ │
+│     │  at specific locations. A guide RNA directs      │ │
+│     │  Cas9 to the target sequence where it makes      │ │
+│     │  a double-strand break..."                        │ │
+│     └──────────────────────────────────────────────────┘ │
+│                    ↓                                       │
+│     Embed this hypothetical document                      │
+│                    ↓                                       │
+│     Search for real documents similar to it               │
+│                                                            │
+│     Why this works: Hypothetical answer is in "document  │
+│     space" not "query space" - closer to actual docs     │
+│                                                            │
+│                                                            │
+│  3. STEP-BACK PROMPTING                                   │
+│  ──────────────────────                                   │
+│                                                            │
+│     Generate more abstract/general queries:               │
+│                                                            │
+│     Original: "Why did Apple stock drop on Jan 15 2024?" │
+│                    ↓                                       │
+│     Step-back: "What factors affect Apple stock price?"  │
+│                 "Apple earnings and revenue trends"       │
+│                                                            │
+│     Retrieves context that helps answer specific Q       │
+│                                                            │
+│                                                            │
+│  4. QUERY DECOMPOSITION                                   │
+│  ──────────────────────                                   │
+│                                                            │
+│     Break complex query into sub-queries:                 │
+│                                                            │
+│     Original: "How does Tesla's FSD compare to Waymo's   │
+│                approach, and which is safer?"             │
+│                    ↓                                       │
+│     Sub-queries:                                           │
+│     • "How does Tesla Full Self-Driving work?"           │
+│     • "How does Waymo autonomous driving work?"          │
+│     • "Tesla FSD safety statistics and accidents"        │
+│     • "Waymo safety record and statistics"               │
+│                                                            │
+│     Retrieve for each, then synthesize answer            │
+│                                                            │
+│                                                            │
+│  RAG PIPELINE WITH QUERY EXPANSION:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│     User Query                                             │
+│         │                                                  │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Expand    │──→ Generate variants / HyDE / Decompose│
+│    └────────────┘                                         │
+│         │                                                  │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Retrieve  │──→ Search with all expanded queries    │
+│    └────────────┘                                         │
+│         │                                                  │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Dedupe &  │──→ Remove duplicate chunks             │
+│    │  Rerank    │──→ Score by relevance to original      │
+│    └────────────┘                                         │
+│         │                                                  │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Generate  │──→ LLM answers with expanded context   │
+│    └────────────┘                                         │
+│                                                            │
+│                                                            │
+│  EXPANSION TECHNIQUE COMPARISON:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌───────────────┬────────────┬────────────┬───────────┐ │
+│  │ Technique     │ Latency    │ Recall↑    │ Precision │ │
+│  ├───────────────┼────────────┼────────────┼───────────┤ │
+│  │ Synonyms      │ Low        │ Medium     │ May drop  │ │
+│  │ PRF           │ 2x search  │ High       │ Variable  │ │
+│  │ Multi-query   │ +LLM call  │ High       │ Good      │ │
+│  │ HyDE          │ +LLM call  │ Very high  │ Good      │ │
+│  │ Decomposition │ +LLM call  │ High       │ Good      │ │
+│  └───────────────┴────────────┴────────────┴───────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: Does query expansion always help retrieval?**
+
+A: No—expansion increases recall but can hurt precision by introducing irrelevant matches. [Synonym expansion](/en/glossary/semantic-expansion/) is notorious for query drift (e.g., "Python" → "snake"). LLM-based expansion is generally better but adds latency. Always measure impact on your specific use case.
+
+**Q: How is HyDE different from regular query expansion?**
+
+A: Traditional expansion adds terms to the query but searches in "query space." HyDE generates a hypothetical answer (full document-like text) and searches in "document space." Since [embeddings](/en/glossary/embeddings/) of documents cluster differently than query embeddings, HyDE can find documents that query expansion misses.
+
+**Q: Should I use query expansion with dense retrieval?**
+
+A: Dense retrieval already handles [semantic similarity](/en/glossary/semantic-similarity/), reducing the need for synonym expansion. However, LLM-based techniques (multi-query, HyDE, decomposition) still help by providing multiple retrieval angles. Combine dense retrieval with multi-query generation for best results.
+
+**Q: How do I choose between query expansion techniques?**
+
+A: Start with multi-query generation—it's simple and effective. Use HyDE for knowledge-intensive queries where a hypothetical answer helps. Use decomposition for complex multi-part questions. Avoid classical synonym expansion unless you have domain-specific synonyms.
+
+## Related terms
+
+- [Dense retrieval](/en/glossary/dense-retrieval/) — benefits from query expansion
+- [RAG](/en/glossary/rag/) — pipeline where expansion is applied
+- [Reranking](/en/glossary/reranking/) — follows expansion in pipeline
+- [Cross-encoder](/en/glossary/cross-encoder/) — reranks expanded results
+
+---
+
+## References
+
+> Gao et al. (2022), "[Precise Zero-Shot Dense Retrieval without Relevance Labels](https://arxiv.org/abs/2212.10496)", ACL 2023. [HyDE paper]
+
+> Wang et al. (2023), "[Query2Doc: Query Expansion with Large Language Models](https://arxiv.org/abs/2303.07678)", EMNLP. [LLM query expansion]
+
+> Carpineto & Romano (2012), "[A Survey of Automatic Query Expansion in Information Retrieval](https://dl.acm.org/doi/10.1145/2071389.2071390)", ACM Computing Surveys. [Classical techniques]
+
+> Ma et al. (2023), "[Query Rewriting for Retrieval-Augmented Large Language Models](https://arxiv.org/abs/2305.14283)", EMNLP. [RAG query rewriting]

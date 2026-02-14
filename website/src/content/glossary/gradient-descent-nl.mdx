@@ -1,0 +1,138 @@
+---
+term: "Gradiëntafdaling"
+termSlug: "gradient-descent"
+short: "Een optimalisatie-algoritme dat modelparameters iteratief aanpast door te bewegen in de richting die de verliesfunctie vermindert."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["loss-function", "backpropagation", "fine-tuning", "neural-network"]
+synonyms: ["Gradiënt-gebaseerde optimalisatie", "Steilste afdaling", "GD"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Gradiëntafdaling is het fundamentele optimalisatie-algoritme gebruikt om [machine learning](/nl/glossary/machine-learning/) modellen te trainen. Het werkt door de gradiënt (richting van steilste stijging) van de verliesfunctie ten opzichte van modelparameters te berekenen, en dan een stap in de tegenovergestelde richting te nemen om het verlies te verminderen. Door vele iteraties vindt dit proces parameterwaarden die voorspellingsfouten minimaliseren.
+
+## Waarom het belangrijk is
+
+Gradiëntafdaling maakt neurale netwerktraining mogelijk:
+
+- **Universele optimizer** — werkt voor elke differentieerbare verliesfunctie
+- **Schaalbaar** — behandelt miljarden parameters efficiënt
+- **Fundament** — basis voor alle moderne [deep learning](/nl/glossary/deep-learning/)
+- **Varianten** — Adam, SGD, AdaGrad verbeteren basisalgoritme
+- **Convergentie** — wiskundig gegarandeerd onder bepaalde condities
+
+Zonder gradiëntafdaling zou het trainen van grote taalmodellen onmogelijk zijn.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    GRADIËNTAFDALING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Kern updateregel: θ_nieuw = θ_oud - α × ∇L(θ)            │
+│                                                            │
+│  θ = parameters                                            │
+│  α = leersnelheid                                          │
+│  ∇L = gradiënt van verlies                                │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VISUALISATIE (2D parameterruimte):           │        │
+│  │                                                │        │
+│  │       Verlies                                  │        │
+│  │        │    ○ Start                           │        │
+│  │        │     \                                │        │
+│  │        │      \  ← gradiënt wijst omhoog     │        │
+│  │        │       ○                              │        │
+│  │        │        \                             │        │
+│  │        │         ○                            │        │
+│  │        │          \                           │        │
+│  │        │           ★ Minimum (doel)          │        │
+│  │        └────────────────────────► Parameter  │        │
+│  │                                                │        │
+│  │  Elke stap beweegt tegengesteld aan gradiënt │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VARIANTEN:                                                │
+│  ─────────                                                 │
+│                                                            │
+│  ┌─────────────┬────────────────────────────────┐          │
+│  │ Batch GD    │ Gebruik alle data per update   │          │
+│  │             │ Traag maar stabiel             │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ SGD         │ Gebruik één sample per update  │          │
+│  │             │ Snel maar ruisig               │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ Mini-batch  │ Gebruik batch van samples      │          │
+│  │             │ Beste van beide (meest gebrukt)│          │
+│  └─────────────┴────────────────────────────────┘          │
+│                                                            │
+│  LEERSNELHEID EFFECT:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  Te klein: ....○....○....○....○.... (traag)              │
+│  Precies goed: ○---○---○---★ (convergeert)                │
+│  Te groot:  ○       ○       ○ (divergeert/oscilleert)     │
+│                   \/    \/                                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Moderne optimizers:**
+| Optimizer | Belangrijkste eigenschap | Wanneer gebruiken |
+|-----------|--------------------------|-------------------|
+| SGD | Eenvoudig, momentum optioneel | Goed afgestelde training |
+| Adam | Adaptieve leersnelheden | Standaardkeuze |
+| AdamW | Adam + weight decay | [Transformers](/nl/glossary/transformer-architecture/), LLMs |
+| Adagrad | Per-parameter snelheden | Schaarse data |
+| RMSprop | Exponentieel bewegend gemiddelde | RNNs |
+
+## Veelgestelde vragen
+
+**V: Wat is een goede leersnelheid?**
+
+A: Het hangt af van het model en de optimizer. Voor Adam is 1e-4 tot 3e-4 vaak goed voor fine-tuning van [LLMs](/nl/glossary/llm/). Te hoog veroorzaakt divergentie; te laag veroorzaakt trage training. Leersnelheid-schedulers die over tijd afnemen helpen vaak.
+
+**V: Wat is het verschil tussen batch, mini-batch en stochastische gradiëntafdaling?**
+
+A: Batch GD gebruikt alle trainingsdata per update (accuraat maar traag). Stochastische GD gebruikt één sample (snel maar ruisig). Mini-batch gebruikt een subset (typisch 16-128 samples)—de praktische standaard die snelheid en stabiliteit combineert.
+
+**V: Waarom daalt het trainingsverlies niet?**
+
+A: Veelvoorkomende oorzaken: leersnelheid te hoog (divergeert), leersnelheid te laag (vastgelopen), slechte initialisatie, verdwijnende/exploderende gradiënten, of dataproblemen. Probeer leersnelheid te verlagen, gradient clipping, of andere initialisatie.
+
+**V: Hoe gaat gradiëntafdaling om met lokale minima?**
+
+A: In hoogdimensionale ruimtes (miljoenen parameters) zijn lokale minima zelden problematisch—de meeste kritieke punten zijn zadelpunten. Momentum en ruis van mini-batching helpen uit suboptimale regio's te ontsnappen.
+
+## Gerelateerde termen
+
+- [Verliesfunctie](/nl/glossary/loss-function/) — wat gradiëntafdaling minimaliseert
+- [Backpropagation](/nl/glossary/backpropagation/) — berekent gradiënten efficiënt
+- [Fine-tuning](/nl/glossary/fine-tuning/) — past gradiëntafdaling toe om modellen aan te passen
+- [Neuraal Netwerk](/nl/glossary/neural-network/) — getraind via gradiëntafdaling
+
+---
+
+## Referenties
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5.000+ [citaties](/nl/glossary/citation/)]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100.000+ citaties]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Hoofdstuk 8. [20.000+ citaties]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5.000+ citaties]
+
+## References
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5,000+ citations]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 8. [20,000+ citations]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5,000+ citations]

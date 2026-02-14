@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 60px;
+  }
+
+  .pq-mark {
+    font-size: 72px;
+    font-weight: 800;
+    color: var(--primary-text);
+    line-height: 0.6;
+    opacity: 0.4;
+    margin-bottom: 16px;
+  }
+
+  .pq-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--fg);
+    line-height: 1.4;
+    max-width: 900px;
+    margin-bottom: 24px;
+  }
+
+  .pq-highlight {
+    color: var(--primary-text);
+  }
+
+  .pq-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .pq-attribution {
+    font-size: 16px;
+    color: var(--muted-fg);
+    font-style: italic;
+  }
+
+  .pq-source {
+    font-size: 14px;
+    color: var(--muted-fg);
+    margin-top: 8px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="pull-quote">
+    <div class="pq-mark">&ldquo;</div>
+    <div class="pq-text">A tool that is <span class="pq-highlight">90% accurate and honest about it</span> is safer than one that is 95% accurate and never tells you when it's wrong.</div>
+    <div class="pq-divider"></div>
+    <div class="pq-attribution">The Verification Gap</div>
+    <div class="pq-source">Auryth TX — Belgian Tax Research</div>
+  </div>
+</div>
+</body>
+</html>

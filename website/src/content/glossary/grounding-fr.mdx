@@ -1,0 +1,147 @@
+---
+term: "Grounding"
+termSlug: "grounding"
+short: "La technique d'ancrage des sorties de modèles IA à des sources vérifiables, faits ou documents récupérés pour réduire les hallucinations et augmenter la précision."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["rag", "hallucination", "citation", "factuality"]
+synonyms: ["Ancrage factuel", "Ancrage aux connaissances", "Ancrage aux sources"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Le grounding est la pratique de connecter les réponses générées par l'IA à des sources d'information externes vérifiables—documents, bases de données, APIs, ou bases de connaissances—plutôt que de s'appuyer uniquement sur les informations encodées dans les paramètres du modèle. Dans les systèmes RAG (Retrieval-Augmented Generation), le grounding signifie contraindre les sorties du modèle aux informations réellement présentes dans les documents récupérés. Un grounding efficace réduit les hallucinations, augmente la précision factuelle, permet la vérification, et rend les systèmes IA plus fiables pour les applications entreprise et critiques.
+
+## Pourquoi c'est important
+
+Le grounding est essentiel pour les systèmes IA en production:
+
+- **Réduit hallucinations** — sorties liées à sources réelles
+- **Permet vérification** — utilisateurs peuvent vérifier les affirmations
+- **Augmente confiance** — réponses auditables, traçables
+- **Supporte conformité** — requis pour domaines juridiques, médicaux
+- **Améliore précision** — exploite informations actuelles, faisant autorité
+- **Débloque usage entreprise** — prérequis pour applications critiques
+
+## Comment ça fonctionne
+
+**Non-ancré vs ancré :**
+
+```
+NON-ANCRÉ (LLM pur):
+  Utilisateur: "Quelle est la politique de remboursement?"
+  LLM → "Nous offrons une garantie remboursement 30 jours..."
+        ⚠️ Halluciné — le modèle n'a jamais vu la politique réelle
+
+ANCRÉ (RAG):
+  Utilisateur: "Quelle est la politique de remboursement?"
+  1. Récupérer: conditions-generales.pdf, p.12
+     "Les abonnés peuvent annuler sous 14 jours pour
+      remboursement complet..."
+  2. Générer depuis source:
+     "Selon nos Conditions Générales, nous offrons une
+      fenêtre de remboursement de 14 jours." [1]
+      [1] conditions-generales.pdf, p.12
+      ✓ Vérifiable — l'utilisateur peut vérifier la source
+```
+
+**Architecture grounding :**
+
+```
+      Requête utilisateur
+              │
+              ▼
+  ┌──────────────────────┐
+  │  Traitement requête  │
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐    ┌─────────────────┐
+  │  Système retrieval   │───▶│ Base connaiss.  │
+  │  (trouve sources)    │◀───│ • Documents     │
+  └──────────────────────┘    │ • Bases données │
+              │               │ • APIs          │
+              ▼               └─────────────────┘
+  ┌──────────────────────┐
+  │   Génération LLM     │ ← contraint au contexte récupéré
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐
+  │  Couche vérification │ ← vérifie affirmations vs sources
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐
+  │   Réponse ancrée     │
+  │   + citations sources│
+  └──────────────────────┘
+```
+
+**Types de grounding :**
+
+| Type | Source | Exemple |
+|---|---|---|
+| Document | PDFs, pages web, bases connaissances | RAG entreprise sur docs internes |
+| Base données | Résultats [requêtes](/fr/glossary/prompt/) SQL/NoSQL | "Ventes Q4" → chiffres réels |
+| API | Données externes live | "Prix AAPL?" → cotation temps réel |
+| Outil | Sorties calculateur/code | "15% de 2 340 €" → résultat exact |
+
+**Métriques qualité :**
+
+| Métrique | Mesure |
+|---|---|
+| Fidélité | Réponse correspond aux sources |
+| [Attribution](/fr/glossary/attribution/) | Affirmations liées aux sources |
+| Couverture | Infos clés des sources incluses |
+| Précision | Pas d'affirmations non-ancrées |
+| Précision citations | Citations vers la bonne source |
+
+## Questions fréquentes
+
+**Q: Comment le grounding diffère du [fine-tuning](/fr/glossary/fine-tuning/)?**
+
+R: Le fine-tuning fixe l'information dans les paramètres—change ce que modèle "sait". Le grounding fournit information à l'[inférence](/fr/glossary/inference/) via retrieval, gardant modèle inchangé. Plus flexible (MAJ documents), auditable (tracer vers sources).
+
+**Q: Le grounding peut-il éliminer complètement les hallucinations?**
+
+R: Non, mais les réduit significativement. Modèles peuvent mal interpréter sources ou générer affirmations non-supportées. Meilleures pratiques combinent grounding avec couches vérification et exigences citations.
+
+**Q: Quelle relation entre grounding et RAG?**
+
+R: RAG est l'architecture; grounding est l'objectif. RAG atteint grounding en récupérant documents et les incluant dans contexte. Grounding aussi possible via requêtes bases données ou appels API.
+
+**Q: Comment mesurer la qualité du grounding?**
+
+R: Métriques clés: fidélité (réponse correspond sources), attribution (affirmations liées sources), scores groundedness (évaluation automatisée), précision citations.
+
+## Termes associés
+
+- [RAG](/fr/glossary/rag/) — architecture retrieval-augmented generation
+- [Hallucination](/fr/glossary/hallucination/) — ce que grounding prévient
+- [Citation](/fr/glossary/citation/) — rendre grounding transparent
+- [Factualité](/fr/glossary/factuality/) — objectif précision du grounding
+
+---
+
+## Références
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [Article RAG fondamental]
+
+> Thoppilan et al. (2022), "[LaMDA: Language Models for Dialog Applications](https://arxiv.org/abs/2201.08239)", arXiv. [Grounding dans systèmes dialogue]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Métriques attribution]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [Survey complet RAG/grounding]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [Foundational RAG paper]
+
+> Thoppilan et al. (2022), "[LaMDA: Language Models for Dialog Applications](https://arxiv.org/abs/2201.08239)", arXiv. [Grounding in dialog systems]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attribution metrics]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [Comprehensive RAG/grounding survey]

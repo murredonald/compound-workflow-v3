@@ -1,0 +1,121 @@
+---
+term: "Temperatuur"
+termSlug: "temperature"
+short: "Een parameter die de willekeurigheid van taalmodeloutputs regelt, en creativiteit versus consistentie beïnvloedt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["top-p", "top-k", "inference", "llm"]
+synonyms: ["Samplingtemperatuur", "Modeltemperatuur", "Generatietemperatuur"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Temperatuur is een parameter die de willekeurigheid van de output van een taalmodel tijdens tekstgeneratie regelt. Lagere temperaturen (bijv. 0.1) maken outputs meer deterministisch en gefocust, terwijl hogere temperaturen (bijv. 1.0+) diversiteit en creativiteit verhogen maar coherentie kunnen verminderen. Het werkt door de kansverdeling te schalen voordat het volgende token wordt gesampled.
+
+## Waarom het belangrijk is
+
+Temperatuur is een kritieke controle voor AI-applicatiegedrag:
+
+- **Precisie vs. creativiteit** — laag voor feitelijke taken, hoog voor brainstormen
+- **Consistentie** — lage temperaturen produceren reproduceerbare outputs
+- **Gebruikerservaring** — temperatuur afstellen beïnvloedt waargenomen intelligentie
+- **Taakoptimalisatie** — verschillende taken vereisen verschillende temperatuurinstellingen
+- **Veiligheid** — lagere temperaturen reduceren onverwachte of ongepaste outputs
+
+De juiste temperatuur kan modelprestaties voor specifieke use cases transformeren.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   TEMPERATUUREFFECT                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Originele logits: [2.0, 1.0, 0.5, 0.2]                   │
+│  (Voor softmax)                                            │
+│                                                            │
+│  TEMPERATUUR = 0.5 (Meer gefocust)                         │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Geschaald: [4.0, 2.0, 1.0, 0.4]               │        │
+│  │  Kansen:    [78%, 15%, 5%, 2%]                 │        │
+│  │  ████████████████████░░░░                      │        │
+│  │  Token A domineert                             │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  TEMPERATUUR = 1.0 (Gebalanceerd)                          │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Geschaald: [2.0, 1.0, 0.5, 0.2]               │        │
+│  │  Kansen:    [47%, 27%, 17%, 9%]                │        │
+│  │  ████████████░░░░░░░░                          │        │
+│  │  Meer diversiteit                              │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  TEMPERATUUR = 2.0 (Creatief/willekeurig)                  │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Geschaald: [1.0, 0.5, 0.25, 0.1]              │        │
+│  │  Kansen:    [34%, 28%, 22%, 16%]               │        │
+│  │  ████████░░░░░░░░░░░░                          │        │
+│  │  Bijna uniforme verdeling                      │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  Formule: P(token) = softmax(logits / temperatuur)         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Aanbevolen instellingen per taak:**
+| Taak | Temperatuur | Motivatie |
+|------|-------------|-----------|
+| Codegeneratie | 0.0-0.3 | Precisie vereist |
+| Feitelijke Q&A | 0.1-0.5 | Nauwkeurigheid boven creativiteit |
+| Conversatie | 0.7-0.9 | Natuurlijke variatie |
+| Creatief schrijven | 0.9-1.2 | Nieuwheid aanmoedigen |
+
+## Veelgestelde vragen
+
+**V: Wat betekent temperatuur 0?**
+
+A: Temperatuur 0 (of bijna-nul) laat het model altijd het token met hoogste kans kiezen—deterministische, [greedy decodering](/nl/glossary/greedy-decoding/). Nuttig wanneer je consistente, reproduceerbare outputs nodig hebt.
+
+**V: Kan temperatuur groter zijn dan 1?**
+
+A: Ja. Waarden boven 1 vlakken de kansverdeling af, waardoor zeldzame tokens waarschijnlijker worden. Dit verhoogt creativiteit maar riskeert incoherentie. Blijf over het algemeen onder 1.5 voor bruikbare output.
+
+**V: Hoe werkt temperatuur samen met top-p?**
+
+A: Ze zijn complementair. Temperatuur past de verdelingsvorm aan; top-p/top-k samplen er vervolgens uit. Beide gebruiken geeft fijnmazige controle. Veel APIs passen eerst temperatuur toe, dan top-p filtering.
+
+**V: Wat is een goede standaardtemperatuur?**
+
+A: 0.7 is een veelgebruikte default—gebalanceerd tussen consistentie en variatie. Pas aan op basis van je specifieke taakvereisten en test met echte voorbeelden.
+
+## Gerelateerde termen
+
+- [Top-p Sampling](/nl/glossary/top-p/) — nucleus sampling parameter
+- [Top-k Sampling](/nl/glossary/top-k/) — beperkt tokenkandidaten
+- [Inferentie](/nl/glossary/inference/) — generatieproces waar temperatuur op van toepassing is
+- [LLM](/nl/glossary/llm/) — modellen gecontroleerd door temperatuur
+
+---
+
+## Referenties
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ [citaties](/nl/glossary/citation/)]
+
+> Ackley et al. (1985), "[A Learning Algorithm for Boltzmann Machines](https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf)", Cognitive Science. [5.000+ citaties]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1.000+ citaties]
+
+> Ficler & Goldberg (2017), "[Controlling Linguistic Style Aspects in Neural Language Generation](https://arxiv.org/abs/1707.02633)", arXiv. [400+ citaties]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Ackley et al. (1985), "[A Learning Algorithm for Boltzmann Machines](https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf)", Cognitive Science. [5,000+ citations]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Ficler & Goldberg (2017), "[Controlling Linguistic Style Aspects in Neural Language Generation](https://arxiv.org/abs/1707.02633)", arXiv. [400+ citations]

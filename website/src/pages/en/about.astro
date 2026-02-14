@@ -14,79 +14,95 @@ const locale = "en";
   path="/about/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
-    <div class="container">
-      <h1 class="text-display font-bold tracking-tight mb-6">
-        {t("nav.about", locale)}
-      </h1>
-      <p class="text-body-lg text-muted-foreground max-w-3xl mb-12">
-        Building AI-powered tax research for Belgium's professionals.
-      </p>
-    </div>
-  </Section>
+    <Section>
+      <div class="max-w-3xl">
+        <p class="text-body-sm font-medium text-primary uppercase tracking-wider mb-4">About Auryth</p>
+        <h1 class="text-display font-bold tracking-tight mb-6">
+          Building a tax research assistant that's honest about what it knows — and what it doesn't.
+        </h1>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-4 py-2 text-body-sm font-medium text-foreground">10+ years in Belgian tax</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-4 py-2 text-body-sm font-medium text-foreground">Tax × AI expertise</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-4 py-2 text-body-sm font-medium text-foreground">3 Belgian regions, 4 languages</span>
+        </div>
+      </div>
+    </Section>
 
-  <Section muted class="py-24 md:py-32">
-    <div class="container">
+    <Section muted>
       <div class="max-w-3xl mx-auto">
         <h2 class="text-h2 font-bold mb-6">Our Story</h2>
         <div class="space-y-4 text-body text-muted-foreground">
           <p>
-            Auryth BV is a Belgian company dedicated to making tax law accessible
-            through artificial intelligence. We started with a simple observation:
-            tax professionals spend countless hours searching through fragmented
-            documentation, legal texts, and ruling databases.
+            <strong class="text-foreground">Auryth was born from frustration</strong> — not from a pitch deck.
           </p>
           <p>
-            Our platform brings together Belgium's tax landscape—federal and
-            regional legislation, administrative circulars, advance rulings, and
-            case law—into a single, intelligent research assistant.
+            For over a decade, our team has lived inside Belgian tax. We've sat in the offices of <strong class="text-foreground">law firms, Big Four advisory teams, accounting practices, family offices, and corporate tax departments</strong> across Belgium, Luxembourg, and Switzerland. We've done the work: navigating the WIB, cross-referencing circulars, chasing down rulings across Fisconetplus, Jura, and Monkey — often for hours, just to be confident in a single answer.
           </p>
           <p>
-            We're building for accountants, tax advisors, and legal professionals
-            who need reliable answers backed by verifiable sources. Every response
-            includes precise citations, enabling you to trust the information and
-            verify it yourself.
+            We also happen to be deeply technical — from both sides. One of us has been programming in Python for years and was working with <strong class="text-foreground">natural language processing long before anyone called it "AI."</strong> Algorithmic trading, early OpenAI models like DaVinci, custom-built RAG systems — we were implementing this technology for our own work well before it had a name that trended on LinkedIn. The other spent years as a <strong class="text-foreground">technology consultant advising major financial institutions</strong> — designing systems, managing complex transformations, and understanding firsthand what it takes to build tools that professionals in regulated industries actually trust and adopt.
           </p>
         </div>
-      </div>
-    </div>
-  </Section>
 
-  <Section class="py-24 md:py-32">
-    <div class="container">
-      <div class="max-w-3xl mx-auto">
-        <h2 class="text-h2 font-bold mb-6">Our Mission</h2>
-        <p class="text-body-lg text-muted-foreground mb-8">
-          Making Belgian tax law accessible and transparent through AI that
-          professionals can trust.
+        <blockquote class="border-l-4 border-primary pl-6 py-2 my-8">
+          <p class="text-h3 font-semibold text-foreground">
+            "We didn't read about the problem in a market report. We lived it."
+          </p>
+        </blockquote>
+
+        <div class="space-y-4 text-body text-muted-foreground">
+          <p>
+            That combination — <strong class="text-foreground">deep tax expertise, hands-on AI experience, and enterprise technology consulting at the highest level</strong> — is what makes Auryth different. When we tested general-purpose AI models on real Belgian tax questions, we saw exactly what any experienced practitioner would see: confident answers that were <strong class="text-foreground">subtly, dangerously wrong</strong>. Outdated rates. Blended jurisdictions. Missing exceptions. No sources.
+          </p>
+          <p>
+            We knew it could be done better. Not by making another chatbot that guesses, but by building a <strong class="text-foreground">research platform that thinks the way a tax professional thinks</strong> — methodically, with sources, with awareness of what changed and when.
+          </p>
+          <p>
+            That's Auryth. <strong class="text-foreground">Every answer is scored for confidence. Every source is ranked by legal authority. Every claim can be verified.</strong>
+          </p>
+        </div>
+
+        <blockquote class="border-l-4 border-primary pl-6 py-2 my-8">
+          <p class="text-h3 font-semibold text-foreground">
+            "In tax, 'probably right' isn't good enough."
+          </p>
+        </blockquote>
+
+        <p class="text-body text-muted-foreground">
+          We're building for the professionals who know the difference.
         </p>
+      </div>
+    </Section>
+
+    <Section>
+      <div class="max-w-3xl mx-auto mb-10">
+        <h2 class="text-h2 font-bold mb-4">Our Approach</h2>
+        <p class="text-body-lg text-muted-foreground">
+          Most AI tools give you confident answers. We think that's dangerous — especially in tax.
+        </p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
         <Card>
-          <h3 class="text-body-lg font-semibold mb-3">Our Approach</h3>
-          <ul class="space-y-2 text-body text-muted-foreground">
-            <li class="flex items-start">
-              <span class="mr-2">•</span>
-              <span>Accuracy first: every answer cites official sources</span>
-            </li>
-            <li class="flex items-start">
-              <span class="mr-2">•</span>
-              <span>Built for professionals: authoritative yet accessible</span>
-            </li>
-            <li class="flex items-start">
-              <span class="mr-2">•</span>
-              <span>Belgian-focused: deep coverage of federal and regional tax law</span>
-            </li>
-            <li class="flex items-start">
-              <span class="mr-2">•</span>
-              <span>Transparent: you can always verify our sources</span>
-            </li>
-          </ul>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Honest by design</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Every answer comes with a confidence score. When we're certain, we show you why. When we're not, we tell you — because you deserve to know how much weight to put on what we give you.
+          </p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">No black box</h3>
+          <p class="text-body-sm text-muted-foreground">
+            See which sources informed an answer, how they were ranked, and why certain provisions were considered but set aside. As a professional, your judgment should always be the final word.
+          </p>
+        </Card>
+        <Card>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Our promise</h3>
+          <p class="text-body-sm text-muted-foreground">
+            Not that we're always right — but that you'll always know where you stand. We'd rather give you an honest "we're not sure" than a convincing answer built on thin evidence. Because in tax, the cost of false certainty is always higher than the cost of knowing your limits.
+          </p>
         </Card>
       </div>
-    </div>
-  </Section>
+    </Section>
 
-  <Section muted class="py-24 md:py-32">
-    <div class="container">
+    <Section muted>
       <div class="max-w-2xl mx-auto text-center">
         <h2 class="text-h2 font-bold mb-6">
           Join the Waitlist
@@ -102,7 +118,6 @@ const locale = "en";
           Join Waitlist
         </a>
       </div>
-    </div>
-  </Section>
+    </Section>
   </main>
 </BaseLayout>

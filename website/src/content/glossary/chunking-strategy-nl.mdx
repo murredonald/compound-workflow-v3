@@ -1,0 +1,121 @@
+---
+term: "Chunking Strategie"
+termSlug: "chunking-strategy"
+short: "De methode om documenten te verdelen in kleinere segmenten voor effectieve retrieval en verwerking in RAG-systemen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "embeddings", "context-window", "semantic-search"]
+synonyms: ["Tekstsegmentatie", "Documentsplitsing", "Chunk-optimalisatie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een chunking strategie definieert hoe documenten worden opgesplitst in kleinere stukken ([chunks](/nl/glossary/document-chunk/)) voor opslag in vectordatabases en retrieval in RAG-systemen. De strategie bepaalt chunkgrootte, overlap en grenzen—kritieke beslissingen die de retrievalkwaliteit en relevantie van gegenereerde antwoorden significant beïnvloeden.
+
+## Waarom het belangrijk is
+
+Effectieve chunking is fundamenteel voor RAG-systeemprestaties:
+
+- **Retrievalprecisie** — correct gedimensioneerde chunks verbeteren semantische matching-nauwkeurigheid
+- **Contextbehoud** — goede grenzen houden gerelateerde informatie bij elkaar
+- **Token-efficiëntie** — optimale groottes balanceren contextrijkheid met [LLM](/nl/glossary/llm/)-limieten
+- **Antwoordkwaliteit** — betere chunks leiden tot betere gegenereerde antwoorden
+- **Kostenbeheer** — passende dimensionering reduceert onnodige API-calls
+
+Slechte chunking is een van de meest voorkomende oorzaken van ondermaatse RAG-systeemprestaties.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   CHUNKING STRATEGIEËN                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  VASTE-GROOTTE CHUNKING                                    │
+│  ┌──────────┬──────────┬──────────┬──────────┐             │
+│  │  500 tok │  500 tok │  500 tok │  500 tok │             │
+│  └──────────┴──────────┴──────────┴──────────┘             │
+│  Simpel maar kan midden in zin knippen                     │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  OVERLAPPENDE CHUNKS                                       │
+│  ┌──────────────┐                                          │
+│  │   Chunk 1    │                                          │
+│  └────────┬─────┴───────┐                                  │
+│           │   Chunk 2   │    50-100 token overlap          │
+│           └────────┬────┴───────┐                          │
+│                    │   Chunk 3  │                          │
+│                    └────────────┘                          │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SEMANTISCHE CHUNKING                                      │
+│  ┌─────────────────┐ ┌────────────┐ ┌──────────────────┐   │
+│  │ Compleet idee A │ │  Idee B    │ │ Compleet idee C  │   │
+│  └─────────────────┘ └────────────┘ └──────────────────┘   │
+│  Splitst bij natuurlijke grenzen (paragrafen, secties)     │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HIËRARCHISCHE CHUNKING                                    │
+│  Document → Sectie → Paragraaf → Zin                       │
+│  Meerdere granulariteiten samen opgeslagen                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Belangrijke parameters:**
+1. **Chunkgrootte** — typisch 256-1024 tokens; afhankelijk van contenttype
+2. **Overlap** — meestal 10-20% voorkomt informatieverlies bij grenzen
+3. **Splitsmethode** — karakter, token, zin, paragraaf of semantisch
+4. **Metadata** — bron, positie en hiërarchie-informatie bewaard
+
+## Veelgestelde vragen
+
+**V: Wat is de beste chunkgrootte?**
+
+A: Het hangt af van je content. Technische docs werken vaak goed met 500-1000 tokens. Q&A-content heeft mogelijk kortere chunks nodig (256-500). Test verschillende groottes met je daadwerkelijke queries om het optimum te vinden.
+
+**V: Moeten chunks overlappen?**
+
+A: Meestal wel. 50-100 token overlap helpt context te behouden die chunkgrenzen overspant. Zonder overlap kunnen zinnen of belangrijke context doormidden worden geknipt.
+
+**V: Wat is semantische chunking?**
+
+A: In plaats van vaste groottes, splitst semantische chunking bij natuurlijke grenzen—paragrafen, secties of zelfs gedetecteerde onderwerpswijzigingen. Het houdt coherente ideeën bij elkaar maar produceert variabele chunkgroottes.
+
+**V: Hoe beïnvloedt chunking retrieval?**
+
+A: Te groot = verwaterde relevantie, kan contextlimieten overschrijden. Te klein = gefragmenteerde informatie, ontbrekende context. De juiste balans vinden voor jouw use case is essentieel.
+
+## Gerelateerde termen
+
+- [RAG](/nl/glossary/rag/) — systeem dat gechunkte documenten gebruikt
+- [Embeddings](/nl/glossary/embeddings/) — vectoren gegenereerd van chunks
+- [Vector Database](/nl/glossary/vector-database/) — slaat chunk-[embeddings](/nl/glossary/vector-embeddings/) op
+- [Context Window](/nl/glossary/context-window/) — beperkt hoeveel chunks passen
+
+---
+
+## Referenties
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [4.000+ [citaties](/nl/glossary/citation/)]
+
+> Gao et al. (2024), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [500+ citaties]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3.500+ citaties]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain QA](https://arxiv.org/abs/2007.01282)", EACL. [1.500+ citaties]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [4,000+ citations]
+
+> Gao et al. (2024), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [500+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain QA](https://arxiv.org/abs/2007.01282)", EACL. [1,500+ citations]

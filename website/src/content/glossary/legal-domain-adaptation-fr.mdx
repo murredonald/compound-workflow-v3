@@ -1,0 +1,68 @@
+---
+term: "Adaptation au domaine juridique"
+termSlug: "legal-domain-adaptation"
+short: "L’adaptation au domaine juridique ajuste un système IA/retrieval au langage, aux sources et aux contraintes du droit pour des réponses plus précises et défendables."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["authority-ranking-model", "rag", "embeddings", "prompt", "inference"]
+synonyms: ["Legal-domain adaptation", "Domain adaptation for law", "Legal specialization"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L’adaptation au domaine juridique consiste à [adapter](/fr/glossary/adapter/) un système d’IA (LLM, classifieur ou stack de retrieval) aux textes et pratiques du droit. Elle vise le vocabulaire juridique, les [citations](/fr/glossary/citation/), la structure documentaire, et les critères de justesse propres au domaine (juridiction, temporalité, hiérarchie des normes).
+
+## Pourquoi c'est important
+
+- **Précision** : le langage juridique est dense et sensible aux nuances.
+- **Ancrage** : les réponses doivent être liées à des sources faisant autorité.
+- **Coût de l’erreur** : une petite erreur peut avoir un impact de conformité important.
+- **Meilleur couple retrieval + génération** : améliore ce qui est retrouvé et la synthèse.
+
+## Comment ça fonctionne
+
+L’adaptation combine souvent données, retrieval et évaluation :
+
+```
+Sources juridiques + labels -> adapter retrieval + prompts + évaluation -> déployer -> surveiller
+```
+
+Exemples : [corpus](/fr/glossary/corpus/) autoritatifs, métadonnées (juridiction, dates d’effet), ranking par autorité, jeux d’évaluation juridiques, et prompts orientés "citation d’abord".
+
+## Exemple pratique
+
+Un assistant générique peut confondre le poids d’une "circulaire" et d’une "loi". Un système adapté reconnaît le caractère souvent non contraignant de la circulaire, remonte la norme applicable et fournit une réponse structurée avec citations et limites d’applicabilité.
+
+## Questions fréquentes
+
+**Q: Est-ce la même chose que le [fine-tuning](/fr/glossary/fine-tuning/) ?**
+
+R: Pas forcément. Le fine-tuning est un outil possible. On peut aussi obtenir beaucoup via retrieval, ranking par autorité, conception de prompts et évaluation sans modifier les poids du modèle.
+
+**Q: Quel est le piège principal ?**
+
+R: Confondre "ça sonne juste" avec "c’est juridiquement correct". Il faut gérer juridiction, dates et sélection de sources.
+
+## Termes associés
+
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - intégrer l’autorité au ranking
+- [RAG](/fr/glossary/rag/) - récupérer des sources avant de générer
+- [Embeddings](/fr/glossary/embeddings/) - retrieval sémantique sur textes juridiques
+- [Prompt](/fr/glossary/prompt/) - orienter vers citations et contraintes
+- [Inference](/fr/glossary/inference/) - comportement runtime à surveiller
+
+---
+
+## Références
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

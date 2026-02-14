@@ -1,0 +1,218 @@
+---
+term: "Attribution"
+termSlug: "attribution"
+short: "La capacité de l'IA à lier les déclarations générées à des preuves sources spécifiques, établissant quelles parties de la sortie sont soutenues par quels documents."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["citation", "grounding", "rag", "factuality"]
+synonyms: ["Attribution de source", "Liaison de preuves", "Attribution de déclarations"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'attribution dans les systèmes IA fait référence au processus d'établissement de connexions explicites entre les affirmations générées et leurs preuves de support. Alors que la citation ajoute des références aux réponses, l'attribution va plus loin—elle détermine si une affirmation spécifique est réellement impliquée par (logiquement supportée par) la source citée. Un système IA bien attribué peut répondre "Quelle preuve supporte cette déclaration?" pour chaque affirmation factuelle. L'attribution est cruciale pour l'IA fiable car elle permet la vérification et prévient l'illusion d'ancrage.
+
+## Pourquoi c'est important
+
+L'attribution est essentielle pour l'[IA responsable](/fr/glossary/responsible-ai/):
+
+- **Prévient faux ancrage** — assure que sources citées supportent réellement
+- **Permet audit** — chaque affirmation traçable à preuve spécifique
+- **Supporte conformité** — exigences réglementaires de transparence
+- **Construit confiance** — utilisateurs peuvent vérifier chaîne raisonnement
+- **Attrape [hallucinations](/fr/glossary/hallucination/)** — affirmations non-attribuées sont signalées
+- **Améliore fiabilité** — force modèle à rester sur ce que disent sources
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      ATTRIBUTION                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CITATION vs ATTRIBUTION:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  CITATION SEULE (peut être superficielle):                │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Réponse: "La date limite est 15 jan [1]"          │ │
+│  │  Source [1]: "Planning Q4 doit être fait pour déc" │ │
+│  │                                                      │ │
+│  │  ⚠️ Citation existe mais ne supporte pas affirm.! │ │
+│  │  La source ne dit rien sur date limite 15 janvier. │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  ATTRIBUTION CORRECTE:                                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Réponse: "La date limite est 15 jan [1]"          │ │
+│  │  Source [1]: "Date limite livrables 15 janvier"    │ │
+│  │                                                      │ │
+│  │  ✓ Attribution vérifiée: source implique affirm.  │ │
+│  │  La source déclare explicitement la date limite.   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CLASSIFICATION ATTRIBUTION:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Pour chaque paire affirmation + source citée:            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ATTRIBUABLE (source supporte affirmation):        │ │
+│  │  ├── Match exact: affirm. utilise mêmes mots       │ │
+│  │  ├── Paraphrase: affirm. reformule sens source     │ │
+│  │  └── Inférence: affirm. découle logiquement        │ │
+│  │                                                      │ │
+│  │  NON ATTRIBUABLE (source ne supporte pas):         │ │
+│  │  ├── Hors sujet: source discute autre sujet       │ │
+│  │  ├── Contradite: source dit l'opposé              │ │
+│  │  ├── Extrapolée: affirm. va au-delà source        │ │
+│  │  └── Fabriquée: aucune relation source            │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PIPELINE ATTRIBUTION:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. EXTRACTION AFFIRMATIONS                          │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Réponse: "CA a crû de 15% [1] et part de   │   │ │
+│  │  │  marché a atteint 23% [2] au Q4."           │   │ │
+│  │  │                                              │   │ │
+│  │  │  Affirmations extraites:                     │   │ │
+│  │  │  • Affirm. A: "CA crû 15%" [cite 1]         │   │ │
+│  │  │  • Affirm. B: "Part marché 23%" [cite 2]    │   │ │
+│  │  │  • Affirm. C: "C'était au Q4" [cite ?]      │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  2. RÉCUPÉRATION SOURCES                            │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Source [1]: "FY24 a vu croissance CA de    │   │ │
+│  │  │              15,2% vs année précédente"     │   │ │
+│  │  │                                              │   │ │
+│  │  │  Source [2]: "Part marché a atteint 22,8%   │   │ │
+│  │  │              à fin année fiscale"           │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  3. VÉRIFICATION IMPLICATION                        │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Affirm. A: "CA crû 15%"                    │   │ │
+│  │  │  Source 1: "croissance CA de 15,2%"         │   │ │
+│  │  │  → ATTRIBUABLE ✓ (15% ≈ 15,2%)             │   │ │
+│  │  │                                              │   │ │
+│  │  │  Affirm. B: "Part marché 23%"               │   │ │
+│  │  │  Source 2: "Part marché a atteint 22,8%"    │   │ │
+│  │  │  → ATTRIBUABLE ✓ (23% ≈ 22,8%)             │   │ │
+│  │  │                                              │   │ │
+│  │  │  Affirm. C: "C'était au Q4"                 │   │ │
+│  │  │  Sources: mentionnent "FY" et "année fiscale"│  │ │
+│  │  │  → NON ATTRIBUABLE ⚠️ (Q4 non mentionné)   │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MÉTHODES ATTRIBUTION:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Basée NLI (Natural Language Inference):                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Utiliser modèle NLI pour classifier:               │ │
+│  │  Prémisse: [texte source]                            │ │
+│  │  Hypothèse: [affirmation]                            │ │
+│  │                                                      │ │
+│  │  → Implication: Source supporte affirm. ✓          │ │
+│  │  → Neutre: Source n'aborde pas affirm.             │ │
+│  │  → Contradiction: Source contredit affirm. ✗       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Vérification basée LLM:                                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt LLM:                                         │ │
+│  │  "Cette source supporte-t-elle cette affirmation?  │ │
+│  │                                                      │ │
+│  │   Source: [texte source]                            │ │
+│  │   Affirmation: [texte affirmation]                  │ │
+│  │                                                      │ │
+│  │   Réponse: Supportée / Non supportée"              │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MÉTRIQUES ATTRIBUTION:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Métrique         │  Formule                        │ │
+│  │  ─────────────────┼──────────────────────────────── │ │
+│  │  Précision        │  # affirmations attribuées      │ │
+│  │  attribution      │  ────────────────────────       │ │
+│  │                   │  # affirmations avec citations  │ │
+│  │                   │                                  │ │
+│  │  Rappel           │  # affirmations attribuées      │ │
+│  │  attribution      │  ────────────────────────       │ │
+│  │                   │  # total affirm. factuelles     │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Comment l'attribution diffère de la citation?**
+
+R: La citation ajoute références; l'attribution les vérifie. Une réponse peut avoir citations parfaites mais mauvaise attribution (sources citées ne supportent pas affirmations). Attribution est contrôle qualité sur citations.
+
+**Q: Comment implémenter vérification attribution?**
+
+R: Approches communes: (1) modèles NLI qui classifient paires prémisse-hypothèse, (2) [LLM](/fr/glossary/llm/)-comme-juge pour vérifier support source-affirmation, (3) évaluation humaine pour applications critiques.
+
+**Q: Chaque affirmation doit-elle être attribuée?**
+
+R: Affirmations factuelles nécessitant preuves doivent être attribuées. Connaissances communes, [inférences](/fr/glossary/inference/) logiques de faits attribués, et opinions/analyses ne nécessitent pas attribution.
+
+**Q: Quel score attribution acceptable?**
+
+R: Dépend de l'application. Domaines critiques (juridique, médical) doivent viser 95%+. Assistants connaissances générales peuvent accepter 80-90%.
+
+## Termes associés
+
+- [Citation](/fr/glossary/citation/) — ajouter références sources
+- [Grounding](/fr/glossary/grounding/) — ancrer aux sources
+- [Factualité](/fr/glossary/factuality/) — précision des affirmations
+- [RAG](/fr/glossary/rag/) — retrieval permettant attribution
+
+---
+
+## Références
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Métrique AIS et évaluation attribution]
+
+> Bohnet et al. (2022), "[Attributed Question Answering](https://arxiv.org/abs/2212.08037)", arXiv. [Framework Attributed QA]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [Évaluation attribution basée LLM]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Révision basée attribution]
+
+## References
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [AIS metric and attribution evaluation]
+
+> Bohnet et al. (2022), "[Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [LLM-based attribution evaluation]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Attribution-based revision]

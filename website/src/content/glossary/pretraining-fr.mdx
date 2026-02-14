@@ -1,0 +1,184 @@
+---
+term: "Pré-entraînement"
+termSlug: "pretraining"
+short: "La phase initiale d'entraînement d'un grand modèle de langage sur des corpus de texte massifs pour apprendre les patterns linguistiques généraux et les connaissances avant le fine-tuning spécifique."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["fine-tuning", "llm", "transformer-architecture", "instruction-tuning"]
+synonyms: ["Pre-training", "Entraînement de base", "Entraînement fondation"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Le pré-entraînement est la phase d'entraînement fondamentale où un modèle de langage apprend à partir de vastes quantités de données textuelles non étiquetées. Pendant le pré-entraînement, le modèle développe ses capacités fondamentales: comprendre la grammaire, apprendre des faits sur le monde, acquérir des patterns de raisonnement et construire des représentations du langage. Cette phase implique typiquement la [prédiction](/fr/glossary/inference/) des tokens suivants (modélisation causale) ou le remplissage de mots masqués sur des milliards d'échantillons textuels. Le pré-entraînement crée un "modèle fondation" qui peut ensuite être adapté à des tâches spécifiques via fine-tuning.
+
+## Pourquoi c'est important
+
+Le pré-entraînement est la phase la plus critique et coûteuse du développement LLM:
+
+- **Détermine les capacités** — ce qu'un modèle sait vient des données de pré-entraînement
+- **Établit le raisonnement** — les patterns logiques émergent pendant cette phase
+- **Crée la fondation** — toutes les tâches en aval s'appuient sur les connaissances pré-entraînées
+- **Investissement majeur** — coûte des millions en compute, prend semaines/mois
+- **Fixe les limitations** — date de coupure des connaissances, biais intégrés
+- **Permet le transfert** — un modèle pré-entraîné sert de nombreuses applications
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    PRÉ-ENTRAÎNEMENT                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PRÉ-ENTRAÎNEMENT DANS LE CYCLE DE VIE DU MODÈLE:         │
+│  ────────────────────────────────────────────────          │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. PRÉ-ENTRAÎNEMENT (cette phase)                  │ │
+│  │     │  Apprendre langage général & connaissances    │ │
+│  │     │  Trillions de tokens, mois d'entraînement     │ │
+│  │     │  Sortie: Modèle fondation/base                │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  2. FINE-TUNING                                      │ │
+│  │     │  Adapter à tâches/domaines spécifiques        │ │
+│  │     │  Datasets plus petits, jours d'entraînement   │ │
+│  │     │  Sortie: Modèle spécifique à la tâche         │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  3. ALIGNMENT (RLHF/Constitutional AI)              │ │
+│  │     │  Aligner avec préférences humaines            │ │
+│  │     │  Feedback humain, ajustement sécurité         │ │
+│  │     │  Sortie: Modèle assistant                     │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  4. DÉPLOIEMENT                                      │ │
+│  │        Usage production avec guardrails             │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OBJECTIFS DE PRÉ-ENTRAÎNEMENT:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Modélisation Causale du Langage (style GPT):             │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Entrée:  "La capitale de la France est"            │ │
+│  │                                                      │ │
+│  │  Tâche: Prédire le token suivant                    │ │
+│  │                                                      │ │
+│  │  Modèle prédit: "Paris" (avec probabilité)          │ │
+│  │                                                      │ │
+│  │  ┌─────┬──────┬─────┬──────┬─────┬─────────┐       │ │
+│  │  │ La  │capi- │de la│France│ est │  [?]    │       │ │
+│  │  │     │tale  │     │      │     │         │       │ │
+│  │  └──┬──┴──┬───┴──┬──┴──┬───┴──┬──┴────┬────┘       │ │
+│  │     │     │      │     │      │       │             │ │
+│  │     ▼     ▼      ▼     ▼      ▼       ▼             │ │
+│  │  [Transformer traite gauche-à-droite]              │ │
+│  │                                 │                   │ │
+│  │                                 ▼                   │ │
+│  │                            "Paris"                  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  DONNÉES DE PRÉ-ENTRAÎNEMENT:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Mix typique de données pour LLMs modernes:         │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Pages web (Common Crawl)     │  ~60%      │   │ │
+│  │  │  Livres                        │  ~15%      │   │ │
+│  │  │  Wikipedia                     │  ~5%       │   │ │
+│  │  │  Code (GitHub)                 │  ~10%      │   │ │
+│  │  │  Articles scientifiques        │  ~5%       │   │ │
+│  │  │  Autre (news, forums, etc.)    │  ~5%       │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Exemples d'échelle:                                │ │
+│  │  • GPT-3: 300B tokens                               │ │
+│  │  • LLaMA: 1.4T tokens                               │ │
+│  │  • GPT-4: Estimé 10T+ tokens                        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CE QUE LES MODÈLES APPRENNENT PENDANT PRÉ-ENTRAÎNEMENT:   │
+│  ───────────────────────────────────────────────────────   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Grammaire & Syntaxe:                               │ │
+│  │  • Accord sujet-verbe                              │ │
+│  │  • Structure des phrases                           │ │
+│  │  • Règles de ponctuation                           │ │
+│  │                                                      │ │
+│  │  Connaissances du Monde:                            │ │
+│  │  • Faits (capitales, dates, noms)                  │ │
+│  │  • Sens commun                                      │ │
+│  │  • Connaissances de domaine (science, droit, etc.) │ │
+│  │                                                      │ │
+│  │  Patterns de Raisonnement:                          │ │
+│  │  • Inférence logique                               │ │
+│  │  • Opérations mathématiques                        │ │
+│  │  • Cause et effet                                   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Comment le pré-entraînement diffère du fine-tuning?**
+
+R: Le pré-entraînement enseigne la compréhension générale du langage à partir de données massives non étiquetées. Le fine-tuning adapte le modèle pré-entraîné à des tâches spécifiques avec des datasets plus petits et étiquetés.
+
+**Q: Pourquoi ne pas simplement entraîner sur des données spécifiques à la tâche dès le départ?**
+
+R: Les datasets spécifiques sont trop petits pour apprendre la compréhension générale du langage. Le pré-entraînement sur des milliards de tokens capture des patterns qui se transfèrent à toute tâche en aval.
+
+**Q: Qu'est-ce qui détermine la date de coupure des connaissances?**
+
+R: Les données de pré-entraînement ont une date de collecte—le modèle ne connaît que ce qui était dans son [corpus](/fr/glossary/corpus/) d'entraînement.
+
+**Q: Les biais de pré-entraînement peuvent-ils être complètement supprimés via fine-tuning?**
+
+R: Difficile. Les biais appris pendant le pré-entraînement sont profondément intégrés dans les poids du modèle. Le fine-tuning peut réduire les sorties problématiques mais peut ne pas éliminer les biais sous-jacents.
+
+## Termes associés
+
+- [Fine-tuning](/fr/glossary/fine-tuning/) — [adapter](/fr/glossary/adapter/) les modèles pré-entraînés
+- [LLM](/fr/glossary/llm/) — grand modèle de langage
+- [Instruction tuning](/fr/glossary/instruction-tuning/) — apprendre à suivre les [instructions](/fr/glossary/prompt/)
+- [RLHF](/fr/glossary/rlhf/) — [alignment](/fr/glossary/alignment/) via feedback humain
+
+---
+
+## Références
+
+> Radford et al. (2018), "[Improving Language Understanding by Generative Pre-Training](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)", OpenAI. [Pré-entraînement GPT original]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [Pré-entraînement MLM]
+
+> Hoffmann et al. (2022), "[Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)", arXiv. [Ratios optimaux données/compute]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Pratiques modernes de pré-entraînement]
+
+## References
+
+> Radford et al. (2018), "[Improving Language Understanding by Generative Pre-Training](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)", OpenAI. [Original GPT pretraining]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [Masked language modeling pretraining]
+
+> Hoffmann et al. (2022), "[Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)", arXiv (Chinchilla). [Optimal pretraining data/compute ratios]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Modern pretraining practices]

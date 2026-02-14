@@ -1,0 +1,170 @@
+---
+term: "Quantization"
+termSlug: "quantization"
+short: "Het verlagen van modelprecisie van 32/16-bit naar 8/4-bit, wat geheugengebruik drastisch vermindert en inferentie versnelt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["qlora", "model-compression", "inference", "llm"]
+synonyms: ["Modelquantisatie", "Gewichtsquantisatie", "Low-precision inferentie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Quantisatie is een modelcompressietechniek die de numerieke precisie van neurale netwerkgewichten en activaties verlaagt van hogere-bit formaten (32-bit float, 16-bit float) naar lagere-bit representaties (8-bit int, 4-bit int, of zelfs binair). Dit vermindert de geheugenvoetafdruk dramatisch en verhoogt de inferentiesnelheid terwijl acceptabele nauwkeurigheid doorgaans behouden blijft. Moderne quantisatiemethoden kunnen LLMs 4-8x comprimeren met minimaal kwaliteitsverlies.
+
+## Waarom het belangrijk is
+
+Quantisatie maakt praktische deployment van grote modellen mogelijk:
+
+- **Geheugenreductie** — 4x minder geheugen voor 8-bit, 8x minder voor 4-bit
+- **Snellere inferentie** — integer operaties sneller dan floating point
+- **Edge deployment** — draai LLMs op telefoons en embedded devices
+- **Kostenbesparing** — kleinere modellen hebben goedkopere hardware nodig
+- **Energie-efficiëntie** — lagere precisie = minder stroomverbruik
+
+Quantisatie maakt miljarden-parameter modellen toegankelijk op consumentenhardware.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    QUANTISATIE BASICS                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PRECISIE VERGELIJKING:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  FP32 (32-bit float): ████████████████████████████████    │
+│  Bits per gewicht: 32                                      │
+│  LLaMA-7B grootte: 28 GB                                   │
+│                                                            │
+│  FP16 (16-bit float): ████████████████                    │
+│  Bits per gewicht: 16                                      │
+│  LLaMA-7B grootte: 14 GB                                   │
+│                                                            │
+│  INT8 (8-bit integer): ████████                           │
+│  Bits per gewicht: 8                                       │
+│  LLaMA-7B grootte: 7 GB                                    │
+│                                                            │
+│  INT4 (4-bit integer): ████                               │
+│  Bits per gewicht: 4                                       │
+│  LLaMA-7B grootte: 3.5 GB                                  │
+│                                                            │
+│                                                            │
+│  QUANTISATIE PROCES:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  Origineel FP32 gewicht: 0.12345678                       │
+│                                                            │
+│  1. Vind bereik: [min_val, max_val]                       │
+│     bijv. [-0.5, 0.5]                                     │
+│                                                            │
+│  2. Bereken schaal: scale = (max - min) / (2^bits - 1)    │
+│     Voor INT8: scale = 1.0 / 255 ≈ 0.00392                │
+│                                                            │
+│  3. Quantiseer: q = round((val - min) / scale)            │
+│     0.12345678 → round((0.12345678 + 0.5) / 0.00392)      │
+│     = round(158.8) = 159                                  │
+│                                                            │
+│  4. Sla op als integer: 159 (gebruikt slechts 8 bits)     │
+│                                                            │
+│  5. Dequantiseer: val = q × scale + min                   │
+│     159 × 0.00392 - 0.5 = 0.12328 ≈ 0.12345678 ✓         │
+│                                                            │
+│                                                            │
+│  QUANTISATIE TYPES:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Post-Training Quantisatie (PTQ)                      │ │
+│  │ ───────────────────────────────                      │ │
+│  │ • Quantiseer NA training (geen hertraining nodig)    │ │
+│  │ • Snel, simpel, werkt goed voor 8-bit                │ │
+│  │ • Kan nauwkeurigheid verliezen bij 4-bit             │ │
+│  │                                                       │ │
+│  │ Getraind Model ──► Kalibratie ──► Gequantiseerd      │ │
+│  │                    (sample data)                      │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Quantization-Aware Training (QAT)                    │ │
+│  │ ─────────────────────────────────                    │ │
+│  │ • Simuleer quantisatie TIJDENS training              │ │
+│  │ • Model leert robuust te zijn tegen quantisatie      │ │
+│  │ • Betere nauwkeurigheid, maar vereist training       │ │
+│  │                                                       │ │
+│  │ Training met ──► Fake Quantize ──► Echte Quantize    │ │
+│  │ gesim. lage prec.  (gradiënten)     (deployment)     │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  POPULAIRE QUANTISATIE METHODEN:                           │
+│  ────────────────────────────────                          │
+│                                                            │
+│  LLM.int8()   - 8-bit met outlier handling                │
+│  GPTQ         - 4-bit met laag-voor-laag kalibratie       │
+│  AWQ          - 4-bit activatie-bewuste quantisatie       │
+│  NF4          - 4-bit geoptimaliseerd voor normale distr. │
+│  GGML/GGUF   - CPU-geoptimaliseerde quantisatie formaten  │
+│                                                            │
+│  NAUWKEURIGHEID vs COMPRESSIE AFWEGING:                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  Precisie │ Grootte │ Snelheid │ Kwaliteitsverlies        │
+│  ─────────┼─────────┼──────────┼────────────────          │
+│  FP16     │ 1x      │ 1x       │ ~0%                      │
+│  INT8     │ 0.5x    │ 2-3x     │ ~0-1%                    │
+│  INT4     │ 0.25x   │ 3-4x     │ ~1-3%                    │
+│  INT2     │ 0.125x  │ 4-5x     │ ~5-10%+                  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Schaadt quantisatie altijd de modelkwaliteit?**
+
+A: Voor 8-bit quantisatie is kwaliteitsverlies typisch verwaarloosbaar (`<0.5%`). Voor 4-bit bereiken moderne methoden zoals GPTQ en AWQ 1-3% degradatie op benchmarks. De impact verschilt per taak—feitelijke recall kan meer lijden dan algemene vloeiendheid. Benchmark altijd op uw specifieke use case.
+
+**V: Welke quantisatiemethode moet ik gebruiken?**
+
+A: Voor serving op GPU's zijn GPTQ of AWQ populaire keuzes. Voor CPU-inferentie of consumentenapparaten werkt GGUF-formaat goed. Voor fine-tuning behoudt NF4 (gebruikt in QLoRA) de trainbaarheid. Elk heeft afwegingen tussen snelheid, kwaliteit en compatibiliteit.
+
+**V: Kan ik elk model quantiseren?**
+
+A: De meeste moderne transformers quantiseren goed. Kleinere modellen (< 7B parameters) kunnen meer lijden van agressieve quantisatie. Zeer oude architecturen zonder layer normalization kunnen problematisch zijn. Bij twijfel, benchmark uw specifieke model.
+
+**V: Wat is mixed-precision quantisatie?**
+
+A: Verschillende delen van het model gebruiken verschillende precisies. Bijvoorbeeld attention lagen in hogere precisie houden terwijl MLP's agressiever gequantiseerd worden. Dit kan betere kwaliteit/snelheid afwegingen geven dan uniforme quantisatie.
+
+## Gerelateerde termen
+
+- [QLoRA](/nl/glossary/qlora/) — quantisatie gecombineerd met LoRA voor efficiënte fine-tuning
+- [Model compression](/nl/glossary/model-compression/) — bredere categorie inclusief quantisatie
+- [Inference](/nl/glossary/inference/) — waar quantisatievoordelen worden gerealiseerd
+- [LLM](/nl/glossary/llm/) — modellen die vaak gequantiseerd worden voor deployment
+
+---
+
+## Referenties
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Fundamentele 8-bit quantisatie]
+
+> Frantar et al. (2022), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Populaire 4-bit methode]
+
+> Lin et al. (2023), "[AWQ: Activation-aware Weight Quantization](https://arxiv.org/abs/2306.00978)", arXiv. [Geavanceerde 4-bit quantisatie]
+
+> Jacob et al. (2018), "[Quantization and Training of Neural Networks for Efficient Inference](https://arxiv.org/abs/1712.05877)", CVPR. [Fundamentele quantisatietechnieken]
+
+## References
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Foundational 8-bit quantization]
+
+> Frantar et al. (2022), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Popular 4-bit method]
+
+> Lin et al. (2023), "[AWQ: Activation-aware Weight Quantization](https://arxiv.org/abs/2306.00978)", arXiv. [Advanced 4-bit quantization]
+
+> Jacob et al. (2018), "[Quantization and Training of Neural Networks for Efficient Inference](https://arxiv.org/abs/1712.05877)", CVPR. [Foundational quantization techniques]

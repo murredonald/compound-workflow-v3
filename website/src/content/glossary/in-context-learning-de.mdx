@@ -1,0 +1,215 @@
+---
+term: "In-Context Learning"
+termSlug: "in-context-learning"
+short: "Die Fähigkeit großer Sprachmodelle, neue Aufgaben zur Inferenzzeit zu lernen, indem sie auf Beispiele oder Instruktionen im Prompt konditionieren, ohne Parameterupdates."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["few-shot", "zero-shot", "chain-of-thought", "prompt-engineering"]
+synonyms: ["ICL", "Kontextlernen", "Prompt-basiertes Lernen"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+In-Context Learning (ICL) ist ein Paradigma, bei dem große Sprachmodelle sich an neue Aufgaben anpassen, indem sie Informationen im Eingabeprompt nutzen—Beispiele, Instruktionen oder Demonstrationen—ohne Modellparameter durch Training zu modifizieren. Im Gegensatz zu traditionellem [Machine Learning](/de/glossary/machine-learning/), das [gradientenbasierte Optimierung](/de/glossary/gradient-descent/) erfordert, ermöglicht ICL Modellen, Muster aus dem [Kontextfenster](/de/glossary/context-window/) zur Inferenzzeit zu "lernen". Diese emergente Fähigkeit großer [Transformer](/de/glossary/transformer-architecture/) ermöglicht Benutzern, Modellen neues Verhalten beizubringen, einfach durch Erstellen geeigneter [Prompts](/de/glossary/prompt/). ICL umfasst sowohl Zero-Shot (nur Instruktionen) als auch Few-Shot (Beispiele gegeben) Ansätze.
+
+## Warum es wichtig ist
+
+In-Context Learning repräsentiert einen fundamentalen Wandel in der KI-Nutzung:
+
+- **Kein Training erforderlich** — Modelle sofort für neue Aufgaben anpassen
+- **Keine Infrastruktur** — keine GPUs, Datasets oder ML-Pipelines nötig
+- **Maximale Flexibilität** — Aufgabenverhalten durch Prompt-Änderung ändern
+- **Schnelles Prototyping** — Ideen in Minuten statt Tagen testen
+- **Demokratisierte KI** — jeder kann Modelle mit Sprache "programmieren"
+- **Emergente Fähigkeit** — erscheint bei Skala ohne explizites Training
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   IN-CONTEXT LEARNING                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRADITIONELLES ML vs IN-CONTEXT LEARNING:                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  TRADITIONELLES MACHINE LEARNING:                          │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. Gelabelten Datensatz sammeln                    │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ Input₁ → Label₁              │                │ │
+│  │     │ Input₂ → Label₂              │                │ │
+│  │     │ ...                           │                │ │
+│  │     │ Inputₙ → Labelₙ              │                │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  2. Modell trainieren (Gradient Updates)           │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ for epoch in epochs:         │                │ │
+│  │     │   loss = compute_loss(...)   │                │ │
+│  │     │   loss.backward()            │ ← Aktualisiert│ │
+│  │     │   optimizer.step()           │   Gewichte!   │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  3. Trainiertes Modell deployen                    │ │
+│  │                                                      │ │
+│  │  Zeit: Tage bis Wochen                              │ │
+│  │  Kosten: Compute + Datensammlung                    │ │
+│  │  Flexibilität: Nach Training fixiert                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  IN-CONTEXT LEARNING:                                      │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. Prompt mit Aufgabenbeschreibung/Beispielen     │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ [Instruktionen oder Beispiele]│               │ │
+│  │     │ [Neue Eingabe zu verarbeiten] │               │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  2. Modell verarbeitet (KEINE Gewicht-Updates!)    │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ Muster aus Kontext erkannt,  │ ← Nur-Lese-   │ │
+│  │     │ nicht in Parameter gelernt   │   Inferenz    │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  3. Modell generiert passende Antwort              │ │
+│  │                                                      │ │
+│  │  Zeit: Sekunden                                      │ │
+│  │  Kosten: API-Aufruf                                  │ │
+│  │  Flexibilität: Prompt ändern = Verhalten ändern    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ICL SPEKTRUM:                                             │
+│  ────────────                                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Zero-shot ←────────────────────────→ Many-shot    │ │
+│  │                                                      │ │
+│  │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌────────┐ │ │
+│  │  │ Zero-   │  │ One-    │  │ Few-    │  │ Many-  │ │ │
+│  │  │ shot    │  │ shot    │  │ shot    │  │ shot   │ │ │
+│  │  │         │  │         │  │         │  │        │ │ │
+│  │  │ Nur     │  │ Ein     │  │ 2-5     │  │ 10+    │ │ │
+│  │  │ Instruk-│  │ Beispiel│  │ Bei-    │  │ Bei-   │ │ │
+│  │  │ tionen  │  │         │  │ spiele  │  │ spiele │ │ │
+│  │  └─────────┘  └─────────┘  └─────────┘  └────────┘ │ │
+│  │                                                      │ │
+│  │  Weniger Kontext ←──────────────→ Mehr Kontext     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WIE ICL MECHANISTISCH FUNKTIONIERT:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  1. Implizite Bayessche Inferenz:                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Modell leitet implizit ab: Welche Aufgabe würde   │ │
+│  │  diese Input-Output-Paare produzieren?              │ │
+│  │                                                      │ │
+│  │  Beispiele im Kontext → Auf Aufgabenhypothese      │ │
+│  │                        konditionieren               │ │
+│  │                       → Konsistente Ausgabe        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  2. Induktionsköpfe (Attention-Schaltkreise):             │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Attention Heads die implementieren:                │ │
+│  │  "Wenn A von B gefolgt wurde, und wir A jetzt      │ │
+│  │   sehen, vorhersagen dass B folgt"                  │ │
+│  │                                                      │ │
+│  │  Beispiel: "Apfel → rot, Banane → gelb,            │ │
+│  │             Traube →"                               │ │
+│  │                                                      │ │
+│  │  Induktionskopf: Sieht Muster, sagt "lila" vorher  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FAKTOREN DIE ICL-LEISTUNG BEEINFLUSSEN:                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Faktor              │  Auswirkung                  │ │
+│  │  ────────────────────┼───────────────────────────── │ │
+│  │  Modellgröße         │  ICL entsteht ~10B+ Params  │ │
+│  │  Anzahl Beispiele    │  Mehr = besser (bis Punkt)  │ │
+│  │  Beispiel-Diversität │  Randfälle abdecken hilft   │ │
+│  │  Beispiel-Reihenfolge│ Neuere stärker gewichtet    │ │
+│  │  Format-Konsistenz   │  Gleiche Struktur hilft     │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ICL LIMITIERUNGEN:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  • Kontextfenster begrenzt Anzahl der Beispiele           │
+│  • Kann empfindlich auf Beispielauswahl/-reihenfolge sein │
+│  • Lernt nicht wirklich - behält nicht zwischen Aufrufen  │
+│  • Schwierig mit Aufgaben sehr anders als Pre-Training    │
+│                                                            │
+│  Wann Fine-Tuning besser ist:                             │
+│  • Konsistente hohe Genauigkeit benötigt                  │
+│  • Aufgabe sehr spezialisiert                             │
+│  • Viele Trainingsbeispiele verfügbar                     │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich In-Context Learning von [Fine-Tuning](/de/glossary/fine-tuning/)?**
+
+A: Fine-Tuning aktualisiert Modellgewichte durch Gradient Descent auf aufgabenspezifischen Daten, das Modell permanent ändernd. ICL nutzt Beispiele nur zur Inferenzzeit—Modellparameter bleiben fix. ICL ist schneller und braucht keine Trainingsinfrastruktur.
+
+**F: Warum funktioniert In-Context Learning ohne Training?**
+
+A: Große Sprachmodelle sind auf massiven Korpora mit diversen Aufgabenmustern vortrainiert. ICL-Prompts helfen dem Modell zu erkennen, welches Aufgabenmuster anzuwenden ist. Mechanistisch ermöglicht Transformer-[Attention](/de/glossary/attention-mechanism/), auf Beispiele im Kontext zu "attenden".
+
+**F: Brauchen die Beispiele in ICL korrekte [Labels](/de/glossary/ground-truth/)?**
+
+A: Überraschenderweise zeigt Forschung, dass Format und Struktur mehr ausmachen als Labelkorrektheit für einige Aufgaben. Allerdings verbessern korrekte Labels die Leistung generell.
+
+**F: Wie viele Beispiele sollte ich für ICL geben?**
+
+A: Starte mit 3-5 diversen Beispielen, die verschiedene Fälle abdecken. Mehr Beispiele helfen generell bis zu abnehmenden Erträgen oder Kontextlimits.
+
+## Verwandte Begriffe
+
+- [Few-Shot Learning](/de/glossary/few-shot/) — ICL mit Beispieldemonstrationen
+- [Zero-Shot Learning](/de/glossary/zero-shot/) — ICL nur mit Instruktionen
+- [Chain-of-Thought](/de/glossary/chain-of-thought/) — Reasoning durch ICL
+- Prompt Engineering — effektive ICL-Prompts erstellen
+
+---
+
+## Referenzen
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [Führte ICL-Terminologie mit GPT-3 ein]
+
+> Olsson et al. (2022), "[In-context Learning and Induction Heads](https://arxiv.org/abs/2209.11895)", Transformer Circuits. [Mechanistische ICL-Erklärung]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", ACL. [Labelkorrektheit-Studie]
+
+> Xie et al. (2022), "[An Explanation of In-context Learning as Implicit Bayesian Inference](https://arxiv.org/abs/2111.02080)", ICLR. [Theoretisches Framework]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [Introduced ICL terminology with GPT-3]
+
+> Olsson et al. (2022), "[In-context Learning and Induction Heads](https://arxiv.org/abs/2209.11895)", Transformer Circuits. [Mechanistic ICL explanation]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", ACL. [Label correctness study]
+
+> Xie et al. (2022), "[An Explanation of In-context Learning as Implicit Bayesian Inference](https://arxiv.org/abs/2111.02080)", ICLR. [Theoretical framework]

@@ -1,0 +1,122 @@
+---
+term: "Inferenz"
+termSlug: "inference"
+short: "Der Prozess der Verwendung eines trainierten Modells zur Generierung von Vorhersagen oder Ausgaben auf neuen Daten."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["llm", "fine-tuning", "embeddings", "latency"]
+synonyms: ["Modell-Inferenz", "Vorhersage", "Model Serving"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Inferenz ist der Prozess des Ausführens eines trainierten KI-Modells, um Ausgaben aus neuen Eingaben zu generieren. Anders als Training (das Modellgewichte anpasst), verwendet Inferenz feste Gewichte, um Vorhersagen, Antworten, [Embeddings](/de/glossary/embeddings/) oder andere Ausgaben zu produzieren. Dies geschieht, wenn Sie einen Prompt an ChatGPT senden oder eine Embedding-API abfragen.
+
+## Warum es wichtig ist
+
+Inferenz ist, wo KI-Modelle Wert in der Produktion liefern:
+
+- **Benutzererfahrung** — Inferenzgeschwindigkeit bestimmt Antwortzeit
+- **Kostentreiber** — die meisten KI-Betriebskosten entstehen durch Inferenz
+- **Skalierbarkeit** — gleichzeitige Inferenzanfragen erfordern Optimierung
+- **Genauigkeit** — Inferenzqualität hängt von Modellwahl und Konfiguration ab
+- **Deployment** — Inferenzanforderungen formen Infrastrukturentscheidungen
+
+Inferenz zu verstehen ist essentiell für effizientes KI-System-Deployment.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    INFERENZ-PIPELINE                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│        EINGABE                        AUSGABE              │
+│  "Was sind MwSt-                 "MwSt-Befreiungen         │
+│   Befreiungen?"                   umfassen..."             │
+│        │                               ▲                   │
+│        │                               │                   │
+│        ▼                               │                   │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │                VORVERARBEITUNG                   │      │
+│  │   • Tokenisierung                                │      │
+│  │   • Embedding-Lookup                             │      │
+│  │   • Kontextassemblierung                         │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              MODELL FORWARD PASS                 │      │
+│  │   • Schicht-für-Schicht-Berechnung               │      │
+│  │   • Attention-Berechnungen                       │      │
+│  │   • Matrixmultiplikationen                       │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              NACHVERARBEITUNG                    │      │
+│  │   • Token-Sampling/Dekodierung                   │      │
+│  │   • Ausgabeformatierung                          │      │
+│  │   • Sicherheitsfilterung                         │      │
+│  └──────────────────────────────────────────────────┘      │
+│                                                            │
+│  METRIKEN:                                                 │
+│  • Latenz: Zeit bis zum ersten Token (TTFT, ~100-500ms)    │
+│  • Durchsatz: Tokens pro Sekunde (TPS)                     │
+│  • Kosten: € pro Million Tokens                            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wichtige Inferenz-Konzepte:**
+1. **Batch-Inferenz** — mehrere Eingaben zusammen für Effizienz verarbeiten
+2. **Echtzeit-Inferenz** — sofortige Antwort für interaktive Anwendungen
+3. **Streaming** — Tokens zurückgeben während sie generiert werden
+4. **Edge-Inferenz** — Modelle lokal auf dem Gerät ausführen
+
+## Häufige Fragen
+
+**F: Was beeinflusst Inferenzgeschwindigkeit?**
+
+A: Modellgröße (Parameter), Hardware (GPU-Typ), Batch-Größe, [Sequenzlänge](/de/glossary/context-window/) und Optimierungstechniken ([Quantisierung](/de/glossary/quantization/), KV-Caching). Größere Modelle und längere Kontexte erhöhen Latenz.
+
+**F: Was ist Quantisierung?**
+
+A: Reduzierung der Modellpräzision (z.B. float32 → int8) zur Beschleunigung der Inferenz und Speicherreduktion. Etwas Genauigkeit kann verloren gehen, aber moderne Quantisierung erhält die meiste Qualität bei 2-4x schnellerer Inferenz.
+
+**F: Was ist der Unterschied zwischen Inferenz und Training?**
+
+A: Training passt Modellgewichte mit Daten an; Inferenz verwendet feste Gewichte zur Ausgabegenerierung. Training ist computationell teuer und geschieht periodisch; Inferenz ist günstiger pro [Anfrage](/de/glossary/prompt/) und läuft kontinuierlich.
+
+**F: Wie werden Inferenzkosten berechnet?**
+
+A: Meist nach verarbeiteten Tokens. APIs berechnen pro Million Input/Output-Tokens. Selbst-gehostete Inferenzkosten umfassen GPU-Zeit, Speicher und Infrastruktur. Output-Tokens kosten oft mehr als Input-Tokens.
+
+## Verwandte Begriffe
+
+- [LLM](/de/glossary/llm/) — Modelle, die Inferenz durchführen
+- [Fine-Tuning](/de/glossary/fine-tuning/) — Trainingsprozess vor Inferenz
+- Latenz — Zeitmetrik für Inferenz
+- Batch-Verarbeitung — Inferenz-Optimierungstechnik
+
+---
+
+## Referenzen
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ Zitationen]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1.000+ Zitationen]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ Zitationen]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ Zitationen]
+
+## References
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ citations]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1,000+ citations]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ citations]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ citations]

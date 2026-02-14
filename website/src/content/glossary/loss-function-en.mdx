@@ -1,0 +1,125 @@
+---
+term: "Loss Function"
+termSlug: "loss-function"
+short: "A mathematical function that measures how far a model's predictions are from the desired outputs during training."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["gradient-descent", "backpropagation", "perplexity", "fine-tuning"]
+synonyms: ["Cost function", "Objective function", "Error function", "Training loss"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A loss function (or cost function) is a mathematical measure of the difference between a model's [predictions](/en/glossary/inference/) and the actual target values. During training, the model's parameters are adjusted to minimize this loss, effectively teaching the model to make better predictions. For language models, cross-entropy loss is most common—measuring how well the predicted probability distribution matches the true next token.
+
+## Why it matters
+
+Loss functions are central to [machine learning](/en/glossary/machine-learning/):
+
+- **Training signal** — guides parameter updates during optimization
+- **Model comparison** — compare different architectures or hyperparameters
+- **Progress tracking** — monitor if training is improving
+- **Convergence detection** — identify when to stop training
+- **Quality proxy** — lower loss generally indicates better performance
+
+The choice of loss function shapes what the model learns to optimize.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      LOSS FUNCTION                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CROSS-ENTROPY LOSS (for language models):                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  True label: "cat" (one-hot: [0, 1, 0, 0])                │
+│  Predicted:          [0.1, 0.7, 0.15, 0.05]               │
+│                                                            │
+│  Loss = -Σ true_i × log(pred_i)                           │
+│       = -0×log(0.1) - 1×log(0.7) - 0×log(0.15) - ...      │
+│       = -log(0.7)                                          │
+│       = 0.36                                               │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  LOSS LANDSCAPE VISUALIZATION:                │        │
+│  │                                                │        │
+│  │     Loss                                       │        │
+│  │       │     *                                  │        │
+│  │       │    * *        *                        │        │
+│  │       │   *   *      * *                       │        │
+│  │       │  *     *    *   *                      │        │
+│  │       │ *       *  *     *                     │        │
+│  │       │*         **       *                    │        │
+│  │       │           ▲        **                  │        │
+│  │       └───────────┼──────────────► Params     │        │
+│  │                   │                            │        │
+│  │                   Local minimum (goal)         │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  COMMON LOSS FUNCTIONS:                                    │
+│  ─────────────────────                                     │
+│                                                            │
+│  Cross-Entropy    Classification, LLMs                     │
+│  ─────────────────────────────────────                     │
+│  L = -Σ y_i × log(ŷ_i)                                    │
+│                                                            │
+│  Mean Squared Error (MSE)    Regression                    │
+│  ─────────────────────────────────────                     │
+│  L = 1/n × Σ(y - ŷ)²                                      │
+│                                                            │
+│  Binary Cross-Entropy    Binary classification             │
+│  ─────────────────────────────────────                     │
+│  L = -[y×log(ŷ) + (1-y)×log(1-ŷ)]                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Loss functions by task:**
+| Task | Loss Function | Notes |
+|------|---------------|-------|
+| Language modeling | Cross-entropy | Predicts next token distribution |
+| Classification | Cross-entropy | Multi-class predictions |
+| Regression | MSE / MAE | Continuous outputs |
+| Contrastive learning | InfoNCE | Embedding similarity |
+| [Reinforcement learning](/en/glossary/reinforcement-learning/) | Policy gradient | Reward optimization |
+
+## Common questions
+
+**Q: Why does loss go down but model quality doesn't improve?**
+
+A: This often indicates overfitting—the model memorizes training data instead of learning generalizable patterns. Monitor validation loss alongside training loss; if training loss drops but validation loss rises, you're overfitting.
+
+**Q: What's a good loss value?**
+
+A: It depends entirely on the task and dataset. Focus on whether loss decreases during training and how it correlates with evaluation [metrics](/en/glossary/distance-metric/). For language models, loss around 2-3 nats often indicates good learning.
+
+**Q: What's the difference between loss and accuracy?**
+
+A: Loss is a continuous differentiable function used for optimization; accuracy is a discrete metric for evaluation. A model can have improving loss but stagnant accuracy—training uses loss gradients to adjust weights.
+
+**Q: Why use cross-entropy instead of accuracy for training?**
+
+A: Cross-entropy provides smooth gradients for optimization. Accuracy is non-differentiable (0 or 1 per sample) so can't guide gradient descent. Cross-entropy penalizes confident wrong predictions more heavily.
+
+## Related terms
+
+- [Gradient Descent](/en/glossary/gradient-descent/) — optimization using loss
+- [Backpropagation](/en/glossary/backpropagation/) — computes loss gradients
+- [Perplexity](/en/glossary/perplexity/) — exp(loss) for language models
+- [Fine-tuning](/en/glossary/fine-tuning/) — minimizes loss on new data
+
+---
+
+## References
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8,000+ citations]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50,000+ citations]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15,000+ citations]

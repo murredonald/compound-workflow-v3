@@ -1,0 +1,182 @@
+---
+term: "Knowledge Graph"
+termSlug: "knowledge-graph"
+short: "A structured network of entities and their relationships that enables machines to understand and reason about real-world concepts."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["ner", "semantic-search", "embedding", "rag"]
+synonyms: ["Semantic graph", "Ontology", "Knowledge base"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A knowledge graph is a structured representation of information as a network of interconnected entities (nodes) and their relationships (edges). Each entity represents a real-world concept—a person, place, organization, or idea—and relationships capture how entities relate to each other ("works for," "located in," "invented by"). Knowledge graphs enable machines to understand context, make inferences, and answer complex queries by traversing these connections.
+
+## Why it matters
+
+Knowledge graphs power intelligent systems:
+
+- **Enhanced search** — Google's Knowledge Graph revolutionized web search
+- **Recommendations** — understand user preferences through connections
+- **Question answering** — enable complex multi-hop reasoning
+- **Data integration** — unify information from disparate sources
+- **RAG improvement** — provide structured context for [LLMs](/en/glossary/llm/)
+
+Major tech companies maintain massive knowledge graphs: Google (500B+ facts), Facebook, Amazon, Microsoft, and LinkedIn.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    KNOWLEDGE GRAPH                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  BASIC STRUCTURE:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Entities (Nodes) + Relationships (Edges) = Knowledge      │
+│                                                            │
+│                  ┌──────────────┐                         │
+│                  │   Einstein   │                         │
+│                  │   (Person)   │                         │
+│                  └──────┬───────┘                         │
+│                         │                                  │
+│       ┌─────────────────┼─────────────────┐               │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  developed         born_in          worked_at             │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  ┌─────────┐       ┌─────────┐     ┌───────────────┐     │
+│  │Relativity│      │  Ulm,   │     │   Princeton   │     │
+│  │ Theory  │       │ Germany │     │  University   │     │
+│  └─────────┘       └─────────┘     └───────────────┘     │
+│   (Theory)          (City)          (Organization)        │
+│                                                            │
+│                                                            │
+│  TRIPLE REPRESENTATION:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  Subject ──relationship──▶ Object                         │
+│                                                            │
+│  (Einstein, developed, Relativity Theory)                 │
+│  (Einstein, born_in, Ulm)                                 │
+│  (Einstein, worked_at, Princeton)                         │
+│  (Ulm, located_in, Germany)                               │
+│  (Germany, member_of, European Union)                     │
+│                                                            │
+│                                                            │
+│  MULTI-HOP REASONING:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  Question: "What country developed relativity?"           │
+│                                                            │
+│  Path traversal:                                          │
+│                                                            │
+│  Relativity ◄──developed── Einstein                       │
+│                               │                            │
+│                          born_in                           │
+│                               ▼                            │
+│                             Ulm ──located_in──▶ Germany   │
+│                                                            │
+│  Answer: Germany (Einstein, who developed relativity,     │
+│          was born in Ulm, which is in Germany)            │
+│                                                            │
+│                                                            │
+│  SCHEMA/ONTOLOGY:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Defines valid entity types and relationships:            │
+│                                                            │
+│  Entity Types:        Relationships:                       │
+│  ┌─────────────┐      ┌────────────────────────┐          │
+│  │ Person      │      │ born_in: Person → Place │         │
+│  │ Place       │      │ works_at: Person → Org  │         │
+│  │ Organization│      │ located_in: Place →Place│         │
+│  │ Event       │      │ founded: Person → Org   │         │
+│  │ Concept     │      │ invented: Person → Thing│         │
+│  └─────────────┘      └────────────────────────┘          │
+│                                                            │
+│                                                            │
+│  KNOWLEDGE GRAPH + LLMs (GraphRAG):                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  Query: "How is Einstein related to Germany?"   │      │
+│  │                                                  │      │
+│  │        ┌────────────┐      ┌────────────────┐  │      │
+│  │        │ Knowledge  │      │    LLM         │  │      │
+│  │  Query │   Graph    │─────►│   (Answer      │  │      │
+│  │  ─────►│  Lookup    │      │   Generation)  │  │      │
+│  │        └────────────┘      └────────────────┘  │      │
+│  │              │                     │           │      │
+│  │              ▼                     ▼           │      │
+│  │        Structured            Natural Language │      │
+│  │        Facts:                Answer:           │      │
+│  │        (Einstein,born_in,    "Einstein was     │      │
+│  │         Ulm,Germany)         born in Ulm..."   │      │
+│  │                                                │      │
+│  └─────────────────────────────────────────────────┘      │
+│                                                            │
+│                                                            │
+│  MAJOR KNOWLEDGE GRAPHS:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  • Google Knowledge Graph: 500B+ facts, powers Search      │
+│  • Wikidata: 100M+ items, open community-driven           │
+│  • DBpedia: Structured Wikipedia extraction               │
+│  • YAGO: Academic KG with high accuracy                   │
+│  • Microsoft Academic Graph: Scientific literature        │
+│  • Amazon Product Graph: E-commerce relationships         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Knowledge graph applications:**
+| Domain | Application | Example |
+|--------|-------------|---------|
+| Search | Enhanced results | Google's info panels |
+| E-commerce | Recommendations | "Customers also bought" |
+| Healthcare | Drug interactions | Medical decision support |
+| Finance | Fraud detection | Transaction networks |
+| Legal | Case law connections | Precedent finding |
+
+## Common questions
+
+**Q: How is a knowledge graph different from a database?**
+
+A: Traditional databases store data in rigid tables with predefined schemas. Knowledge graphs store data as flexible networks of relationships, enabling queries across connections that weren't anticipated when the data was created. They're optimized for traversing relationships (graph queries) rather than aggregating rows (SQL queries).
+
+**Q: How are knowledge graphs built?**
+
+A: Through multiple approaches: manual curation by experts, automated extraction from text using NER and relation extraction, importing from structured sources like Wikipedia/Wikidata, and crowdsourcing. Modern approaches combine these methods—using LLMs to extract entities and relationships from unstructured text, then having humans validate the results.
+
+**Q: Can LLMs replace knowledge graphs?**
+
+A: No, they're complementary. LLMs store knowledge implicitly in parameters but hallucinate and have knowledge cutoffs. Knowledge graphs store knowledge explicitly and verifiably but lack natural language understanding. The best systems combine both: knowledge graphs provide grounded facts, LLMs provide natural interaction—this is the GraphRAG approach.
+
+**Q: How do I [query](/en/glossary/prompt/) a knowledge graph?**
+
+A: Using graph query languages like SPARQL (for RDF graphs), Cypher (for Neo4j), or Gremlin. These let you express patterns like "find all people who worked at companies founded by someone from the same city as Einstein." Modern systems also support natural language queries that get translated to graph queries automatically.
+
+## Related terms
+
+- [NER](/en/glossary/ner/) — extracting entities for knowledge graphs
+- [Semantic search](/en/glossary/semantic-search/) — search enhanced by knowledge graphs
+- Embedding — vector representations of entities
+- [RAG](/en/glossary/rag/) — using knowledge graphs for grounded generation
+
+---
+
+## References
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Comprehensive academic survey]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Google's original announcement]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [LLM + KG integration survey]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Technical deep dive]

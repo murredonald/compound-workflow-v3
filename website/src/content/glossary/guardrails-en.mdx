@@ -1,0 +1,252 @@
+---
+term: "Guardrails"
+termSlug: "guardrails"
+short: "Safety mechanisms and constraints that prevent AI systems from generating harmful, inappropriate, or off-topic outputs—providing runtime protection beyond training-time alignment."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["alignment", "prompt-injection", "responsible-ai", "content-filtering"]
+synonyms: ["AI safety guardrails", "Model guardrails", "Output filters"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Guardrails are protective mechanisms implemented around AI systems to prevent harmful, inappropriate, or undesired outputs. Unlike alignment (which trains models to behave well), guardrails operate at runtime as external constraints—filtering inputs, validating outputs, and enforcing boundaries regardless of what the underlying model might generate. They include input validation, output filtering, content moderation, topic restriction, format enforcement, and fallback handling. Guardrails provide defense-in-depth, catching edge cases that alignment alone cannot guarantee.
+
+## Why it matters
+
+Guardrails are essential for production AI systems:
+
+- **Safety** — prevents harmful content generation even when models fail
+- **Compliance** — enforces regulatory requirements (GDPR, [AI Act](/en/glossary/eu-ai-act/), content laws)
+- **Brand protection** — prevents embarrassing or off-brand outputs
+- **Reliability** — ensures consistent behavior across edge cases
+- **Auditability** — provides explicit, inspectable rules for behavior
+- **Layered defense** — catches what alignment misses
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GUARDRAILS                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DEFENSE IN DEPTH:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │                 User Input                           │ │
+│  │                     │                                │ │
+│  │                     ▼                                │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │         INPUT GUARDRAILS                      │  │ │
+│  │  │                                               │  │ │
+│  │  │  • Prompt injection detection                │  │ │
+│  │  │  • PII detection & redaction                 │  │ │
+│  │  │  • Content policy pre-screening              │  │ │
+│  │  │  • Topic boundary enforcement                │  │ │
+│  │  │  • Rate limiting & abuse detection           │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ validated input             │ │
+│  │                       ▼                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │              LLM MODEL                        │  │ │
+│  │  │                                               │  │ │
+│  │  │   (aligned via RLHF, but not perfect)        │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ raw output                  │ │
+│  │                       ▼                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │        OUTPUT GUARDRAILS                      │  │ │
+│  │  │                                               │  │ │
+│  │  │  • Toxicity & harm classification            │  │ │
+│  │  │  • Factuality verification                   │  │ │
+│  │  │  • Format validation                         │  │ │
+│  │  │  • Citation checking                         │  │ │
+│  │  │  • PII re-check (model might leak)           │  │ │
+│  │  │  • Brand guideline compliance                │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ safe output                 │ │
+│  │                       ▼                             │ │
+│  │                 To User                             │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GUARDRAIL TYPES:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. CONTENT SAFETY                                  │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Input: "How do I make a bomb?"             │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌────────────────────────────────────┐    │   │ │
+│  │  │  │ Content Classifier                  │    │   │ │
+│  │  │  │                                     │    │   │ │
+│  │  │  │  Violence:  ████████████░ HIGH     │    │   │ │
+│  │  │  │  Illegal:   ████████████░ HIGH     │    │   │ │
+│  │  │  │                                     │    │   │ │
+│  │  │  │  Decision: BLOCK                    │    │   │ │
+│  │  │  └────────────────────────────────────┘    │   │ │
+│  │  │                                              │   │ │
+│  │  │  Output: "I can't help with that."          │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  2. TOPIC BOUNDARIES                                │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Customer Support Bot Configuration:         │   │ │
+│  │  │                                              │   │ │
+│  │  │  allowed_topics:                            │   │ │
+│  │  │    - product_info                           │   │ │
+│  │  │    - order_status                           │   │ │
+│  │  │    - returns                                │   │ │
+│  │  │    - shipping                               │   │ │
+│  │  │                                              │   │ │
+│  │  │  blocked_topics:                            │   │ │
+│  │  │    - politics                               │   │ │
+│  │  │    - religion                               │   │ │
+│  │  │    - competitors                            │   │ │
+│  │  │    - medical_advice                         │   │ │
+│  │  │                                              │   │ │
+│  │  │  Input: "What's your view on politics?"     │   │ │
+│  │  │  → Topic classifier detects: politics       │   │ │
+│  │  │  → Action: Redirect to allowed topics       │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  3. FORMAT ENFORCEMENT                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Expected: JSON with specific schema        │   │ │
+│  │  │                                              │   │ │
+│  │  │  Model output: "Here's the JSON: {...}"     │   │ │
+│  │  │                                              │   │ │
+│  │  │  Format Guardrail:                          │   │ │
+│  │  │  1. Extract JSON from response             │   │ │
+│  │  │  2. Validate against schema                │   │ │
+│  │  │  3. If invalid → retry or return error     │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  4. FACTUALITY CHECKS                               │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Model: "The CEO of Apple is John Smith"    │   │ │
+│  │  │                                              │   │ │
+│  │  │  Fact-check guardrail:                      │   │ │
+│  │  │  • Cross-reference with knowledge base      │   │ │
+│  │  │  • Detect low-confidence claims            │   │ │
+│  │  │  • Add uncertainty markers or block        │   │ │
+│  │  │                                              │   │ │
+│  │  │  Action: BLOCK (factual error detected)     │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  IMPLEMENTATION PATTERN:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  # Pseudocode: Guardrail pipeline                   │ │
+│  │                                                      │ │
+│  │  def process_request(user_input):                   │ │
+│  │                                                      │ │
+│  │      # Input guardrails                             │ │
+│  │      if detect_prompt_injection(user_input):        │ │
+│  │          return BLOCKED_RESPONSE                    │ │
+│  │                                                      │ │
+│  │      if detect_prohibited_content(user_input):      │ │
+│  │          return BLOCKED_RESPONSE                    │ │
+│  │                                                      │ │
+│  │      sanitized = redact_pii(user_input)            │ │
+│  │                                                      │ │
+│  │      # Generate response                            │ │
+│  │      response = llm.generate(sanitized)            │ │
+│  │                                                      │ │
+│  │      # Output guardrails                            │ │
+│  │      if detect_harmful_output(response):            │ │
+│  │          return SAFE_FALLBACK                       │ │
+│  │                                                      │ │
+│  │      if not validate_format(response):              │ │
+│  │          response = retry_with_guidance()           │ │
+│  │                                                      │ │
+│  │      return response                                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GUARDRAIL FRAMEWORKS:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NeMo Guardrails (NVIDIA):                          │ │
+│  │  • Programmable safety rails                        │ │
+│  │  • Colang DSL for rail definition                   │ │
+│  │                                                      │ │
+│  │  Guardrails AI:                                     │ │
+│  │  • Validators for structured output                 │ │
+│  │  • Automatic retry logic                            │ │
+│  │                                                      │ │
+│  │  LlamaGuard (Meta):                                 │ │
+│  │  • Safety classifier model                          │ │
+│  │  • Toxicity and harm detection                      │ │
+│  │                                                      │ │
+│  │  AWS Bedrock Guardrails:                            │ │
+│  │  • Managed content filtering                        │ │
+│  │  • PII detection and redaction                      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: Why not just rely on model alignment instead of guardrails?**
+
+A: Alignment is probabilistic—models can still produce harmful outputs in edge cases. Guardrails provide deterministic, auditable safety guarantees. Use both for defense-in-depth.
+
+**Q: Don't guardrails make models less useful?**
+
+A: Poorly designed guardrails can be overly restrictive. Good guardrails are precise, blocking genuinely harmful content while allowing legitimate use cases. This requires careful [calibration](/en/glossary/calibration/).
+
+**Q: How do guardrails handle adversarial attacks?**
+
+A: Guardrails include [prompt](/en/glossary/prompt/) injection detection, but adversaries constantly find bypasses. Guardrails must be monitored and updated continuously. They're one layer, not a complete solution.
+
+**Q: What's the performance impact of guardrails?**
+
+A: Guardrails add latency (additional model calls or classifiers). Balance safety vs. speed based on risk tolerance. Some guardrails run in parallel; others must be sequential.
+
+## Related terms
+
+- [Alignment](/en/glossary/alignment/) — training models to behave safely
+- [Prompt injection](/en/glossary/prompt-injection/) — attacks guardrails defend against
+- [Responsible AI](/en/glossary/responsible-ai/) — ethical AI development
+- Content filtering — specific guardrail type
+
+---
+
+## References
+
+> Rebedea et al. (2023), "[NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications](https://arxiv.org/abs/2310.10501)", arXiv. [NVIDIA guardrails framework]
+
+> Inan et al. (2023), "[Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)", arXiv. [Meta safety classifier]
+
+> Greshake et al. (2023), "[Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications](https://arxiv.org/abs/2302.12173)", arXiv. [Why guardrails matter]
+
+> AWS (2024), "[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)", AWS Documentation. [Managed guardrails service]

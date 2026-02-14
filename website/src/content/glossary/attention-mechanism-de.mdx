@@ -1,0 +1,95 @@
+---
+term: "Attention-Mechanismus"
+termSlug: "attention-mechanism"
+short: "Eine neuronale Netzwerktechnik, die Modellen ermöglicht, sich bei der Ausgabeerzeugung auf relevante Teile der Eingabe zu konzentrieren."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["transformer-architecture", "self-attention", "multi-head-attention", "llm"]
+synonyms: ["Attention", "Neuronale Attention", "Attention-Schicht"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein Attention-Mechanismus ist eine Komponente in neuronalen Netzwerken, die Modellen ermöglicht, sich dynamisch auf relevante Teile der Eingabesequenz zu konzentrieren, wenn jeder Teil der Ausgabe generiert wird. Anstatt alle Eingaben in eine einzige Repräsentation fester Größe zu komprimieren, ermöglicht Attention dem Modell, selektiv verschiedenen Eingabeelementen basierend auf ihrer Relevanz für die aktuelle Aufgabe „Aufmerksamkeit zu schenken".
+
+## Warum es wichtig ist
+
+Attention-Mechanismen lösen fundamentale Einschränkungen früherer Sequenzmodelle:
+
+- **Verarbeitung langer Sequenzen** — Attention verbindet entfernte Elemente direkt ohne Informationsverlust durch viele Schritte
+- **[Interpretierbarkeit](/de/glossary/explainability/)** — Attention-Gewichte zeigen, welche Eingaben jede Ausgabe beeinflusst haben, was beim Debugging und Vertrauen hilft
+- **Parallelisierung** — Attention-Berechnungen können gleichzeitig ausgeführt werden, anders als sequentielle RNNs
+- **Dynamischer Kontext** — das Modell lernt, worauf es sich konzentrieren soll, anstatt feste Muster zu verwenden
+
+Attention ist die Kerninnovation hinter Transformers und modernen Sprachmodellen.
+
+## Wie es funktioniert
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  ATTENTION-MECHANISMUS               │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  Query (Q) ─────┐                                    │
+│                 ├──→ Score ──→ Softmax ──→ Gewichte  │
+│  Key (K) ───────┘                           │        │
+│                                             ▼        │
+│  Value (V) ─────────────────────────→ Gewichtete Sum │
+│                                             │        │
+│                                             ▼        │
+│                                         Ausgabe      │
+└──────────────────────────────────────────────────────┘
+```
+
+1. **Query, Key, Value** — Eingabe wird in drei Repräsentationen transformiert
+2. **Scoring** — Queries werden mit Keys verglichen, um Relevanz-Scores zu berechnen
+3. **Softmax** — Scores werden normalisiert, um zu 1 zu summieren (Attention-Gewichte)
+4. **Gewichtete Kombination** — Values werden mit Attention-Gewichten kombiniert
+5. **Ausgabe** — kontextuell informierte Repräsentation für jede Position
+
+Die Formel: `Attention(Q,K,V) = softmax(QK^T / √d_k) × V`
+
+## Häufige Fragen
+
+**F: Was ist der Unterschied zwischen Attention und Self-Attention?**
+
+A: Standard-Attention berechnet Relevanz zwischen zwei verschiedenen Sequenzen (z.B. Encoder-Ausgaben und Decoder-Zustand). Self-Attention berechnet Relevanz innerhalb einer einzelnen Sequenz—jedes Element attendiert auf alle anderen in derselben Sequenz.
+
+**F: Warum durch √d_k in der Attention-Formel teilen?**
+
+A: Diese „skalierte Dot-Product Attention" verhindert, dass Dot-Produkte in hohen Dimensionen zu groß werden, was Softmax in Bereiche mit verschwindenden Gradienten drängen würde.
+
+**F: Kann Attention visualisiert werden?**
+
+A: Ja, Attention-Gewichte können als Heatmaps dargestellt werden, die zeigen, auf welche Eingabe-Tokens jedes Ausgabe-Token attendierte, was [Interpretierbarkeit](/de/glossary/model-interpretability/) bietet.
+
+## Verwandte Begriffe
+
+- [Transformer-Architektur](/de/glossary/transformer-architecture/) — vollständig auf Attention-Mechanismen aufgebaut
+- [Self-Attention](/de/glossary/self-attention/) — Attention innerhalb einer einzelnen Sequenz
+- [Multi-Head Attention](/de/glossary/multi-head-attention/) — parallele Attention für diverse Repräsentationen
+- [LLM](/de/glossary/llm/) — Sprachmodelle, die von Attention angetrieben werden
+
+---
+
+## Referenzen
+
+> Bahdanau et al. (2015), "[Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)", ICLR. [35.000+ Zitationen]
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ Zitationen]
+
+> Luong et al. (2015), "[Effective Approaches to Attention-based Neural Machine Translation](https://arxiv.org/abs/1508.04025)", EMNLP. [12.000+ Zitationen]
+
+> Galassi et al. (2020), "[Attention in Natural Language Processing](https://arxiv.org/abs/1902.02181)", IEEE TNNLS. [1.000+ Zitationen]
+
+## References
+
+> Bahdanau et al. (2015), "[Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)", ICLR. [35,000+ citations]
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Luong et al. (2015), "[Effective Approaches to Attention-based Neural Machine Translation](https://arxiv.org/abs/1508.04025)", EMNLP. [12,000+ citations]
+
+> Galassi et al. (2020), "[Attention in Natural Language Processing](https://arxiv.org/abs/1902.02181)", IEEE TNNLS. [1,000+ citations]

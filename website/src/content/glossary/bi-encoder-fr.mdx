@@ -1,0 +1,190 @@
+---
+term: "Bi-Encoder"
+termSlug: "bi-encoder"
+short: "Une architecture neuronale qui encode séparément requêtes et documents en vecteurs fixes, permettant une recherche de similarité efficace via embeddings pré-calculés et index de voisins approximatifs."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["cross-encoder", "dense-retrieval", "semantic-search", "embedding"]
+synonyms: ["Dual encoder", "Modèle deux-tours", "Encodeur siamois"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Un bi-encodeur (aussi appelé dual encoder ou modèle deux-tours) est une architecture neuronale qui encode [requêtes](/fr/glossary/prompt/) et documents indépendamment en [représentations vectorielles](/fr/glossary/vector-embeddings/) denses. Chaque entrée passe par un encodeur séparé (ou encodeur à poids partagés) pour produire un embedding de taille fixe. La pertinence est calculée en mesurant la similarité (typiquement cosinus ou produit scalaire) entre ces vecteurs pré-calculés. Cette architecture permet une recherche évolutive: les [embeddings](/fr/glossary/embeddings/) documents peuvent être calculés hors ligne et indexés dans des structures ANN ([approximate nearest neighbor](/fr/glossary/ann/)), permettant des recherches sub-seconde sur des millions de documents.
+
+## Pourquoi c'est important
+
+Les bi-encodeurs sont la fondation de la recherche moderne:
+
+- **Recherche évolutive** — calculer embeddings documents une fois, réutiliser pour toutes requêtes
+- **Retrieval temps réel** — latence milliseconde sur [corpus](/fr/glossary/corpus/) milliard-échelle
+- **Matching sémantique** — comprendre le sens au-delà du chevauchement de mots-clés
+- **Dense retrieval** — paradigme dominant remplaçant méthodes sparse
+- **Enabler RAG** — alimentent retrieval dans systèmes generation augmentée
+- **Systèmes hybrides** — combiner avec [BM25](/fr/glossary/bm25/) et cross-encodeurs pour meilleurs résultats
+
+Sans bi-encodeurs, la recherche sémantique à échelle serait computationnellement infaisable.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      BI-ENCODEUR                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ARCHITECTURE DEUX-TOURS:                                   │
+│  ────────────────────────                                   │
+│                                                            │
+│        Requête                        Document             │
+│          │                               │                 │
+│          ↓                               ↓                 │
+│  ┌──────────────┐               ┌──────────────┐          │
+│  │   Encodeur   │               │   Encodeur   │          │
+│  │   Requête    │               │   Document   │          │
+│  │  (Tour 1)    │               │  (Tour 2)    │          │
+│  └──────────────┘               └──────────────┘          │
+│          │                               │                 │
+│          ↓                               ↓                 │
+│   ┌───────────┐                  ┌───────────┐            │
+│   │ Vec Req.  │                  │ Vec Doc   │            │
+│   │ [768-dim] │                  │ [768-dim] │            │
+│   └───────────┘                  └───────────┘            │
+│          \                           /                     │
+│           → similarité(q, d) ←                            │
+│              cosinus / produit scalaire                    │
+│                      │                                     │
+│                      ↓                                     │
+│               Score de Pertinence                          │
+│                                                            │
+│                                                            │
+│  WORKFLOW INDEXATION ET RETRIEVAL:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  HORS LIGNE (Phase Indexation):                           │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                     │  │
+│  │  Collection Documents                              │  │
+│  │  ┌─────┬─────┬─────┬─────┬─────┬───────┐         │  │
+│  │  │Doc 1│Doc 2│Doc 3│Doc 4│ ... │Doc N  │         │  │
+│  │  └─────┴─────┴─────┴─────┴─────┴───────┘         │  │
+│  │      │     │     │     │           │              │  │
+│  │      ↓     ↓     ↓     ↓           ↓              │  │
+│  │  ┌─────────────────────────────────────────┐     │  │
+│  │  │          Encodeur Document               │     │  │
+│  │  └─────────────────────────────────────────┘     │  │
+│  │      │     │     │     │           │              │  │
+│  │      ↓     ↓     ↓     ↓           ↓              │  │
+│  │   [v₁]  [v₂]  [v₃]  [v₄]  ...   [vₙ]            │  │
+│  │                    │                              │  │
+│  │                    ↓                              │  │
+│  │           ┌─────────────────┐                    │  │
+│  │           │   Index ANN     │                    │  │
+│  │           │ (FAISS, HNSW)   │                    │  │
+│  │           └─────────────────┘                    │  │
+│  │                                                     │  │
+│  │  Coût unique: N passages encodeur                  │  │
+│  │                                                     │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│  EN LIGNE (Phase Requête):                                │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                     │  │
+│  │  Requête: "Qu'est-ce que machine learning?"        │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │  ┌─────────────────┐                               │  │
+│  │  │ Encodeur Requête│  (~5-10ms sur GPU)           │  │
+│  │  └─────────────────┘                               │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │    [vec_q]                                          │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │  ┌─────────────────┐                               │  │
+│  │  │  Recherche ANN  │  (~1-5ms)                    │  │
+│  │  │ top-k plus près │                               │  │
+│  │  └─────────────────┘                               │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │  Résultats classés: Doc₄, Doc₁, Doc₇, ...         │  │
+│  │                                                     │  │
+│  │  Latence totale: ~10-20ms pour millions de docs!  │  │
+│  │                                                     │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  COMPARAISON: BI-ENCODEUR vs CROSS-ENCODEUR:               │
+│  ───────────────────────────────────────────               │
+│                                                            │
+│  ┌─────────────────┬───────────────────────────────────┐ │
+│  │ Aspect          │ Bi-Encodeur   │ Cross-Encodeur   │ │
+│  ├─────────────────┼───────────────┼──────────────────┤ │
+│  │ Encodage        │ Séparé        │ Conjoint         │ │
+│  │ Pré-calcul      │ ✓ Oui         │ ✗ Non            │ │
+│  │ Latence (1M)    │ ~10ms         │ ~heures          │ │
+│  │ Précision       │ Bonne         │ Meilleure        │ │
+│  │ Cas d'usage     │ Retrieval     │ Reranking        │ │
+│  └─────────────────┴───────────────┴──────────────────┘ │
+│                                                            │
+│                                                            │
+│  MODÈLES BI-ENCODEUR POPULAIRES:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  • all-MiniLM-L6-v2        - Rapide, 384-dim             │
+│  • all-mpnet-base-v2       - Meilleure qualité           │
+│  • e5-large-v2             - Fort général                │
+│  • bge-large-en-v1.5       - Top performances            │
+│  • OpenAI text-embedding-3 - API, 3072-dim               │
+│  • Cohere embed-v3         - API, multilingue            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Pourquoi les bi-encodeurs sont moins précis que les cross-encodeurs?**
+
+R: Les bi-encodeurs compriment chaque texte en vecteur fixe indépendamment—pas d'interaction niveau token entre requête et document. Les cross-encodeurs voient les deux ensemble, permettant attention entre "python" dans requête et "serpent" ou "programmation" dans document.
+
+**Q: Comment choisir entre modèles bi-encodeur?**
+
+R: Considérer: (1) dimension vs coût stockage, (2) exigences vitesse [inférence](/fr/glossary/inference/), (3) ajustement tâche/domaine—vérifier leaderboard MTEB, (4) besoins multilingues. Commencer avec all-mpnet-base-v2 usage général.
+
+**Q: Les bi-encodeurs peuvent-ils gérer longs documents?**
+
+R: La plupart ont limites 512 tokens. Pour longs documents: (1) découper en passages, [embedder](/fr/glossary/embedding-model/) chacun, (2) utiliser max-pooling sur [chunks](/fr/glossary/document-chunk/), (3) considérer modèles contexte plus long, ou (4) utiliser modèles late interaction comme ColBERT.
+
+**Q: Qu'est-ce que late interaction?**
+
+R: Modèles comme ColBERT gardent embeddings niveau token au lieu de représentations single-vector. Tokens requête matchent contre tokens document via MaxSim. Cela préserve précision cross-encodeur tout en permettant pré-calcul.
+
+## Termes associés
+
+- [Cross-encoder](/fr/glossary/cross-encoder/) — alternative plus précise pour [reranking](/fr/glossary/reranking/)
+- [Dense retrieval](/fr/glossary/dense-retrieval/) — retrieval avec embeddings bi-encodeur
+- Embedding — représentation vectorielle produite
+- [Semantic search](/fr/glossary/semantic-search/) — application principale
+
+---
+
+## Références
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Article bi-encodeur fondateur]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR bi-encodeur pour QA]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [Benchmark évaluation bi-encodeur]
+
+> Khattab & Zaharia (2020), "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction](https://arxiv.org/abs/2004.12832)", SIGIR. [Avancée late interaction]
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Foundational bi-encoder paper]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR bi-encoder for QA]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [Bi-encoder evaluation benchmark]
+
+> Khattab & Zaharia (2020), "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction](https://arxiv.org/abs/2004.12832)", SIGIR. [Late interaction advancement]

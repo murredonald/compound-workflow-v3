@@ -1,0 +1,197 @@
+---
+term: "HNSW"
+termSlug: "hnsw"
+short: "Hierarchical Navigable Small World Graphen - der State-of-the-Art-Algorithmus für schnelle approximative Nearest-Neighbor-Suche in hochdimensionalen Räumen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["ann", "faiss", "embedding", "dense-retrieval"]
+synonyms: ["Hierarchical Navigable Small World", "hnswlib"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+HNSW (Hierarchical Navigable Small World) ist ein graphbasierter Algorithmus für approximative [Nearest-Neighbor-Suche](/de/glossary/nearest-neighbor-search/), der State-of-the-Art-Performance erreicht, indem er navigierbare Small-World-Graphprinzipien mit hierarchischen Schichten kombiniert. Jeder Vektor wird zu einem Knoten, der mit seinen nächsten Nachbarn verbunden ist. Obere Schichten enthalten sparse Langstreckenverbindungen für schnelle Navigation; untere Schichten enthalten dichte lokale Verbindungen für präzise Suche. Diese Mehrschichtstruktur ermöglicht logarithmische Suchkomplexität, was HNSW zur Standardwahl für die meisten Vektorsuchanwendungen einschließlich [RAG](/de/glossary/rag/)-Systemen macht.
+
+## Warum es wichtig ist
+
+HNSW dominiert moderne Vektorsuche:
+
+- **Bester Recall/Geschwindigkeit-Tradeoff** — übertrifft konsistent andere ANN-Algorithmen
+- **Hochdimensional freundlich** — funktioniert gut mit 768+ Dimensions-[Embeddings](/de/glossary/embeddings/)
+- **Produktionserprobt** — genutzt von Pinecone, [Weaviate](/de/glossary/weaviate/), Qdrant, pgvector, Milvus
+- **RAG essentiell** — ermöglicht Millisekunden-[semantische Suche](/de/glossary/semantic-search/) über Millionen von Chunks
+- **Keine Parameter-Sensitivität** — robuste Standardparameter funktionieren für die meisten Fälle
+- **Inkrementelle Updates** — unterstützt Hinzufügen von Vektoren ohne vollständigen Neuaufbau
+
+HNSW ist der Algorithmus hinter den meisten erfolgreichen KI-Anwendungen, die [Ähnlichkeitssuche](/de/glossary/similarity-search/) durchführen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               HNSW - HIERARCHICAL NAVIGABLE                │
+│                    SMALL WORLD GRAPHEN                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE SCHLÜSSELERKENNTNIS:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Small-World-Netzwerke: Die meisten Knoten können jeden   │
+│  anderen Knoten durch eine kleine Anzahl von Sprüngen     │
+│  erreichen (wie "6 Grade der Trennung"). HNSW nutzt       │
+│  dies für Vektorsuche.                                     │
+│                                                            │
+│                                                            │
+│  HIERARCHISCHE STRUKTUR:                                   │
+│  ──────────────────────                                    │
+│                                                            │
+│            SCHICHT 2 (oben): Wenige Knoten, Langstreck.   │
+│                                                            │
+│                 ●═══════════════════●                      │
+│                 ║                   ║                      │
+│                 ║                   ║                      │
+│            SCHICHT 1: Mehr Knoten, mittlere Verbindungen  │
+│                                                            │
+│           ●════●════●═══════●════●════●                   │
+│           ║    ║    ║       ║    ║    ║                   │
+│           ║    ║    ║       ║    ║    ║                   │
+│            SCHICHT 0 (Basis): Alle Knoten, lokale Links   │
+│                                                            │
+│        ●──●──●──●──●──●──●──●──●──●──●──●──●──●──●        │
+│                                                            │
+│                                                            │
+│  SCHICHTZUWEISUNG:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Jeder Vektor wird zufällig einer maximalen Schicht       │
+│  mit Exponentialverteilung zugewiesen:                    │
+│                                                            │
+│    max_schicht = floor(-ln(random()) × mL)                │
+│                                                            │
+│  Ergebnis: ~63% Knoten nur in Schicht 0                   │
+│            ~23% Knoten erreichen Schicht 1                 │
+│            ~9%  Knoten erreichen Schicht 2                 │
+│            ...exponentiell weniger auf höheren Schichten  │
+│                                                            │
+│                                                            │
+│  SUCHALGORITHMUS:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Anfrage: q = [0.12, -0.34, 0.56, ...]                    │
+│  Finde: k nächste Nachbarn                                │
+│                                                            │
+│  Schritt 1: Am Einstiegspunkt starten (obere Schicht)    │
+│                                                            │
+│     Schicht 2:  [q]→→→→●                                  │
+│                        ↓                                   │
+│                                                            │
+│  Schritt 2: Greedy-Abstieg - auf jeder Schicht zum       │
+│             nächsten Nachbarn zu q gehen                  │
+│                                                            │
+│     Schicht 1:     ●→→→●→→→●                              │
+│                            ↓                               │
+│                                                            │
+│  Schritt 3: Auf Schicht 0, Suche mit ef_search           │
+│             Kandidaten erweitern (nicht nur 1)            │
+│                                                            │
+│     Schicht 0:         ●←●→●                              │
+│                       ↙  ↓  ↘                             │
+│                      ●   ●   ●                             │
+│                                                            │
+│  Schritt 4: Top-k aus erkundeten Kandidaten zurückgeben  │
+│                                                            │
+│                                                            │
+│  WICHTIGE PARAMETER:                                       │
+│  ──────────────────                                        │
+│                                                            │
+│  ┌─────────────┬───────────────────────────────────────┐  │
+│  │ Parameter   │ Effekt                                 │  │
+│  ├─────────────┼───────────────────────────────────────┤  │
+│  │ M           │ Kanten pro Knoten (Standard 16)       │  │
+│  │             │ Höher = besserer Recall, mehr Speich. │  │
+│  │             │                                        │  │
+│  │ ef_const    │ Konstruktions-Suchtiefe (Std 200)     │  │
+│  │             │ Höher = besserer Index, langsamerer Bau│  │
+│  │             │                                        │  │
+│  │ ef_search   │ Anfrage-Suchtiefe (Std 10)           │  │
+│  │             │ Höher = besserer Recall, langsamer    │  │
+│  │             │ Muss >= k sein (angefragte Nachbarn)  │  │
+│  └─────────────┴───────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  RECALL vs LATENZ TRADEOFF:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ef_search kontrolliert Suchqualität/Geschwindigkeit:     │
+│                                                            │
+│    ef_search │ Recall@10 │ Latenz  │ Distanzberechnungen │
+│    ──────────┼───────────┼─────────┼────────────────     │
+│         10   │   85%     │  0.5ms  │    ~300             │
+│         50   │   95%     │  1.5ms  │   ~1000             │
+│        100   │   98%     │  3.0ms  │   ~2000             │
+│        200   │   99%     │  5.0ms  │   ~4000             │
+│                                                            │
+│                                                            │
+│  SPEICHERVERBRAUCH:                                        │
+│  ─────────────────                                         │
+│                                                            │
+│  Für n Vektoren der Dimension d:                          │
+│                                                            │
+│  Speicher ≈ n × (d × 4 Bytes + M × 2 × 4 Bytes)          │
+│                ↑                ↑                          │
+│            Vektoren       Graph-Kanten                    │
+│                                                            │
+│  Beispiel: 1M Vektoren × 768d × M=16                      │
+│  = 1M × (768×4 + 16×2×4) = ~3.2 GB                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Was ist die Beziehung zwischen HNSW und Vektordatenbanken?**
+
+A: HNSW ist ein Algorithmus; Vektordatenbanken sind Systeme, die ihn nutzen. Fast alle großen Vektordatenbanken (Pinecone, Weaviate, Qdrant, [Milvus](/de/glossary/milvus/), pgvector) verwenden HNSW als ihren primären Indexierungsalgorithmus. Wenn Sie einen Index in diesen Systemen erstellen, konfigurieren Sie oft HNSW-Parameter.
+
+**F: Wie stimme ich HNSW-Parameter für meinen Anwendungsfall ab?**
+
+A: Beginnen Sie mit Standardwerten (M=16, ef_construction=200). Für Anfragen stimmen Sie ef_search basierend auf Ihren Recall/Latenz-Anforderungen ab—beginnen Sie bei k×2 (wobei k die benötigten Nachbarn ist) und erhöhen Sie bis der Recall ein Plateau erreicht.
+
+**F: Unterstützt HNSW Filterung (Metadata-Suche)?**
+
+A: HNSW allein filtert nicht—es findet nur nächste Vektoren. Vektordatenbanken fügen Filterung oben drauf hinzu: Pre-Filtering oder Post-Filtering. Das ist warum Vektordatenbanken Mehrwert über rohes HNSW hinaus bieten.
+
+**F: Wie handhabt HNSW Updates und Löschungen?**
+
+A: HNSW unterstützt inkrementelle Einfügungen effizient. Löschungen sind kniffliger: die meisten Implementierungen markieren Vektoren als gelöscht, behalten aber Graph-Kanten. Für schwere Update-Workloads kann periodische Neuindexierung nötig sein.
+
+## Verwandte Begriffe
+
+- [ANN](/de/glossary/ann/) — Approximate-Nearest-Neighbor-Algorithmen
+- [FAISS](/de/glossary/faiss/) — enthält HNSW-Implementierung
+- [Pinecone](/de/glossary/pinecone/) — Vektordatenbank mit HNSW
+- [Dense retrieval](/de/glossary/dense-retrieval/) — verlässt sich auf HNSW für Suche
+
+---
+
+## Referenzen
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://ieeexplore.ieee.org/document/8594636)", IEEE Transactions on Pattern Analysis and Machine Intelligence. [Originales HNSW-Paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [HNSW-Benchmark-Vergleiche]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [HNSW im FAISS-Kontext]
+
+> Fu et al. (2019), "[Fast Approximate Nearest Neighbor Search With The Navigating Spreading-out Graph](https://www.vldb.org/pvldb/vol12/p461-fu.pdf)", VLDB. [NSG-Vergleichspaper]
+
+## References
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://ieeexplore.ieee.org/document/8594636)", IEEE Transactions on Pattern Analysis and Machine Intelligence. [Original HNSW paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [HNSW benchmark comparisons]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [HNSW in FAISS context]
+
+> Fu et al. (2019), "[Fast Approximate Nearest Neighbor Search With The Navigating Spreading-out Graph](https://www.vldb.org/pvldb/vol12/p461-fu.pdf)", VLDB. [NSG comparison paper]

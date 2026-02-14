@@ -1,0 +1,245 @@
+---
+term: "Faktizität"
+termSlug: "factuality"
+short: "Der Grad, zu dem KI-generierte Inhalte überprüfbare Wahrheit genau widerspiegeln und korrekte Aussagen von Fabrikationen und Halluzinationen unterscheiden."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["grounding", "citation", "attribution", "hallucination"]
+synonyms: ["Faktische Genauigkeit", "Wahrhaftigkeit", "Faktische Korrektheit"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Faktizität in KI bezeichnet die Genauigkeit und Wahrhaftigkeit generierter Inhalte—ob Aussagen verifizierbaren Fakten entsprechen. Eine faktische KI-Antwort enthält Behauptungen, die gegen maßgebliche Quellen oder etabliertes Wissen validiert werden können. Faktizität unterscheidet sich von Flüssigkeit (wie natürlich Text klingt) und Relevanz (wie gut die Frage beantwortet wird); eine Antwort kann perfekt flüssig und relevant sein, aber faktisch falsch. Faktizität beantwortet: "Ist das, was die KI gesagt hat, tatsächlich wahr?"
+
+## Warum es wichtig ist
+
+Faktizität ist nicht verhandelbar für [vertrauenswürdige KI](/de/glossary/responsible-ai/):
+
+- **Verhindert Fehlinformation** — faktische Fehler verbreiten sich, wenn KI vertraut wird
+- **Ermöglicht sicheren Einsatz** — kritisch in medizinischen, rechtlichen, finanziellen Bereichen
+- **Baut Benutzervertrauen** — wiederholte Ungenauigkeiten zerstören Glaubwürdigkeit
+- **Unterstützt Compliance** — Vorschriften erfordern genaue Informationen
+- **Reduziert Haftung** — faktische Fehler können rechtliche Konsequenzen haben
+- **Unterscheidet Qualität** — Faktizität trennt nützliche KI von gefährlicher KI
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      FAKTIZITÄT                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FAKTIZITÄTSSPEKTRUM:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  FAKTISCH ◄────────────────────────► FABRIZIERT    │ │
+│  │     │                                     │          │ │
+│  │     ▼                                     ▼          │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │ │
+│  │  │Verifiziert│ │ Genau   │ │Fehlerhaft│ │Halluzi-│ │ │
+│  │  │ korrekt  │ │(wahrsch. │ │ (falsche │ │ niert  │ │ │
+│  │  │(bewiesen)│ │  wahr)   │ │ Fakten)  │ │(erfund)│ │ │
+│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘ │ │
+│  │                                                      │ │
+│  │  Beispiele:                                          │ │
+│  │  • Verifiziert: "Wasser kocht bei 100°C Meeresniv."│ │
+│  │  • Genau: "Das Projekt war in Q3 abgeschlossen"    │ │
+│  │  • Fehlerhaft: "Einstein entdeckte Schwerkraft"    │ │
+│  │  • Halluziniert: "Olympiade 2025 auf dem Mars"     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ARTEN FAKTISCHER FEHLER:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  FEHLERTYP      │  BESCHREIBUNG     │  BEISPIEL     │ │
+│  │  ───────────────┼───────────────────┼────────────── │ │
+│  │  Entitätsfehler │  Falsche Namen,   │  "Microsoft   │ │
+│  │                 │  Daten, Orte      │  gegründet    │ │
+│  │                 │                   │  1976"        │ │
+│  │  ───────────────┼───────────────────┼────────────── │ │
+│  │  Relationsfehler│  Falsche Verbin-  │  "Einstein    │ │
+│  │                 │  dungen zwischen  │  entdeckte    │ │
+│  │                 │  Entitäten        │  Penicillin"  │ │
+│  │  ───────────────┼───────────────────┼────────────── │ │
+│  │  Numerischer    │  Falsche Zahlen,  │  "Die Erde    │ │
+│  │  Fehler         │  Statistiken      │  ist 4 Mrd    │ │
+│  │                 │                   │  Jahre alt"   │ │
+│  │  ───────────────┼───────────────────┼────────────── │ │
+│  │  Zeitlicher     │  Falsches Timing, │  "WWII endete │ │
+│  │  Fehler         │  Reihenfolge      │  1944"        │ │
+│  │  ───────────────┼───────────────────┼────────────── │ │
+│  │  Fabrikation    │  Komplett erfund- │  "Das Smith-  │ │
+│  │                 │  ene Entitäten    │  Gesetz von   │ │
+│  │                 │                   │  2022..."     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FAKTIZITÄTS-EVALUIERUNGS-PIPELINE:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. AUSSAGEN-EXTRAKTION                              │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  KI-Antwort: "Apple wurde 1976 von Steve    │  │ │
+│  │  │  Jobs und Bill Gates in Kalifornien gegrün- │  │ │
+│  │  │  det. Das erste Produkt war der Apple I."   │  │ │
+│  │  │                                              │  │ │
+│  │  │  Extrahierte Aussagen:                       │  │ │
+│  │  │  C1: "Apple 1976 gegründet"                 │  │ │
+│  │  │  C2: "Steve Jobs gründete Apple"            │  │ │
+│  │  │  C3: "Bill Gates gründete Apple"            │  │ │
+│  │  │  C4: "Apple in Kalifornien gegründet"       │  │ │
+│  │  │  C5: "Erstes Produkt war Apple I"           │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  2. FAKTVERIFIZIERUNG (pro Aussage)                 │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  C1: "Apple 1976 gegründet" ✓               │  │ │
+│  │  │      Quelle: Wikipedia, SEC-Dokumente       │  │ │
+│  │  │      → FAKTISCH                              │  │ │
+│  │  │                                              │  │ │
+│  │  │  C2: "Steve Jobs gründete Apple" ✓          │  │ │
+│  │  │      Quelle: Unternehmensgeschichte         │  │ │
+│  │  │      → FAKTISCH                              │  │ │
+│  │  │                                              │  │ │
+│  │  │  C3: "Bill Gates gründete Apple" ✗          │  │ │
+│  │  │      Widerspruch: Gates → Microsoft         │  │ │
+│  │  │      → NICHT-FAKTISCH (falsche Relation)    │  │ │
+│  │  │                                              │  │ │
+│  │  │  C4: "Apple in Kalifornien" ✓               │  │ │
+│  │  │      Quelle: Gründungsdokumente             │  │ │
+│  │  │      → FAKTISCH                              │  │ │
+│  │  │                                              │  │ │
+│  │  │  C5: "Erstes Produkt Apple I" ✓             │  │ │
+│  │  │      Quelle: Produktgeschichte              │  │ │
+│  │  │      → FAKTISCH                              │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  3. FAKTIZITÄTSBEWERTUNG                            │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  Gesamt Aussagen: 5                          │  │ │
+│  │  │  Faktische Aussagen: 4                       │  │ │
+│  │  │  Nicht-faktische Aussagen: 1                 │  │ │
+│  │  │                                              │  │ │
+│  │  │  Faktizitätswert: 4/5 = 80%                 │  │ │
+│  │  │                                              │  │ │
+│  │  │  Fehleranalyse:                              │  │ │
+│  │  │  • 1 Entität/Relationsfehler (Bill Gates)   │  │ │
+│  │  │  • Schweregrad: HOCH (falscher Mitgründer)  │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FAKTIZITÄTS-VERIFIKATIONSMETHODEN:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Wissensbasis-Abfrage:                                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Strukturierte Wissensbasen abfragen (Wikidata)    │ │
+│  │                                                      │ │
+│  │  Aussage: "Paris ist Hauptstadt von Frankreich"    │ │
+│  │  Abfrage: hauptstadt_von(Paris, ?)                  │ │
+│  │  KB-Ergebnis: hauptstadt_von(Paris, Frankreich)     │ │
+│  │  → FAKTISCH ✓                                       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Web-Such-Verifikation:                                    │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Nach unterstützenden/widersprechenden Belegen suchen│ │
+│  │                                                      │ │
+│  │  Aussage: "Produkt X gewann 2023 Innovationspreis" │ │
+│  │  Suche: "Produkt X" "2023 Innovationspreis"         │ │
+│  │  Ergebnisse: Mehrere Quellen bestätigen → FAKTISCH │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FAKTIZITÄT VERBESSERN:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  RAG (Retrieval-Augmented Generation):             │ │
+│  │  ├── Antworten in abgerufenen Dokumenten verankern │ │
+│  │  └── Reduziert Abhängigkeit von Parameterwissen   │ │
+│  │                                                      │ │
+│  │  Chain-of-Thought Verifikation:                    │ │
+│  │  ├── Modell zeigt Schritt-für-Schritt Begründung  │ │
+│  │  └── Jeder Schritt kann faktengeprüft werden      │ │
+│  │                                                      │ │
+│  │  Unsicherheitsausdruck:                            │ │
+│  │  ├── Modell drückt Konfidenzniveaus aus           │ │
+│  │  └── "Ich bin unsicher..." reduziert Fehler       │ │
+│  │                                                      │ │
+│  │  Post-Generierungs-Faktenprüfung:                  │ │
+│  │  ├── Aussagen nach Generierung verifizieren       │ │
+│  │  └── Nicht-faktischen Inhalt filtern/markieren    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Faktizität von Halluzination?**
+
+A: Halluzination ist ein Typ von Faktizitätsversagen—spezifisch das Generieren von Inhalten ohne Basis in Trainingsdaten oder bereitgestelltem Kontext. Faktizität ist das breitere Konzept, das alle Arten von Wahrhaftigkeit umfasst.
+
+**F: Wie messe ich Faktizität in meinem KI-System?**
+
+A: Gängige Ansätze: (1) Benchmarks wie FactScore, TruthfulQA oder FEVER nutzen, (2) Domänenspezifische Testsets mit verifizierten Fakten erstellen, (3) Aussagenextraktion + Verifikations-Pipelines implementieren, (4) Menschliche Bewertung für kritische Anwendungen.
+
+**F: Kann [RAG](/de/glossary/rag/) Faktizität garantieren?**
+
+A: RAG verbessert Faktizität durch Verankerung in abgerufenen Quellen, garantiert sie aber nicht. Das Modell kann immer noch Quellen falsch interpretieren oder ungenaue Quellen abrufen.
+
+**F: Was ist eine akzeptable Faktizitätsrate?**
+
+A: Hängt vom Domänenrisiko ab. Medizinisch/rechtlich/finanziell: 99%+ (Fehler können schaden). Allgemeinwissen: 90-95% akzeptabel mit Unsicherheitsausdruck.
+
+## Verwandte Begriffe
+
+- [Grounding](/de/glossary/grounding/) — an Quelldokumenten verankern
+- [Zitation](/de/glossary/citation/) — Quellenreferenzen hinzufügen
+- [Attribution](/de/glossary/attribution/) — Quellenunterstützung verifizieren
+- [Halluzination](/de/glossary/hallucination/) — fabrizierter Inhalt
+
+---
+
+## Referenzen
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision](https://arxiv.org/abs/2305.14251)", EMNLP. [Faktizitäts-Evaluierungsmethode]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Wahrhaftigkeits-Benchmark]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Faktenverifikations-Dataset]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Aktuelle Faktizitätsforschung]
+
+## References
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation](https://arxiv.org/abs/2305.14251)", EMNLP. [Factuality evaluation method]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Truthfulness benchmark]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Fact verification dataset]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Recent factuality research]

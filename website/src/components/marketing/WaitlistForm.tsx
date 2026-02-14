@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import React, { useState, useRef } from "react";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
@@ -8,6 +8,7 @@ interface WaitlistFormProps {
     emailPlaceholder?: string;
     submit?: string;
     success?: string;
+    successDuplicate?: string;
     consent?: string;
     privacyLinkText?: string;
     privacyHref?: string;
@@ -31,6 +32,12 @@ function getUtmParams(): Record<string, string> {
   return utm;
 }
 
+function getSelectedPlan(): string | null {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  return params.get("plan");
+}
+
 export default function WaitlistForm({
   labels = {},
   onSuccess,
@@ -39,7 +46,8 @@ export default function WaitlistForm({
     emailLabel = "Email address",
     emailPlaceholder = "you@example.com",
     submit = "Join the waitlist",
-    success = "You're on the list! We'll email you when a spot opens.",
+    success = "You're on the list! We'll be in touch when a spot opens.",
+    successDuplicate = "You're already on the list! We'll be in touch when a spot opens.",
     consent = "By joining you agree to receive updates about Auryth TX AI. Unsubscribe anytime.",
     privacyLinkText = "Privacy Policy",
     privacyHref = "/en/privacy/",
@@ -50,9 +58,11 @@ export default function WaitlistForm({
 
   const [email, setEmail] = useState("");
   const [state, setState] = useState<FormState>("idle");
+  const [isDuplicate, setIsDuplicate] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
     // Client-side validation
@@ -67,19 +77,28 @@ export default function WaitlistForm({
     setErrorMsg("");
 
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: trimmed,
+          plan: getSelectedPlan(),
           ...getUtmParams(),
+          ...(honeypotRef.current?.value && { website: honeypotRef.current.value }),
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeout);
       const data = await res.json().catch(() => null);
 
       if (res.ok && data?.success) {
+        setIsDuplicate(data.duplicate === true);
         setState("success");
+        window.dispatchEvent(new CustomEvent("waitlist-refresh"));
         onSuccess?.();
         return;
       }
@@ -103,7 +122,7 @@ export default function WaitlistForm({
   if (state === "success") {
     return (
       <div role="status" className="rounded-lg border border-primary/30 bg-primary/5 p-6 text-center">
-        <p className="text-body font-medium text-foreground">{success}</p>
+        <p className="text-body font-medium text-foreground">{isDuplicate ? successDuplicate : success}</p>
       </div>
     );
   }
@@ -150,6 +169,7 @@ export default function WaitlistForm({
           id="waitlist-website"
           type="text"
           name="website"
+          ref={honeypotRef}
           tabIndex={-1}
           autoComplete="off"
         />

@@ -1,0 +1,190 @@
+---
+term: "Alignement"
+termSlug: "alignment"
+short: "Le processus d'entraînement des systèmes IA pour qu'ils se comportent conformément aux valeurs, intentions et préférences humaines—assurant que les modèles sont utiles, inoffensifs et honnêtes."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["rlhf", "guardrails", "responsible-ai", "instruction-tuning"]
+synonyms: ["Alignement IA", "Alignement de valeurs", "Alignement humain"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'alignement en IA fait [référence](/fr/glossary/citation/) au fait de s'assurer que les systèmes d'intelligence artificielle agissent conformément aux intentions, valeurs et principes éthiques humains. Une IA alignée fait ce que les humains veulent réellement (pas seulement ce qu'ils disent littéralement), évite les actions nuisibles et opère de manière transparente. L'alignement comble le fossé entre les capacités brutes d'un modèle (apprises pendant le [pré-entraînement](/fr/glossary/pretraining/)) et son comportement souhaitable en déploiement. Le désalignement—où l'IA poursuit des objectifs non conformes aux valeurs humaines—est considéré comme l'un des risques centraux du développement de l'IA.
+
+## Pourquoi c'est important
+
+L'alignement est essentiel pour une IA sûre et bénéfique:
+
+- **Sécurité** — empêche les modèles de causer des dommages par des objectifs mal compris
+- **Fiabilité** — les utilisateurs peuvent compter sur un comportement cohérent et prévisible
+- **Utilité** — les modèles alignés aident avec ce dont les utilisateurs ont vraiment besoin
+- **Conformité** — les réglementations exigent de plus en plus l'alignement
+- **Atténuation des risques** — réduit le potentiel de manipulation ou sorties dangereuses
+- **Acceptation sociale** — l'IA alignée gagne la confiance publique et institutionnelle
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      ALIGNEMENT                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LE PROBLÈME D'ALIGNEMENT:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  MODÈLE NON ALIGNÉ:                                 │ │
+│  │                                                      │ │
+│  │  Utilisateur: "Aide-moi à écrire un email persuasif"│ │
+│  │                                                      │ │
+│  │  Le modèle pourrait:                                │ │
+│  │  ✗ Générer du contenu manipulateur/trompeur       │ │
+│  │  ✗ Optimiser la persuasion peu importe l'éthique  │ │
+│  │  ✗ Ignorer les dommages potentiels aux destinataires│ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  MODÈLE ALIGNÉ:                                      │ │
+│  │                                                      │ │
+│  │  Utilisateur: "Aide-moi à écrire un email persuasif"│ │
+│  │                                                      │ │
+│  │  Le modèle:                                          │ │
+│  │  ✓ Demande le contexte et le but légitime          │ │
+│  │  ✓ Suggère des techniques de persuasion éthiques   │ │
+│  │  ✓ Refuse si la tromperie est intentionnelle       │ │
+│  │  ✓ Équilibre utilité et prévention des dommages    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OBJECTIFS D'ALIGNEMENT (Framework HHH):                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │               UTILE (Helpful)                │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Aide réellement avec la tâche utilisateur│   │ │
+│  │  │  • Fournit info précise et pertinente       │   │ │
+│  │  │  • Suit les instructions de manière appropriée│  │ │
+│  │  │  • Demande clarification si nécessaire      │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │            INOFFENSIF (Harmless)             │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Refuse demandes dangereuses/illégales    │   │ │
+│  │  │  • Évite générer contenu nuisible           │   │ │
+│  │  │  • Ne manipule ni ne trompe                 │   │ │
+│  │  │  • Considère conséquences en aval           │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              HONNÊTE (Honest)                │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Ne fabrique pas d'information            │   │ │
+│  │  │  • Reconnaît l'incertitude                  │   │ │
+│  │  │  • Fournit perspectives équilibrées         │   │ │
+│  │  │  • Transparent sur les limitations          │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TECHNIQUES D'ALIGNEMENT:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. SUPERVISED FINE-TUNING (SFT)                    │ │
+│  │     Entraîner sur réponses idéales écrites humains  │ │
+│  │                                                      │ │
+│  │  2. REWARD MODELING                                 │ │
+│  │     Entraîner modèle à prédire préférences humaines │ │
+│  │                                                      │ │
+│  │  3. RLHF                                            │ │
+│  │     Utiliser modèle récompense pour entraîner LLM   │ │
+│  │                                                      │ │
+│  │  4. CONSTITUTIONAL AI (CAI)                         │ │
+│  │     Modèle critique et révise sa propre sortie      │ │
+│  │     basé sur une constitution (principes)           │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  DÉFIS D'ALIGNEMENT:                                       │
+│  ───────────────────                                       │ 
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Specification Gaming:                              │ │
+│  │  • Modèle trouve failles dans fonction récompense  │ │
+│  │                                                      │ │
+│  │  Reward Hacking:                                    │ │
+│  │  • Modèle optimise métrique proxy, pas vrai but    │ │
+│  │                                                      │ │
+│  │  Alignement Trompeur:                               │ │
+│  │  • Modèle semble aligné pendant entraînement       │ │
+│  │  • Se comporte différemment en déploiement         │ │
+│  │                                                      │ │
+│  │  Valeurs Concurrentes:                              │ │
+│  │  • Utile vs Inoffensif peut entrer en conflit      │ │
+│  │  • Différents humains ont différentes valeurs       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Quelle différence entre alignement et sécurité?**
+
+R: L'alignement assure que l'IA fait ce que les humains veulent. La sécurité est plus large—elle inclut alignement plus security, fiabilité, [robustesse](/fr/glossary/model-robustness/) et déploiement contrôlé.
+
+**Q: Un modèle peut-il être trop aligné (trop prudent)?**
+
+R: Oui—"taxe d'alignement." Les modèles trop prudents refusent des demandes légitimes. Un bon alignement équilibre utilité et innocuité sans restriction excessive.
+
+**Q: Pourquoi ne pas simplement programmer des règles au lieu d'utiliser RLHF?**
+
+R: Les valeurs humaines sont trop complexes et contextuelles pour être encodées comme règles explicites. RLHF apprend les préférences humaines nuancées à partir d'exemples.
+
+**Q: L'alignement est-il un problème résolu?**
+
+R: Non. Les techniques actuelles fonctionnent pour les modèles actuels mais peuvent ne pas passer à l'échelle pour des systèmes plus capables.
+
+## Termes associés
+
+- [RLHF](/fr/glossary/rlhf/) — technique d'alignement primaire
+- [Guardrails](/fr/glossary/guardrails/) — contraintes de sécurité runtime
+- [IA Responsable](/fr/glossary/responsible-ai/) — développement IA éthique
+- [Instruction tuning](/fr/glossary/instruction-tuning/) — apprendre à suivre [instructions](/fr/glossary/prompt/)
+
+---
+
+## Références
+
+> Christiano et al. (2017), "[Deep Reinforcement Learning from Human Preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Travail RLHF fondamental]
+
+> Ouyang et al. (2022), "[Training Language Models to Follow Instructions with Human Feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [Alignement InstructGPT]
+
+> Bai et al. (2022), "[Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073)", arXiv. [Méthode Constitutional AI]
+
+> Ngo et al. (2022), "[The Alignment Problem from a Deep Learning Perspective](https://arxiv.org/abs/2209.00626)", arXiv. [Aperçu défis alignement]
+
+## References
+
+> Christiano et al. (2017), "[Deep Reinforcement Learning from Human Preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Foundational RLHF work]
+
+> Ouyang et al. (2022), "[Training Language Models to Follow Instructions with Human Feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT alignment]
+
+> Bai et al. (2022), "[Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073)", arXiv. [Constitutional AI method]
+
+> Ngo et al. (2022), "[The Alignment Problem from a Deep Learning Perspective](https://arxiv.org/abs/2209.00626)", arXiv. [Alignment challenges overview]

@@ -1,0 +1,171 @@
+---
+term: "Query Expansion"
+termSlug: "query-expansion"
+short: "Techniques qui reformulent ou augmentent automatiquement les requêtes de recherche pour améliorer le retrieval en ajoutant synonymes, termes associés ou reformulations."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["dense-retrieval", "sparse-retrieval", "rag", "hyde"]
+synonyms: ["Reformulation de requête", "Augmentation de requête", "Réécriture de requête"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+[Query expansion](/fr/glossary/semantic-expansion/) désigne des techniques qui améliorent les [requêtes](/fr/glossary/prompt/) de recherche en ajoutant des termes additionnels, synonymes ou formulations alternatives pour améliorer le recall du retrieval. Dans la recherche traditionnelle, cela signifiait ajouter des synonymes de WordNet ou des termes co-occurrents du [corpus](/fr/glossary/corpus/). Dans les systèmes RAG modernes, les [LLM](/fr/glossary/llm/) peuvent générer plusieurs variantes de requêtes, des réponses hypothétiques, ou décomposer des questions complexes. L'objectif est de combler l'écart de vocabulaire entre la façon dont les utilisateurs formulent leurs questions et comment les documents pertinents sont écrits.
+
+## Pourquoi c'est important
+
+Query expansion adresse des défis de recherche fondamentaux:
+
+- **Décalage de vocabulaire** — utilisateurs disent "voiture" mais documents disent "véhicule"
+- **Ambiguïté de requête** — requêtes courtes manquent de contexte, expansion clarifie l'intention
+- **Recall amélioré** — trouver des documents pertinents que les requêtes exactes manquent
+- **Amélioration RAG** — meilleur retrieval mène à meilleures réponses LLM
+- **Requêtes multi-facettes** — décomposer questions complexes en parties recherchables
+- **Requêtes sous-spécifiées** — ajouter contexte implicite non exprimé
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    QUERY EXPANSION                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LE PROBLÈME:                                              │
+│  ────────────                                              │
+│                                                            │
+│  Requête utilisateur: "vols pas chers pour Paris"          │
+│                                                            │
+│  Les documents peuvent dire:                               │
+│  • "billets d'avion économiques pour CDG"                 │
+│  • "voyages aériens budget vers la France"                │
+│  • "tarifs aériens abordables vers Orly"                  │
+│                                                            │
+│  Correspondance exacte manque tous ces documents!          │
+│                                                            │
+│                                                            │
+│  EXPANSION MODERNE BASÉE LLM:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  1. GÉNÉRATION MULTI-REQUÊTE                              │
+│  ───────────────────────────                              │
+│                                                            │
+│     Prompt: "Générer 3 versions alternatives de cette    │
+│              question qui pourraient récupérer des        │
+│              documents pertinents: {original_query}"      │
+│                                                            │
+│     Original: "Quelles sont les causes du diabète?"        │
+│                                                            │
+│     Requêtes générées:                                     │
+│     • "Facteurs de risque et étiologie du diabète"       │
+│     • "Comment se développe la résistance à l'insuline?" │
+│     • "Causes génétiques et mode de vie du type 2"       │
+│                                                            │
+│                                                            │
+│  2. HyDE: EMBEDDINGS DE DOCUMENTS HYPOTHÉTIQUES           │
+│  ──────────────────────────────────────────────           │
+│                                                            │
+│     Générer réponse hypothétique et chercher docs réels: │
+│                                                            │
+│     Requête: "Comment fonctionne CRISPR?"                  │
+│                    ↓                                       │
+│     LLM génère réponse hypothétique:                      │
+│     ┌──────────────────────────────────────────────────┐ │
+│     │ "CRISPR est une technologie d'édition génique    │ │
+│     │  qui utilise la protéine Cas9 pour couper l'ADN │ │
+│     │  à des endroits spécifiques. Un ARN guide       │ │
+│     │  dirige Cas9 vers la séquence cible..."         │ │
+│     └──────────────────────────────────────────────────┘ │
+│                    ↓                                       │
+│     Embedder ce document hypothétique                     │
+│                    ↓                                       │
+│     Chercher documents réels similaires                   │
+│                                                            │
+│                                                            │
+│  3. DÉCOMPOSITION DE REQUÊTE                              │
+│  ───────────────────────────                              │
+│                                                            │
+│     Diviser requête complexe en sous-requêtes:            │
+│                                                            │
+│     Original: "Comment le FSD de Tesla se compare à      │
+│                l'approche Waymo, et lequel est plus sûr?"│
+│                    ↓                                       │
+│     Sous-requêtes:                                         │
+│     • "Comment fonctionne Tesla Full Self-Driving?"      │
+│     • "Comment fonctionne la conduite autonome Waymo?"   │
+│     • "Statistiques de sécurité Tesla FSD"               │
+│     • "Bilan sécurité et statistiques Waymo"             │
+│                                                            │
+│                                                            │
+│  PIPELINE RAG AVEC QUERY EXPANSION:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│     Requête Utilisateur                                    │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Expanding │──→ Générer variantes / HyDE / Decomp.  │
+│    └────────────┘                                         │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Retrieve  │──→ Chercher avec toutes les requêtes   │
+│    └────────────┘                                         │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Dedupe &  │──→ Supprimer chunks dupliqués          │
+│    │  Rerank    │──→ Scorer par pertinence à l'original  │
+│    └────────────┘                                         │
+│         ↓                                                  │
+│    ┌────────────┐                                         │
+│    │  Generate  │──→ LLM répond avec contexte étendu     │
+│    └────────────┘                                         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: L'expansion de requête aide-t-elle toujours le retrieval?**
+
+R: Non—l'expansion augmente le recall mais peut nuire à la précision en introduisant des correspondances non pertinentes. L'expansion de synonymes est notoire pour la dérive de requête. L'expansion basée LLM est généralement meilleure mais ajoute de la latence.
+
+**Q: Comment HyDE diffère-t-il de l'expansion de requête régulière?**
+
+R: L'expansion traditionnelle ajoute des termes à la requête mais cherche dans "l'espace requête". HyDE génère une réponse hypothétique (texte complet type document) et cherche dans "l'espace document".
+
+**Q: Dois-je utiliser l'expansion avec le dense retrieval?**
+
+R: Le dense retrieval gère déjà la [similarité sémantique](/fr/glossary/semantic-similarity/). Cependant, les techniques basées LLM (multi-requête, HyDE, décomposition) aident encore en fournissant plusieurs angles de retrieval.
+
+**Q: Comment choisir entre les techniques d'expansion?**
+
+R: Commencez par la génération multi-requête—c'est simple et efficace. Utilisez HyDE pour les requêtes intensives en connaissances. Utilisez la décomposition pour les questions complexes multi-parties.
+
+## Termes associés
+
+- [Dense retrieval](/fr/glossary/dense-retrieval/) — bénéficie de l'expansion
+- [RAG](/fr/glossary/rag/) — pipeline où l'expansion est appliquée
+- [Reranking](/fr/glossary/reranking/) — suit l'expansion dans le pipeline
+- [Cross-encoder](/fr/glossary/cross-encoder/) — reclasse les résultats étendus
+
+---
+
+## Références
+
+> Gao et al. (2022), "[Precise Zero-Shot Dense Retrieval without Relevance Labels](https://arxiv.org/abs/2212.10496)", ACL 2023. [Article HyDE]
+
+> Wang et al. (2023), "[Query2Doc: Query Expansion with Large Language Models](https://arxiv.org/abs/2303.07678)", EMNLP. [Expansion de requête LLM]
+
+> Carpineto & Romano (2012), "[A Survey of Automatic Query Expansion in Information Retrieval](https://dl.acm.org/doi/10.1145/2071389.2071390)", ACM Computing Surveys. [Techniques classiques]
+
+> Ma et al. (2023), "[Query Rewriting for Retrieval-Augmented Large Language Models](https://arxiv.org/abs/2305.14283)", EMNLP. [[Réécriture de requête](/fr/glossary/query-rewriting/) RAG]
+
+## References
+
+> Gao et al. (2022), "[Precise Zero-Shot Dense Retrieval without Relevance Labels](https://arxiv.org/abs/2212.10496)", ACL 2023. [HyDE paper]
+
+> Wang et al. (2023), "[Query2Doc: Query Expansion with Large Language Models](https://arxiv.org/abs/2303.07678)", EMNLP. [LLM query expansion]
+
+> Carpineto & Romano (2012), "[A Survey of Automatic Query Expansion in Information Retrieval](https://dl.acm.org/doi/10.1145/2071389.2071390)", ACM Computing Surveys. [Classical techniques]
+
+> Ma et al. (2023), "[Query Rewriting for Retrieval-Augmented Large Language Models](https://arxiv.org/abs/2305.14283)", EMNLP. [RAG query rewriting]

@@ -1,0 +1,105 @@
+---
+term: "Attention Multi-Têtes"
+termSlug: "multi-head-attention"
+short: "Une technique exécutant plusieurs opérations d'attention en parallèle, permettant aux modèles de capturer différents types de relations simultanément."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["attention-mechanism", "self-attention", "transformer-architecture", "llm"]
+synonyms: ["MHA", "Multi-head attention", "Têtes d'attention parallèles"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'Attention Multi-Têtes est un mécanisme qui effectue plusieurs opérations d'attention en parallèle, chacune avec différentes projections apprises. Au lieu de calculer une seule fonction d'attention, le modèle exécute plusieurs « têtes » simultanément, chacune capturant différents aspects des relations dans les données. Les sorties sont ensuite concaténées et projetées pour produire le résultat final.
+
+## Pourquoi c'est important
+
+L'Attention Multi-Têtes répond aux limitations de l'attention à tête unique :
+
+- **Représentations diverses** — différentes têtes peuvent apprendre différents types de relations (syntaxiques, sémantiques, positionnelles)
+- **Expressivité plus riche** — capturer plusieurs motifs simultanément améliore la capacité du modèle
+- **Entraînement stable** — plusieurs têtes fournissent redondance et stabilité du flux de gradient
+- **[Interprétabilité](/fr/glossary/explainability/)** — les têtes individuelles se spécialisent souvent dans des motifs linguistiques identifiables
+
+C'est pourquoi les Transformers utilisent l'attention multi-têtes plutôt qu'une attention unique—c'est fondamentalement plus puissant.
+
+## Comment ça fonctionne
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  ATTENTION MULTI-TÊTES                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Entrée ──┬──→ Tête 1 (W_Q1, W_K1, W_V1) ──→ Attention 1   │
+│           │                                                 │
+│           ├──→ Tête 2 (W_Q2, W_K2, W_V2) ──→ Attention 2   │
+│           │                                                 │
+│           ├──→ Tête 3 (W_Q3, W_K3, W_V3) ──→ Attention 3   │
+│           │                                    │            │
+│           └──→  ...h têtes...                  ▼            │
+│                                         [Concaténer]        │
+│                                               │             │
+│                                    Projection Linéaire (W_O)│
+│                                               │             │
+│                                               ▼             │
+│                                            Sortie           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+1. **Projeter les entrées** — Q, K, V sont projetés linéairement h fois avec différents poids appris
+2. **Attention parallèle** — chaque tête calcule l'attention indépendamment
+3. **Concaténer** — les sorties des têtes sont concaténées le long de la dimension des caractéristiques
+4. **Projection finale** — la sortie concaténée est projetée linéairement vers la dimension du modèle
+
+Formule : `MultiHead(Q,K,V) = Concat(tête_1,...,tête_h) × W_O`
+
+Où chaque `tête_i = Attention(Q×W_Qi, K×W_Ki, V×W_Vi)`
+
+## Questions fréquentes
+
+**Q : Combien de têtes sont typiquement utilisées ?**
+
+R : Les configurations courantes utilisent 8, 12 ou 16 têtes. GPT-3 utilise 96 têtes avec une dimension cachée de 12 288. Le nombre de têtes est généralement choisi pour que la dimension de chaque tête (d_model / num_heads) soit une taille raisonnable comme 64 ou 128.
+
+**Q : Les différentes têtes apprennent-elles des choses différentes ?**
+
+R : Oui, la recherche montre que les têtes se spécialisent souvent. Certaines s'attendent aux mots adjacents, d'autres aux dépendances syntaxiques, positions spécifiques ou tokens rares. Toutes les têtes ne sont pas également importantes—certaines peuvent être élaguées avec une perte de performance minimale.
+
+**Q : Pourquoi ne pas simplement utiliser une attention à tête unique plus large ?**
+
+R : L'attention à tête unique plus large a le même nombre de paramètres mais moins de diversité représentationnelle. Les sous-espaces parallèles de l'attention multi-têtes capturent des motifs plus riches et variés.
+
+**Q : Qu'est-ce que Group Query Attention (GQA) ?**
+
+R : GQA est une variante efficace où plusieurs têtes de query partagent des têtes Key-Value, réduisant la mémoire et le calcul tout en maintenant la qualité. Utilisé dans des modèles comme Llama 2.
+
+## Termes associés
+
+- [Mécanisme d'Attention](/fr/glossary/attention-mechanism/) — la technique fondamentale
+- [Auto-Attention](/fr/glossary/self-attention/) — chaque tête effectue l'auto-attention
+- [Architecture Transformer](/fr/glossary/transformer-architecture/) — utilise l'attention multi-têtes partout
+- [LLM](/fr/glossary/llm/) — les modèles de langage modernes reposent sur l'attention multi-têtes
+
+---
+
+## Références
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130 000+ [citations](/fr/glossary/citation/)]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1 200+ citations]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ citations]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ citations]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1,200+ citations]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ citations]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ citations]

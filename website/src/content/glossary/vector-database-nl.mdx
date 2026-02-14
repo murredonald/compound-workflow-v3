@@ -1,0 +1,101 @@
+---
+term: "Vector Database"
+termSlug: "vector-database"
+short: "Een gespecialiseerde database geoptimaliseerd voor het opslaan en doorzoeken van hoogdimensionale vector embeddings met similariteitsmetrieken."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["embeddings", "rag", "semantic-similarity", "approximate-nearest-neighbor"]
+synonyms: ["Vector store", "Vector DB", "Embedding database", "Similariteitszoek-database"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een vector database is een gespecialiseerde dataopslag ontworpen om hoogdimensionale [vector embeddings](/nl/glossary/vector-embeddings/) efficiënt te indexeren, op te slaan en te doorzoeken. In tegenstelling tot traditionele databases die exacte waarden matchen, vinden vector databases items die vergelijkbaar zijn met een queryvector met behulp van afstandsmetrieken zoals cosinus-similariteit of [Euclidische afstand](/nl/glossary/euclidean-distance/). Ze maken semantisch zoeken op schaal mogelijk door approximate nearest neighbor (ANN) algoritmen.
+
+## Waarom het belangrijk is
+
+Vector databases zijn essentiële infrastructuur voor moderne AI-toepassingen:
+
+- **[Semantisch zoeken](/nl/glossary/semantic-search/)** — vind conceptueel vergelijkbare content ongeacht exacte trefwoorden
+- **RAG-systemen** — haal relevante context op voor taalmodelresponsen
+- **Aanbevelingssystemen** — vind vergelijkbare producten, content of gebruikers
+- **Anomaliedetectie** — identificeer uitbijters in de embedding-ruimte
+- **Schaalbaarheid** — doorzoek miljarden vectoren in milliseconden
+
+Elk systeem dat "vergelijkbaar" in plaats van "exact" moet vinden, vertrouwt op vector databases.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    VECTOR DATABASE                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  INDEXEREN:                                                │
+│  Documenten → Embed → [0.1, 0.4, ...] → Index (HNSW/IVF)  │
+│                                                            │
+│  ┌─────────────────────────────────────────┐               │
+│  │  Vector Index (grafen/clusters)         │               │
+│  │    ●──●──●                              │               │
+│  │   /│\   \                               │               │
+│  │  ● ● ●   ●──●                           │               │
+│  └─────────────────────────────────────────┘               │
+│                                                            │
+│  ZOEKEN:                                                   │
+│  Query → Embed → [0.2, 0.3, ...] → ANN Search → Top K     │
+│                                            │               │
+│                                            ▼               │
+│                                    Vergelijkbare documenten│
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Embedding** — documenten worden omgezet naar vectoren via embedding-model
+2. **Indexeren** — vectoren worden georganiseerd in efficiënte zoekstructuren (HNSW, IVF, etc.)
+3. **Query-embedding** — zoekopdracht wordt omgezet naar dezelfde embedding-ruimte
+4. **ANN-zoeken** — index wordt doorzocht om [approximate nearest neighbors](/nl/glossary/ann/) te vinden
+5. **Resultaten** — top K meest vergelijkbare vectoren geretourneerd met metadata
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt een vector database van een traditionele database?**
+
+A: Traditionele databases gebruiken exact matchen (WHERE naam = 'Jan'). Vector databases gebruiken similariteitszoeken—het vinden van vectoren die het dichtst bij je query liggen in hoogdimensionale ruimte. Ze vullen traditionele databases aan in plaats van ze te vervangen.
+
+**V: Welke indexeringsalgoritmen worden gebruikt?**
+
+A: Gangbare algoritmen zijn HNSW ([Hierarchical Navigable Small World](/nl/glossary/hnsw/)), IVF (Inverted File Index) en PQ ([Product Quantization](/nl/glossary/vector-quantization/)). HNSW is het populairst vanwege de goede snelheid/nauwkeurigheidsafweging.
+
+**V: Wat zijn populaire vector databases?**
+
+A: Specifiek gebouwde opties zijn Pinecone, Weaviate, Milvus, Qdrant en Chroma. Traditionele databases zoals PostgreSQL (pgvector) en Elasticsearch ondersteunen ook vectorzoeken.
+
+**V: Hoe ga ik om met metadata-filtering?**
+
+A: De meeste vector databases ondersteunen hybride zoeken dat vectorsimilariteit combineert met metadatafilters (bijv. "vergelijkbaar met query EN categorie = 'juridisch'"). Dit is cruciaal voor productie-RAG-systemen.
+
+## Gerelateerde termen
+
+- [Embeddings](/nl/glossary/embeddings/) — de vectoren opgeslagen in vector databases
+- [RAG](/nl/glossary/rag/) — retrieval-architectuur aangedreven door vectorzoeken
+- [Semantic Similarity](/nl/glossary/semantic-similarity/) — de maat gebruikt voor ranking
+- Approximate Nearest Neighbor — kern zoekalgoritme
+
+---
+
+## Referenties
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2.600+ citaties]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1.800+ citaties]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ citaties]
+
+## References
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2,600+ citations]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1,800+ citations]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ citations]

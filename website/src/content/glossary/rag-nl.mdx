@@ -1,0 +1,75 @@
+---
+term: "Retrieval-Augmented Generation"
+termSlug: "rag"
+short: "RAG is een AI-techniek die informatieopvraging combineert met tekstgeneratie om nauwkeurige, brongebaseerde antwoorden te produceren."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "embeddings"]
+synonyms: ["RAG", "retrieval augmented generation"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Retrieval-Augmented Generation (RAG) is een techniek die grote taalmodellen verbetert door relevante documenten uit een kennisbank op te halen voordat antwoorden worden gegenereerd. Dit verankert de AI-output in feitelijke, actuele informatie in plaats van uitsluitend te vertrouwen op trainingsdata.
+
+## Waarom het belangrijk is
+
+RAG is bijzonder waardevol voor kennisintensieve domeinen waar nauwkeurigheid en actualiteit cruciaal zijn. Traditionele LLM's kunnen plausibele maar verouderde of onjuiste informatie genereren. RAG lost dit op door:
+
+- **Antwoorden te verankeren in bronnen** — elk antwoord verwijst naar specifieke documenten uit de kennisbank
+- **Actualiteit te behouden** — kennisbanken kunnen worden bijgewerkt zonder dure hertraining van het model
+- **[Hallucinaties](/nl/glossary/hallucination/) te verminderen** — het model genereert vanuit opgehaalde feiten, niet uit gememoriseerde patronen
+- **Controleerbaarheid te bieden** — citaties stellen gebruikers in staat AI-gegenereerde antwoorden te verifiëren
+
+## Hoe het werkt
+
+```
+Vraag → Embed → Zoek KB → Haal docs op → Genereer → Antwoord
+  │                          │
+  └──── vector similariteit ───┘
+```
+
+1. Gebruiker stelt een vraag
+2. Systeem zet vraag om naar embeddings en doorzoekt de kennisbank
+3. Meest relevante documenten worden opgehaald
+4. LLM genereert antwoord met behulp van opgehaalde context
+5. Antwoord bevat [broncitaties](/nl/glossary/citation/) ter verificatie
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt RAG van [fine-tuning](/nl/glossary/fine-tuning/)?**
+
+A: Fine-tuning wijzigt permanent de modelgewichten met nieuwe data. RAG haalt informatie op tijdens het bevragen, waardoor het gemakkelijker is om bij te werken en te auditen. RAG heeft de voorkeur wanneer bronmateriaal frequent verandert.
+
+**V: Kan RAG hallucineren?**
+
+A: RAG vermindert hallucinaties aanzienlijk door antwoorden te verankeren in opgehaalde documenten, maar de kwaliteit hangt af van de volledigheid van de kennisbank en de nauwkeurigheid van het ophalen.
+
+**V: Waarom niet gewoon een zoekmachine gebruiken?**
+
+A: Zoekmachines retourneren documenten; RAG synthetiseert informatie uit meerdere bronnen tot een coherent antwoord met de juiste context.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — de generatiecomponent die natuurlijke taalreacties produceert
+- [Embeddings](/nl/glossary/embeddings/) — [vectorrepresentaties](/nl/glossary/vector-embeddings/) die semantisch zoeken mogelijk maken
+
+---
+
+## Referenties
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11.200+ citaties]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2.800+ citaties]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1.400+ citaties]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11,200+ citations]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2,800+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1,400+ citations]

@@ -1,0 +1,99 @@
+---
+title: "Comment fonctionne la recherche hybride — et pourquoi votre outil d'IA juridique n'utilise probablement que la moitié de l'équation"
+description: "La recherche par mots-clés trouve les numéros d'articles exacts. La recherche sémantique trouve les concepts connexes. La recherche hybride fait les deux."
+publishDate: 2026-02-28
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "IA expliquée"
+tags: ["recherche hybride", "BM25", "recherche sémantique", "IA juridique", "retrieval"]
+locale: "fr"
+draft: false
+---
+
+Recherchez « Art. 344 CIR » dans un outil d'IA juridique. Vous devriez obtenir la disposition générale anti-abus belge. Maintenant, recherchez « mesure anti-abus ». Vous devriez obtenir le même résultat. La plupart des outils réussissent l'un et ratent l'autre — parce qu'ils n'utilisent que la moitié de la technologie de recherche dont ils ont besoin.
+
+Ce n'est pas un problème théorique. Lors de la compétition COLIEE 2021 pour la recherche juridique, un algorithme basique de recherche par mots-clés ([BM25](/fr/glossary/bm25/)) s'est classé deuxième, battant la plupart des approches neuronales. Parallèlement, le benchmark BEIR montre que la recherche par mots-clés seule atteint 43,42 en nDCG@10, tandis que la [recherche hybride](/fr/glossary/hybrid-search/) atteint 52,59 — une amélioration de 21 %. Aucune approche seule ne suffit. Ensemble, elles surpassent tout le reste.
+
+## Deux types de recherche, deux types d'aveuglement
+
+**La recherche par mots-clés (BM25)** compte les mots. Elle est rapide, précise et excellente pour trouver les numéros d'articles exacts, les citations juridiques et les termes techniques. Quand un fiscaliste belge cherche « Art. 19bis CIR », la recherche par mots-clés trouve chaque document contenant cette chaîne exacte.
+
+Mais la recherche par mots-clés est aveugle au sens. Cherchez « taxation des plus-values sur fonds » et elle ne trouvera pas les documents qui traitent du même concept avec des mots différents — « taxe Reynders » ou « précompte mobilier sur fonds d'investissement ». Même concept, termes différents, zéro résultat.
+
+**La recherche sémantique ([embeddings](/fr/glossary/embeddings/) vectoriels)** comprend le sens. Elle convertit le texte en représentations mathématiques où les concepts similaires se regroupent. Cherchez « mesure anti-abus » et elle trouve des documents sur « antimisbruikbepaling », « Missbrauchsbestimmung » et « anti-abuse provision » — même à travers les langues.
+
+Mais la recherche sémantique a son propre angle mort. Elle rate parfois les [références](/fr/glossary/citation/) exactes. Cherchez « Art. 344 CIR » et un système purement sémantique pourrait retourner des documents sur les dispositions anti-abus en général — y compris le mauvais article de la mauvaise juridiction.
+
+| | Recherche par mots-clés (BM25) | Recherche sémantique (vecteurs) | Recherche hybride |
+|---|---|---|---|
+| **Numéros d'articles exacts** | Correspondance précise | Peut rater ou confondre | Correspondance précise |
+| **Synonymes conceptuels** | Rate complètement | Trouve naturellement | Trouve naturellement |
+| **Multilingue** | Échoue | Fonctionne bien | Fonctionne bien |
+| **Spécificité** | Élevée | Variable | Élevée |
+| **Largeur conceptuelle** | Aucune | Élevée | Élevée |
+
+> La recherche par mots-clés vous dit ce qu'un document dit. La recherche sémantique vous dit ce qu'un document signifie. Vous avez besoin des deux.
+
+## Comment la recherche hybride les combine
+
+La recherche hybride exécute les deux requêtes simultanément : une recherche par mots-clés qui trouve les correspondances exactes, et une recherche sémantique qui trouve les correspondances conceptuelles. Les résultats sont ensuite fusionnés grâce à une technique appelée **Reciprocal Rank Fusion (RRF)** (Cormack et al., 2009).
+
+Le principe est élégant. Un document classé 1er dans les résultats par mots-clés et 3e dans les résultats sémantiques obtient un score combiné reflétant sa pertinence dans les deux systèmes. Un document bien classé dans un seul système apparaît toujours — mais plus bas. Les documents que les deux systèmes considèrent pertinents remontent en tête.
+
+![Comment la recherche hybride fusionne les résultats par mots-clés et sémantiques via reciprocal rank fusion](/blog/hybride-zoektechnologie/hybrid-search-pipeline-dark.png)
+
+La recherche de Karpukhin et al. (2020) a quantifié ceci : en réponse aux questions de domaine ouvert, la recherche hybride atteint 53,4 % de rappel top-1, contre 48,7 % pour la recherche dense seule et seulement 22,1 % pour BM25 seul. L'hybride ne fait pas que diviser la différence — il dépasse les deux.
+
+## Pourquoi cela compte plus en juridique qu'en recherche générale
+
+La plupart des benchmarks utilisent des datasets généralistes — articles Wikipedia, pages web, posts de forums. Les documents juridiques sont différents de manières qui rendent la recherche hybride non optionnelle, mais essentielle :
+
+**Les références exactes sont structurelles.** En recherche générale, obtenir « à peu près la bonne page » suffit. En droit fiscal, la différence entre l'Art. 19bis CIR (taxe Reynders sur les plus-values de fonds) et l'Art. 19 CIR (définition générale du revenu imposable) est la différence entre un conseil correct et une faute professionnelle.
+
+**La terminologie est fragmentée.** Le droit fiscal belge existe en néerlandais, français et allemand. Le même code est WIB 92 en néerlandais et CIR 92 en français. Le même concept peut avoir des noms différents selon les commentaires, la jurisprudence et les circulaires administratives. La recherche sémantique comble ce fossé ; la recherche par mots-clés seule crée des silos.
+
+**Les renvois sont structurels.** Une seule disposition fiscale belge peut référencer des arrêtés royaux, des directives européennes, des codes régionaux et des positions administratives. Une recherche sur une disposition doit faire apparaître les instruments connexes — mais seulement s'ils sont réellement connexes.
+
+## L'angle mort que la plupart des outils d'IA ne mentionnent pas
+
+Beaucoup d'outils d'IA juridique décrivent leur technologie comme « recherche IA avancée » ou « compréhension sémantique » sans préciser s'ils utilisent la [correspondance par mots-clés](/fr/glossary/sparse-retrieval/). Certains utilisent uniquement la [recherche vectorielle](/fr/glossary/ann/) — ce qui semble sophistiqué mais signifie qu'ils ratent parfois des références d'articles exactes.
+
+Le test est simple : recherchez un numéro d'article spécifique (comme « Art. 171, 4° CIR ») et vérifiez si l'outil retourne la disposition exacte. Puis recherchez le concept (« taxation séparée des revenus mobiliers ») et vérifiez s'il trouve la même disposition. S'il échoue à l'un ou l'autre test, il n'utilise que la moitié de l'équation.
+
+## Questions fréquentes
+
+**Quelle est la différence entre la recherche hybride et simplement effectuer deux recherches séparées ?**
+
+L'étape de fusion est cruciale. Effectuer deux recherches et afficher les deux listes submergerait l'utilisateur de doublons et de classements incohérents. La Reciprocal Rank Fusion crée un classement unique et cohérent où les documents pertinents pour les critères par mots-clés et sémantiques apparaissent en premier.
+
+**La recherche hybride ralentit-elle la recherche ?**
+
+Marginalement. La recherche par mots-clés (BM25) est extrêmement rapide — généralement moins de 10 millisecondes pour des millions de documents. La recherche sémantique ajoute un calcul de [similarité vectorielle](/fr/glossary/cosine-similarity/), généralement 20 à 50 ms. La latence totale reste bien en dessous d'une seconde.
+
+**Comment la recherche hybride gère-t-elle le droit belge multilingue ?**
+
+C'est là que la combinaison est particulièrement puissante. La recherche par mots-clés trouve « Art. 344 CIR » dans les textes francophones et « Art. 344 WIB » dans les textes néerlandophones — des correspondances exactes dans chaque langue. La recherche sémantique connecte les concepts à travers les langues, comprenant que « mesure anti-abus » et « antimisbruikbepaling » décrivent la même disposition.
+
+---
+
+## Articles connexes
+
+- [Qu'est-ce que le RAG — et pourquoi c'est la seule architecture qui rend l'IA juridique défendable → /fr/blog/wat-is-rag-fr/](/fr/blog/wat-is-rag-fr/)
+- [Qu'est-ce que le classement par autorité — et pourquoi votre outil d'IA juridique l'ignore probablement → /fr/blog/authority-ranking-juridische-ai-fr/](/fr/blog/authority-ranking-juridische-ai-fr/)
+- [Qu'est-ce que le chunking — et pourquoi c'est la base invisible de la qualité de l'IA juridique → /fr/blog/wat-is-chunking-juridische-ai-fr/](/fr/blog/wat-is-chunking-juridische-ai-fr/)
+
+---
+
+## Comment Auryth TX applique ceci
+
+Auryth TX utilise la recherche hybride comme fondation de sa recherche. Chaque [requête](/fr/glossary/prompt/) passe simultanément par la correspondance BM25 par mots-clés et la [recherche vectorielle](/fr/glossary/semantic-search/) dense, avec des résultats fusionnés par reciprocal rank fusion. Cela signifie que rechercher « Art. 344 CIR » retourne la disposition exacte, tandis que rechercher « mesure anti-abus » retourne la même disposition plus les décisions, circulaires et commentaires connexes — quelle que soit la langue.
+
+Le système couvre nativement les textes juridiques en néerlandais, français et allemand, avec un pont sémantique multilingue. Les numéros d'articles sont matchés exactement. Les concepts sont matchés par le sens.
+
+---
+
+*Sources :*
+*1. Cormack, G.V. et al. (2009). « [Reciprocal rank fusion outperforms condorcet and individual rank learning methods](https://dl.acm.org/doi/10.1145/1571941.1572114) ». SIGIR '09.*
+*2. Karpukhin, V. et al. (2020). « [Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906) ». EMNLP 2020.*
+*3. Thakur, N. et al. (2021). « [BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663) ». NeurIPS 2021.*
+*4. Rosa, G. et al. (2021). « [Yes, BM25 is a Strong Baseline for Legal Case Retrieval](https://arxiv.org/abs/2105.05686) ». COLIEE 2021.*

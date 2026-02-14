@@ -1,0 +1,185 @@
+---
+term: "Weaviate"
+termSlug: "weaviate"
+short: "Eine Open-Source-Vektordatenbank, die Vektorsuche mit strukturierter Datenfilterung und integrierten ML-Modulen kombiniert—ermöglicht semantische Suche, RAG und KI-native Anwendungen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["vector-database", "embeddings", "similarity-search", "milvus", "semantic-search"]
+synonyms: ["Weaviate DB", "Weaviate Vektordatenbank"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Weaviate ist eine Open-Source, Cloud-native Vektordatenbank, die sowohl Vektoren als auch strukturierte Datenobjekte speichern kann. Sie unterscheidet sich durch integrierte [ML](/de/glossary/machine-learning/)-Module (text2vec, img2vec), die automatisch [Embeddings](/de/glossary/vector-embeddings/) generieren und externe Embedding-Pipelines überflüssig machen. Weaviate verwendet eine GraphQL-API für Abfragen, unterstützt hybride Suche (kombiniert [BM25](/de/glossary/bm25/)-[Keyword-Suche](/de/glossary/full-text-search/) mit Vektor-Ähnlichkeit), und bietet modulare Vectorizer für verschiedene Embedding-Modelle (OpenAI, Cohere, Hugging Face, lokale Modelle).
+
+## Warum es wichtig ist
+
+Weaviate vereinfacht die KI-Anwendungsentwicklung:
+
+- **Integrierte Vektorisierung** — keine separate Embedding-Pipeline erforderlich
+- **[Hybride Suche](/de/glossary/hybrid-search/)** — kombiniert Keyword- und semantische Suche in einer Abfrage
+- **GraphQL-Interface** — entwicklerfreundliche Abfragesprache
+- **Multi-modal** — unterstützt Text, Bilder und benutzerdefinierte Datentypen
+- **Schema-Flexibilität** — [strukturierte Daten](/de/glossary/structured-data/) neben Vektoren
+- **Produktionsreif** — horizontale Skalierung, Replikation, Multi-Tenancy
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       WEAVIATE                              │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WICHTIGSTER UNTERSCHIED: INTEGRIERTE VEKTORISIERUNG       │
+│  ───────────────────────────────────────────────────       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Andere Vektor-DBs:                                  │ │
+│  │  ┌─────────┐   ┌─────────────┐   ┌────────────┐   │ │
+│  │  │  Deine  │   │  Embedding  │   │  Vektor    │   │ │
+│  │  │  App    │ → │  API        │ → │  DB        │   │ │
+│  │  │         │   │  (OpenAI)   │   │  (Milvus)  │   │ │
+│  │  └─────────┘   └─────────────┘   └────────────┘   │ │
+│  │                                                      │ │
+│  │      Du verwaltest Embedding-Generierung separat    │ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  Weaviate:                                           │ │
+│  │  ┌─────────┐   ┌──────────────────────────────┐   │ │
+│  │  │  Deine  │   │         WEAVIATE             │   │ │
+│  │  │  App    │ → │  ┌─────────────────────────┐│   │ │
+│  │  │         │   │  │ text2vec-openai Modul   ││   │ │
+│  │  │  "roher"│   │  │ (auto-generiert Embed.) ││   │ │
+│  │  │  Text   │   │  ├─────────────────────────┤│   │ │
+│  │  └─────────┘   │  │    Vektor-Speicher      ││   │ │
+│  │                │  └─────────────────────────┘│   │ │
+│  │                └──────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │      Sende Text, Weaviate erledigt Vektorisierung   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WEAVIATE ARCHITEKTUR:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              API-Schicht                      │   │ │
+│  │  │                                               │   │ │
+│  │  │  ┌───────────┐  ┌───────────┐  ┌─────────┐ │   │ │
+│  │  │  │  GraphQL  │  │   REST    │  │  gRPC   │ │   │ │
+│  │  │  │  Query    │  │   CRUD    │  │  Proto  │ │   │ │
+│  │  │  └───────────┘  └───────────┘  └─────────┘ │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │           Modul-System                       │   │ │
+│  │  │                                               │   │ │
+│  │  │  Vectorizer:                                 │   │ │
+│  │  │  ┌──────────────┐ ┌──────────────┐         │   │ │
+│  │  │  │ text2vec-    │ │ text2vec-    │         │   │ │
+│  │  │  │ openai       │ │ huggingface  │         │   │ │
+│  │  │  └──────────────┘ └──────────────┘         │   │ │
+│  │  │                                               │   │ │
+│  │  │  Reader/Generatoren:                         │   │ │
+│  │  │  ┌──────────────┐ ┌──────────────┐         │   │ │
+│  │  │  │ qna-openai   │ │ generative-  │         │   │ │
+│  │  │  │ (Q&A)        │ │ openai (RAG) │         │   │ │
+│  │  │  └──────────────┘ └──────────────┘         │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │           Speicher-Engine                    │   │ │
+│  │  │                                               │   │ │
+│  │  │  ┌─────────────────────────────────────┐   │   │ │
+│  │  │  │         HNSW Vektor-Index            │   │   │ │
+│  │  │  │  (In-Memory für Geschwindigkeit)     │   │   │ │
+│  │  │  └─────────────────────────────────────┘   │   │ │
+│  │  │                                               │   │ │
+│  │  │  ┌─────────────────────────────────────┐   │   │ │
+│  │  │  │       Invertierter Index (BM25)      │   │   │ │
+│  │  │  │  (Keyword-Suche, Filterung)          │   │   │ │
+│  │  │  └─────────────────────────────────────┘   │   │ │
+│  │  │                                               │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  HYBRIDE SUCHE (Einzigartiges Feature):                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Abfrage: "machine learning best practices"         │ │
+│  │                                                      │ │
+│  │  Vektor-Suche (semantisch):                         │ │
+│  │  Findet konzeptuell ähnliche Docs über:             │ │
+│  │  • "ML Deployment Richtlinien"                     │ │
+│  │  • "KI Model Training Tipps"                       │ │
+│  │                                                      │ │
+│  │           +  FUSION (gewichtete Kombination)        │ │
+│  │                                                      │ │
+│  │  Keyword-Suche (BM25):                              │ │
+│  │  Findet exakte Keyword-Matches:                     │ │
+│  │  • Docs mit wörtlicher Phrase                      │ │
+│  │  • Technische Dokumente, Code-Kommentare           │ │
+│  │                                                      │ │
+│  │  Ergebnis: Das Beste aus beiden Welten             │ │
+│  │  • Semantisches Verständnis + exaktes Matching     │ │
+│  │  • Konfigurierbares Alpha (Vektor vs Keyword)      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wann Weaviate vs Milvus verwenden?**
+
+A: Weaviate für einfachere Entwicklung (integrierte Vektorisierung, GraphQL), besser für kleinere Teams. Milvus für maximale Skalierung (Milliarden Vektoren), GPU-Beschleunigung, und wenn Sie bereits Embedding-Pipelines haben.
+
+**F: Wie funktioniert Weaviates hybride Suche?**
+
+A: Kombiniert BM25-Keyword-Scoring mit Vektor-Ähnlichkeit, fusioniert Ergebnisse mit konfigurierbarem Alpha-Gewicht. Alpha=1.0 ist reiner Vektor; Alpha=0.0 ist reines Keyword.
+
+**F: Welche Embedding-Modelle unterstützt Weaviate?**
+
+A: OpenAI, Cohere, Hugging Face, Google PaLM, lokale [Transformer](/de/glossary/transformer-architecture/)-Modelle und benutzerdefinierte Modelle über die API.
+
+## Verwandte Begriffe
+
+- [Vektordatenbank](/de/glossary/vector-database/) — allgemeine Kategorie
+- [Milvus](/de/glossary/milvus/) — alternative Vektordatenbank
+- [Semantische Suche](/de/glossary/semantic-search/) — was Weaviate ermöglicht
+- [Embeddings](/de/glossary/embeddings/) — was Weaviate generiert/speichert
+
+---
+
+## Referenzen
+
+> Weaviate (2024), "[Weaviate Documentation](https://weaviate.io/developers/weaviate)", Weaviate. [Offizielle Dokumentation]
+
+> van Hagen et al. (2021), "[Weaviate: A Cloud-Native, Real-Time Vector Search Engine](https://db-engines.com/en/blog_post/85)", DB-Engines Blog. [Architektur-Übersicht]
+
+> Weaviate (2023), "[Hybrid Search Explained](https://weaviate.io/blog/hybrid-search-explained)", Weaviate Blog. [Hybride Suche Deep Dive]
+
+> SeMI Technologies (2024), "[Weaviate Modules](https://weaviate.io/developers/weaviate/modules)", Weaviate. [Modul-Ökosystem]
+
+## References
+
+> Weaviate (2024), "[Weaviate Documentation](https://weaviate.io/developers/weaviate)", Weaviate. [Official documentation]
+
+> van Hagen et al. (2021), "[Weaviate: A Cloud-Native, Real-Time Vector Search Engine](https://db-engines.com/en/blog_post/85)", DB-Engines Blog. [Architecture overview]
+
+> Weaviate (2023), "[Hybrid Search Explained](https://weaviate.io/blog/hybrid-search-explained)", Weaviate Blog. [Hybrid search deep dive]
+
+> SeMI Technologies (2024), "[Weaviate Modules](https://weaviate.io/developers/weaviate/modules)", Weaviate. [Module ecosystem]

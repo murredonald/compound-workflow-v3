@@ -1,0 +1,115 @@
+---
+term: "Recherche Hybride"
+termSlug: "hybrid-search"
+short: "Une approche de récupération combinant recherche par mots-clés et recherche vectorielle sémantique pour exploiter les forces des deux méthodes."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["semantic-search", "bm25", "embeddings", "rag", "reranking"]
+synonyms: ["Recherche combinée", "Récupération multimodale", "Récupération hybride"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La recherche hybride combine la recherche traditionnelle par mots-clés (comme BM25) avec la [recherche vectorielle](/fr/glossary/ann/) sémantique moderne pour trouver des documents pertinents. En fusionnant ces deux approches, elle capture à la fois les correspondances exactes de mots-clés et la [similarité conceptuelle](/fr/glossary/semantic-similarity/), fournissant une récupération plus robuste que chaque méthode seule.
+
+## Pourquoi c'est important
+
+La recherche hybride adresse les limitations des approches pures :
+
+- **Le meilleur des deux mondes** — capture les termes exacts ET les correspondances conceptuelles
+- **Couverture des modes d'échec** — quand une méthode échoue, l'autre réussit souvent
+- **Flexibilité de domaine** — fonctionne avec [requêtes](/fr/glossary/prompt/) techniques et langage naturel
+- **Fiabilité en production** — résultats plus cohérents selon les types de requêtes
+- **Qualité [RAG](/fr/glossary/rag/)** — améliore la récupération de documents pour les pipelines de génération
+
+La recherche vectorielle pure peut manquer des termes exacts; la recherche par mots-clés pure manque les synonymes—l'hybride capture les deux.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   RECHERCHE HYBRIDE                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│                    Requête Utilisateur                     │
+│                "Règles TVA article 15bis"                  │
+│                          │                                 │
+│              ┌───────────┴───────────┐                     │
+│              ▼                       ▼                     │
+│  ┌───────────────────┐   ┌───────────────────┐             │
+│  │  RECHERCHE MOT-CLÉ│   │  RECHERCHE VECTOR │             │
+│  │  (BM25/TF-IDF)    │   │  (Embeddings)     │             │
+│  │                   │   │                   │             │
+│  │  Corresp. exactes:│   │  Corresp. sémant.:│             │
+│  │  - "article 15bis"│   │  - Règlements TVA │             │
+│  │  - "règles TVA"   │   │  - Exemptions fisc│             │
+│  │                   │   │  - Droit fiscal   │             │
+│  └─────────┬─────────┘   └─────────┬─────────┘             │
+│            │                       │                       │
+│            └───────────┬───────────┘                       │
+│                        ▼                                   │
+│            ┌───────────────────────┐                       │
+│            │   FUSION DES SCORES   │                       │
+│            │   • Reciprocal Rank   │                       │
+│            │   • Somme Pondérée    │                       │
+│            │   • Combo. Convexe    │                       │
+│            └───────────┬───────────┘                       │
+│                        ▼                                   │
+│               Résultats Combinés                           │
+│            (Meilleur des deux méthodes)                    │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Méthodes de fusion :**
+1. **Reciprocal Rank Fusion (RRF)** — classe selon la position dans chaque liste
+2. **Somme pondérée** — combine les scores normalisés avec des poids configurables
+3. **Combinaison convexe** — α × score_mot_clé + (1-α) × score_vecteur
+
+## Questions fréquentes
+
+**Q : Quel ratio mot-clé/vecteur fonctionne le mieux ?**
+
+R : Commencez à 50/50, puis ajustez selon vos requêtes. Les domaines techniques (juridique, médical) bénéficient souvent d'un poids mot-clé plus élevé (60-70%) pour la terminologie précise. Les requêtes conversationnelles favorisent la recherche vectorielle (60-70%).
+
+**Q : Quand la recherche hybride aide-t-elle le plus ?**
+
+R : Quand les requêtes mélangent termes spécifiques et questions conceptuelles. Par exemple, "Article 15bis exemptions TVA pour services numériques"—nécessite correspondance exacte d'article ET compréhension sémantique des exemptions.
+
+**Q : La recherche hybride ajoute-t-elle de la latence ?**
+
+R : Légèrement—vous exécutez deux recherches. Mais les deux peuvent s'exécuter en parallèle, donc le surcoût est minimal (~10-50ms). L'amélioration de qualité justifie généralement ce coût.
+
+**Q : Qu'est-ce que Reciprocal Rank Fusion (RRF) ?**
+
+R : RRF combine les classements sans avoir besoin de scores comparables. Pour chaque document, il calcule 1/(k + rang) pour les deux méthodes et les additionne. C'est robuste car ça n'utilise que la position, pas la magnitude du score.
+
+## Termes associés
+
+- [Recherche Sémantique](/fr/glossary/semantic-search/) — [composant de récupération](/fr/glossary/retrieval-layer/) vectorielle
+- [BM25](/fr/glossary/bm25/) — algorithme classique de recherche par mots-clés
+- [Embeddings](/fr/glossary/embeddings/) — vecteurs pour recherche sémantique
+- [Reclassement](/fr/glossary/reranking/) — suit souvent la recherche hybride
+
+---
+
+## Références
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)", Foundations and Trends in Information Retrieval. [3 000+ [citations](/fr/glossary/citation/)]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3 500+ citations]
+
+> Cormack et al. (2009), "[Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)", SIGIR. [500+ citations]
+
+> Ma et al. (2021), "[A Replication Study of Dense Passage Retriever](https://arxiv.org/abs/2104.05740)", arXiv. [200+ citations]
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)", Foundations and Trends in Information Retrieval. [3,000+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Cormack et al. (2009), "[Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)", SIGIR. [500+ citations]
+
+> Ma et al. (2021), "[A Replication Study of Dense Passage Retriever](https://arxiv.org/abs/2104.05740)", arXiv. [200+ citations]

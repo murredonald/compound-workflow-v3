@@ -1,0 +1,107 @@
+---
+term: "Prompt"
+termSlug: "prompt"
+short: "De tekstinvoer of instructie die aan een taalmodel wordt gegeven om de responsgeneratie te sturen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "system-prompt", "prompt-engineering", "context-window"]
+synonyms: ["Invoerprompt", "Query", "Instructie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een prompt is de tekstinvoer die aan een taalmodel wordt verstrekt en het instrueert wat te doen of waarop te reageren. Het kan variëren van een simpele vraag tot complexe meerdelige instructies inclusief context, voorbeelden en opmaakeisen. De kunst van het maken van effectieve prompts—prompt engineering—is cruciaal voor het verkrijgen van kwalitatieve outputs van taalmodellen.
+
+## Waarom het belangrijk is
+
+Prompts zijn de primaire interface tussen gebruikers en taalmodellen:
+
+- **Outputkwaliteit** — goed opgestelde prompts verbeteren responsnauwkeurigheid en relevantie dramatisch
+- **Taakdefinitie** — prompts vertellen het model welke taak uit te voeren (samenvatten, vertalen, analyseren)
+- **Gedragscontrole** — prompts kunnen toon, formaat, lengte en beperkingen instellen
+- **Zero-shot leren** — goede prompts stellen modellen in staat taken uit te voeren zonder [fine-tuning](/nl/glossary/fine-tuning/)
+
+Hetzelfde model kan sterk verschillende outputs produceren afhankelijk van hoe het geprompt wordt.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     PROMPTSTRUCTUUR                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ SYSTEEMPROMPT (stelt gedrag/persona in)             │   │
+│  │ "Je bent een behulpzame belastingadviseur..."       │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ CONTEXT (opgehaalde documenten, eerdere conversatie)│   │
+│  │ "Op basis van de volgende belastingregels..."       │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ GEBRUIKERSPROMPT (de eigenlijke vraag/taak)         │   │
+│  │ "Leg de aftrekregels voor thuiskantoren uit"        │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│                          ▼                                 │
+│                    MODELRESPONS                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Belangrijke promptcomponenten:**
+1. **Systeemprompt** — permanente instructies die modelgedrag definiëren
+2. **Context** — achtergrondinformatie of opgehaalde documenten
+3. **Voorbeelden** — demonstraties van gewenste invoer/uitvoer-paren (few-shot)
+4. **Gebruikersvraag** — de specifieke vraag of taak
+5. **Outputformaat** — specificatie van hoe de respons te structureren
+
+## Veelgestelde vragen
+
+**V: Wat is prompt engineering?**
+
+A: Prompt engineering is de praktijk van het ontwerpen en optimaliseren van prompts om betere resultaten van taalmodellen te krijgen. Het omvat technieken zoals chain-of-thought, few-shot voorbeelden en gestructureerde opmaak.
+
+**V: Wat is het verschil tussen zero-shot en [few-shot prompting](/nl/glossary/few-shot/)?**
+
+A: Zero-shot geeft geen voorbeelden—alleen instructies. Few-shot bevat voorbeelden van het gewenste invoer/uitvoer-patroon. Few-shot verbetert typisch de nauwkeurigheid voor complexe taken.
+
+**V: Hoe lang moet een prompt zijn?**
+
+A: Zo lang als nodig voor duidelijkheid, maar binnen contextlimieten. Meer context is niet altijd beter—gerichte, goed gestructureerde prompts presteren vaak beter dan uitgebreide.
+
+**V: Kunnen prompts worden "gejailbreakt"?**
+
+A: Kwaadwillende gebruikers maken soms prompts om veiligheidsrichtlijnen te omzeilen. Daarom hebben productiesystemen robuuste prompt-injectieverdediging en contentfiltering nodig.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — modellen die reageren op prompts
+- [System Prompt](/nl/glossary/system-prompt/) — permanente configuratieprompt
+- [Context Window](/nl/glossary/context-window/) — beperkt totale promptgrootte
+- [Chain-of-Thought](/nl/glossary/chain-of-thought/) — promptingtechniek voor redeneren
+
+---
+
+## Referenties
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25.000+ [citaties](/nl/glossary/citation/)]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5.000+ citaties]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3.000+ citaties]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ citaties]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25,000+ citations]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5,000+ citations]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3,000+ citations]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ citations]

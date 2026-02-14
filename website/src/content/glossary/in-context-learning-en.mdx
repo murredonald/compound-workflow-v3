@@ -1,0 +1,260 @@
+---
+term: "In-Context Learning"
+termSlug: "in-context-learning"
+short: "The ability of large language models to learn new tasks at inference time by conditioning on examples or instructions provided directly in the prompt, without any gradient updates."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["few-shot", "zero-shot", "chain-of-thought", "prompt-engineering"]
+synonyms: ["ICL", "Context learning", "Prompt-based learning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+In-context learning (ICL) is a paradigm where [large language models](/en/glossary/llm/) adapt to new tasks by leveraging information provided in the [input prompt](/en/glossary/prompt/)—examples, instructions, or demonstrations—without modifying model parameters through training. Unlike traditional [machine learning](/en/glossary/machine-learning/) that requires [gradient-based optimization](/en/glossary/gradient-descent/), ICL enables models to "learn" patterns from the [context window](/en/glossary/context-window/) at inference time. This emergent capability of large [transformers](/en/glossary/transformer-architecture/) allows users to teach models new behaviors simply by crafting appropriate prompts. ICL encompasses both zero-shot (instruction only) and few-shot (examples provided) approaches.
+
+## Why it matters
+
+In-context learning represents a fundamental shift in how we use AI:
+
+- **No training required** — adapt models instantly to new tasks
+- **Zero infrastructure** — no GPUs, datasets, or ML pipelines needed
+- **Maximum flexibility** — change task behavior by changing prompts
+- **Rapid prototyping** — test ideas in minutes instead of days
+- **Democratized AI** — anyone can "program" models with natural language
+- **Emergent capability** — appears at scale without explicit training
+
+ICL is why ChatGPT and similar systems can do almost anything users ask.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   IN-CONTEXT LEARNING                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRADITIONAL ML vs IN-CONTEXT LEARNING:                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  TRADITIONAL MACHINE LEARNING:                             │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. Collect labeled dataset                         │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ Input₁ → Label₁              │                │ │
+│  │     │ Input₂ → Label₂              │                │ │
+│  │     │ ...                           │                │ │
+│  │     │ Inputₙ → Labelₙ              │                │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  2. Train model (gradient updates)                  │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ for epoch in epochs:         │                │ │
+│  │     │   loss = compute_loss(...)   │                │ │
+│  │     │   loss.backward()            │ ← Updates     │ │
+│  │     │   optimizer.step()           │   weights!    │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  3. Deploy trained model                            │ │
+│  │                   ↓                                  │ │
+│  │  4. Inference on new inputs                         │ │
+│  │                                                      │ │
+│  │  Time: Days to weeks                                 │ │
+│  │  Cost: Compute + data collection                    │ │
+│  │  Flexibility: Fixed after training                  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  IN-CONTEXT LEARNING:                                      │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. Craft prompt with task description/examples     │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ [Instructions or examples]   │                │ │
+│  │     │ [New input to process]       │                │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  2. Model processes prompt (NO weight updates!)     │ │
+│  │     ┌──────────────────────────────┐                │ │
+│  │     │ Patterns recognized from     │ ← Read-only   │ │
+│  │     │ context, not learned into    │   inference   │ │
+│  │     │ parameters                   │                │ │
+│  │     └──────────────────────────────┘                │ │
+│  │                   ↓                                  │ │
+│  │  3. Model generates appropriate response            │ │
+│  │                                                      │ │
+│  │  Time: Seconds                                       │ │
+│  │  Cost: API call                                      │ │
+│  │  Flexibility: Change prompt = change behavior       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ICL SPECTRUM:                                             │
+│  ────────────                                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Zero-shot ←────────────────────────→ Many-shot    │ │
+│  │                                                      │ │
+│  │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌────────┐ │ │
+│  │  │ Zero-   │  │ One-    │  │ Few-    │  │ Many-  │ │ │
+│  │  │ shot    │  │ shot    │  │ shot    │  │ shot   │ │ │
+│  │  │         │  │         │  │         │  │        │ │ │
+│  │  │ Just    │  │ Single  │  │ 2-5     │  │ 10+    │ │ │
+│  │  │ instruc-│  │ example │  │ examples│  │ examples│ │ │
+│  │  │ tions   │  │         │  │         │  │        │ │ │
+│  │  └─────────┘  └─────────┘  └─────────┘  └────────┘ │ │
+│  │                                                      │ │
+│  │  Less context ←──────────────────→ More context    │ │
+│  │  More reliance on pre-training   Better task spec. │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  HOW ICL WORKS MECHANISTICALLY:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Theories on what happens inside the model:               │
+│                                                            │
+│  1. Implicit Bayesian inference:                          │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Model implicitly infers: What task would          │ │
+│  │  produce these input-output pairs?                  │ │
+│  │                                                      │ │
+│  │  Examples in context → Condition on task hypothesis│ │
+│  │                      → Generate consistent output  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  2. Task location in pre-training:                        │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Pre-training contains many tasks:                  │ │
+│  │  • Q&A pairs on forums                              │ │
+│  │  • Translation pairs                                │ │
+│  │  • Classification examples                          │ │
+│  │  • etc.                                              │ │
+│  │                                                      │ │
+│  │  ICL prompts help model "locate" right task        │ │
+│  │  pattern from pre-training distribution             │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  3. Induction heads (attention circuits):                 │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Attention heads that implement:                    │ │
+│  │  "If A followed by B before, and we see A now,     │ │
+│  │   predict B will follow"                            │ │
+│  │                                                      │ │
+│  │  Example prompt: "apple → red, banana → yellow,    │ │
+│  │                   grape →"                          │ │
+│  │                                                      │ │
+│  │  Induction head: Sees pattern, predicts "purple"   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ICL EXAMPLE - SENTIMENT CLASSIFICATION:                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  Prompt:                                                   │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Classify each review as positive or negative:     │ │
+│  │                                                      │ │
+│  │  Review: "Amazing product, exceeded expectations!" │ │
+│  │  Sentiment: positive                                │ │
+│  │                                                      │ │
+│  │  Review: "Terrible quality, broke after one day"   │ │
+│  │  Sentiment: negative                                │ │
+│  │                                                      │ │
+│  │  Review: "Works perfectly, highly recommend!"      │ │
+│  │  Sentiment: positive                                │ │
+│  │                                                      │ │
+│  │  Review: "Complete waste of money"                  │ │
+│  │  Sentiment:                                          │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Model learns from examples in context:                   │
+│  • Pattern: Review → Sentiment label                      │
+│  • Format: Label comes after "Sentiment:"                 │
+│  • Values: "positive" or "negative"                       │
+│  • No gradient updates occurred!                          │
+│                                                            │
+│                                                            │
+│  FACTORS AFFECTING ICL PERFORMANCE:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Factor              │  Impact                      │ │
+│  │  ────────────────────┼────────────────────────────  │ │
+│  │  Model size          │  ICL emerges ~10B+params    │ │
+│  │  Number of examples  │  More = better (to point)   │ │
+│  │  Example diversity   │  Cover edge cases helps     │ │
+│  │  Example order       │  Recent examples weighted   │ │
+│  │  Label balance       │  Include all classes        │ │
+│  │  Ground-truth labels │  Surprisingly matters less  │ │
+│  │  Format consistency  │  Same structure helps       │ │
+│  │  Task similarity     │  To pre-training tasks      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ICL LIMITATIONS:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  • Context window limits number of examples               │
+│  • Can be sensitive to example selection/order            │
+│  • Doesn't truly learn - can't retain between calls      │
+│  • Struggles with tasks very different from pre-training  │
+│  • Can be less robust than fine-tuned models             │
+│                                                            │
+│  When to fine-tune instead:                               │
+│  • Need consistent high accuracy                          │
+│  • Task is very specialized                               │
+│  • Have many training examples                            │
+│  • Cost per inference matters                             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How is in-context learning different from [fine-tuning](/en/glossary/fine-tuning/)?**
+
+A: Fine-tuning updates model weights through gradient descent on task-specific data, permanently changing the model. ICL uses examples only at [inference](/en/glossary/inference/) time—model parameters stay fixed. ICL is faster and requires no training infrastructure, but fine-tuning typically achieves higher accuracy for specific tasks.
+
+**Q: Why does in-context learning work without training?**
+
+A: Large language models are pre-trained on massive corpora containing diverse task patterns. ICL prompts help the model recognize which task pattern to apply. Mechanistically, transformer [attention](/en/glossary/attention-mechanism/) allows the model to "attend" to examples in context and mimic the demonstrated pattern.
+
+**Q: Do the examples in ICL need correct [labels](/en/glossary/ground-truth/)?**
+
+A: Surprisingly, research shows format and structure matter more than label correctness for some tasks. However, correct labels generally improve performance. The model learns the task format and pattern from examples even with random labels, though accuracy suffers.
+
+**Q: How many examples should I provide for ICL?**
+
+A: Start with 3-5 diverse examples covering different cases. More examples generally help until hitting diminishing returns or context limits. For most tasks, 5-20 examples is sufficient. Quality and diversity matter more than quantity.
+
+## Related terms
+
+- [Few-shot learning](/en/glossary/few-shot/) — ICL with example demonstrations
+- [Zero-shot learning](/en/glossary/zero-shot/) — ICL with instructions only
+- [Chain-of-thought](/en/glossary/chain-of-thought/) — reasoning through ICL
+- Prompt engineering — crafting effective ICL prompts
+
+---
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [Introduced ICL terminology with GPT-3]
+
+> Olsson et al. (2022), "[In-context Learning and Induction Heads](https://arxiv.org/abs/2209.11895)", Transformer Circuits. [Mechanistic ICL explanation]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", ACL. [Label correctness study]
+
+> Xie et al. (2022), "[An Explanation of In-context Learning as Implicit Bayesian Inference](https://arxiv.org/abs/2111.02080)", ICLR. [Theoretical framework]

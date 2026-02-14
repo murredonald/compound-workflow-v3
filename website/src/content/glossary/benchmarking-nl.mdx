@@ -1,0 +1,175 @@
+---
+term: "Benchmarking"
+termSlug: "benchmarking"
+short: "Het systematische proces van het evalueren van modelprestaties tegen gestandaardiseerde datasets en metrieken, wat eerlijke vergelijking tussen verschillende modellen, architecturen en benaderingen mogelijk maakt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["evaluation-metrics", "ground-truth", "leaderboard", "test-set", "model-evaluation"]
+synonyms: ["Modelevaluatie", "Prestatietesten", "Vergelijkende tests"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Benchmarking in [machine learning](/nl/glossary/machine-learning/) is de systematische evaluatie van modelprestaties met behulp van gestandaardiseerde datasets, metrieken en evaluatieprotocollen. Het maakt eerlijke, reproduceerbare vergelijking tussen verschillende modellen, architecturen en benaderingen mogelijk. Benchmarks bestaan typisch uit: (1) een gecureerde [testdataset](/nl/glossary/evaluation-dataset/) met ground truth labels, (2) gedefinieerde evaluatiemetrieken (accuracy, F1, BLEU, etc.), en (3) gestandaardiseerde evaluatieprocedures. Goed ontworpen benchmarks stimuleren vooruitgang door gemeenschappelijke doelen te bieden en modelzwakheden bloot te leggen.
+
+## Waarom het belangrijk is
+
+Benchmarking maakt systematische AI-vooruitgang mogelijk:
+
+- **Modelvergelijking** — objectief verschillende benaderingen vergelijken
+- **Voortgangstracking** — verbetering over tijd meten
+- **Reproduceerbaarheid** — gestandaardiseerde evaluatie garandeert eerlijke vergelijking
+- **Onderzoekscommunicatie** — gemeenschappelijk vocabulaire voor resultaten
+- **Modelselectie** — beste model kiezen voor specifieke use case
+- **Zwaktedetectie** — identificeren waar modellen falen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      BENCHMARKING                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAT EEN BENCHMARK IS:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  BENCHMARK = Dataset + Metrieken + Protocol         │ │
+│  │                                                      │ │
+│  │  1. GESTANDAARDISEERDE DATASET                      │ │
+│  │     • Gecureerde inputs                             │ │
+│  │     • Ground truth labels                           │ │
+│  │     • Representatief voor taak                      │ │
+│  │                                                      │ │
+│  │  2. EVALUATIEMETRIEKEN                              │ │
+│  │     Classificatie: Accuracy, F1, AUC                │ │
+│  │     Generatie: BLEU, ROUGE, Perplexity              │ │
+│  │     Retrieval: MRR, NDCG, Recall@K                  │ │
+│  │                                                      │ │
+│  │  3. EVALUATIEPROTOCOL                               │ │
+│  │     • Preprocessing regels                          │ │
+│  │     • Inference instellingen                        │ │
+│  │     • Toegestane resources                          │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARKING WORKFLOW:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌───────────┐    ┌───────────┐    ┌───────────┐   │ │
+│  │  │  Model A  │    │  Model B  │    │  Model C  │   │ │
+│  │  └─────┬─────┘    └─────┬─────┘    └─────┬─────┘   │ │
+│  │        │                │                │         │ │
+│  │        ▼                ▼                ▼         │ │
+│  │  ┌─────────────────────────────────────────────┐  │ │
+│  │  │           ZELFDE BENCHMARK                   │  │ │
+│  │  │           Test Dataset                       │  │ │
+│  │  └─────────────────────────────────────────────┘  │ │
+│  │        │                │                │         │ │
+│  │        ▼                ▼                ▼         │ │
+│  │  ┌─────────────────────────────────────────────┐  │ │
+│  │  │           ZELFDE EVALUATIE                   │  │ │
+│  │  │                                              │  │ │
+│  │  │  Model A: Accuracy = 92.3%                  │  │ │
+│  │  │  Model B: Accuracy = 89.7%                  │  │ │
+│  │  │  Model C: Accuracy = 94.1%  ← Winnaar      │  │ │
+│  │  │                                              │  │ │
+│  │  └─────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  VEELGEBRUIKTE BENCHMARKS PER DOMEIN:                      │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NLP / TAALMODELLEN                                 │ │
+│  │  ├─ GLUE/SuperGLUE   Taalbegrip                    │ │
+│  │  ├─ MMLU             Multi-task kennis             │ │
+│  │  ├─ HellaSwag        Common sense redenering       │ │
+│  │  ├─ HumanEval        Code generatie                │ │
+│  │  └─ MTEB             Embedding kwaliteit           │ │
+│  │                                                      │ │
+│  │  COMPUTER VISION                                    │ │
+│  │  ├─ ImageNet         Beeldclassificatie            │ │
+│  │  ├─ COCO             Object detectie/segmentatie  │ │
+│  │  └─ CIFAR-10/100     Kleine beeldclassificatie     │ │
+│  │                                                      │ │
+│  │  RETRIEVAL / RAG                                    │ │
+│  │  ├─ BEIR             Zero-shot IR                  │ │
+│  │  ├─ MS MARCO         Passage retrieval             │ │
+│  │  └─ Natural Questions  QA retrieval                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARK VALKUILEN:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Probleem            │ Beschrijving                  │ │
+│  │  ────────────────────┼──────────────────────────────│ │
+│  │                      │                               │ │
+│  │  Data               │ Testdata lekt naar training   │ │
+│  │  contaminatie       │ (opgeblazen scores)           │ │
+│  │                      │                               │ │
+│  │  Teaching to        │ Model geoptimaliseerd voor    │ │
+│  │  the test           │ test, faalt in productie      │ │
+│  │                      │                               │ │
+│  │  Benchmark          │ Oude benchmarks worden        │ │
+│  │  saturatie          │ te makkelijk                  │ │
+│  │                      │                               │ │
+│  │  Smalle             │ Benchmark vangt real-world   │ │
+│  │  evaluatie          │ complexiteit niet            │ │
+│  │                      │                               │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wat maakt een goede benchmark?**
+
+A: Diverse, representatieve testdata; duidelijke metrieken afgestemd op real-world doelen; weerstand tegen gaming/overfitting; apart gehouden testsets; actief onderhoud.
+
+**V: Hoe vermijd ik benchmark overfitting?**
+
+A: Gebruik meerdere benchmarks, evalueer op apart gehouden real-world data, monitor productiemetrieken, gebruik menselijke evaluatie voor open taken.
+
+**V: Zijn leaderboard scores betrouwbaar?**
+
+A: Gedeeltelijk. Scores zijn vergelijkbaar binnen een benchmark maar voorspellen mogelijk niet real-world prestaties. Datacontaminatie en taakspecifieke optimalisatie beperken generalisatie.
+
+## Gerelateerde termen
+
+- [Ground truth](/nl/glossary/ground-truth/) — referentielabels voor evaluatie
+- Evaluatiemetrieken — meetmethoden in benchmarks
+
+---
+
+## Referenties
+
+> Wang et al. (2019), "[SuperGLUE: A Stickier Benchmark for Language Understanding](https://arxiv.org/abs/1905.00537)", NeurIPS. [NLU benchmark design]
+
+> Hendrycks et al. (2021), "[Measuring Massive Multitask Language Understanding](https://arxiv.org/abs/2009.03300)", ICLR. [MMLU benchmark]
+
+> Thakur et al. (2021), "[BEIR: A Heterogenous Benchmark for Zero-shot IR](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarking]
+
+## References
+
+> Wang et al. (2019), "[SuperGLUE: A Stickier Benchmark for General-Purpose Language Understanding](https://arxiv.org/abs/1905.00537)", NeurIPS. [NLU benchmark design]
+
+> Hendrycks et al. (2021), "[Measuring Massive Multitask Language Understanding](https://arxiv.org/abs/2009.03300)", ICLR. [MMLU benchmark]
+
+> Thakur et al. (2021), "[BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of IR Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarking]
+
+> Dehghani et al. (2021), "[The Benchmark Lottery](https://arxiv.org/abs/2107.07002)", arXiv. [Benchmark limitations]

@@ -1,0 +1,62 @@
+---
+term: "StratÃ©gie d'indexation"
+termSlug: "indexing-strategy"
+short: "Une stratÃ©gie dâ€™indexation est le plan qui dÃ©finit quoi indexer, comment structurer le contenu et comment garder lâ€™index Ã  jour pour une recherche fiable."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["full-text-search", "semantic-expansion", "relevance-tuning", "content-discoverability", "search-analytics"]
+synonyms: ["Search indexing strategy", "Plan d'indexation", "Conception d'index"]
+locale: "fr"
+draft: false
+---
+
+## DÃ©finition
+
+Une stratÃ©gie d'indexation regroupe les dÃ©cisions qui dÃ©terminent ce que vous indexez (et ce que vous excluez), comment vous reprÃ©sentez le contenu dans lâ€™index, et comment vous gÃ©rez les mises Ã  jour. Elle se situe entre la couche contenu (documents, pages, PDF) et la couche de recherche (rÃ©sultats, recommandations, [RAG](/fr/glossary/rag/)).
+
+## Pourquoi c'est important
+
+- **QualitÃ© de recherche** : une bonne indexation amÃ©liore le rappel et rÃ©duit le bruit.
+- **FraÃ®cheur et confiance** : des rÃ¨gles claires Ã©vitent des rÃ©sultats obsolÃ¨tes ou contradictoires.
+- **CoÃ»t et performance** : tout indexer coÃ»te cher; indexer lâ€™essentiel est efficace.
+- **ConformitÃ©** : droits dâ€™accÃ¨s et rÃ©tention doivent souvent Ãªtre appliquÃ©s dÃ¨s lâ€™indexation.
+
+## Comment Ã§a fonctionne
+
+```
+Contenu -> parse/normalise -> champs -> index -> classement -> mesure -> itÃ¨re
+```
+
+Choix frÃ©quents : granularitÃ© (page vs section), champs (titre/texte/mÃ©tadonnÃ©es), analyse (stemming, synonymes), permissions et cadence de mise Ã  jour (batch vs quasi temps rÃ©el).
+
+## Exemple pratique
+
+Pour une base juridique, vous pouvez indexer la lÃ©gislation au niveau de lâ€™**article**, stocker les **dates dâ€™effet** en mÃ©tadonnÃ©es, et prÃ©voir un champ pour les **[citations](/fr/glossary/citation/) officielles** afin de filtrer et classer avec prÃ©cision.
+
+## Questions frÃ©quentes
+
+**Q: Faut-il indexer des documents entiers ou des segments?**
+
+R: Des unitÃ©s plus petites (sections/articles) amÃ©liorent souvent la prÃ©cision et les extraits, Ã  condition dâ€™avoir de bonnes mÃ©tadonnÃ©es.
+
+**Q: Quand faut-il plusieurs index?**
+
+R: Lorsque des contenus ont des cycles de mise Ã  jour, des rÃ¨gles dâ€™accÃ¨s ou des logiques de classement diffÃ©rents (public vs privÃ©).
+
+## Termes associÃ©s
+
+- [Recherche plein texte](/fr/glossary/full-text-search/) - recherche par mots-clÃ©s dans le texte
+- [Expansion sÃ©mantique](/fr/glossary/semantic-expansion/) - Ã©largir au-delÃ  des mots exacts
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - amÃ©liorer le classement
+- [DÃ©couvrabilitÃ© du contenu](/fr/glossary/content-discoverability/) - rendre le contenu indexable et trouvable
+- [Analytique de recherche](/fr/glossary/search-analytics/) - mesurer et optimiser la recherche
+
+---
+
+## RÃ©fÃ©rences
+
+> Manning, Raghavan & SchÃ¼tze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

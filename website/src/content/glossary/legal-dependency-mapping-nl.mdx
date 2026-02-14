@@ -1,0 +1,69 @@
+---
+term: "Juridische afhankelijkheidsmapping"
+termSlug: "legal-dependency-mapping"
+short: "Juridische afhankelijkheidsmapping bouwt een grafiek van citaties en relaties tussen rechtsbronnen zodat retrieval en analyse kunnen volgen wat van wat afhangt."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["knowledge-graph", "semantic-expansion", "authority-ranking-model", "source-conflict-resolution", "multi-jurisdictional-indexing"]
+synonyms: ["Legal citation graph", "Dependency graph for law", "Legal reference mapping"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Juridische afhankelijkheidsmapping is het extraheren en modelleren van relaties tussen rechtsbronnen: citaties, kruisverwijzingen, wijzigingen, uitvoeringsmaatregelen en hiërarchische links. Het resultaat is vaak een grafiek die helpt begrijpen hoe teksten samenhangen en welke bronnen controlerend zijn.
+
+## Waarom het belangrijk is
+
+- **Betere retrieval**: een vraag over één artikel vereist vaak definities of uitvoeringsregels elders.
+- **Impactanalyse**: bij wijzigingen zie je snel wat downstream geraakt wordt.
+- **[Uitlegbaarheid](/nl/glossary/algorithmic-transparency/)**: toont waarom een bron relevant is (citaties en paden).
+- **Conflictbehandeling**: helpt tegenstrijdige of opgeheven bronnen detecteren.
+
+## Hoe het werkt
+
+Meestal: citaties extraheren en identifiers normaliseren:
+
+```
+Parse documenten -> extraheer referenties -> normaliseer identifiers -> bouw graph -> gebruik in retrieval en UI
+```
+
+Relatietypes:
+
+- "citeert" / "wordt geciteerd door"
+- "wijzigt" / "wordt gewijzigd door"
+- "implementeert" / "wordt geïmplementeerd door"
+- "definieert" / "wordt gedefinieerd in"
+
+## Praktisch voorbeeld
+
+Een gebruiker zoekt een fiscaal artikel. Het systeem haalt ook het definities-artikel op, het uitvoeringsbesluit en de laatste wijziging. Het antwoord bevat citaties en een korte "dependency path" om te tonen waarom bronnen meegeleverd worden.
+
+## Veelgestelde vragen
+
+**Q: Is dit hetzelfde als een knowledge graph?**
+
+A: Het kan deel zijn van een knowledge graph, maar dependency mapping is nauwer: het focust op document-tot-document relaties en juridische [referenties](/nl/glossary/citation/) die toepasbaarheid beïnvloeden.
+
+**Q: Moet extractie perfect zijn?**
+
+A: Nee. Een gedeeltelijke graph is al nuttig zolang referenties goed genormaliseerd zijn en je transparant bent over confidence.
+
+## Gerelateerde termen
+
+- [Knowledge Graph](/nl/glossary/knowledge-graph/) - bredere entiteiten- en relatie-modellering
+- [Semantische uitbreiding](/nl/glossary/semantic-expansion/) - dependencies kunnen veilige uitbreiding sturen
+- [Autoriteitsrankingmodel](/nl/glossary/authority-ranking-model/) - citatiestructuur als autoriteitssignaal
+- [Source Conflict Resolution](/nl/glossary/source-conflict-resolution/) - conflicts via overrides/wijzigingen detecteren
+- [Multi-jurisdictie-indexering](/nl/glossary/multi-jurisdictional-indexing/) - afhankelijkheden verschillen per jurisdictie
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

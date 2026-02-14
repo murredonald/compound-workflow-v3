@@ -1,0 +1,74 @@
+---
+term: "Autoritäts-Ranking-Modell"
+termSlug: "authority-ranking-model"
+short: "Ein Autoritäts-Ranking-Modell priorisiert Quellen nach rechtlicher Autorität und Zuverlässigkeit, damit kontrollierende, belastbare Quellen zuerst erscheinen."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["source-reliability-weighting", "source-conflict-resolution", "relevance-tuning", "multi-jurisdictional-indexing", "compliance-aware-retrieval"]
+synonyms: ["Authority-aware ranking", "Legal authority ranking", "Source authority ranking"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein Autoritäts-Ranking-Modell ist ein Ranking-Ansatz, der gefundene Dokumente nicht nur nach thematischer Relevanz, sondern auch nach ihrer *Autorität* für die konkrete Rechtsfrage bewertet. Ziel ist, kontrollierende Quellen (z.B. bindendes Recht und offizielle Guidance) vor weniger autoritativen Kommentaren zu platzieren.
+
+## Warum es wichtig ist
+
+- **Bessere juristische Qualität**: priorisiert Quellen mit höherem rechtlichem Gewicht.
+- **Geringeres Risiko**: reduziert die Abhängigkeit von schwachen oder nicht-bindenden Quellen.
+- **Auditierbarkeit**: erleichtert die Begründung, warum eine Quelle oben steht.
+- **Konsistenz**: stabilere Ergebnisse über ähnliche Queries und Jurisdiktionen.
+
+## Wie es funktioniert
+
+Autorität wird meist als Zusatzscore (oder als harte Regeln) modelliert und mit Relevanz kombiniert:
+
+```
+Query -> Kandidaten abrufen -> Relevanz + Autorität scoren -> kombinieren -> ranken -> zitieren
+```
+
+Typische Autoritätssignale:
+
+- **Quellentyp** (Gesetz, Verordnung, offizielles Rundschreiben, Rechtsprechung, Kommentar)
+- **Herausgebende Stelle** (Gesetzgeber, Ministerium, Gerichtsebene, Regulator)
+- **Jurisdiktions-Match** (Land/Region, Sprache, Anwendungsbereich)
+- **Aktualität und Versionierung** (Inkrafttreten, Änderungen, konsolidierter Text)
+- **[Zitations](/de/glossary/citation/)- und Abhängigkeitssignale** (was zitiert wird und wer zitiert)
+
+## Praktisches Beispiel
+
+Ein Nutzer sucht "Quellensteuer Dividende Belgien Abkommen". Ein reines Relevanz-Ranking kann Blogartikel nach oben spülen. Ein Autoritäts-Ranking-Modell boostet den Abkommenstext, offizielle Verwaltungsanweisungen und konsolidierte Normen vor Kommentaren, ohne Erklärtexte komplett zu verdrängen.
+
+## Häufige Fragen
+
+**Q: Ist das dasselbe wie Relevanz-Tuning?**
+
+A: Verwandt, aber nicht identisch. Relevanz-Tuning optimiert die Ranking-Qualität insgesamt; Autoritätsranking ergänzt domänenspezifische Signale, damit kontrollierende Quellen nicht untergehen.
+
+**Q: Regeln oder [Machine Learning](/de/glossary/machine-learning/)?**
+
+A: Häufig beides: harte Constraints für klare Hierarchien (z.B. "offizielles Recht vor Kommentar") und Gewichte/ML für weichere Signale (Aktualität, Zitationsmuster).
+
+## Verwandte Begriffe
+
+- [Source Reliability Weighting](/de/glossary/source-reliability-weighting/) - Quellen nach Zuverlässigkeit gewichten
+- [Source Conflict Resolution](/de/glossary/source-conflict-resolution/) - Widersprüche zwischen Quellen behandeln
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Ranking per Evaluation verbessern
+- [Multijurisdiktionale Indexierung](/de/glossary/multi-jurisdictional-indexing/) - Routing über Jurisdiktionen
+- [Compliance-bewusstes Retrieval](/de/glossary/compliance-aware-retrieval/) - Retrieval innerhalb Governance- und Policy-Grenzen
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: [BM25](/de/glossary/bm25/) and Beyond", *Foundations and Trends in Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: BM25 and Beyond", *Foundations and Trends in Information Retrieval*.

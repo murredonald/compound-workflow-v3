@@ -1,0 +1,147 @@
+---
+term: "Deep Learning"
+termSlug: "deep-learning"
+short: "Een deelveld van machine learning dat neurale netwerken met veel lagen gebruikt om hiërarchische representaties van data te leren."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["neural-network", "transformer-architecture", "backpropagation", "llm"]
+synonyms: ["Diepe neurale netwerken", "DNN", "Hiërarchisch leren", "Representatie leren"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Deep learning is een tak van machine learning die kunstmatige neurale netwerken met meerdere lagen (vandaar "diep") gebruikt om automatisch hiërarchische representaties van data te leren. In tegenstelling tot ondiepe modellen die handgemaakte features vereisen, leren deep learning systemen steeds abstractere features op elke laag—van randen en texturen in afbeeldingen tot semantische concepten, of van karakters naar woorden naar zinnen naar betekenis in tekst.
+
+## Waarom het belangrijk is
+
+Deep learning revolutioneerde AI:
+
+- **Automatische feature extractie** — geen handmatige feature engineering nodig
+- **Hiërarchische abstractie** — leert concepten op meerdere niveaus
+- **Schaalbare prestaties** — verbetert met meer data en rekenkracht
+- **Transfer learning** — voorgetrainde modellen passen zich aan nieuwe taken aan
+- **Doorbraakresultaten** — drijft beeldherkenning, NLP, AlphaGo, LLMs
+
+Elke grote AI-vooruitgang sinds 2012 is door deep learning aangedreven.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      DEEP LEARNING                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ONDIEP VS DIEP ARCHITECTUUR:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ONDIEP (1-2 lagen):            DIEP (veel lagen):        │
+│                                                            │
+│  Input ──► Hidden ──► Output    Input                     │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Laag 1 (laag-niveau)       │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Laag 2                     │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Laag 3                     │
+│                                   │                        │
+│                                   ▼                        │
+│                                 ...                        │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Laag N (hoog-niveau)       │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Output                     │
+│                                                            │
+│  HIËRARCHISCH FEATURE LEREN (Afbeelding Voorbeeld):        │
+│  ──────────────────────────────────────────────────        │
+│                                                            │
+│  Laag 1:   ┌───┐ ┌───┐ ┌───┐                              │
+│  (Randen)  │ / │ │ ─ │ │ \ │   Detecteert randen         │
+│            └───┘ └───┘ └───┘                              │
+│                   │                                        │
+│                   ▼                                        │
+│  Laag 2:   ┌─────┐ ┌─────┐                                │
+│  (Vormen)  │  ○  │ │ □── │   Combineert tot vormen       │
+│            └─────┘ └─────┘                                │
+│                   │                                        │
+│                   ▼                                        │
+│  Laag 3:   ┌───────┐ ┌───────┐                            │
+│  (Delen)   │ (◕‿◕) │ │  🦻   │   Vormt objectdelen        │
+│            └───────┘ └───────┘                            │
+│                   │                                        │
+│                   ▼                                        │
+│  Laag N:   ┌─────────────────┐                            │
+│  (Object)  │     "KAT"       │   Herkent volledige obj.   │
+│            └─────────────────┘                            │
+│                                                            │
+│  DEEP LEARNING ARCHITECTUREN:                              │
+│  ────────────────────────────                              │
+│  CNNs:        Afbeeldingen, ruimtelijke patronen          │
+│  RNNs/LSTMs:  Sequenties, tijdreeksen                     │
+│  Transformers: Taal, visie (dominant vandaag)             │
+│  GANs:        Generatieve taken                           │
+│  Autoencoders: Compressie, denoising                      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Waarom diepte belangrijk is:**
+| Aspect | Ondiep Netwerk | Diep Netwerk |
+|--------|----------------|--------------|
+| Feature leren | Handmatig of beperkt | Automatisch, hiërarchisch |
+| Abstractie | Enkel niveau | Meerdere niveaus |
+| Expressiviteit | Beperkte complexiteit | Zeer complexe functies |
+| Data-efficiëntie | Meer data per feature nodig | Leert herbruikbare features |
+
+## Veelgestelde vragen
+
+**V: Hoeveel lagen maken een netwerk "diep"?**
+
+A: Over het algemeen wordt 3+ hidden layers als "diep" beschouwd, hoewel moderne LLMs 32-100+ lagen hebben. De term is relatief—wat "diep" was in 2010 (5-8 lagen) is vandaag ondiep. Diepte gaat over het leren van hiërarchische representaties, niet een vast aantal.
+
+**V: Waarom kwam deep learning op in 2012?**
+
+A: Drie factoren kwamen samen: (1) GPUs maakten training van grote netwerken mogelijk, (2) grote datasets zoals ImageNet werden beschikbaar, (3) algoritmische verbeteringen zoals ReLU activering en dropout verbeterden training. AlexNet's ImageNet overwinning demonstreerde het potentieel.
+
+**V: Wat is de relatie tussen deep learning en AI?**
+
+A: Deep learning is een subset van machine learning, wat een subset is van AI. Niet alle AI gebruikt deep learning (regelgebaseerde systemen niet), en niet alle machine learning is diep (beslisbomen, SVMs niet). Maar deep learning drijft nu de meeste geavanceerde AI-systemen.
+
+**V: Kan deep learning elk probleem oplossen?**
+
+A: Nee. Deep learning excelleert in [patroonherkenning](/nl/glossary/machine-learning/) met veel data maar heeft moeite met: kleine datasets, redeneren, causale [inferentie](/nl/glossary/inference/), extrapolatie buiten trainingsdata, en taken die expliciete symbolische logica vereisen. Het is een krachtig gereedschap, geen universele oplossing.
+
+## Gerelateerde termen
+
+- [Neuraal Netwerk](/nl/glossary/neural-network/) — het fundament van deep learning
+- [Transformer Architectuur](/nl/glossary/transformer-architecture/) — dominante diepe architectuur
+- [Backpropagation](/nl/glossary/backpropagation/) — algoritme dat deep learning mogelijk maakt
+- [LLM](/nl/glossary/llm/) — grootschalig deep learning voor taal
+
+---
+
+## Referenties
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40.000+ [citaties](/nl/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Uitgebreid leerboek]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - startte deep learning revolutie]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15.000+ citaties]
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Comprehensive textbook]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - sparked deep learning revolution]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15,000+ citations]

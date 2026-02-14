@@ -1,0 +1,178 @@
+---
+term: "Compression de Modèle"
+termSlug: "model-compression"
+short: "Techniques pour réduire la taille des modèles IA et les besoins computationnels tout en préservant les performances, pour un déploiement efficace."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["quantization", "pruning", "distillation", "llm"]
+synonyms: ["Optimisation de modèle", "Efficacité de modèle", "Compression de réseau neuronal"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La compression de modèle est une famille de techniques conçues pour réduire la taille, l'empreinte mémoire et les besoins computationnels des modèles de [machine learning](/fr/glossary/machine-learning/) tout en maintenant des niveaux de performance acceptables. Cela inclut la quantification (réduire la précision numérique), l'élagage (supprimer les paramètres inutiles), la distillation de connaissances (entraîner de plus petits modèles à imiter les plus grands), et les optimisations architecturales. L'objectif est de rendre le déploiement AI pratique sur des appareils à ressources limitées ou à grande échelle en production.
+
+## Pourquoi c'est important
+
+La compression de modèle est essentielle pour l'IA réelle :
+
+- **Réduction des coûts** — servir l'IA à 10-100x moins de coûts d'infrastructure
+- **Amélioration de la latence** — réponses plus rapides pour meilleure expérience utilisateur
+- **Déploiement edge** — exécuter des modèles sur téléphones, navigateurs, appareils IoT
+- **Impact environnemental** — réduire consommation d'énergie et empreinte carbone
+- **Démocratisation** — rendre l'IA avancée accessible sans budgets massifs
+
+Sans compression, les modèles de pointe resteraient enfermés dans des data centers coûteux.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│           TECHNIQUES DE COMPRESSION DE MODÈLE              │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LE PAYSAGE DE LA COMPRESSION:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │ QUANTIFICATION  │  │    ÉLAGAGE      │                 │
+│  │                 │  │                 │                 │
+│  │ FP32 → FP16     │  │ Supprimer poids │                 │
+│  │ FP32 → INT8     │  │ et neurones     │                 │
+│  │ FP32 → INT4     │  │ inutilisés      │                 │
+│  │                 │  │                 │                 │
+│  │ 2-8x plus petit │  │ Structuré vs    │                 │
+│  │ 2-4x plus rapide│  │ Non-structuré   │                 │
+│  └─────────────────┘  └─────────────────┘                 │
+│                                                            │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │  DISTILLATION   │  │ OPTIMISATION    │                 │
+│  │                 │  │ ARCHITECTURE    │                 │
+│  │ Grand → Petit   │  │                 │                 │
+│  │ Prof. → Élève   │  │ MobileNets      │                 │
+│  │                 │  │ EfficientNets   │                 │
+│  │ Transfert de    │  │ Conv depthwise  │                 │
+│  │ connaissances   │  │ Optim attention │                 │
+│  └─────────────────┘  └─────────────────┘                 │
+│                                                            │
+│                                                            │
+│  PIPELINE DE COMPRESSION:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  Modèle Original (GPT-3 175B, FP32)                │   │
+│  │  Taille: 700GB    Inférence: €€€€€                │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │ DISTILLATION │  → Entraînement Prof.-Élève      │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Modèle Plus Petit (7B paramètres)                 │   │
+│  │  Taille: 28GB     Inférence: €€                   │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │   ÉLAGAGE    │  → Supprimer 30-50% des poids    │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Modèle Élagué                                      │   │
+│  │  Taille: 14GB     Inférence: €                    │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │QUANTIFICATION│  → FP32 → INT4                   │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Modèle Final Compressé                            │   │
+│  │  Taille: 3.5GB    Inférence: ¢                    │   │
+│  │                                                     │   │
+│  │  COMPRESSION TOTALE: 200x taille, 50x coût!       │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  COMPROMIS DE COMPRESSION:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  Performance                                               │
+│       ▲                                                    │
+│  100% │████████████░░░░░░░░░ Original                     │
+│   97% │██████████░░░░░░░░░░░ Distillé                     │
+│   95% │████████░░░░░░░░░░░░░ + Élagué                     │
+│   92% │██████░░░░░░░░░░░░░░░ + Quantifié (INT8)           │
+│   85% │████░░░░░░░░░░░░░░░░░ + Quantifié (INT4)           │
+│       └────────────────────────────────▶                  │
+│                                     Ratio de Compression   │
+│             1x    5x   10x   25x   100x  200x              │
+│                                                            │
+│  Sweet spot: 90-95% perf. à 10-50x compression            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Techniques de compression comparées:**
+| Technique | Réduction Taille | Gain Vitesse | Perte Qualité | Effort |
+|-----------|-----------------|--------------|---------------|--------|
+| Quantif. FP16 | 2x | 2x | ~0% | Trivial |
+| Quantif. INT8 | 4x | 3x | 1-3% | Faible |
+| Quantif. INT4 | 8x | 4x | 5-15% | Moyen |
+| Élagage (30%) | 1.4x | 1.3x | 1-2% | Moyen |
+| Distillation | 10-25x | 10x | 5-15% | Élevé |
+| Combiné | 50-200x | 20-50x | 5-20% | Élevé |
+
+## Questions fréquentes
+
+**Q : Quelle technique de compression utiliser en premier ?**
+
+R : Commencez par la quantification—c'est le plus facile et offre souvent les meilleurs gains d'efficacité avec une perte de qualité minimale. FP16 est essentiellement gratuit. INT8 fonctionne pour la plupart des applications. N'allez à INT4 que si vous avez besoin d'une compression agressive.
+
+**Q : Puis-je compresser n'importe quel modèle ?**
+
+R : Oui, mais les résultats varient. Les plus grands modèles se compressent souvent mieux car ils ont plus de redondance. Certaines architectures sont plus favorables à la compression. Les [Transformers](/fr/glossary/transformer-architecture/) se compressent bien. Mesurez toujours la qualité sur votre cas d'usage spécifique avant et après compression.
+
+**Q : Les modèles compressés donneront-ils les mêmes sorties ?**
+
+R : Non. La compression introduit de petites différences. Pour la plupart des applications, ces différences sont imperceptibles. Cependant, pour les applications nécessitant une reproductibilité exacte, utilisez une compression minimale. Testez toujours sur vos tâches spécifiques.
+
+**Q : Quelle perte de qualité est acceptable ?**
+
+R : Cela dépend entièrement de votre cas d'usage. Pour les chatbots, 5-10% de perte peut être imperceptible. Pour le diagnostic médical, même 1% pourrait être trop. Faites toujours des benchmarks sur vos tâches réelles.
+
+## Termes associés
+
+- [Quantization](/fr/glossary/quantization/) — réduire la précision numérique
+- [Pruning](/fr/glossary/pruning/) — supprimer les paramètres inutiles
+- [Distillation](/fr/glossary/distillation/) — entraîner plus petits modèles depuis plus grands
+- [LLM](/fr/glossary/llm/) — modèles couramment compressés
+
+---
+
+## Références
+
+> Han et al. (2015), "[Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding](https://arxiv.org/abs/1510.00149)", ICLR. [Article fondateur sur la compression]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Quantification LLM à grande échelle]
+
+> Frantar & Alistarh (2023), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Quantification LLM pratique]
+
+> Zhu et al. (2023), "[A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)", arXiv. [Enquête complète sur la compression]
+
+## References
+
+> Han et al. (2015), "[Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding](https://arxiv.org/abs/1510.00149)", ICLR. [Foundational compression paper]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Large-scale LLM quantization]
+
+> Frantar & Alistarh (2023), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Practical LLM quantization]
+
+> Zhu et al. (2023), "[A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)", arXiv. [Comprehensive compression survey]

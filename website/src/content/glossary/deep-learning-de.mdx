@@ -1,0 +1,147 @@
+---
+term: "Deep Learning"
+termSlug: "deep-learning"
+short: "Ein Teilbereich des Machine Learning, der neuronale Netze mit vielen Schichten nutzt, um hierarchische Repräsentationen zu lernen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["neural-network", "transformer-architecture", "backpropagation", "llm"]
+synonyms: ["Tiefe neuronale Netze", "DNN", "Hierarchisches Lernen", "Repräsentationslernen"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Deep Learning ist ein Zweig des maschinellen Lernens, der künstliche neuronale Netze mit mehreren Schichten (daher "tief") verwendet, um automatisch hierarchische Repräsentationen von Daten zu lernen. Im Gegensatz zu flachen Modellen, die handgefertigte Features erfordern, lernen Deep-Learning-Systeme auf jeder Schicht zunehmend abstrakte Features—von Kanten und Texturen in Bildern bis zu semantischen Konzepten, oder von Zeichen zu Wörtern zu Sätzen zu Bedeutung in Text.
+
+## Warum es wichtig ist
+
+Deep Learning revolutionierte KI:
+
+- **Automatische Feature-Extraktion** — kein manuelles Feature Engineering nötig
+- **Hierarchische Abstraktion** — lernt Konzepte auf mehreren Ebenen
+- **Skalierbare Leistung** — verbessert sich mit mehr Daten und Rechenleistung
+- **Transfer Learning** — vortrainierte Modelle passen sich neuen Aufgaben an
+- **Durchbruch-Ergebnisse** — treibt Bilderkennung, NLP, AlphaGo, LLMs an
+
+Jeder große KI-Fortschritt seit 2012 wurde durch Deep Learning angetrieben.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      DEEP LEARNING                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FLACHE VS TIEFE ARCHITEKTUR:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  FLACH (1-2 Schichten):         TIEF (viele Schichten):   │
+│                                                            │
+│  Eingabe ──► Hidden ──► Ausgabe Eingabe                   │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Schicht 1 (niedrig)        │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Schicht 2                  │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Schicht 3                  │
+│                                   │                        │
+│                                   ▼                        │
+│                                 ...                        │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Schicht N (hoch)           │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Ausgabe                    │
+│                                                            │
+│  HIERARCHISCHES FEATURE-LERNEN (Bild-Beispiel):            │
+│  ──────────────────────────────────────────────            │
+│                                                            │
+│  Schicht 1: ┌───┐ ┌───┐ ┌───┐                             │
+│  (Kanten)   │ / │ │ ─ │ │ \ │   Erkennt Kanten           │
+│             └───┘ └───┘ └───┘                             │
+│                   │                                        │
+│                   ▼                                        │
+│  Schicht 2: ┌─────┐ ┌─────┐                               │
+│  (Formen)   │  ○  │ │ □── │   Kombiniert zu Formen       │
+│             └─────┘ └─────┘                               │
+│                   │                                        │
+│                   ▼                                        │
+│  Schicht 3: ┌───────┐ ┌───────┐                           │
+│  (Teile)    │ (◕‿◕) │ │  🦻   │   Bildet Objektteile     │
+│             └───────┘ └───────┘                           │
+│                   │                                        │
+│                   ▼                                        │
+│  Schicht N: ┌─────────────────┐                           │
+│  (Objekt)   │    "KATZE"      │   Erkennt Objekte        │
+│             └─────────────────┘                           │
+│                                                            │
+│  DEEP LEARNING ARCHITEKTUREN:                              │
+│  ────────────────────────────                              │
+│  CNNs:        Bilder, räumliche Muster                    │
+│  RNNs/LSTMs:  Sequenzen, Zeitreihen                       │
+│  Transformers: Sprache, Vision (heute dominant)           │
+│  GANs:        Generative Aufgaben                         │
+│  Autoencoders: Kompression, Entrauschen                   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Warum Tiefe wichtig ist:**
+| Aspekt | Flaches Netzwerk | Tiefes Netzwerk |
+|--------|------------------|-----------------|
+| Feature-Lernen | Manuell oder begrenzt | Automatisch, hierarchisch |
+| Abstraktion | Einzelne Ebene | Mehrere Ebenen |
+| Ausdrucksstärke | Begrenzte Komplexität | Sehr komplexe Funktionen |
+| Dateneffizienz | Mehr Daten pro Feature | Lernt wiederverwendbare Features |
+
+## Häufige Fragen
+
+**F: Wie viele Schichten machen ein Netzwerk "tief"?**
+
+A: Generell gelten 3+ versteckte Schichten als "tief", obwohl moderne LLMs 32-100+ Schichten haben. Der Begriff ist relativ—was 2010 "tief" war (5-8 Schichten) ist heute flach. Tiefe bezieht sich auf das Lernen hierarchischer Repräsentationen, nicht auf eine feste Zahl.
+
+**F: Warum startete Deep Learning 2012 durch?**
+
+A: Drei Faktoren kamen zusammen: (1) GPUs ermöglichten Training großer Netzwerke, (2) große Datensätze wie ImageNet wurden verfügbar, (3) algorithmische Verbesserungen wie ReLU-Aktivierung und Dropout verbesserten das Training. AlexNets ImageNet-Sieg demonstrierte das Potenzial.
+
+**F: Was ist die Beziehung zwischen Deep Learning und KI?**
+
+A: Deep Learning ist eine Untermenge von [Machine Learning](/de/glossary/machine-learning/), das eine Untermenge von KI ist. Nicht alle KI nutzt Deep Learning (regelbasierte Systeme nicht), und nicht alles Machine Learning ist tief (Entscheidungsbäume, SVMs nicht). Aber Deep Learning treibt jetzt die meisten hochmodernen KI-Systeme an.
+
+**F: Kann Deep Learning jedes Problem lösen?**
+
+A: Nein. Deep Learning excelliert bei Mustererkennung mit vielen Daten, hat aber Schwierigkeiten mit: kleinen Datensätzen, Schlussfolgerung, kausaler [Inferenz](/de/glossary/inference/), Extrapolation über Trainingsdaten hinaus, und Aufgaben, die explizite symbolische Logik erfordern. Es ist ein mächtiges Werkzeug, keine universelle Lösung.
+
+## Verwandte Begriffe
+
+- [Neuronales Netz](/de/glossary/neural-network/) — das Fundament von Deep Learning
+- [Transformer-Architektur](/de/glossary/transformer-architecture/) — dominante tiefe Architektur
+- [Backpropagation](/de/glossary/backpropagation/) — Algorithmus, der Deep Learning ermöglicht
+- [LLM](/de/glossary/llm/) — großskaliges Deep Learning für Sprache
+
+---
+
+## Referenzen
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40.000+ Zitationen]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Umfassendes Lehrbuch]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - löste Deep Learning Revolution aus]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15.000+ Zitationen]
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Comprehensive textbook]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - sparked deep learning revolution]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15,000+ citations]

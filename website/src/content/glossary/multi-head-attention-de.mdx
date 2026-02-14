@@ -1,0 +1,105 @@
+---
+term: "Multi-Head Attention"
+termSlug: "multi-head-attention"
+short: "Eine Technik, die mehrere Attention-Operationen parallel ausführt und Modellen ermöglicht, verschiedene Beziehungstypen gleichzeitig zu erfassen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["attention-mechanism", "self-attention", "transformer-architecture", "llm"]
+synonyms: ["MHA", "Multi-headed Attention", "Parallele Attention-Köpfe"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Multi-Head Attention ist ein Mechanismus, der mehrere Attention-Operationen parallel durchführt, jede mit unterschiedlichen gelernten Projektionen. Anstatt eine einzelne Attention-Funktion zu berechnen, führt das Modell mehrere „Köpfe" (Heads) gleichzeitig aus, wobei jeder verschiedene Aspekte von Beziehungen in den Daten erfasst. Die Ausgaben werden dann konkateniert und projiziert, um das Endergebnis zu erzeugen.
+
+## Warum es wichtig ist
+
+Multi-Head Attention adressiert Einschränkungen von Single-Head Attention:
+
+- **Diverse Repräsentationen** — verschiedene Köpfe können verschiedene Beziehungstypen lernen (syntaktisch, semantisch, positionell)
+- **Reichere Ausdrucksfähigkeit** — das gleichzeitige Erfassen mehrerer Muster verbessert die Modellkapazität
+- **Stabiles Training** — mehrere Köpfe bieten Redundanz und Gradientenfluss-Stabilität
+- **[Interpretierbarkeit](/de/glossary/explainability/)** — einzelne Köpfe spezialisieren sich oft auf identifizierbare linguistische Muster
+
+Deshalb verwenden Transformers Multi-Head Attention statt einzelner Attention—es ist grundlegend leistungsfähiger.
+
+## Wie es funktioniert
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MULTI-HEAD ATTENTION                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Input ──┬──→ Kopf 1 (W_Q1, W_K1, W_V1) ──→ Attention 1    │
+│          │                                                  │
+│          ├──→ Kopf 2 (W_Q2, W_K2, W_V2) ──→ Attention 2    │
+│          │                                                  │
+│          ├──→ Kopf 3 (W_Q3, W_K3, W_V3) ──→ Attention 3    │
+│          │                                    │             │
+│          └──→  ...h Köpfe...                  ▼             │
+│                                         [Konkatenieren]     │
+│                                               │             │
+│                                    Lineare Projektion (W_O) │
+│                                               │             │
+│                                               ▼             │
+│                                            Ausgabe          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+1. **Inputs projizieren** — Q, K, V werden h-mal linear mit verschiedenen gelernten Gewichten projiziert
+2. **Parallele Attention** — jeder Kopf berechnet Attention unabhängig
+3. **Konkatenieren** — Kopf-Ausgaben werden entlang der Feature-Dimension konkateniert
+4. **Endprojektion** — konkatenierte Ausgabe wird linear zurück zur Modelldimension projiziert
+
+Formel: `MultiHead(Q,K,V) = Concat(kopf_1,...,kopf_h) × W_O`
+
+Wobei jeder `kopf_i = Attention(Q×W_Qi, K×W_Ki, V×W_Vi)`
+
+## Häufige Fragen
+
+**F: Wie viele Köpfe werden typischerweise verwendet?**
+
+A: Übliche Konfigurationen verwenden 8, 12 oder 16 Köpfe. GPT-3 verwendet 96 Köpfe mit 12.288 versteckter Dimension. Die Kopfanzahl wird normalerweise so gewählt, dass die Dimension jedes Kopfes (d_model / num_heads) eine vernünftige Größe wie 64 oder 128 hat.
+
+**F: Lernen verschiedene Köpfe verschiedene Dinge?**
+
+A: Ja, Forschung zeigt, dass Köpfe sich oft spezialisieren. Einige attendieren auf benachbarte Wörter, andere auf syntaktische Abhängigkeiten, spezifische Positionen oder seltene Tokens. Nicht alle Köpfe sind gleich wichtig—einige können mit minimalem Leistungsverlust beschnitten werden.
+
+**F: Warum nicht einfach breitere Single-Head Attention verwenden?**
+
+A: Breitere Single-Head Attention hat die gleiche Parameteranzahl, aber weniger repräsentationelle Diversität. Die parallelen Unterräume von Multi-Head Attention erfassen reichere, vielfältigere Muster.
+
+**F: Was ist Group Query Attention (GQA)?**
+
+A: GQA ist eine effiziente Variante, bei der mehrere Query-Köpfe Key-Value-Köpfe teilen, was Speicher und Berechnung reduziert und dabei Qualität erhält. Verwendet in Modellen wie Llama 2.
+
+## Verwandte Begriffe
+
+- [Attention-Mechanismus](/de/glossary/attention-mechanism/) — die grundlegende Technik
+- [Self-Attention](/de/glossary/self-attention/) — jeder Kopf führt Self-Attention aus
+- [Transformer-Architektur](/de/glossary/transformer-architecture/) — verwendet Multi-Head Attention durchgehend
+- [LLM](/de/glossary/llm/) — moderne Sprachmodelle basieren auf Multi-Head Attention
+
+---
+
+## Referenzen
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ Zitationen]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1.200+ Zitationen]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ Zitationen]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ Zitationen]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1,200+ citations]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ citations]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ citations]

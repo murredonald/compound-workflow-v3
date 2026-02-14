@@ -17,6 +17,9 @@ export async function getStaticPaths() {
 const { guide } = Astro.props;
 const { Content } = await guide.render();
 
+const slug = guide.id.replace(/\.mdx?$|\.md$/, "");
+const guideUrl = `https://auryth.ai/${locale}/guides/${slug}/`;
+
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Article",
@@ -33,20 +36,31 @@ const jsonLd = JSON.stringify({
     }))
   } : {}),
 });
+
+const breadcrumbSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": `https://auryth.ai/${locale}/` },
+    { "@type": "ListItem", "position": 2, "name": "Guides", "item": `https://auryth.ai/${locale}/guides/` },
+    { "@type": "ListItem", "position": 3, "name": guide.data.title, "item": guideUrl },
+  ],
+});
 ---
 
 <BaseLayout
   title={`${guide.data.title} — ${t("site.title", locale)}`}
   description={guide.data.description}
   locale={locale}
-  path={`/guides/${guide.id.replace(/\.mdx?$|\.md$/, "")}/`}
+  path={`/guides/${slug}/`}
 >
   <Fragment slot="head">
-    <script type="application/ld+json" set:html={jsonLd} />
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+    <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
   </Fragment>
 
   <main id="main-content">
-    <Section class="py-24 md:py-32">
+    <Section class="pt-12 md:pt-16">
       <div class="mx-auto max-w-3xl">
         <a href={`/${locale}/guides/`} class="text-body-sm text-primary-text hover:underline">&larr; Tous les guides</a>
 

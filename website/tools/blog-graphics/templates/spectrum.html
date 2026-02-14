@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* ── Spectrum / Scale ── */
+  .spectrum {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .spectrum-bar-wrap {
+    position: relative;
+  }
+
+  .spectrum-bar {
+    display: flex;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .spectrum-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: flex 0.3s;
+  }
+
+  .spectrum-segment.danger {
+    background: hsla(2 62% 56% / 0.25);
+    color: var(--destructive);
+  }
+
+  .spectrum-segment.warning {
+    background: hsla(38 92% 50% / 0.2);
+    color: var(--warning);
+  }
+
+  .spectrum-segment.neutral {
+    background: hsla(220 9% 16% / 0.4);
+    color: var(--muted-fg);
+  }
+
+  .spectrum-segment.good {
+    background: hsla(142 64% 55% / 0.2);
+    color: var(--success);
+  }
+
+  .spectrum-segment.primary {
+    background: hsla(36 32% 38% / 0.3);
+    color: var(--primary-text);
+  }
+
+  .spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+  }
+
+  .spectrum-label {
+    font-size: 14px;
+    color: var(--muted-fg);
+  }
+
+  .spectrum-label.left { text-align: left; }
+  .spectrum-label.right { text-align: right; }
+
+  /* Markers on the spectrum */
+  .spectrum-markers {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .spectrum-marker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--muted);
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .spectrum-marker-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .spectrum-marker-dot.danger { background: var(--destructive); }
+  .spectrum-marker-dot.warning { background: var(--warning); }
+  .spectrum-marker-dot.good { background: var(--success); }
+  .spectrum-marker-dot.primary { background: var(--primary-text); }
+
+  .spectrum-marker-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  .spectrum-marker-value {
+    font-size: 14px;
+    color: var(--muted-fg);
+    margin-left: auto;
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">AI hallucination spectrum: from dangerous to reliable</div>
+  <div class="spectrum">
+    <div class="spectrum-bar-wrap">
+      <div class="spectrum-bar">
+        <div class="spectrum-segment danger" style="flex: 35;">Hallucination zone</div>
+        <div class="spectrum-segment warning" style="flex: 25;">Risk zone</div>
+        <div class="spectrum-segment neutral" style="flex: 15;">Moderate</div>
+        <div class="spectrum-segment good" style="flex: 25;">Verified zone</div>
+      </div>
+      <div class="spectrum-labels">
+        <div class="spectrum-label left">0% accuracy</div>
+        <div class="spectrum-label right">100% verified</div>
+      </div>
+    </div>
+    <div class="spectrum-markers">
+      <div class="spectrum-marker">
+        <div class="spectrum-marker-dot danger"></div>
+        <div class="spectrum-marker-label">ChatGPT (legal)</div>
+        <div class="spectrum-marker-value">58–88% errors</div>
+      </div>
+      <div class="spectrum-marker">
+        <div class="spectrum-marker-dot warning"></div>
+        <div class="spectrum-marker-label">Westlaw AI</div>
+        <div class="spectrum-marker-value">17–33% errors</div>
+      </div>
+      <div class="spectrum-marker">
+        <div class="spectrum-marker-dot primary"></div>
+        <div class="spectrum-marker-label">Auryth TX</div>
+        <div class="spectrum-marker-value">Verified + scored</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

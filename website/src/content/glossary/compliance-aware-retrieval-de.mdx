@@ -1,0 +1,76 @@
+---
+term: "Compliance-bewusstes Retrieval"
+termSlug: "compliance-aware-retrieval"
+short: "Compliance-bewusstes Retrieval erzwingt Governance- und Regulatorik-Constraints (Zugriff, Provenienz, Logging), damit Quellen defensibel abgerufen und zitiert werden."
+category: "ai-regulation"
+category_name: "KI-Regulierung"
+related: ["ai-governance-framework", "eu-ai-act", "ai-documentation-requirements", "human-oversight", "data-ethics", "authority-ranking-model"]
+synonyms: ["Policy-aware retrieval", "Governance-aware retrieval", "Constrained retrieval"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Compliance-bewusstes Retrieval ist ein Retrieval-Design, bei dem rechtliche, Datenschutz- und Governance-Anforderungen *vor* und *während* Retrieval und [Zitation](/de/glossary/citation/) durchgesetzt werden. Statt "alles abrufen und hoffen, dass die Antwort sicher ist", kontrolliert das System per Policy, was abgerufen, angezeigt, zitiert oder geloggt werden darf.
+
+## Warum es wichtig ist
+
+- **Regulatorische Risiken**: falsches Retrieval kann schon ein Compliance-Vorfall sein.
+- **Auditierbarkeit**: Policies und Logs machen Verhalten überprüfbar.
+- **Datenethik**: unterstützt Minimierung, Zweckbindung und [Provenienz](/de/glossary/source-provenance/)-Disziplin.
+- **Vertrauen**: Nutzer sehen, dass Quellen erlaubt, kuratiert und nachvollziehbar sind.
+
+## Wie es funktioniert
+
+Typischerweise wird eine Policy-Schicht in die Pipeline eingebaut:
+
+```
+Query -> Policy-Checks -> erlaubte Quellen abrufen -> ranken -> zitieren -> für Audit loggen
+```
+
+Häufige Controls:
+
+- Zugriffskontrolle (Rollen, Tenant-Grenzen)
+- Allowlists/Denylists für Quellen und Domains
+- Jurisdiktions- und Sprachconstraints
+- PII-/Sensitive-Data-Filter (Abruf und Anzeige)
+- Pflicht zur Zitation und Provenienz
+- Logging- und Retention-Regeln als Evidenz
+
+## Praktisches Beispiel
+
+Eine Query könnte Retrieval aus internen Kundendokumenten auslösen. Compliance-bewusstes Retrieval begrenzt den Abruf auf freigegebene öffentliche Quellen (Recht, offizielle Guidance), loggt die Entscheidung und verhindert das Zitieren oder Offenlegen restriktierter Inhalte.
+
+## Häufige Fragen
+
+**Q: Ist das nicht einfach Security?**
+
+A: Es überschneidet sich, ist aber breiter: es geht um rechtliche und Governance-Pflichten (erlaubte Quellen, Logging-Anforderungen, Disclosures).
+
+**Q: Verschlechtert das die Antwortqualität?**
+
+A: Recall kann sinken, wenn Policies zu strikt sind. Ziel ist ein Ausgleich zwischen Nutzbarkeit und Defensibility, mit klaren, expliziten Constraints.
+
+## Verwandte Begriffe
+
+- [AI Governance Framework](/de/glossary/ai-governance-framework/) - Policies und Rollen, die Constraints definieren
+- [EU AI Act](/de/glossary/eu-ai-act/) - Anforderungen, die Retrieval-Controls beeinflussen
+- [AI-Dokumentationsanforderungen](/de/glossary/ai-documentation-requirements/) - Nachweise für Audits und Nutzer
+- [Menschliche Aufsicht](/de/glossary/human-oversight/) - Eskalation bei sensiblen/ambigen Fällen
+- [Data Ethics](/de/glossary/data-ethics/) - Prinzipien wie Minimierung und Zweckbindung
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - erlaubte, kontrollierende Quellen bevorzugen
+
+---
+
+## Referenzen
+
+> Verordnung (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *[AI Risk Management](/de/glossary/ai-risk-management/) Framework (AI RMF 1.0)*.
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.

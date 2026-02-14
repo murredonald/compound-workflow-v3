@@ -1,0 +1,126 @@
+---
+title: "Wie wir mit widersprüchlichen Quellen umgehen — und warum die meisten KI-Tools das nicht tun"
+description: "Wenn sich belgische Steuerquellen widersprechen, ist das Gefährlichste, was ein KI-Tool tun kann: eine auswählen und selbstsicher antworten."
+publishDate: 2026-03-06
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Vertrauen & Transparenz"
+tags: ["widersprüchliche Quellen", "Unsicherheit", "juristische KI", "Konfidenzwertung", "belgisches Steuerrecht"]
+locale: "de"
+draft: false
+---
+
+Im Oktober 2023 urteilte der belgische Kassationshof (Hof van Cassatie), dass ausländische Einkünfte von der belgischen Besteuerung befreit sind, sobald sie in den Anwendungsbereich des ausländischen Steuersystems fallen — unabhängig davon, ob sie tatsächlich besteuert wurden. Ein Jahr später, im Oktober 2024, urteilte dasselbe Gericht genau umgekehrt: Einkünfte sind nur befreit, wenn sie im Quellenstaat tatsächlich besteuert wurden.
+
+Dieselbe Doktrin. Dasselbe Gericht. Entgegengesetzte Schlussfolgerungen.
+
+Der Unterschied? Der Abkommenskontext — ein Fall betraf das belgisch-niederländische Doppelbesteuerungsabkommen, der andere das belgisch-kongolesische. Doch für den Steuerberater, der eine Beratung vorbereitet, ist die Implikation identisch: Zwei autoritative Quellen weisen in entgegengesetzte Richtungen, und die Antwort hängt davon ab, welche auf die Situation des Mandanten zutrifft.
+
+Stellen Sie sich nun vor, Sie stellen einem KI-Tool diese Frage. Die meisten Tools gäben Ihnen eine Antwort, selbstsicher, mit einem Zitat. Sie würden Ihnen nicht mitteilen, dass das andere Urteil existiert, dass die Doktrin umstritten ist oder dass die Antwort von abkommensspezifischen Formulierungen abhängt. Diese Auslassung ist gefährlicher als eine falsche Antwort — denn eine falsche Antwort kann eine Überprüfung auslösen. Eine selbstsichere, unvollständige Antwort tut das nicht.
+
+## Die Widerspruchslandschaft im belgischen Steuerrecht
+
+Widersprüchliche Quellen sind keine Fehler im belgischen Rechtssystem. Sie sind strukturelle Merkmale. Das System produziert sie zuverlässig, aus Gründen, die nichts mit Fehlern zu tun haben:
+
+| Art des Widerspruchs | Beispiel | Warum er auftritt |
+|---|---|---|
+| **Kammer gegen Kammer** | Die niederländisch- und französischsprachigen Kammern des Kassationshofs kamen zu entgegengesetzten Schlussfolgerungen darüber, ob die jährliche Steuer auf kollektive Anlageorganismen als Vermögensteuer qualifiziert (2022) | Belgiens zweisprachiges Gerichtssystem verhandelt Fälle getrennt |
+| **Rundschreiben vs. Rechtsprechung** | Das Verwaltungsrundschreiben vertritt eine Position; ein Gerichtsurteil widerspricht ihr später — aber das Rundschreiben wird nie zurückgezogen | Verwaltungspraxis und richterliche Auslegung entwickeln sich auf unterschiedlichen Zeitachsen |
+| **Bundesebene vs. Region** | Die einkommensteuerliche Behandlung eines Instruments auf Bundesebene konfligiert mit der schenkungs-/erbschaftsteuerlichen Behandlung auf Regionalebene | Drei Regionen gesetzgeben unabhängig in ihren Zuständigkeiten |
+| **Zeitlicher Verfall** | Eine Bestimmung, die bei Strukturierung der Transaktion des Mandanten galt, wurde seither geändert oder neu interpretiert | Programmgesetze ändern Dutzende Bestimmungen zweimal pro Jahr |
+| **Doktrin vs. Rechtsprechung** | Akademische Kommentare vertreten Position A; aktuelle Rechtsprechung etabliert Position B | Wissenschaftliche Analyse und richterliche Entscheidungen dienen unterschiedlichen Funktionen |
+
+Ein Fachmann, der fünfzehn Jahre im belgischen Steuerrecht gearbeitet hat, kennt diese Widersprüche. Er navigiert sie mit Erfahrung, Urteilsvermögen und sorgfältiger Lektüre. Die Frage ist: Was passiert, wenn man KI in diesen Prozess einbringt?
+
+## Das Übervertrauensproblem
+
+Die meisten KI-Tools sind auf selbstsichere Antworten optimiert. Das ist eine Designentscheidung, keine technologische Einschränkung.
+
+**Große Sprachmodelle sind strukturell übermäßig selbstsicher.** Aktuelle Forschung zur [LLM](/de/glossary/llm/)-[Kalibrierung](/de/glossary/calibration/) zeigt, dass das Modellvertrauen die Korrektheit systematisch überschätzt — was Forscher als „Fehlkalibrierung" bezeichnen (Xiong et al., 2024). Wenn ein LLM einer Antwort 90 % Vertrauen zuweist, liegt die tatsächliche Genauigkeit oft deutlich darunter. Dies ist kein behebbarer Fehler. Es ist, wie die Stanford-[RAG](/de/glossary/rag/)-Halluzinationsstudie formulierte, „eine unvermeidliche Folge der probabilistischen Sprachmodellierung" (Magesh et al., 2024).
+
+Die Konsequenzen sind sichtbar. Eine Datenbank, die KI-Halluzinationen in Gerichtsschriftsätzen erfasst, dokumentierte Ende 2025 über 700 Fälle weltweit, davon 90 % allein im Jahr 2025. Sanktionen gegen Anwälte reichen von 2.000 $ bis 31.000 $ pro Vorfall — nicht für die Nutzung von KI, sondern für das Versäumnis, die Ergebnisse zu überprüfen (Charlotin, 2025).
+
+Das Muster ist immer dasselbe: Das Tool gab eine selbstsichere Antwort, der Fachmann vertraute ihr, und die Quelle erwies sich als erfunden oder nicht anwendbar. Doch es gibt einen subtileren Fehlermodus, der selten Schlagzeilen macht: Das Tool gab eine korrekte Antwort — verbarg aber die Tatsache, dass ebenso autoritative Quellen anderer Meinung sind.
+
+> Der gefährlichste KI-Fehler ist nicht die falsche Antwort. Es ist die richtige Antwort, die die Existenz einer widersprechenden verbirgt.
+
+![Selbstsichere KI vs. ehrliche KI: wie jede mit widersprüchlichen Rechtsquellen umgeht](/blog/onzekerheid-tegenstrijdige-bronnen/confident-vs-honest-ai-contradictory-sources-dark.png)
+
+## Die drei Maximen — und wann sie versagen
+
+Rechtssysteme verfügen über jahrhundertealte Instrumente zur Lösung normativer Konflikte:
+
+- **Lex superior** — höherrangige Normen gehen niedrigeren vor (Verfassung vor Gesetz, Gesetz vor Rundschreiben)
+- **Lex specialis** — spezielle Bestimmungen gehen allgemeinen vor
+- **Lex posterior** — spätere Normen gehen früheren vor
+
+Diese Maximen lösen viele Widersprüche auf. Wenn ein Rundschreiben einem Gesetz widerspricht, entscheidet lex superior: Das Gesetz hat Vorrang. Wenn eine allgemeine Regel und eine spezifische Ausnahme konfligieren, bestimmt lex specialis das Ergebnis.
+
+Doch die belgische Steuerpraxis produziert regelmäßig Situationen, in denen die Maximen den Konflikt nicht eindeutig lösen:
+
+- Zwei Urteile des Kassationshofs gleicher Autorität mit entgegengesetzten Schlussfolgerungen (lex posterior besagt, dass das spätere vorgeht — aber handelte es sich um eine absichtliche Kursänderung, oder war der Kontext ein anderer?)
+- Ein Rundschreiben, das die Verwaltung aktiv durchsetzt, obwohl es der Rechtsprechung widerspricht (lex superior besagt, dass die Rechtsprechung vorgeht — aber folgt der Steuerinspektor dem Urteil oder dem Rundschreiben?)
+- Akademische Doktrin, die eine Mehrdeutigkeit identifiziert, die weder der Gesetzgeber noch die Gerichte behandelt haben
+
+In diesen Situationen **gibt es keine einzige korrekte Antwort.** Es gibt Positionen, jeweils mit unterschiedlichen Graden an Stützung, Risiko und Verteidigbarkeit. Die Aufgabe des Fachmanns ist es, diese Landschaft zu navigieren und den Mandanten zu beraten, welche Position einzunehmen ist und warum.
+
+Ein KI-Tool, das diese Landschaft auf eine einzige selbstsichere Antwort reduziert, hilft nicht. Es entfernt genau die Information, die der Fachmann am dringendsten benötigt.
+
+## Wie ehrliche Unsicherheit aussieht
+
+Die Alternative zu selbstsicheren Antworten sind nicht vage Antworten. Es ist **strukturierte Unsicherheit** — das vollständige Bild mit ausreichend Kontext präsentieren, damit der Fachmann sein Urteil ausüben kann.
+
+| Was die meisten Tools tun | Wie ehrliche Unsicherheit aussieht |
+|---|---|
+| Eine Position als „die Antwort" präsentieren | Alle relevanten Positionen mit ihrem Autoritätsniveau zeigen |
+| Eine Quelle zitieren | Zeigen, wo Quellen übereinstimmen und wo sie divergieren |
+| Gleichförmiges Vertrauen ungeachtet der Quellenqualität | Konfidenzwertung, die sinkt, wenn Quellen sich widersprechen |
+| Keine Anzeige von Mehrdeutigkeit | Explizites Signal: „Quellen zu diesem Thema kommen zu unterschiedlichen Schlussfolgerungen" |
+| Rundschreiben und Urteile als gleichwertig behandeln | Nach juristischer Hierarchie ordnen — aber signalisieren, wenn die Verwaltung von der richterlichen Auslegung abweicht |
+
+Dies ist schwieriger zu bauen. Es erfordert, dass das System erkennt, wenn abgerufene Quellen nicht übereinstimmen, die Art der Meinungsverschiedenheit klassifiziert und den Widerspruch auf eine Weise präsentiert, die dem Fachmann hilft, anstatt ihn zu überfordern.
+
+Aber es ist auch das, was Fachleute tatsächlich brauchen. Ein Steuerberater, der einen Antrag auf Steuervorentscheid beim DVB (Dienst Voorafgaande Beslissingen) vorbereitet, will nicht die Meinung eines Chatbots. Er will wissen: Was sagt das Gesetz, was sagt die Verwaltung, was sagen die Gerichte, und wo weichen diese drei voneinander ab?
+
+## Häufige Fragen
+
+**Kann KI wirklich Widersprüche zwischen juristischen Quellen erkennen?**
+
+Ja — auf der Abrufebene. Wenn ein System mehrere Quellen abruft, die gegensätzliche Behauptungen zur selben Rechtsfrage aufstellen, können Natural Language Inference (NLI)-Modelle den Widerspruch identifizieren. Das schwierigere Problem ist die Klassifizierung des Widerspruchs: Handelt es sich um eine echte Mehrdeutigkeit, einen gelösten Konflikt (bei dem lex superior entscheidet) oder einen scheinbaren Konflikt, der durch unterschiedliche Sachverhalte verursacht wird? Aktuelle Systeme können Widersprüche zuverlässig erkennen. Sie vollständig zu klassifizieren erfordert noch immer professionelles Urteilsvermögen.
+
+**Ist es nicht besser, einfach die autoritativste Antwort zu geben?**
+
+Für gelöste Konflikte ja — lex superior und lex specialis sollten die Antwort leiten. Aber für tatsächlich umstrittene Positionen ist das Präsentieren nur der „autoritativsten" Quelle irreführend. Ein Urteil des Kassationshofs von 2023 ersetzt nicht automatisch ein Urteil von 2024, wenn sie unterschiedliche Abkommenskontexte betreffen. Authority Ranking ist notwendig, aber nicht hinreichend.
+
+**Wie sollte ich in meiner eigenen Praxis mit widersprüchlichen Quellen umgehen?**
+
+Dokumentieren Sie alles. Wenn Quellen nicht übereinstimmen, notieren Sie den Widerspruch explizit in Ihrem Recherche-Output. Identifizieren Sie, welche Lösungsmaxime anwendbar ist (falls zutreffend). Wenn der Konflikt echt ist, präsentieren Sie dem Mandanten die konkurrierenden Positionen und Ihre Empfehlung — zusammen mit dem Risikoprofil jeder Position.
+
+---
+
+## Verwandte Artikel
+
+- [Warum Transparenz wichtiger ist als Genauigkeit in juristischer KI](/de/blog/transparantie-vs-nauwkeurigheid-de/)
+- [Was ist Confidence Scoring — und warum es ehrlicher ist als eine selbstsichere Antwort](/de/blog/confidence-scoring-uitgelegd-de/)
+- [Was ist Authority Ranking — und warum Ihr juristisches KI-Tool es wahrscheinlich ignoriert](/de/blog/authority-ranking-juridische-ai-de/)
+- [Was die Stanford-Halluzinationsstudie tatsächlich enthüllt hat](/de/blog/stanford-hallucination-study-juridische-ai-de/)
+
+---
+
+## Wie Auryth TX das umsetzt
+
+Auryth TX behandelt Quellenwidersprüche als Information, nicht als Fehler. Wenn die Abrufschicht Quellen aufruft, die zu unterschiedlichen Schlussfolgerungen zur selben Rechtsfrage gelangen, signalisiert das System den Widerspruch explizit, anstatt stillschweigend eine auszuwählen.
+
+Jede abgerufene Quelle trägt ihre Position in der belgischen Rechtshierarchie — Verfassung, Gesetzgebung, Königlicher Erlass, Rundschreiben, Rechtsprechung, Doktrin — sodass Widersprüche mit ihrem Autoritätskontext präsentiert werden. Wenn ein Rundschreiben einem Gerichtsurteil widerspricht, zeigt das System beide Positionen und identifiziert die Hierarchie. Wenn zwei Urteile nicht übereinstimmen, zeigt das System beide mit ihren Daten, Kammern und Abkommenskontexten. Die Konfidenzwertung sinkt, wenn Quellen sich widersprechen, was dem Fachmann ein klares Signal gibt, dass diese Frage eine tiefere Analyse erfordert.
+
+Das Ergebnis ist keine schwächere Antwort. Es ist eine vollständigere Antwort. Der Fachmann sieht die vollständige Widerspruchsoberfläche und wendet sein Urteilsvermögen an — was genau so ist, wie seriöse Steuerberatung schon immer funktioniert hat.
+
+*Wenn Quellen nicht übereinstimmen, sollte Ihr KI-Tool Ihnen das mitteilen. Nicht für Sie entscheiden.*
+
+---
+
+*Quellen:*
+*1. Magesh, V. et al. (2024). „[Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362)." Journal of Empirical Legal Studies.*
+*2. Xiong, M. et al. (2024). „[Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs](https://arxiv.org/abs/2306.13063)." ICLR 2024.*
+*3. PwC Legal Belgien (2025). „[Confusion grows over 'subject-to-tax' rule for foreign-sourced income exemptions in Belgium](https://www.pwclegal.be/en/news/confusion-grows-over--subject-to-tax--rule-for-foreign-sourced-i.html)." PwC Belgien.*
+*4. Charlotin, D. (2025). „[AI Hallucination Cases Database](https://www.damiencharlotin.com/hallucinations/)." Unabhängige Forschung.*

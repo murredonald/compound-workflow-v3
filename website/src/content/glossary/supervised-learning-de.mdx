@@ -1,0 +1,147 @@
+---
+term: "Überwachtes Lernen"
+termSlug: "supervised-learning"
+short: "Ein Machine-Learning-Ansatz, bei dem Modelle aus gelabelten Trainingsdaten lernen, um Ausgaben vorherzusagen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["machine-learning", "unsupervised-learning", "deep-learning", "loss-function"]
+synonyms: ["Supervised ML", "Gelabeltes Lernen", "Prädiktive Modellierung", "Induktives Lernen"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Überwachtes Lernen ist ein Machine-Learning-Paradigma, bei dem Algorithmen aus gelabelten Trainingsdaten lernen—Beispiele, die sowohl Eingabe-Features als auch die korrekte Ausgabe (Label) enthalten. Das Modell lernt die Zuordnung zwischen Eingaben und Ausgaben und wendet diese gelernte Beziehung dann an, um [Labels](/de/glossary/ground-truth/) für neue, ungesehene Daten vorherzusagen. Es heißt "überwacht", weil der Trainingsprozess von bekannten korrekten Antworten geleitet wird, wie ein Lehrer, der einen Schüler beaufsichtigt.
+
+## Warum es wichtig ist
+
+Überwachtes Lernen ist der gebräuchlichste ML-Ansatz:
+
+- **Klares Trainingssignal** — bekannte Antworten leiten das Lernen
+- **Messbare Genauigkeit** — Vorhersagen vs. Labels ermöglicht Validierung
+- **Praktische Anwendungen** — Spam-Erkennung, medizinische Diagnose, Kreditbewertung
+- **Fundament für [LLMs](/de/glossary/llm/)** — Next-Token-[Vorhersage](/de/glossary/inference/) ist überwachtes Lernen
+- **Interpretierbare Ergebnisse** — Vorhersagen werden definierten Klassen oder Werten zugeordnet
+
+Die meisten Produktions-ML-Systeme verwenden überwachtes Lernen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   ÜBERWACHTES LERNEN                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRAININGSPHASE:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  Gelabelte Trainingsdaten:                                 │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │ Eingabe (Features)            │ Label (Ziel)    │      │
+│  ├─────────────────────────────────────────────────┤      │
+│  │ [Email: "Gewinne 1000€..."]   │    SPAM        │      │
+│  │ [Email: "Meeting um 15 Uhr"]  │    KEIN SPAM   │      │
+│  │ [Email: "Klick hier!"]        │    SPAM        │      │
+│  │ [Email: "Projekt-Update"]     │    KEIN SPAM   │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │              LERNALGORITHMUS                     │      │
+│  │                                                  │      │
+│  │  1. Vorhersage machen: ŷ = f(x)                 │      │
+│  │  2. Mit Label vergleichen: Fehler = ŷ - y      │      │
+│  │  3. Modell aktualisieren um Fehler zu reduz.    │      │
+│  │  4. Wiederholen bis Fehler minimiert            │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│                  TRAINIERTES MODELL                        │
+│                                                            │
+│  VORHERSAGEPHASE:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Neue Email ──► Trainiertes Modell ──► Vorhersage: SPAM?  │
+│                                                            │
+│  ZWEI HAUPTTYPEN:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  KLASSIFIKATION:              REGRESSION:                  │
+│  Kategorien vorhersagen       Kontinuierliche Werte        │
+│                                                            │
+│  "Katze" oder "Hund"?        "Hauspreis = 450.000€"       │
+│  "Spam" oder "Kein Spam"?    "Temperatur = 23,5°C"        │
+│  "Positiv" oder "Negativ"?   "Verkauf = 12.500€"          │
+│                                                            │
+│       ┌───┐ ┌───┐                    ↗                    │
+│       │ A │ │ B │             ──────●────                 │
+│       └───┘ └───┘                ↗                        │
+│    Diskrete Klassen        Kontinuierliche Linie           │
+│                                                            │
+│  GÄNGIGE ALGORITHMEN:                                      │
+│  ────────────────────                                      │
+│  • Logistische Regression (Klassifikation)                │
+│  • Entscheidungsbäume     (beide)                         │
+│  • Random Forests         (beide)                         │
+│  • Neuronale Netze        (beide)                         │
+│  • Support Vector Machines(Klassifikation)                │
+│  • Lineare Regression     (Regression)                    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Klassifikation vs Regression:**
+| Aspekt | Klassifikation | Regression |
+|--------|---------------|------------|
+| Ausgabe | Diskrete Kategorien | Kontinuierliche Werte |
+| Beispiel | Spam-Erkennung | Preisvorhersage |
+| Metriken | Accuracy, F1-Score | MSE, R-Quadrat |
+| Verlustfunktion | Kreuzentropie | Mittlerer quadratischer Fehler |
+
+## Häufige Fragen
+
+**F: Was macht Daten "gelabelt"?**
+
+A: Gelabelte Daten haben sowohl Eingaben als auch bekannte korrekte Ausgaben. Für Bildklassifikation: Bilder (Eingabe) + was darauf ist (Label). Für Spam-Erkennung: E-Mails (Eingabe) + Spam/Kein-Spam-Tags (Label). Menschen erstellen typischerweise Labels, was teuer und zeitaufwändig ist.
+
+**F: Wie ist LLM-Training überwachtes Lernen?**
+
+A: LLM-[Pretraining](/de/glossary/pretraining/) ist selbstüberwacht: Das "Label" für jedes Token ist einfach das nächste Token im Text. Bei "Die Katze saß auf der" lernt das Modell "Matte" vorherzusagen. Kein menschliches Labeling nötig—der Text selbst bietet Überwachung.
+
+**F: Was wenn ich keine gelabelten Daten habe?**
+
+A: Sie haben mehrere Optionen: (1) Unüberwachtes Lernen verwenden um Muster zu finden, (2) Semi-überwachtes Lernen mit einigen Labels verwenden, (3) Labels selbst oder mit Crowdsourcing generieren, (4) Transfer Learning von vortrainierten Modellen nutzen, (5) Active Learning anwenden um zuerst die informativsten Beispiele zu labeln.
+
+**F: Wie viele gelabelte Daten sind genug?**
+
+A: Es variiert stark. Einfache Probleme: hunderte Beispiele. Komplexes Deep Learning: tausende bis Millionen. Faustregel: 10× mehr Samples als Features. Mit Transfer Learning/[Fine-Tuning](/de/glossary/fine-tuning/) kann viel weniger ausreichen.
+
+## Verwandte Begriffe
+
+- [Maschinelles Lernen](/de/glossary/machine-learning/) — das breitere Feld
+- [Unüberwachtes Lernen](/de/glossary/unsupervised-learning/) — Lernen ohne Labels
+- [Verlustfunktion](/de/glossary/loss-function/) — misst Vorhersagefehler
+- [Deep Learning](/de/glossary/deep-learning/) — nutzt neuronale Netze für überwachte Aufgaben
+
+---
+
+## Referenzen
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Grundlegender Text]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70.000+ Zitationen]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Kapitel 5. [Grundlagen überwachtes Lernen]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Grundlegende Theorie]
+
+## References
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Foundational text]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 5. [Supervised learning fundamentals]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Foundational theory]

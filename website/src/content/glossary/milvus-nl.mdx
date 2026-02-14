@@ -1,0 +1,202 @@
+---
+term: "Milvus"
+termSlug: "milvus"
+short: "Een open-source vectordatabase geoptimaliseerd voor het opslaan, indexeren en doorzoeken van massale embedding-vectoren—maakt similarity search mogelijk voor AI-applicaties zoals RAG, semantisch zoeken en aanbevelingen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["vector-database", "embeddings", "similarity-search", "faiss", "weaviate"]
+synonyms: ["Milvus DB", "Milvus vectordatabase"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Milvus is een open-source vectordatabase ontworpen voor het opslaan en bevragen van hoogdimensionale embedding-vectoren op massale schaal. In tegenstelling tot traditionele databases die zoeken op exacte waarden, voert Milvus approximate nearest neighbor ([ANN](/nl/glossary/ann/)) zoekopdrachten uit om vectoren te vinden die vergelijkbaar zijn met een [query](/nl/glossary/prompt/)-vector. Het ondersteunt miljarden vectoren met milliseconde query-latentie, waardoor het geschikt is voor productie AI-applicaties. Milvus implementeert meerdere indextypes (IVF, [HNSW](/nl/glossary/hnsw/), ANNOY, GPU-indexen), ondersteunt hybride zoekopdrachten en biedt gedistribueerde deployment via Kubernetes.
+
+## Waarom het belangrijk is
+
+Milvus maakt kritieke AI-mogelijkheden mogelijk:
+
+- **[RAG](/nl/glossary/rag/)-applicaties** — slaat [kennisbank](/nl/glossary/knowledge-base/)-embeddings op voor retrieval
+- **[Semantisch zoeken](/nl/glossary/semantic-search/)** — vindt betekenis-vergelijkbare content, niet alleen keywords
+- **Aanbevelingssystemen** — matcht gebruikers aan vergelijkbare items
+- **Beeld/audio zoeken** — vindt visueel of akoestisch vergelijkbare media
+- **Anomalie-detectie** — identificeert uitschieters via vectorafstand
+- **Productieschaal** — verwerkt miljarden vectoren met lage latentie
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                        MILVUS                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAT MILVUS DOET:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Traditionele DB:                                    │ │
+│  │  ┌──────────────────┐   ┌─────────────────────┐   │ │
+│  │  │  Query:          │   │  Resultaat:         │   │ │
+│  │  │  WHERE kleur =   │ → │  Alleen exacte      │   │ │
+│  │  │  'blauw'         │   │  matches            │   │ │
+│  │  └──────────────────┘   └─────────────────────┘   │ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  Vector DB (Milvus):                                │ │
+│  │  ┌──────────────────┐   ┌─────────────────────┐   │ │
+│  │  │  Query:          │   │  Resultaat:         │   │ │
+│  │  │  Embedding van   │ → │  Meest VERGELIJKBARE│   │ │
+│  │  │  "oceaan zonsond"│   │  vectoren           │   │ │
+│  │  └──────────────────┘   └─────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Vindt afbeeldingen van stranden, schemering,      │ │
+│  │  blauw/oranje scènes—semantisch gerelateerd        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MILVUS ARCHITECTUUR:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │                   MILVUS CLUSTER                     │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │             Toegangslaag                     │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐ │   │ │
+│  │  │  │  Proxy   │  │  Proxy   │  │  Proxy   │ │   │ │
+│  │  │  │  Node    │  │  Node    │  │  Node    │ │   │ │
+│  │  │  └──────────┘  └──────────┘  └──────────┘ │   │ │
+│  │  │       Load balancing, authenticatie        │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │           Coördinatorlaag                    │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐      │   │ │
+│  │  │  │  Root   │ │  Query  │ │  Data   │      │   │ │
+│  │  │  │  Coord  │ │  Coord  │ │  Coord  │      │   │ │
+│  │  │  └─────────┘ └─────────┘ └─────────┘      │   │ │
+│  │  │  Beheert clusterstatus, scheduling         │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              Werkerlaag                      │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────────────┐ ┌──────────────────┐  │   │ │
+│  │  │  │   Query Nodes   │ │   Data Nodes     │  │   │ │
+│  │  │  │                 │ │                   │  │   │ │
+│  │  │  │  Laadt vectoren │ │  Insert/delete   │  │   │ │
+│  │  │  │  Voert search   │ │  Index bouwen    │  │   │ │
+│  │  │  └─────────────────┘ └──────────────────┘  │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │               Opslaglaag                     │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────────┐  ┌───────────────────┐   │   │ │
+│  │  │  │  etcd        │  │  Object Storage   │   │   │ │
+│  │  │  │  (metadata)  │  │  (MinIO/S3)       │   │   │ │
+│  │  │  └──────────────┘  │  (vector data)    │   │   │ │
+│  │  │                    └───────────────────┘   │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  INDEX TYPES:                                              │
+│  ────────────                                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  IVF_FLAT (Inverted File)                           │ │
+│  │  ├─ Clustert vectoren, zoekt relevante clusters    │ │
+│  │  └─ Best voor: <10M vectoren                        │ │
+│  │                                                      │ │
+│  │  HNSW (Hierarchical Navigable Small World)          │ │
+│  │  ├─ Graaf-gebaseerd, excellente recall             │ │
+│  │  └─ Best voor: Hoge nauwkeurigheidseisen            │ │
+│  │                                                      │ │
+│  │  IVF_PQ / IVF_SQ8                                   │ │
+│  │  ├─ Gekwantiseerde versies, minder geheugen        │ │
+│  │  └─ Best voor: Geheugen-beperkte deployments        │ │
+│  │                                                      │ │
+│  │  GPU Indexes                                        │ │
+│  │  ├─ Benut GPU voor massale acceleratie             │ │
+│  │  └─ Best voor: Miljarden-schaal datasets            │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MILVUS vs ALTERNATIEVEN:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │         MILVUS     PINECONE    WEAVIATE    FAISS   │ │
+│  │  ──────────────────────────────────────────────────  │ │
+│  │  Open      ✓         ✗          ✓          ✓       │ │
+│  │  Source                                             │ │
+│  │                                                      │ │
+│  │  Schaal    Miljarden Miljarden  Miljoenen  Milj.   │ │
+│  │                                                      │ │
+│  │  Hybride   ✓         ✓          ✓          ✗       │ │
+│  │  Search                                             │ │
+│  │                                                      │ │
+│  │  Best voor: Self-hosted productie op schaal        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wanneer Milvus vs Pinecone gebruiken?**
+
+A: Milvus voor self-hosted controle, geen vendor lock-in, en kostenoptimalisatie. Pinecone voor volledig beheerde eenvoud. Milvus vereist infra-expertise; Pinecone abstraheert dit weg.
+
+**V: Hoe schaalt Milvus?**
+
+A: Horizontaal via Kubernetes. Separate schaling van query nodes (zoekdoorvoer), data nodes (ingestie), en opslag. Ontworpen voor miljarden vectoren over gedistribueerde clusters.
+
+**V: Welk indextype kiezen?**
+
+A: HNSW voor beste nauwkeurigheid. IVF_FLAT voor gebalanceerde prestaties. IVF_PQ/SQ8 voor geheugenbeperkingen. GPU-indexen voor miljardenschaal.
+
+## Gerelateerde termen
+
+- [Vectordatabase](/nl/glossary/vector-database/) — algemene categorie
+- [Embeddings](/nl/glossary/embeddings/) — wat Milvus opslaat
+- [Weaviate](/nl/glossary/weaviate/) — alternatieve vectordatabase
+- [FAISS](/nl/glossary/faiss/) — eenvoudigere vectorbibliotheek
+
+---
+
+## Referenties
+
+> Wang et al. (2021), "[Milvus: A Purpose-Built Vector Data Management System](https://dl.acm.org/doi/10.1145/3448016.3457550)", SIGMOD. [Originele Milvus paper]
+
+> Milvus Documentation (2024), "[Milvus Architecture Overview](https://milvus.io/docs/architecture_overview.md)", Milvus. [Officiële documentatie]
+
+> Zilliz (2023), "[Milvus 2.0: Building a Cloud-Native Vector Database](https://zilliz.com/blog/milvus-2-0-goal-building-a-cloud-native-vector-database)", Zilliz Blog. [Architectuur evolutie]
+
+> LF AI & Data Foundation (2024), "[Milvus Project](https://lfaidata.foundation/projects/milvus/)", Linux Foundation. [Project governance]
+
+## References
+
+> Wang et al. (2021), "[Milvus: A Purpose-Built Vector Data Management System](https://dl.acm.org/doi/10.1145/3448016.3457550)", SIGMOD. [Original Milvus paper]
+
+> Milvus Documentation (2024), "[Milvus Architecture Overview](https://milvus.io/docs/architecture_overview.md)", Milvus. [Official documentation]
+
+> Zilliz (2023), "[Milvus 2.0: Building a Cloud-Native Vector Database](https://zilliz.com/blog/milvus-2-0-goal-building-a-cloud-native-vector-database)", Zilliz Blog. [Architecture evolution]
+
+> LF AI & Data Foundation (2024), "[Milvus Project](https://lfaidata.foundation/projects/milvus/)", Linux Foundation. [Project governance]

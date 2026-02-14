@@ -1,0 +1,150 @@
+---
+term: "Maschinelles Lernen"
+termSlug: "machine-learning"
+short: "Ein KI-Bereich, in dem Systeme Muster aus Daten lernen, um Vorhersagen ohne explizite Programmierung zu treffen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["deep-learning", "neural-network", "supervised-learning", "llm"]
+synonyms: ["ML", "Statistisches Lernen", "Prädiktive Modellierung", "Mustererkennung"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Maschinelles Lernen ist ein Zweig der künstlichen Intelligenz, bei dem Algorithmen Muster direkt aus Daten lernen, anstatt explizit mit Regeln programmiert zu werden. Gegeben Trainingsbeispiele identifizieren ML-Systeme automatisch Muster, erstellen mathematische Modelle und verwenden diese Modelle, um Vorhersagen oder Entscheidungen über neue, ungesehene Daten zu treffen.
+
+## Warum es wichtig ist
+
+Maschinelles Lernen transformierte Technologie:
+
+- **Datengesteuerte Entscheidungen** — lernt aus Evidenz, nicht Annahmen
+- **Bewältigt Komplexität** — löst Probleme, die für manuelle Regeln zu komplex sind
+- **Kontinuierliche Verbesserung** — Modelle werden mit mehr Daten besser
+- **Automatisierung im großen Stil** — ermöglicht intelligente Systeme in allen Branchen
+- **Fundament für KI** — treibt alles von Suche bis selbstfahrende Autos an
+
+ML ist der Motor hinter Personalisierung, Betrugserkennung, medizinischer Diagnose und LLMs.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  MASCHINELLES LERNEN                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRADITIONELLE PROGRAMMIERUNG VS ML:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  Traditionell:                   Machine Learning:         │
+│  ┌──────────┐                    ┌──────────┐             │
+│  │  Daten   │────┐               │  Daten   │────┐        │
+│  └──────────┘    │               └──────────┘    │        │
+│                  ▼                               ▼        │
+│  ┌──────────┐  ┌──────────┐      ┌──────────┐  ┌─────┐   │
+│  │  Regeln  │──│ Computer │──►   │   ML-    │──│Modell│  │
+│  └──────────┘  └──────────┘      │Algorithmus│ └─────┘   │
+│       │              │           └──────────┘      │      │
+│       ▼              ▼                 ▲           ▼      │
+│  (manuell)       Antworten        ┌────────┐   Antworten │
+│                                    │ Labels │             │
+│                                    └────────┘             │
+│                                                            │
+│  DER ML-WORKFLOW:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  1. DATEN SAMMELN                                          │
+│     ┌─────────────────────────────────────┐               │
+│     │ Trainingsdaten (gelabelt oder nicht) │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  2. MODELL TRAINIEREN                                      │
+│     ┌─────────────────────────────────────┐               │
+│     │ Algorithmus lernt Muster aus Daten   │               │
+│     │ Passt Parameter an zur Fehlermin.    │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  3. EVALUIEREN                                             │
+│     ┌─────────────────────────────────────┐               │
+│     │ Test auf zurückgehaltenen Daten      │               │
+│     │ Messe Genauigkeit, Präzision, Recall │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  4. DEPLOYEN & VORHERSAGEN                                 │
+│     ┌─────────────────────────────────────┐               │
+│     │ Neue Daten ──► Modell ──► Vorhers.   │               │
+│     └─────────────────────────────────────┘               │
+│                                                            │
+│  DREI TYPEN VON ML:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  ÜBERWACHT:         UNÜBERWACHT:        VERSTÄRKUNG:      │
+│  Lernt von          Findet Muster       Lernt von         │
+│  gelabelten Daten   in ungelabelten     Belohnungen       │
+│                                                            │
+│  Eingabe → Label    Eingabe → ?         Zustand → Aktion  │
+│  "Katze"→"Katze"    Cluster             +10 oder -5       │
+│                     Anomalien                              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**ML-Algorithmen-Vergleich:**
+| Typ | Algorithmus | Anwendung |
+|-----|-------------|-----------|
+| Überwacht | Lineare Regression | Zahlen vorhersagen |
+| Überwacht | Entscheidungsbäume | Klassifikation |
+| Überwacht | Neuronale Netze | Komplexe Muster |
+| Unüberwacht | K-Means | Clustering |
+| Unüberwacht | PCA | [Dimensionsreduktion](/de/glossary/dimensionality-reduction/) |
+| Verstärkung | Q-Learning | Spiele, Robotik |
+
+## Häufige Fragen
+
+**F: Was ist der Unterschied zwischen KI, ML und Deep Learning?**
+
+A: KI ist der breiteste Begriff (Maschinen, die intelligent handeln). ML ist eine Untermenge von KI (Lernen aus Daten). Deep Learning ist eine Untermenge von ML (tiefe neuronale Netze). Alles Deep Learning ist ML, alles ML ist KI, aber nicht umgekehrt.
+
+**F: Wie viele Daten braucht maschinelles Lernen?**
+
+A: Es hängt von der Komplexität ab. Einfache lineare Modelle brauchen vielleicht hunderte Beispiele. Deep Learning braucht oft tausende bis Millionen. Transfer Learning reduziert dies durch vortrainierte Modelle. Faustregel: 10× mehr Samples als Features für traditionelles ML.
+
+**F: Kann maschinelles Lernen falsch liegen?**
+
+A: Ja, häufig. ML-Modelle können durch Trainingsdaten verzerrt sein, auf Rauschen überanpassen, bei Randfällen versagen oder selbstbewusst falsche Ausgaben produzieren. Sie excellieren bei Mustern ähnlich den Trainingsdaten, können aber bei neuen Situationen versagen. [Menschliche Aufsicht](/de/glossary/human-oversight/) bleibt essentiell.
+
+**F: Wie verhält sich maschinelles Lernen zu LLMs?**
+
+A: LLMs sind eine spezifische Anwendung von maschinellem Lernen—speziell Deep Learning mit [Transformer](/de/glossary/transformer-architecture/)-Netzwerken, trainiert auf Textdaten. ML ist die breite Disziplin; LLMs sind eine (sehr erfolgreiche) Implementierung von ML-Techniken.
+
+## Verwandte Begriffe
+
+- [Deep Learning](/de/glossary/deep-learning/) — ML mit tiefen neuronalen Netzen
+- [Neuronales Netz](/de/glossary/neural-network/) — Rechenmodell für ML
+- [Überwachtes Lernen](/de/glossary/supervised-learning/) — Lernen von gelabelten Beispielen
+- [LLM](/de/glossary/llm/) — ML angewandt auf Sprache
+
+---
+
+## Referenzen
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Grundlegendes Lehrbuch]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40.000+ Zitationen]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70.000+ Zitationen]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Umfassende Übersicht]
+
+## References
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Foundational textbook]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40,000+ citations]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Comprehensive overview]

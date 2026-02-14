@@ -1,0 +1,137 @@
+---
+term: "Deep Learning"
+termSlug: "deep-learning"
+short: "A subset of machine learning using neural networks with many layers to learn hierarchical representations from data."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["neural-network", "transformer-architecture", "backpropagation", "llm"]
+synonyms: ["Deep neural networks", "DNN", "Hierarchical learning", "Representation learning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Deep learning is a branch of machine learning that uses artificial neural networks with multiple layers (hence "deep") to automatically learn hierarchical representations of data. Unlike shallow models that require hand-crafted features, deep learning systems learn increasingly abstract features at each layer—from edges and textures in images to semantic concepts, or from characters to words to sentences to meaning in text.
+
+## Why it matters
+
+Deep learning revolutionized AI:
+
+- **Automatic feature extraction** — no need for manual feature engineering
+- **Hierarchical abstraction** — learns concepts at multiple levels
+- **Scalable performance** — improves with more data and compute
+- **Transfer learning** — pretrained models adapt to new tasks
+- **Breakthrough results** — powers image recognition, NLP, AlphaGo, LLMs
+
+Every major AI advance since 2012 has been driven by deep learning.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      DEEP LEARNING                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SHALLOW VS DEEP ARCHITECTURE:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  SHALLOW (1-2 layers):          DEEP (many layers):       │
+│                                                            │
+│  Input ──► Hidden ──► Output    Input                     │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Layer 1 (low-level)        │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Layer 2                    │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Layer 3                    │
+│                                   │                        │
+│                                   ▼                        │
+│                                 ...                        │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Layer N (high-level)       │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Output                     │
+│                                                            │
+│  HIERARCHICAL FEATURE LEARNING (Image Example):            │
+│  ──────────────────────────────────────────────            │
+│                                                            │
+│  Layer 1:  ┌───┐ ┌───┐ ┌───┐                              │
+│  (Edges)   │ / │ │ ─ │ │ \ │   Detects edges, gradients   │
+│            └───┘ └───┘ └───┘                              │
+│                   │                                        │
+│                   ▼                                        │
+│  Layer 2:  ┌─────┐ ┌─────┐                                │
+│  (Shapes) │  ○  │ │ □── │   Combines edges into shapes   │
+│            └─────┘ └─────┘                                │
+│                   │                                        │
+│                   ▼                                        │
+│  Layer 3:  ┌───────┐ ┌───────┐                            │
+│  (Parts)   │ (◕‿◕) │ │  🦻   │   Forms object parts       │
+│            └───────┘ └───────┘                            │
+│                   │                                        │
+│                   ▼                                        │
+│  Layer N:  ┌─────────────────┐                            │
+│  (Object)  │     "CAT"       │   Recognizes full objects  │
+│            └─────────────────┘                            │
+│                                                            │
+│  DEEP LEARNING ARCHITECTURES:                              │
+│  ────────────────────────────                              │
+│  CNNs:        Images, spatial patterns                    │
+│  RNNs/LSTMs:  Sequences, time series                      │
+│  Transformers: Language, vision (dominant today)          │
+│  GANs:        Generative tasks                            │
+│  Autoencoders: Compression, denoising                     │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Why depth matters:**
+| Aspect | Shallow Network | Deep Network |
+|--------|-----------------|--------------|
+| Feature learning | Manual or limited | Automatic, hierarchical |
+| Abstraction | Single level | Multiple levels |
+| Expressiveness | Limited complexity | Highly complex functions |
+| Data efficiency | May need more data per feature | Learns reusable features |
+
+## Common questions
+
+**Q: How many layers make a network "deep"?**
+
+A: Generally 3+ hidden layers is considered "deep," though modern LLMs have 32-100+ layers. The term is relative—what was "deep" in 2010 (5-8 layers) is shallow today. Depth is about learning hierarchical representations, not a fixed number.
+
+**Q: Why did deep learning take off in 2012?**
+
+A: Three factors converged: (1) GPUs enabled training large networks, (2) large datasets like ImageNet became available, (3) algorithmic improvements like ReLU activation and dropout improved training. AlexNet's ImageNet victory demonstrated the potential.
+
+**Q: What's the relationship between deep learning and AI?**
+
+A: Deep learning is a subset of machine learning, which is a subset of AI. Not all AI uses deep learning (rule-based systems don't), and not all machine learning is deep (decision trees, SVMs aren't). But deep learning now powers most cutting-edge AI systems.
+
+**Q: Can deep learning solve any problem?**
+
+A: No. Deep learning excels at [pattern recognition](/en/glossary/machine-learning/) with lots of data but struggles with: small datasets, reasoning, causal [inference](/en/glossary/inference/), extrapolation beyond training data, and tasks requiring explicit symbolic logic. It's a powerful tool, not a universal solution.
+
+## Related terms
+
+- [Neural Network](/en/glossary/neural-network/) — the foundation of deep learning
+- [Transformer Architecture](/en/glossary/transformer-architecture/) — dominant deep architecture
+- [Backpropagation](/en/glossary/backpropagation/) — algorithm that enables deep learning
+- [LLM](/en/glossary/llm/) — large-scale deep learning for language
+
+---
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Comprehensive textbook]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - sparked deep learning revolution]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15,000+ citations]

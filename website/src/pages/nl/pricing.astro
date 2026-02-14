@@ -12,10 +12,10 @@ const locale = "nl";
 
 // Tier data inline to avoid island serialization issues
 const tiers = [
-  { id: "solo", name: t("pricing.solo", locale), monthly: 99, annual: 89, founding: 69, queries: "~150–300/mnd", features: ["1 seat", "1 jurisdiction", "Source citations", "Confidence scoring", "Query history", "Email support"] },
-  { id: "team", name: t("pricing.team", locale), monthly: 299, annual: 269, founding: 209, queries: "~750–3.000/mnd", highlighted: true, features: ["5 seats", "1 jurisdiction", "Source citations", "Confidence scoring", "Shared workspace", "Client folders", "Templates", "Priority support"] },
-  { id: "firm", name: t("pricing.firm", locale), monthly: 549, annual: 494, founding: 384, queries: "~2.000–8.000/mnd", features: ["15 seats", "2 jurisdictions", "Source citations", "Confidence scoring", "Admin dashboard", "Knowledge base", "Bulk analysis", "Audit trail", "SSO", "Dedicated support"] },
-  { id: "enterprise", name: t("pricing.enterprise", locale), monthly: null, annual: null, founding: null, queries: "Unlimited", features: ["Unlimited seats", "All jurisdictions", "All features", "Custom integrations", "SLA", "Dedicated account manager"] },
+  { id: "solo", name: t("pricing.solo", locale), monthly: 99, annual: 89, queries: "~150–300/mnd", features: ["1 seat", "1 jurisdictie", "Bronvermelding", "Betrouwbaarheidsscore", "Zoekgeschiedenis", "E-mail support"] },
+  { id: "team", name: t("pricing.team", locale), monthly: 299, annual: 269, queries: "~750–3.000/mnd", highlighted: true, features: ["4 seats", "1 jurisdictie", "Bronvermelding", "Betrouwbaarheidsscore", "Gedeelde workspace", "Klantmappen", "Sjablonen", "Prioriteit support"] },
+  { id: "firm", name: t("pricing.firm", locale), monthly: 549, annual: 494, queries: "~2.000–8.000/mnd", features: ["15 seats", "2 jurisdicties", "Bronvermelding", "Betrouwbaarheidsscore", "Admin dashboard", "Kennisbank", "Bulkanalyse", "Audit trail", "SSO", "Dedicated support"] },
+  { id: "enterprise", name: t("pricing.enterprise", locale), monthly: null, annual: null, queries: "Onbeperkt", features: ["Onbeperkte seats", "Alle jurisdicties", "Alle functies", "Aangepaste integraties", "SLA", "Dedicated account manager"] },
 ];
 ---
 
@@ -26,7 +26,7 @@ const tiers = [
   path="/pricing/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
+    <Section class="pt-12 md:pt-16 pb-8">
       <div class="mx-auto max-w-3xl text-center">
         <h1 class="text-display text-foreground">{t("pricing.title", locale)}</h1>
         <p class="mt-4 text-body-lg text-muted-foreground">{t("pricing.subtitle", locale)}</p>
@@ -41,15 +41,26 @@ const tiers = [
         />
       </div>
 
-      {/* Founding member offer */}
-      <p class="mt-6 text-center text-body-sm font-medium text-primary-text">
-        {t("pricing.founding_offer", locale)}
-      </p>
-    </Section>
+      {/* Billing explanation */}
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="mt-2 text-body-xs text-muted-foreground">
+          <strong>Maandelijks:</strong> Betaal elke maand, opzeggen wanneer u wilt &nbsp;|&nbsp; <strong>Jaarlijks:</strong> Betaal vooraf voor 12 maanden, bespaar 10%
+        </p>
+      </div>
 
-    {/* Tier cards — UIX-05 */}
-    <Section>
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Founding member offer */}
+      <div class="mt-6 mx-auto max-w-2xl rounded-lg border border-primary/20 bg-primary/5 px-8 py-5 text-center">
+        <p class="text-body font-semibold text-primary-text">Oprichtersprijzen</p>
+        <p class="mt-2 text-body-sm text-muted-foreground">
+          Oprichtersprijzen <strong class="text-foreground">gegarandeerd voor 1 jaar</strong>. Beperkte beschikbaarheid.
+        </p>
+        <p class="mt-1 text-body-sm text-muted-foreground">
+          Alle prijzen zijn <strong>per abonnement</strong> (niet per seat).
+        </p>
+      </div>
+
+      {/* Tier cards — UIX-05 */}
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier) => (
           <Card highlighted={tier.highlighted} class={tier.highlighted ? "shadow-lg" : ""}>
             <div class="flex flex-col h-full">
@@ -61,13 +72,14 @@ const tiers = [
               </div>
 
               {tier.monthly ? (
-                <div class="mb-4">
-                  {/* Founding member price (PRICE-06) */}
-                  <div class="flex items-baseline gap-2">
-                    <span class="text-display-sm font-bold text-foreground">€{tier.founding}</span>
-                    <span class="text-body-sm text-muted-foreground">{t("pricing.per_month", locale)}</span>
+                <div class="mb-6">
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-display-sm font-bold text-foreground">€<span data-price-monthly={tier.monthly} data-price-annual={tier.annual}>{tier.monthly}</span></span>
+                    <span class="text-body-sm text-muted-foreground">/mnd</span>
                   </div>
-                  <p class="text-body-xs text-muted-foreground line-through">€{tier.monthly}{t("pricing.per_month", locale)}</p>
+                  <p class="text-body-xs text-muted-foreground mt-1">
+                    <span data-billing-text data-billing-monthly={`€${tier.monthly} maandelijks gefactureerd`} data-billing-annual={`€${tier.annual * 12}/jaar (€${tier.annual}/mnd)`}>€{tier.monthly} maandelijks gefactureerd</span>
+                  </p>
                 </div>
               ) : (
                 <div class="mb-4">
@@ -87,7 +99,7 @@ const tiers = [
               </ul>
 
               <a
-                href={tier.monthly ? `/${locale}/waitlist/` : `/${locale}/contact/`}
+                href={tier.monthly ? `/${locale}/waitlist/?plan=${tier.id}` : `/${locale}/contact/`}
                 class="inline-flex h-11 min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 {tier.monthly ? t("pricing.cta", locale) : t("pricing.enterprise_cta", locale)}
@@ -100,18 +112,37 @@ const tiers = [
 
     {/* Jurisdiction add-ons — PRICE-03 */}
     <Section muted>
-      <h2 class="text-h2 text-foreground">Jurisdictie-uitbreidingen</h2>
-      <p class="mt-2 text-body text-muted-foreground">Breid dekking uit buiten België</p>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2">
-        <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">+1 Jurisdictie</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Solo +€29/mnd · Team +€79/mnd · Firm +€149/mnd</p>
-        </Card>
-        <Card>
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-h2 text-foreground">Jurisdictie-uitbreidingen</h2>
+        <p class="mt-2 text-body text-muted-foreground">Breid dekking uit buiten België</p>
+      </div>
+      <div class="mt-10 grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
+        <div class="rounded-xl border border-border bg-card/50 p-6 text-center">
+          <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <h3 class="text-body-lg font-semibold text-foreground">Extra jurisdicties</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Voeg Nederland of Luxemburg individueel toe aan uw plan</p>
+          <div class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-caption font-medium text-primary-text">
+            <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-primary"></span></span>
+            Binnenkort
+          </div>
+        </div>
+        <div class="rounded-xl border border-border bg-card/50 p-6 text-center">
+          <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
           <h3 class="text-body-lg font-semibold text-foreground">Benelux-bundel</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Solo +€49/mnd · Team +€129/mnd · Firm +€249/mnd</p>
-          <p class="mt-1 text-body-xs text-primary-text">Bespaar vs. individuele uitbreidingen</p>
-        </Card>
+          <p class="mt-2 text-body-sm text-muted-foreground">België + Nederland + Luxemburg in één pakket</p>
+          <div class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-caption font-medium text-primary-text">
+            <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-primary"></span></span>
+            Binnenkort
+          </div>
+        </div>
       </div>
     </Section>
 
@@ -128,8 +159,34 @@ const tiers = [
     <Section muted>
       <h2 class="text-h2 text-foreground">Veelgestelde vragen</h2>
       <div class="mt-8 mx-auto max-w-3xl">
-        <PricingFAQ faqs={[{ question: "Wanneer wordt Auryth TX AI gelanceerd?", answer: "We zijn momenteel in pre-launch. Schrijf u in op de wachtlijst om op de hoogte te worden gebracht bij de lancering en om founding member-prijzen te krijgen met 30%% korting." }, { question: "Is er een gratis proefperiode?", answer: "Ja. Elk abonnement bevat een gratis proefperiode van 14 dagen met volledige toegang. Geen creditcard nodig om te starten." }, { question: "Kan ik later van abonnement wisselen?", answer: "Zeker. U kunt op elk moment upgraden of downgraden. Wijzigingen worden van kracht bij de volgende factureringscyclus." }, { question: "Welke betaalmethoden accepteren jullie?", answer: "Bij de lancering accepteren we alle gangbare creditcards en SEPA-domiciliering." }, { question: "Zijn mijn gegevens veilig?", answer: "Ja. Wij zijn een Belgisch bedrijf onderworpen aan de AVG. Uw gegevens worden verwerkt en opgeslagen binnen de EU. Zie ons privacybeleid voor details." }]} />
+        <PricingFAQ faqs={[
+          { question: "Zijn de prijzen per seat of per abonnement?", answer: "Prijzen zijn per abonnement, niet per seat. Elk plan omvat een aantal seats (Solo: 1, Team: 4, Firm: 15). U betaalt niet extra voor elke gebruiker binnen uw limiet." },
+          { question: "Wat is het verschil tussen maandelijks en jaarlijks?", answer: "Maandelijks wordt elke maand gefactureerd en u kunt op elk moment opzeggen. Jaarlijks wordt vooraf gefactureerd voor 12 maanden met 10% korting. Beide tonen de maandelijkse prijs voor eenvoudige vergelijking." },
+          { question: "Wat zijn Oprichtersprijzen?", answer: "Oprichtersprijzen zijn gegarandeerd voor 1 jaar vanaf inschrijving. Beperkte beschikbaarheid — schrijf u in op de wachtlijst om uw plek te verzekeren." },
+          { question: "Wanneer wordt Auryth TX AI gelanceerd?", answer: "We zijn momenteel in pre-launch. Schrijf u in op de wachtlijst om op de hoogte te worden gebracht bij de lancering en om oprichtersprijzen te krijgen." },
+          { question: "Is er een gratis proefperiode?", answer: "Ja. Elk abonnement bevat een gratis proefperiode van 14 dagen met volledige toegang. Geen creditcard nodig om te starten." },
+          { question: "Kan ik later van abonnement wisselen?", answer: "Zeker. U kunt op elk moment upgraden of downgraden. Wijzigingen worden van kracht bij de volgende factureringscyclus." },
+          { question: "Welke betaalmethoden accepteren jullie?", answer: "Bij de lancering accepteren we alle gangbare creditcards en SEPA-domiciliering." },
+          { question: "Zijn mijn gegevens veilig?", answer: "Ja. Wij zijn een Belgisch bedrijf onderworpen aan de AVG. Uw gegevens worden verwerkt en opgeslagen binnen de EU. Zie ons privacybeleid voor details." }
+        ]} />
       </div>
     </Section>
   </main>
+
+  {/* Billing toggle → price swap script */}
+  <script is:inline>
+    window.addEventListener("billing-toggle", function (e) {
+      var isAnnual = e.detail.isAnnual;
+      
+      // Update prices
+      document.querySelectorAll("[data-price-monthly]").forEach(function (el) {
+        el.textContent = isAnnual ? el.dataset.priceAnnual : el.dataset.priceMonthly;
+      });
+      
+      // Update billing text
+      document.querySelectorAll("[data-billing-text]").forEach(function (el) {
+        el.textContent = isAnnual ? el.dataset.billingAnnual : el.dataset.billingMonthly;
+      });
+    });
+  </script>
 </BaseLayout>

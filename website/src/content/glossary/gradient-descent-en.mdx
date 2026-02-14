@@ -1,0 +1,128 @@
+---
+term: "Gradient Descent"
+termSlug: "gradient-descent"
+short: "An optimization algorithm that iteratively adjusts model parameters by moving in the direction that reduces the loss function."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["loss-function", "backpropagation", "fine-tuning", "neural-network"]
+synonyms: ["Gradient-based optimization", "Steepest descent", "GD"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Gradient descent is the fundamental optimization algorithm used to train [machine learning](/en/glossary/machine-learning/) models. It works by computing the gradient (direction of steepest increase) of the loss function with respect to model parameters, then taking a step in the opposite direction to reduce the loss. Through many iterations, this process finds parameter values that minimize [prediction](/en/glossary/inference/) errors.
+
+## Why it matters
+
+Gradient descent enables neural network training:
+
+- **Universal optimizer** — works for any differentiable loss function
+- **Scalable** — handles billions of parameters efficiently
+- **Foundation** — basis for all modern [deep learning](/en/glossary/deep-learning/)
+- **Variants** — Adam, SGD, AdaGrad improve basic algorithm
+- **Convergence** — mathematically guaranteed under certain conditions
+
+Without gradient descent, training [large language models](/en/glossary/llm/) would be impossible.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    GRADIENT DESCENT                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Core update rule: θ_new = θ_old - α × ∇L(θ)              │
+│                                                            │
+│  θ = parameters                                            │
+│  α = learning rate                                         │
+│  ∇L = gradient of loss                                    │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VISUALIZATION (2D parameter space):          │        │
+│  │                                                │        │
+│  │       Loss                                     │        │
+│  │        │    ○ Start                           │        │
+│  │        │     \                                │        │
+│  │        │      \  ← gradient points uphill    │        │
+│  │        │       ○                              │        │
+│  │        │        \                             │        │
+│  │        │         ○                            │        │
+│  │        │          \                           │        │
+│  │        │           ★ Minimum (goal)          │        │
+│  │        └────────────────────────► Parameter  │        │
+│  │                                                │        │
+│  │  Each step moves opposite to gradient         │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VARIANTS:                                                 │
+│  ─────────                                                 │
+│                                                            │
+│  ┌─────────────┬────────────────────────────────┐          │
+│  │ Batch GD    │ Use all data per update        │          │
+│  │             │ Slow but stable                │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ SGD         │ Use one sample per update      │          │
+│  │             │ Fast but noisy                 │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ Mini-batch  │ Use batch of samples           │          │
+│  │             │ Best of both (most common)     │          │
+│  └─────────────┴────────────────────────────────┘          │
+│                                                            │
+│  LEARNING RATE EFFECT:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Too small: ....○....○....○....○.... (slow)              │
+│  Just right: ○---○---○---★ (converges)                    │
+│  Too large:  ○       ○       ○ (diverges/oscillates)      │
+│                   \/    \/                                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Modern optimizers:**
+| Optimizer | Key Feature | When to use |
+|-----------|-------------|-------------|
+| SGD | Simple, momentum optional | Well-tuned training |
+| Adam | Adaptive learning rates | Default choice |
+| AdamW | Adam + weight decay | [Transformers](/en/glossary/transformer-architecture/), LLMs |
+| Adagrad | Per-parameter rates | Sparse data |
+| RMSprop | Exponential moving average | RNNs |
+
+## Common questions
+
+**Q: What's a good learning rate?**
+
+A: It depends on the model and optimizer. For Adam, 1e-4 to 3e-4 is often good for fine-tuning LLMs. Too high causes divergence; too low causes slow training. Learning rate schedulers that decrease over time often help.
+
+**Q: What's the difference between batch, mini-batch, and stochastic gradient descent?**
+
+A: Batch GD uses all training data per update (accurate but slow). Stochastic GD uses one sample (fast but noisy). Mini-batch uses a subset (typically 16-128 samples)—the practical default combining speed and stability.
+
+**Q: Why might training loss not decrease?**
+
+A: Common causes: learning rate too high (diverging), learning rate too low (stuck), bad initialization, vanishing/exploding gradients, or data issues. Try reducing learning rate, gradient clipping, or different initialization.
+
+**Q: How does gradient descent handle local minima?**
+
+A: In high-dimensional spaces (millions of parameters), local minima are rarely problematic—most critical points are saddle points. Momentum and noise from mini-batching help escape suboptimal regions.
+
+## Related terms
+
+- [Loss Function](/en/glossary/loss-function/) — what gradient descent minimizes
+- [Backpropagation](/en/glossary/backpropagation/) — computes gradients efficiently
+- [Fine-tuning](/en/glossary/fine-tuning/) — applies gradient descent to adapt models
+- [Neural Network](/en/glossary/neural-network/) — trained via gradient descent
+
+---
+
+## References
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5,000+ citations]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 8. [20,000+ citations]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5,000+ citations]

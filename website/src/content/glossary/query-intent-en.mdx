@@ -1,0 +1,58 @@
+---
+term: "Query Intent"
+termSlug: "query-intent"
+short: "Query intent is the underlying goal behind a search query (what the user is trying to accomplish), used to tailor ranking and results."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["query-understanding", "semantic-expansion", "search-analytics", "relevance-tuning"]
+synonyms: ["Search intent", "User intent", "Intent classification"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Query intent is the purpose behind a query: what the user wants to find or do. [Search systems](/en/glossary/information-retrieval-system/) use intent signals to decide which result types to show, which fields to weight, and how to rank candidates.
+
+## Why it matters
+
+- **Better relevance**: the same words can mean different things depending on intent.
+- **Correct result type**: intent can shift results toward definitions, documents, filters, or actions.
+- **Fewer zero-result searches**: understanding intent enables safer expansions and fallbacks.
+- **Measurable improvement**: intent segments make analytics and tuning more precise.
+
+## How it works
+
+```
+Query -> signals (terms, entities, history) -> intent guess -> ranking strategy
+```
+
+Common intent groupings include informational, navigational, and transactional. In domain search (legal/tax), intent can be "find the source", "understand meaning", or "compare versions".
+
+## Practical example
+
+If a user searches "Article 26 [WIB92](/en/glossary/wib-cir/)", the likely intent is **source lookup**. A good system ranks the exact article page above commentary, and offers filters like date/version.
+
+## Common questions
+
+**Q: Is intent the same as [query](/en/glossary/prompt/) understanding?**
+
+A: No. Query understanding interprets the text (entities, language, ambiguity). Intent is the goal inferred from that understanding.
+
+**Q: Can a query have multiple intents?**
+
+A: Yes. Some queries are ambiguous; systems often hedge by mixing result types or prompting the user to refine.
+
+## Related terms
+
+- [Query Understanding](/en/glossary/query-understanding/) - interpret meaning and entities
+- [Semantic Expansion](/en/glossary/semantic-expansion/) - broaden recall while respecting intent
+- [Search Analytics](/en/glossary/search-analytics/) - measure intent segments and outcomes
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - improve ranking per intent
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

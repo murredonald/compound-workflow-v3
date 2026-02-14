@@ -1,0 +1,79 @@
+---
+term: "Transformer Architecture"
+termSlug: "transformer-architecture"
+short: "A neural network architecture using self-attention to process sequential data in parallel, powering modern LLMs."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "attention-mechanism", "self-attention", "multi-head-attention"]
+synonyms: ["Transformer", "Transformer model", "Transformer neural network"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+The Transformer is a [neural network](/en/glossary/neural-network/) architecture introduced in 2017 that revolutionized natural language processing. Unlike previous sequential models (RNNs, LSTMs), Transformers process all input tokens simultaneously using self-attention mechanisms, enabling massive parallelization and capturing long-range dependencies in text.
+
+## Why it matters
+
+The Transformer architecture is the foundation of virtually all modern large language models, including GPT, BERT, Claude, and PaLM. Its ability to:
+
+- **Scale efficiently** — parallel processing enables training on billions of parameters
+- **Capture context** — attention mechanisms relate any word to any other word regardless of distance
+- **Transfer knowledge** — pre-trained Transformers can be fine-tuned for countless downstream tasks
+
+This makes it essential for building AI systems that understand and generate natural language.
+
+## How it works
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    TRANSFORMER                          │
+├─────────────────────────────────────────────────────────┤
+│  Input → Embedding + Position → [ENCODER] → [DECODER]  │
+│                                      │          │       │
+│                                      ▼          ▼       │
+│                              Self-Attention  Cross-Attn │
+│                                      │          │       │
+│                                 Feed-Forward  Output    │
+└─────────────────────────────────────────────────────────┘
+```
+
+1. **Input embedding** — tokens converted to [dense vectors](/en/glossary/vector-embeddings/)
+2. **[Positional encoding](/en/glossary/positional-encoding/)** — position information added (since processing is parallel)
+3. **Self-attention layers** — each token attends to all others to build contextual representations
+4. **[Feed-forward networks](/en/glossary/feed-forward-network/)** — transform attention outputs
+5. **Output generation** — decoder produces final sequence
+
+## Common questions
+
+**Q: Why did Transformers replace RNNs and LSTMs?**
+
+A: RNNs process tokens sequentially, creating bottlenecks for long sequences and making parallelization impossible. Transformers process all tokens at once, enabling faster training and better long-range dependency modeling.
+
+**Q: What are encoder-only vs decoder-only Transformers?**
+
+A: Encoder-only models (like BERT) are optimized for understanding tasks (classification, NER). Decoder-only models (like GPT) are optimized for generation. The original Transformer used both.
+
+**Q: How do Transformers handle sequence order without recurrence?**
+
+A: Positional encodings are added to input embeddings, providing position information that the model learns to use during attention.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — large language models built on Transformer architecture
+- [Attention Mechanism](/en/glossary/attention-mechanism/) — the core innovation enabling Transformers
+- [Self-Attention](/en/glossary/self-attention/) — mechanism allowing tokens to attend to each other
+- [Multi-Head Attention](/en/glossary/multi-head-attention/) — parallel attention for richer representations
+
+---
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)", NAACL. [90,000+ citations]
+
+> Lin et al. (2022), "[A Survey of Transformers](https://arxiv.org/abs/2106.04554)", AI Open. [2,500+ citations]
+
+> Wolf et al. (2020), "[Transformers: State-of-the-Art Natural Language Processing](https://arxiv.org/abs/1910.03771)", EMNLP. [7,500+ citations]

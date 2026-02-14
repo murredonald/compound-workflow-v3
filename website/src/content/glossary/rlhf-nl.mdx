@@ -1,0 +1,146 @@
+---
+term: "RLHF"
+termSlug: "rlhf"
+short: "Reinforcement Learning from Human Feedback—een techniek om taalmodellen te fine-tunen met menselijke voorkeuren als beloningssignalen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["reinforcement-learning", "fine-tuning", "llm", "instruction-tuning"]
+synonyms: ["Reinforcement Learning from Human Feedback", "RLAIF", "Voorkeursleren", "Menselijke voorkeur optimalisatie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+RLHF (Reinforcement Learning from Human Feedback) is een trainingstechniek die taalmodellen afstemt op menselijke voorkeuren door gebruik van reinforcement learning. In plaats van alleen voor voorspellingsnauwkeurigheid te optimaliseren, traint RLHF modellen om outputs te genereren die mensen als behulpzaam, onschadelijk en eerlijk beoordelen. Een beloningsmodel leert menselijke voorkeuren te voorspellen, waarna RL het taalmodel optimaliseert om die voorspelde voorkeuren te maximaliseren.
+
+## Waarom het belangrijk is
+
+RLHF is essentieel voor moderne AI-afstemming:
+
+- **Voorbij [voorspelling](/nl/glossary/inference/)** — optimaliseert voor wat mensen daadwerkelijk willen
+- **Vermindert schadelijke outputs** — modellen leren toxische, bevooroordeelde content te vermijden
+- **Verbetert behulpzaamheid** — antwoorden worden nuttiger en relevanter
+- **Drijft ChatGPT** — de techniek die conversationele AI praktisch maakte
+- **Veiligheidsfundament** — kritieke stap naar afgestemde, [betrouwbare AI](/nl/glossary/responsible-ai/)-systemen
+
+RLHF transformeerde taalmodellen van tekstvoorspellers naar behulpzame assistenten.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                         RLHF                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DE DRIE STADIA VAN RLHF:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  STADIUM 1: SUPERVISED FINE-TUNING (SFT)                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  Basis LLM + Mensgeschreven voorbeelden ──► SFT Model     │
+│                                                            │
+│  "Hoe kook ik pasta?"                                      │
+│  → [Mens schrijft ideale respons]                         │
+│  → Model leert vergelijkbare kwaliteit genereren          │
+│                                                            │
+│  STADIUM 2: TRAIN BELONINGSMODEL                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │     Prompt: "Wat is machine learning?"          │      │
+│  │                                                  │      │
+│  │  Respons A:         Respons B:                  │      │
+│  │  "Machine learning  "ML is eigenlijk           │      │
+│  │   is een subset van gewoon computers           │      │
+│  │   AI die systemen   die automatisch            │      │
+│  │   in staat stelt..."dingen doen lol"           │      │
+│  │                                                  │      │
+│  │         Mens kiest: A is beter ✓               │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│        Beloningsmodel leert: Score(A) > Score(B)          │
+│                                                            │
+│  STADIUM 3: REINFORCEMENT LEARNING (PPO)                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  SFT Model ──► Genereer Respons ──► Bel.Model  │      │
+│  │       ↑                                    │     │      │
+│  │       │                                    │     │      │
+│  │       └───── Update gewichten ◄── Score ◄─┘     │      │
+│  │                                                  │      │
+│  │    (Met PPO algoritme om te optimaliseren)      │      │
+│  │    (KL penalty voorkomt te veel drift)          │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│               RLHF-afgestemd Model                         │
+│      (Behulpzame, Onschadelijke, Eerlijke responsen)      │
+│                                                            │
+│  KERNCOMPONENTEN:                                          │
+│  ────────────────                                          │
+│  Beloningsmodel: Voorspelt menselijke voorkeursscores     │
+│  PPO:           Policy optimalisatie algoritme            │
+│  KL Penalty:    Voorkomt catastrofaal vergeten            │
+│  Voorkeursdata: Vergelijkingsparen met menselijke keuzes  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**RLHF progressie:**
+| Stadium | Trainingssignaal | Resultaat |
+|---------|-----------------|-----------|
+| [Pretraining](/nl/glossary/pretraining/) | Next token voorspelling | Ruwe taalvaardigheid |
+| SFT | Menselijke demonstraties | Volgt [instructies](/nl/glossary/prompt/) |
+| RLHF | Menselijke voorkeuren | Behulpzaam, veilig, afgestemd |
+
+## Veelgestelde vragen
+
+**V: Waarom is RLHF nodig als we fine-tuning hebben?**
+
+A: Fine-tuning leert modellen voorbeelden na te bootsen, maar optimaliseert niet voor genuanceerde voorkeuren. RLHF kan subtiele onderscheidingen leren zoals "beleefd maar niet slijmerig" of "gedetailleerd maar niet overweldigend" die moeilijk te vangen zijn in demonstratiedata alleen. Het optimaliseert holistisch voor menselijk oordeel.
+
+**V: Wat is een beloningsmodel?**
+
+A: Het beloningsmodel is een [neuraal netwerk](/nl/glossary/neural-network/) getraind om menselijke voorkeuren te voorspellen. Gegeven twee responsen op dezelfde prompt, leert het hogere scores toe te kennen aan de respons die mensen prefereren. Dit zet subjectief menselijk oordeel om in een differentieerbaar beloningssignaal voor RL.
+
+**V: Wat is DPO en hoe verhoudt het zich tot RLHF?**
+
+A: Direct Preference Optimization (DPO) is een eenvoudiger alternatief dat RLHF-achtige resultaten bereikt zonder expliciet een beloningsmodel te trainen of RL te gebruiken. Het optimaliseert direct taalmodelgewichten op voorkeursparen. Veel recente modellen gebruiken DPO omdat het eenvoudiger en stabieler is dan PPO-gebaseerde RLHF.
+
+**V: Wat zijn de beperkingen van RLHF?**
+
+A: Belangrijke uitdagingen zijn: (1) Reward hacking—modellen vinden onbedoelde manieren om hoge scores te krijgen, (2) Voorkeurskwaliteit—menselijke beoordelaars kunnen inconsistent of bevooroordeeld zijn, (3) Schaalbaarheid—voorkeursdata verzamelen is duur, (4) Misalignment—beloningsmodel vangt mogelijk niet de ware voorkeuren.
+
+## Gerelateerde termen
+
+- [Reinforcement Learning](/nl/glossary/reinforcement-learning/) — het onderliggende paradigma
+- [Fine-tuning](/nl/glossary/fine-tuning/) — voorgetrainde modellen aanpassen
+- [LLM](/nl/glossary/llm/) — modellen getraind met RLHF
+- [Instructie Tuning](/nl/glossary/instruction-tuning/) — gaat vaak vooraf aan RLHF
+
+---
+
+## Referenties
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT paper - introduceerde RLHF voor LLMs]
+
+> Christiano et al. (2017), "[Deep reinforcement learning from human preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Fundamenteel RLHF paper]
+
+> Stiennon et al. (2020), "[Learning to summarize with human feedback](https://arxiv.org/abs/2009.01325)", NeurIPS. [Vroege RLHF voor samenvatting]
+
+> Rafailov et al. (2023), "[Direct Preference Optimization](https://arxiv.org/abs/2305.18290)", NeurIPS. [DPO - eenvoudiger alternatief voor RLHF]
+
+## References
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT paper - introduced RLHF for LLMs]
+
+> Christiano et al. (2017), "[Deep reinforcement learning from human preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Foundational RLHF paper]
+
+> Stiennon et al. (2020), "[Learning to summarize with human feedback](https://arxiv.org/abs/2009.01325)", NeurIPS. [Early RLHF for summarization]
+
+> Rafailov et al. (2023), "[Direct Preference Optimization](https://arxiv.org/abs/2305.18290)", NeurIPS. [DPO - simpler alternative to RLHF]

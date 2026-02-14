@@ -1,6 +1,8 @@
 ---
 import "@/styles/global.css";
 import SEOHead from "@/components/seo/SEOHead.astro";
+import Nav from "@/components/layout/Nav.astro";
+import Footer from "@/components/layout/Footer.astro";
 import type { Locale } from "@/i18n/utils";
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
   noindex?: boolean;
 }
 
-const { locale, ...seoProps } = Astro.props;
+const { locale, path, ...seoProps } = Astro.props;
 
 const cfBeacon = import.meta.env.PUBLIC_CF_BEACON;
 
@@ -58,15 +60,15 @@ const softwareSchema = JSON.stringify({
 <!doctype html>
 <html lang={locale} class="scroll-smooth">
   <head>
-    <SEOHead locale={locale} {...seoProps} />
-    <script type="application/ld+json" set:html={organizationSchema} />
-    <script type="application/ld+json" set:html={softwareSchema} />
+    <SEOHead locale={locale} path={path} {...seoProps} />
+    <script is:inline type="application/ld+json" set:html={organizationSchema} />
+    <script is:inline type="application/ld+json" set:html={softwareSchema} />
     <slot name="head" />
-    {/* Dark mode: inline script prevents flash of wrong theme */}
+    {/* Dark mode: default to dark, only light if explicitly stored */}
     <script is:inline>
       (function () {
         const stored = localStorage.getItem("AURYTH-theme");
-        if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        if (stored !== "light") {
           document.documentElement.classList.add("dark");
         }
       })();
@@ -76,7 +78,9 @@ const softwareSchema = JSON.stringify({
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">
       Skip to main content
     </a>
+    <Nav locale={locale} path={path} />
     <slot />
+    <Footer locale={locale} />
     {cfBeacon && (
       <script
         defer

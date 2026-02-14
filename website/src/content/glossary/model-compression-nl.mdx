@@ -1,0 +1,178 @@
+---
+term: "Model Compression"
+termSlug: "model-compression"
+short: "Technieken om AI-modelgrootte en rekenvereisten te verminderen met behoud van prestaties, voor efficiënte deployment."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["quantization", "pruning", "distillation", "llm"]
+synonyms: ["Modeloptimalisatie", "Model efficiëntie", "Neurale netwerkcompressie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Modelcompressie is een familie van technieken ontworpen om de grootte, geheugenvoetafdruk en rekenvereisten van [machine learning](/nl/glossary/machine-learning/)-modellen te verminderen met behoud van acceptabele prestatieniveaus. Dit omvat kwantisatie (verminderen van numerieke precisie), snoeien (verwijderen van onnodige parameters), kennisdestillatie (kleinere modellen trainen om grotere na te bootsen), en architecturale optimalisaties. Het doel is om AI-deployment praktisch te maken op apparaten met beperkte resources of op schaal in productie.
+
+## Waarom het belangrijk is
+
+Modelcompressie is essentieel voor real-world AI:
+
+- **Kostenverlaging** — serveer AI tegen 10-100x lagere infrastructuurkosten
+- **Latentieverbetering** — snellere respons voor betere gebruikerservaring
+- **Edge deployment** — draai modellen op telefoons, browsers, IoT-apparaten
+- **Milieu-impact** — verminder energieverbruik en CO2-voetafdruk
+- **Democratisering** — maak geavanceerde AI toegankelijk zonder enorme budgetten
+
+Zonder compressie zouden state-of-the-art modellen opgesloten blijven in dure datacenters.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│              MODELCOMPRESSIE TECHNIEKEN                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET COMPRESSIELANDSCHAP:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │  KWANTISATIE    │  │    SNOEIEN      │                 │
+│  │                 │  │                 │                 │
+│  │ FP32 → FP16     │  │ Verwijder       │                 │
+│  │ FP32 → INT8     │  │ ongebruikte     │                 │
+│  │ FP32 → INT4     │  │ gewichten       │                 │
+│  │                 │  │                 │                 │
+│  │ 2-8x kleiner    │  │ Gestructureerd  │                 │
+│  │ 2-4x sneller    │  │ vs Ongestr.     │                 │
+│  └─────────────────┘  └─────────────────┘                 │
+│                                                            │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │  DESTILLATIE    │  │ ARCHITECTUUR    │                 │
+│  │                 │  │ OPTIMALISATIE   │                 │
+│  │ Groot → Klein   │  │                 │                 │
+│  │ Teacher→Student │  │ MobileNets      │                 │
+│  │                 │  │ EfficientNets   │                 │
+│  │ Transfer        │  │ Depthwise conv  │                 │
+│  │ kennis          │  │ Attention optim │                 │
+│  └─────────────────┘  └─────────────────┘                 │
+│                                                            │
+│                                                            │
+│  COMPRESSIE PIPELINE:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  Origineel Model (GPT-3 175B, FP32)                │   │
+│  │  Grootte: 700GB    Inferentie: €€€€€              │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │ DESTILLATIE  │  → Teacher-Student training      │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Kleiner Model (7B parameters)                     │   │
+│  │  Grootte: 28GB     Inferentie: €€                 │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │   SNOEIEN    │  → Verwijder 30-50% gewichten    │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Gesnoeid Model                                     │   │
+│  │  Grootte: 14GB     Inferentie: €                  │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │ KWANTISATIE  │  → FP32 → INT4                   │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Finaal Gecomprimeerd Model                        │   │
+│  │  Grootte: 3.5GB    Inferentie: ¢                  │   │
+│  │                                                     │   │
+│  │  TOTALE COMPRESSIE: 200x grootte, 50x kosten!     │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  COMPRESSIE TRADE-OFFS:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  Prestaties                                                │
+│       ▲                                                    │
+│  100% │████████████░░░░░░░░░ Origineel                    │
+│   97% │██████████░░░░░░░░░░░ Gedestilleerd                │
+│   95% │████████░░░░░░░░░░░░░ + Gesnoeid                   │
+│   92% │██████░░░░░░░░░░░░░░░ + Gekwantiseerd (INT8)       │
+│   85% │████░░░░░░░░░░░░░░░░░ + Gekwantiseerd (INT4)       │
+│       └────────────────────────────────▶                  │
+│                                         Compressieratio    │
+│             1x    5x   10x   25x   100x  200x              │
+│                                                            │
+│  Sweet spot: 90-95% prestatie bij 10-50x compressie       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Compressietechnieken vergeleken:**
+| Techniek | Groottereductie | Snelheidswinst | Kwaliteitsverlies | Inspanning |
+|----------|-----------------|----------------|-------------------|-----------|
+| FP16 kwantisatie | 2x | 2x | ~0% | Triviaal |
+| INT8 kwantisatie | 4x | 3x | 1-3% | Laag |
+| INT4 kwantisatie | 8x | 4x | 5-15% | Medium |
+| Snoeien (30%) | 1.4x | 1.3x | 1-2% | Medium |
+| Destillatie | 10-25x | 10x | 5-15% | Hoog |
+| Gecombineerd | 50-200x | 20-50x | 5-20% | Hoog |
+
+## Veelgestelde vragen
+
+**V: Welke compressietechniek moet ik eerst gebruiken?**
+
+A: Begin met kwantisatie—het is het makkelijkst en biedt vaak de beste efficiëntiewinst met minimaal kwaliteitsverlies. FP16 is essentieel gratis. INT8 werkt voor de meeste toepassingen. Ga alleen naar INT4 als je agressieve compressie nodig hebt. Voeg snoeien en destillatie toe als je verdere groottereductie nodig hebt.
+
+**V: Kan ik elk model comprimeren?**
+
+A: Ja, maar resultaten variëren. Grotere modellen comprimeren vaak beter omdat ze meer redundantie hebben. Sommige architecturen zijn comprimeervriendelijker dan andere. [Transformers](/nl/glossary/transformer-architecture/) comprimeren goed. Meet altijd de kwaliteit op je specifieke use case voor en na compressie.
+
+**V: Geven gecomprimeerde modellen dezelfde outputs?**
+
+A: Nee. Compressie introduceert kleine verschillen. Voor de meeste toepassingen zijn deze verschillen onmerkbaar. Echter, voor toepassingen die exacte reproduceerbaarheid of extreme precisie vereisen, gebruik minimale compressie. Test altijd op je specifieke taken.
+
+**V: Hoeveel kwaliteitsverlies is acceptabel?**
+
+A: Het hangt volledig af van je use case. Voor chatbots kan 5-10% kwaliteitsverlies onmerkbaar zijn. Voor medische diagnose kan zelfs 1% te veel zijn. Benchmark altijd op je werkelijke taken, niet alleen algemene benchmarks.
+
+## Gerelateerde termen
+
+- [Quantization](/nl/glossary/quantization/) — verminderen van numerieke precisie
+- [Pruning](/nl/glossary/pruning/) — verwijderen van onnodige parameters
+- [Distillation](/nl/glossary/distillation/) — kleinere modellen trainen van grotere
+- [LLM](/nl/glossary/llm/) — modellen die vaak gecomprimeerd worden
+
+---
+
+## Referenties
+
+> Han et al. (2015), "[Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding](https://arxiv.org/abs/1510.00149)", ICLR. [Fundamentele compressie paper]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Grootschalige LLM kwantisatie]
+
+> Frantar & Alistarh (2023), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Praktische LLM kwantisatie]
+
+> Zhu et al. (2023), "[A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)", arXiv. [Uitgebreid compressie-overzicht]
+
+## References
+
+> Han et al. (2015), "[Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding](https://arxiv.org/abs/1510.00149)", ICLR. [Foundational compression paper]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Large-scale LLM quantization]
+
+> Frantar & Alistarh (2023), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Practical LLM quantization]
+
+> Zhu et al. (2023), "[A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)", arXiv. [Comprehensive compression survey]

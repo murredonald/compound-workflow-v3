@@ -1,0 +1,62 @@
+---
+term: "Indexeringsstrategie"
+termSlug: "indexing-strategy"
+short: "Een indexeringsstrategie is het plan voor wat je indexeert, hoe je content structureert en hoe je de index actueel houdt voor betrouwbare zoekresultaten."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["full-text-search", "semantic-expansion", "relevance-tuning", "content-discoverability", "search-analytics"]
+synonyms: ["Search indexing strategy", "Indexeringsplan", "Indexontwerp"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een indexeringsstrategie is het geheel van keuzes dat bepaalt wat je indexeert (en wat je uitsluit), hoe je content in de index voorstelt en hoe je updates verwerkt. Het vormt de brug tussen je contentlaag (documenten, pagina’s, PDF’s) en je retrievallaag (zoekresultaten, aanbevelingen, RAG).
+
+## Waarom het belangrijk is
+
+- **Zoekkwaliteit**: betere indexkeuzes verhogen recall en verminderen ruis.
+- **Actualiteit en vertrouwen**: duidelijke update-regels voorkomen verouderde of tegenstrijdige resultaten.
+- **Performance en kosten**: alles indexeren is duur; het juiste indexeren is efficiënt.
+- **Compliance**: toegangsrechten en bewaartermijnen moeten vaak al bij het indexeren worden afgedwongen.
+
+## Hoe het werkt
+
+```
+Content -> parse/normaliseer -> kies velden -> bouw index -> rank -> meet -> verbeter
+```
+
+Typische strategiekeuzes: documentgrenzen (pagina vs sectie), velden (titel/tekst/metadata), analyzers (stemming, synoniemen), permissies en updatecadans (batch vs near-real-time).
+
+## Praktisch voorbeeld
+
+Voor een juridische [kennisbank](/nl/glossary/knowledge-base/) kun je wetgeving op **artikelniveau** indexeren (niet per volledige wet), **inwerkingtredingsdata** opslaan als metadata en een apart veld gebruiken voor **officiële [referenties](/nl/glossary/citation/)** om exact te kunnen filteren en ranken.
+
+## Veelgestelde vragen
+
+**Q: Indexeer ik hele documenten of kleinere stukken?**
+
+A: Kleinere eenheden (secties/artikelen) verbeteren vaak precisie en snippets, maar vereisen goede metadata zodat resultaten context behouden.
+
+**Q: Wanneer heb ik meer dan één index nodig?**
+
+A: Gebruik aparte indexen als content verschillende updatecycli, toegangsregels of rankinglogica heeft (bv. publieke pagina’s vs cliëntmemos).
+
+## Gerelateerde termen
+
+- [Full-Text Search](/nl/glossary/full-text-search/) - [keyword search](/nl/glossary/lexical-search/) over tekst
+- [Semantische uitbreiding](/nl/glossary/semantic-expansion/) - uitbreiden voorbij exacte keywords
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - ranking systematisch verbeteren
+- [Vindbaarheid van content](/nl/glossary/content-discoverability/) - zorgen dat content vindbaar en indexeerbaar is
+- [Zoekanalyse](/nl/glossary/search-analytics/) - meten en verbeteren van zoekresultaten
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

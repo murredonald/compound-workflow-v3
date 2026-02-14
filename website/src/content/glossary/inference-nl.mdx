@@ -1,0 +1,122 @@
+---
+term: "Inferentie"
+termSlug: "inference"
+short: "Het proces van het gebruiken van een getraind model om voorspellingen of outputs te genereren op nieuwe data."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "fine-tuning", "embeddings", "latency"]
+synonyms: ["Model-inferentie", "Voorspelling", "Model serving"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Inferentie is het proces van het uitvoeren van een getraind AI-model om outputs te genereren uit nieuwe inputs. In tegenstelling tot training (die modelgewichten aanpast), gebruikt inferentie vaste gewichten om voorspellingen, antwoorden, [embeddings](/nl/glossary/embeddings/) of andere outputs te produceren. Dit is wat er gebeurt wanneer je een [prompt](/nl/glossary/prompt/) naar ChatGPT stuurt of een embedding API bevraagt.
+
+## Waarom het belangrijk is
+
+Inferentie is waar AI-modellen waarde leveren in productie:
+
+- **Gebruikerservaring** — inferentiesnelheid bepaalt responstijd
+- **Kostenfactor** — de meeste AI-operationele kosten komen van inferentie
+- **Schaalbaarheid** — gelijktijdige inferentieaanvragen afhandelen vereist optimalisatie
+- **Nauwkeurigheid** — inferentiekwaliteit hangt af van modelkeuze en configuratie
+- **Deployment** — inferentievereisten bepalen infrastructuurbeslissingen
+
+Inferentie begrijpen is essentieel voor het efficiënt deployen van AI-systemen.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    INFERENTIE PIPELINE                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│        INPUT                          OUTPUT               │
+│  "Wat zijn BTW-                  "BTW-vrijstellingen       │
+│   vrijstellingen?"                omvatten..."             │
+│        │                               ▲                   │
+│        │                               │                   │
+│        ▼                               │                   │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │                VOORVERWERKING                    │      │
+│  │   • Tokenisatie                                  │      │
+│  │   • Embedding lookup                             │      │
+│  │   • Contextassemblage                            │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              MODEL FORWARD PASS                  │      │
+│  │   • Laag-voor-laag berekening                    │      │
+│  │   • Attentieberekeningen                         │      │
+│  │   • Matrixvermenigvuldigingen                    │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              NAVERWERKING                        │      │
+│  │   • Token sampling/decodering                    │      │
+│  │   • Outputformattering                           │      │
+│  │   • Veiligheidsfiltering                         │      │
+│  └──────────────────────────────────────────────────┘      │
+│                                                            │
+│  METRIEKEN:                                                │
+│  • Latentie: Tijd tot eerste token (TTFT, ~100-500ms)      │
+│  • Doorvoer: Tokens per seconde (TPS)                      │
+│  • Kosten: € per miljoen tokens                            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Belangrijke inferentieconcepten:**
+1. **Batch-inferentie** — verwerk meerdere inputs samen voor efficiëntie
+2. **Real-time inferentie** — directe respons voor interactieve applicaties
+3. **Streaming** — retourneer tokens terwijl ze gegenereerd worden
+4. **Edge-inferentie** — draai modellen lokaal op device, vermijd netwerklatentie
+
+## Veelgestelde vragen
+
+**V: Wat beïnvloedt inferentiesnelheid?**
+
+A: Modelgrootte (parameters), hardware (GPU-type), batchgrootte, [sequentielengte](/nl/glossary/context-window/) en optimalisatietechnieken (quantisatie, KV-caching). Grotere modellen en langere contexten verhogen latentie.
+
+**V: Wat is quantisatie?**
+
+A: Het reduceren van modelprecisie (bijv. float32 → int8) om inferentie te versnellen en geheugen te reduceren. Enige nauwkeurigheid kan verloren gaan, maar moderne quantisatie behoudt de meeste kwaliteit terwijl inferentie 2-4x sneller wordt.
+
+**V: Wat is het verschil tussen inferentie en training?**
+
+A: Training past modelgewichten aan met data; inferentie gebruikt vaste gewichten om outputs te genereren. Training is computationeel duur en gebeurt periodiek; inferentie is goedkoper per query en draait continu.
+
+**V: Hoe worden inferentiekosten berekend?**
+
+A: Meestal per verwerkte tokens. APIs rekenen per miljoen input/output tokens. Zelf-gehoste inferentiekosten omvatten GPU-tijd, geheugen en infrastructuur. Output tokens kosten vaak meer dan input tokens.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — modellen die inferentie uitvoeren
+- [Fine-Tuning](/nl/glossary/fine-tuning/) — trainingsproces voor inferentie
+- Latentie — tijdsmetriek voor inferentie
+- Batchverwerking — inferentie-optimalisatietechniek
+
+---
+
+## Referenties
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ [citaties](/nl/glossary/citation/)]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1.000+ citaties]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ citaties]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ citaties]
+
+## References
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ citations]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1,000+ citations]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ citations]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ citations]

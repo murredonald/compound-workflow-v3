@@ -1,0 +1,117 @@
+---
+term: "Reranking"
+termSlug: "reranking"
+short: "Eine zweistufige Retrieval-Technik, die initiale Suchergebnisse neu ordnet, um Relevanz mit ausgefeilteren Modellen zu verbessern."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["rag", "semantic-search", "hybrid-search", "embeddings"]
+synonyms: ["Cross-Encoder Reranking", "Ergebnis-Neuordnung", "Zweistufiges Retrieval"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Reranking ist eine Retrieval-Technik, die ein leistungsfähigeres Modell anwendet, um einen initialen Satz von Suchergebnissen neu zu ordnen und das Ranking wirklich relevanter Dokumente zu verbessern. Es folgt typischerweise auf ein erstes Retrieval (wie [Vektorsuche](/de/glossary/ann/)) und verwendet Cross-Encoder-Modelle, die Query-Dokument-Paare gemeinsam betrachten für genaueres Relevanz-Scoring.
+
+## Warum es wichtig ist
+
+Reranking überbrückt die Lücke zwischen schnellem Retrieval und akkurater Relevanz:
+
+- **Qualitätsverbesserung** — schiebt die relevantesten Ergebnisse nach oben
+- **Präzisionsboost** — Cross-Encoder verstehen Kontext besser als [Bi-Encoder](/de/glossary/bi-encoder/)
+- **RAG-Verbesserung** — stellt sicher, dass die besten Dokumente in den [LLM](/de/glossary/llm/)-Kontext gelangen
+- **Kosteneffektiv** — wendet teure Modelle nur auf Top-Kandidaten an, nicht den gesamten [Corpus](/de/glossary/corpus/)
+- **Latenzbalance** — fügt ~50-100ms für signifikant bessere Ergebnisse hinzu
+
+Reranking kann die Retrieval-Genauigkeit um 10-30% steigern bei minimalem Latenz-Impact.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   ZWEISTUFIGES RETRIEVAL                   │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STUFE 1: SCHNELLES RETRIEVAL (Bi-Encoder)                 │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │  Query ─────────────┐                              │    │
+│  │                     ├───► Vergleiche Embeddings    │    │
+│  │  Doc Embeddings ────┘    (Approximativ, Schnell)   │    │
+│  │                                                    │    │
+│  │  Gibt zurück: Top 100-500 Kandidaten               │    │
+│  └────────────────────────────────────────────────────┘    │
+│                          │                                 │
+│                          ▼                                 │
+│  STUFE 2: RERANKING (Cross-Encoder)                        │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │                                                    │    │
+│  │  Für jeden Kandidaten:                             │    │
+│  │  ┌─────────────────────────────────────────────┐   │    │
+│  │  │  [Query] [SEP] [Dokument] → Modell → Score  │   │    │
+│  │  └─────────────────────────────────────────────┘   │    │
+│  │                                                    │    │
+│  │  Betrachtet volle Interaktion (Akkurat, Langsamer)│    │
+│  │                                                    │    │
+│  │  Gibt zurück: Neugeordnete Top 5-20               │    │
+│  └────────────────────────────────────────────────────┘    │
+│                          │                                 │
+│                          ▼                                 │
+│                 FINALE GERANKTE ERGEBNISSE                 │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wichtige Unterschiede:**
+| Aspekt | Bi-Encoder (Stufe 1) | Cross-Encoder (Stufe 2) |
+|--------|---------------------|------------------------|
+| Geschwindigkeit | Schnell (~1ms/1M Docs) | Langsam (~10ms pro Doc) |
+| Genauigkeit | Gut | Ausgezeichnet |
+| Interaktion | Keine (separate Kodierung) | Voll (gemeinsame Kodierung) |
+| Skala | Gesamter Corpus | Nur Top-Kandidaten |
+
+## Häufige Fragen
+
+**F: Warum nicht einfach Cross-Encoder für alles verwenden?**
+
+A: Cross-Encoder sind zu langsam für großangelegtes Retrieval. Sie müssen jedes Query-Dokument-Paar zusammen verarbeiten, was sie O(n) macht, wobei n die Corpus-Größe ist. Zweistufiges Retrieval bietet das Beste aus beiden Welten.
+
+**F: Welche Modelle werden für Reranking verwendet?**
+
+A: Beliebte Reranker sind Cohere Rerank, BGE Reranker und Cross-Encoder-Modelle, die auf MS MARCO feinabgestimmt wurden. Diese sind speziell trainiert, um Query-Dokument-Relevanz zu bewerten.
+
+**F: Wie viele Dokumente sollten rerankt werden?**
+
+A: Typischerweise werden 50-200 Kandidaten aus der ersten Stufe rerankt. Zu wenige und Sie könnten relevante Dokumente verpassen; zu viele fügt unnötige Latenz hinzu.
+
+**F: Ersetzt Reranking die Vektorsuche?**
+
+A: Nein, es ergänzt sie. Vektorsuche bietet schnelles Kandidaten-Retrieval; Reranking verbessert die Ordnung. Beide Stufen werden für optimale Leistung benötigt.
+
+## Verwandte Begriffe
+
+- [RAG](/de/glossary/rag/) — Pipeline, die von Reranking profitiert
+- [Hybridsuche](/de/glossary/hybrid-search/) — Erststufen-Ansatz, der Methoden kombiniert
+- [Semantische Suche](/de/glossary/semantic-search/) — Embedding-basiertes Retrieval
+- [Cross-Encoder](/de/glossary/cross-encoder/) — Modelltyp für Reranking verwendet
+
+---
+
+## Referenzen
+
+> Nogueira & Cho (2019), "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)", arXiv. [1.500+ Zitationen]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3.500+ Zitationen]
+
+> Humeau et al. (2020), "[Poly-encoders: Architectures and Pre-training Strategies for Fast and Accurate Multi-sentence Scoring](https://arxiv.org/abs/1905.01969)", ICLR. [700+ Zitationen]
+
+> Glass et al. (2022), "[Re2G: Retrieve, Rerank, Generate](https://arxiv.org/abs/2207.06300)", NAACL. [100+ Zitationen]
+
+## References
+
+> Nogueira & Cho (2019), "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)", arXiv. [1,500+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Humeau et al. (2020), "[Poly-encoders: Architectures and Pre-training Strategies for Fast and Accurate Multi-sentence Scoring](https://arxiv.org/abs/1905.01969)", ICLR. [700+ citations]
+
+> Glass et al. (2022), "[Re2G: Retrieve, Rerank, Generate](https://arxiv.org/abs/2207.06300)", NAACL. [100+ citations]

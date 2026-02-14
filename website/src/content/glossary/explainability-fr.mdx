@@ -1,0 +1,179 @@
+---
+term: "Explicabilité"
+termSlug: "explainability"
+short: "La capacité de comprendre, interpréter et expliquer comment les modèles IA/ML font des prédictions—essentiel pour la confiance, le débogage, la conformité réglementaire et le déploiement responsable de l'IA."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["interpretability", "transparency", "black-box", "xai", "feature-importance", "ai-act"]
+synonyms: ["Interprétabilité", "XAI", "IA explicable", "Transparence des modèles"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'explicabilité (ou IA Explicable/XAI) fait [référence](/fr/glossary/citation/) aux techniques qui rendent les décisions des modèles IA compréhensibles pour les humains. Elle répond à "pourquoi le modèle a-t-il fait cette [prédiction](/fr/glossary/inference/)?" plutôt que simplement "qu'est-ce que le modèle a prédit?" L'explicabilité existe sur un spectre: des modèles intrinsèquement interprétables (régression linéaire, arbres de décision) aux explications post-hoc pour les modèles boîte noire (SHAP, LIME, visualisation d'attention). À mesure que les systèmes IA prennent des décisions de plus en plus importantes (santé, finance, juridique), l'explicabilité devient cruciale pour la confiance, la responsabilité, le débogage et la conformité réglementaire ([AI Act](/fr/glossary/eu-ai-act/), RGPD Article 22).
+
+## Pourquoi c'est important
+
+L'explicabilité répond aux besoins critiques de déploiement IA:
+
+- **Confiance** — les utilisateurs font confiance aux systèmes qu'ils comprennent
+- **Débogage** — identifier pourquoi les modèles échouent sur des cas spécifiques
+- **Conformité réglementaire** — AI Act exige explications pour IA haut-risque
+- **Détection biais** — révéler si modèles utilisent attributs protégés
+- **Validation domaine** — experts vérifient que raisonnement modèle est valide
+- **Défendabilité juridique** — expliquer décisions automatisées contestées
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     EXPLICABILITÉ                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LE SPECTRE DE L'EXPLICABILITÉ:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │    INTERPRÉTABLE           →           BOÎTE NOIRE  │ │
+│  │    (intégré)                         (nécessite XAI)│ │
+│  │                                                      │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │ │
+│  │  │  RÉGRESSION │  │   FORÊT     │  │  RÉSEAU     │ │ │
+│  │  │   LINÉAIRE  │  │  ALÉATOIRE  │  │  NEURONAL   │ │ │
+│  │  │             │  │             │  │  PROFOND    │ │ │
+│  │  │ coefficient │  │ importance  │  │             │ │ │
+│  │  │ = explication│ │ features    │  │ 🤷 ???     │ │ │
+│  │  │ directe     │  │ disponible  │  │ Besoin SHAP │ │ │
+│  │  │             │  │             │  │ LIME, etc.  │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘ │ │
+│  │                                                      │ │
+│  │  ◄─── Plus interprétable    Moins interprétable ──► │ │
+│  │  ◄─── Moins puissant        Plus puissant ──►       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TYPES D'EXPLICATIONS:                                     │
+│  ─────────────────────                                     │ │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. EXPLICATIONS GLOBALES                           │ │
+│  │     "Comment le modèle fonctionne généralement?"    │ │
+│  │                                                      │ │
+│  │     Importance Features (globale)                   │ │
+│  │     Âge:       ████████████████  (45%)             │ │
+│  │     Revenu:    ███████████       (28%)             │ │
+│  │     Lieu:      █████             (15%)             │ │
+│  │     Historique:████              (12%)             │ │
+│  │                                                      │ │
+│  │  2. EXPLICATIONS LOCALES                            │ │
+│  │     "Pourquoi le modèle a fait CETTE prédiction?"   │ │
+│  │                                                      │ │
+│  │     Prédiction: REFUSÉ                              │ │
+│  │                                                      │ │
+│  │     Facteurs contributifs pour CE cas:             │ │
+│  │     Âge < 25:       ─────█████  (-0.34)            │ │
+│  │     Revenu faible:  ─────████   (-0.28)            │ │
+│  │     Bon historique: ████─────   (+0.21)            │ │
+│  │                                                      │ │
+│  │     "Refusé principalement à cause du jeune âge    │ │
+│  │      et faible revenu malgré bon historique"       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TECHNIQUES XAI POPULAIRES:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  SHAP (SHapley Additive exPlanations)               │ │
+│  │  • Approche théorie des jeux                       │ │
+│  │  • Attribue valeur contribution à chaque feature   │ │
+│  │  • Cohérent: même entrée = même explication        │ │
+│  │  • Fonctionne sur tout modèle (model-agnostic)     │ │
+│  │                                                      │ │
+│  │  LIME (Local Interpretable Model-agnostic Exp)      │ │
+│  │  • Crée approximation linéaire locale              │ │
+│  │  • Perturbe entrée, observe changements            │ │
+│  │  • Fit modèle simple autour prédiction             │ │
+│  │  • Bon pour explications image/texte               │ │
+│  │                                                      │ │
+│  │  VISUALISATION ATTENTION (pour transformers)        │ │
+│  │  Entrée: "Le film était absolument terrible"       │ │
+│  │  Attention: Le film était absolument terrible      │ │
+│  │             ░   ░    ░      ▓▓       ████          │ │
+│  │  Modèle focalisé sur "terrible" et "absolument"    │ │
+│  │                                                      │ │
+│  │  EXPLICATIONS CONTREFACTUELLES                      │ │
+│  │  "Qu'est-ce qui devrait changer pour autre résultat?"│ │
+│  │  Actuel: Prêt REFUSÉ                               │ │
+│  │  Contrefactuel: "Si le revenu était €5000 plus    │ │
+│  │  élevé, le prêt serait APPROUVÉ"                   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  EXIGENCES RÉGLEMENTAIRES:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  EU AI ACT (2024)                                   │ │
+│  │  ├─ IA haut-risque doit être compréhensible       │ │
+│  │  ├─ Utilisateurs doivent pouvoir interpréter sorties│ │
+│  │  └─ Documentation comportement modèle requise      │ │
+│  │                                                      │ │
+│  │  RGPD Article 22                                    │ │
+│  │  ├─ Droit à explication décisions automatisées    │ │
+│  │  └─ "Info significative sur logique impliquée"    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Quelle différence entre explicabilité et interprétabilité?**
+
+R: Souvent utilisés de façon interchangeable. Techniquement: interprétabilité = à quel point un modèle est compréhensible intrinsèquement; explicabilité = méthodes pour expliquer le comportement de tout modèle.
+
+**Q: Les explications ralentissent-elles l'inférence?**
+
+R: Les explications post-hoc (SHAP, LIME) ajoutent du calcul. Vous pouvez calculer les explications hors ligne pour l'analyse, ou utiliser des méthodes approximatives.
+
+**Q: Les poids d'attention sont-ils des explications fiables?**
+
+R: Controversé. L'attention montre où le modèle a "regardé," mais ne prouve pas la causalité.
+
+## Termes associés
+
+- AI Act — réglementation UE exigeant explicabilité
+- Modèle boîte noire — modèles nécessitant techniques XAI
+
+---
+
+## Références
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [Méthodologie SHAP]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining Predictions](https://arxiv.org/abs/1602.04938)", KDD. [Méthodologie LIME]
+
+> Rudin (2019), "[Stop Explaining Black Box ML Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence.
+
+> Commission Européenne (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Journal Officiel.
+
+## References
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [SHAP methodology]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining the Predictions of Any Classifier](https://arxiv.org/abs/1602.04938)", KDD. [LIME methodology]
+
+> Rudin (2019), "[Stop Explaining Black Box Machine Learning Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence. [Case for inherent interpretability]
+
+> European Commission (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Official Journal. [Regulatory requirements for explainability]

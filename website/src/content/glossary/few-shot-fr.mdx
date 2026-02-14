@@ -1,0 +1,173 @@
+---
+term: "Few-Shot Learning"
+termSlug: "few-shot"
+short: "Un paradigme d'apprentissage automatique où les modèles apprennent à effectuer des tâches à partir de quelques exemples seulement, permettant une adaptation rapide sans réentraînement extensif."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["zero-shot", "in-context-learning", "chain-of-thought", "prompt-engineering"]
+synonyms: ["Prompting few-shot", "Apprentissage K-shot", "Apprentissage low-shot"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Le few-shot learning est une approche d'[apprentissage automatique](/fr/glossary/machine-learning/) où les modèles effectuent des tâches après avoir vu seulement un petit nombre d'exemples (typiquement 1-10). Dans le contexte des grands modèles de langage, le few-shot learning est réalisé via l'apprentissage in-context: des démonstrations sont fournies dans le prompt, et le modèle infère le patron à appliquer aux nouvelles entrées. Cela contraste avec l'apprentissage traditionnel nécessitant des milliers d'exemples, permettant une adaptation rapide sans mise à jour des poids.
+
+## Pourquoi c'est important
+
+Le few-shot learning révolutionne le déploiement IA:
+
+- **Pas d'entraînement requis** — [adapter](/fr/glossary/adapter/) modèles instantanément via prompting
+- **Efficacité données** — fonctionne avec exemples étiquetés minimaux
+- **Prototypage rapide** — tester idées sans infrastructure ML
+- **Réduction coûts** — éviter compute [fine-tuning](/fr/glossary/fine-tuning/) coûteux
+- **Flexibilité** — même modèle gère tâches diverses
+- **Accessibilité** — non-experts ML peuvent personnaliser comportement
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    FEW-SHOT LEARNING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  COMPARAISON PARADIGMES APPRENTISSAGE:                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  ┌────────────────┬───────────────────────────────────┐  │
+│  │ Paradigme      │ Exemples Nécessaires               │  │
+│  ├────────────────┼───────────────────────────────────┤  │
+│  │ ML Traditionnel│ 10.000 - 1.000.000+ (entraînement)│  │
+│  │ Fine-tuning    │ 100 - 10.000 (entraînement)       │  │
+│  │ Few-shot       │ 2 - 10 (dans prompt, pas entr.)   │  │
+│  │ One-shot       │ 1 (dans prompt, pas entr.)        │  │
+│  │ Zero-shot      │ 0 (juste instructions)            │  │
+│  └────────────────┴───────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  STRUCTURE PROMPT FEW-SHOT:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  [Optionnel: Description tâche/instruction]         │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Exemple 1:                                   │   │ │
+│  │  │ Entrée: "Le film était absolument génial"   │   │ │
+│  │  │ Sortie: Positif                             │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Exemple 2:                                   │   │ │
+│  │  │ Entrée: "Terrible perte de temps"           │   │ │
+│  │  │ Sortie: Négatif                             │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Exemple 3:                                   │   │ │
+│  │  │ Entrée: "C'était correct, rien de spécial"  │   │ │
+│  │  │ Sortie: Neutre                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ NOUVELLE ENTRÉE (à classifier):             │   │ │
+│  │  │ Entrée: "Meilleur achat jamais fait!"      │   │ │
+│  │  │ Sortie: ???                                 │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Modèle complète: "Positif" ✓                       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  SÉLECTION D'EXEMPLES IMPORTANTE:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  MAUVAIS exemples few-shot:                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Ex 1: "super film" → Positif                        │ │
+│  │ Ex 2: "super repas" → Positif                       │ │
+│  │ Ex 3: "super livre" → Positif ← Tous même classe!  │ │
+│  │                                                      │ │
+│  │ Problème: Modèle n'apprend pas "négatif"           │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  BONS exemples few-shot:                                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Ex 1: "adoré" → Positif        ← Couvre positif    │ │
+│  │ Ex 2: "détesté" → Négatif      ← Couvre négatif    │ │
+│  │ Ex 3: "c'est ok" → Neutre      ← Couvre neutre     │ │
+│  │ Ex 4: "incroyable!" → Positif  ← Entrée courte     │ │
+│  │ Ex 5: "pire jamais" → Négatif  ← Cas limite        │ │
+│  │                                                      │ │
+│  │ ✓ Classes équilibrées                               │ │
+│  │ ✓ Longueurs entrées variées                        │ │
+│  │ ✓ Cas limites inclus                               │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEW-SHOT VS FINE-TUNING:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────┬─────────────┬───────────────────┐   │
+│  │ Aspect          │ Few-Shot    │ Fine-Tuning       │   │
+│  ├─────────────────┼─────────────┼───────────────────┤   │
+│  │ Exemples        │ 2-10        │ 100-10.000        │   │
+│  │ Coût compute    │ 0€ (API)    │ 10€-10.000€+      │   │
+│  │ Temps setup     │ Minutes     │ Heures-Jours      │   │
+│  │ Flexibilité     │ Haute       │ Tâche-spécifique  │   │
+│  │ Précision max   │ Bonne       │ Meilleure         │   │
+│  │ Latence         │ Plus haute  │ Plus basse        │   │
+│  └─────────────────┴─────────────┴───────────────────┘   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Combien d'exemples inclure dans prompts few-shot?**
+
+R: Typiquement 3-5 exemples donnent bons résultats. Plus d'exemples (jusqu'à 10-20) peuvent améliorer précision mais augmentent coûts et latence. Rendements décroissants autour 5-10 exemples.
+
+**Q: Comment sélectionner quels exemples inclure?**
+
+R: Choisir exemples divers, représentatifs couvrant toutes classes/patrons. Inclure cas limites. Pour classification, équilibrer exemples entre catégories.
+
+**Q: L'ordre des exemples compte-t-il?**
+
+R: Oui, l'ordre peut significativement impacter résultats. Recherche montre: (1) placer exemples plus pertinents proche [requête](/fr/glossary/prompt/), (2) biais récence signifie derniers exemples ont plus influence.
+
+**Q: Le few-shot learning peut-il échouer?**
+
+R: Oui. Échecs communs: (1) tâche trop complexe pour reconnaissance patrons, (2) exemples ne représentent pas distribution réelle, (3) exemples ambigus confondent modèle, (4) prompt trop long atteint limites contexte.
+
+## Termes associés
+
+- [Zero-shot learning](/fr/glossary/zero-shot/) — effectuer tâches sans exemples
+- [In-context learning](/fr/glossary/in-context-learning/) — mécanisme derrière few-shot
+- [Chain-of-thought](/fr/glossary/chain-of-thought/) — few-shot avec traces raisonnement
+- Prompt engineering — créer prompts efficaces
+
+---
+
+## Références
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [Article capacités few-shot GPT-3]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Stratégies sélection exemples]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analyse mécanique few-shot]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Effets ordre exemples]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 few-shot capabilities paper]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Example selection strategies]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analysis of few-shot mechanics]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Example ordering effects]

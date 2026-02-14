@@ -1,0 +1,145 @@
+---
+term: "Unsupervised Learning"
+termSlug: "unsupervised-learning"
+short: "Een machine learning aanpak waarbij modellen patronen en structuur in data ontdekken zonder gelabelde voorbeelden."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["machine-learning", "supervised-learning", "embeddings", "clustering"]
+synonyms: ["Unsupervised ML", "Zelf-organiserend", "Patroonontdekking", "Ongelabeld leren"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Unsupervised learning is een machine learning paradigma waarbij algoritmen verborgen patronen, structuren en relaties in data ontdekken zonder de begeleiding van gelabelde voorbeelden. In tegenstelling tot supervised learning waar correcte antwoorden worden gegeven tijdens training, moeten unsupervised methoden zelf betekenisvolle organisatie in de data vinden—natuurlijke clusters identificeren, dimensionaliteit reduceren, anomalieën detecteren, of nuttige representaties leren.
+
+## Waarom het belangrijk is
+
+Unsupervised learning ontsluit waarde in ongelabelde data:
+
+- **Geen labeling nodig** — werkt met ruwe, ongelabelde data (goedkoper, overvloedig)
+- **Patroonontdekking** — vindt structuur die mensen mogelijk missen
+- **[Data preprocessing](/nl/glossary/data-preprocessing/)** — dimensionaliteitsreductie, feature learning
+- **Anomaliedetectie** — identificeert uitschieters zonder voorbeelden
+- **Fundament voor [embeddings](/nl/glossary/vector-embeddings/)** — leert representaties die [semantisch zoeken](/nl/glossary/semantic-search/) drijven
+
+Veel moderne AI-doorbraken, waaronder text embeddings, berusten op unsupervised of self-supervised learning.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  UNSUPERVISED LEARNING                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SUPERVISED VS UNSUPERVISED:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  SUPERVISED:                   UNSUPERVISED:               │
+│  "Hier is de data EN           "Hier is de data.          │
+│   de juiste antwoorden"         Vind zelf patronen"        │
+│                                                            │
+│  Input → LABEL                 Input → ???                 │
+│  [Afbeelding] → "Kat"          [Datapunten] → Groepen?    │
+│                                                            │
+│  HOOFDTAKEN UNSUPERVISED:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  1. CLUSTERING                                             │
+│     Groepeer vergelijkbare items samen                     │
+│                                                            │
+│     Voor:                Na:                               │
+│       ●  ○  ●              ┌───────┐  ┌───────┐           │
+│     ○    ●    ○            │ ● ● ● │  │ ○ ○ ○ │           │
+│       ●  ○  ●              │ ● ● ● │  │ ○ ○ ○ │           │
+│                            └───────┘  └───────┘           │
+│                            Cluster A   Cluster B           │
+│                                                            │
+│  2. DIMENSIONALITEITSREDUCTIE                              │
+│     Comprimeer data met behoud van structuur               │
+│                                                            │
+│     Hoog-D ruimte          Laag-D ruimte                  │
+│     (100 features)    →    (2-3 features)                 │
+│                                                            │
+│     ┌─────────────┐        ┌─────────────┐                │
+│     │ x₁,x₂,...x₁₀₀│   →   │   x'₁, x'₂  │                │
+│     └─────────────┘        └─────────────┘                │
+│          PCA, t-SNE, UMAP, Autoencoders                   │
+│                                                            │
+│  3. ANOMALIEDETECTIE                                       │
+│     Vind ongewone patronen                                 │
+│                                                            │
+│          ●●●●●●                                            │
+│        ●●●●●●●●●                                           │
+│          ●●●●●●         ○ ← Anomalie!                     │
+│                                                            │
+│  4. REPRESENTATIE LEREN                                    │
+│     Leer automatisch nuttige features                      │
+│                                                            │
+│     Ruwe Data → Encoder → Embedding → Nuttige represent.  │
+│                                                            │
+│  VEELGEBRUIKTE ALGORITMEN:                                 │
+│  ─────────────────────────                                 │
+│  Clustering:      K-Means, DBSCAN, Hiërarchisch           │
+│  Dim. Reductie:   PCA, t-SNE, UMAP                        │
+│  Dichtheidsgebaseerd: Gaussian Mixture Models             │
+│  Neuraal:         Autoencoders, VAEs                      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Unsupervised methoden vergelijking:**
+| Methode | Doel | Output | Voorbeeldgebruik |
+|---------|------|--------|------------------|
+| K-Means | Clustering | K groepen | Klantsegmentatie |
+| PCA | Dimensionaliteitsreductie | Lagere-D data | Feature compressie |
+| Autoencoders | [Representatie leren](/nl/glossary/deep-learning/) | Embeddings | Beeldcompressie |
+| DBSCAN | Dichtheidsclustering | Variabele groepen | Anomaliedetectie |
+
+## Veelgestelde vragen
+
+**V: Hoe evalueer je unsupervised learning als er geen labels zijn?**
+
+A: Verschillende benaderingen: (1) Intrinsieke metrieken zoals silhouette score voor clustering, (2) Reconstructiefout voor autoencoders, (3) Downstream taakprestaties (gebruik geleerde representaties voor supervised taak), (4) Menselijke evaluatie van ontdekte patronen, (5) Vergelijking met bekende [ground truth](/nl/glossary/ground-truth/) indien beschikbaar.
+
+**V: Wat is self-supervised learning?**
+
+A: Self-supervised learning is een vorm van unsupervised learning waarbij het algoritme zijn eigen labels creëert uit de data. [LLM](/nl/glossary/llm/) [pretraining](/nl/glossary/pretraining/) is self-supervised: het voorspellen van het volgende token gebruikt de tekst zelf als labels. Het is technisch unsupervised (geen menselijke labels) maar het trainingsproces lijkt op supervised learning.
+
+**V: Wanneer moet ik unsupervised vs supervised learning gebruiken?**
+
+A: Gebruik unsupervised wanneer: (1) Je geen labels hebt, (2) Je datastructuur wilt verkennen/begrijpen, (3) Je preprocessing nodig hebt (dimensionaliteitsreductie), (4) Je anomalieën wilt vinden. Gebruik supervised wanneer je labels hebt en een specifieke voorspellingstaak.
+
+**V: Hoe verhoudt unsupervised learning zich tot embeddings?**
+
+A: Veel embedding methoden gebruiken unsupervised of self-supervised learning. Word2Vec leert word embeddings zonder labels door context woorden te voorspellen. Autoencoders leren gecomprimeerde representaties. Deze unsupervised embeddings maken vervolgens semantisch zoeken, clustering, en meer mogelijk.
+
+## Gerelateerde termen
+
+- [Machine Learning](/nl/glossary/machine-learning/) — het bredere vakgebied
+- [Supervised Learning](/nl/glossary/supervised-learning/) — leren met labels
+- [Embeddings](/nl/glossary/embeddings/) — vaak unsupervised geleerd
+- Clustering — vergelijkbare items groeperen
+
+---
+
+## Referenties
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Hoofdstukken 13-14. [Fundamentele tekst]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Hoofdstuk 15. [Unsupervised representatie leren]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20.000+ [citaties](/nl/glossary/citation/)]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Fundamenteel VAE paper, 15.000+ citaties]
+
+## References
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Chapters 13-14. [Foundational text]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 15. [Unsupervised representation learning]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20,000+ citations]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Foundational VAE paper, 15,000+ citations]

@@ -1,0 +1,66 @@
+---
+term: "Source Freshness Tracking"
+termSlug: "source-freshness-tracking"
+short: "Source freshness tracking records how current each source is (version, last update, in-force date) so retrieval stays aligned with changing law."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["regulatory-drift-detection", "search-analytics", "indexing-strategy", "content-discoverability", "authority-ranking-model"]
+synonyms: ["Freshness monitoring", "Source currency tracking", "Document freshness scoring"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Source freshness tracking is the practice of storing and using "currency" metadata for each document in an index: last updated time, publication date, effective (in-force) dates, and version identifiers. It helps a retrieval system prefer the most current applicable sources and flag potentially outdated material.
+
+## Why it matters
+
+- **Legal change is constant**: tax and regulatory rules evolve through amendments and guidance.
+- **Fewer outdated [citations](/en/glossary/citation/)**: reduces answers that cite superseded versions.
+- **Better ranking**: freshness can be a useful tie-breaker among similarly relevant sources.
+- **Operational monitoring**: enables alerts for sources that have not been refreshed.
+
+## How it works
+
+Freshness tracking is usually implemented as metadata + scoring rules:
+
+```
+Ingest -> extract dates/versions -> store freshness fields -> rank with freshness -> alert on staleness
+```
+
+Common fields:
+
+- `published_at`, `updated_at`
+- `effective_from`, `effective_to` (or repeal date)
+- `version_id` / consolidation identifiers
+- `last_checked_at` (when the crawler verified the source)
+
+## Practical example
+
+If a consolidated legal article was updated last month, the system boosts it above an older PDF excerpt. If a source has not been checked for a long time, it is flagged for review or down-weighted.
+
+## Common questions
+
+**Q: Is freshness always good for ranking?**
+
+A: Not always. Freshness matters only when the newer source is applicable. Authority and applicability still come first.
+
+**Q: How do you prevent "new but irrelevant" boosting?**
+
+A: Use freshness as a secondary signal and require strong relevance + applicability filters.
+
+## Related terms
+
+- [Regulatory Drift Detection](/en/glossary/regulatory-drift-detection/) - detect changes that require updates
+- [Search Analytics](/en/glossary/search-analytics/) - monitor staleness and failures
+- [Indexing Strategy](/en/glossary/indexing-strategy/) - ingestion and refresh cadence design
+- [Content Discoverability](/en/glossary/content-discoverability/) - make versions and dates searchable
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - combine authority with freshness signals
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

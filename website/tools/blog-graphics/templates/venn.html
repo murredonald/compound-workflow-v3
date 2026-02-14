@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* ── Venn Diagram ── */
+  .venn {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .venn-circle {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .venn-circle.left {
+    left: calc(50% - 280px);
+    background: hsla(2 62% 56% / 0.12);
+    border: 2px solid hsla(2 62% 56% / 0.3);
+  }
+
+  .venn-circle.right {
+    left: calc(50% - 40px);
+    background: hsla(36 32% 38% / 0.12);
+    border: 2px solid hsla(36 32% 38% / 0.3);
+  }
+
+  .venn-label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .venn-circle.left .venn-label { color: var(--destructive); }
+  .venn-circle.right .venn-label { color: var(--primary-text); }
+
+  .venn-items {
+    list-style: none;
+    font-size: 14px;
+    color: var(--muted-fg);
+    line-height: 1.6;
+  }
+
+  .venn-circle.left .venn-items {
+    padding-right: 60px;
+  }
+
+  .venn-circle.right .venn-items {
+    padding-left: 60px;
+  }
+
+  /* Intersection */
+  .venn-overlap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    max-width: 160px;
+  }
+
+  .venn-overlap-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 6px;
+  }
+
+  .venn-overlap-items {
+    list-style: none;
+    font-size: 13px;
+    color: var(--muted-fg);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">What general AI and specialized tax AI share — and where they diverge</div>
+  <div class="venn">
+    <div class="venn-circle left">
+      <div class="venn-label">General LLM</div>
+      <ul class="venn-items">
+        <li>Broad knowledge</li>
+        <li>Creative writing</li>
+        <li>No source citations</li>
+        <li>No confidence signal</li>
+      </ul>
+    </div>
+    <div class="venn-circle right">
+      <div class="venn-label">Specialized Tax AI</div>
+      <ul class="venn-items">
+        <li>Belgian legal corpus</li>
+        <li>Authority ranking</li>
+        <li>Temporal versioning</li>
+        <li>Cross-domain detection</li>
+      </ul>
+    </div>
+    <div class="venn-overlap">
+      <div class="venn-overlap-label">Both</div>
+      <ul class="venn-overlap-items">
+        <li>Natural language input</li>
+        <li>LLM-powered generation</li>
+        <li>Can still hallucinate</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

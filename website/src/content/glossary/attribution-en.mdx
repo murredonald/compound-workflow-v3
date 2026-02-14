@@ -1,0 +1,251 @@
+---
+term: "Attribution"
+termSlug: "attribution"
+short: "The AI capability of linking generated statements to specific source evidence, establishing which parts of the output are supported by which documents or data points."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["citation", "grounding", "rag", "factuality"]
+synonyms: ["Source attribution", "Evidence linking", "Claim attribution"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Attribution in AI systems refers to the process of establishing explicit connections between generated claims and their supporting evidence. While citation adds references to responses, attribution goes deeper—it determines whether a specific claim is actually entailed by (logically supported by) the cited source. A well-attributed AI system can answer "What evidence supports this statement?" for every factual claim it makes. Attribution is crucial for [trustworthy AI](/en/glossary/responsible-ai/) because it enables verification, prevents the illusion of grounding (citing sources that don't actually support claims), and makes AI decision-support systems auditable.
+
+## Why it matters
+
+Attribution is essential for accountable AI:
+
+- **Prevents false grounding** — ensures cited sources actually support claims
+- **Enables auditing** — every claim traceable to specific evidence
+- **Supports compliance** — regulatory requirements for decision transparency
+- **Builds trust** — users can verify the [reasoning chain](/en/glossary/chain-of-thought/)
+- **Catches hallucinations** — unattributed claims are flagged
+- **Improves reliability** — forces model to stick to what sources say
+
+Citation without attribution is decoration. Attribution without citation is hidden. Together, they create verifiable AI.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      ATTRIBUTION                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CITATION vs ATTRIBUTION:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  CITATION ONLY (can be superficial):                       │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Response: "The project deadline is Jan 15 [1]"    │ │
+│  │  Source [1]: "Q4 planning should be done by Dec"   │ │
+│  │                                                      │ │
+│  │  ⚠️ Citation exists but doesn't support claim!     │ │
+│  │  The source says nothing about Jan 15 deadline.    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  PROPER ATTRIBUTION:                                       │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Response: "The project deadline is Jan 15 [1]"    │ │
+│  │  Source [1]: "Final deliverables due January 15"   │ │
+│  │                                                      │ │
+│  │  ✓ Attribution verified: source entails claim      │ │
+│  │  The source explicitly states the deadline.        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTION CLASSIFICATION:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  For each claim + cited source pair:                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ATTRIBUTABLE (source supports claim):              │ │
+│  │  ├── Exact match: claim uses same words as source  │ │
+│  │  ├── Paraphrase: claim restates source meaning     │ │
+│  │  └── Inference: claim logically follows from src   │ │
+│  │                                                      │ │
+│  │  NOT ATTRIBUTABLE (source doesn't support):        │ │
+│  │  ├── Irrelevant: source discusses different topic │ │
+│  │  ├── Contradicted: source says opposite            │ │
+│  │  ├── Extrapolated: claim goes beyond source        │ │
+│  │  └── Fabricated: no source relationship at all     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTION PIPELINE:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. CLAIM EXTRACTION                                 │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Response: "Company revenue grew 15% [1] and │   │ │
+│  │  │  market share increased to 23% [2] in Q4."  │   │ │
+│  │  │                                              │   │ │
+│  │  │  Extracted claims:                           │   │ │
+│  │  │  • Claim A: "Revenue grew 15%" [cites 1]    │   │ │
+│  │  │  • Claim B: "Market share is 23%" [cites 2] │   │ │
+│  │  │  • Claim C: "This happened in Q4" [cites ?] │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  2. SOURCE RETRIEVAL                                │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Source [1]: "FY24 saw revenue growth of    │   │ │
+│  │  │              15.2% compared to prior year"  │   │ │
+│  │  │                                              │   │ │
+│  │  │  Source [2]: "Market share reached 22.8%    │   │ │
+│  │  │              as of end of fiscal year"      │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  3. ENTAILMENT VERIFICATION                         │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Claim A: "Revenue grew 15%"                │   │ │
+│  │  │  Source 1: "revenue growth of 15.2%"        │   │ │
+│  │  │  → ATTRIBUTABLE ✓ (15% ≈ 15.2%)            │   │ │
+│  │  │                                              │   │ │
+│  │  │  Claim B: "Market share is 23%"             │   │ │
+│  │  │  Source 2: "Market share reached 22.8%"     │   │ │
+│  │  │  → ATTRIBUTABLE ✓ (23% ≈ 22.8%)            │   │ │
+│  │  │                                              │   │ │
+│  │  │  Claim C: "This happened in Q4"             │   │ │
+│  │  │  Sources: mention "FY" and "fiscal year"    │   │ │
+│  │  │  → NOT ATTRIBUTABLE ⚠️ (Q4 not mentioned)  │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  4. ATTRIBUTION SCORING                             │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Response attribution score:                 │   │ │
+│  │  │  • 2 of 3 claims properly attributed        │   │ │
+│  │  │  • Score: 66.7%                              │   │ │
+│  │  │                                              │   │ │
+│  │  │  Actions:                                    │   │ │
+│  │  │  • Flag Claim C for review                  │   │ │
+│  │  │  • Or: Remove/rephrase Claim C              │   │ │
+│  │  │  • Or: Find supporting source for Q4       │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTION METHODS:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  NLI-based (Natural Language Inference):                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Use NLI model to classify:                         │ │
+│  │  Premise: [source text]                             │ │
+│  │  Hypothesis: [claim]                                 │ │
+│  │                                                      │ │
+│  │  → Entailment: Source supports claim ✓             │ │
+│  │  → Neutral: Source doesn't address claim           │ │
+│  │  → Contradiction: Source contradicts claim ✗       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  LLM-based verification:                                   │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt LLM:                                         │ │
+│  │  "Does the following source support this claim?    │ │
+│  │                                                      │ │
+│  │   Source: [source text]                             │ │
+│  │   Claim: [claim text]                               │ │
+│  │                                                      │ │
+│  │   Answer: Supported / Not Supported / Contradicted │ │
+│  │   Evidence: [quote from source]"                   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Embedding similarity:                                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Compare semantic similarity between claim and     │ │
+│  │  source embeddings. High similarity suggests       │ │
+│  │  potential attribution (needs verification).       │ │
+│  │                                                      │ │
+│  │  Note: Similarity ≠ entailment                     │ │
+│  │  "The sky is blue" and "The sky is not blue"      │ │
+│  │  are semantically similar but contradictory!       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTION METRICS:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Metric          │  Formula                         │ │
+│  │  ────────────────┼────────────────────────────────  │ │
+│  │  Attribution     │  # attributed claims             │ │
+│  │  precision       │  ─────────────────────           │ │
+│  │                  │  # claims with citations         │ │
+│  │                  │                                   │ │
+│  │  Attribution     │  # attributed claims             │ │
+│  │  recall          │  ─────────────────────           │ │
+│  │                  │  # total factual claims          │ │
+│  │                  │                                   │ │
+│  │  AIS (Attrib.    │  Human eval of whether sources  │ │
+│  │  to Identified   │  fully support generated text   │ │
+│  │  Sources)        │                                   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  COMMON ATTRIBUTION FAILURES:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  • Citing topically related but non-supporting sources   │
+│  • Over-generalizing from specific source claims          │
+│  • Combining multiple sources incorrectly                 │
+│  • Citing source that contradicts claim                   │
+│  • Citing source for wrong part of claim                  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How is attribution different from citation?**
+
+A: Citation adds references; attribution verifies them. A response can have perfect citations (every claim has [1], [2], [3]) but poor attribution (the cited sources don't actually support the claims). Attribution is the quality check on citations.
+
+**Q: How do I implement attribution verification?**
+
+A: Common approaches: (1) NLI models that classify premise-hypothesis pairs, (2) [LLM](/en/glossary/llm/)-as-judge prompting to verify source-claim support, (3) Human evaluation for high-stakes applications. RAGAS and similar frameworks provide attribution [metrics](/en/glossary/distance-metric/).
+
+**Q: Should every claim be attributed?**
+
+A: Factual claims requiring evidence should be attributed. Common knowledge ("Paris is in France"), logical [inferences](/en/glossary/inference/) clearly derived from attributed facts, and opinions/analysis don't require attribution. Focus on claims users might dispute or verify.
+
+**Q: What's an acceptable attribution score?**
+
+A: Depends on the application. High-stakes domains (legal, medical, financial) should target 95%+. General knowledge assistants might accept 80-90%. The key is transparency—users should know the system's attribution reliability.
+
+## Related terms
+
+- [Citation](/en/glossary/citation/) — adding source references
+- [Grounding](/en/glossary/grounding/) — anchoring to sources
+- [Factuality](/en/glossary/factuality/) — accuracy of claims
+- [RAG](/en/glossary/rag/) — retrieval that enables attribution
+
+---
+
+## References
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [AIS metric and attribution evaluation]
+
+> Bohnet et al. (2022), "[Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [LLM-based attribution evaluation]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Attribution-based revision]

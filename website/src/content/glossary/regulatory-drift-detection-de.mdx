@@ -1,0 +1,68 @@
+---
+term: "Erkennung regulatorischer Drift"
+termSlug: "regulatory-drift-detection"
+short: "Regulatorische-Drift-Erkennung überwacht Änderungen in Recht und Guidance, die Retrieval, Outputs oder Kontrollen eines KI-Systems veralten lassen."
+category: "ai-regulation"
+category_name: "KI-Regulierung"
+related: ["source-freshness-tracking", "ai-risk-management", "eu-ai-act", "ai-documentation-requirements", "compliance-aware-retrieval"]
+synonyms: ["Regulation change monitoring", "Legal change detection", "Policy drift detection"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Regulatorische-Drift-Erkennung ist die Praxis, Änderungen in Gesetzen, Verordnungen, Verwaltungsanweisungen oder internen Policies zu identifizieren, die ein KI-System beeinflussen. In Legal- und Tax-Kontexten bedeutet "Drift" häufig: Eine zuvor korrekte Antwort oder Zitierung ist nicht mehr gültig, weil sich die zugrunde liegende Quelle geändert hat.
+
+## Warum es wichtig ist
+
+- **Aktualität**: rechtliche Pflichten ändern sich oft schneller als Modelle und [Content-Pipelines](/de/glossary/data-pipeline/).
+- **Risikokontrolle**: Drift kann unbemerkt Compliance-Exposure erzeugen.
+- **Nachvollziehbarkeit**: unterstützt Dokumentation von Änderungen und Updates.
+- **Messbarkeit**: macht "up to date bleiben" zu einem kontrollierten Prozess.
+
+## Wie es funktioniert
+
+Üblich ist eine Kombination aus Quellenmonitoring und operativen Triggern:
+
+```
+Autoritative Quellen überwachen -> Änderungen erkennen -> Impact klassifizieren -> Index/Prompts updaten -> dokumentieren + reviewen
+```
+
+Signale: neue Fassungen von Normen, Änderungen/Aufhebungen, neue Rundschreiben, Rechtsprechung mit neuer Auslegung, oder neue interne Policies, die Retrieval und Disclosure einschränken.
+
+## Praktisches Beispiel
+
+Ein Steuersatz oder ein Reporting-Schwellenwert ändert sich auf einer offiziellen Website. Drift Detection erkennt die Änderung, stößt Re-Indexing an und erzeugt eine Review-Aufgabe für Antworten, die die alte Regel zitiert haben.
+
+## Häufige Fragen
+
+**Q: Ist das dasselbe wie [Model Drift](/de/glossary/model-drift/)?**
+
+A: Nein. Model Drift betrifft Datenverteilungen und Performance. Regulatorische Drift betrifft die *Regeln*, die eingehalten und zitiert werden müssen.
+
+**Q: Was sollte bei erkannter Drift passieren?**
+
+A: Mindestens: Quellen aktualisieren, Retrieval/Answer-Evaluation für betroffene Themen neu laufen lassen und die Änderung in Dokumentation/Logs festhalten.
+
+## Verwandte Begriffe
+
+- [Source Freshness Tracking](/de/glossary/source-freshness-tracking/) - Quellenaktualität nachhalten
+- [AI Risk Management](/de/glossary/ai-risk-management/) - Risiken über den Lifecycle steuern
+- [EU AI Act](/de/glossary/eu-ai-act/) - Anforderungen, die Monitoring und Controls beeinflussen
+- [AI-Dokumentationsanforderungen](/de/glossary/ai-documentation-requirements/) - Nachweise für Audits
+- [Compliance-bewusstes Retrieval](/de/glossary/compliance-aware-retrieval/) - Retrieval innerhalb Policy- und Regelgrenzen
+
+---
+
+## Referenzen
+
+> Verordnung (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.

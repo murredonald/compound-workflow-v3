@@ -1,0 +1,202 @@
+---
+term: "Inverted Index"
+termSlug: "inverted-index"
+short: "Een datastructuur die termen koppelt aan documentlocaties, voor snelle full-text zoekopdrachten over grote documentcollecties."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["bm25", "tf-idf", "sparse-retrieval", "dense-retrieval"]
+synonyms: ["Geïnverteerd bestand", "Posting bestand", "Posting lijst"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een inverted index is een datastructuur die content (typisch woorden of termen) koppelt aan hun locaties in documenten. In plaats van "document → woorden" op te slaan, slaat het "woord → documenten" op, vandaar de naam "inverted." Deze ogenschijnlijk simpele omschakeling maakt sub-milliseconde zoeken over miljarden documenten mogelijk—wanneer je zoekt naar "klimaatverandering," zoekt het systeem twee posting-lijsten op en kruist ze, in plaats van elk document te scannen. De inverted index is de fundamentele datastructuur die zoekmachines aandrijft van Google tot Elasticsearch.
+
+## Waarom het belangrijk is
+
+Inverted indexes maken modern zoeken mogelijk:
+
+- **Snelheid** — O(1) lookup per term vs O(n) documentscanning
+- **Schaal** — zoek miljarden documenten in milliseconden
+- **Alomtegenwoordigheid** — drijft Google, Bing, Elasticsearch, Solr, Lucene aan
+- **Efficiëntie** — slaat alleen relevante documentreferenties op, niet volledige content
+- **Fundament** — maakt BM25, TF-IDF en alle sparse retrieval-methoden mogelijk
+- **Combineerbaarheid** — booleaanse operaties (AND, OR, NOT) zijn snelle verzamelingsoperaties
+
+Het begrijpen van inverted indexes is essentieel voor iedereen die zoeksystemen bouwt.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     INVERTED INDEX                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DE FUNDAMENTELE INVERSIE:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  FORWARD INDEX (hoe documenten worden opgeslagen):         │
+│                                                            │
+│  ┌──────────────────────────────────────────────────┐     │
+│  │ Doc 1: "De snelle bruine vos"                    │     │
+│  │ Doc 2: "De luie hond slaapt"                     │     │
+│  │ Doc 3: "Snelle bruine honden rennen"             │     │
+│  └──────────────────────────────────────────────────┘     │
+│                                                            │
+│  Om "bruin" te vinden: scan ALLE documenten → O(n) = TRAAG│
+│                                                            │
+│                                                            │
+│  INVERTED INDEX (term → document mapping):                 │
+│                                                            │
+│  ┌──────────────────────────────────────────────────┐     │
+│  │ Term      │ Posting Lijst (documenten met term)  │     │
+│  ├───────────┼──────────────────────────────────────┤     │
+│  │ "bruin"   │ → [Doc 1, Doc 3]                     │     │
+│  │ "hond"    │ → [Doc 2, Doc 3]                     │     │
+│  │ "vos"     │ → [Doc 1]                            │     │
+│  │ "lui"     │ → [Doc 2]                            │     │
+│  │ "snel"    │ → [Doc 1, Doc 3]                     │     │
+│  │ "ren"     │ → [Doc 3]                            │     │
+│  │ "slaap"   │ → [Doc 2]                            │     │
+│  │ "de"      │ → [Doc 1, Doc 2]                     │     │
+│  └──────────────────────────────────────────────────┘     │
+│                                                            │
+│  Om "bruin" te vinden: lookup hash tabel → O(1) = SNEL!   │
+│                                                            │
+│                                                            │
+│  VOLLEDIGE INDEX STRUCTUUR:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  WOORDENBOEK (vocabulaire)                          │  │
+│  │  ┌────────────────────────────────────────────┐    │  │
+│  │  │ Term     │ Doc Freq │ Pointer naar Postings │    │  │
+│  │  ├──────────┼──────────┼──────────────────────┤    │  │
+│  │  │ "bruin"  │ 2        │ ────────┐             │    │  │
+│  │  │ "klimaat"│ 156      │ ────────┼──┐          │    │  │
+│  │  │ "hond"   │ 3        │ ────────┼──┼──┐       │    │  │
+│  │  └──────────┴──────────┴────────┼──┼──┼───────┘    │  │
+│  │                                  │  │  │           │  │
+│  │  POSTING LIJSTEN                 ▼  ▼  ▼           │  │
+│  │  ┌────────────────────────────────────────────┐    │  │
+│  │  │ "bruin":  [D1:2, D3:1]                     │    │  │
+│  │  │           (doc_id: term_freq)              │    │  │
+│  │  │                                            │    │  │
+│  │  │ "klimaat": [D5:3, D12:1, D45:2, D89:1..]  │    │  │
+│  │  │                                            │    │  │
+│  │  │ "hond":   [D2:1, D3:2, D99:1]             │    │  │
+│  │  └────────────────────────────────────────────┘    │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  QUERY VERWERKING:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Query: "bruine hond"                                      │
+│                                                            │
+│  Stap 1: Tokenize query → ["bruin", "hond"]               │
+│                                                            │
+│  Stap 2: Lookup posting lijsten                           │
+│          "bruin" → [D1, D3]                               │
+│          "hond"  → [D2, D3]                               │
+│                                                            │
+│  Stap 3: Booleaanse operaties                             │
+│                                                            │
+│  AND (beide termen):                                       │
+│  [D1, D3] ∩ [D2, D3] = [D3]                              │
+│                                                            │
+│  OR (een van beide):                                       │
+│  [D1, D3] ∪ [D2, D3] = [D1, D2, D3]                      │
+│                                                            │
+│  Stap 4: Score en rank (BM25, TF-IDF, etc.)               │
+│                                                            │
+│                                                            │
+│  POSTING LIJST FORMATEN:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  BASIS: Alleen document IDs                         │  │
+│  │  "klimaat" → [5, 12, 45, 89, 156, ...]             │  │
+│  │                                                      │  │
+│  │  MET FREQUENTIE: doc_id:term_freq paren            │  │
+│  │  "klimaat" → [5:3, 12:1, 45:2, 89:1, ...]          │  │
+│  │  (nodig voor TF-IDF/BM25 scoring)                   │  │
+│  │                                                      │  │
+│  │  MET POSITIES: doc_id:posities lijst               │  │
+│  │  "klimaat" → [5:[12,45,89], 12:[3], ...]          │  │
+│  │  (nodig voor frase zoeken "klimaatverandering")    │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  INDEX CONSTRUCTIE PIPELINE:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Documenten ──► Tokenize ──► Normaliseer ──► Index        │
+│                                                            │
+│  Tokenize:                                                 │
+│  "De Snelle-Bruine vos!" → ["De", "Snelle", "Bruine",vos"]│
+│                                                            │
+│  Normaliseer:                                              │
+│  • Lowercase: "Snel" → "snel"                             │
+│  • Verwijder leestekens                                    │
+│  • Stemming: "rennend" → "ren"                            │
+│  • Stopwoord verwijdering: verwijder "de", "is", "op"     │
+│                                                            │
+│  Index:                                                    │
+│  Voeg toe aan posting lijsten + update woordenboek        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe gaat de inverted index om met updates?**
+
+A: Moderne systemen gebruiken een "merge" strategie: nieuwe documenten gaan in een kleine in-memory index, die periodiek samenvoegt met grotere on-disk segmenten. Deletes worden afgehandeld via een deletion bitmap. Dit is hoe Elasticsearch/Lucene zowel snel indexeren als snel zoeken bereiken.
+
+**V: Wat is het verschil tussen inverted index en vector index?**
+
+A: Inverted indexes koppelen termen aan documenten (sparse, exacte matching). Vector indexes ([FAISS](/nl/glossary/faiss/), HNSW) koppelen embedding vectoren aan approximate nearest neighbors (dense, semantische matching). Modern zoeken gebruikt vaak beide in [hybride retrieval](/nl/glossary/hybrid-search/).
+
+**V: Hoe werken frase-zoekopdrachten met inverted indexes?**
+
+A: Positie-informatie wordt opgeslagen in posting lijsten. Voor "klimaatverandering" vindt het systeem documenten met beide termen, controleert dan of "klimaat" op positie N verschijnt en "verandering" op positie N+1 in hetzelfde document.
+
+**V: Hoe groot zijn inverted indexes vergeleken met originele documenten?**
+
+A: Typisch 10-30% van originele documentgrootte, afhankelijk van compressie en wat wordt opgeslagen. Zware compressie kan tot 5-10% komen.
+
+## Gerelateerde termen
+
+- [BM25](/nl/glossary/bm25/) — ranking algoritme met inverted index
+- [TF-IDF](/nl/glossary/tf-idf/) — weegschema voor index scores
+- [Sparse retrieval](/nl/glossary/sparse-retrieval/) — retrieval met inverted indexes
+- [Dense retrieval](/nl/glossary/dense-retrieval/) — vector-gebaseerd alternatief
+
+---
+
+## Referenties
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [Definitief tekstboek over inverted indexes]
+
+> Zobel & Moffat (2006), "[Inverted Files for Text Search Engines](https://dl.acm.org/doi/10.1145/1132956.1132959)", ACM Computing Surveys. [Uitgebreide survey]
+
+> Büttcher et al. (2010), "[Information Retrieval: Implementing and Evaluating Search Engines](https://mitpress.mit.edu/9780262026512/information-retrieval/)", MIT Press. [Implementatiedetails]
+
+> Dean (2009), "[Challenges in Building Large-Scale Information Retrieval Systems](https://research.google/pubs/pub37043/)", WSDM Keynote. [Google's index op schaal]
+
+## References
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [Definitive textbook on inverted indexes]
+
+> Zobel & Moffat (2006), "[Inverted Files for Text Search Engines](https://dl.acm.org/doi/10.1145/1132956.1132959)", ACM Computing Surveys. [Comprehensive survey]
+
+> Büttcher et al. (2010), "[Information Retrieval: Implementing and Evaluating Search Engines](https://mitpress.mit.edu/9780262026512/information-retrieval/)", MIT Press. [Implementation details]
+
+> Dean (2009), "[Challenges in Building Large-Scale Information Retrieval Systems](https://research.google/pubs/pub37043/)", WSDM Keynote. [Google's index at scale]

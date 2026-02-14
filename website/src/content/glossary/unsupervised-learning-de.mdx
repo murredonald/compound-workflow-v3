@@ -1,0 +1,145 @@
+---
+term: "Unüberwachtes Lernen"
+termSlug: "unsupervised-learning"
+short: "Ein Machine-Learning-Ansatz, bei dem Modelle Muster und Strukturen in Daten ohne gelabelte Beispiele entdecken."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["machine-learning", "supervised-learning", "embeddings", "clustering"]
+synonyms: ["Unsupervised ML", "Selbstorganisierend", "Musterentdeckung", "Ungelabeltes Lernen"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Unüberwachtes Lernen ist ein Machine-Learning-Paradigma, bei dem Algorithmen verborgene Muster, Strukturen und Beziehungen in Daten ohne die Anleitung von gelabelten Beispielen entdecken. Anders als beim überwachten Lernen, wo korrekte Antworten während des Trainings bereitgestellt werden, müssen unüberwachte Methoden selbst eine bedeutungsvolle Organisation in den Daten finden—natürliche Cluster identifizieren, Dimensionalität reduzieren, Anomalien erkennen oder nützliche Repräsentationen lernen.
+
+## Warum es wichtig ist
+
+Unüberwachtes Lernen erschließt Wert in ungelabelten Daten:
+
+- **Kein Labeling erforderlich** — arbeitet mit rohen, ungelabelten Daten (günstiger, reichlich)
+- **Musterentdeckung** — findet Strukturen, die Menschen möglicherweise übersehen
+- **[Datenvorverarbeitung](/de/glossary/data-preprocessing/)** — [Dimensionalitätsreduktion](/de/glossary/dimensionality-reduction/), Feature-Lernen
+- **Anomalieerkennung** — identifiziert Ausreißer ohne Beispiele
+- **Fundament für [Embeddings](/de/glossary/vector-embeddings/)** — lernt Repräsentationen, die [semantische Suche](/de/glossary/semantic-search/) antreiben
+
+Viele moderne KI-Durchbrüche, einschließlich Text-Embeddings, beruhen auf unüberwachtem oder selbstüberwachtem Lernen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  UNÜBERWACHTES LERNEN                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ÜBERWACHT VS UNÜBERWACHT:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ÜBERWACHT:                    UNÜBERWACHT:                │
+│  "Hier sind die Daten UND      "Hier sind die Daten.      │
+│   die richtigen Antworten"      Finde selbst Muster"       │
+│                                                            │
+│  Eingabe → LABEL               Eingabe → ???               │
+│  [Bild] → "Katze"              [Datenpunkte] → Gruppen?   │
+│                                                            │
+│  HAUPTAUFGABEN UNÜBERWACHT:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  1. CLUSTERING                                             │
+│     Ähnliche Elemente gruppieren                           │
+│                                                            │
+│     Vorher:              Nachher:                          │
+│       ●  ○  ●              ┌───────┐  ┌───────┐           │
+│     ○    ●    ○            │ ● ● ● │  │ ○ ○ ○ │           │
+│       ●  ○  ●              │ ● ● ● │  │ ○ ○ ○ │           │
+│                            └───────┘  └───────┘           │
+│                            Cluster A   Cluster B           │
+│                                                            │
+│  2. DIMENSIONALITÄTSREDUKTION                              │
+│     Daten komprimieren unter Strukturerhalt                │
+│                                                            │
+│     Hoch-D Raum            Niedrig-D Raum                 │
+│     (100 Features)    →    (2-3 Features)                 │
+│                                                            │
+│     ┌─────────────┐        ┌─────────────┐                │
+│     │ x₁,x₂,...x₁₀₀│   →   │   x'₁, x'₂  │                │
+│     └─────────────┘        └─────────────┘                │
+│          PCA, t-SNE, UMAP, Autoencoder                    │
+│                                                            │
+│  3. ANOMALIEERKENNUNG                                      │
+│     Ungewöhnliche Muster finden                            │
+│                                                            │
+│          ●●●●●●                                            │
+│        ●●●●●●●●●                                           │
+│          ●●●●●●         ○ ← Anomalie!                     │
+│                                                            │
+│  4. REPRÄSENTATIONSLERNEN                                  │
+│     Automatisch nützliche Features lernen                  │
+│                                                            │
+│     Rohdaten → Encoder → Embedding → Nützliche Repräs.    │
+│                                                            │
+│  GÄNGIGE ALGORITHMEN:                                      │
+│  ────────────────────                                      │
+│  Clustering:      K-Means, DBSCAN, Hierarchisch           │
+│  Dim. Reduktion:  PCA, t-SNE, UMAP                        │
+│  Dichtebasiert:   Gaussian Mixture Models                 │
+│  Neuronal:        Autoencoder, VAEs                       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Vergleich unüberwachter Methoden:**
+| Methode | Zweck | Ausgabe | Beispielanwendung |
+|---------|-------|---------|------------------|
+| K-Means | Clustering | K Gruppen | Kundensegmentierung |
+| PCA | Dimensionalitätsreduktion | Niedrig-D Daten | Feature-Kompression |
+| Autoencoder | [Repräsentationslernen](/de/glossary/deep-learning/) | Embeddings | Bildkompression |
+| DBSCAN | Dichteclustering | Variable Gruppen | Anomalieerkennung |
+
+## Häufige Fragen
+
+**F: Wie bewertet man unüberwachtes Lernen ohne Labels?**
+
+A: Mehrere Ansätze: (1) Intrinsische Metriken wie Silhouette-Score für Clustering, (2) Rekonstruktionsfehler für Autoencoder, (3) Downstream-Aufgabenleistung (gelernte Repräsentationen für überwachte Aufgabe nutzen), (4) Menschliche Bewertung entdeckter Muster, (5) Vergleich mit bekannter [Ground Truth](/de/glossary/ground-truth/) falls verfügbar.
+
+**F: Was ist selbstüberwachtes Lernen?**
+
+A: Selbstüberwachtes Lernen ist eine Form des unüberwachten Lernens, bei der der Algorithmus seine eigenen Labels aus den Daten erstellt. [LLM](/de/glossary/llm/)-[Pretraining](/de/glossary/pretraining/) ist selbstüberwacht: Das Vorhersagen des nächsten Tokens verwendet den Text selbst als Labels. Es ist technisch unüberwacht (keine menschlichen Labels), aber der Trainingsprozess ähnelt überwachtem Lernen.
+
+**F: Wann sollte ich unüberwacht vs überwacht verwenden?**
+
+A: Verwenden Sie unüberwacht wenn: (1) Sie keine Labels haben, (2) Sie Datenstruktur erkunden/verstehen wollen, (3) Sie Vorverarbeitung brauchen (Dimensionalitätsreduktion), (4) Sie Anomalien finden wollen. Verwenden Sie überwacht wenn Sie Labels haben und eine spezifische Vorhersageaufgabe.
+
+**F: Wie verhält sich unüberwachtes Lernen zu Embeddings?**
+
+A: Viele Embedding-Methoden nutzen unüberwachtes oder selbstüberwachtes Lernen. Word2Vec lernt Wort-Embeddings ohne Labels durch Vorhersagen von Kontextwörtern. Autoencoder lernen komprimierte Repräsentationen. Diese unüberwachten Embeddings ermöglichen dann semantische Suche, Clustering und mehr.
+
+## Verwandte Begriffe
+
+- [Maschinelles Lernen](/de/glossary/machine-learning/) — das breitere Feld
+- [Überwachtes Lernen](/de/glossary/supervised-learning/) — Lernen mit Labels
+- [Embeddings](/de/glossary/embeddings/) — oft unüberwacht gelernt
+- Clustering — ähnliche Elemente gruppieren
+
+---
+
+## Referenzen
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Kapitel 13-14. [Grundlegender Text]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Kapitel 15. [Unüberwachtes Repräsentationslernen]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20.000+ Zitationen]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Grundlegendes VAE-Paper, 15.000+ Zitationen]
+
+## References
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Chapters 13-14. [Foundational text]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 15. [Unsupervised representation learning]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20,000+ citations]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Foundational VAE paper, 15,000+ citations]

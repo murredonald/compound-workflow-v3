@@ -1,0 +1,68 @@
+---
+term: "Aanpassing aan het juridische domein"
+termSlug: "legal-domain-adaptation"
+short: "Juridische domeinaanpassing stemt een AI- of zoeksysteem af op juridische taal, bronnen en redenering zodat output preciezer en verdedigbaar wordt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["authority-ranking-model", "rag", "embeddings", "prompt", "inference"]
+synonyms: ["Legal-domain adaptation", "Domain adaptation for law", "Legal specialization"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Juridische [domeinaanpassing](/nl/glossary/fine-tuning/) is het afstemmen van een AI-systeem (LLM, classifier of retrieval-stack) op juridische teksten en workflows. Het gaat om juridische terminologie, citaties, documentstructuur en domeinspecifieke correctheid (bv. jurisdictie, temporele geldigheid en [bronhiërarchie](/nl/glossary/source-hierarchy/)).
+
+## Waarom het belangrijk is
+
+- **Precisie**: juridische taal is compact, context-gevoelig en woordkeuze is belangrijk.
+- **Brongebondenheid**: juridisch werk vereist antwoorden gekoppeld aan autoritatieve bronnen.
+- **Hoge foutkost**: kleine fouten kunnen grote compliance- of aansprakelijkheidsimpact hebben.
+- **Betere retrieval + generatie**: verbetert zowel wat je vindt als wat je samenvat.
+
+## Hoe het werkt
+
+Domeinaanpassing combineert meestal data-, retrieval- en evaluatiewerk:
+
+```
+Juridische bronnen + labels -> retrieval + prompts + evaluatie aanpassen -> deploy -> fouten monitoren
+```
+
+Typisch: autoritatieve corpora cureren, metadata toevoegen (jurisdictie, inwerkingtreding), autoriteitsranking bouwen, juridische evaluatiesets opzetten en prompts verfijnen voor "[citation](/nl/glossary/citation/)-first" antwoorden.
+
+## Praktisch voorbeeld
+
+Een generieke assistant kan "circulaire" en "wet" als vergelijkbaar behandelen. Een juridisch aangepast systeem herkent dat een circulaire meestal niet-bindende guidance is, boost de bindende norm en formatteert de output met citaties en toepasbaarheidsvoorwaarden.
+
+## Veelgestelde vragen
+
+**Q: Is dit hetzelfde als fine-tuning?**
+
+A: Niet noodzakelijk. Fine-tuning is één mogelijke techniek. Je kan ook veel bereiken met retrieval, autoriteitsranking, prompt design en evaluatie zonder modelgewichten te wijzigen.
+
+**Q: Wat is de grootste valkuil?**
+
+A: "Klinkt plausibel" verwarren met correct. Juridische systemen vragen checks op tijd (geldigheid), jurisdictie en bronkeuze.
+
+## Gerelateerde termen
+
+- [Autoriteitsrankingmodel](/nl/glossary/authority-ranking-model/) - autoriteit in ranking verwerken
+- [RAG](/nl/glossary/rag/) - bronnen ophalen vóór generatie
+- [Embeddings](/nl/glossary/embeddings/) - semantische retrieval over juridisch tekst
+- [Prompt](/nl/glossary/prompt/) - antwoorden sturen naar citaties en constraints
+- [Inference](/nl/glossary/inference/) - runtime-gedrag dat je moet monitoren
+
+---
+
+## Referenties
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

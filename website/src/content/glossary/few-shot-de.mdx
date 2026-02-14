@@ -1,0 +1,173 @@
+---
+term: "Few-Shot Learning"
+termSlug: "few-shot"
+short: "Ein Machine-Learning-Paradigma, bei dem Modelle Aufgaben aus nur wenigen Beispielen lernen, was schnelle Anpassung ohne umfangreiches Neutraining oder Fine-Tuning ermöglicht."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["zero-shot", "in-context-learning", "chain-of-thought", "prompt-engineering"]
+synonyms: ["Few-Shot Prompting", "K-Shot Learning", "Low-Shot Learning"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Few-Shot Learning ist ein Machine-Learning-Ansatz, bei dem Modelle Aufgaben nach nur wenigen Beispielen ausführen (typischerweise 1-10). Im Kontext großer Sprachmodelle wird Few-Shot Learning durch In-Context Learning erreicht: Demonstrationen werden im [Prompt](/de/glossary/prompt/) bereitgestellt, und das Modell leitet das Muster ab, das auf neue Eingaben angewendet werden soll. Dies steht im Gegensatz zu traditionellem [Machine Learning](/de/glossary/machine-learning/), das Tausende von Trainingsbeispielen erfordert, und ermöglicht schnelle Aufgabenanpassung ohne Gewichtsaktualisierungen oder [Fine-Tuning](/de/glossary/fine-tuning/).
+
+## Warum es wichtig ist
+
+Few-Shot Learning revolutioniert KI-Deployment:
+
+- **Kein Training nötig** — Modelle sofort via Prompting anpassen
+- **Dateneffizient** — funktioniert mit minimalen gelabelten Beispielen
+- **Schnelles Prototyping** — Ideen testen ohne ML-Infrastruktur
+- **Kostenreduktion** — teures Fine-Tuning-Compute vermeiden
+- **Flexibilität** — gleiches Modell handhabt diverse Aufgaben
+- **Zugänglichkeit** — Nicht-ML-Experten können Verhalten anpassen
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    FEW-SHOT LEARNING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LERNPARADIGMA-VERGLEICH:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌────────────────┬───────────────────────────────────┐  │
+│  │ Paradigma      │ Beispiele Benötigt                 │  │
+│  ├────────────────┼───────────────────────────────────┤  │
+│  │ Traditionell   │ 10.000 - 1.000.000+ (Training)    │  │
+│  │ Fine-Tuning    │ 100 - 10.000 (Training)           │  │
+│  │ Few-Shot       │ 2 - 10 (im Prompt, kein Training) │  │
+│  │ One-Shot       │ 1 (im Prompt, kein Training)      │  │
+│  │ Zero-Shot      │ 0 (nur Instruktionen)             │  │
+│  └────────────────┴───────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  FEW-SHOT PROMPT STRUKTUR:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  [Optional: Aufgabenbeschreibung/Instruktion]       │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Beispiel 1:                                  │   │ │
+│  │  │ Eingabe: "Der Film war absolut fantastisch" │   │ │
+│  │  │ Ausgabe: Positiv                            │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Beispiel 2:                                  │   │ │
+│  │  │ Eingabe: "Schreckliche Zeitverschwendung"   │   │ │
+│  │  │ Ausgabe: Negativ                            │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Beispiel 3:                                  │   │ │
+│  │  │ Eingabe: "War okay, nichts Besonderes"      │   │ │
+│  │  │ Ausgabe: Neutral                            │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ NEUE EINGABE (zu klassifizieren):           │   │ │
+│  │  │ Eingabe: "Bester Kauf aller Zeiten!"       │   │ │
+│  │  │ Ausgabe: ???                                │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Modell vervollständigt: "Positiv" ✓                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BEISPIELAUSWAHL IST WICHTIG:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  SCHLECHTE Few-Shot Beispiele:                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Bsp 1: "toller Film" → Positiv                      │ │
+│  │ Bsp 2: "tolles Essen" → Positiv                     │ │
+│  │ Bsp 3: "tolles Buch" → Positiv ← Alle gleich!      │ │
+│  │                                                      │ │
+│  │ Problem: Modell lernt nicht wie "negativ" aussieht │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  GUTE Few-Shot Beispiele:                                 │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Bsp 1: "geliebt" → Positiv      ← Deckt positiv    │ │
+│  │ Bsp 2: "gehasst" → Negativ      ← Deckt negativ    │ │
+│  │ Bsp 3: "ist okay" → Neutral     ← Deckt neutral    │ │
+│  │ Bsp 4: "fantastisch!" → Positiv ← Kurze Eingabe    │ │
+│  │ Bsp 5: "schlimmste je" → Negativ ← Grenzfall       │ │
+│  │                                                      │ │
+│  │ ✓ Ausgewogene Klassen                               │ │
+│  │ ✓ Variierte Eingabelängen                          │ │
+│  │ ✓ Grenzfälle enthalten                             │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEW-SHOT VS FINE-TUNING:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────┬─────────────┬───────────────────┐   │
+│  │ Aspekt          │ Few-Shot    │ Fine-Tuning       │   │
+│  ├─────────────────┼─────────────┼───────────────────┤   │
+│  │ Beispiele       │ 2-10        │ 100-10.000        │   │
+│  │ Compute-Kosten  │ 0€ (API)    │ 10€-10.000€+      │   │
+│  │ Setup-Zeit      │ Minuten     │ Stunden-Tage      │   │
+│  │ Flexibilität    │ Hoch        │ Aufgaben-spezif.  │   │
+│  │ Max Genauigkeit │ Gut         │ Besser            │   │
+│  │ Latenz          │ Höher       │ Niedriger         │   │
+│  └─────────────────┴─────────────┴───────────────────┘   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie viele Beispiele sollte ich in Few-Shot Prompts aufnehmen?**
+
+A: Typischerweise geben 3-5 Beispiele gute Ergebnisse. Mehr Beispiele (bis 10-20) können Genauigkeit verbessern, erhöhen aber Kosten und Latenz. Abnehmende Erträge um 5-10 Beispiele für die meisten Aufgaben.
+
+**F: Wie wähle ich aus welche Beispiele aufzunehmen sind?**
+
+A: Wähle diverse, repräsentative Beispiele die alle Klassen/Muster abdecken. Schließe Grenzfälle ein. Für Klassifikation, balanciere Beispiele über alle Kategorien.
+
+**F: Ist die Reihenfolge der Beispiele wichtig?**
+
+A: Ja, Reihenfolge kann Ergebnisse signifikant beeinflussen. Forschung zeigt: (1) platziere relevanteste Beispiele näher an Query, (2) Recency-Bias bedeutet letzte Beispiele haben mehr Einfluss.
+
+**F: Kann Few-Shot Learning scheitern?**
+
+A: Ja. Häufige Fehler: (1) Aufgabe zu komplex für Mustererkennung, (2) Beispiele repräsentieren echte Verteilung nicht, (3) ambige Beispiele verwirren Modell, (4) Prompt zu lang erreicht Kontextlimits.
+
+## Verwandte Begriffe
+
+- [Zero-shot Learning](/de/glossary/zero-shot/) — Aufgaben ohne Beispiele ausführen
+- [In-context Learning](/de/glossary/in-context-learning/) — Lernmechanismus hinter Few-Shot
+- [Chain-of-thought](/de/glossary/chain-of-thought/) — Few-Shot mit Reasoning-Traces
+- Prompt Engineering — effektive Prompts erstellen
+
+---
+
+## Referenzen
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 Few-Shot-Fähigkeiten Paper]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Beispielauswahl-Strategien]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analyse Few-Shot-Mechanik]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Beispiel-Reihenfolge-Effekte]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 few-shot capabilities paper]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Example selection strategies]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analysis of few-shot mechanics]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Example ordering effects]

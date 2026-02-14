@@ -1,0 +1,179 @@
+---
+term: "Uitlegbaarheid"
+termSlug: "explainability"
+short: "Het vermogen om te begrijpen, interpreteren en uitleggen hoe AI/ML-modellen voorspellingen maken—essentieel voor vertrouwen, debugging, regelgevingscompliance en verantwoorde AI-inzet."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["interpretability", "transparency", "black-box", "xai", "feature-importance", "ai-act"]
+synonyms: ["Interpreteerbaarheid", "XAI", "Verklaarbare AI", "Modeltransparantie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Uitlegbaarheid (of Explainable AI/XAI) verwijst naar technieken die AI-modelbeslissingen begrijpelijk maken voor mensen. Het beantwoordt "waarom maakte het model deze [voorspelling](/nl/glossary/inference/)?" in plaats van alleen "wat voorspelde het model?" [Uitlegbaarheid](/nl/glossary/algorithmic-transparency/) bestaat op een spectrum: van inherent interpreteerbare modellen (lineaire regressie, beslisbomen) tot post-hoc verklaringen voor black-box modellen (SHAP, LIME, attentievisualisatie). Naarmate AI-systemen steeds belangrijkere beslissingen nemen (gezondheidszorg, financiën, juridisch), wordt uitlegbaarheid cruciaal voor vertrouwen, verantwoording, debugging en regelgevingscompliance ([AI Act](/nl/glossary/eu-ai-act/), AVG Artikel 22).
+
+## Waarom het belangrijk is
+
+Uitlegbaarheid adresseert kritieke AI-implementatiebehoeften:
+
+- **Vertrouwen** — gebruikers vertrouwen systemen die ze begrijpen
+- **Debugging** — identificeren waarom modellen falen in specifieke gevallen
+- **Regelgevingscompliance** — AI Act vereist uitleg voor hoog-risico AI
+- **Biasdetectie** — onthullen of modellen beschermde attributen gebruiken
+- **Domeinvalidatie** — experts verifiëren dat modelredenering klopt
+- **Juridische verdedigbaarheid** — geautomatiseerde beslissingen uitleggen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     UITLEGBAARHEID                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET UITLEGBAARHEID SPECTRUM:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │    INTERPRETEERBAAR         →          BLACK-BOX    │ │
+│  │    (ingebouwd)                       (heeft XAI nodig)│ │
+│  │                                                      │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │ │
+│  │  │   LINEAIRE  │  │   RANDOM    │  │   DIEP      │ │ │
+│  │  │  REGRESSIE  │  │   FOREST    │  │  NEURAAL    │ │ │
+│  │  │             │  │             │  │  NETWERK    │ │ │
+│  │  │ coëfficiënt │  │ feature     │  │             │ │ │
+│  │  │ = directe   │  │ importance  │  │ 🤷 ???     │ │ │
+│  │  │ uitleg      │  │ beschikbaar │  │ Heeft SHAP  │ │ │
+│  │  │             │  │             │  │ LIME nodig  │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘ │ │
+│  │                                                      │ │
+│  │  ◄─── Meer interpreteerbaar  Minder interpr. ───►   │ │
+│  │  ◄─── Minder krachtig        Krachtiger ───►        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  SOORTEN UITLEG:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. GLOBALE UITLEG                                  │ │
+│  │     "Hoe werkt het model over het algemeen?"        │ │
+│  │                                                      │ │
+│  │     Feature Importance (totaal)                     │ │
+│  │     Leeftijd:  ████████████████  (45%)             │ │
+│  │     Inkomen:   ███████████       (28%)             │ │
+│  │     Locatie:   █████             (15%)             │ │
+│  │     Historie:  ████              (12%)             │ │
+│  │                                                      │ │
+│  │  2. LOKALE UITLEG                                   │ │
+│  │     "Waarom maakte het model DEZE voorspelling?"    │ │
+│  │                                                      │ │
+│  │     Voorspelling: AFGEWEZEN                         │ │
+│  │                                                      │ │
+│  │     Bijdragende factoren voor DIT geval:           │ │
+│  │     Leeftijd < 25:  ─────█████  (-0.34)            │ │
+│  │     Inkomen laag:   ─────████   (-0.28)            │ │
+│  │     Goede historie: ████─────   (+0.21)            │ │
+│  │                                                      │ │
+│  │     "Afgewezen voornamelijk door jonge leeftijd    │ │
+│  │      en laag inkomen ondanks goede historie"       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  POPULAIRE XAI TECHNIEKEN:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  SHAP (SHapley Additive exPlanations)               │ │
+│  │  • Speltheoretische aanpak                          │ │
+│  │  • Kent bijdragewaarde toe aan elk kenmerk          │ │
+│  │  • Consistent: zelfde input = zelfde uitleg         │ │
+│  │  • Werkt op elk model (model-agnostisch)            │ │
+│  │                                                      │ │
+│  │  LIME (Local Interpretable Model-agnostic Exp)      │ │
+│  │  • Creëert lokale lineaire benadering              │ │
+│  │  • Verstoort input, observeert veranderingen       │ │
+│  │  • Fit simpel model rond voorspelling              │ │
+│  │  • Goed voor beeld/tekst uitleg                    │ │
+│  │                                                      │ │
+│  │  ATTENTIE VISUALISATIE (voor transformers)          │ │
+│  │  Input: "De film was absoluut verschrikkelijk"     │ │
+│  │  Attentie: De film was absoluut verschrikkelijk    │ │
+│  │            ░   ░   ░    ▓▓      ████               │ │
+│  │  Model focuste op "verschrikkelijk" en "absoluut"  │ │
+│  │                                                      │ │
+│  │  COUNTERFACTUAL UITLEG                              │ │
+│  │  "Wat zou moeten veranderen voor andere uitkomst?" │ │
+│  │  Huidig: Lening AFGEWEZEN                          │ │
+│  │  Counterfactual: "Als inkomen €5000 hoger was,    │ │
+│  │  zou lening GOEDGEKEURD worden"                    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WETTELIJKE VEREISTEN:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  EU AI ACT (2024)                                   │ │
+│  │  ├─ Hoog-risico AI moet begrijpelijk zijn          │ │
+│  │  ├─ Gebruikers moeten outputs kunnen interpreteren │ │
+│  │  └─ Documentatie van modelgedrag vereist           │ │
+│  │                                                      │ │
+│  │  AVG Artikel 22                                     │ │
+│  │  ├─ Recht op uitleg voor geautomatiseerde besluiten│ │
+│  │  └─ "Betekenisvolle info over logica betrokken"   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen uitlegbaarheid en interpreteerbaarheid?**
+
+A: Vaak door elkaar gebruikt. Technisch: interpreteerbaarheid = hoe begrijpelijk een model inherent is; uitlegbaarheid = methodes om elk modelgedrag uit te leggen. Een beslisboom is interpreteerbaar; een neuraal netwerk kan uitlegbaar worden gemaakt via SHAP.
+
+**V: Vertragen uitleg de inferentie?**
+
+A: Post-hoc uitleg (SHAP, LIME) voegen berekening toe. Je kunt uitleg offline berekenen voor analyse, of benaderingsmethodes gebruiken voor realtime.
+
+**V: Zijn attentie-gewichten betrouwbare uitleg?**
+
+A: Controversieel. Attentie toont waar het model "keek," maar bewijst geen causaliteit. Onderzoek toont dat attentie gemanipuleerd kan worden zonder voorspellingen te veranderen.
+
+## Gerelateerde termen
+
+- AI Act — EU-regelgeving die uitlegbaarheid vereist
+- Black-box model — modellen die XAI-technieken nodig hebben
+
+---
+
+## Referenties
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [SHAP-methodologie]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining Predictions of Any Classifier](https://arxiv.org/abs/1602.04938)", KDD. [LIME-methodologie]
+
+> Rudin (2019), "[Stop Explaining Black Box ML Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence.
+
+> Europese Commissie (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Official Journal.
+
+## References
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [SHAP methodology]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining the Predictions of Any Classifier](https://arxiv.org/abs/1602.04938)", KDD. [LIME methodology]
+
+> Rudin (2019), "[Stop Explaining Black Box Machine Learning Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence. [Case for inherent interpretability]
+
+> European Commission (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Official Journal. [Regulatory requirements for explainability]

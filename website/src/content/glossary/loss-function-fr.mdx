@@ -1,0 +1,135 @@
+---
+term: "Fonction de Perte"
+termSlug: "loss-function"
+short: "Une fonction mathématique qui mesure à quel point les prédictions d'un modèle sont éloignées des sorties désirées pendant l'entraînement."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["gradient-descent", "backpropagation", "perplexity", "fine-tuning"]
+synonyms: ["Fonction de coût", "Fonction objectif", "Fonction d'erreur", "Perte d'entraînement"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Une fonction de perte (ou fonction de coût) est une mesure mathématique de la différence entre les [prédictions](/fr/glossary/inference/) d'un modèle et les valeurs cibles réelles. Pendant l'entraînement, les paramètres du modèle sont ajustés pour minimiser cette perte, enseignant effectivement au modèle à faire de meilleures prédictions. Pour les modèles de langage, la perte d'entropie croisée est la plus courante—mesurant à quel point la distribution de probabilité prédite correspond au vrai token suivant.
+
+## Pourquoi c'est important
+
+Les fonctions de perte sont centrales en [apprentissage automatique](/fr/glossary/machine-learning/) :
+
+- **Signal d'entraînement** — guide les mises à jour des paramètres pendant l'optimisation
+- **Comparaison de modèles** — comparer différentes architectures ou hyperparamètres
+- **Suivi de progression** — surveiller si l'entraînement s'améliore
+- **Détection de convergence** — identifier quand arrêter l'entraînement
+- **Proxy de qualité** — une perte plus basse indique généralement de meilleures performances
+
+Le choix de la fonction de perte façonne ce que le modèle apprend à optimiser.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    FONCTION DE PERTE                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PERTE D'ENTROPIE CROISÉE (pour modèles de langage):       │
+│  ───────────────────────────────────────────────────       │
+│                                                            │
+│  Vrai label: "chat" (one-hot: [0, 1, 0, 0])               │
+│  Prédit:             [0.1, 0.7, 0.15, 0.05]               │
+│                                                            │
+│  Perte = -Σ true_i × log(pred_i)                          │
+│        = -0×log(0.1) - 1×log(0.7) - 0×log(0.15) - ...     │
+│        = -log(0.7)                                         │
+│        = 0.36                                              │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VISUALISATION DU PAYSAGE DE PERTE:           │        │
+│  │                                                │        │
+│  │     Perte                                      │        │
+│  │       │     *                                  │        │
+│  │       │    * *        *                        │        │
+│  │       │   *   *      * *                       │        │
+│  │       │  *     *    *   *                      │        │
+│  │       │ *       *  *     *                     │        │
+│  │       │*         **       *                    │        │
+│  │       │           ▲        **                  │        │
+│  │       └───────────┼──────────────► Params     │        │
+│  │                   │                            │        │
+│  │                   Minimum local (objectif)     │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  FONCTIONS DE PERTE COURANTES:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  Entropie croisée    Classification, LLMs                  │
+│  ─────────────────────────────────────                     │
+│  L = -Σ y_i × log(ŷ_i)                                    │
+│                                                            │
+│  Erreur quadratique moyenne (MSE)    Régression            │
+│  ─────────────────────────────────────                     │
+│  L = 1/n × Σ(y - ŷ)²                                      │
+│                                                            │
+│  Entropie croisée binaire    Classification binaire        │
+│  ─────────────────────────────────────                     │
+│  L = -[y×log(ŷ) + (1-y)×log(1-ŷ)]                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Fonctions de perte par tâche:**
+| Tâche | Fonction de perte | Notes |
+|-------|-------------------|-------|
+| Modélisation du langage | Entropie croisée | Prédit distribution du prochain token |
+| Classification | Entropie croisée | Prédictions multi-classes |
+| Régression | MSE / MAE | Sorties continues |
+| Apprentissage contrastif | InfoNCE | Similarité d'embedding |
+| [Apprentissage par renforcement](/fr/glossary/reinforcement-learning/) | Policy gradient | Optimisation de récompense |
+
+## Questions fréquentes
+
+**Q : Pourquoi la perte diminue mais la qualité du modèle ne s'améliore pas ?**
+
+R : Cela indique souvent du surapprentissage—le modèle mémorise les données d'entraînement au lieu d'apprendre des patterns généralisables. Surveillez la perte de validation à côté de la perte d'entraînement; si la perte d'entraînement baisse mais la perte de validation monte, vous surapprenez.
+
+**Q : Quelle est une bonne valeur de perte ?**
+
+R : Cela dépend entièrement de la tâche et du jeu de données. Concentrez-vous sur si la perte diminue pendant l'entraînement et comment elle corrèle avec les métriques d'évaluation. Pour les modèles de langage, une perte autour de 2-3 nats indique souvent un bon apprentissage.
+
+**Q : Quelle différence entre perte et exactitude ?**
+
+R : La perte est une fonction continue différentiable utilisée pour l'optimisation; l'exactitude est une métrique discrète pour l'évaluation. Un modèle peut avoir une perte qui s'améliore mais une exactitude stagnante—l'entraînement utilise les gradients de perte pour ajuster les poids.
+
+**Q : Pourquoi utiliser l'entropie croisée plutôt que l'exactitude pour l'entraînement ?**
+
+R : L'entropie croisée fournit des gradients lisses pour l'optimisation. L'exactitude est non-différentiable (0 ou 1 par échantillon) donc ne peut pas guider la descente de gradient. L'entropie croisée pénalise plus lourdement les prédictions erronées confiantes.
+
+## Termes associés
+
+- [Descente de Gradient](/fr/glossary/gradient-descent/) — optimisation utilisant la perte
+- [Rétropropagation](/fr/glossary/backpropagation/) — calcule les gradients de perte
+- [Perplexité](/fr/glossary/perplexity/) — exp(perte) pour modèles de langage
+- [Fine-tuning](/fr/glossary/fine-tuning/) — minimise la perte sur nouvelles données
+
+---
+
+## Références
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapitre 6. [20 000+ [citations](/fr/glossary/citation/)]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8 000+ citations]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50 000+ citations]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15 000+ citations]
+
+## References
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8,000+ citations]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50,000+ citations]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15,000+ citations]

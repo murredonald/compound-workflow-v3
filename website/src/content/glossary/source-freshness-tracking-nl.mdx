@@ -1,0 +1,69 @@
+---
+term: "Tracking van bronactualiteit"
+termSlug: "source-freshness-tracking"
+short: "Tracking van bronactualiteit legt vast hoe actueel elke bron is (versie, laatste update, geldigheidsdata) zodat retrieval mee evolueert met veranderend recht."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["regulatory-drift-detection", "search-analytics", "indexing-strategy", "content-discoverability", "authority-ranking-model"]
+synonyms: ["Freshness monitoring", "Source currency tracking", "Document freshness scoring"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Tracking van bronactualiteit is het bijhouden en gebruiken van "currency"-metadata per document: laatste update, publicatiedatum, geldigheidsdata (inwerkingtreding) en versie-identifiers. Het helpt retrieval om de meest actuele en toepasbare bronnen te prefereren en om mogelijk verouderd materiaal te signaleren.
+
+## Waarom het belangrijk is
+
+- **Recht wijzigt continu**: via wijzigingen, consolidaties en administratieve guidance.
+- **Minder verouderde [citaties](/nl/glossary/citation/)**: verlaagt kans op verwijzingen naar oude versies.
+- **Betere ranking**: actualiteit helpt bij gelijkwaardige matches.
+- **Operationele monitoring**: alerts voor bronnen die te lang niet vernieuwd zijn.
+
+## Hoe het werkt
+
+Meestal als metadata + scoringsregels:
+
+```
+Ingest -> extraheer data/versies -> sla velden op -> rank met actualiteit -> alert bij staleness
+```
+
+Voorbeelden van velden:
+
+- `published_at`, `updated_at`
+- `effective_from`, `effective_to` (of opheffingsdatum)
+- `version_id` / consolidatie-id’s
+- `last_checked_at` (laatste crawler-check)
+
+## Praktisch voorbeeld
+
+Als een geconsolideerd wetsartikel vorige maand werd bijgewerkt, boost het systeem dat boven een oudere PDF-extract. Als een bron lang niet gecontroleerd is, wordt die geflagd voor review of lager gewogen.
+
+## Veelgestelde vragen
+
+**Q: Is recency altijd goed voor ranking?**
+
+A: Niet altijd. Actualiteit telt enkel als de nieuwere bron ook toepasbaar is. Autoriteit en toepasbaarheid blijven primair.
+
+**Q: Hoe vermijd je "nieuw maar irrelevant" boosting?**
+
+A: Gebruik actualiteit als secundair signaal en combineer met sterke relevantie- en toepasbaarheidsfilters.
+
+## Gerelateerde termen
+
+- [Detectie van regelgevingsdrift](/nl/glossary/regulatory-drift-detection/) - wijzigingen detecteren die updates vereisen
+- [Search Analytics](/nl/glossary/search-analytics/) - staleness en failures monitoren
+- [Indexing Strategy](/nl/glossary/indexing-strategy/) - refresh-cadans en ingest ontwerpen
+- [Content Discoverability](/nl/glossary/content-discoverability/) - versies en data vindbaar maken
+- [Autoriteitsrankingmodel](/nl/glossary/authority-ranking-model/) - autoriteit combineren met actualiteit
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

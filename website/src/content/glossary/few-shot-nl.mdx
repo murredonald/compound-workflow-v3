@@ -1,0 +1,185 @@
+---
+term: "Few-Shot Learning"
+termSlug: "few-shot"
+short: "Een machine learning paradigma waarbij modellen taken leren uitvoeren met slechts een handvol voorbeelden, wat snelle aanpassing mogelijk maakt zonder uitgebreide hertraining of fine-tuning."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["zero-shot", "in-context-learning", "chain-of-thought", "prompt-engineering"]
+synonyms: ["Few-shot prompting", "K-shot learning", "Low-shot learning"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Few-shot learning is een machine learning aanpak waarbij modellen taken uitvoeren na slechts een klein aantal voorbeelden te hebben gezien (typisch 1-10). In de context van grote taalmodellen wordt few-shot learning bereikt via in-context learning: demonstraties worden in de [prompt](/nl/glossary/prompt/) gegeven, en het model leidt het patroon af om toe te passen op nieuwe invoer. Dit contrasteert met traditionele machine learning die duizenden trainingsvoorbeelden vereist, wat snelle taakaanpassing mogelijk maakt zonder gewichtsupdates of [fine-tuning](/nl/glossary/fine-tuning/).
+
+## Waarom het belangrijk is
+
+Few-shot learning revolutioneert AI-implementatie:
+
+- **Geen training nodig** — pas modellen direct aan via prompting
+- **Data-efficiënt** — werkt met minimale gelabelde voorbeelden
+- **Snel prototypen** — test ideeën zonder ML-infrastructuur
+- **Kostenbesparing** — vermijd dure fine-tuning compute
+- **Flexibiliteit** — hetzelfde model handelt diverse taken af
+- **Toegankelijkheid** — niet-ML experts kunnen gedrag aanpassen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    FEW-SHOT LEARNING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LEERPARADIGMA VERGELIJKING:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ┌────────────────┬───────────────────────────────────┐  │
+│  │ Paradigma      │ Voorbeelden Nodig                  │  │
+│  ├────────────────┼───────────────────────────────────┤  │
+│  │ Traditioneel   │ 10.000 - 1.000.000+ (training)    │  │
+│  │ Fine-tuning    │ 100 - 10.000 (training)           │  │
+│  │ Few-shot       │ 2 - 10 (in prompt, geen training) │  │
+│  │ One-shot       │ 1 (in prompt, geen training)      │  │
+│  │ Zero-shot      │ 0 (alleen instructies)            │  │
+│  └────────────────┴───────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  FEW-SHOT PROMPT STRUCTUUR:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  [Optioneel: Taakbeschrijving/instructie]           │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Voorbeeld 1:                                 │   │ │
+│  │  │ Invoer: "De film was absoluut fantastisch"  │   │ │
+│  │  │ Uitvoer: Positief                           │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Voorbeeld 2:                                 │   │ │
+│  │  │ Invoer: "Verschrikkelijke tijdverspilling"  │   │ │
+│  │  │ Uitvoer: Negatief                           │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Voorbeeld 3:                                 │   │ │
+│  │  │ Invoer: "Het was oké, niets bijzonders"     │   │ │
+│  │  │ Uitvoer: Neutraal                           │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ NIEUWE INVOER (te classificeren):           │   │ │
+│  │  │ Invoer: "Beste aankoop ooit!"              │   │ │
+│  │  │ Uitvoer: ???                                │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Model voltooit: "Positief" ✓                       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  VOORBEELDSELECTIE IS BELANGRIJK:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  SLECHTE few-shot voorbeelden:                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Vb 1: "geweldige film" → Positief                   │ │
+│  │ Vb 2: "geweldig eten" → Positief                    │ │
+│  │ Vb 3: "geweldig boek" → Positief  ← Alle zelfde!   │ │
+│  │                                                      │ │
+│  │ Probleem: Model leert niet wat "negatief" eruitziet│ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  GOEDE few-shot voorbeelden:                              │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Vb 1: "geweldig" → Positief     ← Dekt positief    │ │
+│  │ Vb 2: "verschrikkelijk" → Negatief ← Dekt negatief│ │
+│  │ Vb 3: "is oké" → Neutraal       ← Dekt neutraal   │ │
+│  │ Vb 4: "fantastisch!" → Positief ← Korte invoer    │ │
+│  │ Vb 5: "slechtste ooit" → Negatief ← Randgeval     │ │
+│  │                                                      │ │
+│  │ ✓ Gebalanceerde klassen                             │ │
+│  │ ✓ Gevarieerde invoerlengtes                        │ │
+│  │ ✓ Randgevallen opgenomen                           │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEW-SHOT VS FINE-TUNING:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────┬─────────────┬───────────────────┐   │
+│  │ Aspect          │ Few-Shot    │ Fine-Tuning       │   │
+│  ├─────────────────┼─────────────┼───────────────────┤   │
+│  │ Voorbeelden     │ 2-10        │ 100-10.000        │   │
+│  │ Compute kosten  │ €0 (API)    │ €10-€10.000+      │   │
+│  │ Setup tijd      │ Minuten     │ Uren-Dagen        │   │
+│  │ Flexibiliteit   │ Hoog        │ Taak-specifiek    │   │
+│  │ Max nauwkeur.   │ Goed        │ Beter             │   │
+│  │ Latentie        │ Hoger       │ Lager             │   │
+│  └─────────────────┴─────────────┴───────────────────┘   │
+│                                                            │
+│  Wanneer few-shot gebruiken:                              │
+│  • Snel prototypen en testen                              │
+│  • Beperkte trainingsdata beschikbaar                     │
+│  • Veel verschillende taken nodig                         │
+│  • Kostenlimieten                                          │
+│                                                            │
+│  Wanneer fine-tunen:                                       │
+│  • Maximale nauwkeurigheid vereist                        │
+│  • Hoog-volume productie gebruik                          │
+│  • Specifieke domein expertise nodig                      │
+│  • Latentie kritiek                                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoeveel voorbeelden moet ik opnemen in few-shot prompts?**
+
+A: Typisch geven 3-5 voorbeelden goede resultaten. Meer voorbeelden (tot 10-20) kunnen nauwkeurigheid verbeteren maar verhogen kosten en latentie. Afnemende meeropbrengsten rond 5-10 voorbeelden voor de meeste taken.
+
+**V: Hoe selecteer ik welke voorbeelden op te nemen?**
+
+A: Kies diverse, representatieve voorbeelden die alle klassen/patronen dekken. Neem randgevallen op. Voor classificatie, balanceer voorbeelden over alle categorieën. Overweeg voorbeelden vergelijkbaar met verwachte invoer te gebruiken.
+
+**V: Maakt de volgorde van voorbeelden uit in few-shot prompts?**
+
+A: Ja, volgorde kan resultaten significant beïnvloeden. Onderzoek toont: (1) plaats meest relevante voorbeelden dichter bij de query, (2) recentiebias betekent dat laatste voorbeelden meer invloed hebben, (3) voor classificatie, wissel klassen af.
+
+**V: Kan few-shot learning falen?**
+
+A: Ja. Veelvoorkomende mislukkingen: (1) taak te complex voor [patroonherkenning](/nl/glossary/machine-learning/), (2) voorbeelden representeren werkelijke distributie niet, (3) ambigue voorbeelden verwarren model, (4) prompt te lang raakt contextlimieten.
+
+## Gerelateerde termen
+
+- [Zero-shot learning](/nl/glossary/zero-shot/) — taken uitvoeren zonder voorbeelden
+- [In-context learning](/nl/glossary/in-context-learning/) — leermechanisme achter few-shot
+- [Chain-of-thought](/nl/glossary/chain-of-thought/) — few-shot met redeneertraces
+- Prompt engineering — effectieve prompts maken
+
+---
+
+## Referenties
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 few-shot mogelijkheden paper]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Voorbeeldselectie strategieën]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analyse few-shot mechanica]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Voorbeeldvolgorde effecten]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 few-shot capabilities paper]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Example selection strategies]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analysis of few-shot mechanics]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Example ordering effects]

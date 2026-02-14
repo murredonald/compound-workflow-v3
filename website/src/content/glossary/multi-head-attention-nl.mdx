@@ -1,0 +1,105 @@
+---
+term: "Multi-Head Attention"
+termSlug: "multi-head-attention"
+short: "Een techniek die meerdere attention-operaties parallel uitvoert, waardoor modellen verschillende soorten relaties tegelijk kunnen vastleggen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["attention-mechanism", "self-attention", "transformer-architecture", "llm"]
+synonyms: ["MHA", "Multi-headed attention", "Parallelle attention heads"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Multi-Head Attention is een mechanisme dat meerdere attention-operaties parallel uitvoert, elk met verschillende geleerde projecties. In plaats van één enkele attention-functie te berekenen, voert het model meerdere "heads" gelijktijdig uit, elk gericht op het vastleggen van verschillende aspecten van relaties in de data. De outputs worden vervolgens geconcateneerd en geprojecteerd om het eindresultaat te produceren.
+
+## Waarom het belangrijk is
+
+Multi-Head Attention pakt beperkingen van single-head attention aan:
+
+- **Diverse representaties** — verschillende heads kunnen verschillende relatietypes leren (syntactisch, semantisch, positioneel)
+- **Rijkere expressiviteit** — het gelijktijdig vastleggen van meerdere patronen verbetert de modelcapaciteit
+- **Stabiele training** — meerdere heads bieden redundantie en stabiliteit in gradiëntenstroom
+- **[Interpreteerbaarheid](/nl/glossary/explainability/)** — individuele heads specialiseren zich vaak in identificeerbare taalkundige patronen
+
+Dit is waarom Transformers multi-head attention gebruiken in plaats van enkele attention—het is fundamenteel krachtiger.
+
+## Hoe het werkt
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MULTI-HEAD ATTENTION                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Input ──┬──→ Head 1 (W_Q1, W_K1, W_V1) ──→ Attention 1    │
+│          │                                                  │
+│          ├──→ Head 2 (W_Q2, W_K2, W_V2) ──→ Attention 2    │
+│          │                                                  │
+│          ├──→ Head 3 (W_Q3, W_K3, W_V3) ──→ Attention 3    │
+│          │                                    │             │
+│          └──→  ...h heads...                  ▼             │
+│                                         [Concateneren]      │
+│                                               │             │
+│                                    Lineaire Projectie (W_O) │
+│                                               │             │
+│                                               ▼             │
+│                                            Output           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+1. **Projecteer inputs** — Q, K, V worden h keer lineair geprojecteerd met verschillende geleerde gewichten
+2. **Parallelle attention** — elke head berekent attention onafhankelijk
+3. **Concateneren** — head outputs worden geconcateneerd langs de feature-dimensie
+4. **Eindprojectie** — geconcateneerde output wordt lineair teruggeprojecteerd naar modeldimensie
+
+Formule: `MultiHead(Q,K,V) = Concat(head_1,...,head_h) × W_O`
+
+Waarbij elke `head_i = Attention(Q×W_Qi, K×W_Ki, V×W_Vi)`
+
+## Veelgestelde vragen
+
+**V: Hoeveel heads worden typisch gebruikt?**
+
+A: Gangbare configuraties gebruiken 8, 12 of 16 heads. GPT-3 gebruikt 96 heads met 12.288 verborgen dimensie. Het aantal heads wordt meestal zo gekozen dat de dimensie van elke head (d_model / num_heads) een redelijke grootte heeft zoals 64 of 128.
+
+**V: Leren verschillende heads verschillende dingen?**
+
+A: Ja, onderzoek toont dat heads zich vaak specialiseren. Sommige attenderen aan aangrenzende woorden, andere aan syntactische afhankelijkheden, specifieke posities of zeldzame tokens. Niet alle heads zijn even belangrijk—sommige kunnen worden verwijderd met minimaal prestatieverlies.
+
+**V: Waarom niet gewoon bredere single-head attention?**
+
+A: Bredere single-head attention heeft hetzelfde aantal parameters maar minder representationele diversiteit. De parallelle subspaces van multi-head attention leggen rijkere, meer gevarieerde patronen vast.
+
+**V: Wat is Group Query Attention (GQA)?**
+
+A: GQA is een efficiënte variant waarbij meerdere [query](/nl/glossary/prompt/) heads Key-Value heads delen, wat geheugen en berekening vermindert terwijl kwaliteit behouden blijft. Gebruikt in modellen zoals Llama 2.
+
+## Gerelateerde termen
+
+- [Attention-mechanisme](/nl/glossary/attention-mechanism/) — de fundamentele techniek
+- [Self-Attention](/nl/glossary/self-attention/) — elke head voert self-attention uit
+- [Transformer-architectuur](/nl/glossary/transformer-architecture/) — gebruikt multi-head attention overal
+- [LLM](/nl/glossary/llm/) — moderne taalmodellen vertrouwen op multi-head attention
+
+---
+
+## Referenties
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ [citaties](/nl/glossary/citation/)]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1.200+ citaties]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ citaties]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ citaties]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1,200+ citations]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ citations]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ citations]

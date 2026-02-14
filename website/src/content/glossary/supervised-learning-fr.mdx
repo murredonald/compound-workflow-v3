@@ -1,0 +1,147 @@
+---
+term: "Apprentissage Supervisé"
+termSlug: "supervised-learning"
+short: "Une approche de machine learning où les modèles apprennent de données d'entraînement étiquetées pour prédire des sorties."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["machine-learning", "unsupervised-learning", "deep-learning", "loss-function"]
+synonyms: ["ML supervisé", "Apprentissage étiqueté", "Modélisation prédictive", "Apprentissage inductif"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'apprentissage supervisé est un paradigme de machine learning où les algorithmes apprennent à partir de données d'entraînement étiquetées—des exemples qui incluent à la fois les features d'entrée et la sortie correcte (étiquette). Le modèle apprend le mapping entre entrées et sorties, puis applique cette relation apprise pour prédire des étiquettes pour de nouvelles données non vues. Il s'appelle "supervisé" car le processus d'entraînement est guidé par des réponses correctes connues, comme un enseignant supervisant un élève.
+
+## Pourquoi c'est important
+
+L'apprentissage supervisé est l'approche ML la plus courante :
+
+- **Signal d'entraînement clair** — les réponses connues guident l'apprentissage
+- **Précision mesurable** — [prédictions](/fr/glossary/inference/) vs. étiquettes permet la validation
+- **Applications pratiques** — détection de spam, diagnostic médical, scoring crédit
+- **Fondement des [LLMs](/fr/glossary/llm/)** — la prédiction du prochain token est supervisée
+- **Résultats interprétables** — prédictions mappées à des classes ou valeurs définies
+
+La plupart des systèmes ML en production utilisent l'apprentissage supervisé.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  APPRENTISSAGE SUPERVISÉ                   │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PHASE D'ENTRAÎNEMENT:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Données d'Entraînement Étiquetées:                        │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │ Entrée (Features)             │ Étiquette       │      │
+│  ├─────────────────────────────────────────────────┤      │
+│  │ [Email: "Gagnez 1000€..."]    │    SPAM        │      │
+│  │ [Email: "Réunion à 15h"]      │    PAS SPAM    │      │
+│  │ [Email: "Cliquez ici!"]       │    SPAM        │      │
+│  │ [Email: "Mise à jour projet"] │    PAS SPAM    │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │            ALGORITHME D'APPRENTISSAGE            │      │
+│  │                                                  │      │
+│  │  1. Faire prédiction: ŷ = f(x)                  │      │
+│  │  2. Comparer à l'étiquette: Erreur = ŷ - y     │      │
+│  │  3. Mettre à jour modèle pour réduire erreur    │      │
+│  │  4. Répéter jusqu'à minimisation erreur         │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│                   MODÈLE ENTRAÎNÉ                          │
+│                                                            │
+│  PHASE DE PRÉDICTION:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  Nouvel Email ──► Modèle Entraîné ──► Prédiction: SPAM?   │
+│                                                            │
+│  DEUX TYPES PRINCIPAUX:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  CLASSIFICATION:              RÉGRESSION:                  │
+│  Prédire catégories           Prédire valeurs continues   │
+│                                                            │
+│  "Chat" ou "Chien"?          "Prix maison = 450 000€"     │
+│  "Spam" ou "Pas Spam"?       "Température = 23.5°C"       │
+│  "Positif" ou "Négatif"?     "Ventes = 12 500€"           │
+│                                                            │
+│       ┌───┐ ┌───┐                    ↗                    │
+│       │ A │ │ B │             ──────●────                 │
+│       └───┘ └───┘                ↗                        │
+│    Classes discrètes       Ligne continue                  │
+│                                                            │
+│  ALGORITHMES COURANTS:                                     │
+│  ─────────────────────                                     │
+│  • Régression Logistique  (classification)                │
+│  • Arbres de Décision     (les deux)                      │
+│  • Forêts Aléatoires      (les deux)                      │
+│  • Réseaux Neuronaux      (les deux)                      │
+│  • Machines à Vecteurs    (classification)                │
+│  • Régression Linéaire    (régression)                    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Classification vs Régression:**
+| Aspect | Classification | Régression |
+|--------|---------------|------------|
+| Sortie | Catégories discrètes | Valeurs continues |
+| Exemple | Détection spam | Prédiction prix |
+| Métriques | Accuracy, F1-score | MSE, R-carré |
+| Fonction perte | Cross-entropie | Erreur quadratique |
+
+## Questions fréquentes
+
+**Q : Qu'est-ce qui rend les données "étiquetées" ?**
+
+R : Les données étiquetées ont à la fois des entrées et des sorties correctes connues. Pour la classification d'images : images (entrée) + ce qu'elles contiennent (étiquette). Pour la détection de spam : emails (entrée) + tags spam/pas-spam (étiquette). Les humains créent généralement les étiquettes, ce qui est coûteux et chronophage.
+
+**Q : Comment l'entraînement des LLMs est-il supervisé ?**
+
+R : Le [pré-entraînement](/fr/glossary/pretraining/) des LLMs est auto-supervisé : l'"étiquette" pour chaque token est simplement le prochain token dans le texte. Étant donné "Le chat était assis sur le", le modèle apprend à prédire "tapis". Pas d'étiquetage humain nécessaire—le texte lui-même fournit la supervision.
+
+**Q : Et si je n'ai pas de données étiquetées ?**
+
+R : Vous avez plusieurs options : (1) Utiliser l'apprentissage non supervisé pour trouver des patterns, (2) Utiliser l'apprentissage semi-supervisé avec quelques étiquettes, (3) Générer des étiquettes vous-même ou avec du crowdsourcing, (4) Utiliser le transfer learning de modèles pré-entraînés, (5) Appliquer l'active learning pour étiqueter d'abord les exemples les plus informatifs.
+
+**Q : Combien de données étiquetées suffisent ?**
+
+R : Cela varie beaucoup. Problèmes simples : centaines d'exemples. Deep learning complexe : milliers à millions. Règle générale : 10× plus d'échantillons que de features. Avec le transfer learning/[fine-tuning](/fr/glossary/fine-tuning/), beaucoup moins peut suffire.
+
+## Termes associés
+
+- [Machine Learning](/fr/glossary/machine-learning/) — le domaine plus large
+- [Apprentissage Non Supervisé](/fr/glossary/unsupervised-learning/) — apprentissage sans étiquettes
+- [Fonction de Perte](/fr/glossary/loss-function/) — mesure l'erreur de prédiction
+- [Apprentissage Profond](/fr/glossary/deep-learning/) — utilise des réseaux neuronaux pour tâches supervisées
+
+---
+
+## Références
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Texte fondateur]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70 000+ [citations](/fr/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapitre 5. [Fondamentaux de l'apprentissage supervisé]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Théorie fondamentale]
+
+## References
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Foundational text]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 5. [Supervised learning fundamentals]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Foundational theory]

@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layout/Section.astro";
 import Card from "@/components/ui/Card.astro";
+import ScreenshotPlaceholder from "@/components/ui/ScreenshotPlaceholder.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "nl";
@@ -14,73 +15,95 @@ const locale = "nl";
   path="/features/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
-      <div class="mx-auto max-w-3xl text-center">
-        <h1 class="text-display text-foreground">{t("nav.features", locale)}</h1>
-        <p class="mt-4 text-body-lg text-muted-foreground">{t("site.description", locale)}</p>
+    <Section>
+      <div class="max-w-3xl">
+        <p class="text-body-sm font-medium text-primary uppercase tracking-wider mb-4">Functies</p>
+        <h1 class="text-display font-bold tracking-tight mb-6">
+          Onderzoekstools gebouwd voor fiscale professionals, niet voor algemeen giswerk.
+        </h1>
+        <p class="text-body-lg text-muted-foreground">
+          Drie pijlers die Auryth onderscheiden: vertrouwen dat u kunt meten, redenering die u kunt volgen, en Belgische fiscale diepgang die geen algemene AI kan evenaren.
+        </p>
       </div>
     </Section>
 
-    <Section muted id="transparency">
-      <h2 class="text-h2 text-foreground">{t("trust.transparency", locale)}</h2>
-      <p class="mt-4 text-body text-muted-foreground">{t("trust.transparency_desc", locale)}</p>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+    <Section muted id="honest-by-design">
+      <div class="max-w-3xl mb-8">
+        <h2 class="text-h2 font-bold text-foreground">{t("trust.transparency", locale)}</h2>
+        <p class="mt-4 text-body text-muted-foreground">{t("trust.transparency_desc", locale)}</p>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 max-w-4xl">
         <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">Betrouwbaarheidsscores</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Elk antwoord gescoord op betrouwbaarheid. Hoog, matig of laag vertrouwen — altijd zichtbaar.</p>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Betrouwbaarheidsscores</h3>
+          <p class="text-body-sm text-muted-foreground">Elk antwoord gescoord op betrouwbaarheid. Hoog, matig of laag vertrouwen — altijd zichtbaar, zodat u precies weet hoeveel gewicht u eraan moet geven.</p>
         </Card>
         <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">Broncitaties</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Elke bewering gekoppeld aan de juridische bron. Artikelverwijzingen, arresten en circulaires — altijd verifieerbaar.</p>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Broncitaties</h3>
+          <p class="text-body-sm text-muted-foreground">Elke bewering gekoppeld aan de juridische bron. Artikelverwijzingen, arresten en circulaires — altijd verifieerbaar, nooit een zwarte doos.</p>
         </Card>
       </div>
-      <div class="mt-8 rounded-lg border border-border bg-muted/50 p-8 text-center text-muted-foreground">
-        <p class="text-body-sm">Screenshot placeholder — Transparantie dashboard</p>
-      </div>
-      <div class="mt-8 text-center">
-        <a href={`/${locale}/waitlist/`} class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{t("hero.cta", locale)}</a>
+      <div class="mt-10 max-w-4xl">
+        <ScreenshotPlaceholder label="Screenshot: Confidence score UI" suggestion="Annotated UI: 0-100 confidence meter with green/amber/red zones, source count badge, list of cited authorities with legislation/ruling icons, and temporal validity indicator." />
       </div>
     </Section>
 
-    <Section id="precision">
-      <h2 class="text-h2 text-foreground">{t("trust.precision", locale)}</h2>
-      <p class="mt-4 text-body text-muted-foreground">{t("trust.precision_desc", locale)}</p>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+    <Section id="no-black-box">
+      <div class="max-w-3xl mb-8">
+        <h2 class="text-h2 font-bold text-foreground">{t("trust.precision", locale)}</h2>
+        <p class="mt-4 text-body text-muted-foreground">{t("trust.precision_desc", locale)}</p>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 max-w-4xl">
         <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">Temporeel versiebeheer</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Fiscale wetgeving verandert. Auryth volgt ingangsdata en past de juiste versie toe op uw vraag.</p>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Redeneerspoor</h3>
+          <p class="text-body-sm text-muted-foreground">Volg de logica van de AI stap voor stap. Zie welke bronnen werden geraadpleegd, hoe ze samenhangen en waarom het antwoord werd bereikt.</p>
         </Card>
         <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">Cross-domeinanalyse</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Verbindt inkomstenbelasting, btw, vennootschapsrecht en sociale bijdragen wanneer uw vraag meerdere domeinen bestrijkt.</p>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Open methodologie</h3>
+          <p class="text-body-sm text-muted-foreground">Ons retrievalsysteem, scoringsmodel en bronnenhiërarchie zijn gedocumenteerd. Geen geheime magie — alleen rigoureuze technologie die u kunt inspecteren.</p>
+          <a href={`/${locale}/how-it-works/`} class="mt-3 inline-block text-body-sm font-medium text-primary hover:underline">Bekijk hoe het werkt &rarr;</a>
         </Card>
       </div>
-      <div class="mt-8 rounded-lg border border-border bg-muted/50 p-8 text-center text-muted-foreground">
-        <p class="text-body-sm">Screenshot placeholder — Precisie-engine</p>
-      </div>
-      <div class="mt-8 text-center">
-        <a href={`/${locale}/waitlist/`} class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{t("hero.cta", locale)}</a>
+      <div class="mt-10 max-w-4xl">
+        <ScreenshotPlaceholder label="Screenshot: Source panel" suggestion="Expanded source panel: article excerpt with highlighted relevant passage in yellow, publication date, authority tier badge (e.g. 'Tier 2 - Legislation'), and 'Open original' link." />
       </div>
     </Section>
 
-    <Section muted id="belgium">
-      <h2 class="text-h2 text-foreground">{t("trust.belgium", locale)}</h2>
-      <p class="mt-4 text-body text-muted-foreground">{t("trust.belgium_desc", locale)}</p>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+    <Section muted id="jurisdiction-deep">
+      <div class="max-w-3xl mb-8">
+        <h2 class="text-h2 font-bold text-foreground">{t("trust.belgium", locale)}</h2>
+        <p class="mt-4 text-body text-muted-foreground">{t("trust.belgium_desc", locale)}</p>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 max-w-4xl">
         <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">Belgische bronnenhierarchie</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Begrijpt de Belgische juridische hierarchie: federale wet, gewestdecreten, circulaires, rulings en administratief commentaar.</p>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Belgische bronnenhiërarchie</h3>
+          <p class="text-body-sm text-muted-foreground">Begrijpt de Belgische juridische hiërarchie: federale wet, gewestdecreten, circulaires, rulings en administratief commentaar.</p>
+          <a href={`/${locale}/how-it-works/#authority-hierarchy`} class="mt-3 inline-block text-body-sm font-medium text-primary hover:underline">Bekijk hoe we bronnen rangschikken &rarr;</a>
         </Card>
         <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">NL/FR tweetalig</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Zoekt en citeert bronnen in beide officiele talen. Stel een vraag in het Nederlands, citeer Franstalige bepalingen — of omgekeerd.</p>
+          <h3 class="text-body-lg font-semibold text-foreground mb-2">Drietalig NL/FR/EN</h3>
+          <p class="text-body-sm text-muted-foreground">Stel een vraag in het Nederlands, Frans of Engels — vind bepalingen in alle officiële talen van België. Met juridisch correcte terminologie in alle drie.</p>
         </Card>
       </div>
-      <div class="mt-8 rounded-lg border border-border bg-muted/50 p-8 text-center text-muted-foreground">
-        <p class="text-body-sm">Screenshot placeholder — Belgische fiscale intelligentie</p>
+      <div class="mt-10 max-w-4xl">
+        <ScreenshotPlaceholder label="Screenshot: Drietalig zoeken" suggestion="Zoekresultaten met een Engelse vraag die Nederlandse en Franse wetgeving retourneert, met taallabels (NL/FR/EN) op elke bron en vertaalknop." />
       </div>
-      <div class="mt-8 text-center">
-        <a href={`/${locale}/waitlist/`} class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">{t("hero.cta", locale)}</a>
+    </Section>
+
+    <Section>
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-h2 font-bold mb-6">
+          Schrijf je in op de wachtlijst
+        </h2>
+        <p class="text-body-lg text-muted-foreground mb-8">
+          Wees een van de eersten die AI-gestuurd Belgisch fiscaal onderzoek
+          ervaart, ontwikkeld voor professionals.
+        </p>
+        <a
+          href={`/${locale}/waitlist`}
+          class="inline-flex h-11 min-h-[44px] items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Schrijf je in
+        </a>
       </div>
     </Section>
   </main>

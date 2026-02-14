@@ -1,0 +1,126 @@
+---
+title: "Comment nous gérons les sources contradictoires — et pourquoi la plupart des outils d'IA ne le font pas"
+description: "Quand les sources fiscales belges se contredisent, la pire chose qu'un outil d'IA puisse faire est d'en choisir une et de répondre avec assurance."
+publishDate: 2026-03-06
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Confiance & transparence"
+tags: ["sources contradictoires", "incertitude", "IA juridique", "score de confiance", "droit fiscal belge"]
+locale: "fr"
+draft: false
+---
+
+En octobre 2023, la Cour de cassation belge a jugé que les revenus de source étrangère sont exonérés d'impôt belge dès lors qu'ils relèvent du champ d'application du régime fiscal étranger — que ces revenus aient été effectivement imposés ou non. Un an plus tard, en octobre 2024, la même Cour a jugé l'inverse : les revenus ne sont exonérés que s'ils ont été effectivement imposés dans le pays de la source.
+
+Même doctrine. Même Cour. Conclusions opposées.
+
+La distinction ? Le contexte conventionnel — une affaire concernait la convention belgo-néerlandaise, l'autre la convention belgo-congolaise. Mais pour le fiscaliste qui prépare un avis, l'implication est identique : deux sources faisant autorité pointent dans des directions opposées, et la réponse dépend de celle qui s'applique à la situation de votre client.
+
+Imaginez maintenant poser cette question à un outil d'IA. La plupart des outils vous donneraient une seule réponse, avec assurance, accompagnée d'une [citation](/fr/glossary/citation/). Ils ne vous diraient pas que l'autre arrêt existe, que la doctrine est contestée, ou que la réponse dépend de formulations spécifiques à chaque convention. Cette omission est plus dangereuse qu'une mauvaise réponse — car une mauvaise réponse peut déclencher une vérification. Une réponse assurée mais incomplète ne le fait pas.
+
+## Le paysage des contradictions en droit fiscal belge
+
+Les sources contradictoires ne sont pas des erreurs dans le système juridique belge. Ce sont des caractéristiques structurelles. Le système les produit de manière fiable, pour des raisons qui n'ont rien à voir avec l'erreur :
+
+| Type de contradiction | Exemple | Pourquoi cela se produit |
+|---|---|---|
+| **Chambre contre chambre** | Les chambres néerlandophone et francophone de la Cour de cassation sont arrivées à des conclusions opposées sur la question de savoir si la taxe annuelle sur les OPC constitue un impôt sur la fortune (2022) | Le système judiciaire bilingue belge traite les affaires séparément |
+| **Circulaire contre jurisprudence** | La circulaire administrative adopte une position ; une décision judiciaire la contredit par la suite — mais la circulaire n'est jamais retirée | La pratique administrative et l'interprétation judiciaire évoluent selon des calendriers différents |
+| **Fédéral contre régional** | Le traitement en matière d'impôt fédéral sur les revenus d'un instrument entre en conflit avec le traitement en droits de donation/succession régionaux du même instrument | Trois régions légifèrent de manière indépendante dans leurs compétences |
+| **Dérive temporelle** | Une disposition qui était en vigueur lorsque votre client a structuré une opération a depuis été modifiée ou réinterprétée | Les lois-programmes modifient des dizaines de dispositions deux fois par an |
+| **Doctrine contre jurisprudence** | Le commentaire académique défend la position A ; la jurisprudence récente établit la position B | L'analyse scientifique et les décisions judiciaires servent des fonctions différentes |
+
+Un professionnel qui a passé quinze ans dans le droit fiscal belge connaît ces contradictions. Il les navigue grâce à l'expérience, au jugement et à une lecture minutieuse. La question est : que se passe-t-il lorsqu'on ajoute l'IA à ce processus ?
+
+## Le problème de l'excès de confiance
+
+La plupart des outils d'IA sont optimisés pour des réponses assurées. C'est un choix de conception, pas une limitation de la technologie.
+
+**Les grands modèles de langage sont structurellement trop confiants.** Des recherches récentes sur la [calibration](/fr/glossary/calibration/) des LLM montrent que la confiance du modèle surestime systématiquement l'exactitude — ce que les chercheurs appellent la « miscalibration » (Xiong et al., 2024). Lorsqu'un [LLM](/fr/glossary/llm/) attribue 90 % de confiance à une réponse, l'exactitude réelle est souvent sensiblement inférieure. Ce n'est pas un défaut réparable. C'est, comme l'a formulé l'étude de Stanford sur les [hallucinations](/fr/glossary/hallucination/) RAG, « une conséquence inévitable de la modélisation probabiliste du langage » (Magesh et al., 2024).
+
+Les conséquences sont visibles. Une base de données qui recense les hallucinations d'IA dans les actes de procédure a documenté plus de 700 cas dans le monde fin 2025, dont 90 % en 2025 seulement. Les sanctions contre les avocats varient de 2 000 $ à 31 000 $ par incident — non pas pour avoir utilisé l'IA, mais pour ne pas avoir vérifié ses résultats (Charlotin, 2025).
+
+Le schéma est toujours le même : l'outil a donné une réponse assurée, le professionnel lui a fait confiance, et la source s'est avérée fabriquée ou inapplicable. Mais il existe un mode de défaillance plus subtil qui fait rarement la une : l'outil a donné une réponse correcte — mais a dissimulé le fait que des sources tout aussi faisant autorité ne sont pas d'accord.
+
+> La défaillance d'IA la plus dangereuse n'est pas la mauvaise réponse. C'est la bonne réponse qui cache l'existence d'une réponse contradictoire.
+
+![IA confiante vs. IA honnête : comment chacune gère les sources juridiques contradictoires](/blog/onzekerheid-tegenstrijdige-bronnen/confident-vs-honest-ai-contradictory-sources-dark.png)
+
+## Les trois maximes — et quand elles échouent
+
+Les systèmes juridiques disposent d'outils anciens pour résoudre les conflits normatifs :
+
+- **Lex superior** — les normes de rang supérieur l'emportent sur les normes inférieures (la constitution prime la loi, la loi prime la circulaire)
+- **Lex specialis** — les dispositions spécifiques l'emportent sur les dispositions générales
+- **Lex posterior** — les normes plus récentes l'emportent sur les normes antérieures
+
+Ces maximes résolvent de nombreuses contradictions. Lorsqu'une circulaire contredit une loi, lex superior tranche : la loi prévaut. Lorsqu'une règle générale et une exception spécifique entrent en conflit, lex specialis détermine l'issue.
+
+Mais la pratique fiscale belge produit régulièrement des situations où les maximes ne résolvent pas clairement le conflit :
+
+- Deux arrêts de la Cour de cassation de même autorité aboutissant à des conclusions opposées (lex posterior dit que le plus récent prévaut — mais s'agissait-il d'un revirement intentionnel, ou le contexte était-il différent ?)
+- Une circulaire que l'administration applique activement malgré sa contradiction avec la jurisprudence (lex superior dit que la jurisprudence prévaut — mais l'inspecteur suivra-t-il l'arrêt ou la circulaire ?)
+- La doctrine académique qui identifie une ambiguïté que ni le législateur ni les tribunaux n'ont traitée
+
+Dans ces situations, **il n'existe pas de réponse unique correcte.** Il y a des positions, chacune avec des niveaux différents de soutien, de risque et de défendabilité. Le travail du professionnel est de naviguer ce paysage et de conseiller le client sur la position à adopter et pourquoi.
+
+Un outil d'IA qui aplatit ce paysage en une seule réponse assurée n'aide pas. Il supprime précisément l'information dont le professionnel a le plus besoin.
+
+## À quoi ressemble l'incertitude honnête
+
+L'alternative aux réponses assurées n'est pas des réponses vagues. C'est l'**incertitude structurée** — présenter le tableau complet avec suffisamment de contexte pour que le professionnel exerce son jugement.
+
+| Ce que font la plupart des outils | Ce que l'incertitude honnête implique |
+|---|---|
+| Présenter une position comme « la réponse » | Afficher toutes les positions pertinentes avec leur niveau d'autorité |
+| Citer une seule source | Montrer où les sources concordent et où elles divergent |
+| Confiance uniforme quelle que soit la qualité des sources | [Score de confiance](/fr/glossary/confidence-scoring/) qui baisse lorsque les sources se contredisent |
+| Aucune indication d'ambiguïté | Signal explicite : « Les sources sur ce sujet arrivent à des conclusions différentes » |
+| Traiter circulaires et arrêts comme équivalents | Classer par hiérarchie juridique — mais signaler quand l'administration diverge de l'interprétation judiciaire |
+
+C'est plus difficile à construire. Cela exige que le système détecte quand les sources récupérées sont en désaccord, classe la nature du désaccord, et présente la contradiction d'une manière qui aide le professionnel plutôt que de le submerger.
+
+Mais c'est aussi ce dont les professionnels ont réellement besoin. Un conseiller fiscal qui prépare une demande de ruling pour le SDA (Service des Décisions Anticipées) ne veut pas l'opinion d'un chatbot. Il veut savoir : que dit la loi, que dit l'administration, que disent les tribunaux, et où ces trois divergent-ils ?
+
+## Questions fréquentes
+
+**L'IA peut-elle réellement détecter les contradictions entre sources juridiques ?**
+
+Oui — au niveau de la recherche. Lorsqu'un système récupère plusieurs sources qui formulent des affirmations opposées sur la même question juridique, les modèles d'inférence en langage naturel (NLI) peuvent identifier la contradiction. Le problème plus difficile est de classifier la contradiction : s'agit-il d'une véritable ambiguïté, d'un conflit résolu (où lex superior tranche), ou d'un conflit apparent causé par des contextes factuels différents ? Les systèmes actuels peuvent signaler les contradictions de manière fiable. Les classifier entièrement requiert encore le jugement professionnel.
+
+**N'est-il pas préférable de simplement donner la réponse la plus autorisée ?**
+
+Pour les conflits résolus, oui — lex superior et lex specialis devraient guider la réponse. Mais pour les positions véritablement contestées, ne présenter que la source « la plus autorisée » est trompeur. Un arrêt de la Cour de cassation de 2023 ne remplace pas automatiquement un arrêt de 2024 s'ils concernent des contextes conventionnels différents. Le classement par autorité est nécessaire mais pas suffisant.
+
+**Comment dois-je gérer les sources contradictoires dans ma propre pratique ?**
+
+Documentez tout. Lorsque les sources sont en désaccord, notez la contradiction explicitement dans votre production de recherche. Identifiez quelle maxime de résolution s'applique (le cas échéant). Si le conflit est réel, présentez au client les positions concurrentes et votre recommandation — accompagnée du profil de risque de chaque position.
+
+---
+
+## Articles connexes
+
+- [Pourquoi la transparence compte plus que la précision en IA juridique](/fr/blog/transparantie-vs-nauwkeurigheid-fr/)
+- [Qu'est-ce que le confidence scoring — et pourquoi c'est plus honnête qu'une réponse assurée](/fr/blog/confidence-scoring-uitgelegd-fr/)
+- [Qu'est-ce que l'authority ranking — et pourquoi votre outil d'IA juridique l'ignore probablement](/fr/blog/authority-ranking-juridische-ai-fr/)
+- [Ce que l'étude de Stanford sur les hallucinations a réellement révélé](/fr/blog/stanford-hallucination-study-juridische-ai-fr/)
+
+---
+
+## Comment Auryth TX applique ceci
+
+Auryth TX traite les contradictions entre sources comme de l'information, pas comme des erreurs. Lorsque la couche de recherche remonte des sources qui arrivent à des conclusions différentes sur la même question juridique, le système signale la contradiction explicitement plutôt que d'en choisir une en silence.
+
+Chaque source récupérée porte sa position dans la hiérarchie juridique belge — constitution, législation, arrêté royal, circulaire, jurisprudence, doctrine — de sorte que les contradictions sont présentées avec leur contexte d'autorité. Lorsqu'une circulaire contredit un arrêt, le système montre les deux positions et identifie la hiérarchie. Lorsque deux arrêts sont en désaccord, le système affiche les deux avec leurs dates, chambres et contextes conventionnels. Le score de confiance baisse lorsque les sources se contredisent, donnant au professionnel un signal clair que cette question nécessite une analyse plus approfondie.
+
+Le résultat n'est pas une réponse plus faible. C'est une réponse plus complète. Le professionnel voit la surface de contradiction complète et applique son jugement — ce qui est exactement ainsi que le conseil fiscal sérieux a toujours fonctionné.
+
+*Quand les sources ne sont pas d'accord, votre outil d'IA devrait vous le dire. Pas décider à votre place.*
+
+---
+
+*Sources :*
+*1. Magesh, V. et al. (2024). « [Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362) ». Journal of Empirical Legal Studies.*
+*2. Xiong, M. et al. (2024). « [Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs](https://arxiv.org/abs/2306.13063) ». ICLR 2024.*
+*3. PwC Legal Belgique (2025). « [Confusion grows over 'subject-to-tax' rule for foreign-sourced income exemptions in Belgium](https://www.pwclegal.be/en/news/confusion-grows-over--subject-to-tax--rule-for-foreign-sourced-i.html) ». PwC Belgique.*
+*4. Charlotin, D. (2025). « [AI Hallucination Cases Database](https://www.damiencharlotin.com/hallucinations/) ». Recherche indépendante.*

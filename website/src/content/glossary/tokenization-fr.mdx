@@ -1,0 +1,113 @@
+---
+term: "Tokenisation"
+termSlug: "tokenization"
+short: "Le processus de division du texte en unités plus petites (tokens) que les modèles de langage peuvent traiter et comprendre."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["llm", "context-window", "embeddings", "bpe"]
+synonyms: ["Tokenization", "Segmentation de texte", "Tokenisation en sous-mots"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La tokenisation est le processus de conversion de texte brut en unités discrètes appelées tokens que les modèles de langage peuvent traiter. Ces tokens peuvent être des mots, des sous-mots, des caractères ou des unités au niveau des octets. Les LLM modernes utilisent généralement la tokenisation en sous-mots (comme BPE ou [SentencePiece](/fr/glossary/sentencepiece/)), qui équilibre la taille du vocabulaire avec la capacité de gérer les mots rares et composés en les divisant en morceaux significatifs.
+
+## Pourquoi c'est important
+
+La tokenisation est l'étape critique initiale dans toutes les opérations des modèles de langage :
+
+- **Entrée du modèle** — les LLM ne voient pas le texte ; ils voient des séquences d'ID de tokens
+- **Limites de contexte** — le nombre de tokens (pas de caractères) détermine ce qui tient dans la fenêtre de contexte
+- **Calcul des coûts** — la tarification API est basée sur les tokens consommés
+- **Support multilingue** — la conception du tokenizer affecte l'efficacité de traitement des différentes langues
+- **Capacités du modèle** — une mauvaise tokenisation du code, des mathématiques ou du texte non anglais dégrade les performances
+
+Le choix du tokenizer façonne fondamentalement ce qu'un modèle peut comprendre et avec quelle efficacité.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     TOKENISATION                           │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Entrée: "La tokenisation gère les mots inconnus"          │
+│                          │                                 │
+│                          ▼                                 │
+│  ┌────────────────────────────────────────────────┐        │
+│  │ Tokenisation en sous-mots (exemple BPE):       │        │
+│  │                                                │        │
+│  │ "La" " token" "isation" " gère" " les" " mots" │        │
+│  │ " in" "connus"                                 │        │
+│  │                                                │        │
+│  │ IDs de tokens: [14402, 2065, 17082, 653, 4339] │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  Différents tokenizers pour le même texte:                 │
+│  ┌─────────────────────────────────────────────┐           │
+│  │ GPT-4:    "Bonjour" → [15496]               │           │
+│  │ Llama:    "Bonjour" → [12345]               │           │
+│  │ Modèles différents = IDs différents          │           │
+│  └─────────────────────────────────────────────┘           │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Pré-traitement** — le texte est normalisé (Unicode, gestion des espaces)
+2. **Segmentation** — le texte est divisé selon des règles apprises (BPE, WordPiece, etc.)
+3. **Mapping** — chaque token est converti en un ID entier unique
+4. **Tokens spéciaux** — des marqueurs comme `<BOS>`, `<EOS>`, `<PAD>` sont ajoutés selon les besoins
+
+Algorithmes courants :
+- **BPE (Byte Pair Encoding)** — modèles GPT, fusionne les paires de caractères fréquentes
+- **WordPiece** — BERT, similaire à BPE avec un scoring différent
+- **SentencePiece** — agnostique à la langue, traite le texte comme Unicode brut
+- **Tiktoken** — implémentation BPE rapide d'OpenAI
+
+## Questions fréquentes
+
+**Q : Pourquoi ne pas simplement diviser sur les espaces et les mots ?**
+
+R : La tokenisation au niveau des mots crée d'énormes vocabulaires et ne peut pas gérer les mots inconnus. La tokenisation en sous-mots équilibre la taille du vocabulaire (~50K-100K tokens) avec la couverture de tout texte, y compris les mots rares et les néologismes.
+
+**Q : Pourquoi les langues non anglaises utilisent-elles plus de tokens ?**
+
+R : Les tokenizers entraînés principalement sur l'anglais peuvent diviser les mots non anglais en plus de morceaux. Cela signifie que le même contenu coûte plus de tokens et utilise plus de fenêtre de contexte dans d'autres langues.
+
+**Q : Comment compter les tokens avant d'envoyer à une API ?**
+
+R : Utilisez la bibliothèque tokenizer du modèle (ex: `tiktoken` pour OpenAI). Estimation approximative : 1 token ≈ 4 caractères en anglais. La plupart des fournisseurs offrent des outils de comptage de tokens.
+
+**Q : La tokenisation peut-elle causer des erreurs de modèle ?**
+
+R : Oui. Une tokenisation inhabituelle des nombres, du code ou des caractères spéciaux peut confondre les modèles. Comprendre la tokenisation aide à déboguer les comportements inattendus.
+
+## Termes associés
+
+- [LLM](/fr/glossary/llm/) — modèles qui utilisent la tokenisation pour l'entrée
+- [Fenêtre de Contexte](/fr/glossary/context-window/) — mesurée en tokens
+- [Embeddings](/fr/glossary/embeddings/) — les vecteurs représentent les tokens
+- BPE — algorithme de tokenisation courant
+
+---
+
+## Références
+
+> Sennrich et al. (2016), "[Neural Machine Translation of Rare Words with Subword Units](https://arxiv.org/abs/1508.07909)", ACL. [11 000+ [citations](/fr/glossary/citation/)]
+
+> Kudo & Richardson (2018), "[SentencePiece: A simple and language independent subword tokenizer and detokenizer](https://arxiv.org/abs/1808.06226)", EMNLP. [3 000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [Article GPT-2, 15 000+ citations]
+
+> Rust et al. (2021), "[How Good is Your Tokenizer? On the Monolingual Performance of Multilingual Language Models](https://arxiv.org/abs/2012.15613)", ACL. [400+ citations]
+
+## References
+
+> Sennrich et al. (2016), "[Neural Machine Translation of Rare Words with Subword Units](https://arxiv.org/abs/1508.07909)", ACL. [11,000+ citations]
+
+> Kudo & Richardson (2018), "[SentencePiece: A simple and language independent subword tokenizer and detokenizer](https://arxiv.org/abs/1808.06226)", EMNLP. [3,000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [GPT-2 paper, 15,000+ citations]
+
+> Rust et al. (2021), "[How Good is Your Tokenizer? On the Monolingual Performance of Multilingual Language Models](https://arxiv.org/abs/2012.15613)", ACL. [400+ citations]

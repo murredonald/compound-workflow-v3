@@ -1,0 +1,104 @@
+---
+term: "Fenêtre de Contexte"
+termSlug: "context-window"
+short: "La quantité maximale de texte (mesurée en tokens) qu'un modèle de langage peut traiter en une seule interaction."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["llm", "tokenization", "rag", "transformer-architecture"]
+synonyms: ["Context window", "Longueur de contexte", "Taille de contexte", "Longueur de séquence"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Une fenêtre de contexte est le nombre maximum de tokens qu'un grand modèle de langage peut considérer à la fois pendant l'[inférence](/fr/glossary/inference/)—incluant à la fois le prompt d'entrée et la sortie générée. Elle représente la « mémoire de travail » du modèle : tout ce qui est en dehors de cette fenêtre est invisible pour le modèle pendant cette interaction. Les fenêtres de contexte sont passées de 2 048 tokens dans les premiers modèles à 128 000+ tokens dans les systèmes modernes.
+
+## Pourquoi c'est important
+
+La taille de la fenêtre de contexte impacte directement ce que les systèmes IA peuvent accomplir :
+
+- **Analyse de documents** — des fenêtres plus grandes permettent de traiter des documents entiers sans découpage
+- **Pertinence RAG** — plus de contexte permet de récupérer et d'incorporer plus de matériel source
+- **Mémoire conversationnelle** — des contextes plus longs maintiennent des dialogues multi-tours cohérents
+- **Raisonnement complexe** — plus d'espace pour le [chain-of-thought](/fr/glossary/chain-of-thought/) et les exemples
+
+Cependant, des contextes plus grands augmentent le coût computationnel de façon quadratique avec l'[auto-attention](/fr/glossary/self-attention/), stimulant l'innovation dans les architectures efficaces.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  FENÊTRE DE CONTEXTE                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ◄──────────────── 128K tokens ──────────────────────────► │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ Prompt  │  Contexte   │  Question  │  Réponse       │  │
+│  │ Système │  Récupéré   │  Utilisat. │  Générée       │  │
+│  │ (500)   │  (50 000)   │  (500)     │  (4 000)       │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  Tous les tokens rivalisent pour l'attention ←→            │
+│  Tokens hors fenêtre : invisibles                          │
+│                                                            │
+│  Fenêtres de contexte des modèles:                         │
+│  GPT-3.5:     4K / 16K                                    │
+│  GPT-4:       8K / 32K / 128K                             │
+│  Claude:      100K / 200K                                 │
+│  Gemini:      32K / 1M+                                   │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Comptage des tokens** — toutes les entrées ([prompt système](/fr/glossary/system-prompt/), entrée utilisateur, docs récupérés) consomment des tokens
+2. **Allocation** — tokens restants disponibles pour la sortie du modèle
+3. **Attention** — chaque token peut s'attendre à tous les autres dans la fenêtre
+4. **Troncation** — le contenu dépassant la fenêtre est coupé (typiquement depuis le début)
+
+## Questions fréquentes
+
+**Q : Que se passe-t-il quand l'entrée dépasse la fenêtre de contexte ?**
+
+R : La plupart des systèmes tronquent—supprimant le contenu le plus ancien pour faire tenir. Les applications bien conçues évitent cela via le découpage, la synthèse, ou des stratégies RAG qui sélectionnent uniquement les passages pertinents.
+
+**Q : L'utilisation de la fenêtre de contexte complète affecte-t-elle la qualité ?**
+
+R : La recherche montre des effets « perdu au milieu »—les modèles s'attendent mieux au contenu au début et à la fin des longs contextes. Le placement stratégique des informations clés est important.
+
+**Q : Comment les tokens sont-ils comptés ?**
+
+R : Dépend du tokenizer. Approximativement : 1 token ≈ 4 caractères ou ≈ 0,75 mot en anglais. Le texte non anglais et le code peuvent tokeniser différemment.
+
+**Q : Une fenêtre de contexte plus grande est-elle toujours meilleure ?**
+
+R : Pas nécessairement. Les fenêtres plus grandes coûtent plus cher, traitent plus lentement, et peuvent diluer l'attention. Les systèmes RAG surpassent souvent le remplissage brut de contexte en récupérant uniquement le contenu pertinent.
+
+## Termes associés
+
+- [LLM](/fr/glossary/llm/) — les modèles qui ont des fenêtres de contexte
+- [Tokenisation](/fr/glossary/tokenization/) — comment le texte est converti en tokens
+- [RAG](/fr/glossary/rag/) — technique pour gérer un contexte limité
+- [Architecture Transformer](/fr/glossary/transformer-architecture/) — pourquoi les fenêtres de contexte existent
+
+---
+
+## Références
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130 000+ [citations](/fr/glossary/citation/)]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ citations]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Documentation Anthropic.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3 500+ citations]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ citations]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Anthropic Documentation.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3,500+ citations]

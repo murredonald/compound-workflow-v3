@@ -1,0 +1,138 @@
+---
+term: "Gradientenabstieg"
+termSlug: "gradient-descent"
+short: "Ein Optimierungsalgorithmus, der Modellparameter iterativ anpasst, indem er sich in die Richtung bewegt, die die Verlustfunktion reduziert."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["loss-function", "backpropagation", "fine-tuning", "neural-network"]
+synonyms: ["Gradientenbasierte Optimierung", "Steilster Abstieg", "GD"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Gradientenabstieg ist der fundamentale Optimierungsalgorithmus, der zum Trainieren von Machine-Learning-Modellen verwendet wird. Er funktioniert, indem der Gradient (Richtung des steilsten Anstiegs) der Verlustfunktion bezüglich der Modellparameter berechnet wird und dann ein Schritt in die entgegengesetzte Richtung gemacht wird, um den Verlust zu reduzieren. Durch viele Iterationen findet dieser Prozess Parameterwerte, die Vorhersagefehler minimieren.
+
+## Warum es wichtig ist
+
+Gradientenabstieg ermöglicht das Training neuronaler Netze:
+
+- **Universeller Optimizer** — funktioniert für jede differenzierbare Verlustfunktion
+- **Skalierbar** — behandelt Milliarden von Parametern effizient
+- **Fundament** — Basis für alles moderne [Deep Learning](/de/glossary/deep-learning/)
+- **Varianten** — Adam, SGD, AdaGrad verbessern den Basisalgorithmus
+- **Konvergenz** — mathematisch garantiert unter bestimmten Bedingungen
+
+Ohne Gradientenabstieg wäre das Training großer Sprachmodelle unmöglich.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    GRADIENTENABSTIEG                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Kern-Aktualisierungsregel: θ_neu = θ_alt - α × ∇L(θ)     │
+│                                                            │
+│  θ = Parameter                                             │
+│  α = Lernrate                                              │
+│  ∇L = Gradient des Verlusts                               │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VISUALISIERUNG (2D Parameterraum):           │        │
+│  │                                                │        │
+│  │       Verlust                                  │        │
+│  │        │    ○ Start                           │        │
+│  │        │     \                                │        │
+│  │        │      \  ← Gradient zeigt bergauf    │        │
+│  │        │       ○                              │        │
+│  │        │        \                             │        │
+│  │        │         ○                            │        │
+│  │        │          \                           │        │
+│  │        │           ★ Minimum (Ziel)          │        │
+│  │        └────────────────────────► Parameter  │        │
+│  │                                                │        │
+│  │  Jeder Schritt bewegt sich entgegen Gradient │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VARIANTEN:                                                │
+│  ─────────                                                 │
+│                                                            │
+│  ┌─────────────┬────────────────────────────────┐          │
+│  │ Batch GD    │ Alle Daten pro Update          │          │
+│  │             │ Langsam aber stabil            │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ SGD         │ Ein Sample pro Update          │          │
+│  │             │ Schnell aber verrauscht        │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ Mini-batch  │ Batch von Samples              │          │
+│  │             │ Bestes von beiden (üblichste)  │          │
+│  └─────────────┴────────────────────────────────┘          │
+│                                                            │
+│  LERNRATEN-EFFEKT:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Zu klein: ....○....○....○....○.... (langsam)            │
+│  Genau richtig: ○---○---○---★ (konvergiert)               │
+│  Zu groß:  ○       ○       ○ (divergiert/oszilliert)      │
+│                   \/    \/                                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Moderne Optimizer:**
+| Optimizer | Schlüsselmerkmal | Wann verwenden |
+|-----------|------------------|----------------|
+| SGD | Einfach, Momentum optional | Gut abgestimmtes Training |
+| Adam | Adaptive Lernraten | Standardwahl |
+| AdamW | Adam + Weight Decay | [Transformers](/de/glossary/transformer-architecture/), LLMs |
+| Adagrad | Per-Parameter-Raten | Sparse Daten |
+| RMSprop | Exponentieller gleitender Durchschnitt | RNNs |
+
+## Häufige Fragen
+
+**F: Was ist eine gute Lernrate?**
+
+A: Es hängt vom Modell und Optimizer ab. Für Adam ist 1e-4 bis 3e-4 oft gut für Fine-tuning von [LLMs](/de/glossary/llm/). Zu hoch verursacht Divergenz; zu niedrig verursacht langsames Training. Lernraten-Scheduler, die über Zeit abnehmen, helfen oft.
+
+**F: Was ist der Unterschied zwischen Batch, Mini-batch und stochastischem Gradientenabstieg?**
+
+A: Batch GD verwendet alle Trainingsdaten pro Update (genau aber langsam). Stochastisches GD verwendet ein Sample (schnell aber verrauscht). Mini-batch verwendet eine Teilmenge (typisch 16-128 Samples)—der praktische Standard, der Geschwindigkeit und Stabilität kombiniert.
+
+**F: Warum sinkt der Trainingsverlust nicht?**
+
+A: Häufige Ursachen: Lernrate zu hoch (divergiert), Lernrate zu niedrig (steckt fest), schlechte Initialisierung, verschwindende/explodierende Gradienten, oder Datenprobleme. Versuchen Sie die Lernrate zu reduzieren, Gradient Clipping, oder andere Initialisierung.
+
+**F: Wie geht Gradientenabstieg mit lokalen Minima um?**
+
+A: In hochdimensionalen Räumen (Millionen Parameter) sind lokale Minima selten problematisch—die meisten kritischen Punkte sind Sattelpunkte. Momentum und Rauschen vom Mini-batching helfen, aus suboptimalen Regionen zu entkommen.
+
+## Verwandte Begriffe
+
+- [Verlustfunktion](/de/glossary/loss-function/) — was Gradientenabstieg minimiert
+- [Backpropagation](/de/glossary/backpropagation/) — berechnet Gradienten effizient
+- [Fine-tuning](/de/glossary/fine-tuning/) — wendet Gradientenabstieg an, um Modelle anzupassen
+- [Neuronales Netz](/de/glossary/neural-network/) — trainiert via Gradientenabstieg
+
+---
+
+## Referenzen
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5.000+ Zitationen]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100.000+ Zitationen]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Kapitel 8. [20.000+ Zitationen]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5.000+ Zitationen]
+
+## References
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5,000+ citations]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 8. [20,000+ citations]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5,000+ citations]

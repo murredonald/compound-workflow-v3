@@ -1,0 +1,89 @@
+---
+term: "Transformer-architectuur"
+termSlug: "transformer-architecture"
+short: "Een neurale netwerkarchitectuur die self-attention gebruikt om sequentiële data parallel te verwerken, de basis van moderne LLM's."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "attention-mechanism", "self-attention", "multi-head-attention"]
+synonyms: ["Transformer", "Transformer model", "Transformer neuraal netwerk"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+De Transformer is een neurale netwerkarchitectuur die in 2017 werd geïntroduceerd en de natuurlijke taalverwerking revolutionair veranderde. In tegenstelling tot eerdere sequentiële modellen (RNN's, LSTM's) verwerken Transformers alle invoertokens gelijktijdig met behulp van self-attention mechanismen, waardoor massale parallellisatie mogelijk wordt en lange-afstandsafhankelijkheden in tekst worden vastgelegd.
+
+## Waarom het belangrijk is
+
+De Transformer-architectuur vormt de basis van vrijwel alle moderne grote taalmodellen, waaronder GPT, BERT, Claude en PaLM. De mogelijkheid om:
+
+- **Efficiënt te schalen** — parallelle verwerking maakt training met miljarden parameters mogelijk
+- **Context vast te leggen** — attention-mechanismen relateren elk woord aan elk ander woord ongeacht afstand
+- **Kennis over te dragen** — voorgetrainde Transformers kunnen worden gefinetuned voor talloze downstream taken
+
+Dit maakt het essentieel voor het bouwen van AI-systemen die natuurlijke taal begrijpen en genereren.
+
+## Hoe het werkt
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    TRANSFORMER                          │
+├─────────────────────────────────────────────────────────┤
+│  Input → Embedding + Positie → [ENCODER] → [DECODER]   │
+│                                      │          │       │
+│                                      ▼          ▼       │
+│                              Self-Attention  Cross-Attn │
+│                                      │          │       │
+│                                 Feed-Forward  Output    │
+└─────────────────────────────────────────────────────────┘
+```
+
+1. **Input embedding** — tokens worden omgezet naar dichte vectoren
+2. **Positionele codering** — positie-informatie toegevoegd (omdat verwerking parallel is)
+3. **Self-attention lagen** — elk token attendeert aan alle andere om contextuele representaties te bouwen
+4. **Feed-forward netwerken** — transformeren attention outputs
+5. **Output generatie** — decoder produceert de uiteindelijke sequentie
+
+## Veelgestelde vragen
+
+**V: Waarom hebben Transformers RNN's en LSTM's vervangen?**
+
+A: RNN's verwerken tokens sequentieel, wat knelpunten creëert voor lange sequenties en parallellisatie onmogelijk maakt. Transformers verwerken alle tokens tegelijk, waardoor snellere training en betere modellering van lange-afstandsafhankelijkheden mogelijk is.
+
+**V: Wat zijn encoder-only versus decoder-only Transformers?**
+
+A: Encoder-only modellen (zoals BERT) zijn geoptimaliseerd voor begripstaken (classificatie, [NER](/nl/glossary/ner/)). Decoder-only modellen (zoals GPT) zijn geoptimaliseerd voor generatie. De originele Transformer gebruikte beide.
+
+**V: Hoe gaan Transformers om met sequentievolgorde zonder recurrentie?**
+
+A: Positionele coderingen worden toegevoegd aan input [embeddings](/nl/glossary/embeddings/), waardoor positie-informatie wordt verstrekt die het model leert te gebruiken tijdens attention.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — grote taalmodellen gebouwd op Transformer-architectuur
+- [Attention Mechanism](/nl/glossary/attention-mechanism/) — de kerninnovatie die Transformers mogelijk maakt
+- [Self-Attention](/nl/glossary/self-attention/) — mechanisme waarmee tokens aan elkaar kunnen attenderen
+- [Multi-Head Attention](/nl/glossary/multi-head-attention/) — parallelle attention voor rijkere representaties
+
+---
+
+## Referenties
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ [citaties](/nl/glossary/citation/)]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)", NAACL. [90.000+ citaties]
+
+> Lin et al. (2022), "[A Survey of Transformers](https://arxiv.org/abs/2106.04554)", AI Open. [2.500+ citaties]
+
+> Wolf et al. (2020), "[Transformers: State-of-the-Art Natural Language Processing](https://arxiv.org/abs/1910.03771)", EMNLP. [7.500+ citaties]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)", NAACL. [90,000+ citations]
+
+> Lin et al. (2022), "[A Survey of Transformers](https://arxiv.org/abs/2106.04554)", AI Open. [2,500+ citations]
+
+> Wolf et al. (2020), "[Transformers: State-of-the-Art Natural Language Processing](https://arxiv.org/abs/1910.03771)", EMNLP. [7,500+ citations]

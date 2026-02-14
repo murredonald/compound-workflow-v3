@@ -1,0 +1,177 @@
+---
+title: "Wat is een kennisgraaf — en waarom het verandert hoe AI door Belgisch fiscaal recht navigeert"
+description: "Een zoekmachine vindt tekst. Een kennisgraaf navigeert relaties: welk artikel wijzigt welk ander artikel, welke ruling interpreteert wat, welke uitzondering overstemt de regel. Belgisch fiscaal recht is een web van kruisverwijzingen — en een kennisgraaf is de kaart."
+publishDate: 2026-02-23
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "AI uitgelegd"
+tags: ["kennisgraaf", "juridische AI", "Belgische fiscaliteit", "RAG", "kruisverwijzingen", "NLP"]
+locale: "nl"
+draft: false
+---
+
+Stel een Belgische fiscale vraag en je krijgt zelden één artikel als antwoord. Je krijgt een keten.
+
+Artikel 215 WIB 92 stelt het vennootschapsbelastingtarief op 25% — maar verwijst naar artikel 185 voor het arm's-lengthbeginsel bij verrekenprijzen. Artikel 185 werd gewijzigd door de programmawet van december 2023, die overging van een transactionele naar een categorische benadering. Het verlaagde KMO-tarief in artikel 215 zelf vereist het voldoen aan voorwaarden verspreid over artikelen 15 en 215 §2. De roerende voorheffingstarieven waarnaar verwezen wordt in artikel 269 werden gewijzigd door de programmawet van juli 2025. En elk van deze bepalingen werd geïnterpreteerd door administratieve circulaires die hun draagwijdte kunnen versmallen of verbreden.
+
+Dit is geen uitzondering. Zo werkt Belgisch fiscaal recht. Elke bepaling bestaat in een web van verwijzingen, wijzigingen, interpretaties en uitzonderingen. Een systeem dat één artikel vindt maar de verbindingen mist, geeft je een fragment, geen antwoord.
+
+Een kennisgraaf is de datastructuur die deze verbindingen vastlegt — en het verandert fundamenteel wat een juridisch AI-systeem kan doen.
+
+## Wat een kennisgraaf is
+
+Een kennisgraaf stelt informatie voor als entiteiten verbonden door getypeerde relaties. Het concept bestaat in de computerwetenschappelijke literatuur sinds de jaren 1970, maar kwam in algemeen gebruik in 2012 toen Google zijn [Knowledge Graph](/nl/glossary/knowledge-graph/) lanceerde om zoekopdrachten te laten evolueren van "trefwoorden matchen" naar "dingen begrijpen."
+
+In een kennisgraaf:
+- **Entiteiten** zijn de dingen: artikelen, wetten, rulings, concepten, rechtsgebieden, tijdsperiodes
+- **Relaties** zijn de verbindingen: "wijzigt," "interpreteert," "citeert," "uitzondering_op," "is_van_toepassing_op"
+- **Properties** zijn de attributen: ingangsdatum, rechtsgebied, gezagsniveau, taalversie
+
+Het verschil met een gewone database is structureel. Een relationele database slaat records op in tabellen met vaste schema's. Een kennisgraaf slaat relaties rechtstreeks op — en kan ze doorlopen. Vraag "welke bepalingen beïnvloeden de belasting van dividenden uit een dochtervennootschap?" en de graaf kan de keten volgen: artikel 171 (afzonderlijke aanslag) → verwijst naar artikel 269 (roerende voorheffingstarieven) → verwijst naar de DBI-vrijstelling (artikelen 202-204) → die gewijzigd werd door de programmawet van juli 2025 → die vanaf aanslagjaar 2026 een financieel vaste activa-vereiste toevoegde.
+
+Geen keyword-zoekopdracht vindt die keten. Geen vectorembedding legt ze vast. De relaties moeten expliciet gemodelleerd worden.
+
+![Kennisgraaf die toont hoe Artikel 215 WIB 92 verbonden is met gerelateerde bepalingen, programmawetten en circulaires](/blog/knowledge-graph-fiscaal-recht/knowledge-graph-nl-dark.png)
+
+## Waarom Belgisch fiscaal recht een kennisgraaf-probleem is
+
+Belgisch fiscaal recht heeft kenmerken die grafische navigatie niet alleen nuttig maken, maar noodzakelijk.
+
+### Kruisverwijzingen zijn de norm, geen uitzondering
+
+Een enkel Belgisch fiscaal artikel verwijst routinematig naar 5-15 andere bepalingen. Artikel 215 WIB 92 — één artikel over vennootschapsbelastingtarieven — verwijst naar:
+- Artikelen 15 §1-3 (KMO-definitie criteria)
+- Artikel 185 §2 (arm's-lengthbeginsel)
+- Artikelen 202-204 (DBI-vrijstelling)
+- Artikel 269 (roerende voorheffingstarieven)
+- Artikel 289ter (belastingvermindering voor lage inkomens)
+- Meerdere bepalingen van de programmawetten die het wijzigden
+
+Elk artikel waarnaar verwezen wordt heeft zijn eigen web van verwijzingen. De totale graaf bereikbaar vanuit artikel 215 beslaat tientallen bepalingen over meerdere wetboeken, wetgevingsniveaus en tijdsperiodes.
+
+Een keyword-zoekopdracht voor "vennootschapsbelasting België" zou artikel 215 zelf kunnen teruggeven. Maar het antwoord op een echte adviesvraag — "komt de dochtervennootschap van mijn cliënt in aanmerking voor het verlaagde KMO-tarief?" — vereist het doorlopen van de graaf door artikelen 15, 185, 202, en de relevante programmawetwijzigingen.
+
+### Het uitzonderingskettenprobleem
+
+Belgische wetgevingstechnieken volgen een karakteristiek patroon:
+
+**Algemene regel** → **behoudens** → **tenzij** → **mits**
+
+Deze uitzonderingen leven vaak in verschillende artikelen. De algemene regel voor afzonderlijke aanslag van dividenden (artikel 171) heeft uitzonderingen in artikel 171 §2 (optie voor globalisering). Maar het interageert ook met de DBI-vrijstelling (artikelen 202-204), die zijn eigen voorwaarden, uitzonderingen en temporele wijzigingen heeft.
+
+In een platte zoekindex zijn deze uitzonderingen aparte documenten. In een kennisgraaf zijn ze verbonden door expliciete "uitzondering_op" en "wijzigt" relaties — waardoor het mogelijk wordt de volledige regel met al zijn kwalificaties in één doorloop op te halen.
+
+### Temporele gelaagdheid
+
+Belgisch fiscaal recht wordt minstens tweemaal per jaar gewijzigd door programmawetten — omnibus-wetgeving die tientallen bepalingen tegelijk wijzigt. Alleen al de programmawet van december 2023 wijzigde artikelen 54, 185/2, 289ter/1, 321quinquies, 321sexies, 321septies, en 344 §2 van het WIB.
+
+Een kennisgraaf modelleert dit door temporele versieknopen: elke bepaling heeft een versiegeschiedenis, en elke versie registreert welke programmawet die creëerde, wanneer die in werking trad, en wat die verving. Het systeem slaat niet alleen "artikel 215 zegt 25%" op. Het slaat op:
+
+- Artikel 215 (pre-2018): tarief 33,99%
+- Artikel 215 (2018-2019): tarief 29,58%, gewijzigd door Programmawet 25 december 2017
+- Artikel 215 (2020-heden): tarief 25%, gewijzigd door Programmawet 2 mei 2019
+- Artikel 215 (2026+): DBI-vrijstelling gewijzigd, gewijzigd door Programmawet 18 juli 2025
+
+Elke versie is een afzonderlijke knoop, gelinkt aan zijn voorganger en opvolger, met de wijzigende wetgeving als verbindende rand.
+
+### Meerlagig bestuur
+
+Belgische fiscale bepalingen bestaan op meerdere gezagsniveaus, elk met verschillend juridisch gewicht:
+
+1. **EU-verordeningen en -richtlijnen** — rechtstreeks effect, gaan boven nationaal recht
+2. **Federale wetgeving** (WIB, BTW-Wetboek) — primaire wetgeving
+3. **Gewestelijke wetgeving** (VCF, Code wallon, Brussels fiscaal wetboek) — gelijkwaardig met federaal voor gewestelijke belastingen
+4. **Koninklijke besluiten** — uitvoeringsregelingen
+5. **Ministeriële omzendbrieven** — administratieve interpretatie, niet bindend voor rechtbanken
+6. **Voorafgaande beslissingen** — bindend voor de administratie voor het specifieke geval
+7. **Rechtspraak** — jurisprudentie van fiscale rechtbanken, hoven van beroep, Hof van Cassatie
+
+Een kennisgraaf legt niet alleen de tekst op elk niveau vast, maar de hiërarchische relaties ertussen. Wanneer een omzendbrief artikel 215 interpreteert, registreert de graaf die interpretatie met een "interpreteert" rand — en merkt dat omzendbrieven lager gezag hebben dan het artikel zelf. Wanneer een rechterlijke uitspraak een omzendbrief verwerpt, werkt de graaf bij met een "verwerpt" rand.
+
+## Hoe dit verschilt van zoeken
+
+De meeste AI-systemen, inclusief de meeste juridische AI-tools, gebruiken een vorm van zoeken: keyword matching, [semantische gelijkenis](/nl/glossary/semantic-similarity/), of een combinatie. Deze benaderingen vinden tekst die relevant lijkt. Een kennisgraaf navigeert structuur die relevant is.
+
+**Keyword-zoeken** vindt documenten die de woorden in je zoekopdracht bevatten. Het kan geen kruisverwijzingen volgen — als artikel 215 "artikel 185" bij nummer vermeldt, zal een keyword-zoekopdracht voor "verrekenprijzen" die verwijzing niet volgen.
+
+**Vector/[semantisch zoeken](/nl/glossary/semantic-search/)** vindt documenten waarvan de betekenis vergelijkbaar is met je zoekopdracht. Dit is krachtig voor natuurlijke taalvragen maar beperkt door de grenzen van individuele [chunks](/nl/glossary/document-chunk/). Onderzoek naar multi-hop reasoning benchmarks toont dat traditionele [RAG](/nl/glossary/rag/) vaak minder dan 70% nauwkeurigheid bereikt wanneer het antwoord informatie over meerdere documenten moet verbinden.
+
+**Kennisgraaf-doorloop** volgt expliciete relaties. Wanneer gevraagd "wat zijn de voorwaarden voor het verlaagde KMO-tarief?", begint het bij artikel 215, volgt de "verwijst naar" rand naar artikel 15 (KMO-criteria), volgt de "gewijzigd_door" rand naar de relevante programmawet, en geeft de volledige keten terug — niet omdat de tekst vergelijkbaar is, maar omdat de juridische structuur ze verbindt.
+
+De beste systemen combineren beide: vector-zoeken voor initiële retrieval, kennisgraaf voor gestructureerde redenering. Academische benchmarks tonen dat graaf-versterkte benaderingen 85% nauwkeurigheid kunnen overtreffen bij multi-hop taken waar pure vectorbenaderingen doorgaans ver onder die drempel blijven steken.
+
+## Wat de graaf mogelijk maakt
+
+Een kennisgraaf maakt mogelijkheden mogelijk die structureel onmogelijk zijn met alleen zoeken:
+
+**Impactanalyse.** Wanneer een nieuwe programmawet artikel 215 wijzigt, kan het systeem alle bepalingen traceren die naar artikel 215 verwijzen en ze markeren voor herziening. Dit is geen [patroonherkenning](/nl/glossary/machine-learning/) — het is het volgen van expliciete randen in de graaf. De wijziging van de programmawet van juli 2025 aan de DBI-vrijstelling beïnvloedt elke bepaling die verwijst naar artikelen 202-204. De graaf identificeert ze allemaal.
+
+**Uitzonderingscompleteness.** Bij het ophalen van een bepaling kan het systeem alle "uitzondering_op" randen volgen om te verzekeren dat de volledige regel-plus-uitzonderingen keten wordt teruggegeven. Het antwoord op "hoe worden dividenden belast?" is nooit alleen artikel 171 §1 — het omvat §2 (optie voor globalisering), artikelen 202-204 (DBI-vrijstelling), en de 2025-wijzigingen aan kwalificerende voorwaarden.
+
+**Temporele precisie.** Een vraag over vennootschapsbelasting in 2019 volgt de graaf naar de 2018-2019 versieknoop (29,58%), niet de huidige versie (25%). De graaf slaat niet alleen huidig recht op — het slaat de volledige versiegeschiedenis op en kan naar elk tijdspunt navigeren.
+
+**Gezagsrangschikking.** Wanneer meerdere bronnen hetzelfde onderwerp behandelen, maakt de hiërarchie van de graaf principiële rangschikking mogelijk. Een artikel van het WIB weegt zwaarder dan een ministeriële omzendbrief. Een arrest van het Hof van Cassatie weegt zwaarder dan een eerste aanlegvonnis. Deze rangschikkingen zijn gecodeerd in de graaf als gezagsniveau-properties op elke knoop.
+
+**Hiaatontwaring.** Als een vraag een bepaling raakt die recent werd gewijzigd maar de interpretatieve omzendbrieven nog niet werden bijgewerkt, kan de graaf deze hiaat markeren — de "interpreteert" rand van de oude omzendbrief wijst naar een achterhaalde versie van het artikel.
+
+## Waarom de meeste juridische AI-tools dit niet hebben
+
+Het bouwen van een kennisgraaf voor een juridisch [corpus](/nl/glossary/corpus/) is fundamenteel anders dan documenten indexeren voor zoeken. Zoeken vereist tekst splitsen in chunks en embedden. Een kennisgraaf vereist:
+
+1. **Structurele parsing** — het begrijpen van de hiërarchische structuur van elk wetboek (WIB-artikelen, VCF's hiërarchische nummering, BTW-artikelen en koninklijke besluiten)
+2. **Kruisverwijzingsextractie** — het identificeren van elke verwijzing naar een ander artikel, wet, of ruling en het creëren van een expliciete rand
+3. **Temporele versionering** — het traceren van wijzigingsgeschiedenis en het creëren van versieknopen voor elke wijziging
+4. **Gezagsclassificatie** — het taggen van elke bron met zijn niveau in de juridische hiërarchie
+5. **Relatietypering** — het onderscheiden tussen "wijzigt," "interpreteert," "citeert," "uitzondering_op," en andere relatietypes
+
+Dit is gestructureerde ingestie, geen documenten dumpen. Het vereist domeinspecifieke parsing voor elk wetboek en documenttype. De VCF's onderscheidende nummering (artikel 2.10.4.0.1) vereist andere parsing dan de WIB's traditionele artikel-en-paragraaf structuur. Programmawetten vereisen wijzigingstracelogica die het wijzigende artikel verbindt met elke bepaling die het wijzigt.
+
+Generieke AI-tools — ChatGPT, Copilot, Gemini — hebben deze structuur niet. Ze verwerken juridische tekst als ongedifferentieerde tekst. Ze kunnen passages vinden die relevant lijken, maar ze kunnen de keten van kruisverwijzingen, wijzigingen en uitzonderingen die één bepaling met tientallen anderen verbindt niet traceren.
+
+Zelfs de meeste juridische AI-tools gebruiken documentzoeken in plaats van graafnavigatie. Thomson Reuters en LexisNexis hebben zwaar geïnvesteerd in kennisgraaf-technologie voor hun platforms, maar dit zijn enterprise-systemen geprijsd voor grote internationale kantoren. De Belgische markt — kleiner corpus, drie gewesten, twee officiële talen — heeft traditioneel dit niveau van structurele investering niet gerechtvaardigd.
+
+## Waar op te letten
+
+Bij het evalueren van een juridische AI-tool onthult de aanwezigheid of afwezigheid van een kennisgraaf zich in specifieke mogelijkheden:
+
+1. **Kan de tool kruisverwijzingen traceren?** Stel een vraag die een keten volgen vereist: "Aan welke voorwaarden moet mijn bedrijf voldoen voor het verlaagde vennootschapsbelastingtarief?" Als het antwoord artikel 215 citeert maar niet artikel 15 (KMO-definitie), zoekt de tool, het navigeert niet.
+
+2. **Markeert de tool wijzigingen?** Als je vraagt over een bepaling die recent gewijzigd werd door een programmawet, weet de tool van de wijziging? Als het achterhaalde tekst teruggeeft zonder de wijziging te markeren, is de wijzigingsketen niet gemodelleerd.
+
+3. **Kan de tool gezagsniveaus onderscheiden?** Stel een vraag waar een ministeriële omzendbrief een rechterlijke uitspraak tegenspreekt. Als de tool beide als gelijkwaardig gezaghebbend presenteert, heeft het geen hiërarchiemodel — wat betekent: geen graaf.
+
+4. **Kan de tool je de verbindingen tonen?** Een tool gebouwd op een kennisgraaf kan je tonen welke bepalingen verbinden met je antwoord en hoe. Een tool gebouwd op zoeken kan je alleen de tekst tonen die het vond.
+
+De graaf is wat een verzameling juridische documenten omzet in een navigeerbare kaart van het recht.
+
+---
+
+## Gerelateerde artikelen
+
+- [Wat is chunking — en waarom het de onzichtbare basis is van juridische AI-kwaliteit →](/blog/wat-is-chunking-juridische-ai-nl)
+- [Wat is authority ranking — en waarom je juridische AI-tool het waarschijnlijk negeert →](/blog/authority-ranking-juridische-ai-nl)
+- [Wat is temporele versionering — en waarom je juridische AI-tool je waarschijnlijk de wet van gisteren serveert →](/blog/temporele-versionering-juridische-ai-nl)
+
+---
+
+## Hoe Auryth TX dit toepast
+
+Auryth TX zoekt niet in documenten — het navigeert een kennisgraaf van Belgisch fiscaal recht.
+
+Elk artikel in het WIB, BTW-Wetboek, VCF, en gewestelijke wetboeken is een knoop in de graaf. Elke kruisverwijzing is een rand. Elke programmawetwijziging creëert een temporele versieknoop gelinkt aan de bepalingen die het wijzigde. Elke omzendbrief, ruling en rechtelijke beslissing is verbonden met de bepalingen die het interpreteert, met zijn gezagsniveau expliciet gemodelleerd.
+
+Wanneer je vraagt "hoe worden dividenden uit een dochtervennootschap belast?", zoekt het systeem niet alleen artikel 171. Het doorloopt: artikel 171 (afzonderlijke aanslag) → artikelen 202-204 (DBI-vrijstelling) → Programmawet juli 2025 (financieel vaste activa-vereiste) → artikel 269 (roerende voorheffingstarieven) — en geeft de volledige keten terug met temporele context, gezagsrangschikking en uitzonderingscompleteness.
+
+De domeinradar in elk onderzoeksresultaat is een directe visualisatie van deze graaf: het toont welke fiscale domeinen verbinden met je vraag, welke bepalingen van toepassing zijn, en hoe ze zich tot elkaar verhouden. De verbindingen worden niet afgeleid uit tekstgelijkenis. Ze zijn structureel — omdat ze geparsed, geëxtraheerd en gemodelleerd werden uit het recht zelf.
+
+*Niet zoeken. Navigatie. Elke kruisverwijzing getraceerd. Elke wijziging gelinkt. Elke uitzondering verbonden.*
+
+---
+
+*Bronnen:*
+*1. Google (2012). "Introducing the Knowledge Graph: things, not strings." Official Google Blog.*
+*2. Hogan, A. et al. (2021). "[Knowledge Graphs](https://doi.org/10.1145/3447772)." ACM Computing Surveys, 54(4), Article 71.*
+*3. LexisNexis (2025). "Legal AI Software Company Evaluation Report." GlobeNewswire.*
+*4. de Martim, H. (2025). "[An Ontology-Driven Graph RAG for Legal Norms](https://arxiv.org/abs/2505.00039)." arXiv:2505.00039.*
+*5. Barron, A. et al. (2025). "[Bridging Legal Knowledge and AI: RAG with Vector Stores, Knowledge Graphs](https://arxiv.org/abs/2502.20364)." ICAIL 2025.*
+*6. EUR-Lex (2023). "European Legislation Identifier (ELI)." eur-lex.europa.eu.*

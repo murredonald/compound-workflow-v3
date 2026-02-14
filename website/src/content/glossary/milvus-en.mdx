@@ -1,0 +1,259 @@
+---
+term: "Milvus"
+termSlug: "milvus"
+short: "An open-source vector database optimized for storing, indexing, and searching massive-scale embedding vectors—enabling similarity search for AI applications like RAG, semantic search, and recommendations."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["vector-database", "embeddings", "similarity-search", "faiss", "weaviate"]
+synonyms: ["Milvus DB", "Milvus vector database"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Milvus is an open-source vector database designed for storing and querying high-dimensional [embedding vectors](/en/glossary/vector-embeddings/) at massive scale. Unlike traditional databases that search by exact values, Milvus performs approximate nearest neighbor ([ANN](/en/glossary/ann/)) search to find vectors similar to a [query](/en/glossary/prompt/) vector. It supports billions of vectors with millisecond query latency, making it suitable for production AI applications. Milvus implements multiple index types (IVF, [HNSW](/en/glossary/hnsw/), ANNOY, GPU indexes), supports hybrid search (combining vector and scalar filtering), and provides distributed deployment through Kubernetes. Originally developed by Zilliz, it is now a Linux Foundation AI & Data project.
+
+## Why it matters
+
+Milvus enables critical AI capabilities:
+
+- **[RAG](/en/glossary/rag/) applications** — stores [knowledge base](/en/glossary/knowledge-base/) embeddings for retrieval
+- **[Semantic search](/en/glossary/semantic-search/)** — finds meaning-similar content, not just keywords
+- **Recommendation systems** — matches users to similar items
+- **Image/audio search** — finds visually or acoustically similar media
+- **Anomaly detection** — identifies outliers via vector distance
+- **Production scale** — handles billions of vectors with low latency
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                        MILVUS                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WHAT MILVUS DOES:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Traditional DB:                                     │ │
+│  │  ┌──────────────────┐   ┌─────────────────────┐   │ │
+│  │  │  Query:          │   │  Result:            │   │ │
+│  │  │  WHERE color =   │ → │  Exact matches      │   │ │
+│  │  │  'blue'          │   │  only               │   │ │
+│  │  └──────────────────┘   └─────────────────────┘   │ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  Vector DB (Milvus):                                │ │
+│  │  ┌──────────────────┐   ┌─────────────────────┐   │ │
+│  │  │  Query:          │   │  Result:            │   │ │
+│  │  │  Embedding of    │ → │  Most SIMILAR       │   │ │
+│  │  │  "ocean sunset"  │   │  vectors            │   │ │
+│  │  └──────────────────┘   └─────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Finds images of beaches, twilight, blue/orange    │ │
+│  │  scenes—semantically related, not keyword match    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MILVUS ARCHITECTURE:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │                    MILVUS CLUSTER                    │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              Access Layer                    │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐ │   │ │
+│  │  │  │  Proxy   │  │  Proxy   │  │  Proxy   │ │   │ │
+│  │  │  │  Node    │  │  Node    │  │  Node    │ │   │ │
+│  │  │  └──────────┘  └──────────┘  └──────────┘ │   │ │
+│  │  │       Load balancing, authentication       │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │           Coordinator Layer                  │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐      │   │ │
+│  │  │  │  Root   │ │  Query  │ │  Data   │      │   │ │
+│  │  │  │  Coord  │ │  Coord  │ │  Coord  │      │   │ │
+│  │  │  └─────────┘ └─────────┘ └─────────┘      │   │ │
+│  │  │  Manages cluster state, scheduling         │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │             Worker Layer                     │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────────────┐ ┌──────────────────┐  │   │ │
+│  │  │  │   Query Nodes   │ │   Data Nodes     │  │   │ │
+│  │  │  │                 │ │                   │  │   │ │
+│  │  │  │  Load vectors   │ │  Insert/delete   │  │   │ │
+│  │  │  │  Execute search │ │  Index building  │  │   │ │
+│  │  │  └─────────────────┘ └──────────────────┘  │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │              Storage Layer                   │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────────┐  ┌───────────────────┐   │   │ │
+│  │  │  │  etcd        │  │  Object Storage   │   │   │ │
+│  │  │  │  (metadata)  │  │  (MinIO/S3)       │   │   │ │
+│  │  │  └──────────────┘  │  (vector data)    │   │   │ │
+│  │  │                    └───────────────────┘   │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  INDEX TYPES:                                              │
+│  ────────────                                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  IVF_FLAT (Inverted File)                           │ │
+│  │  ├─ Clusters vectors, searches relevant clusters   │ │
+│  │  ├─ Good accuracy, moderate speed                  │ │
+│  │  └─ Best for: <10M vectors                         │ │
+│  │                                                      │ │
+│  │  IVF_SQ8 / IVF_PQ                                   │ │
+│  │  ├─ Quantized versions, lower memory              │ │
+│  │  ├─ Trades accuracy for speed/memory              │ │
+│  │  └─ Best for: Memory-constrained deployments       │ │
+│  │                                                      │ │
+│  │  HNSW (Hierarchical Navigable Small World)          │ │
+│  │  ├─ Graph-based, excellent recall                  │ │
+│  │  ├─ Fast queries, more memory                     │ │
+│  │  └─ Best for: High accuracy requirements           │ │
+│  │                                                      │ │
+│  │  ANNOY (Spotify)                                    │ │
+│  │  ├─ Tree-based, good for static data              │ │
+│  │  └─ Best for: Read-heavy workloads                 │ │
+│  │                                                      │ │
+│  │  GPU Indexes (IVF_FLAT_GPU, etc.)                   │ │
+│  │  ├─ Leverage GPU for massive acceleration         │ │
+│  │  └─ Best for: Billion-scale datasets               │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  USAGE EXAMPLE:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  from pymilvus import connections, Collection       │ │
+│  │                                                      │ │
+│  │  # Connect to Milvus                                │ │
+│  │  connections.connect(host='localhost', port='19530')│ │
+│  │                                                      │ │
+│  │  # Create collection (schema)                       │ │
+│  │  collection = Collection(                           │ │
+│  │      name="documents",                              │ │
+│  │      schema=CollectionSchema([                      │ │
+│  │          FieldSchema("id", DataType.INT64,         │ │
+│  │                      is_primary=True),             │ │
+│  │          FieldSchema("text", DataType.VARCHAR,     │ │
+│  │                      max_length=1000),             │ │
+│  │          FieldSchema("embedding",                  │ │
+│  │                      DataType.FLOAT_VECTOR,        │ │
+│  │                      dim=1536)  # OpenAI dims      │ │
+│  │      ])                                             │ │
+│  │  )                                                  │ │
+│  │                                                      │ │
+│  │  # Insert vectors                                   │ │
+│  │  collection.insert([ids, texts, embeddings])       │ │
+│  │                                                      │ │
+│  │  # Create index                                     │ │
+│  │  collection.create_index(                           │ │
+│  │      field_name="embedding",                        │ │
+│  │      index_params={                                 │ │
+│  │          "index_type": "HNSW",                     │ │
+│  │          "metric_type": "COSINE",                  │ │
+│  │          "params": {"M": 16, "efConstruction": 64}│ │
+│  │      }                                              │ │
+│  │  )                                                  │ │
+│  │                                                      │ │
+│  │  # Search                                           │ │
+│  │  results = collection.search(                       │ │
+│  │      data=[query_embedding],                        │ │
+│  │      anns_field="embedding",                        │ │
+│  │      param={"metric_type": "COSINE", "ef": 64},   │ │
+│  │      limit=10,                                      │ │
+│  │      expr="text like '%AI%'"  # Hybrid filter     │ │
+│  │  )                                                  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MILVUS vs ALTERNATIVES:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │         MILVUS     PINECONE    WEAVIATE    FAISS   │ │
+│  │  ──────────────────────────────────────────────────  │ │
+│  │  Open      ✓         ✗          ✓          ✓       │ │
+│  │  Source                                             │ │
+│  │                                                      │ │
+│  │  Managed   Zilliz    ✓          WCS        ✗       │ │
+│  │  Cloud     Cloud                                    │ │
+│  │                                                      │ │
+│  │  Scale     Billions  Billions   Millions   Millions│ │
+│  │                                                      │ │
+│  │  Hybrid    ✓         ✓          ✓          ✗       │ │
+│  │  Search                                             │ │
+│  │                                                      │ │
+│  │  GPU       ✓         -          ✗          ✓       │ │
+│  │  Index                                              │ │
+│  │                                                      │ │
+│  │  Best for: Self-hosted production at scale         │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: When should I use Milvus vs Pinecone?**
+
+A: Milvus for self-hosted control, no vendor lock-in, and cost optimization. Pinecone for fully managed simplicity. Milvus requires infra expertise; Pinecone abstracts it away.
+
+**Q: How does Milvus scale?**
+
+A: Horizontally via Kubernetes. Separate scaling of query nodes (search throughput), data nodes (ingestion), and storage. Designed for billions of vectors across distributed clusters.
+
+**Q: Which index type should I choose?**
+
+A: HNSW for best accuracy and reasonable memory. IVF_FLAT for balanced performance. IVF_PQ/SQ8 for memory constraints. GPU indexes for billion-scale with GPUs available.
+
+**Q: Can Milvus do hybrid search (vectors + filters)?**
+
+A: Yes. Combine vector similarity with scalar attribute filtering in a single query (e.g., "find similar documents WHERE category='legal'").
+
+## Related terms
+
+- [Vector database](/en/glossary/vector-database/) — general category
+- [Embeddings](/en/glossary/embeddings/) — what Milvus stores
+- [Similarity search](/en/glossary/similarity-search/) — what Milvus enables
+- [Weaviate](/en/glossary/weaviate/) — alternative vector database
+- [FAISS](/en/glossary/faiss/) — simpler vector library
+
+---
+
+## References
+
+> Wang et al. (2021), "[Milvus: A Purpose-Built Vector Data Management System](https://dl.acm.org/doi/10.1145/3448016.3457550)", SIGMOD. [Original Milvus paper]
+
+> Milvus Documentation (2024), "[Milvus Architecture Overview](https://milvus.io/docs/architecture_overview.md)", Milvus. [Official documentation]
+
+> Zilliz (2023), "[Milvus 2.0: Building a Cloud-Native Vector Database](https://zilliz.com/blog/milvus-2-0-goal-building-a-cloud-native-vector-database)", Zilliz Blog. [Architecture evolution]
+
+> LF AI & Data Foundation (2024), "[Milvus Project](https://lfaidata.foundation/projects/milvus/)", Linux Foundation. [Project governance]

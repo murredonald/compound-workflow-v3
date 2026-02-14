@@ -1,0 +1,146 @@
+---
+term: "RLHF"
+termSlug: "rlhf"
+short: "Reinforcement Learning from Human Feedback—eine Technik zum Fine-Tuning von Sprachmodellen mit menschlichen Präferenzen als Belohnungssignal."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["reinforcement-learning", "fine-tuning", "llm", "instruction-tuning"]
+synonyms: ["Reinforcement Learning from Human Feedback", "RLAIF", "Präferenzlernen", "Menschliche Präferenz-Optimierung"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+RLHF (Reinforcement Learning from Human Feedback) ist eine Trainingstechnik, die Sprachmodelle durch Reinforcement Learning an menschliche Präferenzen anpasst. Statt nur Vorhersagegenauigkeit zu optimieren, trainiert RLHF Modelle, Ausgaben zu generieren, die Menschen als hilfreich, harmlos und ehrlich bewerten. Ein Belohnungsmodell lernt, menschliche Präferenzen vorherzusagen, dann optimiert RL das Sprachmodell, um diese vorhergesagten Präferenzen zu maximieren.
+
+## Warum es wichtig ist
+
+RLHF ist entscheidend für moderne KI-Ausrichtung:
+
+- **Über [Vorhersage](/de/glossary/inference/) hinaus** — optimiert für das, was Menschen tatsächlich wollen
+- **Reduziert schädliche Ausgaben** — Modelle lernen, toxische Inhalte zu vermeiden
+- **Verbessert Nützlichkeit** — Antworten werden nützlicher und relevanter
+- **Treibt ChatGPT an** — die Technik, die konversationelle KI praktisch machte
+- **Sicherheitsfundament** — kritischer Schritt zu ausgerichteten, vertrauenswürdigen KI-Systemen
+
+RLHF transformierte Sprachmodelle von Textvorhersagern zu hilfreichen Assistenten.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                         RLHF                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE DREI STUFEN VON RLHF:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  STUFE 1: SUPERVISED FINE-TUNING (SFT)                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  Basis-LLM + Menschgeschriebene Beispiele ──► SFT-Modell  │
+│                                                            │
+│  "Wie koche ich Pasta?"                                    │
+│  → [Mensch schreibt ideale Antwort]                       │
+│  → Modell lernt ähnliche Qualität zu generieren           │
+│                                                            │
+│  STUFE 2: BELOHNUNGSMODELL TRAINIEREN                      │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │     Prompt: "Was ist Machine Learning?"         │      │
+│  │                                                  │      │
+│  │  Antwort A:         Antwort B:                  │      │
+│  │  "Machine Learning  "ML ist halt               │      │
+│  │   ist ein Teilgebiet einfach Computer          │      │
+│  │   der KI, das       die automatisch            │      │
+│  │   Systemen..."      Sachen machen lol"         │      │
+│  │                                                  │      │
+│  │         Mensch wählt: A ist besser ✓           │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│      Belohnungsmodell lernt: Score(A) > Score(B)          │
+│                                                            │
+│  STUFE 3: REINFORCEMENT LEARNING (PPO)                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  SFT-Modell ──► Generiere Antwort ──► Bel.Modell│      │
+│  │       ↑                                    │     │      │
+│  │       │                                    │     │      │
+│  │       └───── Update Gewichte ◄── Score ◄──┘     │      │
+│  │                                                  │      │
+│  │    (Mit PPO-Algorithmus optimieren)             │      │
+│  │    (KL-Penalty verhindert zu viel Drift)        │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│              RLHF-ausgerichtetes Modell                    │
+│      (Hilfreiche, Harmlose, Ehrliche Antworten)           │
+│                                                            │
+│  KERNKOMPONENTEN:                                          │
+│  ────────────────                                          │
+│  Belohnungsmodell: Sagt menschliche Präferenzscores vorher│
+│  PPO:             Politik-Optimierungsalgorithmus         │
+│  KL-Penalty:      Verhindert katastrophales Vergessen     │
+│  Präferenzdaten:  Vergleichspaare mit menschlichen Wahlen │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**RLHF-Fortschritt:**
+| Stufe | Trainingssignal | Ergebnis |
+|-------|----------------|----------|
+| [Pretraining](/de/glossary/pretraining/) | Next-Token-Vorhersage | Rohe Sprachfähigkeit |
+| SFT | Menschliche Demonstrationen | Folgt Anweisungen |
+| RLHF | Menschliche Präferenzen | Hilfreich, sicher, ausgerichtet |
+
+## Häufige Fragen
+
+**F: Warum ist RLHF nötig, wenn wir Fine-Tuning haben?**
+
+A: Fine-Tuning lehrt Modelle, Beispiele nachzuahmen, optimiert aber nicht für nuancierte Präferenzen. RLHF kann subtile Unterscheidungen lernen wie "höflich aber nicht unterwürfig" oder "detailliert aber nicht überwältigend", die schwer allein mit Demonstrationsdaten zu erfassen sind. Es optimiert holistisch für menschliches Urteil.
+
+**F: Was ist ein Belohnungsmodell?**
+
+A: Das Belohnungsmodell ist ein [neuronales Netz](/de/glossary/neural-network/), das trainiert wird, menschliche Präferenzen vorherzusagen. Bei zwei Antworten auf denselben [Prompt](/de/glossary/prompt/) lernt es, der Antwort, die Menschen bevorzugen, höhere Scores zuzuweisen. Dies verwandelt subjektives menschliches Urteil in ein differenzierbares Belohnungssignal für RL.
+
+**F: Was ist DPO und wie verhält es sich zu RLHF?**
+
+A: Direct Preference Optimization (DPO) ist eine einfachere Alternative, die RLHF-ähnliche Ergebnisse ohne explizites Training eines Belohnungsmodells oder RL erzielt. Es optimiert Sprachmodellgewichte direkt auf Präferenzpaaren. Viele neuere Modelle nutzen DPO, weil es einfacher und stabiler als PPO-basiertes RLHF ist.
+
+**F: Was sind die Grenzen von RLHF?**
+
+A: Wichtige Herausforderungen sind: (1) Reward Hacking—Modelle finden unbeabsichtigte Wege zu hohen Scores, (2) Präferenzqualität—menschliche Bewerter können inkonsistent oder voreingenommen sein, (3) Skalierbarkeit—Präferenzdaten sammeln ist teuer, (4) Fehlausrichtung—Belohnungsmodell erfasst möglicherweise nicht die wahren Präferenzen.
+
+## Verwandte Begriffe
+
+- [Reinforcement Learning](/de/glossary/reinforcement-learning/) — das zugrunde liegende Paradigma
+- [Fine-tuning](/de/glossary/fine-tuning/) — Anpassung vortrainierter Modelle
+- [LLM](/de/glossary/llm/) — mit RLHF trainierte Modelle
+- [Instruction Tuning](/de/glossary/instruction-tuning/) — geht oft RLHF voraus
+
+---
+
+## Referenzen
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT-Paper - führte RLHF für LLMs ein]
+
+> Christiano et al. (2017), "[Deep reinforcement learning from human preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Grundlegendes RLHF-Paper]
+
+> Stiennon et al. (2020), "[Learning to summarize with human feedback](https://arxiv.org/abs/2009.01325)", NeurIPS. [Frühes RLHF für Zusammenfassungen]
+
+> Rafailov et al. (2023), "[Direct Preference Optimization](https://arxiv.org/abs/2305.18290)", NeurIPS. [DPO - einfachere Alternative zu RLHF]
+
+## References
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT paper - introduced RLHF for LLMs]
+
+> Christiano et al. (2017), "[Deep reinforcement learning from human preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Foundational RLHF paper]
+
+> Stiennon et al. (2020), "[Learning to summarize with human feedback](https://arxiv.org/abs/2009.01325)", NeurIPS. [Early RLHF for summarization]
+
+> Rafailov et al. (2023), "[Direct Preference Optimization](https://arxiv.org/abs/2305.18290)", NeurIPS. [DPO - simpler alternative to RLHF]

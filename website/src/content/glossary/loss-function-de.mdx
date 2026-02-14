@@ -1,0 +1,135 @@
+---
+term: "Verlustfunktion"
+termSlug: "loss-function"
+short: "Eine mathematische Funktion, die misst, wie weit die Vorhersagen eines Modells von den gewünschten Ausgaben während des Trainings entfernt sind."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["gradient-descent", "backpropagation", "perplexity", "fine-tuning"]
+synonyms: ["Kostenfunktion", "Zielfunktion", "Fehlerfunktion", "Trainingsverlust"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Eine Verlustfunktion (oder Kostenfunktion) ist ein mathematisches Maß für den Unterschied zwischen den Vorhersagen eines Modells und den tatsächlichen Zielwerten. Während des Trainings werden die Parameter des Modells angepasst, um diesen Verlust zu minimieren, wodurch das Modell effektiv lernt, bessere Vorhersagen zu machen. Für Sprachmodelle ist Cross-Entropy-Verlust am häufigsten—er misst, wie gut die vorhergesagte Wahrscheinlichkeitsverteilung mit dem wahren nächsten Token übereinstimmt.
+
+## Warum es wichtig ist
+
+Verlustfunktionen sind zentral für [maschinelles Lernen](/de/glossary/machine-learning/):
+
+- **Trainingssignal** — leitet Parameteraktualisierungen während der Optimierung
+- **Modellvergleich** — verschiedene Architekturen oder Hyperparameter vergleichen
+- **Fortschrittsverfolgung** — überwachen, ob Training sich verbessert
+- **Konvergenzerkennung** — identifizieren, wann Training gestoppt werden soll
+- **Qualitätsproxy** — niedrigerer Verlust zeigt generell bessere Leistung an
+
+Die Wahl der Verlustfunktion formt, was das Modell zu optimieren lernt.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     VERLUSTFUNKTION                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CROSS-ENTROPY VERLUST (für Sprachmodelle):                │
+│  ──────────────────────────────────────────                │
+│                                                            │
+│  Wahres Label: "Katze" (one-hot: [0, 1, 0, 0])            │
+│  Vorhergesagt:         [0.1, 0.7, 0.15, 0.05]             │
+│                                                            │
+│  Verlust = -Σ true_i × log(pred_i)                        │
+│          = -0×log(0.1) - 1×log(0.7) - 0×log(0.15) - ...   │
+│          = -log(0.7)                                       │
+│          = 0.36                                            │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VERLUSTLANDSCHAFT-VISUALISIERUNG:            │        │
+│  │                                                │        │
+│  │     Verlust                                    │        │
+│  │       │     *                                  │        │
+│  │       │    * *        *                        │        │
+│  │       │   *   *      * *                       │        │
+│  │       │  *     *    *   *                      │        │
+│  │       │ *       *  *     *                     │        │
+│  │       │*         **       *                    │        │
+│  │       │           ▲        **                  │        │
+│  │       └───────────┼──────────────► Params     │        │
+│  │                   │                            │        │
+│  │                   Lokales Minimum (Ziel)       │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  HÄUFIGE VERLUSTFUNKTIONEN:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Cross-Entropie    Klassifikation, LLMs                    │
+│  ─────────────────────────────────────                     │
+│  L = -Σ y_i × log(ŷ_i)                                    │
+│                                                            │
+│  Mittlerer quadratischer Fehler (MSE)    Regression        │
+│  ─────────────────────────────────────                     │
+│  L = 1/n × Σ(y - ŷ)²                                      │
+│                                                            │
+│  Binäre Cross-Entropie    Binäre Klassifikation            │
+│  ─────────────────────────────────────                     │
+│  L = -[y×log(ŷ) + (1-y)×log(1-ŷ)]                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Verlustfunktionen nach Aufgabe:**
+| Aufgabe | Verlustfunktion | Anmerkungen |
+|---------|-----------------|-------------|
+| Sprachmodellierung | Cross-Entropie | Sagt nächste Token-Verteilung vorher |
+| Klassifikation | Cross-Entropie | Multi-Klassen-Vorhersagen |
+| Regression | MSE / MAE | Kontinuierliche Outputs |
+| Kontrastives Lernen | InfoNCE | Embedding-Ähnlichkeit |
+| [Reinforcement Learning](/de/glossary/reinforcement-learning/) | Policy Gradient | Belohnungsoptimierung |
+
+## Häufige Fragen
+
+**F: Warum sinkt der Verlust, aber die Modellqualität verbessert sich nicht?**
+
+A: Dies deutet oft auf Overfitting hin—das Modell merkt sich Trainingsdaten anstatt generalisierbare Muster zu lernen. Überwachen Sie Validierungsverlust neben Trainingsverlust; wenn Trainingsverlust sinkt aber Validierungsverlust steigt, haben Sie Overfitting.
+
+**F: Was ist ein guter Verlustwert?**
+
+A: Es hängt vollständig von der Aufgabe und dem Datensatz ab. Fokussieren Sie darauf, ob der Verlust während des Trainings sinkt und wie er mit Evaluationsmetriken korreliert. Für Sprachmodelle deutet Verlust um 2-3 Nats oft auf gutes Lernen hin.
+
+**F: Was ist der Unterschied zwischen Verlust und Genauigkeit?**
+
+A: Verlust ist eine kontinuierliche differenzierbare Funktion für Optimierung; Genauigkeit ist eine diskrete Metrik für Evaluation. Ein Modell kann verbesserten Verlust aber stagnierende Genauigkeit haben—Training verwendet Verlustgradienten um Gewichte anzupassen.
+
+**F: Warum Cross-Entropie statt Genauigkeit für Training verwenden?**
+
+A: Cross-Entropie bietet glatte Gradienten für Optimierung. Genauigkeit ist nicht-differenzierbar (0 oder 1 pro Sample) und kann Gradientenabstieg nicht leiten. Cross-Entropie bestraft selbstsichere falsche Vorhersagen stärker.
+
+## Verwandte Begriffe
+
+- [Gradientenabstieg](/de/glossary/gradient-descent/) — Optimierung mit Verlust
+- [Backpropagation](/de/glossary/backpropagation/) — berechnet Verlustgradienten
+- [Perplexität](/de/glossary/perplexity/) — exp(Verlust) für Sprachmodelle
+- [Fine-tuning](/de/glossary/fine-tuning/) — minimiert Verlust auf neuen Daten
+
+---
+
+## Referenzen
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Kapitel 6. [20.000+ Zitationen]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8.000+ Zitationen]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50.000+ Zitationen]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15.000+ Zitationen]
+
+## References
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8,000+ citations]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50,000+ citations]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15,000+ citations]

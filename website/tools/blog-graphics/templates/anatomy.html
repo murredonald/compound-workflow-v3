@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* ── Anatomy / Exploded view ── */
+  .anatomy {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .anatomy-layer {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 28px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--card);
+    position: relative;
+  }
+
+  .anatomy-layer:first-child {
+    border-radius: 10px 10px 0 0;
+  }
+
+  .anatomy-layer:last-child {
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 10px 10px;
+  }
+
+  .anatomy-layer:nth-child(even) {
+    background: hsla(220 9% 16% / 0.6);
+  }
+
+  .light .anatomy-layer:nth-child(even) {
+    background: hsla(220 10% 94% / 0.6);
+  }
+
+  .anatomy-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 700;
+    background: var(--primary);
+    color: var(--primary-fg);
+    flex-shrink: 0;
+  }
+
+  .anatomy-content {
+    flex: 1;
+  }
+
+  .anatomy-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 4px;
+  }
+
+  .anatomy-desc {
+    font-size: 15px;
+    color: var(--muted-fg);
+    line-height: 1.5;
+  }
+
+  .anatomy-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  .anatomy-tag.core {
+    background: hsla(36 32% 38% / 0.2);
+    color: var(--primary-text);
+  }
+
+  .anatomy-tag.optional {
+    background: hsla(220 9% 16% / 0.3);
+    color: var(--muted-fg);
+  }
+
+  .anatomy-tag.critical {
+    background: hsla(2 62% 56% / 0.15);
+    color: var(--destructive);
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">Anatomy of a verified tax answer</div>
+  <div class="anatomy">
+    <div class="anatomy-layer">
+      <div class="anatomy-num">1</div>
+      <div class="anatomy-content">
+        <div class="anatomy-label">Natural Language Query</div>
+        <div class="anatomy-desc">Your tax question in plain language — no search syntax needed</div>
+      </div>
+      <div class="anatomy-tag core">Input</div>
+    </div>
+    <div class="anatomy-layer">
+      <div class="anatomy-num">2</div>
+      <div class="anatomy-content">
+        <div class="anatomy-label">Retrieval Layer (RAG)</div>
+        <div class="anatomy-desc">Hybrid search across the full Belgian legal corpus — WIB 92, VCF, WBTW, rulings, circulars</div>
+      </div>
+      <div class="anatomy-tag core">Core</div>
+    </div>
+    <div class="anatomy-layer">
+      <div class="anatomy-num">3</div>
+      <div class="anatomy-content">
+        <div class="anatomy-label">Authority Ranking</div>
+        <div class="anatomy-desc">Sources weighted by legal hierarchy — legislation > royal decrees > circulars > rulings</div>
+      </div>
+      <div class="anatomy-tag core">Core</div>
+    </div>
+    <div class="anatomy-layer">
+      <div class="anatomy-num">4</div>
+      <div class="anatomy-content">
+        <div class="anatomy-label">Cross-Domain Detection</div>
+        <div class="anatomy-desc">Automatic identification of all tax domains the question touches</div>
+      </div>
+      <div class="anatomy-tag critical">Key</div>
+    </div>
+    <div class="anatomy-layer">
+      <div class="anatomy-num">5</div>
+      <div class="anatomy-content">
+        <div class="anatomy-label">Confidence Scoring</div>
+        <div class="anatomy-desc">Per-assertion confidence level based on source support — including what was searched but not found</div>
+      </div>
+      <div class="anatomy-tag critical">Key</div>
+    </div>
+    <div class="anatomy-layer">
+      <div class="anatomy-num">6</div>
+      <div class="anatomy-content">
+        <div class="anatomy-label">Verified Answer + Sources</div>
+        <div class="anatomy-desc">Structured output with cited provisions, version dates, and identified gaps</div>
+      </div>
+      <div class="anatomy-tag core">Output</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

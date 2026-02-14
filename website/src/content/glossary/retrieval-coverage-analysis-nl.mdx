@@ -1,0 +1,64 @@
+---
+term: "Analyse van retrieval-dekking"
+termSlug: "retrieval-coverage-analysis"
+short: "Analyse van retrieval-dekking toetst of je index en retrieval-pipeline de noodzakelijke bronnen kan vinden voor een afgebakende set vragen en topics."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["search-analytics", "relevance-tuning", "indexing-strategy", "content-discoverability", "full-text-search"]
+synonyms: ["Coverage testing", "Retrieval gap analysis", "Corpus coverage analysis"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Analyse van retrieval-dekking is een evaluatiemethode die meet hoe goed een zoek- of [RAG](/nl/glossary/rag/)-systeem de *juiste* bronnen kan ophalen voor een gedefinieerde scope (topics, jurisdicties, documenttypes). De kernvraag is: "hebben we het materiaal en vinden we het terug?".
+
+## Waarom het belangrijk is
+
+- **Blinde vlekken vermijden**: een ranker kan geen documenten tonen die niet geïndexeerd zijn.
+- **Betere QA**: vindt ontbrekende bronnen, ingest-bugs of zwakke [query understanding](/nl/glossary/query-understanding/).
+- **Prioritiseren**: laat zien wat je eerst moet toevoegen of fixen.
+- **Governance**: levert bewijs dat dekking past bij beoogd gebruik.
+
+## Hoe het werkt
+
+Dekking meet je meestal tegen een checklist van vereiste bronnen en representatieve queries:
+
+```
+Scope bepalen -> query-set bouwen -> retrieve -> beoordelen "vinden we vereiste bronnen?" -> gaps fixen -> opnieuw testen
+```
+
+Output: dekkingspercentages per topic/jurisdictie, lijsten van ontbrekende of moeilijk vindbare bronnen, en terugkerende failure patterns (metadata, taal, access).
+
+## Praktisch voorbeeld
+
+Je definieert 50 representatieve vragen rond Belgische roerende voorheffing. De analyse toont dat circulaires geïndexeerd zijn, maar geconsolideerde versies van sommige artikelen ontbreken, waardoor retrieval faalt. De fix zit in ingest/indexering, niet in [prompts](/nl/glossary/prompt/).
+
+## Veelgestelde vragen
+
+**Q: Is dit gewoon precision/recall?**
+
+A: Het kan die metrics gebruiken, maar dekking is vaak bron-gericht: "halen we de specifieke autoritatieve documenten op waarop we moeten steunen?"
+
+**Q: Hoe vaak moet je dit doen?**
+
+A: Minstens na ingest-wijzigingen, na grote wetsupdates en periodiek voor high-risk domeinen.
+
+## Gerelateerde termen
+
+- [Search Analytics](/nl/glossary/search-analytics/) - uitkomsten en failure patterns monitoren
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - ranking verbeteren zodra dekking klopt
+- [Indexing Strategy](/nl/glossary/indexing-strategy/) - zorgt dat vereiste bronnen geïndexeerd zijn
+- [Content Discoverability](/nl/glossary/content-discoverability/) - vindbaarheid via metadata en structuur
+- [Full-Text Search](/nl/glossary/full-text-search/) - baseline retrieval om te evalueren
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

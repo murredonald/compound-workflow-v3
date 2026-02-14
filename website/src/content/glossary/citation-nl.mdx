@@ -1,0 +1,226 @@
+---
+term: "Citatie"
+termSlug: "citation"
+short: "De praktijk van expliciet verwijzen naar brondocumenten in AI-gegenereerde antwoorden, waardoor verificatie van claims mogelijk wordt en vertrouwen wordt opgebouwd door transparantie."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["grounding", "attribution", "rag", "factuality"]
+synonyms: ["Broncitatie", "Referentie", "Bronvermelding"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Citatie in AI-systemen verwijst naar het expliciet koppelen van gegenereerde content aan zijn brondocumenten, passages, of data. Wanneer een [LLM](/nl/glossary/llm/) informatie geeft, geven citaties precies aan waar die informatie vandaan kwam—welk document, pagina, paragraaf, of datapunt elke claim ondersteunt. Effectieve citatie transformeert AI van een black box naar een transparant hulpmiddel waar elk feit geverifieerd kan worden. Citaties zijn essentieel voor enterprise AI, onderzoekstoepassingen, en elk domein waar nauwkeurigheid en verantwoording belangrijk zijn.
+
+## Waarom het belangrijk is
+
+Citaties zijn fundamenteel voor [betrouwbare AI](/nl/glossary/responsible-ai/):
+
+- **Maakt verificatie mogelijk** — gebruikers kunnen claims controleren
+- **Bouwt vertrouwen** — transparantie creëert vertrouwen in AI-antwoorden
+- **Ondersteunt verantwoording** — traceerbare claims maken auditing mogelijk
+- **Vereist voor compliance** — juridische, medische domeinen vereisen bronnen
+- **Vermindert [hallucinatie](/nl/glossary/hallucination/)-impact** — ongegronde claims worden duidelijk
+- **Verbetert gebruikerservaring** — nieuwsgierige gebruikers kunnen bronnen verkennen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       CITATIE                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ZONDER vs MET CITATIES:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ZONDER CITATIES:                                          │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  V: "Wat zijn de boetes voor late betaling?"        │ │
+│  │                                                      │ │
+│  │  A: "Late betalingen krijgen 5% boete na 15 dagen, │ │
+│  │      oplopend tot 10% na 30 dagen. Rente loopt     │ │
+│  │      op met 1,5% per maand."                        │ │
+│  │                                                      │ │
+│  │  Problemen:                                          │ │
+│  │  • Is dit accuraat?                                  │ │
+│  │  • Waar komt dit vandaan?                           │ │
+│  │  • Kan ik hierop vertrouwen voor een beslissing?   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  MET CITATIES:                                             │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  V: "Wat zijn de boetes voor late betaling?"        │ │
+│  │                                                      │ │
+│  │  A: "Late betalingen krijgen 5% boete na 15 dagen  │ │
+│  │      [1], oplopend tot 10% na 30 dagen [1].        │ │
+│  │      Rente loopt op met 1,5% per maand [2].        │ │
+│  │                                                      │ │
+│  │      Bronnen:                                        │ │
+│  │      [1] Betalingsvoorwaarden.pdf, Sectie 4.2, p.8 │ │
+│  │      [2] Rentebeleid.pdf, Sectie 2.1, p.3          │ │
+│  │                                                      │ │
+│  │  Voordelen:                                          │ │
+│  │  ✓ Elke claim traceerbaar                           │ │
+│  │  ✓ Gebruiker kan accuraatheid verifiëren           │ │
+│  │  ✓ Bronnen zijn gezaghebbende documenten           │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CITATIE GRANULARITEITSNIVEAUS:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Document-niveau:                                          │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  "Volgens het Personeelshandboek [1]..."           │ │
+│  │                                                      │ │
+│  │  [1] personeelshandboek.pdf                         │ │
+│  │                                                      │ │
+│  │  Pro: Simpel te implementeren                       │ │
+│  │  Con: Moeilijk specifieke claims te verifiëren     │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Sectie/Pagina-niveau:                                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  "Vakantie-opbouw [1] hangt af van dienstverband..."│ │
+│  │                                                      │ │
+│  │  [1] personeelshandboek.pdf, Hoofdstuk 5, p.23     │ │
+│  │                                                      │ │
+│  │  Pro: Makkelijker te vinden                         │ │
+│  │  Con: Vereist nog enig zoeken                       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Passage/Citaat-niveau:                                    │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  "Medewerkers bouwen 1,5 vakantiedag per maand     │ │
+│  │   op na hun eerste jaar" [1]                        │ │
+│  │                                                      │ │
+│  │  [1] "Na voltooiing van twaalf maanden dienst-     │ │
+│  │       verband, bouwen teamleden vakantie op        │ │
+│  │       met 1,5 dag per maand"                        │ │
+│  │       — personeelshandboek.pdf, p.23, par. 3       │ │
+│  │                                                      │ │
+│  │  Pro: Directe verificatie, exacte bron             │ │
+│  │  Con: Complexere implementatie                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CITATIE PIPELINE:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. RETRIEVAL                                        │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Query → Haal relevante passages op         │   │ │
+│  │  │                                              │   │ │
+│  │  │  Bewaar metadata voor elke passage:         │   │ │
+│  │  │  • Document ID                               │   │ │
+│  │  │  • Paginanummer                              │   │ │
+│  │  │  • Sectie/paragraaf                          │   │ │
+│  │  │  • Retrieval score                           │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  2. GENERATIE MET CITATIE-INSTRUCTIES              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  System prompt:                              │   │ │
+│  │  │  "Citeer bronnen met [N] notatie bij        │   │ │
+│  │  │   beantwoorden. Elke feitelijke claim moet  │   │ │
+│  │  │   een citatie hebben."                       │   │ │
+│  │  │                                              │   │ │
+│  │  │  Context: [passage 1 met metadata]          │   │ │
+│  │  │           [passage 2 met metadata]          │   │ │
+│  │  │                                              │   │ │
+│  │  │  Query: [gebruikersvraag]                    │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  3. NAVERWERKING                                   │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  • Parse citatiemarkers [N]                  │   │ │
+│  │  │  • Koppel aan opgehaalde passage metadata   │   │ │
+│  │  │  • Genereer klikbare bronlinks              │   │ │
+│  │  │  • Verifieer citaties bestaan in context    │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CITATIE KWALITEITSMETRIEKEN:                              │
+│  ────────────────────────────                              │ 
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Metriek          │  Beschrijving                   │ │
+│  │  ─────────────────┼──────────────────────────────── │ │
+│  │  Dekking          │  % claims met citaties          │ │
+│  │  Accuraatheid     │  Citaties wijzen naar goede bron│ │
+│  │  Relevantie       │  Geciteerde passage onderbouwt  │ │
+│  │  Granulariteit    │  Hoe specifiek is de citatie    │ │
+│  │  Getrouwheid      │  Claim reflecteert bron correct │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  VEELVOORKOMENDE CITATIEPROBLEMEN:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  • Gefabriceerde citaties (gehallucineerde bronnen)       │
+│  • Verkeerd toegeschreven claims (foute bron geciteerd)   │
+│  • Over-citatie (citeren voor voor de hand liggende feiten)│
+│  • Onder-citatie (ontbrekende citaties voor claims)       │
+│  • Vage citaties (document maar niet locatie)             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe zorg ik dat LLMs geen citaties fabriceren?**
+
+A: Gebruik gestructureerde [prompts](/nl/glossary/prompt/) met genummerde bronnen en instrueer het model alleen te citeren uit gegeven context. Verwerk na om te verifiëren dat elke citatiemarker [N] overeenkomt met een daadwerkelijke passage.
+
+**V: Moet elke zin een citatie hebben?**
+
+A: Nee—citeer feitelijke claims uit bronnen, niet algemene kennis of logische afleidingen. Over-citeren verstoort antwoorden. Focus op claims die gebruikers willen verifiëren: statistieken, beleid, procedures.
+
+**V: Welke citatiegranulariteit moet ik gebruiken?**
+
+A: Hangt af van use case. Enterprise kennisbanken profiteren van sectie/paginaniveau. Onderzoek kan passage-niveau met citaten nodig hebben. Hogere granulariteit verhoogt vertrouwen maar vereist meer engineering.
+
+**V: Hoe verhouden citaties zich tot RAG?**
+
+A: RAG biedt het retrieval-mechanisme dat citaties mogelijk maakt. Zonder ophalen van passages is er niets te citeren. De RAG-pipeline moet bronmetadata bewaren zodat citaties kunnen teruglinken.
+
+## Gerelateerde termen
+
+- [Grounding](/nl/glossary/grounding/) — antwoorden verankeren aan bronnen
+- [Attributie](/nl/glossary/attribution/) — claims koppelen aan bewijs
+- [RAG](/nl/glossary/rag/) — retrieval maakt citatie mogelijk
+- [Feitelijkheid](/nl/glossary/factuality/) — nauwkeurigheidsdoel van citatie
+
+---
+
+## Referenties
+
+> Bohnet et al. (2022), "[Attributed Question Answering](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attributie en citatiemetrieken]
+
+> Gao et al. (2023), "[Enabling Large Language Models to Generate Text with Citations](https://arxiv.org/abs/2305.14627)", EMNLP. [Citatie generatiemethoden]
+
+> Liu et al. (2023), "[Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848)", arXiv. [Citatiekwaliteit evaluatie]
+
+## References
+
+> Bohnet et al. (2022), "[Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attribution and citation metrics]
+
+> Gao et al. (2023), "[Enabling Large Language Models to Generate Text with Citations](https://arxiv.org/abs/2305.14627)", EMNLP. [Citation generation methods]
+
+> Liu et al. (2023), "[Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848)", arXiv. [Citation quality evaluation]

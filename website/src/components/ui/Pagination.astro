@@ -1,0 +1,114 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  prevText?: string;
+  nextText?: string;
+}
+
+const { currentPage, totalPages, baseUrl, prevText = "Previous", nextText = "Next" } = Astro.props;
+
+const prevUrl = currentPage > 1 ? (currentPage === 2 ? baseUrl : `${baseUrl}${currentPage - 1}/`) : null;
+const nextUrl = currentPage < totalPages ? `${baseUrl}${currentPage + 1}/` : null;
+
+// Generate page numbers to show
+function getPageNumbers(): (number | "...")[] {
+  const pages: (number | "...")[] = [];
+  
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    
+    if (currentPage > 3) pages.push("...");
+    
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    
+    for (let i = start; i <= end; i++) pages.push(i);
+    
+    if (currentPage < totalPages - 2) pages.push("...");
+    
+    pages.push(totalPages);
+  }
+  
+  return pages;
+}
+
+const pageNumbers = getPageNumbers();
+---
+
+{totalPages > 1 && (
+  <nav aria-label="Pagination" class="mt-12 flex items-center justify-center gap-2">
+    {/* Previous button */}
+    {prevUrl ? (
+      <a
+        href={prevUrl}
+        class="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-3 py-2 text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
+        rel="prev"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        {prevText}
+      </a>
+    ) : (
+      <span class="inline-flex items-center gap-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-body-sm font-medium text-muted-foreground cursor-not-allowed">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        {prevText}
+      </span>
+    )}
+
+    {/* Page numbers - hidden on mobile */}
+    <div class="hidden sm:flex items-center gap-1">
+      {pageNumbers.map((page) =>
+        page === "..." ? (
+          <span class="px-2 text-muted-foreground">…</span>
+        ) : page === currentPage ? (
+          <span
+            class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-body-sm font-medium text-primary-foreground"
+            aria-current="page"
+          >
+            {page}
+          </span>
+        ) : (
+          <a
+            href={page === 1 ? baseUrl : `${baseUrl}${page}/`}
+            class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            {page}
+          </a>
+        )
+      )}
+    </div>
+
+    {/* Mobile page indicator */}
+    <span class="sm:hidden text-body-sm text-muted-foreground">
+      {currentPage} / {totalPages}
+    </span>
+
+    {/* Next button */}
+    {nextUrl ? (
+      <a
+        href={nextUrl}
+        class="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-3 py-2 text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
+        rel="next"
+      >
+        {nextText}
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    ) : (
+      <span class="inline-flex items-center gap-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-body-sm font-medium text-muted-foreground cursor-not-allowed">
+        {nextText}
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+    )}
+  </nav>
+)}

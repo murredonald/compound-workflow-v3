@@ -1,0 +1,56 @@
+---
+term: "Full-Text Search"
+termSlug: "full-text-search"
+short: "Full-text search retrieves documents by matching query terms against indexed text (often via an inverted index), then ranks the best matches."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["indexing-strategy", "boolean-search", "relevance-tuning", "content-discoverability"]
+synonyms: ["Text search", "Keyword search", "Inverted index search"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Full-text search is keyword-based retrieval over text fields such as titles, body text, and metadata. Most systems build an **[inverted index](/en/glossary/inverted-index/)** that maps terms to the documents (and positions) where they occur, enabling fast lookups and scoring.
+
+## Why it matters
+
+- **Precision**: exact terms, phrases, and filters are often critical in legal and tax content.
+- **Speed**: inverted indexes scale well to large corpora.
+- **Transparency**: you can explain why a result matched (terms, fields, boosts).
+- **Control**: supports field weighting, phrase matching, and Boolean operators.
+
+## How it works
+
+```
+Text -> tokenize/normalize -> inverted index -> query -> scoring -> ranked results
+```
+
+## Practical example
+
+Searching for `"withholding tax" AND Belgium` can reliably surface documents that explicitly contain that phrase and jurisdiction, even when semantic models would drift.
+
+## Common questions
+
+**Q: Is full-text search the same as [semantic search](/en/glossary/semantic-search/)?**
+
+A: No. Full-text search matches tokens/phrases. Semantic search matches meaning (often via embeddings). Many systems combine both ([hybrid search](/en/glossary/hybrid-search/)).
+
+**Q: Why do I sometimes miss results that "should" match?**
+
+A: Common causes are analyzer choices (stemming, stopwords), missing fields, or content that was not indexed due to the indexing strategy.
+
+## Related terms
+
+- [Indexing Strategy](/en/glossary/indexing-strategy/) - decide what and how to index
+- [Boolean Search](/en/glossary/boolean-search/) - strict AND/OR/NOT logic
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - improve ranking quality
+- [Content Discoverability](/en/glossary/content-discoverability/) - ensure content can be found and indexed
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

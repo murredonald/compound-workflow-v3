@@ -1,0 +1,150 @@
+---
+term: "Instruction Tuning"
+termSlug: "instruction-tuning"
+short: "Eine Fine-Tuning-Methode, die Sprachmodelle trainiert, Anweisungen in natürlicher Sprache für diverse Aufgaben zu befolgen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["fine-tuning", "rlhf", "llm", "prompt"]
+synonyms: ["Instruktions-Fine-Tuning", "Aufgaben-Instruktionstraining", "Multi-Task-Instruktionslernen"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Instruction Tuning ist eine Fine-Tuning-Technik, die Sprachmodelle trainiert, menschliche Anweisungen zu verstehen und zu befolgen. Statt auf aufgabenspezifischen Datensätzen zu trainieren, werden Modelle auf Sammlungen verschiedener Aufgaben trainiert, die als natürlichsprachliche Anweisungen formuliert sind (z.B. "Fasse diesen Artikel zusammen:", "Übersetze ins Französische:", "Beantworte diese Frage:"). Dies ermöglicht Modellen, auf neue Aufgaben in natürlicher Sprache zu generalisieren.
+
+## Warum es wichtig ist
+
+Instruction Tuning transformierte die Interaktion mit LLMs:
+
+- **Natürliche Interaktion** — nutze einfache Sprache statt sorgfältigem Prompt Engineering
+- **Aufgabengeneralisierung** — Modelle bewältigen neue Aufgaben ohne Neutraining
+- **Bessere Zero-Shot-Leistung** — folgt neuen Anweisungen, die es noch nicht gesehen hat
+- **Grundlage für Chat** — ermöglicht konversationelle KI-Assistenten
+- **Vorläufer von RLHF** — oft der erste Schritt vor dem Präferenzlernen
+
+Instruction Tuning überbrückt die Lücke zwischen rohen Sprachmodellen und praktischen Assistenten.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   INSTRUCTION TUNING                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  VOR INSTRUCTION TUNING:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  Benutzer: "Übersetze 'hallo' ins Französische"           │
+│  ↓                                                        │
+│  Rohes LLM gibt möglicherweise aus:                       │
+│  "Übersetze 'tschüss' ins Französische. Übersetze..."    │
+│  (setzt Muster fort, übersetzt nicht wirklich)            │
+│                                                            │
+│  NACH INSTRUCTION TUNING:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Benutzer: "Übersetze 'hallo' ins Französische"           │
+│  ↓                                                        │
+│  Instruction-tuned LLM:                                   │
+│  "Bonjour" ✓                                              │
+│  (versteht und befolgt die Anweisung)                     │
+│                                                            │
+│  INSTRUCTION TUNING DATENFORMAT:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐       │
+│  │  ANWEISUNG:                                     │       │
+│  │  "Fasse den folgenden Artikel in 2 Sätzen zusammen"│   │
+│  │                                                  │       │
+│  │  EINGABE:                                        │       │
+│  │  "Der Klimawandel bezieht sich auf langfristige"│       │
+│  │                                                  │       │
+│  │  AUSGABE:                                        │       │
+│  │  "Der Klimawandel beschreibt langfristige       │       │
+│  │   Veränderungen der Temperatur. Menschliche     │       │
+│  │   Aktivitäten sind seit 1800 die Hauptursache." │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│  TRAININGSPROZESS:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  1. Sammle diverse Aufgaben                                │
+│     ┌────────────────────────────────────────────┐        │
+│     │ • Zusammenfassung  • Fragenbeantwortung    │        │
+│     │ • Übersetzung      • Code-Generierung      │        │
+│     │ • Klassifikation   • Schlussfolgerung      │        │
+│     │ • Extraktion       • Kreatives Schreiben   │        │
+│     └────────────────────────────────────────────┘        │
+│                                                            │
+│  2. Formatiere als Anweisungen                             │
+│     Aufgabe→"Führe {Aufgabe} auf {Eingabe} aus. Ausgabe:" │
+│                                                            │
+│  3. Fine-tune Basismodell                                  │
+│     Basis-LLM──[Instruktionsdaten]──►Instruction-tuned LLM│
+│                                                            │
+│  GÄNGIGE INSTRUKTIONS-DATENSÄTZE:                          │
+│  ────────────────────────────────                          │
+│  • FLAN (Finetuned Language Net)    ~1800 Aufgaben        │
+│  • Natural Instructions             ~60 Aufgabenkategorien│
+│  • Self-Instruct                    Automatisch generiert │
+│  • Alpaca                           GPT-generiert         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Instruction Tuning Verbesserungen:**
+| Fähigkeit | Vorher | Nachher |
+|-----------|--------|---------|
+| Anweisungen befolgen | Schwach | Stark |
+| Zero-Shot-Aufgaben | Schwach | Gut |
+| Benutzerinteraktion | Prompt Engineering nötig | Natürliche Sprache |
+| Aufgabenvielfalt | Begrenzt | Breit |
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Instruction Tuning von normalem Fine-Tuning?**
+
+A: Normales Fine-Tuning trainiert auf aufgabenspezifischen Daten (z.B. Sentiment-Klassifikation). Instruction Tuning trainiert auf diversen Aufgaben, formuliert als Anweisungen, und lehrt das Modell, auf JEDE Aufgabe in natürlicher Sprache zu generalisieren. Es geht darum, Anweisungen befolgen zu lernen, nicht nur eine Aufgabe.
+
+**F: Was ist die Beziehung zwischen Instruction Tuning und RLHF?**
+
+A: Sie sind komplementär. Instruction Tuning (oft SFT genannt) wird typischerweise zuerst durchgeführt, um dem Modell das Befolgen von Anweisungen beizubringen. RLHF kommt danach, um Ausgaben an menschliche Präferenzen anzupassen (hilfreich, harmlos, ehrlich). Die meisten modernen Assistenten nutzen beides.
+
+**F: Kann Instruction Tuning kleine Modelle wettbewerbsfähig machen?**
+
+A: Teilweise. Instruction Tuning verbessert die Anweisungsbefolgungsfähigkeit kleinerer Modelle erheblich. Modelle wie Alpaca zeigten, dass instruction-tuned 7B-Modelle viele Aufgaben gut bewältigen. Komplexes Schlussfolgern profitiert jedoch weiterhin von größerer Modellskala.
+
+**F: Was macht gute Instruction-Tuning-Daten aus?**
+
+A: Diversität ist entscheidend—viele verschiedene Aufgaben auf viele verschiedene Arten formuliert. Qualität zählt mehr als Quantität. Anweisungen sollten klar sein, Ausgaben genau, und das Format konsistent. Sowohl von Menschen geschriebene als auch sorgfältig gefilterte synthetische Daten funktionieren.
+
+## Verwandte Begriffe
+
+- [Fine-tuning](/de/glossary/fine-tuning/) — Anpassung vortrainierter Modelle
+- [RLHF](/de/glossary/rlhf/) — folgt typischerweise auf Instruction Tuning
+- [LLM](/de/glossary/llm/) — durch Instruction Tuning verbesserte Modelle
+- [Prompt](/de/glossary/prompt/) — Eingabeformat, das Instruction Tuning ermöglicht
+
+---
+
+## Referenzen
+
+> Wei et al. (2022), "[Finetuned Language Models Are Zero-Shot Learners](https://arxiv.org/abs/2109.01652)", ICLR. [FLAN-Paper - grundlegende Instruction-Tuning-Arbeit]
+
+> Sanh et al. (2022), "[Multitask Prompted Training Enables Zero-Shot Task Generalization](https://arxiv.org/abs/2110.08207)", ICLR. [T0 - Multi-Task Instruction Tuning]
+
+> Wang et al. (2022), "[Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/abs/2212.10560)", ACL. [Self-Instruct-Methode]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [7B instruction-tuned Modell]
+
+## References
+
+> Wei et al. (2022), "[Finetuned Language Models Are Zero-Shot Learners](https://arxiv.org/abs/2109.01652)", ICLR. [FLAN paper - foundational instruction tuning work]
+
+> Sanh et al. (2022), "[Multitask Prompted Training Enables Zero-Shot Task Generalization](https://arxiv.org/abs/2110.08207)", ICLR. [T0 - multi-task instruction tuning]
+
+> Wang et al. (2022), "[Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/abs/2212.10560)", ACL. [Self-Instruct method]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [7B instruction-tuned model]

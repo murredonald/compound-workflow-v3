@@ -1,0 +1,64 @@
+---
+term: "Analyse der Retrieval-Abdeckung"
+termSlug: "retrieval-coverage-analysis"
+short: "Retrieval-Abdeckungsanalyse prüft, ob Index und Retrieval-Pipeline die nötigen Quellen für eine definierte Menge an Fragen und Themen finden können."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["search-analytics", "relevance-tuning", "indexing-strategy", "content-discoverability", "full-text-search"]
+synonyms: ["Coverage testing", "Retrieval gap analysis", "Corpus coverage analysis"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Retrieval-Abdeckungsanalyse ist eine Evaluationsmethode, die misst, wie gut ein Such- oder [RAG](/de/glossary/rag/)-System die *richtigen* Quellen für einen definierten Scope (Themen, Jurisdiktionen, Dokumenttypen) abrufen kann. Im Fokus steht: "Haben wir die benötigten Quellen, und finden wir sie?".
+
+## Warum es wichtig ist
+
+- **Blinde Flecken vermeiden**: ein Ranker kann nicht finden, was nicht indexiert ist.
+- **Bessere QA**: entdeckt fehlende Quellen, Ingestion-Probleme oder schwaches [Query Understanding](/de/glossary/query-understanding/).
+- **Priorisierung**: zeigt, welche Lücken zuerst zu schließen sind.
+- **Governance**: liefert Evidenz, dass Coverage zum Use Case passt.
+
+## Wie es funktioniert
+
+Abdeckung wird oft gegen eine Liste erforderlicher Quellen und repräsentative Queries gemessen:
+
+```
+Scope definieren -> Query-Set bauen -> retrieve -> bewerten "erforderliche Quellen gefunden?" -> Lücken schließen -> re-testen
+```
+
+Typische Ergebnisse: Coverage-Prozente je Thema/Jurisdiktion, Listen fehlender oder schwer auffindbarer Quellen und wiederkehrende Failure-Patterns (Metadaten, Sprache, Zugriff).
+
+## Praktisches Beispiel
+
+Sie definieren 50 repräsentative Fragen zu einem Tax-Thema. Die Analyse zeigt: Rundschreiben sind indexiert, aber konsolidierte Fassungen einiger Normen fehlen, wodurch Retrieval scheitert. Die Lösung liegt in Ingestion/Indexierung, nicht in Prompt-Änderungen.
+
+## Häufige Fragen
+
+**Q: Ist das einfach Precision/Recall?**
+
+A: Es kann solche Metriken nutzen, ist aber oft quellenorientiert: "Rufen wir die konkreten autoritativen Dokumente ab, auf die wir uns stützen müssen?"
+
+**Q: Wie oft sollte man das laufen lassen?**
+
+A: Nach Ingestion-Änderungen, nach großen Rechtsupdates und regelmäßig für High-Risk-Domänen.
+
+## Verwandte Begriffe
+
+- [Search Analytics](/de/glossary/search-analytics/) - Outcomes und Fehlerbilder monitoren
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Ranking nach Coverage verbessern
+- [Indexing Strategy](/de/glossary/indexing-strategy/) - stellt Indexierung benötigter Quellen sicher
+- [Content Discoverability](/de/glossary/content-discoverability/) - Inhalte per Struktur/Metadaten auffindbar machen
+- [Full-Text Search](/de/glossary/full-text-search/) - Basisschicht für Evaluation
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

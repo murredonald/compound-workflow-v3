@@ -1,0 +1,103 @@
+---
+term: "Tokenization"
+termSlug: "tokenization"
+short: "The process of splitting text into smaller units (tokens) that language models can process and understand."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "context-window", "embeddings", "bpe"]
+synonyms: ["Tokenisation", "Text segmentation", "Subword tokenization"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Tokenization is the process of converting raw text into discrete units called tokens that language models can process. These tokens can be words, subwords, characters, or byte-level units. Modern LLMs typically use subword tokenization (like [BPE](/en/glossary/byte-pair-encoding/) or [SentencePiece](/en/glossary/sentencepiece/)), which balances vocabulary size with the ability to handle rare and compound words by breaking them into meaningful pieces.
+
+## Why it matters
+
+Tokenization is the critical first step in all language model operations:
+
+- **Model input** — LLMs don't see text; they see sequences of token IDs
+- **Context limits** — token count (not character count) determines what fits in the context window
+- **Cost calculation** — API pricing is based on tokens consumed
+- **Multilingual support** — tokenizer design affects how efficiently different languages are processed
+- **Model capabilities** — poor tokenization of code, math, or non-English text degrades performance
+
+The choice of tokenizer fundamentally shapes what a model can understand and how efficiently.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     TOKENIZATION                           │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Input: "Tokenization handles unfamiliar words"            │
+│                          │                                 │
+│                          ▼                                 │
+│  ┌────────────────────────────────────────────────┐        │
+│  │ Subword tokenization (BPE example):            │        │
+│  │                                                │        │
+│  │ "Token" "ization" " handles" " un" "familiar"  │        │
+│  │ " words"                                       │        │
+│  │                                                │        │
+│  │ Token IDs: [14402, 2065, 17082, 653, 74, 4339] │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  Different tokenizers for same text:                       │
+│  ┌─────────────────────────────────────────────┐           │
+│  │ GPT-4:    "Hello" → [15496]                 │           │
+│  │ Llama:    "Hello" → [12345]                 │           │
+│  │ Different models = different token IDs       │           │
+│  └─────────────────────────────────────────────┘           │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Pre-processing** — text is normalized (Unicode, whitespace handling)
+2. **Segmentation** — text is split using learned rules (BPE, WordPiece, etc.)
+3. **Mapping** — each token is converted to a unique integer ID
+4. **Special tokens** — markers like `<BOS>`, `<EOS>`, `<PAD>` are added as needed
+
+Common algorithms:
+- **BPE (Byte Pair Encoding)** — GPT models, merges frequent character pairs
+- **WordPiece** — BERT, similar to BPE with different scoring
+- **SentencePiece** — language-agnostic, treats text as raw Unicode
+- **Tiktoken** — OpenAI's fast BPE implementation
+
+## Common questions
+
+**Q: Why not just split on spaces and words?**
+
+A: Word-level tokenization creates huge vocabularies and can't handle unknown words. Subword tokenization balances vocabulary size (~50K-100K tokens) with coverage of any text, including rare words and neologisms.
+
+**Q: Why do non-English languages use more tokens?**
+
+A: Tokenizers trained primarily on English may split non-English words into more pieces. This means the same content costs more tokens and uses more context window in other languages.
+
+**Q: How do I count tokens before sending to an API?**
+
+A: Use the model's tokenizer library (e.g., `tiktoken` for OpenAI). Roughly estimate: 1 token ≈ 4 characters in English. Most providers offer token counting tools.
+
+**Q: Can tokenization cause model errors?**
+
+A: Yes. Unusual tokenization of numbers, code, or special characters can confuse models. Understanding tokenization helps debug unexpected behaviors.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — models that use tokenization for input
+- [Context Window](/en/glossary/context-window/) — measured in tokens
+- [Embeddings](/en/glossary/embeddings/) — vectors represent tokens
+- BPE — common tokenization algorithm
+
+---
+
+## References
+
+> Sennrich et al. (2016), "[Neural Machine Translation of Rare Words with Subword Units](https://arxiv.org/abs/1508.07909)", ACL. [11,000+ citations]
+
+> Kudo & Richardson (2018), "[SentencePiece: A simple and language independent subword tokenizer and detokenizer](https://arxiv.org/abs/1808.06226)", EMNLP. [3,000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [GPT-2 paper, 15,000+ citations]
+
+> Rust et al. (2021), "[How Good is Your Tokenizer? On the Monolingual Performance of Multilingual Language Models](https://arxiv.org/abs/2012.15613)", ACL. [400+ citations]

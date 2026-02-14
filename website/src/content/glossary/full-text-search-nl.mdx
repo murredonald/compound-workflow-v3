@@ -1,0 +1,59 @@
+---
+term: "Full-Text Search"
+termSlug: "full-text-search"
+short: "Full-text search haalt documenten op door querytermen te matchen met geïndexeerde tekst (vaak via een inverted index) en rankt de beste matches."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["indexing-strategy", "boolean-search", "relevance-tuning", "content-discoverability"]
+synonyms: ["Tekstzoekopdracht", "Keyword search", "Inverted index search"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Full-text search is keyword-gebaseerde retrieval over tekstvelden zoals titel, body en metadata. De meeste systemen bouwen een **[inverted index](/nl/glossary/inverted-index/)** die termen koppelt aan documenten (en posities) waar ze voorkomen, zodat zoeken snel en schaalbaar is.
+
+## Waarom het belangrijk is
+
+- **Precisie**: exacte termen, frases en filters zijn vaak cruciaal in juridische/fiscale content.
+- **Snelheid**: inverted indexes schalen goed naar grote corpora.
+- **Transparantie**: je kunt verklaren waarom een resultaat matcht (termen, velden, boosts).
+- **Controle**: ondersteunt veldweging, frasezoekopdrachten en Booleaanse operatoren.
+
+## Hoe het werkt
+
+```
+Tekst -> tokeniseer/normaliseer -> inverted index -> query -> scoring -> ranking
+```
+
+## Praktisch voorbeeld
+
+Zoeken naar `"roerende voorheffing" AND België` kan betrouwbaar documenten opleveren die die exacte frase en jurisdictie expliciet bevatten.
+
+## Veelgestelde vragen
+
+**Q: Is full-text search hetzelfde als semantische zoekfunctie?**
+
+A: Nee. Full-text matcht tokens/frases. Semantische search matcht betekenis (vaak met [embeddings](/nl/glossary/embeddings/)). Veel systemen combineren beide (hybride search).
+
+**Q: Waarom mis ik soms resultaten die zouden moeten matchen?**
+
+A: Vaak door analyzerkeuzes (stemming, stopwoorden), ontbrekende velden of content die niet werd geïndexeerd door de indexeringsstrategie.
+
+## Gerelateerde termen
+
+- [Indexeringsstrategie](/nl/glossary/indexing-strategy/) - wat en hoe indexeren
+- [Booleaanse zoekopdracht](/nl/glossary/boolean-search/) - AND/OR/NOT logica
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - ranking verbeteren
+- [Vindbaarheid van content](/nl/glossary/content-discoverability/) - content vindbaar en indexeerbaar maken
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

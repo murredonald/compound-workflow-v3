@@ -1,0 +1,278 @@
+---
+term: "Pinecone"
+termSlug: "pinecone"
+short: "A fully managed vector database service designed specifically for machine learning applications, providing serverless similarity search at scale."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["faiss", "hnsw", "ann", "embedding", "dense-retrieval", "rag"]
+synonyms: ["Pinecone DB", "Pinecone Vector Database"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Pinecone is a cloud-native, fully managed [vector database](/en/glossary/vector-database/) service that enables developers to build [similarity search](/en/glossary/similarity-search/) applications without managing infrastructure. It indexes high-dimensional vectors ([embeddings](/en/glossary/embeddings/)) and returns the most similar vectors for any query in milliseconds. Unlike self-hosted solutions like FAISS, Pinecone handles scaling, replication, backups, and updates automatically. It's become the default choice for many production RAG systems due to its combination of ease-of-use, reliability, and [metadata filtering](/en/glossary/metadata-filtering/) capabilities.
+
+## Why it matters
+
+Pinecone addresses the operational complexity of [vector search](/en/glossary/ann/):
+
+- **Zero operations** — no servers to manage, no index tuning required
+- **Instant scalability** — handle traffic spikes without capacity planning
+- **Production-ready** — built-in high availability, backups, monitoring
+- **Metadata filtering** — combine [vector similarity](/en/glossary/cosine-similarity/) with attribute filters
+- **Hybrid search** — mix [dense vectors](/en/glossary/vector-embeddings/) with sparse (keyword) retrieval
+- **RAG enabler** — powers retrieval in many production AI applications
+
+For teams that want [semantic search](/en/glossary/semantic-search/) functionality without becoming vector search infrastructure experts, Pinecone provides a managed path to production.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    PINECONE ARCHITECTURE                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WHAT PINECONE PROVIDES:                                   │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  YOUR APPLICATION                                    │  │
+│  │       │                                              │  │
+│  │       │ REST API / Python SDK                       │  │
+│  │       ↓                                              │  │
+│  │  ┌────────────────────────────────────────────┐     │  │
+│  │  │          PINECONE SERVICE                   │     │  │
+│  │  │                                             │     │  │
+│  │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐      │     │  │
+│  │  │  │ Index   │ │ Query   │ │ Metadata│      │     │  │
+│  │  │  │ Shards  │ │ Router  │ │ Filters │      │     │  │
+│  │  │  └─────────┘ └─────────┘ └─────────┘      │     │  │
+│  │  │                                             │     │  │
+│  │  │  ┌─────────────────────────────────────┐  │     │  │
+│  │  │  │      Distributed Vector Index        │  │     │  │
+│  │  │  │   (HNSW-based, auto-scaling)        │  │     │  │
+│  │  │  └─────────────────────────────────────┘  │     │  │
+│  │  │                                             │     │  │
+│  │  │  ┌─────────────────────────────────────┐  │     │  │
+│  │  │  │   Replicated Storage & Backups       │  │     │  │
+│  │  │  └─────────────────────────────────────┘  │     │  │
+│  │  │                                             │     │  │
+│  │  └────────────────────────────────────────────┘     │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  CORE CONCEPTS:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  INDEX: A named collection of vectors                     │
+│  ┌──────────────────────────────────────────────────┐    │
+│  │  Index: "product-catalog"                         │    │
+│  │  Dimension: 768                                    │    │
+│  │  Metric: cosine                                    │    │
+│  │  Pod type: p1.x1 (or serverless)                  │    │
+│  │                                                    │    │
+│  │  Vectors:                                          │    │
+│  │  ┌────────────────────────────────────────────┐  │    │
+│  │  │ id: "prod-123"                              │  │    │
+│  │  │ values: [0.12, -0.34, 0.56, ...]           │  │    │
+│  │  │ metadata: {                                 │  │    │
+│  │  │   "category": "electronics",               │  │    │
+│  │  │   "price": 299.99,                         │  │    │
+│  │  │   "in_stock": true                         │  │    │
+│  │  │ }                                          │  │    │
+│  │  └────────────────────────────────────────────┘  │    │
+│  └──────────────────────────────────────────────────┘    │
+│                                                            │
+│  NAMESPACE: Partition within an index                     │
+│  ┌──────────────────────────────────────────────────┐    │
+│  │  Index: "documents"                               │    │
+│  │  ├── namespace: "company-A"  (1M vectors)        │    │
+│  │  ├── namespace: "company-B"  (500K vectors)      │    │
+│  │  └── namespace: ""  (default, 2M vectors)        │    │
+│  │                                                    │    │
+│  │  Queries are scoped to one namespace              │    │
+│  │  Great for multi-tenant applications              │    │
+│  └──────────────────────────────────────────────────┘    │
+│                                                            │
+│                                                            │
+│  BASIC OPERATIONS:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  # Initialize                                              │
+│  import pinecone                                           │
+│  pc = pinecone.Pinecone(api_key="your-key")               │
+│                                                            │
+│  # Create index                                            │
+│  pc.create_index(                                          │
+│      name="my-index",                                      │
+│      dimension=768,                                        │
+│      metric="cosine",                                      │
+│      spec=ServerlessSpec(cloud="aws", region="us-east-1") │
+│  )                                                         │
+│                                                            │
+│  # Connect to index                                        │
+│  index = pc.Index("my-index")                             │
+│                                                            │
+│  # Upsert vectors (insert or update)                      │
+│  index.upsert(vectors=[                                    │
+│      {"id": "vec1", "values": [0.1, 0.2, ...],            │
+│       "metadata": {"category": "tech"}},                   │
+│      {"id": "vec2", "values": [0.3, 0.4, ...],            │
+│       "metadata": {"category": "health"}},                 │
+│  ])                                                        │
+│                                                            │
+│  # Query                                                   │
+│  results = index.query(                                    │
+│      vector=[0.15, 0.25, ...],                            │
+│      top_k=10,                                             │
+│      include_metadata=True                                 │
+│  )                                                         │
+│                                                            │
+│                                                            │
+│  METADATA FILTERING:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  Combine semantic search with attribute filters:          │
+│                                                            │
+│  results = index.query(                                    │
+│      vector=query_embedding,                               │
+│      top_k=10,                                             │
+│      filter={                                              │
+│          "category": {"$eq": "electronics"},              │
+│          "price": {"$lt": 500},                           │
+│          "in_stock": {"$eq": True}                        │
+│      }                                                     │
+│  )                                                         │
+│                                                            │
+│  Supported operators:                                      │
+│  ┌────────────┬────────────────────────────────────────┐ │
+│  │ Operator   │ Description                            │ │
+│  ├────────────┼────────────────────────────────────────┤ │
+│  │ $eq        │ Equal to                               │ │
+│  │ $ne        │ Not equal to                           │ │
+│  │ $gt, $gte  │ Greater than (or equal)               │ │
+│  │ $lt, $lte  │ Less than (or equal)                  │ │
+│  │ $in        │ In array                               │ │
+│  │ $nin       │ Not in array                           │ │
+│  │ $and, $or  │ Logical operators                     │ │
+│  └────────────┴────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  RAG PIPELINE WITH PINECONE:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. INGESTION                                       │  │
+│  │     ┌──────┐    ┌───────┐    ┌────────┐            │  │
+│  │     │ Doc  │───→│Chunk  │───→│Embed   │            │  │
+│  │     └──────┘    └───────┘    └────────┘            │  │
+│  │                                  │                   │  │
+│  │                                  ↓                   │  │
+│  │                            ┌──────────┐             │  │
+│  │                            │ Pinecone │             │  │
+│  │                            │  Upsert  │             │  │
+│  │                            └──────────┘             │  │
+│  │                                                      │  │
+│  │  2. RETRIEVAL                                       │  │
+│  │     ┌──────┐    ┌───────┐    ┌────────┐            │  │
+│  │     │Query │───→│Embed  │───→│Pinecone│            │  │
+│  │     └──────┘    └───────┘    │ Query  │            │  │
+│  │                              └────────┘             │  │
+│  │                                  │                   │  │
+│  │                                  ↓                   │  │
+│  │                          [Top-K Results]            │  │
+│  │                                  │                   │  │
+│  │  3. GENERATION                   ↓                   │  │
+│  │     ┌──────────────────────────────────────┐       │  │
+│  │     │ LLM Prompt:                           │       │  │
+│  │     │ Context: {retrieved chunks}           │       │  │
+│  │     │ Question: {user query}                │       │  │
+│  │     │ Answer based on context only.         │       │  │
+│  │     └──────────────────────────────────────┘       │  │
+│  │                        │                            │  │
+│  │                        ↓                            │  │
+│  │                   [LLM Response]                    │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  PRICING MODEL (SERVERLESS):                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  • Storage: $/GB/month of vector data                     │
+│  • Reads: $/million queries                               │
+│  • Writes: $/million upserts                              │
+│                                                            │
+│  Free tier available for experimentation                  │
+│  Serverless = pay for actual usage, not capacity          │
+│                                                            │
+│                                                            │
+│  POD-BASED (DEDICATED):                                    │
+│  ─────────────────────                                     │
+│                                                            │
+│  For predictable workloads / low-latency requirements:    │
+│                                                            │
+│  • p1 pods: Fast, more expensive                          │
+│  • s1 pods: Storage-optimized, cheaper                    │
+│  • Replicas for high availability                         │
+│  • Horizontal scaling via shards                          │
+│                                                            │
+│                                                            │
+│  PINECONE vs ALTERNATIVES:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────┬──────────┬──────────┬───────────────┐   │
+│  │ Solution    │ Managed  │ Scaling  │ Best For      │   │
+│  ├─────────────┼──────────┼──────────┼───────────────┤   │
+│  │ Pinecone    │ Yes      │ Auto     │ Production RAG│   │
+│  │ Weaviate    │ Both     │ Manual   │ Hybrid search │   │
+│  │ Qdrant      │ Both     │ Manual   │ Self-host     │   │
+│  │ Milvus      │ Both     │ Manual   │ Scale control │   │
+│  │ pgvector    │ No       │ Manual   │ Simple cases  │   │
+│  │ FAISS       │ No       │ None     │ Research/Dev  │   │
+│  └─────────────┴──────────┴──────────┴───────────────┘   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: When should I use Pinecone vs self-hosting FAISS or Qdrant?**
+
+A: Use Pinecone when you want zero operational overhead, automatic scaling, and don't want to become a vector database expert. Self-host (FAISS/Qdrant) when you need maximum performance customization, have strict data locality requirements, want to avoid vendor lock-in, or have predictable high-volume workloads where managed pricing becomes expensive.
+
+**Q: How does Pinecone handle updates and deletes?**
+
+A: Pinecone supports true upsert (insert or update by ID) and delete by ID or metadata filter. This is a significant advantage over vanilla FAISS which requires index rebuilds. Updates are reflected immediately in queries. Deletes remove vectors and free storage.
+
+**Q: What [embedding models](/en/glossary/embedding-model/) work best with Pinecone?**
+
+A: Pinecone is model-agnostic—it stores and searches any vectors you provide. Popular choices: OpenAI text-embedding-3-small/large (1536/3072 dims), Cohere embed-v3, open models like Sentence [Transformers](/en/glossary/transformer-architecture/) or BGE. Match your index dimension to your model's output dimension.
+
+**Q: How do I handle multi-tenancy in Pinecone?**
+
+A: Use namespaces—each namespace is an isolated partition within an index. Queries are scoped to one namespace, so tenant data never mixes. Alternatively, use metadata filters, but namespaces provide stronger isolation and don't affect query performance.
+
+## Related terms
+
+- [FAISS](/en/glossary/faiss/) — open-source vector search library
+- [HNSW](/en/glossary/hnsw/) — algorithm Pinecone uses internally
+- [RAG](/en/glossary/rag/) — retrieval-augmented generation
+- Embedding — vectors stored in Pinecone
+
+---
+
+## References
+
+> Pinecone Systems Inc., "[Pinecone Documentation](https://docs.pinecone.io/)", Official documentation portal.
+
+> Kandel et al. (2022), "[Pinecone Vector Database](https://www.pinecone.io/learn/)", Pinecone Learning Center. [Conceptual guides]
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [RAG architecture Pinecone enables]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Underlying ANN concepts]

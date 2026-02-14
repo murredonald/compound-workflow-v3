@@ -1,0 +1,138 @@
+---
+term: "Descente de Gradient"
+termSlug: "gradient-descent"
+short: "Un algorithme d'optimisation qui ajuste itérativement les paramètres du modèle en se déplaçant dans la direction qui réduit la fonction de perte."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["loss-function", "backpropagation", "fine-tuning", "neural-network"]
+synonyms: ["Optimisation basée sur le gradient", "Descente la plus raide", "GD"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La descente de gradient est l'algorithme d'optimisation fondamental utilisé pour entraîner les modèles d'[apprentissage automatique](/fr/glossary/machine-learning/). Il fonctionne en calculant le gradient (direction de la plus forte augmentation) de la fonction de perte par rapport aux paramètres du modèle, puis en faisant un pas dans la direction opposée pour réduire la perte. À travers de nombreuses itérations, ce processus trouve des valeurs de paramètres qui minimisent les erreurs de [prédiction](/fr/glossary/inference/).
+
+## Pourquoi c'est important
+
+La descente de gradient permet l'entraînement des réseaux neuronaux :
+
+- **Optimiseur universel** — fonctionne pour toute fonction de perte différentiable
+- **Évolutif** — gère des milliards de paramètres efficacement
+- **Fondation** — base de tout l'[apprentissage profond](/fr/glossary/deep-learning/) moderne
+- **Variantes** — Adam, SGD, AdaGrad améliorent l'algorithme de base
+- **Convergence** — mathématiquement garantie sous certaines conditions
+
+Sans la descente de gradient, entraîner de grands modèles de langage serait impossible.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   DESCENTE DE GRADIENT                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Règle de mise à jour: θ_new = θ_old - α × ∇L(θ)          │
+│                                                            │
+│  θ = paramètres                                            │
+│  α = taux d'apprentissage                                  │
+│  ∇L = gradient de la perte                                │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VISUALISATION (espace paramètres 2D):        │        │
+│  │                                                │        │
+│  │       Perte                                    │        │
+│  │        │    ○ Départ                          │        │
+│  │        │     \                                │        │
+│  │        │      \  ← gradient pointe en haut   │        │
+│  │        │       ○                              │        │
+│  │        │        \                             │        │
+│  │        │         ○                            │        │
+│  │        │          \                           │        │
+│  │        │           ★ Minimum (objectif)      │        │
+│  │        └────────────────────────► Paramètre  │        │
+│  │                                                │        │
+│  │  Chaque pas va à l'opposé du gradient        │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VARIANTES:                                                │
+│  ─────────                                                 │
+│                                                            │
+│  ┌─────────────┬────────────────────────────────┐          │
+│  │ Batch GD    │ Utilise toutes données par MAJ │          │
+│  │             │ Lent mais stable               │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ SGD         │ Utilise un échantillon par MAJ │          │
+│  │             │ Rapide mais bruité             │          │
+│  ├─────────────┼────────────────────────────────┤          │
+│  │ Mini-batch  │ Utilise lot d'échantillons    │          │
+│  │             │ Meilleur des deux (plus commun)│          │
+│  └─────────────┴────────────────────────────────┘          │
+│                                                            │
+│  EFFET DU TAUX D'APPRENTISSAGE:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Trop petit: ....○....○....○....○.... (lent)             │
+│  Juste bien: ○---○---○---★ (converge)                     │
+│  Trop grand:  ○       ○       ○ (diverge/oscille)         │
+│                   \/    \/                                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Optimiseurs modernes:**
+| Optimiseur | Caractéristique clé | Quand utiliser |
+|------------|---------------------|----------------|
+| SGD | Simple, momentum optionnel | Entraînement bien réglé |
+| Adam | Taux d'apprentissage adaptatifs | Choix par défaut |
+| AdamW | Adam + decay des poids | [Transformers](/fr/glossary/transformer-architecture/), LLMs |
+| Adagrad | Taux par paramètre | Données éparses |
+| RMSprop | Moyenne mobile exponentielle | RNNs |
+
+## Questions fréquentes
+
+**Q : Quel est un bon taux d'apprentissage ?**
+
+R : Cela dépend du modèle et de l'optimiseur. Pour Adam, 1e-4 à 3e-4 est souvent bon pour le fine-tuning de [LLMs](/fr/glossary/llm/). Trop élevé cause la divergence; trop bas cause un entraînement lent. Les planificateurs de taux qui diminuent au fil du temps aident souvent.
+
+**Q : Quelle différence entre batch, mini-batch et descente stochastique ?**
+
+R : Batch GD utilise toutes les données par mise à jour (précis mais lent). SGD utilise un échantillon (rapide mais bruité). Mini-batch utilise un sous-ensemble (typiquement 16-128 échantillons)—le défaut pratique combinant vitesse et stabilité.
+
+**Q : Pourquoi la perte d'entraînement ne diminue pas ?**
+
+R : Causes communes: taux d'apprentissage trop élevé (diverge), taux trop bas (bloqué), mauvaise initialisation, gradients disparaissants/explosifs, ou problèmes de données. Essayez de réduire le taux, le clipping de gradient, ou une initialisation différente.
+
+**Q : Comment la descente de gradient gère les minima locaux ?**
+
+R : Dans les espaces de haute dimension (millions de paramètres), les minima locaux sont rarement problématiques—la plupart des points critiques sont des points de selle. Le momentum et le bruit du mini-batching aident à échapper aux régions sous-optimales.
+
+## Termes associés
+
+- [Fonction de Perte](/fr/glossary/loss-function/) — ce que la descente de gradient minimise
+- [Rétropropagation](/fr/glossary/backpropagation/) — calcule les gradients efficacement
+- [Fine-tuning](/fr/glossary/fine-tuning/) — applique la descente de gradient pour [adapter](/fr/glossary/adapter/) les modèles
+- [Réseau Neuronal](/fr/glossary/neural-network/) — entraîné via descente de gradient
+
+---
+
+## Références
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5 000+ [citations](/fr/glossary/citation/)]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100 000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapitre 8. [20 000+ citations]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5 000+ citations]
+
+## References
+
+> Ruder (2016), "[An overview of gradient descent optimization algorithms](https://arxiv.org/abs/1609.04747)", arXiv. [5,000+ citations]
+
+> Kingma & Ba (2015), "[Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980)", ICLR. [100,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 8. [20,000+ citations]
+
+> Loshchilov & Hutter (2019), "[Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)", ICLR. [5,000+ citations]

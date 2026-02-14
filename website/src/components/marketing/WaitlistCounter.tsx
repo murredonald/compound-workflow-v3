@@ -15,7 +15,10 @@ export default function WaitlistCounter({
 
     async function fetchCount() {
       try {
-        const res = await fetch("/api/counter");
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        const res = await fetch("/api/counter", { signal: controller.signal });
+        clearTimeout(timeout);
         const data = await res.json();
         if (!cancelled && typeof data.count === "number") {
           setCount(data.count);

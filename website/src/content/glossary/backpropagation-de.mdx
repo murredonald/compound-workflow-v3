@@ -1,0 +1,134 @@
+---
+term: "Backpropagation"
+termSlug: "backpropagation"
+short: "Ein Algorithmus, der effizient Gradienten berechnet, indem er Fehler rückwärts durch ein neuronales Netzwerk Schicht für Schicht propagiert."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["gradient-descent", "loss-function", "neural-network", "deep-learning"]
+synonyms: ["Backprop", "Rückwärtspropagierung", "Reverse-Mode Autodiff"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Backpropagation (Rückwärtspropagierung von Fehlern) ist der Algorithmus, der es neuronalen Netzwerken ermöglicht zu lernen, indem effizient berechnet wird, wie viel jeder Parameter zum Gesamtfehler beiträgt. Er funktioniert, indem die Kettenregel der Analysis verwendet wird, um den Verlustgradienten rückwärts durch das Netzwerk zu propagieren, Schicht für Schicht, vom Ausgang zum Eingang. Dies ermöglicht dem Gradientenabstieg, Millionen von Parametern effizient zu aktualisieren.
+
+## Warum es wichtig ist
+
+Backpropagation macht Deep Learning möglich:
+
+- **Effizienz** — berechnet alle Gradienten in einem einzigen Rückwärtsdurchlauf
+- **Skalierbarkeit** — behandelt Netzwerke mit Milliarden von Parametern
+- **Fundamental** — Kernalgorithmus hinter allem Training neuronaler Netze
+- **Automatisch** — moderne Frameworks handhaben es automatisch (Autograd)
+- **Universal** — funktioniert für jeden differenzierbaren Berechnungsgraphen
+
+Ohne Backpropagation wäre das Training tiefer Netzwerke rechnerisch unmöglich.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     BACKPROPAGATION                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  VORWÄRTSDURCHLAUF: Berechne Vorhersagen                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  Eingabe → [Schicht 1] → [Schicht 2] → [Schicht 3] → Ausg.│
+│    x          h₁            h₂            h₃         ŷ    │
+│           (versteckt)   (versteckt)   (versteckt)          │
+│                                                            │
+│  VERLUSTBERECHNUNG:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  L = Loss(ŷ, y)    # Vorhersage mit Ziel vergleichen      │
+│                                                            │
+│  RÜCKWÄRTSDURCHLAUF: Propagiere Gradienten                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  Eingabe ← [Schicht 1] ← [Schicht 2] ← [Schicht 3] ← Verl.│
+│           ∂L/∂W₁       ∂L/∂W₂       ∂L/∂W₃       ∂L/∂ŷ    │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  KETTENREGEL IN AKTION:                       │        │
+│  │                                                │        │
+│  │  ∂L/∂W₁ = ∂L/∂ŷ × ∂ŷ/∂h₃ × ∂h₃/∂h₂ × ∂h₂/∂W₁│        │
+│  │                                                │        │
+│  │  Jede Schicht multipliziert eingehenden       │        │
+│  │  Gradient mit ihrer lokalen Ableitung         │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  BERECHNUNGSGRAPH-ANSICHT:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│       Vorwärts ──►                                         │
+│       ◄── Rückwärts                                        │
+│                                                            │
+│    x ──┬──► W₁·x ──┬──► σ(·) ──┬──► W₂·h ──► Verlust      │
+│        │           │           │                           │
+│        └─── ∂/∂W₁ ─┴─── ∂/∂h ──┴─── ∂/∂W₂                 │
+│                                                            │
+│  ZEITKOMPLEXITÄT:                                          │
+│  ────────────────                                          │
+│  Vorwärts:   O(n)  wobei n = Anzahl Operationen           │
+│  Rückwärts:  O(n)  gleich wie vorwärts (effizient!)       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Schlüsselkonzepte:**
+| Konzept | Beschreibung |
+|---------|--------------|
+| Kettenregel | Ableitung der Komposition = Produkt der Ableitungen |
+| Lokaler Gradient | Jeder Knoten berechnet seine eigene partielle Ableitung |
+| Gradientenfluss | Gradienten multiplizieren sich bei Rückwärtspropagierung |
+| Autograd | Automatische Differentiation in Frameworks (PyTorch, TensorFlow) |
+
+## Häufige Fragen
+
+**F: Warum ist Backpropagation effizient?**
+
+A: Es berechnet alle Parametergradienten in einem einzigen Rückwärtsdurchlauf (gleiche Kosten wie Vorwärtsdurchlauf), anstatt jeden Gradienten separat zu berechnen. Für N Parameter ist das O(N) statt O(N²).
+
+**F: Was sind verschwindende und explodierende Gradienten?**
+
+A: Wenn Gradienten sich durch viele Schichten multiplizieren, können sie extrem klein (verschwindend) oder groß (explodierend) werden. Das macht das Training tiefer Netzwerke schwierig. Lösungen umfassen Residualverbindungen, Schichtnormalisierung und sorgfältige Initialisierung.
+
+**F: Muss ich Backpropagation manuell implementieren?**
+
+A: Nein—moderne Frameworks wie PyTorch und TensorFlow implementieren automatische Differentiation (Autograd). Sie definieren die Vorwärtsberechnung und das Framework behandelt Gradienten automatisch.
+
+**F: Was ist die Beziehung zwischen Backpropagation und Gradientenabstieg?**
+
+A: Backpropagation berechnet die Gradienten; Gradientenabstieg verwendet diese Gradienten, um Parameter zu aktualisieren. Es sind separate Algorithmen, die zusammenarbeiten: Backprop berechnet, Gradientenabstieg wendet an.
+
+## Verwandte Begriffe
+
+- [Gradientenabstieg](/de/glossary/gradient-descent/) — verwendet Backprop-Gradienten
+- [Verlustfunktion](/de/glossary/loss-function/) — was Backprop differenziert
+- [Neuronales Netz](/de/glossary/neural-network/) — trainiert via Backprop
+- [Deep Learning](/de/glossary/deep-learning/) — ermöglicht durch Backprop
+
+---
+
+## Referenzen
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30.000+ Zitationen]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Kapitel 6. [20.000+ Zitationen]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2.000+ Zitationen]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40.000+ Zitationen]
+
+## References
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2,000+ citations]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]

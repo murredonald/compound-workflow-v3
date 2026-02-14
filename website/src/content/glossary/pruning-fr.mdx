@@ -1,0 +1,173 @@
+---
+term: "Élagage"
+termSlug: "pruning"
+short: "Suppression des poids ou neurones inutiles des réseaux neuronaux pour réduire la taille et le coût de calcul sans perte significative de précision."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["model-compression", "quantization", "distillation", "neural-network"]
+synonyms: ["Élagage de réseau neuronal", "Élagage de poids", "Sparsification de modèle"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'élagage est une technique de compression de modèle qui supprime les poids, neurones ou structures entières redondants ou moins importants des réseaux neuronaux. En identifiant et éliminant les paramètres qui contribuent minimalement aux performances du modèle, l'élagage peut réduire la taille du modèle de 50-90% avec une perte de précision négligeable. Les réseaux clairsemés résultants nécessitent moins de mémoire et de calcul, permettant une inférence plus rapide.
+
+## Pourquoi c'est important
+
+L'élagage rend les réseaux neuronaux plus efficaces :
+
+- **Modèles plus petits** — réduire la taille de 50-90% sans perte significative
+- **Inférence plus rapide** — moins d'opérations signifie [prédictions](/fr/glossary/inference/) plus rapides
+- **Moins de mémoire** — poids clairsemés nécessitent moins de RAM
+- **Efficacité matérielle** — matériel spécialisé accélère opérations clairsemées
+- **Économies d'énergie** — moins de calculs = moins de consommation
+
+L'élagage est essentiel pour déployer des modèles sur appareils edge et réduire les coûts de service.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    APERÇU DE L'ÉLAGAGE                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  L'INTUITION DE L'ÉLAGAGE:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  La plupart des poids des réseaux sont proches de zéro!   │
+│                                                            │
+│  Distribution des Poids dans un Réseau Entraîné:          │
+│  ┌────────────────────────────────────────┐               │
+│  │         ╭─────╮                         │               │
+│  │        ╱       ╲    Plupart des poids   │               │
+│  │       ╱         ╲   regroupés vers 0    │               │
+│  │      ╱           ╲                      │               │
+│  │     ╱             ╲                     │               │
+│  │    ╱               ╲                    │               │
+│  │ ──╱─────────────────╲──────────────────│               │
+│  │  -1    -0.5    0    0.5    1           │               │
+│  │        ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲                 │               │
+│  │        Ceux-ci peuvent être élagués!    │               │
+│  └────────────────────────────────────────┘               │
+│                                                            │
+│                                                            │
+│  TYPES D'ÉLAGAGE:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  1. ÉLAGAGE NON STRUCTURÉ (Niveau poids)                  │
+│     ────────────────────────────────────                   │
+│     Supprimer des poids individuels partout                │
+│                                                            │
+│     Avant:               Après:                            │
+│     ┌─────────────┐      ┌─────────────┐                  │
+│     │ 0.5  0.02 0.8│      │ 0.5  ·   0.8│                  │
+│     │ 0.01 0.7  0.03│      │ ·   0.7  ·  │                  │
+│     │ 0.9  0.05 0.4│      │ 0.9  ·   0.4│                  │
+│     └─────────────┘      └─────────────┘                  │
+│     (· = élagué à 0)                                      │
+│                                                            │
+│     ✓ Taux de compression élevés possibles (90%+)         │
+│     ✗ Clairsemage irrégulier difficile à accélérer        │
+│                                                            │
+│  2. ÉLAGAGE STRUCTURÉ (Niveau canal/couche)               │
+│     ───────────────────────────────────────                │
+│     Supprimer neurones, canaux ou couches entiers          │
+│                                                            │
+│     Avant:                   Après:                        │
+│     ┌───┐  ┌───┐  ┌───┐     ┌───┐      ┌───┐             │
+│     │ ○ │──│ ○ │──│ ○ │     │ ○ │──────│ ○ │             │
+│     │ ○ │╲╱│ ○ │╲╱│ ○ │     │ ○ │ ╲ ╱  │ ○ │             │
+│     │ ○ │╱╲│ ○ │╱╲│ ○ │     └───┘  ╳   └───┘             │
+│     │ ○ │──│ ○ │──│ ○ │            ╱ ╲                     │
+│     └───┘  └───┘  └───┘    (couche du milieu supprimée)   │
+│                                                            │
+│     ✓ Compatible avec accélération matérielle standard    │
+│     ✗ Taux de compression plus bas (50-70% typique)       │
+│                                                            │
+│                                                            │
+│  PROCESSUS D'ÉLAGAGE:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐            │
+│  │ Modèle   │───►│  Élaguer │───►│ Fine-tune│            │
+│  │ Entraîné │    │(supprimer│    │(récupérer│            │
+│  │          │    │ poids)   │    │ précision)│            │
+│  └──────────┘    └──────────┘    └──────────┘            │
+│       │                                │                   │
+│       │         ┌──────────────────────┘                   │
+│       │         │                                          │
+│       │         ▼                                          │
+│       │    Itérer: élaguer plus → fine-tune → répéter     │
+│       │    jusqu'à clairsemage cible atteint               │
+│       │                                                    │
+│       ▼                                                    │
+│  CRITÈRES D'ÉLAGAGE (quoi supprimer):                      │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  • Magnitude: supprimer plus petits |poids|               │
+│  • Gradient: supprimer poids avec plus petits gradients   │
+│  • Sensibilité: supprimer moins sensibles à la perte      │
+│  • Aléatoire: comparaison de base                         │
+│                                                            │
+│                                                            │
+│  NIVEAUX DE CLAIRSEMAGE:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  Clairsemage │ Poids Supprimés │ Impact Précision Typique │
+│  ────────────┼─────────────────┼─────────────────────     │
+│    50%       │ Moitié          │ ~0-0.5% perte            │
+│    80%       │ Plupart         │ ~0.5-1% perte            │
+│    90%       │ Presque tous    │ ~1-2% perte              │
+│    95%+      │ Extrême         │ ~2-5%+ perte             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q : Jusqu'où puis-je élaguer sans perdre en précision ?**
+
+R : Les réseaux typiques peuvent être élagués à 50-80% de clairsemage avec `<1%` de perte de précision. Avec élagage itératif et fine-tuning, même 90%+ de clairsemage est atteignable pour certains modèles. La limite exacte dépend de l'architecture, complexité de la tâche et données d'entraînement.
+
+**Q : Quelle est la différence entre élagage structuré et non structuré ?**
+
+R : L'élagage non structuré supprime des poids individuels partout, atteignant une compression plus élevée mais créant un clairsemage irrégulier difficile à accélérer sur matériel standard. L'élagage structuré supprime des neurones/canaux entiers, donnant une compression plus basse mais des modèles denses plus petits qui s'exécutent rapidement.
+
+**Q : L'élagage fonctionne-t-il pour les LLMs ?**
+
+R : Oui, mais c'est plus challenging. Les LLMs comme GPT ont des capacités émergentes liées à l'échelle du modèle. La recherche montre que l'élagage non structuré à 50-70% de clairsemage fonctionne bien. L'élagage structuré est plus difficile—supprimer des têtes d'attention ou couches entières peut nuire à des capacités spécifiques.
+
+**Q : Comment l'élagage se compare-t-il à la quantification ?**
+
+R : Ils sont complémentaires. L'élagage supprime des paramètres entièrement; la quantification réduit leur précision. Pour une compression maximale, utilisez les deux: élaguer le modèle d'abord, puis quantifier. Un modèle élagué + quantifié peut être 10-20x plus petit.
+
+## Termes associés
+
+- [Model compression](/fr/glossary/model-compression/) — catégorie plus large incluant l'élagage
+- [Quantization](/fr/glossary/quantization/) — technique de compression complémentaire
+- [Distillation](/fr/glossary/distillation/) — approche alternative avec enseignant-élève
+- [Neural network](/fr/glossary/neural-network/) — modèles que l'élagage optimise
+
+---
+
+## Références
+
+> Han et al. (2015), "[Learning both Weights and Connections for Efficient Neural Networks](https://arxiv.org/abs/1506.02626)", NeurIPS. [Article fondateur sur l'élagage]
+
+> Frankle & Carlin (2019), "[The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)", ICLR. [Théorie influente des réseaux clairsemés]
+
+> Frantar & Alistarh (2023), "[SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot](https://arxiv.org/abs/2301.00774)", ICML. [Élagage [LLM](/fr/glossary/llm/)]
+
+> Sun et al. (2023), "[A Simple and Effective Pruning Approach for Large Language Models](https://arxiv.org/abs/2306.11695)", arXiv. [Méthode Wanda pour LLMs]
+
+## References
+
+> Han et al. (2015), "[Learning both Weights and Connections for Efficient Neural Networks](https://arxiv.org/abs/1506.02626)", NeurIPS. [Foundational pruning paper]
+
+> Frankle & Carlin (2019), "[The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)", ICLR. [Influential sparse network theory]
+
+> Frantar & Alistarh (2023), "[SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot](https://arxiv.org/abs/2301.00774)", ICML. [LLM pruning]
+
+> Sun et al. (2023), "[A Simple and Effective Pruning Approach for Large Language Models](https://arxiv.org/abs/2306.11695)", arXiv. [Wanda method for LLMs]

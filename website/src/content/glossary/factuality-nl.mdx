@@ -1,0 +1,244 @@
+---
+term: "Feitelijkheid"
+termSlug: "factuality"
+short: "De mate waarin AI-gegenereerde inhoud nauwkeurig verifieerbare waarheid weerspiegelt, waarbij correcte uitspraken worden onderscheiden van fabricaties en hallucinaties."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["grounding", "citation", "attribution", "hallucination"]
+synonyms: ["Feitelijke nauwkeurigheid", "Waarheidsgetrouwheid", "Feitelijke correctheid"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Feitelijkheid in AI verwijst naar de nauwkeurigheid en waarheidsgetrouwheid van gegenereerde inhoud—of uitspraken overeenkomen met verifieerbare feiten. Een feitelijk AI-antwoord bevat claims die kunnen worden gevalideerd tegen gezaghebbende bronnen of gevestigde kennis. Feitelijkheid verschilt van vloeiendheid (hoe natuurlijk tekst klinkt) en relevantie (hoe goed het de vraag beantwoordt); een antwoord kan perfect vloeiend en relevant zijn maar feitelijk onjuist. Feitelijkheid beantwoordt: "Is wat de AI zei werkelijk waar?"
+
+## Waarom het belangrijk is
+
+Feitelijkheid is niet onderhandelbaar voor [betrouwbare AI](/nl/glossary/responsible-ai/):
+
+- **Voorkomt misinformatie** — feitelijke fouten verspreiden wanneer AI wordt vertrouwd
+- **Maakt veilige inzet mogelijk** — kritiek in medische, juridische, financiële domeinen
+- **Bouwt gebruikersvertrouwen** — herhaalde onnauwkeurigheden vernietigen geloofwaardigheid
+- **Ondersteunt compliance** — regelgeving vereist accurate informatie
+- **Vermindert aansprakelijkheid** — feitelijke fouten kunnen juridische gevolgen hebben
+- **Onderscheidt kwaliteit** — feitelijkheid scheidt nuttige AI van gevaarlijke AI
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    FEITELIJKHEID                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FEITELIJKHEIDSSPECTRUM:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  FEITELIJK ◄──────────────────────► GEFABRICEERD   │ │
+│  │     │                                      │         │ │
+│  │     ▼                                      ▼         │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │ │
+│  │  │Geverifi- │ │Nauwkeurig│ │ Foutief  │ │ Gehal- │ │ │
+│  │  │eerd      │ │(waarsch. │ │ (foute   │ │ luci-  │ │ │
+│  │  │correct   │ │  waar)   │ │ feiten)  │ │ neerd  │ │ │
+│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘ │ │
+│  │                                                      │ │
+│  │  Voorbeelden:                                        │ │
+│  │  • Geverifieerd: "Water kookt bij 100°C zeeniveau" │ │
+│  │  • Nauwkeurig: "Het project was klaar in Q3"       │ │
+│  │  • Foutief: "Einstein ontdekte zwaartekracht"      │ │
+│  │  • Gehallucineerd: "De Olympische Spelen op Mars"  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TYPES FEITELIJKE FOUTEN:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  FOUTTYPE       │  BESCHRIJVING      │  VOORBEELD   │ │
+│  │  ───────────────┼────────────────────┼───────────── │ │
+│  │  Entiteitsfout  │  Verkeerde namen,  │  "Microsoft  │ │
+│  │                 │  datums, plaatsen  │  opgericht   │ │
+│  │                 │                    │  in 1976"    │ │
+│  │  ───────────────┼────────────────────┼───────────── │ │
+│  │  Relatiefout    │  Verkeerde verban- │  "Einstein   │ │
+│  │                 │  den tussen ent.   │  ontdekte    │ │
+│  │                 │                    │  penicilline"│ │
+│  │  ───────────────┼────────────────────┼───────────── │ │
+│  │  Numerieke fout │  Verkeerde cijfers │  "De Aarde   │ │
+│  │                 │  statistieken      │  is 4 mld    │ │
+│  │                 │                    │  jaar oud"   │ │
+│  │  ───────────────┼────────────────────┼───────────── │ │
+│  │  Temporele fout │  Verkeerde timing  │  "WOII ein-  │ │
+│  │                 │  volgorde          │  digde 1944" │ │
+│  │  ───────────────┼────────────────────┼───────────── │ │
+│  │  Fabricatie     │  Geheel verzonnen  │  "De Wet     │ │
+│  │                 │  entiteiten        │  Van 2022..."│ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEITELIJKHEID EVALUATIE PIPELINE:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. CLAIM EXTRACTIE                                  │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  AI Antwoord: "Apple werd opgericht in 1976 │  │ │
+│  │  │  door Steve Jobs en Bill Gates in Californië.│  │ │
+│  │  │  Het eerste product was de Apple I."        │  │ │
+│  │  │                                              │  │ │
+│  │  │  Geëxtraheerde Claims:                       │  │ │
+│  │  │  C1: "Apple opgericht in 1976"              │  │ │
+│  │  │  C2: "Steve Jobs richtte Apple op"          │  │ │
+│  │  │  C3: "Bill Gates richtte Apple op"          │  │ │
+│  │  │  C4: "Apple opgericht in Californië"        │  │ │
+│  │  │  C5: "Eerste product was Apple I"           │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  2. FEITVERIFICATIE (per claim)                     │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  C1: "Apple opgericht in 1976" ✓            │  │ │
+│  │  │      Bron: Wikipedia, SEC-documenten        │  │ │
+│  │  │      → FEITELIJK                             │  │ │
+│  │  │                                              │  │ │
+│  │  │  C2: "Steve Jobs richtte Apple op" ✓        │  │ │
+│  │  │      Bron: Bedrijfsgeschiedenis              │  │ │
+│  │  │      → FEITELIJK                             │  │ │
+│  │  │                                              │  │ │
+│  │  │  C3: "Bill Gates richtte Apple op" ✗        │  │ │
+│  │  │      Tegenstrijdig: Gates → Microsoft       │  │ │
+│  │  │      → NIET-FEITELIJK (foutieve relatie)    │  │ │
+│  │  │                                              │  │ │
+│  │  │  C4: "Apple in Californië" ✓                │  │ │
+│  │  │      Bron: Oprichtingsdocumenten            │  │ │
+│  │  │      → FEITELIJK                             │  │ │
+│  │  │                                              │  │ │
+│  │  │  C5: "Eerste product Apple I" ✓             │  │ │
+│  │  │      Bron: Productgeschiedenis              │  │ │
+│  │  │      → FEITELIJK                             │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  3. FEITELIJKHEIDSSCORE                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  Totaal claims: 5                            │  │ │
+│  │  │  Feitelijke claims: 4                        │  │ │
+│  │  │  Niet-feitelijke claims: 1                   │  │ │
+│  │  │                                              │  │ │
+│  │  │  Feitelijkheidsscore: 4/5 = 80%             │  │ │
+│  │  │                                              │  │ │
+│  │  │  Foutanalyse:                                │  │ │
+│  │  │  • 1 entiteit/relatiefout (Bill Gates)      │  │ │
+│  │  │  • Ernst: HOOG (verkeerde mede-oprichter)   │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEITELIJKHEID VERIFICATIEMETHODEN:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Knowledge Base Opzoeken:                                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Bevraag gestructureerde kennisbanken (Wikidata)   │ │
+│  │                                                      │ │
+│  │  Claim: "Parijs is hoofdstad van Frankrijk"        │ │
+│  │  Query: hoofdstad_van(Parijs, ?)                    │ │
+│  │  KB Resultaat: hoofdstad_van(Parijs, Frankrijk)     │ │
+│  │  → FEITELIJK ✓                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Webzoek Verificatie:                                      │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Zoek naar ondersteunend/tegenstrijdig bewijs      │ │
+│  │                                                      │ │
+│  │  Claim: "Product X won 2023 Innovatie Award"       │ │
+│  │  Zoeken: "Product X" "2023 Innovatie Award"         │ │
+│  │  Resultaten: Meerdere bronnen bevestigen → FEITELIJK│ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEITELIJKHEID VERBETEREN:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  RAG (Retrieval-Augmented Generation):             │ │
+│  │  ├── Veranker antwoorden in opgehaalde documenten  │ │
+│  │  └── Vermindert afhankelijkheid van parameterkennis │ │
+│  │                                                      │ │
+│  │  Chain-of-Thought Verificatie:                     │ │
+│  │  ├── Model toont redenering stap-voor-stap        │ │
+│  │  └── Elke stap kan worden gefeitcheckt            │ │
+│  │                                                      │ │
+│  │  Onzekerheidsuitdrukking:                          │ │
+│  │  ├── Model drukt betrouwbaarheidsniveaus uit      │ │
+│  │  └── "Ik ben onzeker over..." vermindert fouten   │ │
+│  │                                                      │ │
+│  │  Post-Generatie Feitcontrole:                      │ │
+│  │  ├── Verifieer claims na generatie                │ │
+│  │  └── Filter of markeer niet-feitelijke inhoud     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt feitelijkheid van hallucinatie?**
+
+A: Hallucinatie is een type feitelijkheidsfalen—specifiek het genereren van inhoud zonder basis in trainingsdata of verstrekte context. Feitelijkheid is het bredere concept dat alle types waarheidsgetrouwheid omvat, inclusief foutieve feiten en fabricaties.
+
+**V: Hoe meet ik feitelijkheid in mijn AI-systeem?**
+
+A: Gangbare benaderingen: (1) Gebruik benchmarks zoals FactScore, TruthfulQA of FEVER, (2) Creëer domeinspecifieke testsets met geverifieerde feiten, (3) Implementeer claim-extractie + verificatie pipelines, (4) Gebruik menselijke evaluatie voor kritieke toepassingen.
+
+**V: Kan [RAG](/nl/glossary/rag/) feitelijkheid garanderen?**
+
+A: RAG verbetert feitelijkheid door verankering in opgehaalde bronnen maar garandeert het niet. Het model kan nog steeds bronnen verkeerd interpreteren, onjuist combineren, of onnauwkeurige bronnen ophalen.
+
+**V: Wat is een acceptabel feitelijkheidspercentage?**
+
+A: Hangt af van domeinrisico. Medisch/juridisch/financieel: 99%+ (fouten kunnen schaden). Algemene kennis: 90-95% acceptabel met onzekerheidsuitdrukking.
+
+## Gerelateerde termen
+
+- [Grounding](/nl/glossary/grounding/) — verankeren aan brondocumenten
+- [Citatie](/nl/glossary/citation/) — bronreferenties toevoegen
+- [Attributie](/nl/glossary/attribution/) — bronondersteuning verifiëren
+- [Hallucinatie](/nl/glossary/hallucination/) — gefabriceerde inhoud
+
+---
+
+## Referenties
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision](https://arxiv.org/abs/2305.14251)", EMNLP. [Feitelijkheid evaluatiemethode]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Waarheidsgetrouwheid benchmark]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Feit verificatie dataset]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Recent feitelijkheidsonderzoek]
+
+## References
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation](https://arxiv.org/abs/2305.14251)", EMNLP. [Factuality evaluation method]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Truthfulness benchmark]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Fact verification dataset]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Recent factuality research]

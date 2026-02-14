@@ -1,0 +1,75 @@
+---
+term: "Retrieval-Augmented Generation"
+termSlug: "rag"
+short: "RAG est une technique d'IA qui combine la recherche d'information avec la génération de texte pour produire des réponses précises et sourcées."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["llm", "embeddings"]
+synonyms: ["RAG", "retrieval augmented generation", "génération augmentée par récupération"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Retrieval-Augmented Generation (RAG) est une technique qui améliore les grands modèles de langage en récupérant des documents pertinents d'une [base de connaissances](/fr/glossary/knowledge-base/) avant de générer des réponses. Cela ancre la sortie de l'IA dans des informations factuelles et actualisées plutôt que de se fier uniquement aux données d'entraînement.
+
+## Pourquoi c'est important
+
+RAG est particulièrement précieux pour les domaines à forte intensité de connaissances où la précision et l'actualité sont critiques. Les LLM traditionnels peuvent générer des informations plausibles mais obsolètes ou incorrectes. RAG résout ce problème en :
+
+- **Ancrant les réponses dans des sources** — chaque réponse fait référence à des documents spécifiques de la [base de connaissances](/fr/glossary/knowledge-graph/)
+- **Maintenant l'actualité** — les bases de connaissances peuvent être mises à jour sans réentraînement coûteux du modèle
+- **Réduisant les [hallucinations](/fr/glossary/hallucination/)** — le modèle génère à partir de faits récupérés, pas de motifs mémorisés
+- **Permettant l'auditabilité** — les citations permettent aux utilisateurs de vérifier les réponses générées par l'IA
+
+## Comment ça fonctionne
+
+```
+Question → Embed → Chercher KB → Récupérer docs → Générer → Réponse
+    │                              │
+    └──── similarité vectorielle ────┘
+```
+
+1. L'utilisateur soumet une question
+2. Le système convertit la question en embeddings et interroge la base de connaissances
+3. Les documents les plus pertinents sont récupérés
+4. Le LLM génère une réponse en utilisant le contexte récupéré
+5. La réponse inclut des citations sources pour vérification
+
+## Questions fréquentes
+
+**Q : Quelle est la différence entre RAG et le [fine-tuning](/fr/glossary/fine-tuning/) ?**
+
+R : Le fine-tuning modifie définitivement les poids du modèle avec de nouvelles données. RAG récupère l'information au moment de la requête, ce qui facilite les mises à jour et l'audit. RAG est préféré lorsque le matériel source change fréquemment.
+
+**Q : RAG peut-il halluciner ?**
+
+R : RAG réduit significativement les hallucinations en ancrant les réponses dans les documents récupérés, mais la qualité dépend de la complétude de la base de connaissances et de la précision de la récupération.
+
+**Q : Pourquoi ne pas simplement utiliser un moteur de recherche ?**
+
+R : Les moteurs de recherche retournent des documents ; RAG synthétise l'information de plusieurs sources en une réponse cohérente avec le contexte approprié.
+
+## Termes connexes
+
+- [LLM](/fr/glossary/llm/) — le composant de génération qui produit des réponses en langage naturel
+- [Embeddings](/fr/glossary/embeddings/) — [représentations vectorielles](/fr/glossary/vector-embeddings/) permettant la recherche sémantique
+
+---
+
+## Références
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11 200+ citations]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2 800+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1 400+ citations]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11,200+ citations]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2,800+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1,400+ citations]

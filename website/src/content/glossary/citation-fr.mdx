@@ -1,0 +1,221 @@
+---
+term: "Citation"
+termSlug: "citation"
+short: "La pratique de référencer explicitement les documents sources dans les réponses générées par l'IA, permettant la vérification des affirmations et construisant la confiance par la transparence."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["grounding", "attribution", "rag", "factuality"]
+synonyms: ["Citation de source", "Référence", "Attribution de source"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La citation dans les systèmes IA fait référence au lien explicite du contenu généré à ses documents sources, passages, ou données. Quand un [LLM](/fr/glossary/llm/) fournit des informations, les citations indiquent exactement d'où vient cette information—quel document, page, paragraphe, ou point de données supporte chaque affirmation. Une citation efficace transforme l'IA d'une boîte noire en un outil transparent où chaque fait peut être vérifié. Les citations sont essentielles pour l'IA enterprise, les applications de recherche, et tout domaine où précision et responsabilité comptent.
+
+## Pourquoi c'est important
+
+Les citations sont fondamentales pour l'IA digne de confiance:
+
+- **Permet vérification** — utilisateurs peuvent vérifier les affirmations
+- **Construit confiance** — transparence crée confiance dans réponses IA
+- **Supporte responsabilité** — affirmations traçables permettent audit
+- **Requis pour conformité** — domaines juridiques, médicaux exigent sources
+- **Réduit impact [hallucinations](/fr/glossary/hallucination/)** — affirmations non-fondées deviennent évidentes
+- **Améliore expérience** — utilisateurs peuvent explorer matériel source
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       CITATION                              │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SANS vs AVEC CITATIONS:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  SANS CITATIONS:                                           │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Q: "Quelles sont les pénalités de retard?"         │ │
+│  │                                                      │ │
+│  │  R: "Les retards de paiement entraînent 5% de      │ │
+│  │      pénalité après 15 jours, augmentant à 10%     │ │
+│  │      après 30 jours."                               │ │
+│  │                                                      │ │
+│  │  Problèmes:                                          │ │
+│  │  • Est-ce exact?                                     │ │
+│  │  • D'où ça vient?                                   │ │
+│  │  • Puis-je me fier à ça pour une décision?         │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  AVEC CITATIONS:                                           │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Q: "Quelles sont les pénalités de retard?"         │ │
+│  │                                                      │ │
+│  │  R: "Les retards entraînent 5% de pénalité après   │ │
+│  │      15 jours [1], augmentant à 10% après 30       │ │
+│  │      jours [1].                                     │ │
+│  │                                                      │ │
+│  │      Sources:                                        │ │
+│  │      [1] Conditions-Paiement.pdf, Section 4.2, p.8 │ │
+│  │                                                      │ │
+│  │  Avantages:                                          │ │
+│  │  ✓ Chaque affirmation traçable                      │ │
+│  │  ✓ Utilisateur peut vérifier précision             │ │
+│  │  ✓ Sources sont documents faisant autorité          │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  NIVEAUX DE GRANULARITÉ CITATION:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  Niveau document:                                          │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  "Selon le Guide de l'Employé [1]..."              │ │
+│  │                                                      │ │
+│  │  [1] guide-employe.pdf                              │ │
+│  │                                                      │ │
+│  │  Pro: Simple à implémenter                          │ │
+│  │  Con: Difficile vérifier affirmations spécifiques  │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Niveau section/page:                                      │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  "Les taux d'accumulation vacances [1]..."         │ │
+│  │                                                      │ │
+│  │  [1] guide-employe.pdf, Chapitre 5, p.23           │ │
+│  │                                                      │ │
+│  │  Pro: Plus facile à localiser                       │ │
+│  │  Con: Nécessite encore recherche                    │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Niveau passage/citation:                                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  "Employés accumulent 1,5 jours par mois après     │ │
+│  │   première année" [1]                               │ │
+│  │                                                      │ │
+│  │  [1] "Après douze mois de service, les membres    │ │
+│  │       accumulent congés à 1,5 jours par mois"      │ │
+│  │       — guide-employe.pdf, p.23, para 3            │ │
+│  │                                                      │ │
+│  │  Pro: Vérification instantanée, source exacte      │ │
+│  │  Con: Implémentation plus complexe                  │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PIPELINE CITATION:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. RETRIEVAL                                        │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Requête → Récupérer passages pertinents    │   │ │
+│  │  │                                              │   │ │
+│  │  │  Stocker métadonnées pour chaque passage:   │   │ │
+│  │  │  • ID document                               │   │ │
+│  │  │  • Numéro page                               │   │ │
+│  │  │  • Section/paragraphe                        │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  2. GÉNÉRATION AVEC INSTRUCTIONS CITATION          │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  System prompt:                              │   │ │
+│  │  │  "Citez sources avec notation [N].          │   │ │
+│  │  │   Chaque affirmation factuelle doit avoir  │   │ │
+│  │  │   une citation."                             │   │ │
+│  │  │                                              │   │ │
+│  │  │  Contexte: [passages avec métadonnées]      │   │ │
+│  │  │  Requête: [question utilisateur]             │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  3. POST-TRAITEMENT                                │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  • Parser marqueurs citation [N]             │   │ │
+│  │  │  • Lier aux métadonnées passage             │   │ │
+│  │  │  • Générer liens cliquables                  │   │ │
+│  │  │  • Vérifier citations existent dans contexte│   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MÉTRIQUES QUALITÉ CITATION:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Métrique         │  Description                    │ │
+│  │  ─────────────────┼──────────────────────────────── │ │
+│  │  Couverture       │  % affirmations avec citations  │ │
+│  │  Précision        │  Citations vers bonne source    │ │
+│  │  Pertinence       │  Passage cité supporte affirm.  │ │
+│  │  Granularité      │  Spécificité de la citation     │ │
+│  │  Fidélité         │  Affirm. reflète source correct │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PROBLÈMES CITATION COURANTS:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  • Citations fabriquées (sources hallucinées)             │
+│  • Affirmations mal attribuées (mauvaise source)          │
+│  • Sur-citation (citer faits évidents)                    │
+│  • Sous-citation (citations manquantes)                   │
+│  • Citations vagues (document mais pas localisation)      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Comment s'assurer que les LLM ne fabriquent pas citations?**
+
+R: Utilisez [prompts](/fr/glossary/prompt/) structurés avec sources numérotées et instruisez modèle de citer uniquement du contexte fourni. Post-traitez pour vérifier que chaque marqueur [N] correspond à un passage réel.
+
+**Q: Chaque phrase doit-elle avoir une citation?**
+
+R: Non—citez affirmations factuelles des sources, pas connaissances communes. Sur-citer encombre réponses. Focalisez sur affirmations que utilisateurs voudraient vérifier: statistiques, politiques, procédures.
+
+**Q: Quelle granularité de citation utiliser?**
+
+R: Dépend du cas d'usage. Bases connaissances enterprise bénéficient niveau section/page. Recherche peut nécessiter niveau passage avec citations. Granularité plus haute augmente confiance mais requiert plus d'ingénierie.
+
+**Q: Comment les citations se rapportent à RAG?**
+
+R: RAG fournit mécanisme retrieval qui rend citations possibles. Sans récupérer passages, rien à citer. Pipeline RAG doit préserver métadonnées sources.
+
+## Termes associés
+
+- [Grounding](/fr/glossary/grounding/) — ancrer réponses aux sources
+- [Attribution](/fr/glossary/attribution/) — lier affirmations aux preuves
+- [RAG](/fr/glossary/rag/) — retrieval permet citation
+- [Factualité](/fr/glossary/factuality/) — objectif précision de citation
+
+---
+
+## Références
+
+> Bohnet et al. (2022), "[Attributed Question Answering](https://arxiv.org/abs/2212.08037)", arXiv. [Framework Attributed QA]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Métriques attribution et citation]
+
+> Gao et al. (2023), "[Enabling Large Language Models to Generate Text with Citations](https://arxiv.org/abs/2305.14627)", EMNLP. [Méthodes génération citation]
+
+> Liu et al. (2023), "[Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848)", arXiv. [Évaluation qualité citation]
+
+## References
+
+> Bohnet et al. (2022), "[Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attribution and citation metrics]
+
+> Gao et al. (2023), "[Enabling Large Language Models to Generate Text with Citations](https://arxiv.org/abs/2305.14627)", EMNLP. [Citation generation methods]
+
+> Liu et al. (2023), "[Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848)", arXiv. [Citation quality evaluation]

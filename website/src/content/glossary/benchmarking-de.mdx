@@ -1,0 +1,175 @@
+---
+term: "Benchmarking"
+termSlug: "benchmarking"
+short: "Der systematische Prozess zur Bewertung von Modellleistung gegen standardisierte Datensätze und Metriken, der faire Vergleiche zwischen verschiedenen Modellen, Architekturen und Ansätzen ermöglicht."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["evaluation-metrics", "ground-truth", "leaderboard", "test-set", "model-evaluation"]
+synonyms: ["Modellbewertung", "Leistungstests", "Vergleichstests"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Benchmarking in [Machine Learning](/de/glossary/machine-learning/) ist die systematische Bewertung von Modellleistung unter Verwendung standardisierter Datensätze, Metriken und Evaluierungsprotokolle. Es ermöglicht faire, reproduzierbare Vergleiche zwischen verschiedenen Modellen, Architekturen und Ansätzen. Benchmarks bestehen typischerweise aus: (1) einem kuratierten [Testdatensatz](/de/glossary/evaluation-dataset/) mit Ground-Truth-Labels, (2) definierten Evaluierungsmetriken (Accuracy, F1, BLEU, etc.) und (3) standardisierten Evaluierungsverfahren. Gut gestaltete Benchmarks treiben Fortschritt an, indem sie gemeinsame Ziele bieten und Modellschwächen aufdecken.
+
+## Warum es wichtig ist
+
+Benchmarking ermöglicht systematischen KI-Fortschritt:
+
+- **Modellvergleich** — objektiv verschiedene Ansätze vergleichen
+- **Fortschrittsverfolgung** — Verbesserung über Zeit messen
+- **Reproduzierbarkeit** — standardisierte Evaluierung gewährleistet fairen Vergleich
+- **Forschungskommunikation** — gemeinsames Vokabular für Ergebnisberichte
+- **Modellauswahl** — bestes Modell für spezifischen Anwendungsfall wählen
+- **Schwächenerkennung** — identifizieren wo Modelle versagen
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      BENCHMARKING                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAS EIN BENCHMARK IST:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  BENCHMARK = Datensatz + Metriken + Protokoll       │ │
+│  │                                                      │ │
+│  │  1. STANDARDISIERTER DATENSATZ                      │ │
+│  │     • Kuratierte Eingaben                           │ │
+│  │     • Ground-Truth-Labels                           │ │
+│  │     • Repräsentativ für Aufgabe                     │ │
+│  │                                                      │ │
+│  │  2. EVALUIERUNGSMETRIKEN                            │ │
+│  │     Klassifikation: Accuracy, F1, AUC               │ │
+│  │     Generierung: BLEU, ROUGE, Perplexität           │ │
+│  │     Retrieval: MRR, NDCG, Recall@K                  │ │
+│  │                                                      │ │
+│  │  3. EVALUIERUNGSPROTOKOLL                           │ │
+│  │     • Preprocessing-Regeln                          │ │
+│  │     • Inferenz-Einstellungen                        │ │
+│  │     • Erlaubte Ressourcen                           │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARKING WORKFLOW:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌───────────┐    ┌───────────┐    ┌───────────┐   │ │
+│  │  │  Modell A │    │  Modell B │    │  Modell C │   │ │
+│  │  └─────┬─────┘    └─────┬─────┘    └─────┬─────┘   │ │
+│  │        │                │                │         │ │
+│  │        ▼                ▼                ▼         │ │
+│  │  ┌─────────────────────────────────────────────┐  │ │
+│  │  │           GLEICHER BENCHMARK                 │  │ │
+│  │  │           Test-Datensatz                     │  │ │
+│  │  └─────────────────────────────────────────────┘  │ │
+│  │        │                │                │         │ │
+│  │        ▼                ▼                ▼         │ │
+│  │  ┌─────────────────────────────────────────────┐  │ │
+│  │  │           GLEICHE EVALUIERUNG                │  │ │
+│  │  │                                              │  │ │
+│  │  │  Modell A: Accuracy = 92.3%                 │  │ │
+│  │  │  Modell B: Accuracy = 89.7%                 │  │ │
+│  │  │  Modell C: Accuracy = 94.1%  ← Gewinner    │  │ │
+│  │  │                                              │  │ │
+│  │  └─────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GÄNGIGE BENCHMARKS NACH DOMÄNE:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NLP / SPRACHMODELLE                                │ │
+│  │  ├─ GLUE/SuperGLUE   Sprachverständnis             │ │
+│  │  ├─ MMLU             Multi-Task-Wissen             │ │
+│  │  ├─ HellaSwag        Common-Sense-Reasoning        │ │
+│  │  ├─ HumanEval        Code-Generierung              │ │
+│  │  └─ MTEB             Embedding-Qualität            │ │
+│  │                                                      │ │
+│  │  COMPUTER VISION                                    │ │
+│  │  ├─ ImageNet         Bildklassifikation            │ │
+│  │  ├─ COCO             Objekterkennung/Segmentierung│ │
+│  │  └─ CIFAR-10/100     Kleine Bildklassifikation     │ │
+│  │                                                      │ │
+│  │  RETRIEVAL / RAG                                    │ │
+│  │  ├─ BEIR             Zero-shot IR                  │ │
+│  │  ├─ MS MARCO         Passage Retrieval             │ │
+│  │  └─ Natural Questions  QA Retrieval                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARK-FALLSTRICKE:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Problem             │ Beschreibung                  │ │
+│  │  ────────────────────┼─────────────────────────────  │ │
+│  │                      │                               │ │
+│  │  Daten-             │ Testdaten gelangen ins        │ │
+│  │  kontamination      │ Training (aufgeblähte Scores) │ │
+│  │                      │                               │ │
+│  │  Teaching to         │ Modell für Test optimiert    │ │
+│  │  the test           │ versagt in Produktion        │ │
+│  │                      │                               │ │
+│  │  Benchmark-          │ Alte Benchmarks werden       │ │
+│  │  Sättigung          │ zu einfach                   │ │
+│  │                      │                               │ │
+│  │  Enge               │ Benchmark erfasst nicht      │ │
+│  │  Evaluierung        │ reale Komplexität            │ │
+│  │                      │                               │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Was macht einen guten Benchmark aus?**
+
+A: Diverse, repräsentative Testdaten; klare Metriken ausgerichtet an realen Zielen; Widerstand gegen Gaming/Overfitting; ausgelagerte Testsets; aktive Wartung.
+
+**F: Wie vermeide ich Benchmark-Overfitting?**
+
+A: Verwenden Sie mehrere Benchmarks, evaluieren Sie auf ausgelagerten realen Daten, überwachen Sie Produktionsmetriken, nutzen Sie menschliche Evaluation für offene Aufgaben.
+
+**F: Sind Leaderboard-Scores zuverlässig?**
+
+A: Teilweise. Scores sind innerhalb eines Benchmarks vergleichbar, sagen aber möglicherweise nicht reale Leistung voraus. Datenkontamination und aufgabenspezifische Optimierung begrenzen Generalisierung.
+
+## Verwandte Begriffe
+
+- [Ground Truth](/de/glossary/ground-truth/) — Referenzlabels für Evaluierung
+- Evaluierungsmetriken — Messmethoden in Benchmarks
+
+---
+
+## Referenzen
+
+> Wang et al. (2019), "[SuperGLUE: A Stickier Benchmark for Language Understanding](https://arxiv.org/abs/1905.00537)", NeurIPS. [NLU Benchmark Design]
+
+> Hendrycks et al. (2021), "[Measuring Massive Multitask Language Understanding](https://arxiv.org/abs/2009.03300)", ICLR. [MMLU Benchmark]
+
+> Thakur et al. (2021), "[BEIR: A Heterogenous Benchmark for Zero-shot IR](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval Benchmarking]
+
+## References
+
+> Wang et al. (2019), "[SuperGLUE: A Stickier Benchmark for General-Purpose Language Understanding](https://arxiv.org/abs/1905.00537)", NeurIPS. [NLU benchmark design]
+
+> Hendrycks et al. (2021), "[Measuring Massive Multitask Language Understanding](https://arxiv.org/abs/2009.03300)", ICLR. [MMLU benchmark]
+
+> Thakur et al. (2021), "[BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of IR Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarking]
+
+> Dehghani et al. (2021), "[The Benchmark Lottery](https://arxiv.org/abs/2107.07002)", arXiv. [Benchmark limitations]

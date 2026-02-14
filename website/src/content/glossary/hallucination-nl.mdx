@@ -1,0 +1,109 @@
+---
+term: "Hallucinatie"
+termSlug: "hallucination"
+short: "Wanneer een AI-model valse, verzonnen of onondersteunde informatie genereert die als feit wordt gepresenteerd."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "rag", "faithfulness", "source-grounding"]
+synonyms: ["AI-hallucinatie", "Modelhallucinatie", "Confabulatie", "Fabricatie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Hallucinatie treedt op wanneer een taalmodel content genereert die feitelijk onjuist, onzinnig of niet ondersteund door zijn trainingsdata of verstrekte context is—terwijl het met dezelfde zekerheid wordt gepresenteerd als accurate informatie. Het model "verzint" in wezen feiten, [citaties](/nl/glossary/citation/), gebeurtenissen of details die niet bestaan of verkeerd zijn.
+
+## Waarom het belangrijk is
+
+Hallucinaties zijn een kritieke uitdaging voor AI-implementatie in risicovolle domeinen:
+
+- **Vertrouwenserosie** — gebruikers kunnen modeloutputs niet blindelings vertrouwen zonder verificatie
+- **Juridisch risico** — verzonnen citaties of onjuist advies kunnen juridische gevolgen hebben
+- **Misinformatie** — door AI gegenereerde onwaarheden kunnen snel verspreiden
+- **Domeingevoeligheid** — fiscale, juridische en medische toepassingen vereisen [feitelijke nauwkeurigheid](/nl/glossary/factuality/)
+
+Begrip en mitigatie van hallucinaties is essentieel voor [verantwoorde AI](/nl/glossary/responsible-ai/)-implementatie.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  HALLUCINATIETYPEN                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  1. FEITELIJKE HALLUCINATIE                                │
+│     "De Eiffeltoren werd gebouwd in 1887"                  │
+│     (Eigenlijk 1889)                                       │
+│                                                            │
+│  2. VERZONNEN CITATIES                                     │
+│     "Volgens Smith et al. (2020)..."                       │
+│     (Paper bestaat niet)                                   │
+│                                                            │
+│  3. CONTEXTCONTRADICTIE                                    │
+│     Gegeven: "Bedrijfsomzet: €10M"                         │
+│     Output: "Omzet overschreed €15M"                       │
+│                                                            │
+│  4. LOGISCHE INCONSISTENTIE                                │
+│     Zelfde respons bevat tegenstrijdige claims             │
+│                                                            │
+│  WAAROM HET GEBEURT:                                       │
+│  ┌─────────────┐     ┌─────────────────────────┐           │
+│  │ Statistische│ ──► │ Aannemelijk ≠ Accuraat │           │
+│  │ Voorspelling│     │ Zelfverzekerd ≠ Correct│           │
+│  └─────────────┘     └─────────────────────────┘           │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Onderliggende oorzaken:**
+1. **Trainingsdata-hiaten** — model vult hiaten met aannemelijk klinkende aanvullingen
+2. **[Patroonherkenning](/nl/glossary/machine-learning/)** — voorspelt waarschijnlijke tokens zonder feitelijke grondslag
+3. **Geen waarheidsverificatie** — modellen optimaliseren voor vloeiendheid, niet nauwkeurigheid
+4. **Kennisafsnijding** — trainingsdata heeft een datumlimiet
+
+## Veelgestelde vragen
+
+**V: Hoe vermindert RAG hallucinaties?**
+
+A: RAG grondt responsen in opgehaalde documenten, waardoor het model feitelijke context krijgt in plaats van uitsluitend te vertrouwen op parametrisch geheugen. Het model genereert vanuit verstrekte bronnen, waardoor claims verifieerbaar worden.
+
+**V: Kunnen hallucinaties volledig worden geëlimineerd?**
+
+A: Momenteel niet. Hallucinaties kunnen worden verminderd door RAG, [fine-tuning](/nl/glossary/fine-tuning/), betere prompts en betrouwbaarheidsdrempels, maar niet volledig worden geëlimineerd. Menselijke verificatie blijft belangrijk.
+
+**V: Hoe detecteer je hallucinaties?**
+
+A: Methoden omvatten feitencontrole tegen kennisbanken, citatieverificatie, semantische implicatiecontrole en zelfconsistentietesting waarbij meerdere outputs worden vergeleken.
+
+**V: Hallucineren grotere modellen minder?**
+
+A: Grotere modellen hebben mogelijk betere feitelijke kennis maar kunnen nog steeds zelfverzekerd hallucineren. Modelgrootte alleen lost het probleem niet op—architectuur en trainingsaanpak zijn belangrijker.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — modellen die kunnen hallucineren
+- [RAG](/nl/glossary/rag/) — techniek om hallucinaties te verminderen via [grounding](/nl/glossary/grounding/)
+- [Faithfulness](/nl/glossary/faithfulness/) — maat voor outputtrouw aan bronnen
+- Source Grounding — outputs verankeren aan opgehaalde documenten
+
+---
+
+## Referenties
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1.500+ citaties]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ citaties]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1.100+ citaties]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ citaties]
+
+## References
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1,500+ citations]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ citations]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1,100+ citations]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ citations]

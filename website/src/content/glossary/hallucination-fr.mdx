@@ -1,0 +1,109 @@
+---
+term: "Hallucination"
+termSlug: "hallucination"
+short: "Lorsqu'un modèle d'IA génère des informations fausses, fabriquées ou non étayées présentées comme des faits."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["llm", "rag", "faithfulness", "source-grounding"]
+synonyms: ["Hallucination IA", "Hallucination de modèle", "Confabulation", "Fabrication"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'hallucination se produit lorsqu'un modèle de langage génère du contenu factuellement incorrect, absurde ou non étayé par ses données d'entraînement ou le contexte fourni—tout en le présentant avec la même confiance qu'une information exacte. Le modèle « invente » essentiellement des faits, des [citations](/fr/glossary/citation/), des événements ou des détails qui n'existent pas ou sont erronés.
+
+## Pourquoi c'est important
+
+Les hallucinations sont un défi critique pour le déploiement de l'IA dans les domaines à enjeux élevés :
+
+- **Érosion de la confiance** — les utilisateurs ne peuvent pas faire confiance aveuglément aux sorties du modèle sans vérification
+- **Risque juridique** — des citations fabriquées ou des conseils incorrects peuvent avoir des conséquences légales
+- **Désinformation** — les faussetés générées par l'IA peuvent se propager rapidement
+- **Sensibilité du domaine** — les applications fiscales, juridiques et médicales exigent une [exactitude factuelle](/fr/glossary/factuality/)
+
+Comprendre et atténuer les hallucinations est essentiel pour un déploiement responsable de l'IA.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  TYPES D'HALLUCINATION                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  1. HALLUCINATION FACTUELLE                                │
+│     "La Tour Eiffel a été construite en 1887"              │
+│     (En fait 1889)                                         │
+│                                                            │
+│  2. CITATIONS FABRIQUÉES                                   │
+│     "Selon Smith et al. (2020)..."                         │
+│     (L'article n'existe pas)                               │
+│                                                            │
+│  3. CONTRADICTION DE CONTEXTE                              │
+│     Donné: "Chiffre d'affaires: 10M€"                      │
+│     Sortie: "Le CA a dépassé 15M€"                         │
+│                                                            │
+│  4. INCOHÉRENCE LOGIQUE                                    │
+│     La même réponse contient des affirmations contradictoires│
+│                                                            │
+│  POURQUOI CELA SE PRODUIT:                                 │
+│  ┌─────────────┐     ┌─────────────────────────┐           │
+│  │ Prédiction  │ ──► │ Plausible ≠ Exact      │           │
+│  │ Statistique │     │ Confiant ≠ Correct     │           │
+│  └─────────────┘     └─────────────────────────┘           │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Causes profondes :**
+1. **Lacunes dans les données d'entraînement** — le modèle comble les lacunes avec des complétions plausibles
+2. **Reconnaissance de motifs** — prédit des tokens probables sans [ancrage factuel](/fr/glossary/grounding/)
+3. **Pas de vérification de vérité** — les modèles optimisent la fluidité, pas l'exactitude
+4. **Date limite de connaissance** — les données d'entraînement ont une limite de date
+
+## Questions fréquentes
+
+**Q : Comment RAG réduit-il les hallucinations ?**
+
+R : RAG ancre les réponses dans des documents récupérés, donnant au modèle un contexte factuel plutôt que de s'appuyer uniquement sur la mémoire paramétrique. Le modèle génère à partir de sources fournies, rendant les affirmations vérifiables.
+
+**Q : Les hallucinations peuvent-elles être complètement éliminées ?**
+
+R : Pas actuellement. Les hallucinations peuvent être réduites via RAG, le [fine-tuning](/fr/glossary/fine-tuning/), de meilleurs prompts et des seuils de confiance, mais ne peuvent pas être entièrement éliminées. La vérification humaine reste importante.
+
+**Q : Comment détecter les hallucinations ?**
+
+R : Les méthodes incluent la vérification des faits contre des bases de connaissances, la vérification des citations, le contrôle d'implication sémantique et les tests d'auto-cohérence où plusieurs sorties sont comparées.
+
+**Q : Les modèles plus grands hallucinent-ils moins ?**
+
+R : Les modèles plus grands peuvent avoir de meilleures connaissances factuelles mais peuvent encore halluciner avec confiance. La taille du modèle seule ne résout pas le problème—l'architecture et l'approche d'entraînement comptent davantage.
+
+## Termes associés
+
+- [LLM](/fr/glossary/llm/) — modèles qui peuvent halluciner
+- [RAG](/fr/glossary/rag/) — technique pour réduire les hallucinations via l'ancrage
+- [Fidélité](/fr/glossary/faithfulness/) — mesure de la fidélité des sorties aux sources
+- Ancrage aux Sources — ancrer les sorties aux documents récupérés
+
+---
+
+## Références
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1 500+ citations]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ citations]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1 100+ citations]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ citations]
+
+## References
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1,500+ citations]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ citations]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1,100+ citations]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ citations]

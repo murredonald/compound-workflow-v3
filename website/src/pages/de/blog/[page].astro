@@ -1,0 +1,120 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import Pagination from "@/components/ui/Pagination.astro";
+import { getCollection } from "astro:content";
+import { t } from "@/i18n/utils";
+
+const locale = "de";
+const POSTS_PER_PAGE = 9;
+
+export async function getStaticPaths() {
+  const locale = "de";
+  const POSTS_PER_PAGE = 9;
+  
+  const allPosts = (await getCollection("blog", ({ data }) => data.locale === locale && !data.draft))
+    .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+  
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  
+  // Get unique categories with display names
+  const categoryMap = new Map<string, string>();
+  allPosts.forEach((post) => {
+    if (!categoryMap.has(post.data.category)) {
+      categoryMap.set(post.data.category, post.data.category_name);
+    }
+  });
+  const categories = Array.from(categoryMap.entries());
+  
+  // Generate paths for pages 2 and onwards (page 1 is handled by index.astro)
+  return Array.from({ length: totalPages - 1 }, (_, i) => ({
+    params: { page: String(i + 2) },
+    props: {
+      posts: allPosts.slice((i + 1) * POSTS_PER_PAGE, (i + 2) * POSTS_PER_PAGE),
+      currentPage: i + 2,
+      totalPages,
+      categories,
+    },
+  }));
+}
+
+const { posts, currentPage, totalPages, categories } = Astro.props;
+---
+
+<BaseLayout
+  title={`Blog — Seite ${currentPage} — ${t("site.title", locale)}`}
+  description="Neueste Einblicke in belgisches Steuerrecht, KI-Forschung und Produktupdates von Auryth."
+  locale={locale}
+  path={`/blog/${currentPage}/`}
+>
+  <main id="main-content">
+    <Section class="pt-12 md:pt-16 pb-16 md:pb-24">
+      <div class="mx-auto max-w-3xl text-center mb-8">
+        <h1 class="text-display text-foreground">Blog</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">Einblicke in belgisches Steuerrecht und KI-gestützte Recherche</p>
+        <a href={`/${locale}/glossary/`} class="mt-3 inline-flex items-center gap-1 text-body-sm text-primary-text hover:underline">
+          {t("glossary.explore", locale)} <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      {/* Category filter */}
+      <nav aria-label="Blog Kategorien" class="mb-10 flex flex-wrap justify-center gap-2">
+        <a
+          href={`/${locale}/blog/`}
+          class="rounded-full border border-primary bg-primary px-4 py-1.5 text-body-sm font-medium text-primary-foreground"
+          aria-current="page"
+        >
+          Alle
+        </a>
+        {categories.map(([slug, name]: [string, string]) => (
+          <a
+            href={`/${locale}/blog/category/${slug}/`}
+            class="rounded-full border border-border px-4 py-1.5 text-body-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary-text"
+          >
+            {name}
+          </a>
+        ))}
+      </nav>
+
+      {posts.length > 0 ? (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post: any) => (
+            <Card>
+              <a href={`/${locale}/blog/${post.id.replace(/\.mdx?$/, "")}/`} class="block group">
+                <time class="text-caption text-muted-foreground" datetime={post.data.publishDate.toISOString()}>
+                  {post.data.publishDate.toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
+                </time>
+                <h2 class="mt-2 text-body-lg font-semibold text-foreground group-hover:text-primary-text transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="mt-2 text-body-sm text-muted-foreground">{post.data.description}</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  {post.data.tags.map((tag: string) => (
+                    <a 
+                      href={`/${locale}/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}/`}
+                      class="text-caption text-primary-text hover:underline"
+                      onclick="event.stopPropagation()"
+                    >
+                      {tag}
+                    </a>
+                  ))}
+                </div>
+              </a>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-body text-muted-foreground">Noch keine Beiträge. Schauen Sie bald wieder vorbei!</p>
+      )}
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={`/${locale}/blog/`}
+        prevText="Zurück"
+        nextText="Weiter"
+      />
+    </Section>
+  </main>
+</BaseLayout>

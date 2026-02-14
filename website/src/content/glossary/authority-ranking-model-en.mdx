@@ -1,0 +1,69 @@
+---
+term: "Authority Ranking Model"
+termSlug: "authority-ranking-model"
+short: "An authority ranking model ranks retrieved sources by legal authority and trustworthiness so controlling, reliable sources appear first."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["source-reliability-weighting", "source-conflict-resolution", "relevance-tuning", "multi-jurisdictional-indexing", "compliance-aware-retrieval"]
+synonyms: ["Authority-aware ranking", "Legal authority ranking", "Source authority ranking"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+An authority ranking model is a ranking approach that scores retrieved documents not only by topical relevance, but also by how *authoritative* they are for the legal question at hand. It is designed to surface controlling sources (e.g., binding law and official guidance) before less authoritative commentary.
+
+## Why it matters
+
+- **Better legal quality**: prioritizes sources with higher legal weight in the relevant hierarchy.
+- **Lower risk**: reduces reliance on weak or non-binding sources in summaries and answers.
+- **Auditability**: makes it easier to explain *why* a source is shown first.
+- **Consistency**: supports stable outcomes across similar queries and jurisdictions.
+
+## How it works
+
+Authority is usually modeled as an additional score (or a set of hard rules) combined with relevance:
+
+```
+Query -> retrieve candidates -> score relevance + authority -> combine -> rank -> show citations
+```
+
+Common authority signals include:
+
+- **Source type** (statute, regulation, official circular, case law, commentary)
+- **Issuing body** (legislator, ministry, court level, regulator)
+- **Jurisdiction match** (country/region, language, applicable scope)
+- **Freshness and versioning** (in-force date, amendments, consolidated text)
+- **[Citation](/en/glossary/citation/) and dependency signals** (what a source cites, what cites it)
+
+## Practical example
+
+A user searches for "withholding tax dividend Belgium treaty". A relevance-only ranker may surface blog posts first. An authority ranking model boosts the treaty text, official administrative guidance, and consolidated legal articles above commentary, while still keeping helpful explanations visible lower in the list.
+
+## Common questions
+
+**Q: Is this the same as relevance tuning?**
+
+A: Related, but different. Relevance tuning optimizes overall ranking quality; authority ranking adds domain-specific signals so legally controlling sources are not buried.
+
+**Q: Should authority be rules or machine-learned?**
+
+A: Many systems use both: hard constraints for clear hierarchies (e.g., "official law before commentary") and learned weights for softer signals (e.g., freshness, citation patterns).
+
+## Related terms
+
+- [Source Reliability Weighting](/en/glossary/source-reliability-weighting/) - weight sources by trustworthiness
+- [Source Conflict Resolution](/en/glossary/source-conflict-resolution/) - handle contradictory sources safely
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - improve ranking quality with evaluation
+- [Multi-Jurisdictional Indexing](/en/glossary/multi-jurisdictional-indexing/) - partition and route across jurisdictions
+- [Compliance-Aware Retrieval](/en/glossary/compliance-aware-retrieval/) - retrieval constrained by governance and policy
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+> Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: BM25 and Beyond", *Foundations and Trends in Information Retrieval*.
+

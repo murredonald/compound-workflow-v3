@@ -1,0 +1,131 @@
+---
+term: "Beam Search"
+termSlug: "beam-search"
+short: "Een decoderingsalgoritme dat meerdere kandidaatsequenties parallel verkent en de top-k meest veelbelovende paden bij elke stap behoudt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["top-p", "top-k", "temperature", "inference", "llm"]
+synonyms: ["Beam decodering", "Beam search decodering", "Multi-pad zoeken"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Beam search is een decoderingsalgoritme dat tekst genereert door meerdere kandidaatsequenties gelijktijdig te verkennen. Bij elke stap breidt het alle huidige sequenties uit met mogelijke volgende tokens, scoort ze, en behoudt alleen de top-b hoogst scorende kandidaten (waarbij b de beam breedte is). Deze breedte-eerst benadering vindt vaak betere totaalsequenties dan greedy single-pad decodering.
+
+## Waarom het belangrijk is
+
+Beam search balanceert kwaliteit en rekenkosten:
+
+- **Betere sequenties** — verkent meerdere paden om hogere-kans outputs te vinden
+- **Vermijdt lokale optima** — committeert niet vroeg aan suboptimale tokenkeuzes
+- **Controleerbare exploratie** — beam breedte stemt kwaliteit vs. snelheid af
+- **Vertaalstandaard** — standaard in machinevertaalsystemen
+- **Deterministische output** — produceert consistente resultaten voor zelfde invoer
+
+Beam search is essentieel voor taken waar sequentie-niveau kwaliteit belangrijk is.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       BEAM SEARCH                          │
+│                      (beam breedte = 2)                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Stap 0: Begin met <start> token                           │
+│                                                            │
+│                      [<start>]                             │
+│                          │                                 │
+│  Stap 1: Breid uit naar vocabulaire, behoud top-2          │
+│                          │                                 │
+│          ┌───────────────┴───────────────┐                 │
+│          ▼                               ▼                 │
+│      ["De"]                          ["Een"]               │
+│      p=0.40                          p=0.35                │
+│          │                               │                 │
+│  Stap 2: Breid elk uit, score alles, behoud top-2          │
+│          │                               │                 │
+│    ┌─────┼─────┐                   ┌─────┼─────┐           │
+│    ▼     ▼     ▼                   ▼     ▼     ▼           │
+│  "De    "De    "De              "Een   "Een   "Een         │
+│   kat"   hond"  vogel"           kat"   hond"  man"        │
+│  0.38   0.35   0.32             0.30   0.28   0.25         │
+│                                                            │
+│  SCORES (cumulatieve log-kans):                            │
+│  ─────────────────────────────                             │
+│  "De kat"   = -0.97  ◄── BEHOUD (beste)                   │
+│  "De hond"  = -1.05  ◄── BEHOUD (2e beste)                │
+│  "Een kat"  = -1.20      gesnoeid                          │
+│  "De vogel" = -1.14      gesnoeid                          │
+│  ...                                                       │
+│                                                            │
+│  Stap 3: Ga door tot <einde> token...                      │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  BEAM BREEDTE EFFECTEN:                        │        │
+│  │                                                │        │
+│  │  b=1: Greedy decodering (snel, lagere kwalt.) │        │
+│  │  b=4-5: Gangbare standaard (gebalanceerd)     │        │
+│  │  b=10+: Hoge kwaliteit (trager)               │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Beam breedte vergelijking:**
+| Breedte | Gedrag | Afweging |
+|---------|--------|----------|
+| 1 | [Greedy decodering](/nl/glossary/greedy-decoding/) | Snel maar kan betere sequenties missen |
+| 2-3 | Minimale exploratie | Kleine kwaliteitswinst |
+| 4-5 | Standaard | Goede balans voor meeste taken |
+| 10+ | Uitgebreid | Afnemende meeropbrengst, trager |
+| 50+ | Exhaustief | Zelden nodig |
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt beam search van samplingmethoden?**
+
+A: Beam search is deterministisch—het kiest altijd hoogst-scorende sequenties. Sampling (top-k, top-p, temperatuur) introduceert willekeur voor diversiteit. Beam search optimaliseert voor kans; sampling ruilt wat kans voor variëteit en creativiteit.
+
+**V: Wat is een goede beam breedte?**
+
+A: 4-5 is gangbaar voor de meeste taken. Machinevertaling gebruikt vaak 4-10. Hogere waarden geven afnemende meeropbrengst terwijl berekening toeneemt. Voor creatief schrijven worden samplingmethoden meestal verkozen boven beam search.
+
+**V: Garandeert beam search het vinden van de beste sequentie?**
+
+A: Nee—het is een benadering. Echte beste-eerst zoeken is rekenkundig onhaalbaar voor taalmodellen. Beam search kan nog steeds de globaal optimale sequentie missen door zijn vaste-breedte snoeien.
+
+**V: Waarom kan beam search repetitieve tekst produceren?**
+
+A: Beam search optimaliseert voor kans, en herhalen van veelvoorkomende zinsdelen kan hoge lokale kans hebben. Daarom worden lengtestraf en n-gram blokkering vaak toegevoegd in de praktijk.
+
+## Gerelateerde termen
+
+- [Top-k Sampling](/nl/glossary/top-k/) — stochastisch alternatief
+- [Top-p Sampling](/nl/glossary/top-p/) — adaptieve sampling
+- [Temperatuur](/nl/glossary/temperature/) — kanshervorming
+- [Inferentie](/nl/glossary/inference/) — generatieproces
+
+---
+
+## Referenties
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2.000+ [citaties](/nl/glossary/citation/)]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ citaties]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ citaties]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citaties]
+
+## References
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2,000+ citations]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]

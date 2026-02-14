@@ -1,0 +1,134 @@
+---
+term: "Backpropagation"
+termSlug: "backpropagation"
+short: "Een algoritme dat efficiënt gradiënten berekent door fouten achterwaarts door een neuraal netwerk te propageren, laag voor laag."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["gradient-descent", "loss-function", "neural-network", "deep-learning"]
+synonyms: ["Backprop", "Achterwaartse propagatie", "Reverse-mode autodiff"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Backpropagation (achterwaartse propagatie van fouten) is het algoritme dat neurale netwerken in staat stelt te leren door efficiënt te berekenen hoeveel elke parameter bijdraagt aan de totale fout. Het werkt door de kettingregel van calculus te gebruiken om de verliesgradiënt achterwaarts door het netwerk te propageren, laag voor laag, van output naar input. Dit stelt gradiëntafdaling in staat om miljoenen parameters efficiënt bij te werken.
+
+## Waarom het belangrijk is
+
+Backpropagation maakt deep learning mogelijk:
+
+- **Efficiëntie** — berekent alle gradiënten in een enkele achterwaartse pass
+- **Schaalbaarheid** — behandelt netwerken met miljarden parameters
+- **Fundamenteel** — kernalgoritme achter alle neurale netwerktraining
+- **Automatisch** — moderne frameworks handelen het automatisch af (autograd)
+- **Universeel** — werkt voor elke differentieerbare berekeningsgrafiek
+
+Zonder backpropagation zou het trainen van diepe netwerken rekenkundig onhaalbaar zijn.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     BACKPROPAGATION                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FORWARD PASS: Bereken voorspellingen                      │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  Input → [Laag 1] → [Laag 2] → [Laag 3] → Output          │
+│    x        h₁         h₂         h₃       ŷ              │
+│          (hidden)   (hidden)   (hidden)                    │
+│                                                            │
+│  VERLIESBEREKENING:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  L = Loss(ŷ, y)    # Vergelijk voorspelling met doel      │
+│                                                            │
+│  BACKWARD PASS: Propageer gradiënten                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  Input ← [Laag 1] ← [Laag 2] ← [Laag 3] ← Loss            │
+│         ∂L/∂W₁    ∂L/∂W₂    ∂L/∂W₃    ∂L/∂ŷ              │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  KETTINGREGEL IN ACTIE:                       │        │
+│  │                                                │        │
+│  │  ∂L/∂W₁ = ∂L/∂ŷ × ∂ŷ/∂h₃ × ∂h₃/∂h₂ × ∂h₂/∂W₁│        │
+│  │                                                │        │
+│  │  Elke laag vermenigvuldigt inkomende gradiënt │        │
+│  │  met zijn lokale afgeleide                    │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  BEREKENINGSGRAFIEK WEERGAVE:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│       Forward ──►                                          │
+│       ◄── Backward                                         │
+│                                                            │
+│    x ──┬──► W₁·x ──┬──► σ(·) ──┬──► W₂·h ──► Loss         │
+│        │           │           │                           │
+│        └─── ∂/∂W₁ ─┴─── ∂/∂h ──┴─── ∂/∂W₂                 │
+│                                                            │
+│  TIJDSCOMPLEXITEIT:                                        │
+│  ──────────────────                                        │
+│  Forward:  O(n)  waarbij n = aantal operaties             │
+│  Backward: O(n)  zelfde als forward (efficiënt!)          │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Kernconcepten:**
+| Concept | Beschrijving |
+|---------|--------------|
+| Kettingregel | Afgeleide van compositie = product van afgeleiden |
+| Lokale gradiënt | Elk knooppunt berekent zijn eigen partiële afgeleide |
+| Gradiëntenstroom | Gradiënten vermenigvuldigen terwijl ze achterwaarts propageren |
+| Autograd | Automatische differentiatie in frameworks (PyTorch, TensorFlow) |
+
+## Veelgestelde vragen
+
+**V: Waarom is backpropagation efficiënt?**
+
+A: Het berekent alle parametergradiënten in een enkele achterwaartse pass (zelfde kosten als forward pass), in plaats van elke gradiënt apart te berekenen. Voor N parameters is dit O(N) in plaats van O(N²).
+
+**V: Wat zijn verdwijnende en exploderende gradiënten?**
+
+A: Wanneer gradiënten door veel lagen vermenigvuldigen, kunnen ze extreem klein (verdwijnend) of groot (exploderend) worden. Dit maakt het trainen van diepe netwerken moeilijk. Oplossingen zijn residuele verbindingen, laagnormalisatie, en zorgvuldige initialisatie.
+
+**V: Moet ik backpropagation handmatig implementeren?**
+
+A: Nee—moderne frameworks zoals PyTorch en TensorFlow implementeren automatische differentiatie (autograd). Je definieert de forward berekening en het framework handelt gradiënten automatisch af.
+
+**V: Wat is de relatie tussen backpropagation en gradiëntafdaling?**
+
+A: Backpropagation berekent de gradiënten; gradiëntafdaling gebruikt die gradiënten om parameters bij te werken. Het zijn aparte algoritmen die samenwerken: backprop berekent, gradiëntafdaling past toe.
+
+## Gerelateerde termen
+
+- [Gradiëntafdaling](/nl/glossary/gradient-descent/) — gebruikt backprop gradiënten
+- [Verliesfunctie](/nl/glossary/loss-function/) — wat backprop differentieert
+- [Neuraal Netwerk](/nl/glossary/neural-network/) — getraind via backprop
+- [Deep Learning](/nl/glossary/deep-learning/) — mogelijk gemaakt door backprop
+
+---
+
+## Referenties
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30.000+ [citaties](/nl/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Hoofdstuk 6. [20.000+ citaties]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2.000+ citaties]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40.000+ citaties]
+
+## References
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2,000+ citations]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Dark theme (default) — from website tokens.css */
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 20%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+  }
+
+  /* Light theme override */
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .tree-question {
+    background: var(--primary);
+    color: var(--primary-fg);
+    padding: 20px 44px;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    max-width: 540px;
+  }
+
+  .tree-connector {
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+  }
+
+  .tree-connector-h {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+  }
+
+  .tree-connector-h::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .tree-branches {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  .tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    max-width: 320px;
+  }
+
+  .tree-branch-connector {
+    width: 2px;
+    height: 24px;
+    background: var(--border);
+  }
+
+  .tree-condition {
+    font-size: 15px;
+    color: var(--muted-fg);
+    text-align: center;
+    font-style: italic;
+    padding: 6px 0 10px;
+  }
+
+  .tree-answer {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 28px;
+    text-align: center;
+    width: 100%;
+    background: var(--muted);
+  }
+
+  .tree-answer.recommended {
+    border-color: var(--primary);
+    border-width: 2px;
+    background: hsla(36 32% 38% / 0.08);
+  }
+
+  .tree-answer-label {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--fg);
+  }
+
+  .tree-answer.recommended .tree-answer-label {
+    color: var(--primary-text);
+  }
+
+  .tree-answer-desc {
+    font-size: 15px;
+    color: var(--muted-fg);
+    line-height: 1.5;
+  }
+
+  .tree-answer-tag {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 4px;
+    margin-top: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .tree-answer-tag.warn {
+    background: hsla(38 92% 50% / 0.15);
+    color: var(--warning, hsl(38 92% 50%));
+  }
+
+  .tree-answer-tag.ok {
+    background: hsla(142 64% 55% / 0.15);
+    color: var(--success);
+  }
+
+  .tree-answer-tag.best {
+    background: hsla(36 32% 38% / 0.2);
+    color: var(--primary-text);
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="tree">
+    <div class="tree-question">Welke AI-architectuur past bij uw kantoor?</div>
+    <div class="tree-connector"></div>
+    <div class="tree-connector-h"></div>
+    <div class="tree-branches">
+      <div class="tree-branch">
+        <div class="tree-branch-connector"></div>
+        <div class="tree-condition">Stabiel domein, groot budget</div>
+        <div class="tree-answer">
+          <div class="tree-answer-label">Fine-tuning</div>
+          <div class="tree-answer-desc">Snelle inferentie, maar model veroudert bij elke wetswijziging. Hertraining kost maanden + €100k+.</div>
+          <div class="tree-answer-tag warn">Veroudert snel</div>
+        </div>
+      </div>
+      <div class="tree-branch">
+        <div class="tree-branch-connector"></div>
+        <div class="tree-condition">Veranderlijk domein, transparantie nodig</div>
+        <div class="tree-answer recommended">
+          <div class="tree-answer-label">RAG</div>
+          <div class="tree-answer-desc">Altijd actueel, verifieerbare bronnen, confidence scoring. Ideaal voor Belgisch fiscaal recht.</div>
+          <div class="tree-answer-tag best">Aanbevolen</div>
+        </div>
+      </div>
+      <div class="tree-branch">
+        <div class="tree-branch-connector"></div>
+        <div class="tree-condition">Beide voordelen, complexiteit acceptabel</div>
+        <div class="tree-answer">
+          <div class="tree-answer-label">Hybride</div>
+          <div class="tree-answer-desc">Fine-tuned model + RAG retrieval. Maximale kwaliteit, maar complex en duur om te onderhouden.</div>
+          <div class="tree-answer-tag ok">Mogelijk</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

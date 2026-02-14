@@ -1,0 +1,112 @@
+---
+term: "Fine-Tuning"
+termSlug: "fine-tuning"
+short: "Het proces van verder trainen van een voorgetraind model op domeinspecifieke data om prestaties voor gespecialiseerde taken te verbeteren."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "transfer-learning", "prompt-engineering", "lora"]
+synonyms: ["Model fine-tuning", "Domeinaanpassing", "Taakspecifieke training"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Fine-tuning is het proces van het nemen van een voorgetraind taalmodel en het verder trainen op een kleinere, taakspecifieke dataset. Dit past de algemene capaciteiten van het model aan om uit te blinken in specifieke taken of domeinen—zoals juridische documentanalyse, belastingadvies of medische diagnose—zonder vanaf nul te trainen.
+
+## Waarom het belangrijk is
+
+Fine-tuning overbrugt de kloof tussen algemene modellen en gespecialiseerde applicaties:
+
+- **Domeinexpertise** — modellen leren branchespecifieke terminologie en patronen
+- **Taakoptimalisatie** — verbetert prestaties op specifieke workflows (classificatie, extractie, samenvatting)
+- **Efficiëntie** — vereist veel minder data en rekenkracht dan pre-training
+- **Maatwerk** — stemt modelgedrag af op organisatievereisten
+- **Verminderde [hallucinatie](/nl/glossary/hallucination/)** — domeingerichte training verbetert [feitelijke nauwkeurigheid](/nl/glossary/factuality/)
+
+Fine-tuning is vaak het verschil tussen een capabele demo en een productierijp systeem.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   FINE-TUNING PIPELINE                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌──────────────────────┐    ┌──────────────────────┐      │
+│  │   VOORGETRAIND MODEL │    │  DOMEIN DATASET      │      │
+│  │   (GPT, LLaMA, etc.) │    │  (1K-100K voorb.)    │      │
+│  │   Miljarden params   │    │  Taakspecifieke data │      │
+│  └──────────┬───────────┘    └──────────┬───────────┘      │
+│             │                           │                  │
+│             └───────────┬───────────────┘                  │
+│                         ▼                                  │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │              TRAININGSPROCES                       │    │
+│  │  • Lage learning rate (vermijd catastrofaal verg.) │    │
+│  │  • Weinig epochs (typisch 1-5)                     │    │
+│  │  • Optioneel: LoRA, QLoRA (parameter-efficiënt)    │    │
+│  └────────────────────────────────────────────────────┘    │
+│                         │                                  │
+│                         ▼                                  │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │              GEFINETUNED MODEL                     │    │
+│  │  Algemene kennis + Domeinexpertise                 │    │
+│  │  Geoptimaliseerd voor specifieke taak/stijl        │    │
+│  └────────────────────────────────────────────────────┘    │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Fine-tuning benaderingen:**
+1. **Volledige fine-tuning** — werkt alle modelparameters bij (duur, krachtig)
+2. **LoRA/[QLoRA](/nl/glossary/qlora/)** — traint kleine adapterlagen, bevriest basismodel
+3. **[Instructie](/nl/glossary/prompt/) tuning** — traint op instructie-respons-paren
+4. **[RLHF](/nl/glossary/rlhf/)** — gebruikt menselijke feedback om modelgedrag af te stemmen
+5. **Prefix tuning** — leert taakspecifieke soft prompts
+
+## Veelgestelde vragen
+
+**V: Wanneer moet ik fine-tunen vs. prompt engineering gebruiken?**
+
+A: Begin met prompt engineering—het is sneller en goedkoper. Fine-tune wanneer: je consistente outputformattering nodig hebt, domeinspecifieke terminologie hebt, betere nauwkeurigheid nodig hebt dan prompting bereikt, of tokengebruik wilt reduceren.
+
+**V: Hoeveel data heb ik nodig voor fine-tuning?**
+
+A: Typisch 500-10.000 kwalitatieve voorbeelden. Kwaliteit is belangrijker dan kwantiteit. Voor LoRA kunnen zelfs 100-500 voorbeelden verbetering tonen op specifieke taken.
+
+**V: Wat is catastrofaal vergeten?**
+
+A: Wanneer een model zijn originele capaciteiten verliest tijdens het leren van nieuwe. Voorkomen door lage learning rates, beperkte epochs en parameter-efficiënte methoden zoals LoRA.
+
+**V: Is fine-tuning duur?**
+
+A: Volledige fine-tuning van grote modellen vereist significante GPU-resources. Parameter-efficiënte methoden (LoRA, QLoRA) reduceren kosten met 10-100x, waardoor fine-tuning toegankelijk wordt op consumentenhardware.
+
+## Gerelateerde termen
+
+- [LLM](/nl/glossary/llm/) — basismodellen die gefinetuned worden
+- [LoRA](/nl/glossary/lora/) — parameter-efficiënte fine-tuning methode
+- Transfer Learning — breder concept dat fine-tuning implementeert
+- [Instruction Tuning](/nl/glossary/instruction-tuning/) — specifieke fine-tuning aanpak
+
+---
+
+## Referenties
+
+> Howard & Ruder (2018), "[Universal Language Model Fine-tuning for Text Classification](https://arxiv.org/abs/1801.06146)", ACL. [5.000+ [citaties](/nl/glossary/citation/)]
+
+> Hu et al. (2022), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [4.000+ citaties]
+
+> Wei et al. (2022), "[Finetuned Language Models Are Zero-Shot Learners](https://arxiv.org/abs/2109.01652)", ICLR. [3.500+ citaties]
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [6.000+ citaties]
+
+## References
+
+> Howard & Ruder (2018), "[Universal Language Model Fine-tuning for Text Classification](https://arxiv.org/abs/1801.06146)", ACL. [5,000+ citations]
+
+> Hu et al. (2022), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [4,000+ citations]
+
+> Wei et al. (2022), "[Finetuned Language Models Are Zero-Shot Learners](https://arxiv.org/abs/2109.01652)", ICLR. [3,500+ citations]
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [6,000+ citations]

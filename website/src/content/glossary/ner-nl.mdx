@@ -1,0 +1,213 @@
+---
+term: "Named Entity Recognition"
+termSlug: "ner"
+short: "AI-techniek die benoemde entiteiten zoals personen, plaatsen en organisaties in tekst identificeert en classificeert voor informatie-extractie."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["knowledge-graph", "semantic-search", "llm", "nlp"]
+synonyms: ["NER", "Entiteitsextractie", "Named entity extractie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Named Entity Recognition (NER) is een natural language processing-taak die benoemde entiteiten in tekst identificeert en classificeert in voorgedefinieerde categorieën zoals personen, organisaties, locaties, data, geldbedragen en meer. Gegeven een zin als "Apple Inc. werd opgericht door Steve Jobs in Cupertino in 1976," identificeert NER "Apple Inc." als een organisatie, "Steve Jobs" als een persoon, "Cupertino" als een locatie en "1976" als een datum. Deze gestructureerde extractie maakt downstream-toepassingen mogelijk zoals zoeken, knowledge graphs en vraagbeantwoording.
+
+## Waarom het belangrijk is
+
+NER is fundamenteel voor informatie-extractie:
+
+- **Knowledge graph constructie** — automatisch entiteiten extraheren en grafen bouwen
+- **Zoekverbetering** — begrijp queries en documenten semantisch
+- **Content classificatie** — tag documenten op personen, plaatsen, onderwerpen
+- **Compliance** — identificeer PII voor AVG/privacy-vereisten
+- **Business intelligence** — extraheer bedrijven, producten en relaties uit nieuws
+
+NER draait achter de schermen in vrijwel elk modern AI-systeem dat tekst verwerkt.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               NAMED ENTITY RECOGNITION                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  INPUT TEKST:                                              │
+│  ────────────                                              │
+│                                                            │
+│  "Elon Musk kondigde aan dat Tesla een nieuwe fabriek     │
+│   zal bouwen in Berlijn voor €4 miljard tegen 2025."      │
+│                                                            │
+│                                                            │
+│  NER OUTPUT:                                               │
+│  ───────────                                               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  [Elon Musk]    → PERSOON                           │  │
+│  │  [Tesla]        → ORGANISATIE                       │  │
+│  │  [Berlijn]      → LOCATIE                           │  │
+│  │  [€4 miljard]   → GELD                              │  │
+│  │  [2025]         → DATUM                             │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  GANGBARE ENTITEITSTYPES:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────┬──────────────────────────────────┐   │
+│  │ Type            │ Voorbeelden                       │   │
+│  ├─────────────────┼──────────────────────────────────┤   │
+│  │ PERSOON (PER)   │ Elon Musk, Marie Curie           │   │
+│  │ ORGANISATIE     │ Tesla, Verenigde Naties, Google  │   │
+│  │ LOCATIE (LOC)   │ Berlijn, Mount Everest, Europa   │   │
+│  │ DATUM           │ 2025, 15 januari, afgelopen dins.│   │
+│  │ TIJD            │ 15:00, ochtend, middag           │   │
+│  │ GELD            │ €4 miljard, $500, £100           │   │
+│  │ PERCENTAGE      │ 25%, 0,5 procent                 │   │
+│  │ PRODUCT         │ iPhone, Model 3, Windows 11      │   │
+│  │ GEBEURTENIS     │ Tweede Wereldoorlog, Olymp. Sp.  │   │
+│  │ WET             │ AVG, Grondwet                    │   │
+│  │ TAAL            │ Nederlands, Python, JavaScript   │   │
+│  └─────────────────┴──────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  HOE NER WERKT:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  Traditionele aanpak: Sequentie-labeling                  │
+│                                                            │
+│  Tekst:  Elon    Musk   werkt  bij   Tesla                │
+│            │       │       │     │      │                  │
+│            ▼       ▼       ▼     ▼      ▼                  │
+│  Labels: B-PER  I-PER    O     O    B-ORG                 │
+│                                                            │
+│  B = Begin van entiteit                                    │
+│  I = Binnen entiteit (voortzetting)                        │
+│  O = Buiten (geen entiteit)                                │
+│                                                            │
+│  Dit heet BIO of IOB-tagging                               │
+│                                                            │
+│                                                            │
+│  NEURALE NER ARCHITECTUUR:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│      "Elon Musk richtte Tesla op"                         │
+│                │                                           │
+│                ▼                                           │
+│      ┌─────────────────────┐                              │
+│      │    Tokenisatie      │                              │
+│      │  [Elon][Musk][richt]│                              │
+│      │  [te][Tesla][op]    │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      ┌─────────────────────┐                              │
+│      │  Embedding Laag     │                              │
+│      │  (BERT, RoBERTa)    │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      ┌─────────────────────┐                              │
+│      │  Contextuele Encoder│                              │
+│      │  (Transformer/LSTM) │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      ┌─────────────────────┐                              │
+│      │  Classificatie      │                              │
+│      │  (CRF of Softmax)   │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      B-PER  I-PER   O    O   B-ORG   O                    │
+│                                                            │
+│                                                            │
+│  MODERNE LLM-GEBASEERDE NER:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Prompt: "Extraheer alle benoemde entiteiten uit deze     │
+│           tekst en classificeer ze als PERSOON, ORG,      │
+│           of LOCATIE: 'Elon Musk kondigde aan dat Tesla   │
+│           uitbreidt naar Berlijn'"                         │
+│                                                            │
+│  LLM Antwoord:                                             │
+│  - Elon Musk: PERSOON                                      │
+│  - Tesla: ORGANISATIE                                      │
+│  - Berlijn: LOCATIE                                        │
+│                                                            │
+│  Voordelen: Zero-shot, verwerkt nieuwe entiteitstypes     │
+│  Nadelen: Langzamer, duurder, minder consistent           │
+│                                                            │
+│                                                            │
+│  NER IN DE PRAKTIJK:                                       │
+│  ────────────────────                                      │
+│                                                            │
+│  Populaire libraries en modellen:                          │
+│                                                            │
+│  • spaCy - Snel, productie-klare NER                      │
+│  • Hugging Face Transformers - BERT-gebaseerde NER        │
+│  • Stanford NER - Klassiek Java-gebaseerd systeem         │
+│  • Flair - State-of-the-art sequentie-labeling            │
+│  • Azure/AWS/GCP APIs - Cloud NER-services                │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**NER model prestaties (CoNLL-2003 benchmark):**
+| Model | F1 Score | Jaar |
+|-------|----------|------|
+| LSTM-CRF | 90.9 | 2015 |
+| BERT-base | 92.4 | 2019 |
+| RoBERTa-large | 93.5 | 2019 |
+| LUKE | 94.3 | 2020 |
+| GPT-4 (few-shot) | ~93 | 2023 |
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen NER en entity linking?**
+
+A: NER identificeert dat "Apple" een organisatie is. Entity linking (ook wel entity disambiguation) bepaalt WELKE Apple—het verbindt "Apple" aan een specifieke [knowledge base](/nl/glossary/knowledge-base/)-entry zoals Wikidata's Q312 (Apple Inc.) in plaats van de vrucht. Entity linking draait typisch na NER en lost ambiguïteiten op met behulp van context.
+
+**V: Hoe train ik een aangepast NER-model voor mijn domein?**
+
+A: Begin met een voorgetraind model (zoals spaCy of BERT-gebaseerd) en fine-tune op je domeinspecifieke data. Je hebt gelabelde voorbeelden nodig—typisch honderden tot duizenden afhankelijk van entiteitstypes. Voor gespecialiseerde domeinen (juridisch, medisch, financieel) bestaan domeinspecifieke voorgetrainde modellen die minder [fine-tuning](/nl/glossary/fine-tuning/) data vereisen.
+
+**V: Kan NER geneste entiteiten aan?**
+
+A: Standaard NER worstelt met geneste entiteiten zoals "Bank of America" (ORG) dat "America" (LOC) bevat. Sommige nieuwere benaderingen behandelen dit: span-gebaseerde modellen die entiteits-spans voorspellen in plaats van token-[labels](/nl/glossary/ground-truth/), of twee-pass NER dat entiteiten op verschillende niveaus identificeert.
+
+**V: Moet ik NER gebruiken of gewoon een LLM vragen om entiteiten te extraheren?**
+
+A: Hangt af van je vereisten. Traditionele NER-modellen zijn sneller, goedkoper, consistenter en beter voor hoog-volume verwerking. LLMs zijn flexibeler, behandelen nieuwe entiteitstypes zero-shot. Voor productie op schaal, gebruik gespecialiseerde NER-modellen. Voor prototyping of complexe gevallen kunnen LLMs praktischer zijn.
+
+## Gerelateerde termen
+
+- [Knowledge graph](/nl/glossary/knowledge-graph/) — grafen gebouwd met NER-outputs
+- [Semantic search](/nl/glossary/semantic-search/) — zoeken verbeterd door entiteitsbegrip
+- [LLM](/nl/glossary/llm/) — modellen die NER kunnen uitvoeren via prompting
+- NLP — breder veld dat NER bevat
+
+---
+
+## Referenties
+
+> Lample et al. (2016), "[Neural Architectures for Named Entity Recognition](https://arxiv.org/abs/1603.01360)", NAACL. [Fundamentele neurale NER paper]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [BERT voor NER]
+
+> Li et al. (2020), "[A Survey on Deep Learning for Named Entity Recognition](https://arxiv.org/abs/1812.09449)", TKDE. [Uitgebreide NER survey]
+
+> Wang et al. (2023), "[GPT-NER: Named Entity Recognition via Large Language Models](https://arxiv.org/abs/2304.10428)", arXiv. [LLM-gebaseerde NER aanpakken]
+
+## References
+
+> Lample et al. (2016), "[Neural Architectures for Named Entity Recognition](https://arxiv.org/abs/1603.01360)", NAACL. [Foundational neural NER paper]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [BERT for NER]
+
+> Li et al. (2020), "[A Survey on Deep Learning for Named Entity Recognition](https://arxiv.org/abs/1812.09449)", TKDE. [Comprehensive NER survey]
+
+> Wang et al. (2023), "[GPT-NER: Named Entity Recognition via Large Language Models](https://arxiv.org/abs/2304.10428)", arXiv. [LLM-based NER approaches]

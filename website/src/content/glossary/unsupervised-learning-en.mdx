@@ -1,0 +1,135 @@
+---
+term: "Unsupervised Learning"
+termSlug: "unsupervised-learning"
+short: "A machine learning approach where models discover patterns and structure in data without labeled examples."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["machine-learning", "supervised-learning", "embeddings", "clustering"]
+synonyms: ["Unsupervised ML", "Self-organizing", "Pattern discovery", "Unlabeled learning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Unsupervised learning is a machine learning paradigm where algorithms discover hidden patterns, structures, and relationships in data without the guidance of labeled examples. Unlike supervised learning where correct answers are provided during training, unsupervised methods must find meaningful organization in the data on their own—identifying natural clusters, reducing dimensionality, detecting anomalies, or learning useful representations.
+
+## Why it matters
+
+Unsupervised learning unlocks value in unlabeled data:
+
+- **No labeling required** — works with raw, unlabeled data (cheaper, abundant)
+- **Pattern discovery** — finds structure humans might miss
+- **[Data preprocessing](/en/glossary/data-preprocessing/)** — [dimensionality reduction](/en/glossary/dimensionality-reduction/), feature learning
+- **Anomaly detection** — identifies outliers without examples
+- **Foundation for embeddings** — learns representations that power [semantic search](/en/glossary/semantic-search/)
+
+Many modern AI breakthroughs, including text embeddings, rely on unsupervised or self-supervised learning.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  UNSUPERVISED LEARNING                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SUPERVISED VS UNSUPERVISED:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  SUPERVISED:                   UNSUPERVISED:               │
+│  "Here's the data AND           "Here's the data.         │
+│   the right answers"             Find patterns yourself"   │
+│                                                            │
+│  Input → LABEL                 Input → ???                 │
+│  [Image] → "Cat"               [Data points] → Groups?     │
+│                                                            │
+│  MAIN UNSUPERVISED TASKS:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  1. CLUSTERING                                             │
+│     Group similar items together                           │
+│                                                            │
+│     Before:              After:                            │
+│       ●  ○  ●              ┌───────┐  ┌───────┐           │
+│     ○    ●    ○            │ ● ● ● │  │ ○ ○ ○ │           │
+│       ●  ○  ●              │ ● ● ● │  │ ○ ○ ○ │           │
+│                            └───────┘  └───────┘           │
+│                            Cluster A   Cluster B           │
+│                                                            │
+│  2. DIMENSIONALITY REDUCTION                               │
+│     Compress data while preserving structure               │
+│                                                            │
+│     High-D space           Low-D space                     │
+│     (100 features)    →    (2-3 features)                 │
+│                                                            │
+│     ┌─────────────┐        ┌─────────────┐                │
+│     │ x₁,x₂,...x₁₀₀│   →   │   x'₁, x'₂  │                │
+│     └─────────────┘        └─────────────┘                │
+│          PCA, t-SNE, UMAP, Autoencoders                   │
+│                                                            │
+│  3. ANOMALY DETECTION                                      │
+│     Find unusual patterns                                  │
+│                                                            │
+│          ●●●●●●                                            │
+│        ●●●●●●●●●                                           │
+│          ●●●●●●         ○ ← Anomaly!                      │
+│                                                            │
+│  4. REPRESENTATION LEARNING                                │
+│     Learn useful features automatically                    │
+│                                                            │
+│     Raw Data → Encoder → Embedding → Useful representation│
+│                                                            │
+│  COMMON ALGORITHMS:                                        │
+│  ──────────────────                                        │
+│  Clustering:      K-Means, DBSCAN, Hierarchical           │
+│  Dim. Reduction:  PCA, t-SNE, UMAP                        │
+│  Density-based:   Gaussian Mixture Models                 │
+│  Neural:          Autoencoders, VAEs                      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Unsupervised methods comparison:**
+| Method | Purpose | Output | Example Use |
+|--------|---------|--------|-------------|
+| K-Means | Clustering | K groups | Customer segmentation |
+| PCA | Dimensionality reduction | Lower-D data | Feature compression |
+| Autoencoders | [Representation learning](/en/glossary/deep-learning/) | Embeddings | Image compression |
+| DBSCAN | Density clustering | Variable groups | Anomaly detection |
+
+## Common questions
+
+**Q: How do you evaluate unsupervised learning if there are no labels?**
+
+A: Several approaches: (1) Intrinsic [metrics](/en/glossary/distance-metric/) like silhouette score for clustering, (2) Reconstruction error for autoencoders, (3) Downstream task performance (use learned representations for a supervised task), (4) Human evaluation of discovered patterns, (5) Comparison with known [ground truth](/en/glossary/ground-truth/) if available.
+
+**Q: What's self-supervised learning?**
+
+A: Self-supervised learning is a form of unsupervised learning where the algorithm creates its own labels from the data. LLM [pretraining](/en/glossary/pretraining/) is self-supervised: predicting the next token uses the text itself as labels. It's technically unsupervised (no human labels) but the training process resembles supervised learning.
+
+**Q: When should I use unsupervised vs supervised learning?**
+
+A: Use unsupervised when: (1) You have no labels, (2) You want to explore/understand data structure, (3) You need preprocessing (dimensionality reduction), (4) You want to find anomalies. Use supervised when you have labels and a specific [prediction](/en/glossary/inference/) task.
+
+**Q: How does unsupervised learning relate to embeddings?**
+
+A: Many embedding methods use unsupervised or self-supervised learning. Word2Vec learns word embeddings without labels by predicting context words. Autoencoders learn compressed representations. These unsupervised embeddings then enable semantic search, clustering, and more.
+
+## Related terms
+
+- [Machine Learning](/en/glossary/machine-learning/) — the broader field
+- [Supervised Learning](/en/glossary/supervised-learning/) — learning with labels
+- [Embeddings](/en/glossary/embeddings/) — often learned unsupervised
+- Clustering — grouping similar items
+
+---
+
+## References
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer, Chapters 13-14. [Foundational text]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 15. [Unsupervised representation learning]
+
+> van der Maaten & Hinton (2008), "[Visualizing Data using t-SNE](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)", JMLR. [20,000+ citations]
+
+> Kingma & Welling (2014), "[Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)", ICLR. [Foundational VAE paper, 15,000+ citations]

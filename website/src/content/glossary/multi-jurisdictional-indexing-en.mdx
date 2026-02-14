@@ -1,0 +1,66 @@
+---
+term: "Multi-Jurisdictional Indexing"
+termSlug: "multi-jurisdictional-indexing"
+short: "Multi-jurisdictional indexing structures an index across countries or regions so retrieval respects jurisdiction, language, and legal applicability."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["indexing-strategy", "query-understanding", "semantic-expansion", "authority-ranking-model", "legal-dependency-mapping"]
+synonyms: ["Cross-jurisdiction indexing", "Multi-country indexing", "Jurisdiction-aware indexing"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Multi-jurisdictional indexing is the design of an index and metadata model that supports searching across multiple jurisdictions (countries, regions, legal systems) without mixing results in a way that misleads users. It makes jurisdiction an explicit retrieval and ranking signal, not an afterthought.
+
+## Why it matters
+
+- **Applicability**: the "right" rule depends on jurisdiction and sometimes on sub-region.
+- **Language variation**: the same concept can appear in different languages and citation styles.
+- **Authority differences**: courts and administrative bodies have different weights per jurisdiction.
+- **Better UX**: enables clean filters, routing, and result grouping by jurisdiction.
+
+## How it works
+
+Most implementations combine metadata, routing, and ranking:
+
+```
+Query -> detect jurisdiction signals -> route/search -> rank with authority -> present with clear labels
+```
+
+Common building blocks:
+
+- Mandatory metadata (jurisdiction, effective dates, source type, issuing body)
+- Separate indexes or partitions per jurisdiction (or per language) when needed
+- [Query](/en/glossary/prompt/) understanding rules for jurisdiction hints ("BE", "NL", treaty names, local abbreviations)
+- Cross-lingual expansion for shared concepts and citations
+
+## Practical example
+
+A query like "withholding tax dividend" may apply differently in Belgium and the Netherlands. A multi-jurisdictional index routes or filters results based on detected jurisdiction intent and clearly [labels](/en/glossary/ground-truth/) results when multiple jurisdictions are plausible.
+
+## Common questions
+
+**Q: Do you always need separate indexes per jurisdiction?**
+
+A: Not always. Many stacks use one index with strong metadata and filters. Separate partitions help when languages, schemas, or authority models differ significantly.
+
+**Q: What is the biggest risk?**
+
+A: Showing a correct rule for the *wrong jurisdiction* without making that clear.
+
+## Related terms
+
+- [Indexing Strategy](/en/glossary/indexing-strategy/) - how you structure and maintain an index
+- [Query Understanding](/en/glossary/query-understanding/) - detect jurisdiction and constraints
+- [Semantic Expansion](/en/glossary/semantic-expansion/) - bridge language and wording variants
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - encode legal authority into ranking
+- [Legal Dependency Mapping](/en/glossary/legal-dependency-mapping/) - model cross-[references](/en/glossary/citation/) and applicability
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

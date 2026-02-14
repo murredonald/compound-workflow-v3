@@ -12,10 +12,10 @@ const locale = "fr";
 
 // Tier data inline to avoid island serialization issues
 const tiers = [
-  { id: "solo", name: t("pricing.solo", locale), monthly: 99, annual: 89, founding: 69, queries: "~150–300/mois", features: ["1 seat", "1 jurisdiction", "Source citations", "Confidence scoring", "Query history", "Email support"] },
-  { id: "team", name: t("pricing.team", locale), monthly: 299, annual: 269, founding: 209, queries: "~750–3 000/mois", highlighted: true, features: ["5 seats", "1 jurisdiction", "Source citations", "Confidence scoring", "Shared workspace", "Client folders", "Templates", "Priority support"] },
-  { id: "firm", name: t("pricing.firm", locale), monthly: 549, annual: 494, founding: 384, queries: "~2 000–8 000/mois", features: ["15 seats", "2 jurisdictions", "Source citations", "Confidence scoring", "Admin dashboard", "Knowledge base", "Bulk analysis", "Audit trail", "SSO", "Dedicated support"] },
-  { id: "enterprise", name: t("pricing.enterprise", locale), monthly: null, annual: null, founding: null, queries: "Unlimited", features: ["Unlimited seats", "All jurisdictions", "All features", "Custom integrations", "SLA", "Dedicated account manager"] },
+  { id: "solo", name: t("pricing.solo", locale), monthly: 99, annual: 89, queries: "~150–300/mois", features: ["1 siège", "1 juridiction", "Citations des sources", "Score de confiance", "Historique des requêtes", "Support email"] },
+  { id: "team", name: t("pricing.team", locale), monthly: 299, annual: 269, queries: "~750–3 000/mois", highlighted: true, features: ["4 sièges", "1 juridiction", "Citations des sources", "Score de confiance", "Espace partagé", "Dossiers clients", "Modèles", "Support prioritaire"] },
+  { id: "firm", name: t("pricing.firm", locale), monthly: 549, annual: 494, queries: "~2 000–8 000/mois", features: ["15 sièges", "2 juridictions", "Citations des sources", "Score de confiance", "Tableau de bord admin", "Base de connaissances", "Analyse en masse", "Piste d'audit", "SSO", "Support dédié"] },
+  { id: "enterprise", name: t("pricing.enterprise", locale), monthly: null, annual: null, queries: "Illimité", features: ["Sièges illimités", "Toutes juridictions", "Toutes fonctionnalités", "Intégrations personnalisées", "SLA", "Gestionnaire de compte dédié"] },
 ];
 ---
 
@@ -26,7 +26,7 @@ const tiers = [
   path="/pricing/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
+    <Section class="pt-12 md:pt-16 pb-8">
       <div class="mx-auto max-w-3xl text-center">
         <h1 class="text-display text-foreground">{t("pricing.title", locale)}</h1>
         <p class="mt-4 text-body-lg text-muted-foreground">{t("pricing.subtitle", locale)}</p>
@@ -41,15 +41,26 @@ const tiers = [
         />
       </div>
 
-      {/* Founding member offer */}
-      <p class="mt-6 text-center text-body-sm font-medium text-primary-text">
-        {t("pricing.founding_offer", locale)}
-      </p>
-    </Section>
+      {/* Billing explanation */}
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="mt-2 text-body-xs text-muted-foreground">
+          <strong>Mensuel :</strong> Payez chaque mois, résiliez quand vous voulez &nbsp;|&nbsp; <strong>Annuel :</strong> Payez d'avance pour 12 mois, économisez 10%
+        </p>
+      </div>
 
-    {/* Tier cards — UIX-05 */}
-    <Section>
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Founding member offer */}
+      <div class="mt-6 mx-auto max-w-2xl rounded-lg border border-primary/20 bg-primary/5 px-8 py-5 text-center">
+        <p class="text-body font-semibold text-primary-text">Tarifs Fondateurs</p>
+        <p class="mt-2 text-body-sm text-muted-foreground">
+          Tarifs fondateurs <strong class="text-foreground">garantis pour 1 an</strong>. Disponibilité limitée.
+        </p>
+        <p class="mt-1 text-body-sm text-muted-foreground">
+          Tous les prix sont <strong>par plan</strong> (pas par siège).
+        </p>
+      </div>
+
+      {/* Tier cards — UIX-05 */}
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier) => (
           <Card highlighted={tier.highlighted} class={tier.highlighted ? "shadow-lg" : ""}>
             <div class="flex flex-col h-full">
@@ -61,13 +72,14 @@ const tiers = [
               </div>
 
               {tier.monthly ? (
-                <div class="mb-4">
-                  {/* Founding member price (PRICE-06) */}
-                  <div class="flex items-baseline gap-2">
-                    <span class="text-display-sm font-bold text-foreground">€{tier.founding}</span>
-                    <span class="text-body-sm text-muted-foreground">{t("pricing.per_month", locale)}</span>
+                <div class="mb-6">
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-display-sm font-bold text-foreground">€<span data-price-monthly={tier.monthly} data-price-annual={tier.annual}>{tier.monthly}</span></span>
+                    <span class="text-body-sm text-muted-foreground">/mois</span>
                   </div>
-                  <p class="text-body-xs text-muted-foreground line-through">€{tier.monthly}{t("pricing.per_month", locale)}</p>
+                  <p class="text-body-xs text-muted-foreground mt-1">
+                    <span data-billing-text data-billing-monthly={`€${tier.monthly} facturé mensuellement`} data-billing-annual={`€${tier.annual * 12}/an (€${tier.annual}/mois)`}>€{tier.monthly} facturé mensuellement</span>
+                  </p>
                 </div>
               ) : (
                 <div class="mb-4">
@@ -87,7 +99,7 @@ const tiers = [
               </ul>
 
               <a
-                href={tier.monthly ? `/${locale}/waitlist/` : `/${locale}/contact/`}
+                href={tier.monthly ? `/${locale}/waitlist/?plan=${tier.id}` : `/${locale}/contact/`}
                 class="inline-flex h-11 min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-6 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 {tier.monthly ? t("pricing.cta", locale) : t("pricing.enterprise_cta", locale)}
@@ -100,18 +112,37 @@ const tiers = [
 
     {/* Jurisdiction add-ons — PRICE-03 */}
     <Section muted>
-      <h2 class="text-h2 text-foreground">Extensions de juridiction</h2>
-      <p class="mt-2 text-body text-muted-foreground">Étendez la couverture au-delà de la Belgique</p>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2">
-        <Card>
-          <h3 class="text-body-lg font-semibold text-foreground">+1 Juridiction</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Solo +€29/mois · Team +€79/mois · Firm +€149/mois</p>
-        </Card>
-        <Card>
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-h2 text-foreground">Extensions de juridiction</h2>
+        <p class="mt-2 text-body text-muted-foreground">Étendez la couverture au-delà de la Belgique</p>
+      </div>
+      <div class="mt-10 grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
+        <div class="rounded-xl border border-border bg-card/50 p-6 text-center">
+          <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <h3 class="text-body-lg font-semibold text-foreground">Juridictions supplémentaires</h3>
+          <p class="mt-2 text-body-sm text-muted-foreground">Ajoutez les Pays-Bas ou le Luxembourg individuellement à votre plan</p>
+          <div class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-caption font-medium text-primary-text">
+            <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-primary"></span></span>
+            Bientôt
+          </div>
+        </div>
+        <div class="rounded-xl border border-border bg-card/50 p-6 text-center">
+          <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
           <h3 class="text-body-lg font-semibold text-foreground">Offre Benelux</h3>
-          <p class="mt-2 text-body-sm text-muted-foreground">Solo +€49/mois · Team +€129/mois · Firm +€249/mois</p>
-          <p class="mt-1 text-body-xs text-primary-text">Économisez par rapport aux extensions individuelles</p>
-        </Card>
+          <p class="mt-2 text-body-sm text-muted-foreground">Belgique + Pays-Bas + Luxembourg en un seul forfait</p>
+          <div class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-caption font-medium text-primary-text">
+            <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-primary"></span></span>
+            Bientôt
+          </div>
+        </div>
       </div>
     </Section>
 
@@ -128,8 +159,34 @@ const tiers = [
     <Section muted>
       <h2 class="text-h2 text-foreground">Questions fréquentes</h2>
       <div class="mt-8 mx-auto max-w-3xl">
-        <PricingFAQ faqs={[{ question: "Quand Auryth TX AI sera-t-il lancé ?", answer: "Nous sommes actuellement en pré-lancement. Inscrivez-vous sur la liste d'attente pour être notifié du lancement et bénéficier du tarif fondateur à -30%%." }, { question: "Y a-t-il un essai gratuit ?", answer: "Oui. Chaque plan inclut un essai gratuit de 14 jours avec accès complet. Aucune carte bancaire requise." }, { question: "Puis-je changer de plan plus tard ?", answer: "Absolument. Vous pouvez passer à un plan supérieur ou inférieur à tout moment. Les changements prennent effet au prochain cycle de facturation." }, { question: "Quels moyens de paiement acceptez-vous ?", answer: "Au lancement, nous accepterons toutes les cartes bancaires courantes et le prélèvement SEPA." }, { question: "Mes données sont-elles sécurisées ?", answer: "Oui. Nous sommes une société belge soumise au RGPD. Vos données sont traitées et stockées dans l'UE. Consultez notre politique de confidentialité." }]} />
+        <PricingFAQ faqs={[
+          { question: "Les prix sont-ils par siège ou par plan ?", answer: "Les prix sont par plan, pas par siège. Chaque plan inclut un nombre de sièges (Solo: 1, Team: 4, Firm: 15). Vous ne payez pas supplémentaire pour chaque utilisateur dans votre limite." },
+          { question: "Quelle est la différence entre mensuel et annuel ?", answer: "La facturation mensuelle débite votre carte chaque mois et vous pouvez résilier à tout moment. La facturation annuelle débite une fois d'avance pour 12 mois avec 10% de réduction. Les deux affichent le tarif mensuel pour faciliter la comparaison." },
+          { question: "Que sont les Tarifs Fondateurs ?", answer: "Les tarifs fondateurs sont garantis pendant 1 an à partir de l'inscription. Disponibilité limitée — inscrivez-vous sur la liste d'attente pour réserver votre place." },
+          { question: "Quand Auryth TX AI sera-t-il lancé ?", answer: "Nous sommes actuellement en pré-lancement. Inscrivez-vous sur la liste d'attente pour être notifié du lancement et bénéficier des tarifs fondateurs." },
+          { question: "Y a-t-il un essai gratuit ?", answer: "Oui. Chaque plan inclut un essai gratuit de 14 jours avec accès complet. Aucune carte bancaire requise." },
+          { question: "Puis-je changer de plan plus tard ?", answer: "Absolument. Vous pouvez passer à un plan supérieur ou inférieur à tout moment. Les changements prennent effet au prochain cycle de facturation." },
+          { question: "Quels moyens de paiement acceptez-vous ?", answer: "Au lancement, nous accepterons toutes les cartes bancaires courantes et le prélèvement SEPA." },
+          { question: "Mes données sont-elles sécurisées ?", answer: "Oui. Nous sommes une société belge soumise au RGPD. Vos données sont traitées et stockées dans l'UE. Consultez notre politique de confidentialité." }
+        ]} />
       </div>
     </Section>
   </main>
+
+  {/* Billing toggle → price swap script */}
+  <script is:inline>
+    window.addEventListener("billing-toggle", function (e) {
+      var isAnnual = e.detail.isAnnual;
+      
+      // Update prices
+      document.querySelectorAll("[data-price-monthly]").forEach(function (el) {
+        el.textContent = isAnnual ? el.dataset.priceAnnual : el.dataset.priceMonthly;
+      });
+      
+      // Update billing text
+      document.querySelectorAll("[data-billing-text]").forEach(function (el) {
+        el.textContent = isAnnual ? el.dataset.billingAnnual : el.dataset.billingMonthly;
+      });
+    });
+  </script>
 </BaseLayout>

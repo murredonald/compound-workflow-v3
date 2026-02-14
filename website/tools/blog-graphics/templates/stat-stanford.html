@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Dark theme (default) — from website tokens.css */
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  /* Light theme override */
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 48px 56px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    padding: 8px 0;
+  }
+
+  .stat-number {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--destructive);
+  }
+
+  .stat-text { flex: 1; }
+
+  .stat-headline {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .stat-body {
+    font-size: 17px;
+    color: var(--muted-fg);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  .stat-source {
+    font-size: 14px;
+    color: var(--muted-fg);
+    margin-top: 16px;
+    font-style: italic;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="stat-card">
+    <div class="stat-number">17–33%</div>
+    <div class="stat-text">
+      <div class="stat-headline">Zelfs premium juridische AI fabriceert bronnen</div>
+      <div class="stat-body">
+        Stanford-onderzoekers testten Westlaw AI, LexisNexis+ AI en GPT-4.
+        Alle tools produceerden hallucinaties — verzonnen citaties die er betrouwbaar uitzien
+        maar niet bestaan. Voor fiscalisten die op deze bronnen vertrouwen, is dat een
+        aansprakelijkheidsrisico.
+      </div>
+      <div class="stat-source">Bron: Dahl et al. (2024). "Large Legal Fictions." Stanford HAI.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+---
+title: "Pourquoi nous publions notre exactitude — et pourquoi presque personne d'autre ne le fait"
+description: "Les affirmations d'exactitude sans métriques publiées sont du marketing. Voici ce qu'exige une mesure honnête de l'IA juridique, et pourquoi le secteur l'évite."
+publishDate: 2026-03-05
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Confiance & Transparence"
+tags: ["exactitude", "transparence", "benchmarking", "IA juridique", "confiance"]
+locale: "fr"
+draft: false
+---
+
+Chaque fournisseur d'IA juridique revendique une haute exactitude. Demandez-leur les données, et la conversation s'arrête.
+
+Ce n'est pas un oubli. C'est une stratégie. Des affirmations d'exactitude invérifiables ne sont pas des affirmations — ce sont des slogans. Et le secteur de l'IA juridique a construit tout un cycle de vente sur des slogans qu'aucun acheteur ne peut auditer.
+
+Nous pensons que cela doit changer. Non pas parce que nous sommes plus courageux que les autres, mais parce que les professionnels qui engagent leur réputation sur la recherche assistée par IA méritent de voir le bulletin avant de faire confiance au tuteur.
+
+## L'illusion d'exactitude
+
+L'écart entre ce que les fournisseurs d'IA juridique promettent et ce qu'ils peuvent prouver est plus large que la plupart des acheteurs ne le réalisent.
+
+Des chercheurs de Stanford ont testé les principaux outils de recherche juridique basés sur [RAG](/fr/glossary/rag/) — Lexis+ AI, Westlaw AI-Assisted Research et Ask Practical Law AI — dans la première évaluation empirique pré-enregistrée du genre. Malgré des affirmations marketing de résultats « sans [hallucination](/fr/glossary/hallucination/) », chaque outil hallucinait entre 17 % et 33 % du temps. Lexis+ AI était le système le plus performant, répondant correctement à 65 % des [requêtes](/fr/glossary/prompt/). Westlaw AI-Assisted Research était exact dans seulement 42 % des cas mais hallucinait presque deux fois plus que les autres outils testés (Magesh et al., 2024).
+
+Ce ne sont pas des prototypes de recherche obscurs. Ce sont les outils pour lesquels les plus grands cabinets d'avocats au monde paient des abonnements premium. Et jusqu'à ce que Stanford les teste indépendamment, aucun acheteur n'avait le moindre moyen de vérifier le marketing.
+
+> L'exactitude sans méthodologie n'est qu'un chiffre. La méthodologie sans publication n'est qu'une promesse.
+
+## Pourquoi le secteur évite la mesure
+
+Publier des métriques d'exactitude est coûteux, inconfortable et risqué sur le plan concurrentiel. Voici pourquoi la plupart des fournisseurs choisissent le silence :
+
+| Barrière | Pourquoi elle bloque la mesure |
+|---|---|
+| **Pas de benchmark standard** | L'IA juridique n'a pas d'équivalent d'ImageNet ou GLUE. Chaque fournisseur définit « exactitude » différemment — certains comptent l'existence des citations, d'autres la correction substantielle, d'autres la satisfaction utilisateur |
+| **La mesure est spécifique au domaine** | Un benchmark valable pour le droit américain est sans signification pour le droit fiscal belge. Construire un [jeu de test](/fr/glossary/evaluation-dataset/) valide exige des experts du domaine, pas seulement des ingénieurs |
+| **Les résultats exposent les faiblesses** | Un taux de 87 % publié invite la question : « Et les 13 % restants ? » Les fournisseurs préfèrent des affirmations vagues à des chiffres spécifiques susceptibles d'être examinés |
+| **Déclin temporel** | L'exactitude juridique n'est pas statique. Un système qui score 92 % en janvier peut atteindre 84 % en juin après une loi-programme qui modifie des dizaines de dispositions. La mesure continue exige un investissement continu |
+| **Risque concurrentiel** | Si vous publiez et votre concurrent non, les acheteurs comparent votre honnête 88 % à leur « quasi-parfait » implicite. Le fournisseur honnête paraît moins performant |
+
+Cela crée une course vers le bas de la transparence. La stratégie rationnelle du fournisseur est : revendiquer l'exactitude haut et fort, ne jamais la mesurer.
+
+## La récession de la transparence
+
+Le problème dépasse largement l'IA juridique. Le Stanford Foundation Model Transparency Index — l'évaluation la plus complète de la divulgation des entreprises d'IA — a constaté que la transparence dans l'ensemble du secteur a chuté d'un score moyen de 58 sur 100 en 2024 à seulement 40 en 2025, annulant entièrement les progrès de l'année précédente (Wan et al., 2025).
+
+Le score de Meta a chuté de 60 à 31. Celui de Mistral est passé de 55 à 18. Les entreprises qui construisent les modèles fondamentaux sur lesquels reposent les outils d'IA juridique deviennent moins transparentes, pas plus.
+
+![L'écart d'exactitude : six constats issus de la recherche sur la transparence et les hallucinations de l'IA juridique](/blog/waarom-wij-nauwkeurigheid-publiceren/accuracy-gap-research-findings-dark.png "Sources : Magesh et al. (2024), Wan et al. (2025), Vals AI (2025), SEC (2024)")
+
+Pour les professionnels du droit, cela compte directement. Quand les modèles fondamentaux deviennent plus opaques, les outils construits dessus héritent de cette opacité. Vous ne faites pas seulement confiance aux affirmations d'exactitude de votre fournisseur d'IA juridique — vous faites confiance à une chaîne d'affirmations que personne dans la chaîne ne peut pleinement vérifier.
+
+## À quoi ressemble une mesure honnête
+
+Publier l'exactitude ne consiste pas simplement à afficher un pourcentage sur une page web. Cela exige une infrastructure que la plupart des fournisseurs n'ont pas construite :
+
+**1. Un jeu de données de [référence](/fr/glossary/citation/) construit par des experts du domaine**
+
+Pas généré par IA. Pas extrait de benchmarks existants. Des questions composées manuellement avec des réponses vérifiées, couvrant toute la complexité du domaine cible. Pour le droit fiscal belge, cela signifie : questions temporelles (quel était le droit en 2019 ?), comparaisons régionales (en quoi la Flandre diffère-t-elle de Bruxelles ?), analyse transversale (quelles sont toutes les conséquences fiscales d'un produit TAK 23 ?), et cas limites où le droit est véritablement ambigu ou contradictoire.
+
+**2. [Évaluation continue](/fr/glossary/continuous-evaluation/), pas un test ponctuel**
+
+Un seul passage de benchmark est un instantané, pas un système. Les lois changent. Les modèles sont mis à jour. Le [corpus](/fr/glossary/corpus/) évolue. Une mesure honnête signifie exécuter les évaluations en continu et publier la tendance, pas le pic.
+
+**3. Notation multidimensionnelle**
+
+« L'exactitude » n'est pas un seul chiffre. C'est au moins trois :
+
+| Dimension | Ce qu'elle mesure |
+|---|---|
+| **Exactitude des citations** | Les sources citées existent-elles ? Disent-elles ce que le système affirme ? |
+| **Correction substantielle** | La conclusion juridique est-elle correcte, compte tenu des sources citées ? |
+| **Complétude** | Le système a-t-il trouvé toutes les dispositions pertinentes, ou seulement les plus évidentes ? |
+
+Un système qui score 95 % en exactitude des citations mais 60 % en complétude est dangereux — il vous donne un conseil correct mais incomplet avec une haute confiance.
+
+**4. Méthodologie publiée**
+
+La méthodologie compte autant que le score. Comment les questions ont-elles été sélectionnées ? Qui a vérifié les réponses ? Qu'est-ce qui compte comme « correct » ? Sans méthodologie publiée, un score est infalsifiable — et les affirmations infalsifiables ne valent exactement rien.
+
+## Le benchmark Vals et ce qu'il révèle
+
+Le Vals Legal AI Report (VLAIR) — le premier benchmark indépendant d'outils d'IA juridique — offre un précédent utile. Dans son évaluation de février 2025, Harvey Assistant a atteint 94,8 % d'exactitude en Q&A documentaire, surpassant le groupe contrôle d'avocats sur quatre des sept tâches. Dans l'évaluation de la recherche juridique d'octobre 2025, tous les outils d'IA testés ont obtenu environ 80 % d'exactitude contre 71 % pour les avocats (Vals AI, 2025).
+
+Mais le VLAIR a également révélé un écart crucial : si l'IA généraliste a égalé l'IA juridique spécialisée en exactitude brute, elle était significativement en retard sur l'**autorité des sources** — 70 % contre une moyenne de 76 % pour l'IA juridique. L'accès à des bases de données juridiques organisées et des sources de citations structurées fait encore la différence.
+
+L'histoire plus large, cependant, est celle de qui a participé. Harvey a participé. Alexi a participé. Counsel Stack a participé. Plusieurs acteurs majeurs — dont Thomson Reuters et LexisNexis — ne l'ont pas fait. Quand les plus grands fournisseurs du secteur se soustraient à l'évaluation indépendante, l'écart entre marketing et mesure reste large.
+
+## Questions fréquentes
+
+**Pourquoi davantage d'entreprises d'IA juridique ne publient-elles pas leurs métriques d'exactitude ?**
+
+Publier l'exactitude exige de construire une infrastructure d'évaluation, d'accepter l'examen public et d'investir dans la mesure continue. La plupart des fournisseurs calculent que les affirmations vagues comportent moins de risque commercial que des chiffres spécifiques — car les chiffres spécifiques peuvent être contestés. Ce calcul change quand les acheteurs commencent à exiger des preuves.
+
+**Quel est un bon taux d'exactitude pour l'IA juridique ?**
+
+Il n'y a pas de réponse universelle car « l'exactitude » englobe l'existence des citations, la correction substantielle et la complétude. Un système qui donne la bonne réponse mais omet les exceptions pertinentes est techniquement « exact » sur la question posée mais professionnellement dangereux. La mesure multidimensionnelle — couvrant correction, complétude et validité temporelle — importe davantage que n'importe quel chiffre unique.
+
+**Comment puis-je vérifier moi-même les affirmations d'exactitude d'un fournisseur ?**
+
+Posez trois questions : (1) Quelle méthodologie de benchmark utilisez-vous ? (2) Qui a construit et vérifié le jeu de test ? (3) Puis-je voir la tendance historique, pas seulement le score actuel ? Si le fournisseur ne peut répondre aux trois, l'affirmation est du marketing.
+
+## Pourquoi nous avons choisi de publier
+
+Nous publions nos métriques d'exactitude pour une raison simple : nous pensons que vous devriez pouvoir vérifier les affirmations de tout outil auquel vous confiez votre réputation professionnelle.
+
+Notre [cadre d'évaluation](/fr/glossary/evals-framework/) couvre plus de 70 questions vérifiées par des experts en droit fiscal belge — questions temporelles, comparaisons régionales, analyse transversale, conscience de la hiérarchie juridique, et cas limites délibérés où le droit est ambigu ou contradictoire. Nous les exécutons en continu, pas une seule fois. Nous publions la tendance, pas le pic.
+
+Quand notre exactitude baisse — et cela arrivera, car les lois-programmes modifient des dizaines de dispositions d'un coup — cette baisse sera visible. Nous considérons cela comme une fonctionnalité, pas un défaut. Une baisse publique d'exactitude après un changement législatif majeur prouve que la mesure est réelle. Un score qui ne change jamais prouve seulement que personne ne vérifie.
+
+Chaque signalement d'erreur que nous recevons devient un nouveau cas de test. Le système s'améliore mesurablementchaque semaine. C'est là l'essentiel : la transparence n'est pas un geste marketing. C'est un moteur d'amélioration.
+
+La SEC a sanctionné des entreprises pour « AI washing » — des affirmations fausses ou trompeuses sur les capacités de l'IA. En 2024, Delphia et Global Predictions ont payé 400 000 $ d'amendes pour avoir exagéré le rôle de leur IA. En 2025, l'application s'est étendue aux sociétés cotées (SEC, 2024). La direction réglementaire est claire : les affirmations invérifiables sur l'IA auront de plus en plus de conséquences juridiques.
+
+Nous préférons vous montrer un score honnête et expliquer les lacunes plutôt que revendiquer la perfection en espérant que vous ne vérifierez pas.
+
+---
+
+## Articles connexes
+
+- [Pourquoi la transparence compte plus que l'exactitude en IA juridique](/fr/blog/transparantie-vs-nauwkeurigheid-fr/)
+- [Qu'est-ce que le confidence scoring — et pourquoi c'est plus honnête qu'une réponse assurée](/fr/blog/confidence-scoring-uitgelegd-fr/)
+- [Ce que l'étude de Stanford sur les hallucinations a réellement révélé](/fr/blog/stanford-hallucination-study-juridische-ai-fr/)
+- [Comment évaluer un outil d'IA juridique : 10 questions qui comptent vraiment](/fr/blog/juridische-ai-tool-evalueren-fr/)
+
+---
+
+## Comment Auryth TX applique ceci
+
+Auryth TX publie un tableau de bord d'exactitude en temps réel couvrant l'exactitude des citations, la correction substantielle et la complétude transversale en droit fiscal belge. Le jeu d'évaluation est construit et vérifié par des fiscalistes — pas généré par IA ni emprunté à des benchmarks génériques.
+
+Chaque métrique est mise à jour en continu. Quand une loi-programme modifie le corpus juridique, nos scores reflètent la perturbation en temps réel. Quand un utilisateur signale une inexactitude, elle intègre la suite de tests de façon permanente. Le résultat est un système qui s'améliore de manière mesurable et vérifiable — et un tableau de bord qui le prouve.
+
+Nous pensons que cela devrait être le minimum pour tout outil qui demande la confiance professionnelle. Si votre fournisseur d'IA refuse de vous montrer ses données d'exactitude, demandez-vous ce qu'il optimise.
+
+*Consultez nos métriques d'exactitude vous-même — et jugez si votre outil actuel peut offrir la même transparence.*
+
+---
+
+*Sources :*
+*1. Magesh, V. et al. (2024). « [Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362) ». Journal of Empirical Legal Studies.*
+*2. Wan, A. et al. (2025). « [The 2025 Foundation Model Transparency Index](https://crfm.stanford.edu/fmti/December-2025/paper.pdf) ». Stanford CRFM.*
+*3. Vals AI (2025). « [Vals Legal AI Report — Legal Research](https://www.vals.ai/industry-reports/vlair-10-14-25) ». VLAIR octobre 2025.*
+*4. U.S. Securities and Exchange Commission (2024). « [SEC Charges Two Investment Advisers with Making False and Misleading Statements About Their Use of Artificial Intelligence](https://www.sec.gov/newsroom/press-releases/2024-36) ». Communiqué 2024-36.*

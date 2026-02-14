@@ -1,0 +1,212 @@
+---
+term: "Zero-Shot Learning"
+termSlug: "zero-shot"
+short: "Een machine learning vermogen waarbij modellen taken uitvoeren zonder taak-specifieke voorbeelden, puur vertrouwend op voorgetrainde kennis en natuurlijke taalinstructies."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["few-shot", "in-context-learning", "chain-of-thought", "prompt-engineering"]
+synonyms: ["Zero-shot prompting", "Zero-shot inferentie", "Zero-shot classificatie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Zero-shot learning is het vermogen van [machine learning](/nl/glossary/machine-learning/) modellen om taken uit te voeren waarvoor ze niet expliciet getraind zijn, zonder enige voorbeelden van die specifieke taak te zien. Bij grote taalmodellen wordt zero-shot learning bereikt door natuurlijke taalinstructies te geven die de gewenste taak beschrijven. Het model gebruikt zijn voorgetrainde kennis om te generaliseren naar nieuwe taken puur gebaseerd op de beschrijving. Dit contrasteert met few-shot learning (gebruikt voorbeelden) en traditioneel supervised learning (vereist uitgebreide trainingsdata).
+
+## Waarom het belangrijk is
+
+Zero-shot learning vertegenwoordigt een paradigmaverschuiving in AI:
+
+- **Geen voorbeelden nodig** — beschrijf wat je wilt in gewone taal
+- **Directe implementatie** — gebruik modellen meteen voor nieuwe taken
+- **Maximale flexibiliteit** — pas aan elke taak beschrijfbaar in taal
+- **Kostenefficiënt** — geen dataverzameling of training nodig
+- **Democratisering** — iedereen kan AI gebruiken zonder ML expertise
+- **Snelle iteratie** — test ideeën in seconden, niet weken
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    ZERO-SHOT LEARNING                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ZERO-SHOT vs FEW-SHOT VERGELIJKING:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  ZERO-SHOT (geen voorbeelden):                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt:                                             │ │
+│  │  "Classificeer de volgende tekst als Positief,      │ │
+│  │   Negatief, of Neutraal:                            │ │
+│  │                                                      │ │
+│  │   Tekst: 'Dit product overtrof mijn verwachtingen!'│ │
+│  │                                                      │ │
+│  │   Classificatie:"                                   │ │
+│  │                                                      │ │
+│  │  Model output: "Positief"                           │ │
+│  │                                                      │ │
+│  │  ✓ Geen voorbeelden gegeven                         │ │
+│  │  ✓ Beschrijft alleen de taak                        │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  FEW-SHOT (met voorbeelden):                              │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt:                                             │ │
+│  │  "Classificeer als Positief, Negatief, of Neutraal: │ │
+│  │                                                      │ │
+│  │   Tekst: 'Geweldige service!' → Positief            │ │
+│  │   Tekst: 'Verschrikkelijke kwaliteit' → Negatief   │ │
+│  │   Tekst: 'Was oké' → Neutraal                       │ │
+│  │                                                      │ │
+│  │   Tekst: 'Dit product overtrof mijn verwachtingen!'│ │
+│  │   Classificatie:"                                   │ │
+│  │                                                      │ │
+│  │  ✗ Vereiste eerst 3 voorbeelden                     │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  HOE ZERO-SHOT WERKT:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  Pre-training fase (al gedaan):                           │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Massief tekstcorpus:                               │ │
+│  │  • Boeken, websites, papers, code                   │ │
+│  │  • Miljarden tokens                                  │ │
+│  │  • Diverse taken verschijnen natuurlijk in tekst   │ │
+│  │                                                      │ │
+│  │  Model leert:                                        │ │
+│  │  • Taalbegrip                                        │ │
+│  │  • Wereldkennis                                      │ │
+│  │  • Taakpatronen (classificatie, samenvatting,      │ │
+│  │    vertaling, V&A, etc.)                           │ │
+│  │  • Instructies volgen                               │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                        │                                   │
+│                        ↓                                   │
+│  Zero-shot inferentie:                                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Gebruiker geeft:                                    │ │
+│  │  ┌───────────────────────────────────────┐         │ │
+│  │  │ Natuurlijke taal taakbeschrijving     │         │ │
+│  │  │ "Vertaal dit naar Frans: Hallo"       │         │ │
+│  │  └───────────────────────────────────────┘         │ │
+│  │                        │                            │ │
+│  │                        ↓                            │ │
+│  │  Model herkent:                                     │ │
+│  │  ┌───────────────────────────────────────┐         │ │
+│  │  │ Taaktype: Vertaling                   │         │ │
+│  │  │ Bron: Nederlands                      │         │ │
+│  │  │ Doel: Frans                           │         │ │
+│  │  │ Invoer: "Hallo"                       │         │ │
+│  │  └───────────────────────────────────────┘         │ │
+│  │                        │                            │ │
+│  │                        ↓                            │ │
+│  │  Model past geleerde kennis toe:                   │ │
+│  │  ┌───────────────────────────────────────┐         │ │
+│  │  │ Output: "Bonjour"                     │         │ │
+│  │  └───────────────────────────────────────┘         │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ZERO-SHOT TAAK VOORBEELDEN:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Classificatie:                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ "Is deze email spam of geen spam?                   │ │
+│  │  Email: [inhoud]                                    │ │
+│  │  Antwoord:"                                          │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Samenvatting:                                             │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ "Vat dit artikel samen in 3 opsommingstekens:      │ │
+│  │  [artikel tekst]"                                   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Zero-shot CoT:                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ "[wiskundeprobleem]                                 │ │
+│  │                                                      │ │
+│  │  Laten we stap voor stap denken."                  │ │
+│  │                                                      │ │
+│  │  → Model redeneert door, krijgt correct antwoord   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WANNEER ZERO-SHOT GOED WERKT:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ✓ Veelvoorkomende taken (classificatie, samenvatting)   │
+│  ✓ Duidelijke, goed gedefinieerde instructies            │
+│  ✓ Taken vergelijkbaar met pre-training datapatronen    │
+│  ✓ Grote, capabele modellen (GPT-4, Claude, etc.)       │
+│  ✓ Algemene kennis vereist (niet domein-specifiek)      │
+│                                                            │
+│  WANNEER ZERO-SHOT WORSTELT:                               │
+│  ──────────────────────────                                │
+│                                                            │
+│  ✗ Ongebruikelijke outputformaten niet goed beschreven  │
+│  ✗ Domein-specifiek jargon of conventies                │
+│  ✗ Complexe meerstaps-taken                              │
+│  ✗ Taken die voorbeelden nodig hebben voor nuance       │
+│  ✗ Kleinere modellen (ontstaat op schaal)               │
+│                                                            │
+│  → Schakel over naar few-shot voor deze gevallen        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe kies ik tussen zero-shot en few-shot?**
+
+A: Begin met zero-shot—het is simpeler en werkt vaak goed voor veelvoorkomende taken. Schakel over naar few-shot als: (1) zero-shot nauwkeurigheid onvoldoende is, (2) de taak ongebruikelijke formaten heeft, (3) domein-specifieke output nodig is.
+
+**V: Waarom werkt zero-shot überhaupt zonder voorbeelden?**
+
+A: Grote modellen zijn getraind op massieve tekstcorpora met talloze voorbeelden van diverse taken. Tijdens pre-training leren modellen impliciet taakpatronen. Zero-shot prompts activeren deze geleerde kennis door de taak in natuurlijke taal te beschrijven.
+
+**V: Beïnvloedt modelgrootte zero-shot vermogen?**
+
+A: Dramatisch. Zero-shot vermogens "ontstaan" op schaal—modellen onder ~10B parameters falen vaak bij zero-shot taken die grotere modellen makkelijk afhandelen.
+
+**V: Kan ik zero-shot prestaties verbeteren zonder voorbeelden toe te voegen?**
+
+A: Ja. Technieken: (1) duidelijkere [instructies](/nl/glossary/prompt/), (2) gestructureerde outputformaat beschrijvingen, (3) "Laten we stap voor stap denken" toevoegen, (4) rol specificeren ("Je bent een expert in...").
+
+## Gerelateerde termen
+
+- [Few-shot learning](/nl/glossary/few-shot/) — leren met een paar voorbeelden
+- [In-context learning](/nl/glossary/in-context-learning/) — breder leerparadigma
+- [Chain-of-thought](/nl/glossary/chain-of-thought/) — zero-shot redeneertechniek
+- Prompt engineering — effectieve instructies maken
+
+---
+
+## Referenties
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 zero-shot/few-shot analyse]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT ontdekking]
+
+> Wei et al. (2022), "[Emergent Abilities of Large Language Models](https://arxiv.org/abs/2206.07682)", TMLR. [Zero-shot ontstaan op schaal]
+
+> Sanh et al. (2022), "[Multitask Prompted Training Enables Zero-Shot Task Generalization](https://arxiv.org/abs/2110.08207)", ICLR. [T0 zero-shot mogelijkheden]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 zero-shot/few-shot analysis]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT discovery]
+
+> Wei et al. (2022), "[Emergent Abilities of Large Language Models](https://arxiv.org/abs/2206.07682)", TMLR. [Zero-shot emergence at scale]
+
+> Sanh et al. (2022), "[Multitask Prompted Training Enables Zero-Shot Task Generalization](https://arxiv.org/abs/2110.08207)", ICLR. [T0 zero-shot capabilities]

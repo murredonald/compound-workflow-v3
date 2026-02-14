@@ -1,0 +1,182 @@
+---
+term: "Milvus"
+termSlug: "milvus"
+short: "Eine Open-Source-Vektordatenbank, optimiert für das Speichern, Indexieren und Durchsuchen massiver Embedding-Vektoren—ermöglicht Ähnlichkeitssuche für KI-Anwendungen wie RAG, semantische Suche und Empfehlungen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["vector-database", "embeddings", "similarity-search", "faiss", "weaviate"]
+synonyms: ["Milvus DB", "Milvus Vektordatenbank"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Milvus ist eine Open-Source-Vektordatenbank, die für das Speichern und Abfragen hochdimensionaler Embedding-Vektoren in großem Maßstab konzipiert ist. Im Gegensatz zu traditionellen Datenbanken, die nach exakten Werten suchen, führt Milvus Approximate Nearest Neighbor ([ANN](/de/glossary/ann/)) Suchen durch, um Vektoren zu finden, die einem Abfragevektor ähnlich sind. Es unterstützt Milliarden von Vektoren mit Millisekunden-Abfragelatenz. Milvus implementiert mehrere Indextypen (IVF, [HNSW](/de/glossary/hnsw/), ANNOY, GPU-Indizes), unterstützt [hybride Suche](/de/glossary/hybrid-search/) und bietet verteiltes Deployment über Kubernetes.
+
+## Warum es wichtig ist
+
+Milvus ermöglicht kritische KI-Fähigkeiten:
+
+- **[RAG](/de/glossary/rag/)-Anwendungen** — speichert [Wissensbasis](/de/glossary/knowledge-graph/)-Embeddings für Retrieval
+- **[Semantische Suche](/de/glossary/semantic-search/)** — findet bedeutungsähnliche Inhalte, nicht nur Keywords
+- **Empfehlungssysteme** — matcht Benutzer mit ähnlichen Items
+- **Bild-/Audio-Suche** — findet visuell oder akustisch ähnliche Medien
+- **Anomalie-Erkennung** — identifiziert Ausreißer über Vektordistanz
+- **Produktionsmaßstab** — verarbeitet Milliarden Vektoren mit niedriger Latenz
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                        MILVUS                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAS MILVUS MACHT:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Traditionelle DB:                                   │ │
+│  │  ┌──────────────────┐   ┌─────────────────────┐   │ │
+│  │  │  Abfrage:        │   │  Ergebnis:          │   │ │
+│  │  │  WHERE farbe =   │ → │  Nur exakte         │   │ │
+│  │  │  'blau'          │   │  Übereinstimmungen  │   │ │
+│  │  └──────────────────┘   └─────────────────────┘   │ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  Vektor-DB (Milvus):                                │ │
+│  │  ┌──────────────────┐   ┌─────────────────────┐   │ │
+│  │  │  Abfrage:        │   │  Ergebnis:          │   │ │
+│  │  │  Embedding von   │ → │  ÄHNLICHSTE         │   │ │
+│  │  │  "Meeressonnenu."│   │  Vektoren           │   │ │
+│  │  └──────────────────┘   └─────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Findet Bilder von Stränden, Dämmerung, blau/      │ │
+│  │  orangenen Szenen—semantisch verwandt              │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MILVUS ARCHITEKTUR:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │                   MILVUS CLUSTER                     │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │             Zugriffsschicht                  │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐ │   │ │
+│  │  │  │  Proxy   │  │  Proxy   │  │  Proxy   │ │   │ │
+│  │  │  │  Node    │  │  Node    │  │  Node    │ │   │ │
+│  │  │  └──────────┘  └──────────┘  └──────────┘ │   │ │
+│  │  │       Load Balancing, Authentifizierung    │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │          Koordinator-Schicht                │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐      │   │ │
+│  │  │  │  Root   │ │  Query  │ │  Data   │      │   │ │
+│  │  │  │  Coord  │ │  Coord  │ │  Coord  │      │   │ │
+│  │  │  └─────────┘ └─────────┘ └─────────┘      │   │ │
+│  │  │  Verwaltet Cluster-Status, Scheduling      │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │             Worker-Schicht                   │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌─────────────────┐ ┌──────────────────┐  │   │ │
+│  │  │  │   Query Nodes   │ │   Data Nodes     │  │   │ │
+│  │  │  │                 │ │                   │  │   │ │
+│  │  │  │  Lädt Vektoren  │ │  Insert/Delete   │  │   │ │
+│  │  │  │  Führt Suche aus│ │  Index-Aufbau    │  │   │ │
+│  │  │  └─────────────────┘ └──────────────────┘  │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │             Speicher-Schicht                 │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────────┐  ┌───────────────────┐   │   │ │
+│  │  │  │  etcd        │  │  Object Storage   │   │   │ │
+│  │  │  │  (Metadaten) │  │  (MinIO/S3)       │   │   │ │
+│  │  │  └──────────────┘  │  (Vektordaten)    │   │   │ │
+│  │  │                    └───────────────────┘   │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  INDEX-TYPEN:                                              │
+│  ────────────                                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  IVF_FLAT (Inverted File)                           │ │
+│  │  ├─ Clustert Vektoren, durchsucht relevante Cluster│ │
+│  │  └─ Beste für: <10M Vektoren                        │ │
+│  │                                                      │ │
+│  │  HNSW (Hierarchical Navigable Small World)          │ │
+│  │  ├─ Graphbasiert, exzellenter Recall               │ │
+│  │  └─ Beste für: Hohe Genauigkeitsanforderungen       │ │
+│  │                                                      │ │
+│  │  IVF_PQ / IVF_SQ8                                   │ │
+│  │  ├─ Quantisierte Versionen, weniger Speicher       │ │
+│  │  └─ Beste für: Speicherbeschränkte Deployments      │ │
+│  │                                                      │ │
+│  │  GPU-Indizes                                        │ │
+│  │  ├─ Nutzt GPU für massive Beschleunigung           │ │
+│  │  └─ Beste für: Milliarden-Skala Datasets            │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wann Milvus vs Pinecone verwenden?**
+
+A: Milvus für Self-Hosted-Kontrolle, kein Vendor Lock-in, Kostenoptimierung. Pinecone für vollständig verwaltete Einfachheit. Milvus erfordert Infra-Expertise; Pinecone abstrahiert dies.
+
+**F: Wie skaliert Milvus?**
+
+A: Horizontal über Kubernetes. Separate Skalierung von Query Nodes (Suchdurchsatz), Data Nodes (Ingestion) und Storage. Für Milliarden Vektoren konzipiert.
+
+**F: Welchen Indextyp wählen?**
+
+A: HNSW für beste Genauigkeit. IVF_FLAT für ausgewogene Performance. IVF_PQ/SQ8 für Speicherbeschränkungen. GPU-Indizes für Milliarden-Skala.
+
+## Verwandte Begriffe
+
+- [Vektordatenbank](/de/glossary/vector-database/) — allgemeine Kategorie
+- [Embeddings](/de/glossary/embeddings/) — was Milvus speichert
+- [Weaviate](/de/glossary/weaviate/) — alternative Vektordatenbank
+- [FAISS](/de/glossary/faiss/) — einfachere Vektorbibliothek
+
+---
+
+## Referenzen
+
+> Wang et al. (2021), "[Milvus: A Purpose-Built Vector Data Management System](https://dl.acm.org/doi/10.1145/3448016.3457550)", SIGMOD. [Original Milvus Paper]
+
+> Milvus Documentation (2024), "[Milvus Architecture Overview](https://milvus.io/docs/architecture_overview.md)", Milvus. [Offizielle Dokumentation]
+
+> Zilliz (2023), "[Milvus 2.0: Building a Cloud-Native Vector Database](https://zilliz.com/blog/milvus-2-0-goal-building-a-cloud-native-vector-database)", Zilliz Blog. [Architektur-Evolution]
+
+> LF AI & Data Foundation (2024), "[Milvus Project](https://lfaidata.foundation/projects/milvus/)", Linux Foundation. [Projekt-Governance]
+
+## References
+
+> Wang et al. (2021), "[Milvus: A Purpose-Built Vector Data Management System](https://dl.acm.org/doi/10.1145/3448016.3457550)", SIGMOD. [Original Milvus paper]
+
+> Milvus Documentation (2024), "[Milvus Architecture Overview](https://milvus.io/docs/architecture_overview.md)", Milvus. [Official documentation]
+
+> Zilliz (2023), "[Milvus 2.0: Building a Cloud-Native Vector Database](https://zilliz.com/blog/milvus-2-0-goal-building-a-cloud-native-vector-database)", Zilliz Blog. [Architecture evolution]
+
+> LF AI & Data Foundation (2024), "[Milvus Project](https://lfaidata.foundation/projects/milvus/)", Linux Foundation. [Project governance]

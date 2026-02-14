@@ -1,0 +1,112 @@
+---
+term: "Top-k Sampling"
+termSlug: "top-k"
+short: "A sampling method that restricts token selection to the k most probable next tokens at each generation step."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["top-p", "temperature", "inference", "llm"]
+synonyms: ["Top-k decoding", "K-best sampling", "Truncated sampling"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Top-k sampling is a text generation strategy that restricts the selection pool to the k tokens with the highest probability at each generation step. By eliminating low-probability tokens from consideration, it reduces the risk of generating incoherent or unexpected text while maintaining some diversity in outputs.
+
+## Why it matters
+
+Top-k provides predictable control over generation diversity:
+
+- **Noise reduction** — eliminates improbable tokens that cause incoherence
+- **Simplicity** — single integer parameter, easy to understand
+- **Consistency** — fixed candidate pool size regardless of distribution shape
+- **Speed** — efficient to compute by simply sorting and truncating
+- **Historical importance** — early standard that influenced later methods
+
+Top-k remains useful despite top-p often being preferred for adaptive behavior.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      TOP-K SAMPLING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Token probabilities (sorted high to low):                 │
+│                                                            │
+│  Rank  Token     Prob                                      │
+│  ─────────────────────                                     │
+│  1     "the"     0.35   ◄── included                      │
+│  2     "a"       0.25   ◄── included                      │
+│  3     "this"    0.15   ◄── included                      │
+│  4     "that"    0.10   ◄── included                      │
+│  5     "one"     0.08   ◄── included (k=5)                │
+│  6     "some"    0.04       excluded                       │
+│  7     "my"      0.02       excluded                       │
+│  8     "your"    0.01       excluded                       │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  TOP-K = 5                                     │        │
+│  │                                                │        │
+│  │  Always select from exactly 5 tokens          │        │
+│  │                                                │        │
+│  │  Rank: [1] [2] [3] [4] [5] │ [6] [7] [8]...   │        │
+│  │        ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲│▲▲▲▲▲▲▲▲▲▲▲▲▲▲    │        │
+│  │        CANDIDATE POOL     │  EXCLUDED         │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  FIXED SELECTION (regardless of probability shape):        │
+│                                                            │
+│  Confident model         Uncertain model                   │
+│  [0.90, 0.05, 0.02...]   [0.15, 0.14, 0.13...]             │
+│  Still picks k=5         Still picks k=5                   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Common top-k values:**
+| Value | Behavior | Use case |
+|-------|----------|----------|
+| 1 | Greedy (deterministic) | Exact tasks |
+| 10 | Very focused | Factual Q&A |
+| 40 | Balanced (common default) | General use |
+| 100 | Diverse | Creative tasks |
+| 0 | Disabled (all tokens) | With top-p only |
+
+## Common questions
+
+**Q: What's the difference between top-k and top-p?**
+
+A: Top-k always selects exactly k tokens. Top-p (nucleus sampling) selects a variable number based on cumulative probability. If probabilities are highly concentrated on one token, top-p might select just 1-2 tokens while top-k still selects all k.
+
+**Q: What's a good top-k value?**
+
+A: 40-50 is common for general use. Lower (5-20) for factual tasks, higher (100+) for creative work. The optimal value depends on vocabulary size and task requirements.
+
+**Q: Should I use top-k with temperature?**
+
+A: Yes, they work well together. Temperature reshapes probabilities first, then top-k truncates to the top candidates. This combination gives you control over both distribution shape and candidate pool size.
+
+**Q: What happens with top-k = 1?**
+
+A: This is equivalent to [greedy decoding](/en/glossary/greedy-decoding/)—always selecting the most probable token. Output becomes deterministic (same input → same output) but may be repetitive or miss better overall sequences.
+
+## Related terms
+
+- [Top-p Sampling](/en/glossary/top-p/) — probability-based alternative
+- [Temperature](/en/glossary/temperature/) — reshapes probability distribution
+- [Beam Search](/en/glossary/beam-search/) — considers multiple sequences
+- [Inference](/en/glossary/inference/) — generation process
+
+---
+
+## References
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10,000+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]

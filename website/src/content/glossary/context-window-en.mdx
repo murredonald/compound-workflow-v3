@@ -1,0 +1,94 @@
+---
+term: "Context Window"
+termSlug: "context-window"
+short: "The maximum amount of text (measured in tokens) that a language model can process in a single interaction."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "tokenization", "rag", "transformer-architecture"]
+synonyms: ["Context length", "Context size", "Max tokens", "Sequence length"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A context window is the maximum number of tokens that a large language model can consider at once during inference—including both the [input prompt](/en/glossary/prompt/) and the generated output. It represents the model's "working memory": everything outside this window is invisible to the model for that interaction. Context windows have grown from 2,048 tokens in early models to 128,000+ tokens in modern systems.
+
+## Why it matters
+
+Context window size directly impacts what AI systems can accomplish:
+
+- **Document analysis** — larger windows enable processing entire documents without chunking
+- **RAG relevance** — more context allows retrieving and incorporating more source material
+- **Conversational memory** — longer contexts maintain coherent multi-turn dialogues
+- **Complex reasoning** — more space for [chain-of-thought](/en/glossary/chain-of-thought/) and examples
+
+However, larger contexts increase computational cost quadratically with [self-attention](/en/glossary/self-attention/), driving innovation in efficient architectures.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    CONTEXT WINDOW                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ◄──────────────── 128K tokens ──────────────────────────► │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ System │  Retrieved │  User    │  Generated         │  │
+│  │ Prompt │  Context   │  Query   │  Response          │  │
+│  │ (500)  │  (50,000)  │  (500)   │  (4,000)          │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  All tokens compete for attention ←→                       │
+│  Tokens outside window: invisible                          │
+│                                                            │
+│  Model context windows:                                    │
+│  GPT-3.5:     4K / 16K                                    │
+│  GPT-4:       8K / 32K / 128K                             │
+│  Claude:      100K / 200K                                 │
+│  Gemini:      32K / 1M+                                   │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Token counting** — all inputs ([system prompt](/en/glossary/system-prompt/), user input, retrieved docs) consume tokens
+2. **Allocation** — remaining tokens available for model output
+3. **Attention** — each token can attend to all others within the window
+4. **Truncation** — content exceeding the window is cut off (typically from the start)
+
+## Common questions
+
+**Q: What happens when input exceeds the context window?**
+
+A: Most systems truncate—removing oldest content to fit. Well-designed applications prevent this via chunking, summarization, or RAG strategies that select only relevant passages.
+
+**Q: Does using the full context window affect quality?**
+
+A: Research shows "lost in the middle" effects—models attend better to content at the start and end of long contexts. Strategic placement of key information matters.
+
+**Q: How are tokens counted?**
+
+A: Depends on the tokenizer. Roughly: 1 token ≈ 4 characters or ≈ 0.75 words in English. Non-English text and code may tokenize differently.
+
+**Q: Is a larger context window always better?**
+
+A: Not necessarily. Larger windows cost more, process slower, and may dilute attention. RAG systems often outperform raw [context stuffing](/en/glossary/context-injection/) by retrieving only relevant content.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — the models that have context windows
+- [Tokenization](/en/glossary/tokenization/) — how text is converted to tokens
+- [RAG](/en/glossary/rag/) — technique for managing limited context
+- [Transformer Architecture](/en/glossary/transformer-architecture/) — why context windows exist
+
+---
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ citations]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Anthropic Documentation.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3,500+ citations]

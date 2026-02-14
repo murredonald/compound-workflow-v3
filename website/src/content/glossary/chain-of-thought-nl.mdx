@@ -1,0 +1,200 @@
+---
+term: "Chain-of-Thought"
+termSlug: "chain-of-thought"
+short: "Een prompting techniek die stap-voor-stap redenering ontlokt van taalmodellen, prestaties op complexe taken verbetert door het redeneerproces van het model expliciet en verifieerbaar te maken."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["few-shot", "zero-shot", "in-context-learning", "prompt-engineering"]
+synonyms: ["CoT prompting", "Stap-voor-stap redenering", "Redeneringsketen"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Chain-of-thought (CoT) prompting is een techniek die grote taalmodellen aanmoedigt om tussentijdse redeneerstappen te genereren voordat ze tot een eindantwoord komen. In plaats van direct een antwoord uit te voeren, produceert het model een reeks logische stappen die naar de conclusie leiden. Deze aanpak verbetert significant de prestaties op taken die meerstaps-redenering, wiskundige berekeningen, logische [inferentie](/nl/glossary/inference/) en complexe probleemoplossing vereisen. CoT kan worden ontlokt door few-shot voorbeelden met redeneertraces of simpelweg door "Laten we stap voor stap denken" toe te voegen aan [prompts](/nl/glossary/prompt/).
+
+## Waarom het belangrijk is
+
+Chain-of-thought transformeert [LLM](/nl/glossary/llm/)-mogelijkheden:
+
+- **Nauwkeurigheidsboost** — 50-90% verbetering op redenerings-benchmarks
+- **Transparantie** — toont HOE het model tot zijn antwoord kwam
+- **Foutdetectie** — tussentijdse stappen onthullen foute logica
+- **Complexe taken** — maakt wiskunde, logica en multi-hop redenering mogelijk
+- **Debugging** — identificeer exact waar redenering fout gaat
+- **Vertrouwen opbouwen** — verifieerbare redenering voor belangrijke beslissingen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   CHAIN-OF-THOUGHT                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STANDAARD vs CHAIN-OF-THOUGHT PROMPTING:                  │
+│  ────────────────────────────────────────                  │
+│                                                            │
+│  Probleem: "Jan heeft 3 appels en koopt 2 zakken          │
+│           met elk 4 appels. Hoeveel appels in totaal?"    │
+│                                                            │
+│                                                            │
+│  STANDAARD PROMPTING:                                      │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Gebruiker: [probleem]                               │ │
+│  │                                                      │ │
+│  │  Model: 11 appels  ← Direct antwoord (vaak fout)    │ │
+│  │                                                      │ │
+│  │  Waarom het faalt:                                   │ │
+│  │  • Model kan meerstaps-natuur missen                │ │
+│  │  • Geen tussentijdse berekening                     │ │
+│  │  • Kan redenering niet verifiëren                   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CHAIN-OF-THOUGHT PROMPTING:                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Gebruiker: [probleem]                               │ │
+│  │        Laten we stap voor stap denken.              │ │
+│  │                                                      │ │
+│  │  Model:                                              │ │
+│  │  Stap 1: Jan begint met 3 appels                    │ │
+│  │  Stap 2: Hij koopt 2 zakken                         │ │
+│  │  Stap 3: Elke zak heeft 4 appels                    │ │
+│  │  Stap 4: Appels uit zakken = 2 × 4 = 8             │ │
+│  │  Stap 5: Totaal = 3 + 8 = 11 appels                │ │
+│  │                                                      │ │
+│  │  Antwoord: 11 appels ✓                              │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  COT VARIANTEN:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  1. ZERO-SHOT COT:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Voeg "Laten we stap voor stap denken" toe         │ │
+│  │                                                      │ │
+│  │  Prompt: "Wat is 17 × 24?"                          │ │
+│  │          "Laten we stap voor stap denken."         │ │
+│  │                                                      │ │
+│  │  Model: "Eerst splits ik dit op:                    │ │
+│  │          17 × 24 = 17 × (20 + 4)                   │ │
+│  │                  = 17 × 20 + 17 × 4                │ │
+│  │                  = 340 + 68                         │ │
+│  │                  = 408"                             │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  2. FEW-SHOT COT (met voorbeelden):                       │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Voorbeeld 1:                                        │ │
+│  │  V: Een winkel heeft 5 dozen. Elke doos 3 items.   │ │
+│  │     2 items zijn verkocht. Hoeveel blijven over?   │ │
+│  │  A: Laten we stap voor stap denken.                │ │
+│  │     Stap 1: Totaal items = 5 × 3 = 15             │ │
+│  │     Stap 2: Na verkoop: 15 - 2 = 13               │ │
+│  │     Antwoord: 13 items                             │ │
+│  │                                                      │ │
+│  │  Nu oplossen:                                        │ │
+│  │  V: [nieuw probleem]                                │ │
+│  │                                                      │ │
+│  │  Model volgt gedemonstreerd redeneerpatroon!       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GEAVANCEERDE COT TECHNIEKEN:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  SELF-CONSISTENCY:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Genereer meerdere redeneerpaden, stem op antwoord │ │
+│  │                                                      │ │
+│  │  Pad 1: 3 + (2×4) = 3 + 8 = 11 ←─┐                 │ │
+│  │  Pad 2: 3 + 4 + 4 = 11           ←─┼─ Stem: 11 ✓   │ │
+│  │  Pad 3: 3×2 + 4 = 10 (fout)     ←─┘                │ │
+│  │                                                      │ │
+│  │  Meerderheidsstemming filtert redeneerfouten       │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  TREE OF THOUGHTS:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Verken meerdere redeneertakken, ga terug          │ │
+│  │                                                      │ │
+│  │           ┌─────┐                                    │ │
+│  │           │Start│                                    │ │
+│  │           └──┬──┘                                    │ │
+│  │        ┌────┴────┐                                  │ │
+│  │    ┌───┴───┐ ┌───┴───┐                             │ │
+│  │    │Pad A  │ │Pad B  │                             │ │
+│  │    └───┬───┘ └───┬───┘                             │ │
+│  │    ┌───┴───┐     │                                  │ │
+│  │  ┌─┴─┐ ┌─┴─┐   Dood                                │ │
+│  │  │A1 │ │A2 │   einde                               │ │
+│  │  └───┘ └───┘                                        │ │
+│  │    ✓                                                │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARK VERBETERINGEN MET COT:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  ┌────────────────────┬─────────────┬───────────────────┐│
+│  │ Benchmark          │ Standaard   │ Met CoT           ││
+│  ├────────────────────┼─────────────┼───────────────────┤│
+│  │ GSM8K (wiskunde)   │ ~18%        │ ~57% (+217%)      ││
+│  │ MultiArith         │ ~35%        │ ~93% (+166%)      ││
+│  │ StrategyQA         │ ~65%        │ ~75% (+15%)       ││
+│  └────────────────────┴─────────────┴───────────────────┘│
+│                                                            │
+│  (Resultaten variëren per modelgrootte)                   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wanneer moet ik chain-of-thought prompting gebruiken?**
+
+A: Gebruik CoT voor: (1) wiskundeproblemen, (2) meerstaps-redenering, (3) logische inferentie, (4) taken die uitleg vereisen, (5) complexe besluitvorming. Sla CoT over voor simpele feitenvragen, classificatie, of creatieve taken.
+
+**V: Werkt CoT met kleinere modellen?**
+
+A: CoT-voordelen nemen dramatisch toe met modelgrootte. Modellen onder ~10B parameters tonen minimale verbetering. CoT "ontstaat" als vermogen in grotere modellen (62B+). Voor kleinere modellen helpt [fine-tuning](/nl/glossary/fine-tuning/) op redeneertraces.
+
+**V: Hoe ga ik om met CoT-fouten wanneer de redenering fout maar zelfverzekerd is?**
+
+A: Gebruik self-consistency (genereer 5-10 paden, stem op antwoord), voeg verificatiestappen toe, of implementeer expliciete verificatie met een tweede model.
+
+**V: Is CoT alleen prompting of kunnen modellen ervoor getraind worden?**
+
+A: Beide. Prompting extraheert latent redeneervermogen. Training op redeneertraces verbetert CoT-kwaliteit significant. Fine-tuning creëert modellen die standaard beter redeneren.
+
+## Gerelateerde termen
+
+- [Few-shot learning](/nl/glossary/few-shot/) — voorbeelden geven voor CoT
+- [Zero-shot learning](/nl/glossary/zero-shot/) — CoT zonder voorbeelden
+- [In-context learning](/nl/glossary/in-context-learning/) — leerpatroon dat CoT gebruikt
+- Prompt engineering — bredere prompting technieken
+
+---
+
+## Referenties
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [Originele CoT paper]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT]
+
+> Wang et al. (2022), "[Self-Consistency Improves Chain of Thought Reasoning](https://arxiv.org/abs/2203.11171)", ICLR. [Self-consistency voor CoT]
+
+> Yao et al. (2023), "[Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601)", NeurIPS. [Tree of Thoughts uitbreiding]
+
+## References
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [Original CoT paper]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT "Let's think step by step"]
+
+> Wang et al. (2022), "[Self-Consistency Improves Chain of Thought Reasoning](https://arxiv.org/abs/2203.11171)", ICLR. [Self-consistency for CoT]
+
+> Yao et al. (2023), "[Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601)", NeurIPS. [Tree of Thoughts extension]

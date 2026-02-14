@@ -1,0 +1,201 @@
+---
+term: "Reconnaissance d'Entités Nommées"
+termSlug: "ner"
+short: "Technique IA qui identifie et classifie les entités nommées comme personnes, lieux et organisations dans le texte pour l'extraction d'information."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["knowledge-graph", "semantic-search", "llm", "nlp"]
+synonyms: ["NER", "Extraction d'entités", "Named entity extraction"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La Reconnaissance d'Entités Nommées (NER) est une tâche de traitement du langage naturel qui identifie et classifie les entités nommées dans le texte en catégories prédéfinies telles que personnes, organisations, lieux, dates, valeurs monétaires, et plus. Pour une phrase comme "Apple Inc. a été fondée par Steve Jobs à Cupertino en 1976", la NER identifie "Apple Inc." comme organisation, "Steve Jobs" comme personne, "Cupertino" comme lieu, et "1976" comme date. Cette extraction structurée permet des applications en aval comme la recherche, les graphes de connaissances et la réponse aux questions.
+
+## Pourquoi c'est important
+
+La NER est fondamentale pour l'extraction d'information :
+
+- **Construction de graphes de connaissances** — extraire automatiquement des entités et construire des graphes
+- **Amélioration de recherche** — comprendre [requêtes](/fr/glossary/prompt/) et documents sémantiquement
+- **Classification de contenu** — taguer documents par personnes, lieux, sujets
+- **Conformité** — identifier les données personnelles pour exigences RGPD/confidentialité
+- **Business intelligence** — extraire entreprises, produits et relations des actualités
+
+La NER fonctionne en coulisses dans pratiquement tous les systèmes IA modernes traitant du texte.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│         RECONNAISSANCE D'ENTITÉS NOMMÉES                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TEXTE D'ENTRÉE:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  "Elon Musk a annoncé que Tesla construira une nouvelle   │
+│   usine à Berlin pour 4 milliards € d'ici 2025."          │
+│                                                            │
+│                                                            │
+│  SORTIE NER:                                               │
+│  ───────────                                               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  [Elon Musk]     → PERSONNE                         │  │
+│  │  [Tesla]         → ORGANISATION                     │  │
+│  │  [Berlin]        → LIEU                             │  │
+│  │  [4 milliards €] → ARGENT                           │  │
+│  │  [2025]          → DATE                             │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  TYPES D'ENTITÉS COURANTS:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  ┌─────────────────┬──────────────────────────────────┐   │
+│  │ Type            │ Exemples                          │   │
+│  ├─────────────────┼──────────────────────────────────┤   │
+│  │ PERSONNE (PER)  │ Elon Musk, Marie Curie           │   │
+│  │ ORGANISATION    │ Tesla, Nations Unies, Google     │   │
+│  │ LIEU (LOC)      │ Berlin, Mont Everest, Europe     │   │
+│  │ DATE            │ 2025, 15 janvier, mardi dernier  │   │
+│  │ HEURE           │ 15h00, matin, midi               │   │
+│  │ ARGENT          │ 4 milliards €, 500$, 100£        │   │
+│  │ POURCENTAGE     │ 25%, 0,5 pour cent               │   │
+│  │ PRODUIT         │ iPhone, Model 3, Windows 11      │   │
+│  │ ÉVÉNEMENT       │ Seconde Guerre mondiale, JO      │   │
+│  │ LOI             │ RGPD, Constitution               │   │
+│  │ LANGUE          │ Français, Python, JavaScript     │   │
+│  └─────────────────┴──────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  COMMENT LA NER FONCTIONNE:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Approche traditionnelle: Étiquetage de séquence          │
+│                                                            │
+│  Texte:  Elon    Musk   travaille  chez   Tesla            │
+│            │       │       │         │      │              │
+│            ▼       ▼       ▼         ▼      ▼              │
+│  Labels: B-PER  I-PER    O         O    B-ORG             │
+│                                                            │
+│  B = Début d'entité                                        │
+│  I = Intérieur d'entité (continuation)                     │
+│  O = Extérieur (pas une entité)                            │
+│                                                            │
+│  C'est appelé étiquetage BIO ou IOB                        │
+│                                                            │
+│                                                            │
+│  ARCHITECTURE NER NEURONALE:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│      "Elon Musk a fondé Tesla"                            │
+│                │                                           │
+│                ▼                                           │
+│      ┌─────────────────────┐                              │
+│      │    Tokenisation     │                              │
+│      │  [Elon][Musk][a]    │                              │
+│      │  [fondé][Tesla]     │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      ┌─────────────────────┐                              │
+│      │  Couche Embedding   │                              │
+│      │  (BERT, RoBERTa)    │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      ┌─────────────────────┐                              │
+│      │  Encodeur Contextuel│                              │
+│      │  (Transformer/LSTM) │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      ┌─────────────────────┐                              │
+│      │  Classification     │                              │
+│      │  (CRF ou Softmax)   │                              │
+│      └──────────┬──────────┘                              │
+│                 │                                          │
+│                 ▼                                          │
+│      B-PER  I-PER   O    O   B-ORG                        │
+│                                                            │
+│                                                            │
+│  NER MODERNE BASÉE SUR LLM:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Prompt: "Extraire toutes les entités nommées de ce       │
+│           texte et les classifier comme PERSONNE, ORG,    │
+│           ou LIEU: 'Elon Musk a annoncé que Tesla         │
+│           s'étendra à Berlin'"                             │
+│                                                            │
+│  Réponse LLM:                                              │
+│  - Elon Musk: PERSONNE                                     │
+│  - Tesla: ORGANISATION                                     │
+│  - Berlin: LIEU                                            │
+│                                                            │
+│  Avantages: Zero-shot, gère nouveaux types d'entités      │
+│  Inconvénients: Plus lent, plus cher, moins consistant    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Performance des modèles NER (benchmark CoNLL-2003):**
+| Modèle | Score F1 | Année |
+|--------|----------|-------|
+| LSTM-CRF | 90.9 | 2015 |
+| BERT-base | 92.4 | 2019 |
+| RoBERTa-large | 93.5 | 2019 |
+| LUKE | 94.3 | 2020 |
+| GPT-4 (few-shot) | ~93 | 2023 |
+
+## Questions fréquentes
+
+**Q : Quelle différence entre NER et entity linking ?**
+
+R : La NER identifie que "Apple" est une organisation. L'entity linking (aussi appelé désambiguïsation d'entité) détermine QUELLE Apple—connectant "Apple" à une entrée spécifique de [base de connaissances](/fr/glossary/knowledge-base/) comme Q312 de Wikidata (Apple Inc.) plutôt que le fruit. L'entity linking s'exécute typiquement après la NER et résout les ambiguïtés en utilisant le contexte.
+
+**Q : Comment entraîner un modèle NER personnalisé pour mon domaine ?**
+
+R : Commencez avec un modèle pré-entraîné (comme spaCy ou basé BERT) et affinez sur vos données spécifiques au domaine. Vous aurez besoin d'exemples étiquetés—typiquement des centaines à des milliers selon les types d'entités. Pour les domaines spécialisés (juridique, médical, financier), des modèles pré-entraînés spécifiques au domaine existent.
+
+**Q : La NER peut-elle gérer les entités imbriquées ?**
+
+R : La NER standard a du mal avec les entités imbriquées comme "Bank of America" (ORG) contenant "America" (LOC). Certaines approches plus récentes gèrent cela: modèles basés sur les spans qui prédisent des spans d'entités plutôt que des étiquettes de tokens, ou NER à deux passes.
+
+**Q : Dois-je utiliser la NER ou demander à un LLM d'extraire les entités ?**
+
+R : Dépend de vos exigences. Les modèles NER traditionnels sont plus rapides, moins chers, plus consistants et meilleurs pour le traitement à haut volume. Les LLMs sont plus flexibles et gèrent de nouveaux types d'entités en zero-shot. Pour la production à grande échelle, utilisez des modèles NER spécialisés.
+
+## Termes associés
+
+- [Knowledge graph](/fr/glossary/knowledge-graph/) — graphes construits avec les sorties NER
+- [Semantic search](/fr/glossary/semantic-search/) — recherche améliorée par compréhension des entités
+- [LLM](/fr/glossary/llm/) — modèles pouvant effectuer la NER via prompting
+- NLP — domaine plus large contenant la NER
+
+---
+
+## Références
+
+> Lample et al. (2016), "[Neural Architectures for Named Entity Recognition](https://arxiv.org/abs/1603.01360)", NAACL. [Article fondateur NER neuronale]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [BERT pour NER]
+
+> Li et al. (2020), "[A Survey on Deep Learning for Named Entity Recognition](https://arxiv.org/abs/1812.09449)", TKDE. [Enquête complète NER]
+
+> Wang et al. (2023), "[GPT-NER: Named Entity Recognition via Large Language Models](https://arxiv.org/abs/2304.10428)", arXiv. [Approches NER basées LLM]
+
+## References
+
+> Lample et al. (2016), "[Neural Architectures for Named Entity Recognition](https://arxiv.org/abs/1603.01360)", NAACL. [Foundational neural NER paper]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [BERT for NER]
+
+> Li et al. (2020), "[A Survey on Deep Learning for Named Entity Recognition](https://arxiv.org/abs/1812.09449)", TKDE. [Comprehensive NER survey]
+
+> Wang et al. (2023), "[GPT-NER: Named Entity Recognition via Large Language Models](https://arxiv.org/abs/2304.10428)", arXiv. [LLM-based NER approaches]

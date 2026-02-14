@@ -1,0 +1,101 @@
+---
+term: "Base de Données Vectorielle"
+termSlug: "vector-database"
+short: "Une base de données spécialisée optimisée pour stocker et rechercher des embeddings vectoriels de haute dimension avec des métriques de similarité."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["embeddings", "rag", "semantic-similarity", "approximate-nearest-neighbor"]
+synonyms: ["Vector store", "Vector DB", "Base d'embeddings", "Base de recherche par similarité"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Une base de données vectorielle est un stockage de données spécialisé conçu pour indexer, stocker et interroger efficacement des embeddings vectoriels de haute dimension. Contrairement aux bases de données traditionnelles qui font correspondre des valeurs exactes, les bases de données vectorielles trouvent des éléments similaires à un vecteur de requête en utilisant des métriques de distance comme la similarité cosinus ou la [distance euclidienne](/fr/glossary/euclidean-distance/). Elles permettent la recherche sémantique à grande échelle grâce aux algorithmes de plus proche voisin approximatif (ANN).
+
+## Pourquoi c'est important
+
+Les bases de données vectorielles sont une infrastructure essentielle pour les applications IA modernes :
+
+- **Recherche sémantique** — trouver du contenu conceptuellement similaire indépendamment des mots-clés exacts
+- **Systèmes RAG** — récupérer le contexte pertinent pour les réponses des modèles de langage
+- **Moteurs de recommandation** — trouver des produits, contenus ou utilisateurs similaires
+- **Détection d'anomalies** — identifier les valeurs aberrantes dans l'espace d'embedding
+- **Scalabilité** — rechercher des milliards de vecteurs en millisecondes
+
+Tout système qui doit trouver du « similaire » plutôt que de l'« exact » repose sur les bases de données vectorielles.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                BASE DE DONNÉES VECTORIELLE                 │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  INDEXATION:                                               │
+│  Documents → Embed → [0.1, 0.4, ...] → Index (HNSW/IVF)   │
+│                                                            │
+│  ┌─────────────────────────────────────────┐               │
+│  │  Index Vectoriel (graphes/clusters)     │               │
+│  │    ●──●──●                              │               │
+│  │   /│\   \                               │               │
+│  │  ● ● ●   ●──●                           │               │
+│  └─────────────────────────────────────────┘               │
+│                                                            │
+│  REQUÊTE:                                                  │
+│  Query → Embed → [0.2, 0.3, ...] → Recherche ANN → Top K  │
+│                                            │               │
+│                                            ▼               │
+│                                    Documents similaires    │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Embedding** — les documents sont convertis en vecteurs via un modèle d'embedding
+2. **Indexation** — les vecteurs sont organisés en structures de recherche efficaces (HNSW, IVF, etc.)
+3. **Embedding de requête** — la requête de recherche est convertie dans le même espace d'embedding
+4. **Recherche ANN** — l'index est parcouru pour trouver les plus proches voisins approximatifs
+5. **Résultats** — les K vecteurs les plus similaires sont retournés avec leurs métadonnées
+
+## Questions fréquentes
+
+**Q : En quoi une base de données vectorielle diffère-t-elle d'une base de données traditionnelle ?**
+
+R : Les bases de données traditionnelles utilisent la correspondance exacte (WHERE nom = 'Jean'). Les bases de données vectorielles utilisent la [recherche par similarité](/fr/glossary/similarity-search/)—trouvant les vecteurs les plus proches de votre requête dans un espace de haute dimension. Elles complètent plutôt qu'elles ne remplacent les bases de données traditionnelles.
+
+**Q : Quels algorithmes d'indexation sont utilisés ?**
+
+R : Les algorithmes courants incluent HNSW ([Hierarchical Navigable Small World](/fr/glossary/hnsw/)), IVF (Inverted File Index) et PQ (Product Quantization). HNSW est le plus populaire pour son compromis vitesse/précision.
+
+**Q : Quelles sont les bases de données vectorielles populaires ?**
+
+R : Les options dédiées incluent Pinecone, Weaviate, Milvus, Qdrant et Chroma. Les bases de données traditionnelles comme PostgreSQL (pgvector) et Elasticsearch supportent également la [recherche vectorielle](/fr/glossary/ann/).
+
+**Q : Comment gérer le [filtrage par métadonnées](/fr/glossary/metadata-filtering/) ?**
+
+R : La plupart des bases de données vectorielles supportent la recherche hybride combinant [similarité vectorielle](/fr/glossary/cosine-similarity/) et filtres de métadonnées (ex: "similaire à la requête ET catégorie = 'juridique'"). C'est crucial pour les systèmes RAG en production.
+
+## Termes associés
+
+- [Embeddings](/fr/glossary/embeddings/) — les vecteurs stockés dans les bases de données vectorielles
+- [RAG](/fr/glossary/rag/) — architecture de récupération alimentée par la [recherche vectorielle](/fr/glossary/semantic-search/)
+- [Similarité Sémantique](/fr/glossary/semantic-similarity/) — la mesure utilisée pour le classement
+- Plus Proche Voisin Approximatif — algorithme de recherche central
+
+---
+
+## Références
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2 600+ citations]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1 800+ citations]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ citations]
+
+## References
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2,600+ citations]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1,800+ citations]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ citations]

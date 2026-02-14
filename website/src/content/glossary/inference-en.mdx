@@ -1,0 +1,112 @@
+---
+term: "Inference"
+termSlug: "inference"
+short: "The process of using a trained model to generate predictions or outputs on new, unseen data."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "fine-tuning", "embeddings", "latency"]
+synonyms: ["Model inference", "Prediction", "Model serving"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Inference is the process of running a trained AI model to generate outputs from new inputs. Unlike training (which adjusts model weights), inference uses fixed weights to produce predictions, answers, [embeddings](/en/glossary/embeddings/), or other outputs. This is what happens when you send a [prompt](/en/glossary/prompt/) to ChatGPT or query an embedding API.
+
+## Why it matters
+
+Inference is where AI models deliver value in production:
+
+- **User experience** — inference speed determines response time
+- **Cost driver** — most AI operational costs come from inference
+- **Scalability** — handling concurrent inference requests requires optimization
+- **Accuracy** — inference quality depends on model choice and configuration
+- **Deployment** — inference requirements shape infrastructure decisions
+
+Understanding inference is essential for deploying AI systems efficiently.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    INFERENCE PIPELINE                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│        INPUT                          OUTPUT               │
+│  "What are VAT                   "Value Added Tax         │
+│   exemptions?"                    exemptions include..."   │
+│        │                               ▲                   │
+│        │                               │                   │
+│        ▼                               │                   │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │                PRE-PROCESSING                    │      │
+│  │   • Tokenization                                 │      │
+│  │   • Embedding lookup                             │      │
+│  │   • Context assembly                             │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              MODEL FORWARD PASS                  │      │
+│  │   • Layer-by-layer computation                   │      │
+│  │   • Attention calculations                       │      │
+│  │   • Matrix multiplications                       │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              POST-PROCESSING                     │      │
+│  │   • Token sampling/decoding                      │      │
+│  │   • Output formatting                            │      │
+│  │   • Safety filtering                             │      │
+│  └──────────────────────────────────────────────────┘      │
+│                                                            │
+│  METRICS:                                                  │
+│  • Latency: Time to first token (TTFT, ~100-500ms)         │
+│  • Throughput: Tokens per second (TPS)                     │
+│  • Cost: $ per million tokens                              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Key inference concepts:**
+1. **Batch inference** — process multiple inputs together for efficiency
+2. **Real-time inference** — immediate response for interactive applications
+3. **Streaming** — return tokens as they're generated, improving perceived speed
+4. **Edge inference** — run models locally on device, avoiding network latency
+
+## Common questions
+
+**Q: What affects inference speed?**
+
+A: Model size (parameters), hardware (GPU type), batch size, [sequence length](/en/glossary/context-window/), and optimization techniques (quantization, KV caching). Larger models and longer contexts increase latency.
+
+**Q: What is [quantization](/en/glossary/quantization/)?**
+
+A: Reducing model precision (e.g., float32 → int8) to speed up inference and reduce memory. Some accuracy may be lost, but modern quantization preserves most quality while making inference 2-4x faster.
+
+**Q: What's the difference between inference and training?**
+
+A: Training adjusts model weights using data; inference uses fixed weights to generate outputs. Training is computationally expensive and done periodically; inference is cheaper per-query and runs continuously.
+
+**Q: How is inference cost calculated?**
+
+A: Usually by tokens processed. APIs charge per million input/output tokens. Self-hosted inference costs include GPU time, memory, and infrastructure. Output tokens often cost more than input tokens.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — models that perform inference
+- [Fine-Tuning](/en/glossary/fine-tuning/) — training process before inference
+- Latency — time [metric](/en/glossary/distance-metric/) for inference
+- Batch Processing — inference optimization technique
+
+---
+
+## References
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ citations]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1,000+ citations]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ citations]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ citations]

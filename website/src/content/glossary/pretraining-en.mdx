@@ -1,0 +1,233 @@
+---
+term: "Pretraining"
+termSlug: "pretraining"
+short: "The initial phase of training a large language model on massive text corpora to learn general language patterns, world knowledge, and reasoning capabilities before task-specific fine-tuning."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["fine-tuning", "llm", "transformer-architecture", "instruction-tuning"]
+synonyms: ["Pre-training", "Foundation training", "Base model training"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Pretraining is the foundational training phase where a language model learns from vast amounts of unlabeled text data. During pretraining, the model develops its core capabilities: understanding grammar, learning facts about the world, acquiring reasoning patterns, and building representations of language. This phase typically involves predicting next tokens (causal language modeling) or filling in masked words (masked language modeling) across billions of text samples. Pretraining creates a "foundation model" that can later be adapted to specific tasks through fine-tuning. The quality and diversity of pretraining data fundamentally determines a model's capabilities and limitations.
+
+## Why it matters
+
+Pretraining is the most critical and expensive phase of LLM development:
+
+- **Determines capabilities** — what a model knows comes from pretraining data
+- **Establishes reasoning** — logical patterns emerge during this phase
+- **Creates foundation** — all downstream tasks build on pretrained knowledge
+- **Major investment** — costs millions in compute, takes weeks/months
+- **Sets limitations** — knowledge cutoff, biases baked in during pretraining
+- **Enables transfer** — one pretrained model serves many applications
+
+Without quality pretraining, no amount of fine-tuning can compensate.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      PRETRAINING                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PRETRAINING IN THE MODEL LIFECYCLE:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. PRETRAINING (this phase)                        │ │
+│  │     │  Learn general language & knowledge           │ │
+│  │     │  Trillions of tokens, months of training      │ │
+│  │     │  Output: Foundation/Base model                │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  2. FINE-TUNING                                      │ │
+│  │     │  Adapt to specific tasks/domains              │ │
+│  │     │  Smaller datasets, days of training           │ │
+│  │     │  Output: Task-specific model                  │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  3. ALIGNMENT (RLHF/Constitutional AI)              │ │
+│  │     │  Align with human preferences                 │ │
+│  │     │  Human feedback, safety tuning                │ │
+│  │     │  Output: Assistant model                      │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  4. DEPLOYMENT                                       │ │
+│  │        Production use with guardrails               │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PRETRAINING OBJECTIVES:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  Causal Language Modeling (GPT-style):                    │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Input:  "The capital of France is"                 │ │
+│  │                                                      │ │
+│  │  Task: Predict next token                           │ │
+│  │                                                      │ │
+│  │  Model predicts: "Paris" (with probability)         │ │
+│  │                                                      │ │
+│  │  ┌─────┬─────┬─────┬─────┬─────┬─────────┐        │ │
+│  │  │ The │capi-│ of  │Fran-│ is  │  [?]    │        │ │
+│  │  │     │tal  │     │ce   │     │         │        │ │
+│  │  └──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴────┬────┘        │ │
+│  │     │     │     │     │     │       │              │ │
+│  │     ▼     ▼     ▼     ▼     ▼       ▼              │ │
+│  │  [Transformer processes left-to-right]             │ │
+│  │                                 │                   │ │
+│  │                                 ▼                   │ │
+│  │                            "Paris"                  │ │
+│  │                                                      │ │
+│  │  Training: Minimize cross-entropy loss between      │ │
+│  │  predicted and actual next tokens                   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Masked Language Modeling (BERT-style):                   │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Input:  "The [MASK] of France is Paris"            │ │
+│  │                                                      │ │
+│  │  Task: Predict masked token                         │ │
+│  │                                                      │ │
+│  │  Model predicts: "capital"                          │ │
+│  │                                                      │ │
+│  │  ┌─────┬──────┬─────┬──────┬─────┬───────┐        │ │
+│  │  │ The │[MASK]│ of  │France│ is  │ Paris │        │ │
+│  │  └──┬──┴──┬───┴──┬──┴──┬───┴──┬──┴───┬───┘        │ │
+│  │     │     │      │     │      │      │             │ │
+│  │     ▼     ▼      ▼     ▼      ▼      ▼             │ │
+│  │  [Transformer sees all tokens bidirectionally]     │ │
+│  │           │                                         │ │
+│  │           ▼                                         │ │
+│  │      "capital"                                      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PRETRAINING DATA:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Typical data mix for modern LLMs:                  │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Web pages (Common Crawl)     │  ~60%      │   │ │
+│  │  │  Books                         │  ~15%      │   │ │
+│  │  │  Wikipedia                     │  ~5%       │   │ │
+│  │  │  Code (GitHub)                 │  ~10%      │   │ │
+│  │  │  Scientific papers             │  ~5%       │   │ │
+│  │  │  Other (news, forums, etc.)    │  ~5%       │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Scale examples:                                     │ │
+│  │  • GPT-3: 300B tokens                               │ │
+│  │  • LLaMA: 1.4T tokens                               │ │
+│  │  • GPT-4: Estimated 10T+ tokens                     │ │
+│  │                                                      │ │
+│  │  Quality matters more than quantity:                │ │
+│  │  • Deduplication (remove repetitive content)       │ │
+│  │  • Filtering (remove low-quality pages)            │ │
+│  │  • Balancing (ensure topic diversity)              │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PRETRAINING COMPUTE:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Resources required:                                │ │
+│  │                                                      │ │
+│  │  ┌────────────┬───────────────────────────────────┐│ │
+│  │  │ Model Size │ Estimated Pretraining Cost       ││ │
+│  │  ├────────────┼───────────────────────────────────┤│ │
+│  │  │ 7B params  │ ~$100K-500K, weeks               ││ │
+│  │  │ 70B params │ ~$2-5M, months                   ││ │
+│  │  │ 175B params│ ~$10-50M, months                 ││ │
+│  │  │ 1T+ params │ ~$100M+, many months             ││ │
+│  │  └────────────┴───────────────────────────────────┘│ │
+│  │                                                      │ │
+│  │  Hardware: Thousands of GPUs/TPUs                   │ │
+│  │  Duration: Weeks to months of 24/7 training        │ │
+│  │  Energy: Megawatt-hours of electricity             │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WHAT MODELS LEARN DURING PRETRAINING:                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Grammar & Syntax:                                  │ │
+│  │  • Subject-verb agreement                          │ │
+│  │  • Sentence structure                              │ │
+│  │  • Punctuation rules                               │ │
+│  │                                                      │ │
+│  │  World Knowledge:                                   │ │
+│  │  • Facts (capitals, dates, names)                  │ │
+│  │  • Common sense                                     │ │
+│  │  • Domain knowledge (science, law, etc.)           │ │
+│  │                                                      │ │
+│  │  Reasoning Patterns:                                │ │
+│  │  • Logical inference                               │ │
+│  │  • Mathematical operations                         │ │
+│  │  • Cause and effect                                │ │
+│  │                                                      │ │
+│  │  Language Understanding:                            │ │
+│  │  • Context, nuance, ambiguity                      │ │
+│  │  • Multiple languages                              │ │
+│  │  • Different styles and registers                  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How is pretraining different from fine-tuning?**
+
+A: Pretraining teaches general language understanding from massive unlabeled data (self-supervised). Fine-tuning adapts the pretrained model to specific tasks using smaller labeled datasets. Pretraining creates capabilities; fine-tuning channels them.
+
+**Q: Why can't we just train on task-specific data from the start?**
+
+A: Task-specific datasets are too small to learn general language understanding. Pretraining on billions of tokens captures linguistic patterns, world knowledge, and reasoning that transfer to any downstream task. It's more efficient to pretrain once and fine-tune many times.
+
+**Q: What determines the knowledge cutoff date?**
+
+A: The pretraining data has a collection cutoff—the model only knows what was in its training [corpus](/en/glossary/corpus/). Events after this date are unknown to the model. This is why [RAG](/en/glossary/rag/) or tool use is needed for current information.
+
+**Q: Can pretraining biases be fully removed through fine-tuning?**
+
+A: Difficult. Biases learned during pretraining are deeply embedded in the model's weights. Fine-tuning and [alignment](/en/glossary/alignment/) can reduce problematic outputs but may not eliminate underlying biases. Data curation during pretraining is most effective.
+
+## Related terms
+
+- [Fine-tuning](/en/glossary/fine-tuning/) — adapting pretrained models
+- [LLM](/en/glossary/llm/) — large language model
+- [Instruction tuning](/en/glossary/instruction-tuning/) — teaching to follow [instructions](/en/glossary/prompt/)
+- [RLHF](/en/glossary/rlhf/) — alignment through human feedback
+
+---
+
+## References
+
+> Radford et al. (2018), "[Improving Language Understanding by Generative Pre-Training](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)", OpenAI. [Original GPT pretraining]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [Masked language modeling pretraining]
+
+> Hoffmann et al. (2022), "[Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)", arXiv (Chinchilla). [Optimal pretraining data/compute ratios]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Modern pretraining practices]

@@ -1,0 +1,111 @@
+---
+term: "Top-p Sampling"
+termSlug: "top-p"
+short: "A sampling method that selects from the smallest set of tokens whose cumulative probability exceeds a threshold p."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["temperature", "top-k", "inference", "llm"]
+synonyms: ["Nucleus sampling", "Top-p decoding", "Probability mass sampling"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Top-p sampling (also called nucleus sampling) is a text generation strategy that dynamically selects from the smallest possible set of tokens whose cumulative probability exceeds a threshold p. Unlike top-k which uses a fixed count, top-p adapts to the confidence of the model—selecting fewer tokens when the model is confident, more when uncertain.
+
+## Why it matters
+
+Top-p provides intelligent control over output diversity:
+
+- **Adaptive selection** — adjusts candidate pool based on model confidence
+- **Quality balance** — excludes low-probability tokens that cause incoherence
+- **Flexibility** — works across different contexts without manual tuning
+- **Complementary** — combines well with temperature for fine control
+- **Production standard** — default sampling method in most [LLM](/en/glossary/llm/) APIs
+
+Top-p often produces more natural text than fixed top-k sampling.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   TOP-P (NUCLEUS) SAMPLING                 │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Token probabilities (sorted high to low):                 │
+│                                                            │
+│  Token    Prob    Cumulative                               │
+│  ─────────────────────────────                             │
+│  "the"    0.35    0.35                                     │
+│  "a"      0.25    0.60                                     │
+│  "this"   0.15    0.75                                     │
+│  "that"   0.10    0.85  ◄── p=0.9 threshold               │
+│  "one"    0.08    0.93  ◄── included (crosses 0.9)        │
+│  "some"   0.04    0.97      excluded                       │
+│  "my"     0.02    0.99      excluded                       │
+│  "your"   0.01    1.00      excluded                       │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  TOP-P = 0.9                                   │        │
+│  │                                                │        │
+│  │  Selected nucleus: [the, a, this, that, one]  │        │
+│  │  Sample from these 5 tokens only              │        │
+│  │                                                │        │
+│  │  ████████████████████████░░░░░░░░             │        │
+│  │  ▲                      ▲                     │        │
+│  │  Included (93%)         Excluded (7%)         │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  ADAPTIVE BEHAVIOR:                                        │
+│  • Confident prediction → selects 2-3 tokens               │
+│  • Uncertain prediction → selects 10-20 tokens             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Common top-p values:**
+| Value | Behavior | Use case |
+|-------|----------|----------|
+| 0.1 | Very restrictive | Deterministic tasks |
+| 0.5 | Moderately focused | Factual generation |
+| 0.9 | Balanced (default) | General use |
+| 0.95 | More diverse | Creative writing |
+| 1.0 | All tokens | Maximum diversity |
+
+## Common questions
+
+**Q: What's the difference between top-p and top-k?**
+
+A: Top-k always selects exactly k tokens regardless of their probabilities. Top-p selects a variable number based on cumulative probability. Top-p adapts: if one token has 95% probability, it selects just that one; if probabilities are spread, it selects many.
+
+**Q: What's a good default top-p value?**
+
+A: 0.9 is a common default. It includes most reasonable tokens while excluding the long tail of unlikely options. For more focused output, try 0.5-0.7; for more creative, 0.95.
+
+**Q: Should I use top-p with temperature?**
+
+A: Yes, they complement each other. Temperature reshapes the probability distribution; top-p then samples from the adjusted distribution. A common combination: temperature 0.7 + top-p 0.9.
+
+**Q: Does top-p = 1.0 mean no filtering?**
+
+A: Effectively yes—all tokens are included since cumulative probability always reaches 1.0. This gives maximum diversity but may include nonsensical low-probability tokens.
+
+## Related terms
+
+- [Temperature](/en/glossary/temperature/) — reshapes probability distribution
+- [Top-k Sampling](/en/glossary/top-k/) — fixed-count alternative
+- [Beam Search](/en/glossary/beam-search/) — different decoding strategy
+- [Inference](/en/glossary/inference/) — generation process
+
+---
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10,000+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]

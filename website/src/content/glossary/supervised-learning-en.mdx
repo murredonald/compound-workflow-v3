@@ -1,0 +1,137 @@
+---
+term: "Supervised Learning"
+termSlug: "supervised-learning"
+short: "A machine learning approach where models learn from labeled training data to predict outputs for new inputs."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["machine-learning", "unsupervised-learning", "deep-learning", "loss-function"]
+synonyms: ["Supervised ML", "Labeled learning", "Predictive modeling", "Inductive learning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Supervised learning is a machine learning paradigm where algorithms learn from labeled training data—examples that include both input features and the correct output (label). The model learns the mapping between inputs and outputs, then applies this learned relationship to predict [labels](/en/glossary/ground-truth/) for new, unseen data. It's called "supervised" because the training process is guided by known correct answers, like a teacher supervising a student.
+
+## Why it matters
+
+Supervised learning is the most common ML approach:
+
+- **Clear training signal** — known answers guide learning
+- **Measurable accuracy** — [predictions](/en/glossary/inference/) vs. labels enables validation
+- **Practical applications** — spam detection, medical diagnosis, credit scoring
+- **Foundation for [LLMs](/en/glossary/llm/)** — next-token prediction is supervised learning
+- **Interpretable results** — predictions map to defined classes or values
+
+Most production ML systems use supervised learning.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   SUPERVISED LEARNING                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRAINING PHASE:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  Labeled Training Data:                                    │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │ Input (Features)              │ Label (Target)  │      │
+│  ├─────────────────────────────────────────────────┤      │
+│  │ [Email text: "Win $1000..."]  │    SPAM        │      │
+│  │ [Email text: "Meeting at 3"]  │    NOT SPAM    │      │
+│  │ [Email text: "Click here!"]   │    SPAM        │      │
+│  │ [Email text: "Project update"]│    NOT SPAM    │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │              LEARNING ALGORITHM                  │      │
+│  │                                                  │      │
+│  │  1. Make prediction: ŷ = f(x)                   │      │
+│  │  2. Compare to label: Error = ŷ - y            │      │
+│  │  3. Update model to reduce error                │      │
+│  │  4. Repeat until error is minimized             │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│                   TRAINED MODEL                            │
+│                                                            │
+│  PREDICTION PHASE:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  New Email ──► Trained Model ──► Prediction: SPAM/NOT SPAM│
+│                                                            │
+│  TWO MAIN TYPES:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  CLASSIFICATION:              REGRESSION:                  │
+│  Predict categories           Predict continuous values   │
+│                                                            │
+│  "Cat" or "Dog"?             "House price = $450,000"     │
+│  "Spam" or "Not Spam"?       "Temperature = 23.5°C"       │
+│  "Positive" or "Negative"?   "Sales = $12,500"            │
+│                                                            │
+│       ┌───┐ ┌───┐                    ↗                    │
+│       │ A │ │ B │             ──────●────                 │
+│       └───┘ └───┘                ↗                        │
+│    Discrete classes        Continuous line                 │
+│                                                            │
+│  COMMON ALGORITHMS:                                        │
+│  ──────────────────                                        │
+│  • Logistic Regression    (classification)                │
+│  • Decision Trees         (both)                          │
+│  • Random Forests         (both)                          │
+│  • Neural Networks        (both)                          │
+│  • Support Vector Machines(classification)                │
+│  • Linear Regression      (regression)                    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Classification vs Regression:**
+| Aspect | Classification | Regression |
+|--------|---------------|------------|
+| Output | Discrete categories | Continuous values |
+| Example | Spam detection | Price prediction |
+| [Metrics](/en/glossary/distance-metric/) | Accuracy, F1-score | MSE, R-squared |
+| Loss function | Cross-entropy | Mean squared error |
+
+## Common questions
+
+**Q: What makes data "labeled"?**
+
+A: Labeled data has both inputs and known correct outputs. For image classification: images (input) + what's in them (label). For spam detection: emails (input) + spam/not-spam tags (label). Humans typically create labels, which is expensive and time-consuming.
+
+**Q: How is LLM training supervised learning?**
+
+A: LLM [pretraining](/en/glossary/pretraining/) is self-supervised: the "label" for each token is simply the next token in the text. Given "The cat sat on the", the model learns to predict "mat." No human labeling needed—the text itself provides supervision.
+
+**Q: What if I don't have labeled data?**
+
+A: You have several options: (1) Use unsupervised learning to find patterns, (2) Use semi-supervised learning with some labels, (3) Generate labels yourself or with crowdsourcing, (4) Use transfer learning from pretrained models, (5) Apply active learning to label most informative examples first.
+
+**Q: How much labeled data is enough?**
+
+A: It varies widely. Simple problems: hundreds of examples. Complex deep learning: thousands to millions. Rule of thumb: 10× more samples than features. With transfer learning/[fine-tuning](/en/glossary/fine-tuning/), much less may suffice.
+
+## Related terms
+
+- [Machine Learning](/en/glossary/machine-learning/) — the broader field
+- [Unsupervised Learning](/en/glossary/unsupervised-learning/) — learning without labels
+- [Loss Function](/en/glossary/loss-function/) — measures prediction error
+- [Deep Learning](/en/glossary/deep-learning/) — uses [neural networks](/en/glossary/neural-network/) for supervised tasks
+
+---
+
+## References
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Foundational text]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 5. [Supervised learning fundamentals]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Foundational theory]

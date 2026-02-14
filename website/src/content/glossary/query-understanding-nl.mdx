@@ -1,0 +1,61 @@
+---
+term: "Querybegrip"
+termSlug: "query-understanding"
+short: "Querybegrip is hoe een zoeksysteem de betekenis van een query interpreteert (entiteiten, intent, ambiguïteit) vóór retrieval en ranking."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["query-intent", "semantic-expansion", "full-text-search", "boolean-search"]
+synonyms: ["Query-interpretatie", "Query parsing", "Entiteitsextractie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Querybegrip is het geheel aan technieken waarmee een [zoeksysteem](/nl/glossary/information-retrieval-system/) begrijpt wat een zoekopdracht betekent. Het omvat parsing, taalherkenning, spellingsnormalisatie, [entiteitsherkenning](/nl/glossary/entity-extraction/) en disambiguatie, zodat retrieval meer doet dan alleen keywords matchen.
+
+## Waarom het belangrijk is
+
+- **Minder ambiguïteit**: "CIR 92" en "CIR 1992" moeten naar hetzelfde concept wijzen.
+- **Betere matching**: entiteitsbewuste zoekopdrachten vinden sneller de juiste bron.
+- **Veiligere uitbreiding**: begrip voorkomt uitbreidingen die de intent veranderen.
+- **Betere UX**: maakt suggesties, filters en groepering mogelijk.
+
+## Hoe het werkt
+
+```
+Query -> normaliseer -> extraheer entiteiten -> los ambiguïteit op -> maak retrieval-query
+```
+
+De output is vaak een gestructureerde representatie (tokens, entiteiten, intent, filters) die de rankingpipeline aanstuurt.
+
+## Praktisch voorbeeld
+
+Een gebruiker typt "btw deadline België Q4". Goed querybegrip herkent jurisdictie (België), onderwerp (btw) en periode (Q4) en boost betrouwbare content voor de juiste aangifteperiode.
+
+## Veelgestelde vragen
+
+**Q: Is querybegrip alleen relevant voor semantische/[vector search](/nl/glossary/similarity-search/)?**
+
+A: Nee. Ook klassieke full-text systemen hebben baat bij normalisatie, synoniemen en entiteiten.
+
+**Q: Hoe meet je verbetering?**
+
+A: Via zoekanalyse: nulresultaat-rate, herformuleringen, kliksatisfactie en (offline) relevance judgments.
+
+## Gerelateerde termen
+
+- [Zoekintentie](/nl/glossary/query-intent/) - het doel achter de query
+- [Semantische uitbreiding](/nl/glossary/semantic-expansion/) - voorzichtig uitbreiden
+- [Full-Text Search](/nl/glossary/full-text-search/) - keyword retrieval
+- [Booleaanse zoekopdracht](/nl/glossary/boolean-search/) - operator-gebaseerde queries
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

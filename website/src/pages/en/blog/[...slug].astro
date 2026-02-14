@@ -1,52 +1,157 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
 import { getCollection } from "astro:content";
 import { t } from "@/i18n/utils";
 
 const locale = "en";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => data.locale === "en" && !data.draft);
-  return posts.map((post) => ({
+  const allPosts = (await getCollection("blog", ({ data }) => data.locale === "en" && !data.draft))
+    .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+  
+  return allPosts.map((post, index) => ({
     params: { slug: post.id.replace(/\.mdx?$/, "") },
-    props: { post },
+    props: {
+      post,
+      prevPost: index < allPosts.length - 1 ? allPosts[index + 1] : null,
+      nextPost: index > 0 ? allPosts[index - 1] : null,
+      relatedPosts: allPosts
+        .filter((p) => p.data.category === post.data.category && p.id !== post.id)
+        .slice(0, 3),
+    },
   }));
 }
 
-const { post } = Astro.props;
+const { post, prevPost, nextPost, relatedPosts } = Astro.props;
 const { Content } = await post.render();
+
+const slug = post.id.replace(/\.mdx?$/, "");
+const postUrl = `https://auryth.ai/${locale}/blog/${slug}/`;
+
+const blogPostingSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": post.data.publishDate.toISOString(),
+  "author": { "@type": "Person", "name": post.data.author },
+  "publisher": { "@type": "Organization", "name": "Auryth BV", "url": "https://auryth.ai" },
+  "mainEntityOfPage": postUrl,
+  "keywords": post.data.tags.join(", "),
+});
+
+const breadcrumbSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `https://auryth.ai/${locale}/` },
+    { "@type": "ListItem", "position": 2, "name": "Blog", "item": `https://auryth.ai/${locale}/blog/` },
+    { "@type": "ListItem", "position": 3, "name": post.data.title, "item": postUrl },
+  ],
+});
 ---
 
 <BaseLayout
   title={`${post.data.title} — ${t("site.title", locale)}`}
   description={post.data.description}
   locale={locale}
-  path={`/blog/${post.id.replace(/\.mdx?$/, "")}/`}
+  path={`/blog/${slug}/`}
+  type="article"
+  publishedTime={post.data.publishDate.toISOString()}
 >
-  <main id="main-content">
-    <Section class="py-24 md:py-32">
-      <div class="mx-auto max-w-3xl">
-        <a href={`/${locale}/blog/`} class="text-body-sm text-primary-text hover:underline">&larr; Back to blog</a>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={blogPostingSchema} />
+    <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
+  </Fragment>
 
-        <header class="mt-8">
+  <main id="main-content" class="bg-background pt-12 md:pt-16 pb-16 px-6 md:px-12 lg:px-24">
+    <article class="blog-content prose">
+      <nav class="not-prose flex items-center justify-between gap-4 flex-wrap">
+        <a href={`/${locale}/blog/`} class="text-body-sm text-primary-text no-underline hover:underline">&larr; Back to blog</a>
+        <a href={`/${locale}/glossary/`} class="text-body-sm text-muted-foreground hover:text-primary-text transition-colors">
+          {t("glossary.explore", locale)} &rarr;
+        </a>
+      </nav>
+
+      {/* Previous/Next navigation */}
+      <nav class="not-prose mt-6 grid gap-4 sm:grid-cols-2">
+        {prevPost ? (
+          <a
+            href={`/${locale}/blog/${prevPost.id.replace(/\.mdx?$/, "")}/`}
+            class="group flex flex-col p-4 rounded-lg border border-border hover:border-primary transition-colors"
+          >
+            <span class="text-caption text-muted-foreground">&larr; Previous</span>
+            <span class="mt-1 text-body font-medium text-foreground group-hover:text-primary-text transition-colors line-clamp-2">
+              {prevPost.data.title}
+            </span>
+          </a>
+        ) : <div />}
+        {nextPost ? (
+          <a
+            href={`/${locale}/blog/${nextPost.id.replace(/\.mdx?$/, "")}/`}
+            class="group flex flex-col p-4 rounded-lg border border-border hover:border-primary transition-colors sm:text-right"
+          >
+            <span class="text-caption text-muted-foreground">Next &rarr;</span>
+            <span class="mt-1 text-body font-medium text-foreground group-hover:text-primary-text transition-colors line-clamp-2">
+              {nextPost.data.title}
+            </span>
+          </a>
+        ) : <div />}
+      </nav>
+
+      <header class="not-prose mt-8 mb-12">
+        <div class="flex items-center gap-3 mb-3">
+          <a 
+            href={`/${locale}/blog/category/${post.data.category}/`}
+            class="rounded-full bg-primary/10 px-3 py-1 text-body-sm font-medium text-primary-text hover:bg-primary/20 transition-colors"
+          >
+            {post.data.category_name}
+          </a>
           <time class="text-caption text-muted-foreground" datetime={post.data.publishDate.toISOString()}>
             {post.data.publishDate.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" })}
           </time>
-          <h1 class="mt-2 text-display text-foreground">{post.data.title}</h1>
-          <p class="mt-4 text-body-lg text-muted-foreground">{post.data.description}</p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            {post.data.tags.map((tag: string) => (
-              <span class="rounded-full border border-border px-3 py-1 text-caption text-muted-foreground">{tag}</span>
+        </div>
+        <h1 class="mt-2 text-display text-foreground">{post.data.title}</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">{post.data.description}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          {post.data.tags.map((tag: string) => (
+            <a 
+              href={`/${locale}/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}/`}
+              class="rounded-full border border-border px-3 py-1 text-caption text-muted-foreground hover:border-primary hover:text-primary-text transition-colors"
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+        <p class="mt-4 text-body-sm text-muted-foreground">By {post.data.author}</p>
+      </header>
+
+      <Content />
+
+      {/* Related posts */}
+      {relatedPosts.length > 0 && (
+        <aside class="not-prose mt-12">
+          <h2 class="text-heading-md text-foreground mb-6">More in {post.data.category_name}</h2>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedPosts.map((related: any) => (
+              <a
+                href={`/${locale}/blog/${related.id.replace(/\.mdx?$/, "")}/`}
+                class="group block p-4 rounded-lg border border-border hover:border-primary transition-colors"
+              >
+                <time class="text-caption text-muted-foreground">
+                  {related.data.publishDate.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" })}
+                </time>
+                <h3 class="mt-2 text-body font-semibold text-foreground group-hover:text-primary-text transition-colors line-clamp-2">
+                  {related.data.title}
+                </h3>
+                <p class="mt-2 text-body-sm text-muted-foreground line-clamp-2">{related.data.description}</p>
+              </a>
             ))}
           </div>
-          <p class="mt-4 text-body-sm text-muted-foreground">By {post.data.author}</p>
-        </header>
-
-        <article class="prose mt-12">
-          <Content />
-        </article>
-      </div>
-    </Section>
+        </aside>
+      )}
+    </article>
   </main>
 </BaseLayout>

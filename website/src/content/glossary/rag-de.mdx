@@ -1,0 +1,75 @@
+---
+term: "Retrieval-Augmented Generation"
+termSlug: "rag"
+short: "RAG ist eine KI-Technik, die Informationsabruf mit Textgenerierung kombiniert, um präzise, quellenbasierte Antworten zu erzeugen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["llm", "embeddings"]
+synonyms: ["RAG", "retrieval augmented generation"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Retrieval-Augmented Generation (RAG) ist eine Technik, die große Sprachmodelle verbessert, indem relevante Dokumente aus einer [Wissensdatenbank](/de/glossary/knowledge-base/) abgerufen werden, bevor Antworten generiert werden. Dies verankert die KI-Ausgabe in faktischen, aktuellen Informationen anstatt sich ausschließlich auf Trainingsdaten zu verlassen.
+
+## Warum es wichtig ist
+
+RAG ist besonders wertvoll für wissensintensive Bereiche, wo Genauigkeit und Aktualität entscheidend sind. Traditionelle LLMs können plausible, aber veraltete oder falsche Informationen generieren. RAG löst dieses Problem durch:
+
+- **Verankerung von Antworten in Quellen** — jede Antwort verweist auf spezifische Dokumente aus der Wissensdatenbank
+- **Aufrechterhaltung der Aktualität** — Wissensdatenbanken können ohne teures Modell-Neutraining aktualisiert werden
+- **Reduzierung von Halluzinationen** — das Modell generiert aus abgerufenen Fakten, nicht aus auswendig gelernten Mustern
+- **Ermöglichung von Auditierbarkeit** — Zitate ermöglichen Benutzern die Überprüfung von KI-generierten Antworten
+
+## Wie es funktioniert
+
+```
+Frage → Embed → KB durchsuchen → Docs abrufen → Generieren → Antwort
+  │                                │
+  └────── Vektor-Ähnlichkeit ──────┘
+```
+
+1. Benutzer stellt eine Frage
+2. System konvertiert Frage in [Embeddings](/de/glossary/vector-embeddings/) und durchsucht die Wissensdatenbank
+3. Relevanteste Dokumente werden abgerufen
+4. LLM generiert Antwort unter Verwendung des abgerufenen Kontexts
+5. Antwort enthält Quellenangaben zur Verifizierung
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich RAG von [Fine-Tuning](/de/glossary/fine-tuning/)?**
+
+A: Fine-Tuning modifiziert permanent die Modellgewichte mit neuen Daten. RAG ruft Informationen zur Abfragezeit ab, was Aktualisierungen und Audits erleichtert. RAG wird bevorzugt, wenn sich Quellmaterial häufig ändert.
+
+**F: Kann RAG halluzinieren?**
+
+A: RAG reduziert Halluzinationen erheblich, indem Antworten in abgerufenen Dokumenten verankert werden, aber die Qualität hängt von der Vollständigkeit der Wissensdatenbank und der Abrufgenauigkeit ab.
+
+**F: Warum nicht einfach eine Suchmaschine verwenden?**
+
+A: Suchmaschinen liefern Dokumente zurück; RAG synthetisiert Informationen aus mehreren Quellen zu einer kohärenten Antwort mit angemessenem Kontext.
+
+## Verwandte Begriffe
+
+- [LLM](/de/glossary/llm/) — die Generierungskomponente, die Antworten in natürlicher Sprache erzeugt
+- [Embeddings](/de/glossary/embeddings/) — Vektordarstellungen für [semantische Suche](/de/glossary/semantic-search/)
+
+---
+
+## Referenzen
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11.200+ Zitationen]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2.800+ Zitationen]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1.400+ Zitationen]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11,200+ citations]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2,800+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1,400+ citations]

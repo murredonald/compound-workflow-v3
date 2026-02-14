@@ -1,0 +1,180 @@
+---
+term: "TF-IDF"
+termSlug: "tf-idf"
+short: "Term Frequency-Inverse Document Frequency - ein statistisches Maß für die Wichtigkeit von Wörtern in einem Dokument relativ zu einer Sammlung."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["bm25", "sparse-retrieval", "inverted-index", "embedding"]
+synonyms: ["Term Frequency Inverse Document Frequency", "TF×IDF"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+TF-IDF (Term Frequency-Inverse Document Frequency) ist eine numerische Statistik, die misst, wie wichtig ein Wort für ein Dokument innerhalb einer Sammlung ist. Sie multipliziert zwei Komponenten: Termfrequenz (wie oft ein Wort in einem Dokument erscheint) und inverse Dokumentfrequenz (wie selten das Wort über alle Dokumente ist). Wörter, die häufig in einem Dokument aber selten in der Sammlung erscheinen, erhalten hohe TF-IDF-Scores, was sie nützlich für Dokumentcharakterisierung, Suchranking und Feature-Extraktion macht.
+
+## Warum es wichtig ist
+
+TF-IDF ist grundlegend für Information Retrieval und NLP:
+
+- **Suchmaschinen** — frühes Google verwendete TF-IDF; es bleibt relevant
+- **Dokumentähnlichkeit** — Dokumente mit TF-IDF-Vektoren vergleichen
+- **Feature-Extraktion** — Text in numerische Features für [ML](/de/glossary/machine-learning/)-Modelle umwandeln
+- **Keyword-Extraktion** — wichtige Begriffe in Dokumenten identifizieren
+- **Textklassifikation** — traditionelle ML-Klassifikatoren nutzen TF-IDF-Features
+- **Grundlage für BM25** — TF-IDF verstehen hilft modernes Ranking verstehen
+
+Trotz 50+ Jahren liegen TF-IDF-Konzepte modernen Such- und NLP-Systemen zugrunde.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                        TF-IDF                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE TF-IDF FORMEL:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  TF-IDF(t, d, D) = TF(t, d) × IDF(t, D)                   │
+│                                                            │
+│  Wobei:                                                    │
+│  • t = Term                                                │
+│  • d = Dokument                                            │
+│  • D = Dokumentsammlung                                    │
+│                                                            │
+│                                                            │
+│  TERM-FREQUENZ (TF):                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  Wie oft erscheint der Term in DIESEM Dokument?           │
+│                                                            │
+│  Gängige Varianten:                                        │
+│                                                            │
+│  1. Rohe Zählung:                                          │
+│     TF(t,d) = Anzahl von t in d                           │
+│                                                            │
+│  2. Normalisiert (durch Doclänge geteilt):                │
+│     TF(t,d) = count(t,d) / total_terms(d)                 │
+│                                                            │
+│  3. Log-normalisiert:                                      │
+│     TF(t,d) = 1 + log(count(t,d))  wenn count > 0        │
+│                                                            │
+│  4. Boolean:                                               │
+│     TF(t,d) = 1 wenn t in d, sonst 0                      │
+│                                                            │
+│                                                            │
+│  INVERSE DOKUMENTFREQUENZ (IDF):                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  Wie SELTEN ist dieser Term über ALLE Dokumente?          │
+│                                                            │
+│                 N                                          │
+│  IDF(t) = log ─────                                        │
+│               df(t)                                        │
+│                                                            │
+│  Wobei:                                                    │
+│  • N     = Gesamtzahl der Dokumente                        │
+│  • df(t) = Anzahl Dokumente mit Term t                    │
+│                                                            │
+│  Beispiel (N = 10.000 Dokumente):                          │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Term        │ df(t) │ IDF = log(10000/df)         │   │
+│  ├─────────────┼───────┼────────────────────────────┤   │
+│  │ "der"       │ 9.500 │ log(10000/9500) = 0.02     │   │
+│  │ "klima"     │ 500   │ log(10000/500)  = 3.00     │   │
+│  │ "minderung" │ 50    │ log(10000/50)   = 5.30     │   │
+│  │ "anthropo.."│ 5     │ log(10000/5)    = 7.60     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  Seltene Terme → hoher IDF → unterscheidender            │
+│  Häufige Terme → niedriger IDF → weniger nützlich        │
+│                                                            │
+│                                                            │
+│  WARUM TF × IDF MULTIPLIZIEREN?                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Dokument: "Klimawandel-Minderungsstrategien für          │
+│             Klimaanpassung und Klimaresilienz"             │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Term       │ TF │ IDF  │ TF-IDF │ Interpretation   │   │
+│  ├────────────┼────┼──────┼────────┼──────────────────┤   │
+│  │ "klima"    │ 3  │ 3.0  │ 9.0    │ Wichtiges Thema  │   │
+│  │ "wandel"   │ 1  │ 2.5  │ 2.5    │ Relevanter Term  │   │
+│  │ "minderung"│ 1  │ 5.3  │ 5.3    │ Schlüsselkonzept │   │
+│  │ "für"      │ 1  │ 0.1  │ 0.1    │ Stoppwort        │   │
+│  │ "und"      │ 1  │ 0.05 │ 0.05   │ Stoppwort        │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  "klima" punktet am höchsten: häufig UND bedeutsam        │
+│  "für/und" punkten nahe null: häufig = niedriger IDF      │
+│                                                            │
+│                                                            │
+│  TF-IDF EINSCHRÄNKUNGEN (VON BM25 BEHOBEN):                │
+│  ──────────────────────────────────────────                │
+│                                                            │
+│  1. Keine TF-Sättigung:                                    │
+│     Term 100× = 100× das Gewicht von 1×                   │
+│     (Keyword-Stuffing-Anfälligkeit)                        │
+│                                                            │
+│  2. Schlechte Längen-Normalisierung:                       │
+│     Längere Docs haben natürlich höhere TF                │
+│                                                            │
+│  3. Kein semantisches Verständnis:                         │
+│     "Auto" ≠ "Wagen" (Vokabular-Mismatch)                 │
+│                                                            │
+│  BM25 adressiert #1 und #2                                 │
+│  Dense Retrieval adressiert #3                             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wann sollte ich TF-IDF vs BM25 verwenden?**
+
+A: Verwenden Sie BM25 für Suchranking—es ist strikt besser als rohes TF-IDF, weil es Termfrequenz-Sättigung und Dokumentlängen-Normalisierung hinzufügt. Verwenden Sie TF-IDF für Feature-Extraktion in ML-Pipelines, Dokumentvektorisierung, oder wenn Sie eine einfache interpretierbare Baseline brauchen.
+
+**F: Sollte ich Stoppwörter vor TF-IDF entfernen?**
+
+A: Oft ja. Stoppwörter (der, ist, auf, welche) haben sowieso sehr niedrigen IDF, tragen also wenig zu TF-IDF-Scores bei. Entfernen reduziert Dimensionalität und Berechnung. Für Phrasensuche oder wenn Wortfolge wichtig ist, behalten Sie sie.
+
+**F: Wie vergleicht sich TF-IDF mit Wort-[Embeddings](/de/glossary/embeddings/)?**
+
+A: TF-IDF erstellt dünnbesetzte, interpretierbare Vektoren basierend auf Termstatistiken. Wort-Embeddings (Word2Vec, BERT) erstellen dichte Vektoren, die semantische Bedeutung erfassen. TF-IDF ist schneller zu berechnen, braucht kein Training und ist besser interpretierbar.
+
+**F: Was ist die richtige Vokabulargröße für TF-IDF?**
+
+A: Hängt von Ihrem Anwendungsfall ab. Für Suche, alle Terme einschließen (30K-100K+). Für ML-Features, auf Top N nach Dokumentfrequenz beschränken (oft 5K-20K) um Dimensionalität zu reduzieren.
+
+## Verwandte Begriffe
+
+- [BM25](/de/glossary/bm25/) — verbesserte Ranking-Funktion basierend auf TF-IDF
+- [Sparse retrieval](/de/glossary/sparse-retrieval/) — Retrieval mit TF-IDF-artigen Vektoren
+- [Inverted index](/de/glossary/inverted-index/) — Datenstruktur für TF-IDF-Suche
+- Embedding — dichte Alternative zu TF-IDF-Vektoren
+
+---
+
+## Referenzen
+
+> Salton & Buckley (1988), "[Term-weighting approaches in automatic text retrieval](https://www.sciencedirect.com/science/article/pii/030645738890021X)", Information Processing & Management. [Klassische TF-IDF-Analyse]
+
+> Sparck Jones (1972), "[A statistical interpretation of term specificity and its application in retrieval](https://www.emerald.com/insight/content/doi/10.1108/eb026526/full/html)", Journal of Documentation. [Originales IDF-Konzept]
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [TF-IDF Lehrbuchbehandlung]
+
+> Ramos (2003), "[Using TF-IDF to Determine Word Relevance in Document Queries](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.121.1424)", ICML. [Praktisches TF-IDF Tutorial]
+
+## References
+
+> Salton & Buckley (1988), "[Term-weighting approaches in automatic text retrieval](https://www.sciencedirect.com/science/article/pii/030645738890021X)", Information Processing & Management. [Classic TF-IDF analysis]
+
+> Sparck Jones (1972), "[A statistical interpretation of term specificity and its application in retrieval](https://www.emerald.com/insight/content/doi/10.1108/eb026526/full/html)", Journal of Documentation. [Original IDF concept]
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [TF-IDF textbook treatment]
+
+> Ramos (2003), "[Using TF-IDF to Determine Word Relevance in Document Queries](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.121.1424)", ICML. [Practical TF-IDF tutorial]

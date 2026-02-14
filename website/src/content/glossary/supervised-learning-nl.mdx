@@ -1,0 +1,147 @@
+---
+term: "Supervised Learning"
+termSlug: "supervised-learning"
+short: "Een machine learning aanpak waarbij modellen leren van gelabelde trainingsdata om outputs voor nieuwe inputs te voorspellen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["machine-learning", "unsupervised-learning", "deep-learning", "loss-function"]
+synonyms: ["Supervised ML", "Gelabeld leren", "Voorspellende modellering", "Inductief leren"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Supervised learning is een machine learning paradigma waarbij algoritmen leren van gelabelde trainingsdata—voorbeelden die zowel input features als de correcte output (label) bevatten. Het model leert de mapping tussen inputs en outputs, en past deze geleerde relatie toe om [labels](/nl/glossary/ground-truth/) voor nieuwe, ongeziene data te voorspellen. Het heet "supervised" omdat het trainingsproces wordt geleid door bekende correcte antwoorden, zoals een leraar die een student begeleidt.
+
+## Waarom het belangrijk is
+
+Supervised learning is de meest voorkomende ML-aanpak:
+
+- **Duidelijk trainingssignaal** — bekende antwoorden leiden het leren
+- **Meetbare nauwkeurigheid** — voorspellingen vs. labels maakt validatie mogelijk
+- **Praktische toepassingen** — spam detectie, medische diagnose, credit scoring
+- **Fundament voor [LLMs](/nl/glossary/llm/)** — next-token [voorspelling](/nl/glossary/inference/) is supervised learning
+- **Interpreteerbare resultaten** — voorspellingen mappen naar gedefinieerde klassen of waarden
+
+De meeste productie ML-systemen gebruiken supervised learning.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   SUPERVISED LEARNING                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRAININGSFASE:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  Gelabelde Trainingsdata:                                  │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │ Input (Features)              │ Label (Target)  │      │
+│  ├─────────────────────────────────────────────────┤      │
+│  │ [Email: "Win €1000..."]       │    SPAM        │      │
+│  │ [Email: "Vergadering om 3"]   │    GEEN SPAM   │      │
+│  │ [Email: "Klik hier!"]         │    SPAM        │      │
+│  │ [Email: "Project update"]     │    GEEN SPAM   │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │              LEERALGORITME                       │      │
+│  │                                                  │      │
+│  │  1. Maak voorspelling: ŷ = f(x)                 │      │
+│  │  2. Vergelijk met label: Fout = ŷ - y          │      │
+│  │  3. Update model om fout te verminderen         │      │
+│  │  4. Herhaal tot fout geminimaliseerd            │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│                   GETRAIND MODEL                           │
+│                                                            │
+│  VOORSPELLINGSFASE:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  Nieuwe Email ──► Getraind Model ──► Voorspelling: SPAM?  │
+│                                                            │
+│  TWEE HOOFDTYPEN:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  CLASSIFICATIE:               REGRESSIE:                   │
+│  Voorspel categorieën         Voorspel continue waarden   │
+│                                                            │
+│  "Kat" of "Hond"?            "Huisprijs = €450.000"       │
+│  "Spam" of "Geen spam"?      "Temperatuur = 23.5°C"       │
+│  "Positief" of "Negatief"?   "Verkoop = €12.500"          │
+│                                                            │
+│       ┌───┐ ┌───┐                    ↗                    │
+│       │ A │ │ B │             ──────●────                 │
+│       └───┘ └───┘                ↗                        │
+│    Discrete klassen        Continue lijn                   │
+│                                                            │
+│  VEELGEBRUIKTE ALGORITMEN:                                 │
+│  ─────────────────────────                                 │
+│  • Logistische Regressie  (classificatie)                 │
+│  • Beslisbomen            (beide)                         │
+│  • Random Forests         (beide)                         │
+│  • Neurale Netwerken      (beide)                         │
+│  • Support Vector Machines(classificatie)                 │
+│  • Lineaire Regressie     (regressie)                     │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Classificatie vs Regressie:**
+| Aspect | Classificatie | Regressie |
+|--------|--------------|-----------|
+| Output | Discrete categorieën | Continue waarden |
+| Voorbeeld | Spam detectie | Prijsvoorspelling |
+| Metrieken | Accuracy, F1-score | MSE, R-kwadraat |
+| Loss functie | Cross-entropy | Mean squared error |
+
+## Veelgestelde vragen
+
+**V: Wat maakt data "gelabeld"?**
+
+A: Gelabelde data heeft zowel inputs als bekende correcte outputs. Voor beeldclassificatie: afbeeldingen (input) + wat erin staat (label). Voor spam detectie: emails (input) + spam/geen-spam tags (label). Mensen maken typisch labels, wat duur en tijdrovend is.
+
+**V: Hoe is LLM-training supervised learning?**
+
+A: LLM [pretraining](/nl/glossary/pretraining/) is self-supervised: het "label" voor elk token is simpelweg het volgende token in de tekst. Gegeven "De kat zat op de", leert het model "mat" te voorspellen. Geen menselijk labelen nodig—de tekst zelf biedt supervisie.
+
+**V: Wat als ik geen gelabelde data heb?**
+
+A: Je hebt meerdere opties: (1) Gebruik unsupervised learning om patronen te vinden, (2) Gebruik semi-supervised learning met enkele labels, (3) Genereer labels zelf of met crowdsourcing, (4) Gebruik transfer learning van voorgetrainde modellen, (5) Pas active learning toe om eerst de meest informatieve voorbeelden te labelen.
+
+**V: Hoeveel gelabelde data is genoeg?**
+
+A: Het varieert sterk. Eenvoudige problemen: honderden voorbeelden. Complexe deep learning: duizenden tot miljoenen. Vuistregel: 10× meer samples dan features. Met transfer learning/[fine-tuning](/nl/glossary/fine-tuning/) kan veel minder voldoende zijn.
+
+## Gerelateerde termen
+
+- [Machine Learning](/nl/glossary/machine-learning/) — het bredere vakgebied
+- [Unsupervised Learning](/nl/glossary/unsupervised-learning/) — leren zonder labels
+- [Loss Functie](/nl/glossary/loss-function/) — meet voorspellingsfout
+- [Deep Learning](/nl/glossary/deep-learning/) — gebruikt neurale netwerken voor supervised taken
+
+---
+
+## Referenties
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Fundamentele tekst]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70.000+ [citaties](/nl/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Hoofdstuk 5. [Supervised learning fundamenten]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Fundamentele theorie]
+
+## References
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [Foundational text]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press, Chapter 5. [Supervised learning fundamentals]
+
+> Vapnik (1998), "[Statistical Learning Theory](https://www.springer.com/gp/book/9780471030034)", Wiley. [Foundational theory]

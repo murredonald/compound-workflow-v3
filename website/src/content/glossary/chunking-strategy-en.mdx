@@ -1,0 +1,111 @@
+---
+term: "Chunking Strategy"
+termSlug: "chunking-strategy"
+short: "The method of dividing documents into smaller segments for effective retrieval and processing in RAG systems."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "embeddings", "context-window", "semantic-search"]
+synonyms: ["Text segmentation", "Document splitting", "Chunk optimization"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A chunking strategy defines how documents are split into smaller pieces (chunks) for storage in vector databases and retrieval in RAG systems. The strategy determines chunk size, overlap, and boundaries—critical decisions that significantly impact retrieval quality and the relevance of generated responses.
+
+## Why it matters
+
+Effective chunking is foundational to RAG system performance:
+
+- **[Retrieval precision](/en/glossary/retrieval-precision/)** — properly sized chunks improve semantic matching accuracy
+- **Context preservation** — good boundaries keep related information together
+- **Token efficiency** — optimal sizes balance context richness with [LLM](/en/glossary/llm/) limits
+- **Answer quality** — better chunks lead to better generated responses
+- **Cost management** — appropriate sizing reduces unnecessary API calls
+
+Poor chunking is one of the most common causes of RAG system underperformance.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   CHUNKING STRATEGIES                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FIXED-SIZE CHUNKING                                       │
+│  ┌──────────┬──────────┬──────────┬──────────┐             │
+│  │  500 tok │  500 tok │  500 tok │  500 tok │             │
+│  └──────────┴──────────┴──────────┴──────────┘             │
+│  Simple but may cut mid-sentence                           │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  OVERLAPPING CHUNKS                                        │
+│  ┌──────────────┐                                          │
+│  │   Chunk 1    │                                          │
+│  └────────┬─────┴───────┐                                  │
+│           │   Chunk 2   │    50-100 token overlap          │
+│           └────────┬────┴───────┐                          │
+│                    │   Chunk 3  │                          │
+│                    └────────────┘                          │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SEMANTIC CHUNKING                                         │
+│  ┌─────────────────┐ ┌────────────┐ ┌──────────────────┐   │
+│  │ Complete idea A │ │  Idea B    │ │ Complete idea C  │   │
+│  └─────────────────┘ └────────────┘ └──────────────────┘   │
+│  Splits at natural boundaries (paragraphs, sections)       │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HIERARCHICAL CHUNKING                                     │
+│  Document → Section → Paragraph → Sentence                 │
+│  Multiple granularities stored together                    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Key parameters:**
+1. **Chunk size** — typically 256-1024 tokens; depends on content type
+2. **Overlap** — usually 10-20% prevents information loss at boundaries
+3. **Splitting method** — character, token, sentence, paragraph, or semantic
+4. **Metadata** — source, position, and hierarchy information preserved
+
+## Common questions
+
+**Q: What's the best chunk size?**
+
+A: It depends on your content. Technical docs often work well with 500-1000 tokens. Q&A content may need shorter chunks (256-500). Test different sizes with your actual queries to find the optimum.
+
+**Q: Should chunks overlap?**
+
+A: Usually yes. 50-100 token overlap helps preserve context that spans chunk boundaries. Without overlap, sentences or important context can be cut in half.
+
+**Q: What's semantic chunking?**
+
+A: Instead of fixed sizes, semantic chunking splits at natural boundaries—paragraphs, sections, or even detected topic changes. It keeps coherent ideas together but produces variable-size chunks.
+
+**Q: How does chunking affect retrieval?**
+
+A: Too large = diluted relevance, may exceed context limits. Too small = fragmented information, missing context. Finding the right balance for your use case is essential.
+
+## Related terms
+
+- [RAG](/en/glossary/rag/) — system that uses chunked documents
+- [Embeddings](/en/glossary/embeddings/) — vectors generated from chunks
+- [Vector Database](/en/glossary/vector-database/) — stores chunk embeddings
+- [Context Window](/en/glossary/context-window/) — limits how many chunks fit
+
+---
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [4,000+ citations]
+
+> Gao et al. (2024), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [500+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain QA](https://arxiv.org/abs/2007.01282)", EACL. [1,500+ citations]

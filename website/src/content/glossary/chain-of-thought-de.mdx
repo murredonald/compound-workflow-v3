@@ -1,0 +1,182 @@
+---
+term: "Chain-of-Thought"
+termSlug: "chain-of-thought"
+short: "Eine Prompting-Technik, die Schritt-für-Schritt-Reasoning von Sprachmodellen hervorruft, die Leistung bei komplexen Aufgaben verbessert, indem der Denkprozess explizit und verifizierbar gemacht wird."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["few-shot", "zero-shot", "in-context-learning", "prompt-engineering"]
+synonyms: ["CoT Prompting", "Schritt-für-Schritt-Reasoning", "Reasoning-Kette"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Chain-of-Thought (CoT) Prompting ist eine Technik, die große Sprachmodelle ermutigt, Zwischen-Reasoning-Schritte zu generieren, bevor sie zu einer finalen Antwort kommen. Anstatt direkt eine Antwort auszugeben, produziert das Modell eine Reihe logischer Schritte, die zur Schlussfolgerung führen. Dieser Ansatz verbessert signifikant die Leistung bei Aufgaben, die mehrstufiges Reasoning, mathematische Berechnungen, logische [Inferenz](/de/glossary/inference/) und komplexe Problemlösung erfordern. CoT kann durch Few-Shot-Beispiele mit Reasoning-Traces oder einfach durch Hinzufügen von "Lass uns Schritt für Schritt denken" hervorgerufen werden.
+
+## Warum es wichtig ist
+
+Chain-of-Thought transformiert [LLM](/de/glossary/llm/)-Fähigkeiten:
+
+- **Genauigkeitsschub** — 50-90% Verbesserung auf Reasoning-Benchmarks
+- **Transparenz** — zeigt WIE das Modell zu seiner Antwort kam
+- **Fehlererkennung** — Zwischenschritte enthüllen fehlerhafte Logik
+- **Komplexe Aufgaben** — ermöglicht Mathe, Logik und Multi-Hop-Reasoning
+- **Debugging** — identifiziere genau wo Reasoning schiefgeht
+- **Vertrauensaufbau** — verifizierbares Reasoning für kritische Entscheidungen
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   CHAIN-OF-THOUGHT                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STANDARD vs CHAIN-OF-THOUGHT PROMPTING:                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  Problem: "Hans hat 3 Äpfel und kauft 2 Tüten             │
+│           mit je 4 Äpfeln. Wie viele Äpfel insgesamt?"    │
+│                                                            │
+│                                                            │
+│  STANDARD PROMPTING:                                       │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Benutzer: [Problem]                                 │ │
+│  │                                                      │ │
+│  │  Modell: 11 Äpfel  ← Direkte Antwort (oft falsch)   │ │
+│  │                                                      │ │
+│  │  Warum es scheitert:                                │ │
+│  │  • Modell kann mehrstufige Natur übersehen         │ │
+│  │  • Keine Zwischenberechnung                        │ │
+│  │  • Reasoning nicht verifizierbar                   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  CHAIN-OF-THOUGHT PROMPTING:                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Benutzer: [Problem]                                 │ │
+│  │        Lass uns Schritt für Schritt denken.         │ │
+│  │                                                      │ │
+│  │  Modell:                                             │ │
+│  │  Schritt 1: Hans beginnt mit 3 Äpfeln               │ │
+│  │  Schritt 2: Er kauft 2 Tüten                        │ │
+│  │  Schritt 3: Jede Tüte hat 4 Äpfel                   │ │
+│  │  Schritt 4: Äpfel aus Tüten = 2 × 4 = 8            │ │
+│  │  Schritt 5: Gesamt = 3 + 8 = 11 Äpfel              │ │
+│  │                                                      │ │
+│  │  Antwort: 11 Äpfel ✓                                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  COT VARIANTEN:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  1. ZERO-SHOT COT:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Füge "Lass uns Schritt für Schritt denken" hinzu  │ │
+│  │                                                      │ │
+│  │  Prompt: "Was ist 17 × 24?"                         │ │
+│  │          "Lass uns Schritt für Schritt denken."    │ │
+│  │                                                      │ │
+│  │  Modell: "Zuerst zerlege ich das:                   │ │
+│  │          17 × 24 = 17 × (20 + 4)                   │ │
+│  │                  = 17 × 20 + 17 × 4                │ │
+│  │                  = 340 + 68                         │ │
+│  │                  = 408"                             │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  2. FEW-SHOT COT (mit Beispielen):                        │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Beispiel 1:                                         │ │
+│  │  F: Ein Laden hat 5 Kisten. Jede Kiste 3 Artikel.  │ │
+│  │     2 Artikel sind verkauft. Wie viele bleiben?    │ │
+│  │  A: Lass uns Schritt für Schritt denken.           │ │
+│  │     Schritt 1: Gesamt = 5 × 3 = 15                │ │
+│  │     Schritt 2: Nach Verkauf: 15 - 2 = 13          │ │
+│  │     Antwort: 13 Artikel                            │ │
+│  │                                                      │ │
+│  │  Jetzt lösen:                                        │ │
+│  │  F: [neues Problem]                                 │ │
+│  │                                                      │ │
+│  │  Modell folgt demonstriertem Reasoning-Muster!     │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FORTGESCHRITTENE COT TECHNIKEN:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  SELF-CONSISTENCY:                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Generiere mehrere Reasoning-Pfade, stimme ab      │ │
+│  │                                                      │ │
+│  │  Pfad 1: 3 + (2×4) = 3 + 8 = 11 ←─┐                │ │
+│  │  Pfad 2: 3 + 4 + 4 = 11           ←─┼─ Wahl: 11 ✓  │ │
+│  │  Pfad 3: 3×2 + 4 = 10 (falsch)   ←─┘                │ │
+│  │                                                      │ │
+│  │  Mehrheitswahl filtert Reasoning-Fehler            │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARK VERBESSERUNGEN MIT COT:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  ┌────────────────────┬─────────────┬───────────────────┐│
+│  │ Benchmark          │ Standard    │ Mit CoT           ││
+│  ├────────────────────┼─────────────┼───────────────────┤│
+│  │ GSM8K (Mathe)      │ ~18%        │ ~57% (+217%)      ││
+│  │ MultiArith         │ ~35%        │ ~93% (+166%)      ││
+│  │ StrategyQA         │ ~65%        │ ~75% (+15%)       ││
+│  └────────────────────┴─────────────┴───────────────────┘│
+│                                                            │
+│  (Ergebnisse variieren nach Modellgröße)                  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wann sollte ich Chain-of-Thought Prompting verwenden?**
+
+A: Verwende CoT für: (1) Matheprobleme, (2) mehrstufiges Reasoning, (3) logische Inferenz, (4) Aufgaben die Erklärung benötigen, (5) komplexe Entscheidungsfindung. Überspringe CoT für einfache Faktenfragen oder kreative Aufgaben.
+
+**F: Funktioniert CoT mit kleineren Modellen?**
+
+A: CoT-Vorteile steigen dramatisch mit Modellgröße. Modelle unter ~10B Parametern zeigen minimale Verbesserung. CoT "entsteht" als Fähigkeit in größeren Modellen (62B+).
+
+**F: Wie gehe ich mit CoT-Fehlern um wenn Reasoning falsch aber selbstbewusst ist?**
+
+A: Verwende Self-Consistency (generiere 5-10 Pfade, stimme ab), füge Verifikationsschritte hinzu, oder implementiere explizite Verifikation mit zweitem Modell.
+
+**F: Ist CoT nur Prompting oder können Modelle dafür trainiert werden?**
+
+A: Beides. Prompting extrahiert latente Reasoning-Fähigkeit. Training auf Reasoning-Traces verbessert CoT-Qualität signifikant.
+
+## Verwandte Begriffe
+
+- [Few-shot Learning](/de/glossary/few-shot/) — Beispiele für CoT bereitstellen
+- [Zero-shot Learning](/de/glossary/zero-shot/) — CoT ohne Beispiele
+- [In-context Learning](/de/glossary/in-context-learning/) — Lernmuster das CoT nutzt
+- Prompt Engineering — breitere Prompting-Techniken
+
+---
+
+## Referenzen
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [Original CoT Paper]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT]
+
+> Wang et al. (2022), "[Self-Consistency Improves Chain of Thought Reasoning](https://arxiv.org/abs/2203.11171)", ICLR. [Self-consistency für CoT]
+
+> Yao et al. (2023), "[Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601)", NeurIPS. [Tree of Thoughts Erweiterung]
+
+## References
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [Original CoT paper]
+
+> Kojima et al. (2022), "[Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)", NeurIPS. [Zero-shot CoT "Let's think step by step"]
+
+> Wang et al. (2022), "[Self-Consistency Improves Chain of Thought Reasoning](https://arxiv.org/abs/2203.11171)", ICLR. [Self-consistency for CoT]
+
+> Yao et al. (2023), "[Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601)", NeurIPS. [Tree of Thoughts extension]

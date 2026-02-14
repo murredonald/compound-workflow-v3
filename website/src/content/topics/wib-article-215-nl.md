@@ -11,7 +11,7 @@ locale: "nl"
 relatedGuide: "belgian-corporate-tax-nl"
 ---
 
-Artikel 215 van het Belgische Wetboek van de Inkomstenbelastingen (WIB 92) legt de tarifenstructuur voor vennootschapsbelasting vast die van toepassing is op in België gevestigde vennootschappen en buitenlandse vennootschappen met een Belgische vaste inrichting. Het standaard vennootschapsbelastingtarief bedraagt 25%, verlaagd van 33,99% in 2018 door een meerjarige hervorming gericht op het verbeteren van de concurrentiekracht van België en het aantrekken van buitenlandse investeringen.
+Artikel 215 van het Belgische Wetboek van de Inkomstenbelastingen (WIB 92) legt de tariefenstructuur voor vennootschapsbelasting vast die van toepassing is op in België gevestigde vennootschappen en buitenlandse vennootschappen met een Belgische vaste inrichting. Het standaard vennootschapsbelastingtarief bedraagt 25%, verlaagd van 33,99% in 2018 door een meerjarige hervorming gericht op het verbeteren van de concurrentiekracht van België en het aantrekken van buitenlandse investeringen.
 
 Kleine en middelgrote ondernemingen (KMO's) die aan specifieke criteria voldoen, kunnen profiteren van een verlaagd tarief op de eerste schijf van het belastbare inkomen. Bedrijven met belastbare winsten van maximaal €100.000 betalen 20% over de eerste €100.000 van het belastbare inkomen, op voorwaarde dat ze voldoen aan voorwaarden met betrekking tot minimale bezoldiging voor bedrijfsleiders. Dit verlaagde tarief moedigt ondernemerschap aan en ondersteunt de groei van kleinere bedrijven.
 

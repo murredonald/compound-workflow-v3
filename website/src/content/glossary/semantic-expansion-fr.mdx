@@ -1,0 +1,62 @@
+---
+term: "Expansion sÃ©mantique"
+termSlug: "semantic-expansion"
+short: "Lâ€™expansion sÃ©mantique Ã©largit une requÃªte avec des termes ou sens proches (synonymes, entitÃ©s, embeddings) pour amÃ©liorer le rappel sans trahir lâ€™intention."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["query-understanding", "query-intent", "embeddings", "full-text-search", "relevance-tuning"]
+synonyms: ["Query expansion", "Expansion de requÃªte", "Expansion par synonymes"]
+locale: "fr"
+draft: false
+---
+
+## DÃ©finition
+
+Lâ€™expansion sÃ©mantique (souvent appelÃ©e [query expansion](/fr/glossary/query-expansion/)) ajoute Ã  une requÃªte des alternatives liÃ©es au sens: synonymes, concepts proches, variantes dâ€™entitÃ©s. Lâ€™objectif est de retrouver des contenus pertinents mÃªme si les mots exacts ne sont pas prÃ©sents.
+
+## Pourquoi c'est important
+
+- **Meilleur rappel**: couvre des formulations diffÃ©rentes.
+- **Meilleure couverture mÃ©tier**: relie abrÃ©viations, [citations](/fr/glossary/citation/) et jargon.
+- **Meilleure UX**: moins de requÃªtes sans rÃ©sultat, moins de reformulations.
+- **Hybride**: peut alimenter la recherche plein texte et la [recherche vectorielle](/fr/glossary/ann/).
+
+## Comment Ã§a fonctionne
+
+```
+RequÃªte -> comprÃ©hension -> expansion sÃ»re -> retrieval -> classement -> validation par analytics
+```
+
+Les sources dâ€™expansion incluent des listes de synonymes, des taxonomies et des voisins en embedding. Le risque principal est dâ€™Ã©largir au point de changer lâ€™intention.
+
+## Exemple pratique
+
+Si un utilisateur tape "CIR92", lâ€™expansion peut inclure "WIB92" et "Code des impÃ´ts sur les revenus" pour retrouver la mÃªme source malgrÃ© les variantes linguistiques.
+
+## Questions frÃ©quentes
+
+**Q: Pourquoi lâ€™expansion peut-elle dÃ©grader la pertinence?**
+
+R: Une expansion trop large ajoute du bruit. On peut pondÃ©rer les termes ajoutÃ©s plus bas et surveiller lâ€™impact.
+
+**Q: Est-ce la mÃªme chose que des synonymes dans lâ€™index?**
+
+R: Câ€™est liÃ©. On peut faire lâ€™expansion au moment de la requÃªte ou Ã  lâ€™indexation. Lâ€™expansion Ã  la requÃªte est souvent plus facile Ã  auditer.
+
+## Termes associÃ©s
+
+- [ComprÃ©hension de requÃªte](/fr/glossary/query-understanding/) - comprendre avant dâ€™Ã©tendre
+- [Intention de requÃªte](/fr/glossary/query-intent/) - garder lâ€™objectif utilisateur
+- [Embeddings](/fr/glossary/embeddings/) - base de lâ€™expansion par sens
+- [Recherche plein texte](/fr/glossary/full-text-search/) - ajouter des variantes mots-clÃ©s
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - mesurer et ajuster lâ€™impact
+
+---
+
+## RÃ©fÃ©rences
+
+> Manning, Raghavan & SchÃ¼tze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

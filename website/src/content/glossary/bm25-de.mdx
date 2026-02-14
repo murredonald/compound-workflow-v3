@@ -1,0 +1,178 @@
+---
+term: "BM25"
+termSlug: "bm25"
+short: "Best Matching 25 - der State-of-the-Art probabilistische Ranking-Algorithmus für Textsuche basierend auf TF-IDF-Prinzipien."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["tf-idf", "sparse-retrieval", "inverted-index", "dense-retrieval"]
+synonyms: ["Okapi BM25", "Best Match 25"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+BM25 (Best Matching 25) ist eine probabilistische Ranking-Funktion, die Dokumente basierend auf Query-Termfrequenzen bewertet. Es erweitert TF-IDF mit zwei wichtigen Verbesserungen: Termfrequenz-Sättigung (ein Term, der 10-mal vorkommt, ist nicht 10x wichtiger als einmal) und Dokumentlängen-Normalisierung (längere Dokumente bekommen keinen unfairen Vorteil). In den 1990er Jahren an der City University London entwickelt, bleibt BM25 der Standard-Algorithmus in Elasticsearch, Lucene und den meisten Produktionssuchsystemen, weil er einfach, schnell und bemerkenswert effektiv ist.
+
+## Warum es wichtig ist
+
+BM25 ist das Arbeitspferd der Produktionssuche:
+
+- **Universelle Baseline** — Standard in Elasticsearch, Solr, OpenSearch, Lucene
+- **Bewährt** — 30+ Jahre Optimierung über Milliarden von Anfragen
+- **Kein Training** — funktioniert sofort in jedem Bereich ohne [ML](/de/glossary/machine-learning/)
+- **Interpretierbar** — verstehen Sie genau, warum Dokumente so ranken
+- **Effizient** — Sub-Millisekunden-Suche über Milliarden von Dokumenten
+- **Hybride Basis** — BM25 mit neuralem Retrieval kombiniert schlägt oft beides allein
+
+Das Verständnis von BM25 ist essentiell für jeden, der Suchsysteme baut.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                         BM25                                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE BM25 FORMEL:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Für Query Q und Dokument D:                               │
+│                                                            │
+│              ∑    IDF(t) × f(t,D) × (k₁ + 1)              │
+│  score = ──────────────────────────────────────            │
+│            t∈Q   f(t,D) + k₁ × (1 - b + b × |D|/avgdl)    │
+│                                                            │
+│  Wobei:                                                    │
+│  • f(t,D) = Frequenz von Term t in Dokument D             │
+│  • |D|    = Dokumentlänge                                  │
+│  • avgdl  = durchschnittliche Dokumentlänge               │
+│  • k₁     = TF-Sättigung (typisch 1.2-2.0)               │
+│  • b      = Längennormalisierung (typisch 0.75)          │
+│                                                            │
+│                                                            │
+│  IDF (INVERSE DOCUMENT FREQUENCY):                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│              N - n(t) + 0.5                                │
+│  IDF(t) = log ──────────────                               │
+│              n(t) + 0.5                                     │
+│                                                            │
+│  IDF erhöht seltene Terme, senkt häufige:                 │
+│                                                            │
+│  "der"     erscheint in 95% Docs → IDF ≈ 0.05 (ignoriert)│
+│  "klima"   erscheint in 5% Docs  → IDF ≈ 2.94 (nützlich) │
+│  "xylophon" erscheint in 0.01%   → IDF ≈ 9.21 (sehr hoch)│
+│                                                            │
+│                                                            │
+│  KERN-EINSICHT: TERMFREQUENZ-SÄTTIGUNG                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  TF-IDF Problem: Mehr Vorkommen = proportional mehr       │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Score                                              │   │
+│  │   │                                                │   │
+│  │   │                             TF-IDF (linear)   │   │
+│  │ 4 │                          ●──●──●──●──●        │   │
+│  │   │                       ●                        │   │
+│  │ 3 │                    ●                           │   │
+│  │   │                 ●──────────────────────        │   │
+│  │ 2 │              ●        BM25 (sättigt)          │   │
+│  │   │           ●                                    │   │
+│  │ 1 │        ●                                       │   │
+│  │   │     ●                                          │   │
+│  │   │──●────────────────────────────────────────    │   │
+│  │   0  1  2  3  4  5  6  7  8  9  10                │   │
+│  │                Termfrequenz                        │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  BM25: Nach ~3-5 Vorkommen fügt mehr Wiederholung wenig   │
+│        hinzu (verhindert Keyword-Stuffing)                 │
+│                                                            │
+│                                                            │
+│  KERN-EINSICHT: LÄNGEN-NORMALISIERUNG                      │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  Problem: Längere Dokumente enthalten mehr Terme zufällig │
+│                                                            │
+│  Ohne Normalisierung:                                      │
+│  • 100-Wort-Doc mit "Klima" 2x → Score: 2                │
+│  • 1000-Wort-Doc mit "Klima" 3x → Score: 3 GEWINNT       │
+│    (aber 1000-Wort-Doc handelt von vielen Dingen!)        │
+│                                                            │
+│  BM25 Längen-Normalisierung (Parameter b):                │
+│                                                            │
+│  b = 0: Keine Normalisierung (rohe TF)                   │
+│  b = 1: Volle Normalisierung                              │
+│  b = 0.75: Standard (Balance)                             │
+│                                                            │
+│                                                            │
+│  BM25 PARAMETER:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Parameter │ Standard │ Effekt                      │   │
+│  ├───────────┼──────────┼────────────────────────────┤   │
+│  │ k₁        │ 1.2-2.0  │ TF-Sättigungsgeschwindigkeit│   │
+│  │           │          │ Höher = mehr TF-Einfluss    │   │
+│  ├───────────┼──────────┼────────────────────────────┤   │
+│  │ b         │ 0.75     │ Längennormalisierung        │   │
+│  │           │          │ 0 = keine, 1 = voll         │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  Tuning-Richtlinien:                                       │
+│  • Kurze Dokumente (Tweets) → b = 0-0.5                   │
+│  • Variable-Länge-Docs → b = 0.75 (Standard)             │
+│  • Sehr lange Docs → b = 1.0                              │
+│  • k₁ braucht selten Tuning vom Standard 1.2             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wann sollte ich BM25-Parameter tunen?**
+
+A: Normalerweise nie. Die Standards (k₁=1.2, b=0.75) funktionieren gut in den meisten Bereichen. Tunen Sie nur bei spezifischen Problemen: reduzieren Sie b für sehr kurze Dokumente (Tweets, Titel), oder erhöhen Sie b für sehr lange Dokumente mit variabler Länge.
+
+**F: Wie vergleicht sich BM25 mit neuralem Retrieval?**
+
+A: BM25 glänzt bei exakter Übereinstimmung und funktioniert zero-shot in jedem Bereich. Neurales Retrieval erfasst [semantische Ähnlichkeit](/de/glossary/semantic-similarity/). In der Praxis schlägt die Kombination beider ([hybride Suche](/de/glossary/hybrid-search/)) oft eines allein.
+
+**F: Was sind die Einschränkungen von BM25?**
+
+A: BM25 kann keine Synonyme matchen (Auto ≠ Wagen), versteht keine Bedeutung (nur Termstatistiken) und erfordert, dass Query und Dokument Vokabular teilen.
+
+**F: Warum BM25 statt älterer Varianten (BM11, BM15)?**
+
+A: BM25 kombiniert die besten Eigenschaften früherer Modelle. Die "25" bezieht sich auf die 25. Iteration, die von der TREC-Community entwickelt wurde.
+
+## Verwandte Begriffe
+
+- [TF-IDF](/de/glossary/tf-idf/) — grundlegendes Gewichtungsschema, das BM25 verbessert
+- [Sparse retrieval](/de/glossary/sparse-retrieval/) — Retrieval-Familie zu der BM25 gehört
+- [Inverted index](/de/glossary/inverted-index/) — Datenstruktur für BM25-Suche
+- [Dense retrieval](/de/glossary/dense-retrieval/) — neurale Alternative zu BM25
+
+---
+
+## Referenzen
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [Umfassende BM25-Theorie]
+
+> Robertson et al. (1995), "[Okapi at TREC-3](https://trec.nist.gov/pubs/trec3/papers/city.ps.gz)", TREC. [Originales BM25-Paper]
+
+> Trotman et al. (2014), "[Improvements to BM25 and Language Models Examined](https://dl.acm.org/doi/10.1145/2682862.2682863)", ADCS. [BM25-Parameter-Analyse]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [BM25 vs Neural Vergleich]
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [Comprehensive BM25 theory]
+
+> Robertson et al. (1995), "[Okapi at TREC-3](https://trec.nist.gov/pubs/trec3/papers/city.ps.gz)", TREC. [Original BM25 paper]
+
+> Trotman et al. (2014), "[Improvements to BM25 and Language Models Examined](https://dl.acm.org/doi/10.1145/2682862.2682863)", ADCS. [BM25 parameter analysis]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [BM25 vs neural comparison]

@@ -1,0 +1,76 @@
+---
+term: "Retrieval sensible à la conformité"
+termSlug: "compliance-aware-retrieval"
+short: "Le retrieval sensible à la conformité applique des contraintes (accès, provenance, logs) pour récupérer et citer des sources de manière défendable."
+category: "ai-regulation"
+category_name: "Réglementation IA"
+related: ["ai-governance-framework", "eu-ai-act", "ai-documentation-requirements", "human-oversight", "data-ethics", "authority-ranking-model"]
+synonyms: ["Policy-aware retrieval", "Governance-aware retrieval", "Constrained retrieval"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Le retrieval sensible à la conformité est un design de retrieval où les exigences juridiques, privacy et de gouvernance sont appliquées *avant* et *pendant* la récupération et la [citation](/fr/glossary/citation/). Au lieu de "tout récupérer puis espérer que la réponse soit safe", le système impose des politiques qui contrôlent ce qui peut être récupéré, affiché, cité ou journalisé.
+
+## Pourquoi c'est important
+
+- **Exposition réglementaire** : récupérer les mauvaises données peut constituer un incident de conformité.
+- **Auditabilité** : politiques et logs rendent le comportement vérifiable.
+- **Éthique des données** : soutient minimisation, limitation de finalité et discipline de [provenance](/fr/glossary/source-provenance/).
+- **Confiance** : les sources sont permises, curées et traçables.
+
+## Comment ça fonctionne
+
+On ajoute typiquement une couche "policy" au pipeline :
+
+```
+Requête -> contrôles de conformité -> récupérer sources autorisées -> classer -> citer -> logger pour audit
+```
+
+Contrôles courants :
+
+- Contrôle d’accès (rôles, frontières tenant)
+- Allowlists/denylists de sources et domaines
+- Contraintes de juridiction et de langue
+- Filtres PII / données sensibles (récupération et affichage)
+- Exigences de citation et de provenance
+- Règles de journalisation et de rétention
+
+## Exemple pratique
+
+Une [requête](/fr/glossary/prompt/) pourrait déclencher la récupération de documents clients internes. Le retrieval sensible à la conformité limite la récupération à des sources publiques approuvées (loi, guidance officielle), journalise la décision, et empêche l’exposition ou la citation de documents restreints.
+
+## Questions fréquentes
+
+**Q: Est-ce juste une fonctionnalité sécurité ?**
+
+R: Cela recoupe la sécurité, mais c’est plus large : il s’agit d’obligations légales et de gouvernance (sources autorisées, exigences de logs, disclosures).
+
+**Q: Est-ce que ça dégrade la qualité ?**
+
+R: La recall peut baisser si les politiques sont trop strictes. L’objectif est un compromis entre utilité et défendabilité, avec des contraintes explicites.
+
+## Termes associés
+
+- [AI Governance Framework](/fr/glossary/ai-governance-framework/) - politiques et rôles qui pilotent les contraintes
+- [EU AI Act](/fr/glossary/eu-ai-act/) - exigences influençant les contrôles de retrieval
+- [Exigences de documentation IA](/fr/glossary/ai-documentation-requirements/) - preuves pour audits et utilisateurs
+- [Supervision humaine](/fr/glossary/human-oversight/) - escalade pour cas sensibles/ambigus
+- [Data Ethics](/fr/glossary/data-ethics/) - principes de minimisation et finalité
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - privilégier sources permises et contrôlantes
+
+---
+
+## Références
+
+> Règlement (UE) 2024/1689 (EU AI Act).
+
+> NIST (2023), *[AI Risk Management](/fr/glossary/ai-risk-management/) Framework (AI RMF 1.0)*.
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.

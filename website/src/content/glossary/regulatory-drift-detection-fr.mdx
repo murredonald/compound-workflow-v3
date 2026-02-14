@@ -1,0 +1,68 @@
+---
+term: "Détection de dérive réglementaire"
+termSlug: "regulatory-drift-detection"
+short: "La détection de dérive réglementaire surveille les changements de lois et guidance qui peuvent rendre un système IA (retrieval, réponses, contrôles) obsolète."
+category: "ai-regulation"
+category_name: "Réglementation IA"
+related: ["source-freshness-tracking", "ai-risk-management", "eu-ai-act", "ai-documentation-requirements", "compliance-aware-retrieval"]
+synonyms: ["Regulation change monitoring", "Legal change detection", "Policy drift detection"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La détection de dérive réglementaire consiste à repérer quand des lois, règlements, guidances administratives ou politiques internes changent d’une manière qui impacte un système d’IA. En droit et fiscalité, la "dérive" signifie souvent qu’une réponse auparavant correcte ne l’est plus, car la source sous-jacente a évolué.
+
+## Pourquoi c'est important
+
+- **Mise à jour** : les obligations peuvent évoluer plus vite que les modèles et pipelines.
+- **Contrôle du risque** : une dérive non détectée peut créer un risque de conformité silencieux.
+- **Traçabilité** : facilite la documentation des changements et des mises à jour.
+- **Processus mesurable** : transforme "rester à jour" en démarche contrôlée.
+
+## Comment ça fonctionne
+
+On combine généralement surveillance des sources et déclencheurs opérationnels :
+
+```
+Surveiller sources -> détecter changements -> qualifier impact -> mettre à jour index/prompts -> documenter + revue
+```
+
+Signaux possibles : nouvelles versions de textes, amendements, abrogations, nouvelles circulaires, jurisprudence changeant l’interprétation, ou politiques internes modifiant ce qui peut être retrouvé et exposé.
+
+## Exemple pratique
+
+Un taux ou un seuil de reporting change sur un site officiel. Le système détecte la modification, déclenche une ré-indexation et crée une tâche de revue pour les réponses qui citaient l’ancienne règle.
+
+## Questions fréquentes
+
+**Q: Est-ce la même chose que la dérive du modèle ?**
+
+R: Non. La dérive du modèle concerne les distributions de données et la performance. La dérive réglementaire concerne les *règles* à respecter et à citer.
+
+**Q: Que faire quand une dérive est détectée ?**
+
+R: Au minimum : mettre à jour les sources, relancer les évaluations retrieval/réponses sur les sujets touchés, et enregistrer le changement dans la documentation/logs.
+
+## Termes associés
+
+- [Source Freshness Tracking](/fr/glossary/source-freshness-tracking/) - suivre la fraîcheur des sources
+- [Gestion des risques IA](/fr/glossary/ai-risk-management/) - gérer le risque sur le cycle de vie
+- [EU AI Act](/fr/glossary/eu-ai-act/) - exigences influençant monitoring et contrôles
+- [Exigences de documentation IA](/fr/glossary/ai-documentation-requirements/) - preuves pour audits et utilisateurs
+- [Retrieval sensible à la conformité](/fr/glossary/compliance-aware-retrieval/) - retrieval contraint par règles et policy
+
+---
+
+## Références
+
+> Règlement (UE) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.

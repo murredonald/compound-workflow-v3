@@ -1,0 +1,232 @@
+---
+term: "Benchmarking"
+termSlug: "benchmarking"
+short: "The systematic process of evaluating model performance against standardized datasets and metrics, enabling fair comparison between different models, architectures, and approaches."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["evaluation-metrics", "ground-truth", "leaderboard", "test-set", "model-evaluation"]
+synonyms: ["Model evaluation", "Performance testing", "Comparative testing"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Benchmarking in [machine learning](/en/glossary/machine-learning/) is the systematic evaluation of model performance using standardized datasets, [metrics](/en/glossary/distance-metric/), and evaluation protocols. It enables fair, reproducible comparison between different models, architectures, and approaches. Benchmarks typically consist of: (1) a curated [test dataset](/en/glossary/evaluation-dataset/) with ground truth labels, (2) defined evaluation metrics (accuracy, F1, BLEU, etc.), and (3) standardized evaluation procedures. Well-designed benchmarks drive progress by providing common targets and exposing model weaknesses. However, over-optimization on benchmarks can lead to models that excel at tests but fail in real-world deployment.
+
+## Why it matters
+
+Benchmarking enables systematic AI progress:
+
+- **Model comparison** — objectively compare different approaches
+- **Progress tracking** — measure improvement over time
+- **Reproducibility** — standardized evaluation ensures fair comparison
+- **Research communication** — common vocabulary for reporting results
+- **Model selection** — choose best model for specific use case
+- **Weakness detection** — identify where models fail
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      BENCHMARKING                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WHAT A BENCHMARK IS:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  BENCHMARK = Dataset + Metrics + Protocol           │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  1. STANDARDIZED DATASET                    │   │ │
+│  │  │     ┌─────────────────────────────────────┐ │   │ │
+│  │  │     │  Test Set (held out, never trained) │ │   │ │
+│  │  │     │  • Curated inputs                   │ │   │ │
+│  │  │     │  • Ground truth labels              │ │   │ │
+│  │  │     │  • Representative of task           │ │   │ │
+│  │  │     └─────────────────────────────────────┘ │   │ │
+│  │  │                                              │   │ │
+│  │  │  2. EVALUATION METRICS                      │   │ │
+│  │  │     ┌─────────────────────────────────────┐ │   │ │
+│  │  │     │  Classification: Accuracy, F1, AUC  │ │   │ │
+│  │  │     │  Generation: BLEU, ROUGE, Perplexity│ │   │ │
+│  │  │     │  Retrieval: MRR, NDCG, Recall@K     │ │   │ │
+│  │  │     │  Custom: Task-specific metrics      │ │   │ │
+│  │  │     └─────────────────────────────────────┘ │   │ │
+│  │  │                                              │   │ │
+│  │  │  3. EVALUATION PROTOCOL                     │   │ │
+│  │  │     ┌─────────────────────────────────────┐ │   │ │
+│  │  │     │  • How to preprocess inputs         │ │   │ │
+│  │  │     │  • Inference settings (temp, top-k) │ │   │ │
+│  │  │     │  • What resources are allowed       │ │   │ │
+│  │  │     │  • Submission/evaluation rules      │ │   │ │
+│  │  │     └─────────────────────────────────────┘ │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARKING WORKFLOW:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌───────────┐    ┌───────────┐    ┌───────────┐   │ │
+│  │  │  Model A  │    │  Model B  │    │  Model C  │   │ │
+│  │  └─────┬─────┘    └─────┬─────┘    └─────┬─────┘   │ │
+│  │        │                │                │         │ │
+│  │        ▼                ▼                ▼         │ │
+│  │  ┌─────────────────────────────────────────────┐  │ │
+│  │  │           SAME BENCHMARK                     │  │ │
+│  │  │                                              │  │ │
+│  │  │  ┌─────────────────────────────────────┐   │  │ │
+│  │  │  │          Test Dataset               │   │  │ │
+│  │  │  │  [x1, y1], [x2, y2], ... [xn, yn]  │   │  │ │
+│  │  │  └─────────────────────────────────────┘   │  │ │
+│  │  │                                              │  │ │
+│  │  └─────────────────────────────────────────────┘  │ │
+│  │        │                │                │         │ │
+│  │        ▼                ▼                ▼         │ │
+│  │  ┌─────────────────────────────────────────────┐  │ │
+│  │  │           SAME EVALUATION                    │  │ │
+│  │  │                                              │  │ │
+│  │  │  Model A: Accuracy = 92.3%                  │  │ │
+│  │  │  Model B: Accuracy = 89.7%                  │  │ │
+│  │  │  Model C: Accuracy = 94.1%  ← Winner       │  │ │
+│  │  │                                              │  │ │
+│  │  └─────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  COMMON BENCHMARKS BY DOMAIN:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NLP / LANGUAGE MODELS                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  GLUE/SuperGLUE   Language understanding    │   │ │
+│  │  │  MMLU             Multi-task knowledge      │   │ │
+│  │  │  HellaSwag        Common sense reasoning    │   │ │
+│  │  │  HumanEval        Code generation           │   │ │
+│  │  │  MTEB             Embedding quality         │   │ │
+│  │  │  TruthfulQA       Factuality                │   │ │
+│  │  │  BBH              Big Bench Hard            │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  COMPUTER VISION                                    │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  ImageNet         Image classification      │   │ │
+│  │  │  COCO             Object detection/seg      │   │ │
+│  │  │  CIFAR-10/100     Small image classify      │   │ │
+│  │  │  Pascal VOC       Object detection          │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  RETRIEVAL / RAG                                    │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  BEIR             Zero-shot IR              │   │ │
+│  │  │  MS MARCO         Passage retrieval         │   │ │
+│  │  │  Natural Questions  QA retrieval            │   │ │
+│  │  │  KILT             Knowledge retrieval       │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  MULTIMODAL                                         │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  VQA              Visual QA                 │   │ │
+│  │  │  MSCOCO Captions  Image captioning          │   │ │
+│  │  │  Flickr30k        Image-text retrieval      │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  LEADERBOARD EXAMPLE:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  MMLU Benchmark Leaderboard (example)               │ │
+│  │  ──────────────────────────────────────────────     │ │
+│  │                                                      │ │
+│  │  Rank │ Model           │ Score  │ Date             │ │
+│  │  ─────┼─────────────────┼────────┼────────────────  │ │
+│  │   1   │ GPT-4o          │ 88.7%  │ 2024-05          │ │
+│  │   2   │ Claude 3 Opus   │ 86.8%  │ 2024-03          │ │
+│  │   3   │ Gemini Ultra    │ 83.7%  │ 2024-02          │ │
+│  │   4   │ Llama 3 70B     │ 82.0%  │ 2024-04          │ │
+│  │   5   │ Mistral Large   │ 81.2%  │ 2024-02          │ │
+│  │  ...  │ ...             │ ...    │ ...              │ │
+│  │                                                      │ │
+│  │  ⚠️  Leaderboards change frequently                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BENCHMARK PITFALLS:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Problem              │ Description                  │ │
+│  │  ─────────────────────┼─────────────────────────────│ │
+│  │                       │                              │ │
+│  │  Data                 │ Test data leaks into        │ │
+│  │  contamination        │ training (inflated scores)  │ │
+│  │                       │                              │ │
+│  │  Teaching to          │ Model optimized for test    │ │
+│  │  the test             │ but fails in production     │ │
+│  │                       │                              │ │
+│  │  Benchmark            │ Old benchmarks become too   │ │
+│  │  saturation           │ easy (ceiling effect)       │ │
+│  │                       │                              │ │
+│  │  Narrow               │ Benchmark doesn't capture   │ │
+│  │  evaluation           │ real-world complexity       │ │
+│  │                       │                              │ │
+│  │  Gaming               │ Tricks that boost scores    │ │
+│  │  metrics              │ without real improvement    │ │
+│  │                       │                              │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: What makes a good benchmark?**
+
+A: Diverse, representative test data; clear metrics aligned with real-world goals; resistance to gaming/overfitting; held-out test sets; active maintenance; broad community adoption.
+
+**Q: How do I avoid benchmark overfitting?**
+
+A: Use multiple benchmarks, evaluate on held-out real-world data, monitor production metrics, use human evaluation for open-ended tasks, regularly update evaluation sets.
+
+**Q: Are leaderboard scores reliable?**
+
+A: Partially. Scores are comparable within a benchmark but may not predict real-world performance. Data contamination, hyperparameter tuning on test data, and task-specific optimization limit generalization.
+
+**Q: Should I create my own benchmark?**
+
+A: For production systems, yes—create domain-specific evaluation sets that match your actual use case. Use standard benchmarks for initial model selection, custom evaluations for final validation.
+
+## Related terms
+
+- [Ground truth](/en/glossary/ground-truth/) — [reference](/en/glossary/citation/) labels for evaluation
+- Evaluation metrics — measurement methods used in benchmarks
+- Test set — held-out data for evaluation
+
+---
+
+## References
+
+> Wang et al. (2019), "[SuperGLUE: A Stickier Benchmark for General-Purpose Language Understanding](https://arxiv.org/abs/1905.00537)", NeurIPS. [NLU benchmark design]
+
+> Hendrycks et al. (2021), "[Measuring Massive Multitask Language Understanding](https://arxiv.org/abs/2009.03300)", ICLR. [MMLU benchmark]
+
+> Thakur et al. (2021), "[BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of IR Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarking]
+
+> Dehghani et al. (2021), "[The Benchmark Lottery](https://arxiv.org/abs/2107.07002)", arXiv. [Benchmark limitations]

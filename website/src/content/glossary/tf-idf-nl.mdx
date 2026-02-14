@@ -1,0 +1,195 @@
+---
+term: "TF-IDF"
+termSlug: "tf-idf"
+short: "Term Frequency-Inverse Document Frequency - een statistische maat voor woordbelang in een document ten opzichte van een collectie."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["bm25", "sparse-retrieval", "inverted-index", "embedding"]
+synonyms: ["Term Frequency Inverse Document Frequency", "TF×IDF"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+TF-IDF (Term Frequency-Inverse Document Frequency) is een numerieke statistiek die meet hoe belangrijk een woord is voor een document binnen een collectie. Het vermenigvuldigt twee componenten: termfrequentie (hoe vaak een woord in een document voorkomt) en inverse documentfrequentie (hoe zeldzaam het woord is over alle documenten). Woorden die vaak in één document voorkomen maar zelden in de collectie krijgen hoge TF-IDF-scores, waardoor ze nuttig zijn voor documentkarakterisering, zoekranking en feature-extractie.
+
+## Waarom het belangrijk is
+
+TF-IDF is fundamenteel voor informatieophaling en NLP:
+
+- **Zoekmachines** — vroege Google gebruikte TF-IDF; het blijft relevant in moderne zoeken
+- **Documentgelijkenis** — vergelijk documenten met TF-IDF-vectoren
+- **Feature-extractie** — converteer tekst naar numerieke features voor [ML](/nl/glossary/machine-learning/)-modellen
+- **Keyword-extractie** — identificeer belangrijke termen in documenten
+- **Tekstclassificatie** — traditionele ML-classifiers gebruiken TF-IDF-features
+- **Basis voor BM25** — begrijpen van TF-IDF helpt moderne ranking begrijpen
+
+Ondanks 50+ jaar oud te zijn, liggen TF-IDF-concepten ten grondslag aan moderne zoek- en NLP-systemen.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                        TF-IDF                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DE TF-IDF FORMULE:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  TF-IDF(t, d, D) = TF(t, d) × IDF(t, D)                   │
+│                                                            │
+│  Waar:                                                     │
+│  • t = term                                                │
+│  • d = document                                            │
+│  • D = documentcollectie                                   │
+│                                                            │
+│                                                            │
+│  TERM FREQUENTIE (TF):                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Hoe vaak komt de term voor in DIT document?               │
+│                                                            │
+│  Veelvoorkomende varianten:                                │
+│                                                            │
+│  1. Ruwe telling:                                          │
+│     TF(t,d) = telling van t in d                          │
+│                                                            │
+│  2. Genormaliseerd (gedeeld door doc lengte):             │
+│     TF(t,d) = count(t,d) / total_terms(d)                 │
+│                                                            │
+│  3. Log genormaliseerd:                                    │
+│     TF(t,d) = 1 + log(count(t,d))  als count > 0         │
+│                                                            │
+│  4. Boolean:                                               │
+│     TF(t,d) = 1 als t in d, anders 0                      │
+│                                                            │
+│                                                            │
+│  INVERSE DOCUMENT FREQUENTIE (IDF):                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Hoe ZELDZAAM is deze term over ALLE documenten?          │
+│                                                            │
+│                 N                                          │
+│  IDF(t) = log ─────                                        │
+│               df(t)                                        │
+│                                                            │
+│  Waar:                                                     │
+│  • N     = totaal aantal documenten                        │
+│  • df(t) = aantal documenten met term t                   │
+│                                                            │
+│  Voorbeeld (N = 10.000 documenten):                        │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Term        │ df(t) │ IDF = log(10000/df)         │   │
+│  ├─────────────┼───────┼────────────────────────────┤   │
+│  │ "de"        │ 9.500 │ log(10000/9500) = 0.02     │   │
+│  │ "klimaat"   │ 500   │ log(10000/500)  = 3.00     │   │
+│  │ "mitigatie" │ 50    │ log(10000/50)   = 5.30     │   │
+│  │ "anthropo.."│ 5     │ log(10000/5)    = 7.60     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  Zeldzame termen → hoge IDF → meer onderscheidend        │
+│  Gewone termen → lage IDF → minder nuttig voor ranking   │
+│                                                            │
+│                                                            │
+│  WAAROM TF × IDF VERMENIGVULDIGEN?                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  Document: "Klimaatverandering mitigatiestrategieën voor  │
+│             klimaatadaptatie en klimaatresiliantie"        │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Term        │ TF │ IDF  │ TF-IDF │ Interpretatie  │   │
+│  ├─────────────┼────┼──────┼────────┼────────────────┤   │
+│  │ "klimaat"   │ 3  │ 3.0  │ 9.0    │ Belangrijk     │   │
+│  │ "verand."   │ 1  │ 2.5  │ 2.5    │ Relevant       │   │
+│  │ "mitigatie" │ 1  │ 5.3  │ 5.3    │ Sleutelbegrip  │   │
+│  │ "voor"      │ 1  │ 0.1  │ 0.1    │ Stopwoord      │   │
+│  │ "en"        │ 1  │ 0.05 │ 0.05   │ Stopwoord      │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  "klimaat" scoort hoogst: frequent EN betekenisvol        │
+│  "voor/en" scoren bijna nul: gewone = lage IDF            │
+│                                                            │
+│                                                            │
+│  TF-IDF VECTOR REPRESENTATIE:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  Document wordt vector in vocabulaireruimte:              │
+│                                                            │
+│  Vocab: [adapt, en, verand, klimaat, voor, mitig., ...]   │
+│                                                            │
+│  Doc Vector: [1.2, 0.05, 2.5, 9.0, 0.1, 5.3, ...]        │
+│                                                            │
+│  Eigenschappen:                                            │
+│  • Hoogdimensionaal (vocabulairegrootte, vaak 30K+)       │
+│  • Sparse (meeste termen komen niet voor in document)     │
+│  • Interpreteerbaar (zie welke termen bijdragen)          │
+│                                                            │
+│                                                            │
+│  TF-IDF BEPERKINGEN (OPGELOST DOOR BM25):                  │
+│  ────────────────────────────────────────                  │
+│                                                            │
+│  1. Geen TF-saturatie:                                     │
+│     Term 100× voorkomend = 100× gewicht van 1×            │
+│     (keyword stuffing kwetsbaarheid)                       │
+│                                                            │
+│  2. Slechte lengte-normalisatie:                           │
+│     Langere docs hebben natuurlijk hogere TF              │
+│                                                            │
+│  3. Geen semantisch begrip:                                │
+│     "auto" ≠ "wagen" (vocabulaire mismatch)               │
+│                                                            │
+│  BM25 pakt #1 en #2 aan                                    │
+│  Dense retrieval pakt #3 aan                               │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wanneer moet ik TF-IDF vs BM25 gebruiken?**
+
+A: Gebruik BM25 voor zoekranking—het is strikt beter dan ruwe TF-IDF omdat het termfrequentie-saturatie en documentlengte-normalisatie toevoegt. Gebruik TF-IDF voor feature-extractie in ML-pipelines, documentvectorisatie, of wanneer je een eenvoudige interpreteerbare baseline nodig hebt.
+
+**V: Moet ik stopwoorden verwijderen voor TF-IDF?**
+
+A: Vaak wel. Stopwoorden (de, is, op, welke) hebben sowieso zeer lage IDF, dus ze dragen weinig bij aan TF-IDF-scores. Ze verwijderen vermindert dimensionaliteit en berekening. Echter, voor frase-zoeken of wanneer woordvolgorde belangrijk is, behoud ze.
+
+**V: Hoe verhoudt TF-IDF zich tot word [embeddings](/nl/glossary/embeddings/)?**
+
+A: TF-IDF maakt sparse, interpreteerbare vectoren gebaseerd op termstatistieken. Word embeddings (Word2Vec, BERT) maken dense vectoren die semantische betekenis vangen. TF-IDF is sneller te berekenen, vereist geen training, en is beter interpreteerbaar. [Embeddings](/nl/glossary/vector-embeddings/) vangen semantiek maar zijn langzamer en minder transparant.
+
+**V: Wat is de juiste vocabulairegrootte voor TF-IDF?**
+
+A: Hangt af van je use case. Voor zoeken, neem alle termen op (30K-100K+ vocabulaire). Voor ML-features, beperk tot top N op documentfrequentie (vaak 5K-20K) om dimensionaliteit te verminderen.
+
+## Gerelateerde termen
+
+- [BM25](/nl/glossary/bm25/) — verbeterde rankingfunctie gebaseerd op TF-IDF
+- [Sparse retrieval](/nl/glossary/sparse-retrieval/) — retrieval met TF-IDF-achtige vectoren
+- [Inverted index](/nl/glossary/inverted-index/) — datastructuur voor TF-IDF-zoeken
+- Embedding — dense alternatief voor TF-IDF-vectoren
+
+---
+
+## Referenties
+
+> Salton & Buckley (1988), "[Term-weighting approaches in automatic text retrieval](https://www.sciencedirect.com/science/article/pii/030645738890021X)", Information Processing & Management. [Klassieke TF-IDF-analyse]
+
+> Sparck Jones (1972), "[A statistical interpretation of term specificity and its application in retrieval](https://www.emerald.com/insight/content/doi/10.1108/eb026526/full/html)", Journal of Documentation. [Origineel IDF-concept]
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [TF-IDF tekstboekbehandeling]
+
+> Ramos (2003), "[Using TF-IDF to Determine Word Relevance in Document Queries](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.121.1424)", ICML. [Praktische TF-IDF tutorial]
+
+## References
+
+> Salton & Buckley (1988), "[Term-weighting approaches in automatic text retrieval](https://www.sciencedirect.com/science/article/pii/030645738890021X)", Information Processing & Management. [Classic TF-IDF analysis]
+
+> Sparck Jones (1972), "[A statistical interpretation of term specificity and its application in retrieval](https://www.emerald.com/insight/content/doi/10.1108/eb026526/full/html)", Journal of Documentation. [Original IDF concept]
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [TF-IDF textbook treatment]
+
+> Ramos (2003), "[Using TF-IDF to Determine Word Relevance in Document Queries](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.121.1424)", ICML. [Practical TF-IDF tutorial]

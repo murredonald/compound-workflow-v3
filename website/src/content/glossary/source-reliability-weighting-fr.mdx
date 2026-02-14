@@ -1,0 +1,69 @@
+---
+term: "Pondération de la fiabilité des sources"
+termSlug: "source-reliability-weighting"
+short: "La pondération de fiabilité des sources donne plus d’influence aux sources de confiance pour privilégier les contenus officiels et de qualité."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["authority-ranking-model", "source-conflict-resolution", "relevance-tuning", "search-analytics", "compliance-aware-retrieval"]
+synonyms: ["Trust weighting", "Source quality weighting", "Reliability scoring"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La pondération de la fiabilité des sources est une technique où un système de recherche ou de RAG applique des poids différents selon la confiance accordée à chaque source. La fiabilité reflète notamment la [provenance](/fr/glossary/source-provenance/), le contrôle éditorial, la discipline de mise à jour, et le caractère officiel ou interprétatif d’une source.
+
+## Pourquoi c'est important
+
+- **Réponses plus sûres** : réduit l’influence de contenus de faible qualité.
+- **Meilleur ranking** : aide à départager plusieurs documents pertinents.
+- **[Explicabilité](/fr/glossary/explainability/)** : rend visible la préférence pour des sources officielles.
+- **[Robustesse](/fr/glossary/model-robustness/)** : limite l’impact de contenus bruyants ou optimisés SEO.
+
+## Comment ça fonctionne
+
+La fiabilité est souvent un score ou une métadonnée utilisée dans le ranking et/ou la synthèse :
+
+```
+Récupérer -> score pertinence -> appliquer poids de fiabilité -> classer -> générer avec citations
+```
+
+Exemple de niveaux (droit/fiscalité) :
+
+1. Textes officiels et publications administratives
+2. Jurisprudence primaire (avec métadonnées sur le niveau de juridiction)
+3. Doctrine professionnelle et notes internes curées
+4. Web non vérifié
+
+## Exemple pratique
+
+Sur une obligation déclarative, le système récupère une page officielle et plusieurs billets de blog. La pondération remonte la source officielle et l’utilise comme [citation](/fr/glossary/citation/) principale ; les blogs restent des éléments d’explication secondaires.
+
+## Questions fréquentes
+
+**Q: En quoi est-ce différent d’un modèle de classement par autorité ?**
+
+R: La fiabilité est plus large (confiance, provenance). L’autorité est plus juridique (hiérarchie des normes et sources contrôlantes). Souvent, on combine les deux.
+
+**Q: Est-ce manipulable ?**
+
+R: Moins que la pertinence "mots-clés", mais oui si la liste de sources n’est pas maîtrisée. Les bons systèmes contrôlent les domaines autorisés et la provenance, et reviennent sur les sources à fort impact.
+
+## Termes associés
+
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - privilégier les sources contrôlantes
+- [Source Conflict Resolution](/fr/glossary/source-conflict-resolution/) - gérer des sources contradictoires
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - optimiser ranking et évaluation
+- [Search Analytics](/fr/glossary/search-analytics/) - suivre qualité et dérive
+- [Retrieval sensible à la conformité](/fr/glossary/compliance-aware-retrieval/) - contraindre les sources par policy et règles
+
+---
+
+## Références
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

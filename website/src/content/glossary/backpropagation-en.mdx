@@ -1,0 +1,124 @@
+---
+term: "Backpropagation"
+termSlug: "backpropagation"
+short: "An algorithm that efficiently computes gradients by propagating errors backward through a neural network layer by layer."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["gradient-descent", "loss-function", "neural-network", "deep-learning"]
+synonyms: ["Backprop", "Backward propagation", "Reverse-mode autodiff"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Backpropagation (backward propagation of errors) is the algorithm that enables neural networks to learn by efficiently calculating how much each parameter contributes to the total error. It works by using the chain rule of calculus to propagate the loss gradient backward through the network, layer by layer, from output to input. This allows gradient descent to update millions of parameters efficiently.
+
+## Why it matters
+
+Backpropagation makes deep learning possible:
+
+- **Efficiency** — computes all gradients in a single backward pass
+- **Scalability** — handles networks with billions of parameters
+- **Foundational** — core algorithm behind all neural network training
+- **Automatic** — modern frameworks handle it automatically (autograd)
+- **Universal** — works for any differentiable computation graph
+
+Without backpropagation, training deep networks would be computationally infeasible.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     BACKPROPAGATION                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  FORWARD PASS: Compute predictions                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  Input → [Layer 1] → [Layer 2] → [Layer 3] → Output       │
+│    x        h₁          h₂          h₃        ŷ           │
+│          (hidden)    (hidden)    (hidden)                  │
+│                                                            │
+│  LOSS COMPUTATION:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  L = Loss(ŷ, y)    # Compare prediction to target         │
+│                                                            │
+│  BACKWARD PASS: Propagate gradients                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Input ← [Layer 1] ← [Layer 2] ← [Layer 3] ← Loss         │
+│         ∂L/∂W₁     ∂L/∂W₂     ∂L/∂W₃     ∂L/∂ŷ           │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  CHAIN RULE IN ACTION:                        │        │
+│  │                                                │        │
+│  │  ∂L/∂W₁ = ∂L/∂ŷ × ∂ŷ/∂h₃ × ∂h₃/∂h₂ × ∂h₂/∂W₁│        │
+│  │                                                │        │
+│  │  Each layer multiplies incoming gradient      │        │
+│  │  by its local derivative                      │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  COMPUTATIONAL GRAPH VIEW:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│       Forward ──►                                          │
+│       ◄── Backward                                         │
+│                                                            │
+│    x ──┬──► W₁·x ──┬──► σ(·) ──┬──► W₂·h ──► Loss         │
+│        │           │           │                           │
+│        └─── ∂/∂W₁ ─┴─── ∂/∂h ──┴─── ∂/∂W₂                 │
+│                                                            │
+│  TIME COMPLEXITY:                                          │
+│  ────────────────                                          │
+│  Forward:  O(n)  where n = number of operations           │
+│  Backward: O(n)  same as forward (efficient!)             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Key concepts:**
+| Concept | Description |
+|---------|-------------|
+| Chain rule | Derivative of composition = product of derivatives |
+| Local gradient | Each node computes its own partial derivative |
+| Gradient flow | Gradients multiply as they propagate backward |
+| Autograd | Automatic differentiation in frameworks (PyTorch, TensorFlow) |
+
+## Common questions
+
+**Q: Why is backpropagation efficient?**
+
+A: It computes all parameter gradients in a single backward pass (same cost as forward pass), rather than computing each gradient separately. For N parameters, this is O(N) instead of O(N²).
+
+**Q: What are vanishing and exploding gradients?**
+
+A: When gradients multiply through many layers, they can become extremely small (vanishing) or large (exploding). This makes training deep networks difficult. Solutions include residual connections, layer normalization, and careful initialization.
+
+**Q: Do I need to implement backpropagation manually?**
+
+A: No—modern frameworks like PyTorch and TensorFlow implement automatic differentiation (autograd). You define the forward computation and the framework handles gradients automatically.
+
+**Q: What's the relationship between backpropagation and gradient descent?**
+
+A: Backpropagation computes the gradients; gradient descent uses those gradients to update parameters. They're separate algorithms that work together: backprop calculates, gradient descent applies.
+
+## Related terms
+
+- [Gradient Descent](/en/glossary/gradient-descent/) — uses backprop gradients
+- [Loss Function](/en/glossary/loss-function/) — what backprop differentiates
+- [Neural Network](/en/glossary/neural-network/) — trained via backprop
+- [Deep Learning](/en/glossary/deep-learning/) — enabled by backprop
+
+---
+
+## References
+
+> Rumelhart et al. (1986), "[Learning representations by back-propagating errors](https://www.nature.com/articles/323533a0)", Nature. [30,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Baydin et al. (2018), "[Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767)", JMLR. [2,000+ citations]
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]

@@ -1,0 +1,71 @@
+---
+term: "Compliance-Aware Retrieval"
+termSlug: "compliance-aware-retrieval"
+short: "Compliance-aware retrieval applies governance and regulatory constraints (access, provenance, logging) so systems retrieve and cite sources in a defensible way."
+category: "ai-regulation"
+category_name: "AI Regulation"
+related: ["ai-governance-framework", "eu-ai-act", "ai-documentation-requirements", "human-oversight", "data-ethics", "authority-ranking-model"]
+synonyms: ["Policy-aware retrieval", "Governance-aware retrieval", "Constrained retrieval"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Compliance-aware retrieval is a retrieval design where legal, privacy, and governance requirements are enforced *before* and *during* retrieval and [citation](/en/glossary/citation/). Instead of "retrieve everything and hope the answer is safe", the system uses policies to control what can be retrieved, shown, cited, or logged.
+
+## Why it matters
+
+- **Regulatory exposure**: retrieving the wrong data can be a compliance incident even if the final answer is correct.
+- **Audit readiness**: policies and logs make behavior reviewable.
+- **Data ethics**: supports minimization, purpose limitation, and [provenance](/en/glossary/source-provenance/) discipline.
+- **Trust**: users can see that sources are curated, permitted, and traceable.
+
+## How it works
+
+Compliance-aware retrieval typically adds a policy layer to the [retrieval pipeline](/en/glossary/retrieval-pipeline/):
+
+```
+Query -> policy checks -> retrieve allowed sources -> rank -> cite -> log for audit
+```
+
+Common controls include:
+
+- Access control ([role-based permissions](/en/glossary/role-based-access-control/), tenant boundaries)
+- Allowlists/denylists for sources and domains
+- Jurisdiction and language constraints
+- PII and sensitive-data filters (what can be retrieved or displayed)
+- Mandatory citation and provenance requirements
+- Logging and retention rules for evidence
+
+## Practical example
+
+A user asks a question that could trigger retrieval of internal client documents. Compliance-aware retrieval restricts retrieval to approved public sources (law, official guidance), logs the decision, and prevents the system from citing or exposing restricted materials.
+
+## Common questions
+
+**Q: Isn’t this just a security feature?**
+
+A: It overlaps with security, but it is broader: it’s about meeting legal and governance obligations (what sources you can use, what you must log, and what you must disclose).
+
+**Q: Does it reduce answer quality?**
+
+A: It can reduce recall if policies are overly strict. The goal is to balance usefulness with defensibility, and make constraints explicit.
+
+## Related terms
+
+- [AI Governance Framework](/en/glossary/ai-governance-framework/) - policies and roles that drive constraints
+- [EU AI Act](/en/glossary/eu-ai-act/) - compliance obligations that shape retrieval controls
+- [AI Documentation Requirements](/en/glossary/ai-documentation-requirements/) - evidence for audits and users
+- [Human Oversight](/en/glossary/human-oversight/) - escalation for sensitive or ambiguous cases
+- [Data Ethics](/en/glossary/data-ethics/) - principles like minimization and purpose limitation
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - prefer controlling, permitted sources
+
+---
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+
+> NIST (2023), *AI Risk Management Framework (AI RMF 1.0)*.
+

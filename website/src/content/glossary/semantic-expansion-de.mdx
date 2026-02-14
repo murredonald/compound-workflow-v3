@@ -1,0 +1,62 @@
+---
+term: "Semantische Erweiterung"
+termSlug: "semantic-expansion"
+short: "Semantische Erweiterung verbreitert eine Query um verwandte Begriffe oder Bedeutungen (Synonyme, Entitäten, Embeddings), um Recall zu erhöhen, ohne den Intent zu verlieren."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["query-understanding", "query-intent", "embeddings", "full-text-search", "relevance-tuning"]
+synonyms: ["Query expansion", "Semantische Query-Expansion", "Synonym-Expansion"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Semantische Erweiterung (oft [Query Expansion](/de/glossary/query-expansion/)) ergänzt eine Anfrage um bedeutungsnahe Alternativen wie Synonyme, verwandte Konzepte oder Entitätsvarianten. So werden relevante Inhalte gefunden, auch wenn sie nicht exakt die gleichen Wörter enthalten.
+
+## Warum es wichtig ist
+
+- **Höherer Recall**: deckt verschiedene Formulierungen ab.
+- **Bessere Domänenabdeckung**: verbindet Abkürzungen, Zitate und Fachsprache.
+- **Bessere UX**: weniger Nulltreffer und weniger Reformulierungen.
+- **Hybrid-fähig**: kann Volltext- und [Vektor-Retrieval](/de/glossary/dense-retrieval/) unterstützen.
+
+## Wie es funktioniert
+
+```
+Query -> Verständnis -> sichere Expansion -> Retrieval -> Ranking -> Validierung via Analytics
+```
+
+Quellen sind u.a. kuratierte Synonymlisten, Taxonomien und Embedding-Nachbarn. Die wichtigste Herausforderung ist, den Intent nicht zu verändern.
+
+## Praktisches Beispiel
+
+Wenn Nutzer "CIR92" suchen, kann die Expansion auch "WIB92" und "[Code des impôts sur les revenus](/de/glossary/wib-cir/)" hinzufügen, damit dieselbe Rechtsquelle über Sprachvarianten hinweg gefunden wird.
+
+## Häufige Fragen
+
+**Q: Warum kann Expansion Relevanz verschlechtern?**
+
+A: Zu breite Expansion erzeugt Rauschen. Gute Systeme expandieren selektiv, gewichten Zusatzbegriffe niedriger und überwachen den Effekt.
+
+**Q: Ist das dasselbe wie Synonyme im Index?**
+
+A: Verwandt, aber nicht identisch. Expansion kann zur Query-Zeit oder zur Index-Zeit passieren. Query-time ist oft einfacher zu auditieren und anzupassen.
+
+## Verwandte Begriffe
+
+- [Query-Verständnis](/de/glossary/query-understanding/) - Bedeutung verstehen vor Expansion
+- [Suchintention](/de/glossary/query-intent/) - Expansion am Ziel ausrichten
+- [Embeddings](/de/glossary/embeddings/) - Grundlage für Bedeutungsnähe
+- [Volltextsuche](/de/glossary/full-text-search/) - Keyword-Varianten hinzufügen
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Impact messen und nachjustieren
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

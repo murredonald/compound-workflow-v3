@@ -1,0 +1,232 @@
+---
+term: "Attributie"
+termSlug: "attribution"
+short: "Het AI-vermogen om gegenereerde uitspraken te koppelen aan specifiek bronbewijs, waarbij wordt vastgesteld welke delen van de output door welke documenten worden ondersteund."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["citation", "grounding", "rag", "factuality"]
+synonyms: ["Bronattributie", "Bewijskoppeling", "Claimattributie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Attributie in AI-systemen verwijst naar het proces van het leggen van expliciete verbindingen tussen gegenereerde claims en hun ondersteunend bewijs. Terwijl citatie referenties toevoegt aan antwoorden, gaat attributie dieper—het bepaalt of een specifieke claim daadwerkelijk wordt geïmpliceerd door (logisch ondersteund door) de geciteerde bron. Een goed geattribueerd AI-systeem kan "Welk bewijs ondersteunt deze uitspraak?" beantwoorden voor elke feitelijke claim die het maakt. Attributie is cruciaal voor [betrouwbare AI](/nl/glossary/responsible-ai/) omdat het verificatie mogelijk maakt en de illusie van grounding voorkomt.
+
+## Waarom het belangrijk is
+
+Attributie is essentieel voor verantwoordelijke AI:
+
+- **Voorkomt valse grounding** — zorgt dat geciteerde bronnen claims daadwerkelijk ondersteunen
+- **Maakt auditing mogelijk** — elke claim traceerbaar naar specifiek bewijs
+- **Ondersteunt compliance** — regelgevingsvereisten voor beslissingstransparantie
+- **Bouwt vertrouwen** — gebruikers kunnen de [redeneringsketen](/nl/glossary/chain-of-thought/) verifiëren
+- **Vangt hallucinaties** — niet-geattribueerde claims worden gemarkeerd
+- **Verbetert betrouwbaarheid** — dwingt model bij bronnen te blijven
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      ATTRIBUTIE                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CITATIE vs ATTRIBUTIE:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ALLEEN CITATIE (kan oppervlakkig zijn):                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Antwoord: "De deadline is 15 jan [1]"              │ │
+│  │  Bron [1]: "Q4 planning moet voor dec klaar zijn"  │ │
+│  │                                                      │ │
+│  │  ⚠️ Citatie bestaat maar ondersteunt claim niet!   │ │
+│  │  De bron zegt niets over 15 januari deadline.       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  JUISTE ATTRIBUTIE:                                        │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Antwoord: "De deadline is 15 jan [1]"              │ │
+│  │  Bron [1]: "Finale oplevering deadline 15 januari" │ │
+│  │                                                      │ │
+│  │  ✓ Attributie geverifieerd: bron impliceert claim  │ │
+│  │  De bron stelt expliciet de deadline.               │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIE CLASSIFICATIE:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  Voor elk claim + geciteerde bron paar:                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ATTRIBUEERBAAR (bron ondersteunt claim):          │ │
+│  │  ├── Exacte match: claim gebruikt zelfde woorden   │ │
+│  │  ├── Parafrase: claim herformuleert bronbetekenis  │ │
+│  │  └── Inferentie: claim volgt logisch uit bron      │ │
+│  │                                                      │ │
+│  │  NIET ATTRIBUEERBAAR (bron ondersteunt niet):      │ │
+│  │  ├── Irrelevant: bron bespreekt ander onderwerp    │ │
+│  │  ├── Tegengesproken: bron zegt tegenovergestelde   │ │
+│  │  ├── Geëxtrapoleerd: claim gaat voorbij bron       │ │
+│  │  └── Gefabriceerd: geen bronrelatie                │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIE PIPELINE:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. CLAIM EXTRACTIE                                  │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Antwoord: "Omzet groeide 15% [1] en markt- │   │ │
+│  │  │  aandeel steeg naar 23% [2] in Q4."         │   │ │
+│  │  │                                              │   │ │
+│  │  │  Geëxtraheerde claims:                       │   │ │
+│  │  │  • Claim A: "Omzet groeide 15%" [citeert 1] │   │ │
+│  │  │  • Claim B: "Marktaandeel is 23%" [citeert 2]│  │ │
+│  │  │  • Claim C: "Dit was in Q4" [citeert ?]     │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  2. BRON OPHALEN                                    │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Bron [1]: "FY24 zag omzetgroei van 15,2%   │   │ │
+│  │  │            vergeleken met vorig jaar"        │   │ │
+│  │  │                                              │   │ │
+│  │  │  Bron [2]: "Marktaandeel bereikte 22,8%     │   │ │
+│  │  │            einde fiscaal jaar"               │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  3. IMPLICATIE VERIFICATIE                          │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Claim A: "Omzet groeide 15%"               │   │ │
+│  │  │  Bron 1: "omzetgroei van 15,2%"             │   │ │
+│  │  │  → ATTRIBUEERBAAR ✓ (15% ≈ 15,2%)          │   │ │
+│  │  │                                              │   │ │
+│  │  │  Claim B: "Marktaandeel is 23%"             │   │ │
+│  │  │  Bron 2: "Marktaandeel bereikte 22,8%"      │   │ │
+│  │  │  → ATTRIBUEERBAAR ✓ (23% ≈ 22,8%)          │   │ │
+│  │  │                                              │   │ │
+│  │  │  Claim C: "Dit was in Q4"                   │   │ │
+│  │  │  Bronnen: noemen "FY" en "fiscaal jaar"     │   │ │
+│  │  │  → NIET ATTRIBUEERBAAR ⚠️ (Q4 niet genoemd)│   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  4. ATTRIBUTIE SCORE                                │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Antwoord attributiescore:                   │   │ │
+│  │  │  • 2 van 3 claims juist geattribueerd       │   │ │
+│  │  │  • Score: 66,7%                              │   │ │
+│  │  │                                              │   │ │
+│  │  │  Acties:                                     │   │ │
+│  │  │  • Markeer Claim C voor review              │   │ │
+│  │  │  • Of: Verwijder/herformuleer Claim C       │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIE METHODEN:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  NLI-gebaseerd (Natural Language Inference):              │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Gebruik NLI model om te classificeren:             │ │
+│  │  Premisse: [brontekst]                               │ │
+│  │  Hypothese: [claim]                                  │ │
+│  │                                                      │ │
+│  │  → Implicatie: Bron ondersteunt claim ✓            │ │
+│  │  → Neutraal: Bron behandelt claim niet             │ │
+│  │  → Tegenstrijdig: Bron weerspreekt claim ✗         │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  LLM-gebaseerde verificatie:                              │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt LLM:                                         │ │
+│  │  "Ondersteunt de volgende bron deze claim?         │ │
+│  │                                                      │ │
+│  │   Bron: [brontekst]                                  │ │
+│  │   Claim: [claimtekst]                                │ │
+│  │                                                      │ │
+│  │   Antwoord: Ondersteund / Niet ondersteund"        │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIE METRIEKEN:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Metriek          │  Formule                        │ │
+│  │  ─────────────────┼──────────────────────────────── │ │
+│  │  Attributie       │  # geattribueerde claims        │ │
+│  │  precisie         │  ─────────────────────          │ │
+│  │                   │  # claims met citaties          │ │
+│  │                   │                                  │ │
+│  │  Attributie       │  # geattribueerde claims        │ │
+│  │  recall           │  ─────────────────────          │ │
+│  │                   │  # totaal feitelijke claims     │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt attributie van citatie?**
+
+A: Citatie voegt referenties toe; attributie verifieert ze. Een antwoord kan perfecte citaties hebben (elke claim heeft [1], [2], [3]) maar slechte attributie (de geciteerde bronnen ondersteunen de claims niet daadwerkelijk). Attributie is de kwaliteitscontrole op citaties.
+
+**V: Hoe implementeer ik attributieverificatie?**
+
+A: Veelgebruikte benaderingen: (1) NLI-modellen die premisse-hypothese paren classificeren, (2) [LLM](/nl/glossary/llm/)-als-beoordelaar prompting om bron-claim ondersteuning te verifiëren, (3) Menselijke evaluatie voor high-stakes toepassingen.
+
+**V: Moet elke claim geattribueerd zijn?**
+
+A: Feitelijke claims die bewijs vereisen moeten geattribueerd zijn. Algemene kennis, logische [inferenties](/nl/glossary/inference/) afgeleid van geattribueerde feiten, en meningen/analyses vereisen geen attributie.
+
+**V: Wat is een acceptabele attributiescore?**
+
+A: Hangt af van de toepassing. High-stakes domeinen (juridisch, medisch) moeten 95%+ nastreven. Algemene kennisassistenten accepteren mogelijk 80-90%.
+
+## Gerelateerde termen
+
+- [Citatie](/nl/glossary/citation/) — bronreferenties toevoegen
+- [Grounding](/nl/glossary/grounding/) — verankeren aan bronnen
+- [Feitelijkheid](/nl/glossary/factuality/) — nauwkeurigheid van claims
+- [RAG](/nl/glossary/rag/) — retrieval die attributie mogelijk maakt
+
+---
+
+## Referenties
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [AIS metriek en attributie-evaluatie]
+
+> Bohnet et al. (2022), "[Attributed Question Answering](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [LLM-gebaseerde attributie-evaluatie]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Attributie-gebaseerde revisie]
+
+## References
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [AIS metric and attribution evaluation]
+
+> Bohnet et al. (2022), "[Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [LLM-based attribution evaluation]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Attribution-based revision]

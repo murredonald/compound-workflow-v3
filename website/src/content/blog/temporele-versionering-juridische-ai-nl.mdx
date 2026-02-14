@@ -1,0 +1,151 @@
+---
+title: "Wat is temporele versionering — en waarom uw juridische AI-tool u waarschijnlijk de wet van gisteren serveert"
+description: "Belgische fiscale wetgeving verandert minstens twee keer per jaar. Als uw AI-tool 2019 niet van 2026 kan onderscheiden, is het antwoord niet fout — het is gewoon voor het verkeerde jaar. Dit is wat temporele versionering is en waarom het ertoe doet."
+publishDate: 2026-02-19
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Vertrouwen & transparantie"
+tags: ["temporele versionering", "point-in-time retrieval", "Belgische fiscaliteit", "juridische AI", "data-versheid"]
+locale: "nl"
+draft: false
+---
+
+Het Belgische vennootschapsbelastingtarief is 25%. Het is ook 29,58%. En 33,99%. Alle drie zijn correct — afhankelijk van wanneer u het vraagt.
+
+Voor 2018: 33,99%. Vanaf 2018: 29,58% (29% basistarief plus crisisaanslag). Vanaf 2020: 25%. Drie verschillende tarieven in zeven jaar, elk van toepassing op verschillende aanslagjaren, elk het juiste antwoord voor het juiste moment in de tijd.
+
+Vraag een generieke AI-tool "wat is het Belgische vennootschapsbelastingtarief?" en u krijgt één getal. U krijgt niet te horen voor welke periode dit geldt. U krijgt niet te horen dat het drie jaar geleden anders was. U krijgt niet te horen dat de belastingaangifte 2019 van een cliënt een volledig ander tarief gebruikt dan een aangifte 2024.
+
+Dit is het temporele versioneringsprobleem — en het treft elke vraag in de Belgische fiscale wetgeving.
+
+![Tijdlijn die toont hoe Belgische fiscale bepalingen veranderen in de tijd door programmawetten](/blog/temporele-versionering-juridische-ai/version-timeline-nl-dark.png)
+
+## Wat temporele versionering betekent
+
+**Temporele versionering** is het vermogen om meerdere versies van dezelfde wettelijke bepaling in de tijd bij te houden en de correcte versie op te halen voor een specifieke datum of periode.
+
+Elke wetgeving heeft een levenscyclus. Ze wordt op één datum aangenomen, treedt op een andere in werking, wordt op een derde gewijzigd, en kan op een vierde worden ingetrokken. Een bepaling die vandaag bestaat, bestond vorig jaar misschien niet. Een tarief dat dit jaar geldt, geldt volgend jaar misschien niet.
+
+In een temporeel geversioneerd systeem draagt elke bepaling metadata:
+
+- **effective_from** — wanneer de bepaling in werking treedt
+- **effective_to** — wanneer ze ophoudt te gelden (of "huidig" indien nog van kracht)
+- **assessment_year** — voor fiscale bepalingen, welk(e) aanslagjaar/jaren ze dekt
+- **amendment_chain** — welke eerdere versie ze verving, en wat haar verving
+
+Zonder deze metadata is een juridische databank een momentopname. Ermee wordt het een tijdlijn.
+
+> De vraag is nooit alleen "wat zegt de wet?" Het is altijd "wat zei de wet *wanneer*?"
+
+## Waarom de Belgische fiscale wetgeving dit bijzonder moeilijk maakt
+
+De Belgische fiscale wetgeving verandert voortdurend. De federale overheid stemt minstens twee keer per jaar **programmawetten** — doorgaans in juni en december als onderdeel van de begrotingscyclus. Aanvullende wetten, koninklijke besluiten en omzendbrieven worden doorheen het jaar gepubliceerd.
+
+Alleen al in 2023-2024 kende de Belgische fiscaliteit:
+
+- **Afschaffing** van de notionele interestaftrek (omnibus-wet december 2022, van kracht voor belastbare periodes eindigend vanaf 31 december 2023)
+- **Invoering** van Pillar Two minimumbelasting van 15% (Income Inclusion Rule vanaf 31 december 2023; Undertaxed Profits Rule vanaf 31 december 2024)
+- **Invoering** van een meerwaardebelasting van 10% (van kracht vanaf 1 januari 2026, met bescherming van pre-2026 meerwaarden aan de hand van de waarde op 31 december 2025)
+- **Hervorming** van de gewestelijke successierechten in Vlaanderen (2026) en Wallonië (2028) — zelfde land, verschillende inwerkingtredingsdata
+
+Elk van deze wijzigingen creëert een nieuwe versie van één of meerdere wettelijke bepalingen. Elke versie heeft verschillende toepassingsregels. Elke versie is het correcte antwoord — voor haar periode.
+
+### De valkuil van het aanslagjaar
+
+De Belgische fiscaliteit voegt een extra complexiteitslaag toe: het onderscheid tussen **inkomstenjaar** en **aanslagjaar**. Het aanslagjaar is altijd het jaar na het inkomstenjaar — dus aanslagjaar 2026 dekt inkomsten verdiend in 2025.
+
+Wijzigingen in de fiscale wetgeving worden vaak uitgedrukt als "van toepassing vanaf aanslagjaar X." Voor een onderneming met een boekjaar eindigend op 31 maart, dekt aanslagjaar 2026 inkomsten van 1 april 2024 tot 31 maart 2025. Voor een onderneming met een kalenderjaar als boekjaar, dekt het 1 januari tot 31 december 2025.
+
+Zelfde aanslagjaar. Verschillende kalenderperiodes. Verschillende toepasselijke wetgeving.
+
+Een systeem dat enkel kalenderdatums bijhoudt, zal dit verkeerd krijgen. Een systeem dat de relatie begrijpt tussen inkomstenjaar, aanslagjaar en afsluitdatum van het boekjaar, zal het juist krijgen.
+
+## Wat er gebeurt zonder temporeel bewustzijn
+
+Zonder temporele versionering komen drie veelvoorkomende fouten voor:
+
+**1. Huidige wetgeving serveren voor historische vragen.** Een cliënt vraagt naar een transactie uit 2019. Het systeem geeft het vennootschapsbelastingtarief van 2026 (25%) in plaats van het tarief van 2019 (29,58%). Het verschil: 4,58 procentpunten op de volledige belastbare grondslag.
+
+**2. Ingetrokken bepalingen als huidig serveren.** De notionele interestaftrek was bijna twee decennia lang een hoeksteen van de Belgische vennootschapsbelastingplanning. Ze werd afgeschaft met ingang van 2023 — maar de voorraad over te dragen aftrek uit vorige jaren blijft aftrekbaar. Een systeem zonder versieregistratie zou ofwel de afschaffing kunnen missen, ofwel de uitzondering voor overdracht.
+
+**3. Overgangsregels missen.** De nieuwe meerwaardebelasting beschermt pre-2026 meerwaarden door de waarde op 31 december 2025 te gebruiken als aankoopbasis. Dit is een overgangsregel die enkel geldt voor contracten die bestonden vóór de wet in werking trad. Zonder temporeel bewustzijn kan het systeem geen onderscheid maken tussen een contract geopend in 2024 en één geopend in 2027.
+
+Elke foutmodus produceert antwoorden die correct lijken — ze citeren echte wetgeving, gebruiken de juiste artikelnummers, passen de juiste logica toe — maar voor het verkeerde tijdstip.
+
+## Het databaseachterstanden-probleem
+
+Zelfs als een systeem bedoeld is om actueel te zijn, bestaat er een structurele vertraging tussen wetgeving en beschikbaarheid:
+
+- Het **Belgisch Staatsblad / Moniteur Belge** publiceert dagelijks (uitsluitend elektronisch sinds 2003)
+- De **wetgevende index** wordt bijgewerkt D+1 — één dag na publicatie
+- **Geconsolideerde volledige teksten** in databanken kunnen **3 tot 5 maanden** achterlopen voor oudere bepalingen
+
+Dit betekent dat een bepaling die vandaag gepubliceerd wordt, morgen als een ruwe wijziging kan verschijnen, maar pas maanden later in geconsolideerde teksten kan worden weergegeven. Tijdens dat tijdvenster geeft een full-text zoekopdracht op de geconsolideerde versie de oude wet terug, terwijl de wijziging alleen in het staatsblad bestaat.
+
+Een temporeel bewust systeem houdt beide bij: de wijziging zoals gepubliceerd, en de eerdere versie die ze wijzigt — met een duidelijke indicatie van welke wanneer geldt.
+
+## Hoe bestaande systemen hiermee omgaan
+
+**EUR-Lex** (voor EU-wetgeving) biedt geconsolideerde versies die de handeling tonen zoals van toepassing op een specifiek tijdstip. Gebruikers kunnen alle versies bekijken en wijzigingen vergelijken. Maar deze geconsolideerde teksten hebben geen rechtskracht — het is enkel documentatie.
+
+**Jura** (Wolters Kluwer België) bevat geconsolideerde wetgeving sinds 2000 en biedt inmiddels zij-aan-zij vergelijking van wetversies met gemarkeerde verschillen.
+
+**Generieke AI-tools** — ChatGPT, [Perplexity](/nl/glossary/perplexity/), Claude — hebben niets van dit alles. Hun trainingsdata heeft een kenniscutoff. Ze kunnen niet onderscheiden tussen huidige en vroegere versies van een bepaling. Ze kunnen u niet vertellen wat de wet zei op een specifieke datum. Ze weten niet dat de wet die ze citeren zes maanden na het samenstellen van hun trainingsdata werd gewijzigd.
+
+Dit is geen beperking die kan worden opgelost met een groter model of betere training. Het is een architecturele kloof — de afwezigheid van temporele metadata in de datalaag van het systeem.
+
+## Het keerpunt van 2026
+
+De invoering van België's eerste algemene meerwaardebelasting op 1 januari 2026 creëert de meest significante temporele grens in de recente Belgische fiscale geschiedenis.
+
+Voor 2026: geen belasting op meerwaarden uit financiële instrumenten (voor particulieren). Na 2026: 10% op gerealiseerde meerwaarden boven een jaarlijkse vrijstelling van €10.000. De aankoopwaarde voor pre-2026 contracten wordt gefixeerd op de marktwaarde op 31 december 2025.
+
+Elk TAK 23-contract, elke beleggingsportefeuille, elke ETF-positie heeft nu een temporele splitsing: de meerwaarde vóór de afsluitingsdatum (niet belast) en de meerwaarde erna (belast aan 10%). Elk systeem dat "voor 1 januari 2026" niet kan onderscheiden van "na 1 januari 2026" zal de belastbare meerwaarde verkeerd berekenen.
+
+Voeg hierbij de gewestelijke successierechthervormingen — Vlaanderen vanaf 2026, Wallonië vanaf 2028, Brussel ongewijzigd — en een enkele estate planning-vraag vereist nu temporele precisie over meerdere rechtsbevoegdheden met verschillende hervormingstijdlijnen.
+
+## Wat temporele versionering architecturaal vereist
+
+Temporele versionering bouwen is geen feature toggle. Het vereist structurele beslissingen op elke laag:
+
+**Ingestie**: Elk document moet worden geparseerd voor ingangsdatums, wijzigingsverwijzingen en intrekkingsclausules. Dit gaat verder dan full-text indexering — het vereist begrip van de wetgevende structuur van het document.
+
+**Opslag**: Elke bepaling bestaat als een versieketen, niet als een enkel record. Versie N verwijst naar Versie N-1 (wat ze verving) en Versie N+1 (wat haar verving, indien van toepassing). Elke versie draagt haar ingangsdatumbereik.
+
+**Opvraging**: Wanneer een gebruiker een vraag stelt, moet het systeem de relevante tijdsperiode bepalen — ofwel expliciet vermeld ofwel afgeleid uit context — en enkel de bepalingen ophalen die tijdens die periode van kracht waren.
+
+**Presentatie**: De output moet aangeven welke versie van de wet ze citeert, wanneer die versie in werking trad, en of er een nieuwere versie bestaat.
+
+Dit is architecturaal kostbaar. Het is waarom de meeste juridische AI-tools het niet aanbieden. Full-text zoekopdrachten op een [corpus](/nl/glossary/corpus/) met huidige staat is aanzienlijk eenvoudiger en goedkoper dan het onderhouden van een temporeel geïndexeerde versiegrafiek.
+
+Maar voor de Belgische fiscale wetgeving — waar het vennootschapsbelastingtarief drie keer in zeven jaar veranderde, waar een nieuwe meerwaardebelasting een harde temporele grens creëert, waar gewestelijke hervormingen in verschillende jaren in werking treden — is temporele precisie niet optioneel. Het is het verschil tussen een correct antwoord en een correct antwoord voor het verkeerde jaar.
+
+---
+
+## Gerelateerde artikelen
+
+- [Wat is authority ranking — en waarom uw juridische AI-tool het waarschijnlijk negeert →](/blog/authority-ranking-juridische-ai-nl)
+- [Wat is confidence scoring — en waarom het eerlijker is dan een zelfverzekerd antwoord →](/blog/confidence-scoring-uitgelegd-nl)
+- [Case study: TAK 23 — waarom één product vijf fiscale antwoorden nodig heeft →](/blog/case-study-tak-23-cross-domain-nl)
+
+---
+
+## Hoe Auryth TX dit toepast
+
+Elke bepaling in ons systeem draagt een ingangsdatum. Toen het vennootschapsbelastingtarief veranderde van 29,58% naar 25%, vervingen we het oude record niet — we voegden een nieuwe versie toe gekoppeld aan de vorige, met de ingangsdatum van de wijziging.
+
+Wanneer u Auryth TX een vraag stelt, identificeert het systeem de relevante tijdsperiode en haalt het enkel de bepalingen op die tijdens die periode van kracht waren. Als u vraagt naar een transactie uit 2019, krijgt u de wet van 2019. Als u vraagt naar een transactie uit 2026, krijgt u de wet van 2026. Als u vraagt naar de meerwaardebelasting, onderscheidt het systeem automatisch tussen pre-2026 meerwaarden en post-2026 meerwaarden.
+
+Waar een bepaling werd gewijzigd, toont de gestructureerde output de versieketen — wat de wet zei vóór, wat ze nu zegt, en wanneer de wijziging in werking trad. Dit is niet cosmetisch. Het is het verschil tussen advies dat technisch correct is en advies dat correct is voor de werkelijke situatie van de cliënt.
+
+*Elke bepaling draagt een datum. We verwarren 2019 nooit met 2026.*
+
+---
+
+*Bronnen:*
+*1. PwC Tax Summaries. "Belgium — Corporate — Taxes on corporate income." taxsummaries.pwc.com.*
+*2. Deloitte Belgium. "Belgium tax reforms — The latest federal and regional tax measures." deloitte.com/be.*
+*3. PwC Belgium (2026). "Belgium's comprehensive capital gains tax changes: key updates and implications starting January 2026."*
+*4. Bird & Bird (2023). "Belgium: New corporate tax measures in force as of 1 January 2023."*
+*5. European Forum of Official Gazettes. "Belgium — Official Journal." op.europa.eu.*
+*6. CMS Law-Now (2024). "Belgium's regions pass new registration and inheritance tax rates."*

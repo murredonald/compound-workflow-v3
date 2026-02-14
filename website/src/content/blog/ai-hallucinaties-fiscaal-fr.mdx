@@ -1,0 +1,121 @@
+---
+title: "Hallucinations de l'IA : pourquoi ChatGPT fabrique des sources (et comment les repérer)"
+description: "Pourquoi les modèles de langage inventent des références juridiques, ce qui rend le droit fiscal belge vulnérable, et trois défenses qui fonctionnent."
+publishDate: 2026-02-13
+author: "Auryth Team"
+category: "ia-expliquee"
+category_name: "IA expliquée"
+tags: ["hallucinations IA", "ChatGPT", "IA juridique", "technologie fiscale", "fiabilité IA"]
+locale: "fr"
+draft: false
+---
+
+Des chercheurs de Stanford ont testé les outils d'IA juridique les plus coûteux du marché — Westlaw AI, Lexis+ AI — et ont découvert qu'ils fabriquent de l'information dans 17 à 33 % des [requêtes](/fr/glossary/prompt/). Les modèles généralistes comme ChatGPT ? Entre 58 % et 88 %.
+
+Ces chiffres ne sont pas des bugs sur une feuille de route. Ce sont des caractéristiques de systèmes qui n'ont jamais été conçus pour distinguer le fait juridique de la fiction plausible.
+
+## Qu'est-ce qu'une hallucination de l'IA ?
+
+**Une [hallucination](/fr/glossary/hallucination/) de l'IA** se produit lorsqu'un modèle de langage génère un résultat qui semble faire autorité mais qui est factuellement faux — des citations juridiques inventées, des numéros d'articles inexistants, des statistiques fabriquées, ou des taux d'imposition erronés présentés avec une certitude absolue. Le modèle ne ment pas. Il prédit le mot suivant le plus probable en fonction des schémas de ses données d'entraînement. Quand ces schémas ne contiennent pas la disposition légale belge dont vous avez besoin, il comble le vide avec quelque chose qui *semble* correct.
+
+Les grands modèles de langage ne recherchent pas l'information. Ils génèrent du texte plausible. La différence, c'est l'écart entre un bibliothécaire qui vérifie l'étagère et un collègue qui répond de mémoire — et n'admet jamais quand il devine.
+
+## Pourquoi le droit fiscal est un terrain d'hallucination
+
+Tous les domaines ne sont pas également vulnérables. Demandez à un modèle de langage de résumer un article de presse, et les hallucinations sont un désagrément. Demandez-lui des précisions sur l'art. 344 CIR 92 — la disposition anti-abus générale belge — et vous entrez en terrain miné.
+
+Trois facteurs rendent le droit fiscal particulièrement dangereux :
+
+**Dépendance à la précision.** La différence entre 0,12 % et 1,32 % de TOB (taxe sur les opérations de bourse) est la différence entre un conseil correct et une mise en cause de responsabilité. Les modèles de langage optimisent pour un texte plausible, pas pour des chiffres précis. « Approximativement correct » n'existe pas en pratique fiscale professionnelle.
+
+**Densité de [références](/fr/glossary/citation/).** Une seule réponse fiscale belge peut nécessiter l'art. 19bis CIR 92, le Code flamand de la Fiscalité, une décision anticipée du SDA et une circulaire Fisconetplus — simultanément. L'IA généraliste n'a jamais traité la plupart de ces documents. Elle génère donc des références qui *ressemblent* à des vraies.
+
+**Instabilité temporelle.** Le droit fiscal belge change constamment. Le taux de l'impôt des sociétés, les seuils de la TOB, les tranches régionales de droits de succession — autant de cibles mouvantes. Un modèle entraîné il y a six mois vous donne le droit d'hier avec l'assurance d'aujourd'hui.
+
+![Quatre mythes courants sur les hallucinations de l'IA en droit comparés à la réalité](/blog/ai-hallucinaties-fiscaal/mythes-vs-realite-hallucination-ia-dark.png)
+
+## Les cinq indices : comment repérer une réponse fiscale hallucinée
+
+Les hallucinations laissent des empreintes. Après analyse de centaines de réponses fiscales générées par l'IA, cinq schémas émergent systématiquement :
+
+| Indice | À quoi cela ressemble | Exemple |
+|--------|----------------------|---------|
+| **Certitude sans source** | Réponse catégorique, aucune référence d'article | « Le taux TOB est de 0,35 % » — quel instrument ? Sous quelles conditions ? |
+| **La référence trop parfaite** | Article plausible qui n'existe pas | Un numéro d'article avec des paragraphes qui ressemble au droit fiscal belge réel mais introuvable dans le CIR 92 |
+| **Contamination juridictionnelle** | Règles d'un autre pays présentées comme belges | Règles néerlandaises de retenue à la source appliquées à un contribuable belge |
+| **Cécité temporelle** | Taux actuels pour une question historique | Le taux d'impôt des sociétés de 2026 donné pour l'exercice d'imposition 2019 |
+| **Nuances manquantes** | Réponse nette là où la loi est complexe | Un seul taux TOB alors que trois s'appliquent selon la classification du fonds |
+
+Le dernier indice est le plus dangereux. Un numéro d'article fabriqué est facile à détecter — vous le cherchez et il n'existe pas. Une réponse incomplète qui *semble* complète ? C'est là que les professionnels se font piéger et que les clients perdent de l'argent.
+
+> Un modèle qui ne dit jamais « je ne sais pas » ment plus souvent que vous ne le pensez.
+
+## L'inversion confiance-compétence
+
+Voici la vérité contre-intuitive du progrès de l'IA : **plus les modèles s'améliorent en langage, plus ils deviennent mauvais pour signaler quand ils ne savent pas.**
+
+GPT-3 hallucinait de manière évidente — texte maladroit, erreurs visibles. GPT-4 hallucine avec éloquence. La référence juridique fabriquée arrive enveloppée dans une terminologie juridique fluide, complète avec des conditions et exceptions qui *imitent* le vrai droit fiscal.
+
+Des chercheurs d'OpenAI ont documenté cette dynamique en 2025 : les objectifs d'entraînement récompensent la [prédiction](/fr/glossary/inference/) confiante au détriment de l'honnêteté face à l'incertitude. Le modèle qui dit « je ne suis pas sûr » est pénalisé dans les benchmarks. Celui qui invente une réponse plausible est récompensé.
+
+Ce n'est pas un bug à corriger. Xu et al. ont prouvé formellement en 2024 que l'hallucination est *mathématiquement inévitable* pour les modèles de langage utilisés comme résolveurs de problèmes généraux. Pas difficile à éliminer. Pas une limitation temporaire. Impossible — par démonstration.
+
+Nous appelons cela **l'inversion confiance-compétence** : meilleur est le langage, plus il devient difficile de distinguer la connaissance de la fabrication. Chaque génération de modèle rend les hallucinations plus dangereuses, pas moins.
+
+![Chiffres clés sur les taux d'hallucination de l'IA et les conséquences juridiques](/blog/ai-hallucinaties-fiscaal/taux-hallucination-ia-chiffres-dark.png)
+
+## Mais le RAG corrige cela — non ?
+
+Partiellement. La [Génération Augmentée par Récupération](/fr/glossary/rag/) — où l'IA recherche dans de vrais documents avant de répondre — réduit significativement les hallucinations. L'équipe de Stanford a constaté que les outils juridiques basés sur le RAG hallucinent dans 17 à 33 % des cas, contre 58 à 88 % pour les modèles généralistes. C'est un progrès réel.
+
+Mais 17 % n'est pas zéro. Une requête sur six renvoyant de fausses informations n'est pas une erreur d'arrondi — c'est un risque professionnel. Et les hallucinations restantes sont les plus difficiles à détecter : elles citent des sources d'apparence réelle, correspondent au format des réponses exactes, et ne donnent aucun signal que quelque chose est faux.
+
+L'Ordre des Barreaux Flamands a reconnu cette réalité dans ses directives sur l'IA : les avocats doivent vérifier de manière critique toute production d'IA, y compris les sources citées et la jurisprudence. La responsabilité professionnelle reste la vôtre, quel que soit l'outil qui a généré la réponse.
+
+Au niveau international, les tribunaux appliquent cela avec une sévérité croissante. Fin 2025, plus de 700 cas documentés de contenu halluciné par l'IA étaient apparus dans des procédures judiciaires dans le monde. Les sanctions vont de 2 000 $ à plus de 31 000 $ par incident. Rien qu'en août 2025, trois tribunaux fédéraux américains ont sanctionné des avocats pour avoir soumis des citations fabriquées par l'IA.
+
+## La pile de vérification : trois défenses qui fonctionnent
+
+Les hallucinations ne peuvent pas être éliminées. Mais elles peuvent être interceptées. Trois couches de défense architecturales, combinées, réduisent le risque de systémique à gérable :
+
+| Défense | Ce qu'elle fait | Ce qu'elle intercepte |
+|---------|----------------|----------------------|
+| **Récupération dans un [corpus](/fr/glossary/corpus/) source** | Recherche dans un corpus juridique curé avant de générer | Empêche d'inventer des faits jamais récupérés |
+| **Validation des citations** | Vérifie chaque source citée contre le corpus réel | Intercepte les références fabriquées et le contenu mal attribué |
+| **[Score de confiance](/fr/glossary/confidence-scoring/)** | Signale explicitement l'incertitude sur chaque affirmation | Signale les preuves insuffisantes avant que vous ne vous y fiiez |
+
+Aucune couche n'est suffisante seule. La récupération dans un corpus source hallucine encore — Stanford l'a prouvé. La validation des citations intercepte les références fabriquées mais pas les interprétations subtiles erronées. Le score de confiance signale l'incertitude mais nécessite un calibrage.
+
+C'est la combinaison qui compte. Chaque couche attrape ce que les autres manquent.
+
+> Le coût de la fausse certitude est toujours plus élevé que le coût de l'honnête incertitude.
+
+---
+
+## Articles connexes
+
+- [J'ai posé à ChatGPT et Auryth les mêmes questions fiscales belges — voici ce qui s'est passé](/fr/blog/chatgpt-vs-auryth-vergelijking-fr/)
+- [Qu'est-ce que le RAG — et pourquoi c'est important pour les fiscalistes](/fr/blog/wat-is-rag-fr/)
+- [Qu'est-ce que le confidence scoring — et pourquoi est-ce plus honnête qu'une réponse assurée ?](/fr/blog/confidence-scoring-uitgelegd-fr/)
+
+---
+
+## Comment Auryth TX applique ceci
+
+Auryth TX est construit sur l'hypothèse que les hallucinations sont inévitables — et conçoit autour d'elles plutôt que de prétendre qu'elles ne se produiront pas.
+
+Chaque réponse passe par un pipeline de vérification à trois couches : récupération dans le corpus juridique belge curé (pas l'internet ouvert), validation post-génération des citations qui vérifie chaque disposition référencée contre le texte réel, et score de confiance par affirmation qui signale explicitement quand les preuves sont insuffisantes.
+
+Quand le système ne trouve pas assez de sources, il vous le dit. Quand les sources se contredisent, il montre les deux côtés. Quand une disposition citée a été modifiée depuis la date d'imposition concernée, il signale l'écart temporel.
+
+L'objectif n'est pas d'avoir raison à 100 %. C'est de toujours vous dire à quel point vous pouvez faire confiance à la réponse.
+
+[Découvrez comment Auryth TX gère la vérification →](/fr/waitlist/)
+
+---
+
+*Sources :*
+*1. Dahl, M. et al. (2024). « [Large Legal Fictions: Profiling Legal Hallucinations in Large Language Models](https://academic.oup.com/jla/article/16/1/64/7699227). » Journal of Legal Analysis, 16(1), 64–93.*
+*2. Magesh, V. et al. (2025). « [Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362). » Journal of Empirical Legal Studies.*
+*3. Xu, Z., Jain, S. & Kankanhalli, M. (2024). « [Hallucination is Inevitable: An Innate Limitation of Large Language Models](https://arxiv.org/abs/2401.11817). » arXiv:2401.11817.*
+*4. Kalai, A.T., Nachum, O., Vempala, S.S. & Zhang, E. (2025). « [Why Language Models Hallucinate](https://arxiv.org/abs/2509.04664). » OpenAI.*

@@ -1,0 +1,173 @@
+---
+term: "Pruning"
+termSlug: "pruning"
+short: "Het verwijderen van onnodige gewichten of neuronen uit neurale netwerken om modelgrootte en rekenkosten te verminderen zonder significant nauwkeurigheidsverlies."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["model-compression", "quantization", "distillation", "neural-network"]
+synonyms: ["Neuraal netwerk pruning", "Gewichtspruning", "Model sparsificatie"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Pruning is een modelcompressietechniek die redundante of minder belangrijke gewichten, neuronen of hele structuren uit neurale netwerken verwijdert. Door parameters te identificeren en elimineren die minimaal bijdragen aan modelprestaties, kan pruning de modelgrootte met 50-90% verminderen met verwaarloosbaar nauwkeurigheidsverlies. De resulterende sparse netwerken vereisen minder geheugen en rekenkracht, wat snellere [inferentie](/nl/glossary/inference/) en deployment op resource-beperkte apparaten mogelijk maakt.
+
+## Waarom het belangrijk is
+
+Pruning maakt neurale netwerken efficiënter:
+
+- **Kleinere modellen** — verminder grootte met 50-90% zonder significant nauwkeurigheidsverlies
+- **Snellere inferentie** — minder operaties betekent snellere voorspellingen
+- **Lager geheugen** — sparse gewichten hebben minder RAM nodig
+- **Hardware-efficiëntie** — gespecialiseerde hardware versnelt sparse operaties
+- **Energiebesparing** — minder berekeningen = lager stroomverbruik
+
+Pruning is essentieel voor het deployen van modellen op edge-apparaten en het verlagen van servingkosten.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    PRUNING OVERZICHT                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET PRUNING INZICHT:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  De meeste neurale netwerk gewichten zijn bijna nul!       │
+│                                                            │
+│  Gewichtsdistributie in Getraind Netwerk:                  │
+│  ┌────────────────────────────────────────┐               │
+│  │         ╭─────╮                         │               │
+│  │        ╱       ╲    Meeste gewichten    │               │
+│  │       ╱         ╲   geclusterd bij 0    │               │
+│  │      ╱           ╲                      │               │
+│  │     ╱             ╲                     │               │
+│  │    ╱               ╲                    │               │
+│  │ ──╱─────────────────╲──────────────────│               │
+│  │  -1    -0.5    0    0.5    1           │               │
+│  │        ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲                 │               │
+│  │        Deze kunnen gepruned worden!     │               │
+│  └────────────────────────────────────────┘               │
+│                                                            │
+│                                                            │
+│  PRUNING TYPES:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  1. ONGESTRUCTUREERDE PRUNING (Gewichtsniveau)            │
+│     ──────────────────────────────────────                 │
+│     Verwijder individuele gewichten overal                 │
+│                                                            │
+│     Voor:                Na:                               │
+│     ┌─────────────┐      ┌─────────────┐                  │
+│     │ 0.5  0.02 0.8│      │ 0.5  ·   0.8│                  │
+│     │ 0.01 0.7  0.03│      │ ·   0.7  ·  │                  │
+│     │ 0.9  0.05 0.4│      │ 0.9  ·   0.4│                  │
+│     └─────────────┘      └─────────────┘                  │
+│     (· = gepruned naar 0)                                 │
+│                                                            │
+│     ✓ Hoge compressieratio's mogelijk (90%+)              │
+│     ✗ Onregelmatige sparsity moeilijk te versnellen       │
+│                                                            │
+│  2. GESTRUCTUREERDE PRUNING (Kanaal/Laagniveau)           │
+│     ───────────────────────────────────────                │
+│     Verwijder hele neuronen, kanalen of lagen              │
+│                                                            │
+│     Voor:                    Na:                           │
+│     ┌───┐  ┌───┐  ┌───┐     ┌───┐      ┌───┐             │
+│     │ ○ │──│ ○ │──│ ○ │     │ ○ │──────│ ○ │             │
+│     │ ○ │╲╱│ ○ │╲╱│ ○ │     │ ○ │ ╲ ╱  │ ○ │             │
+│     │ ○ │╱╲│ ○ │╱╲│ ○ │     └───┘  ╳   └───┘             │
+│     │ ○ │──│ ○ │──│ ○ │            ╱ ╲                     │
+│     └───┘  └───┘  └───┘    (middelste laag verwijderd)    │
+│                                                            │
+│     ✓ Compatibel met standaard hardwareversnelling        │
+│     ✗ Lagere compressieratio's (50-70% typisch)           │
+│                                                            │
+│                                                            │
+│  PRUNING PROCES:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐            │
+│  │ Getraind │───►│  Prune   │───►│ Fine-tune│            │
+│  │  Model   │    │(verwijder│    │ (herstel │            │
+│  │          │    │ gewichten)│   │ nauwk.)  │            │
+│  └──────────┘    └──────────┘    └──────────┘            │
+│       │                                │                   │
+│       │         ┌──────────────────────┘                   │
+│       │         │                                          │
+│       │         ▼                                          │
+│       │    Herhaal: meer prunen → fine-tune → herhaal     │
+│       │    tot doel-sparsity bereikt                       │
+│       │                                                    │
+│       ▼                                                    │
+│  PRUNING CRITERIA (wat te verwijderen):                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  • Magnitude: verwijder kleinste |gewichten|              │
+│  • Gradiënt: verwijder gewichten met kleinste gradiënten  │
+│  • Sensitiviteit: verwijder minst gevoelig voor verlies   │
+│  • Willekeurig: baseline vergelijking                     │
+│                                                            │
+│                                                            │
+│  SPARSITY NIVEAUS:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Sparsity │ Gewichten Verw. │ Typische Nauwk. Impact      │
+│  ─────────┼─────────────────┼───────────────────          │
+│    50%    │ Helft           │ ~0-0.5% verlies             │
+│    80%    │ Meeste          │ ~0.5-1% verlies             │
+│    90%    │ Bijna alle      │ ~1-2% verlies               │
+│    95%+   │ Extreem         │ ~2-5%+ verlies              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoeveel kan ik prunen zonder nauwkeurigheid te verliezen?**
+
+A: Typische netwerken kunnen tot 50-80% sparsity gepruned worden met `<1%` nauwkeurigheidsverlies. Met iteratief prunen en fine-tuning is zelfs 90%+ sparsity haalbaar voor sommige modellen. De exacte limiet hangt af van modelarchitectuur, taakcomplexiteit en trainingsdata. Benchmark altijd op uw specifieke use case.
+
+**V: Wat is het verschil tussen gestructureerd en ongestructureerd prunen?**
+
+A: Ongestructureerd prunen verwijdert individuele gewichten overal, bereikt hogere compressie maar creëert onregelmatige sparsity die moeilijk te versnellen is op standaard hardware. Gestructureerd prunen verwijdert hele neuronen/kanalen, geeft lagere compressie maar produceert kleinere dense modellen die snel draaien op elke hardware.
+
+**V: Werkt pruning voor LLMs?**
+
+A: Ja, maar het is uitdagender. LLMs zoals GPT hebben emergente capaciteiten gekoppeld aan modelschaal. Onderzoek toont dat ongestructureerd prunen tot 50-70% sparsity goed werkt. Gestructureerd prunen is moeilijker—het verwijderen van hele attention heads of lagen kan specifieke capaciteiten schaden. SparseGPT en Wanda zijn recente methoden ontworpen voor LLMs.
+
+**V: Hoe verhoudt pruning zich tot quantisatie?**
+
+A: Ze zijn complementair. Pruning verwijdert parameters volledig; quantisatie vermindert hun precisie. Voor maximale compressie, gebruik beide: prune het model eerst, quantiseer dan. Een gepruned + gequantiseerd model kan 10-20x kleiner zijn dan het origineel.
+
+## Gerelateerde termen
+
+- [Model compression](/nl/glossary/model-compression/) — bredere categorie inclusief pruning
+- [Quantization](/nl/glossary/quantization/) — complementaire compressietechniek
+- [Distillation](/nl/glossary/distillation/) — alternatieve aanpak met teacher-student
+- [Neural network](/nl/glossary/neural-network/) — modellen die pruning optimaliseert
+
+---
+
+## Referenties
+
+> Han et al. (2015), "[Learning both Weights and Connections for Efficient Neural Networks](https://arxiv.org/abs/1506.02626)", NeurIPS. [Fundamentele pruning paper]
+
+> Frankle & Carlin (2019), "[The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)", ICLR. [Invloedrijke sparse netwerk theorie]
+
+> Frantar & Alistarh (2023), "[SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot](https://arxiv.org/abs/2301.00774)", ICML. [[LLM](/nl/glossary/llm/) pruning]
+
+> Sun et al. (2023), "[A Simple and Effective Pruning Approach for Large Language Models](https://arxiv.org/abs/2306.11695)", arXiv. [Wanda methode voor LLMs]
+
+## References
+
+> Han et al. (2015), "[Learning both Weights and Connections for Efficient Neural Networks](https://arxiv.org/abs/1506.02626)", NeurIPS. [Foundational pruning paper]
+
+> Frankle & Carlin (2019), "[The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)", ICLR. [Influential sparse network theory]
+
+> Frantar & Alistarh (2023), "[SparseGPT: Massive Language Models Can Be Accurately Pruned in One-Shot](https://arxiv.org/abs/2301.00774)", ICML. [LLM pruning]
+
+> Sun et al. (2023), "[A Simple and Effective Pruning Approach for Large Language Models](https://arxiv.org/abs/2306.11695)", arXiv. [Wanda method for LLMs]

@@ -1,0 +1,121 @@
+---
+term: "Beam Search"
+termSlug: "beam-search"
+short: "A decoding algorithm that explores multiple candidate sequences in parallel, keeping the top-k most promising paths at each step."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["top-p", "top-k", "temperature", "inference", "llm"]
+synonyms: ["Beam decoding", "Beam search decoding", "Multi-path search"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Beam search is a decoding algorithm that generates text by exploring multiple candidate sequences simultaneously. At each step, it expands all current sequences with possible next tokens, scores them, and keeps only the top-b highest-scoring candidates (where b is the beam width). This breadth-first approach often finds better overall sequences than greedy single-path decoding.
+
+## Why it matters
+
+Beam search balances quality and computational cost:
+
+- **Better sequences** — explores multiple paths to find higher-probability outputs
+- **Avoids local optima** — doesn't commit early to suboptimal token choices
+- **Controllable exploration** — beam width tunes quality vs. speed tradeoff
+- **Translation standard** — default in machine translation systems
+- **Deterministic output** — produces consistent results for same input
+
+Beam search is essential for tasks where sequence-level quality matters.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       BEAM SEARCH                          │
+│                      (beam width = 2)                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Step 0: Start with <start> token                          │
+│                                                            │
+│                      [<start>]                             │
+│                          │                                 │
+│  Step 1: Expand to vocabulary, keep top-2                  │
+│                          │                                 │
+│          ┌───────────────┴───────────────┐                 │
+│          ▼                               ▼                 │
+│      ["The"]                         ["A"]                 │
+│      p=0.40                          p=0.35                │
+│          │                               │                 │
+│  Step 2: Expand each, score all, keep top-2                │
+│          │                               │                 │
+│    ┌─────┼─────┐                   ┌─────┼─────┐           │
+│    ▼     ▼     ▼                   ▼     ▼     ▼           │
+│  "The  "The  "The               "A     "A     "A           │
+│   cat"  dog"  bird"              cat"   dog"   man"        │
+│  0.38   0.35   0.32             0.30   0.28   0.25         │
+│                                                            │
+│  SCORES (cumulative log-prob):                             │
+│  ─────────────────────────────                             │
+│  "The cat"  = -0.97  ◄── KEEP (best)                      │
+│  "The dog"  = -1.05  ◄── KEEP (2nd best)                  │
+│  "A cat"    = -1.20      pruned                            │
+│  "The bird" = -1.14      pruned                            │
+│  ...                                                       │
+│                                                            │
+│  Step 3: Continue until <end> token...                     │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  BEAM WIDTH EFFECTS:                           │        │
+│  │                                                │        │
+│  │  b=1: Greedy decoding (fast, lower quality)   │        │
+│  │  b=4-5: Common default (balanced)             │        │
+│  │  b=10+: High quality (slower)                 │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Beam width comparison:**
+| Width | Behavior | Trade-off |
+|-------|----------|-----------|
+| 1 | [Greedy decoding](/en/glossary/greedy-decoding/) | Fast but may miss better sequences |
+| 2-3 | Minimal exploration | Slight quality gain |
+| 4-5 | Standard | Good balance for most tasks |
+| 10+ | Extensive | Diminishing returns, slower |
+| 50+ | Exhaustive | Rarely needed |
+
+## Common questions
+
+**Q: How is beam search different from sampling methods?**
+
+A: Beam search is deterministic—it always picks highest-scoring sequences. Sampling (top-k, top-p, temperature) introduces randomness for diversity. Beam search optimizes for probability; sampling trades some probability for variety and creativity.
+
+**Q: What's a good beam width?**
+
+A: 4-5 is common for most tasks. Machine translation often uses 4-10. Higher values give diminishing returns while increasing computation. For creative writing, sampling methods are usually preferred over beam search.
+
+**Q: Does beam search guarantee finding the best sequence?**
+
+A: No—it's an approximation. True best-first search is computationally infeasible for language models. Beam search can still miss the globally optimal sequence due to its fixed-width [pruning](/en/glossary/pruning/).
+
+**Q: Why might beam search produce repetitive text?**
+
+A: Beam search optimizes for probability, and repeating common phrases can have high local probability. This is why length penalties and n-gram blocking are often added in practice.
+
+## Related terms
+
+- [Top-k Sampling](/en/glossary/top-k/) — stochastic alternative
+- [Top-p Sampling](/en/glossary/top-p/) — adaptive sampling
+- [Temperature](/en/glossary/temperature/) — probability reshaping
+- [Inference](/en/glossary/inference/) — generation process
+
+---
+
+## References
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2,000+ citations]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]

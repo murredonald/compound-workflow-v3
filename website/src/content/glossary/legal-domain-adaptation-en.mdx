@@ -1,0 +1,63 @@
+---
+term: "Legal Domain Adaptation"
+termSlug: "legal-domain-adaptation"
+short: "Legal domain adaptation tailors an AI or search system to legal language, sources, and reasoning so outputs are more precise and defensible."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["authority-ranking-model", "rag", "embeddings", "prompt", "inference"]
+synonyms: ["Legal-domain adaptation", "Domain adaptation for law", "Legal specialization"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Legal [domain adaptation](/en/glossary/fine-tuning/) is the process of adapting an AI system (LLM, classifier, or retrieval stack) to legal texts and workflows. It focuses on handling legal terminology, [citations](/en/glossary/citation/), document structure, and domain-specific notions of correctness (e.g., jurisdiction, temporal validity, and hierarchy of authority).
+
+## Why it matters
+
+- **Precision**: legal language is dense, context-dependent, and sensitive to small wording differences.
+- **[Grounding](/en/glossary/grounding/)**: legal work requires answers tied to authoritative sources, not generic knowledge.
+- **Lower error cost**: small mistakes can have large compliance and liability impact.
+- **Better retrieval + generation**: improves both what is found and how it is summarized.
+
+## How it works
+
+Domain adaptation usually combines data, retrieval, and evaluation changes:
+
+```
+Legal sources + labels -> adapt retrieval + prompts + evaluation -> deploy -> monitor errors
+```
+
+Common techniques include: curating authoritative corpora, adding legal metadata (jurisdiction, in-force dates), building authority-aware ranking, using legal-specific evaluation sets, and refining prompts for citation-first answers.
+
+## Practical example
+
+A generic assistant might treat "circular" and "law" as similar. A legally adapted system recognizes that a circular is typically non-binding guidance, boosts the binding legal text, and formats the output with citations and applicability constraints.
+
+## Common questions
+
+**Q: Is this the same as fine-tuning?**
+
+A: Not necessarily. Fine-tuning is one possible tool. Legal domain adaptation can also be achieved with better retrieval, authority ranking, prompt design, and evaluation without changing model weights.
+
+**Q: What is the biggest failure mode?**
+
+A: Treating legal correctness as "sounds right". Legal systems require temporal and jurisdictional checks and careful source selection.
+
+## Related terms
+
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - encode legal authority into ranking
+- [RAG](/en/glossary/rag/) - retrieve sources before generating an answer
+- [Embeddings](/en/glossary/embeddings/) - enable semantic retrieval over legal text
+- [Prompt](/en/glossary/prompt/) - shape answers toward citations and constraints
+- [Inference](/en/glossary/inference/) - runtime behavior that must be monitored
+
+---
+
+## References
+
+> Chalkidis et al. (2020), "LEGAL-BERT: The Muppets straight out of Law School", arXiv.
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

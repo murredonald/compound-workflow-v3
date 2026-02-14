@@ -1,0 +1,111 @@
+---
+term: "Temperature"
+termSlug: "temperature"
+short: "A parameter controlling the randomness of language model outputs, affecting creativity versus consistency."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["top-p", "top-k", "inference", "llm"]
+synonyms: ["Sampling temperature", "Model temperature", "Generation temperature"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Temperature is a parameter that controls the randomness of a language model's output during text generation. Lower temperatures (e.g., 0.1) make outputs more deterministic and focused, while higher temperatures (e.g., 1.0+) increase diversity and creativity but may reduce coherence. It works by scaling the probability distribution before sampling the next token.
+
+## Why it matters
+
+Temperature is a critical control for AI application behavior:
+
+- **Precision vs. creativity** — low for factual tasks, high for brainstorming
+- **Consistency** — low temperatures produce reproducible outputs
+- **User experience** — tuning temperature affects perceived intelligence
+- **Task optimization** — different tasks need different temperature settings
+- **Safety** — lower temperatures reduce unexpected or inappropriate outputs
+
+The right temperature can transform model performance for specific use cases.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   TEMPERATURE EFFECT                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Original logits: [2.0, 1.0, 0.5, 0.2]                    │
+│  (Before softmax)                                          │
+│                                                            │
+│  TEMPERATURE = 0.5 (More focused)                          │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Scaled: [4.0, 2.0, 1.0, 0.4]                  │        │
+│  │  Probs:  [78%, 15%, 5%, 2%]                    │        │
+│  │  ████████████████████░░░░                      │        │
+│  │  Token A dominates                             │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  TEMPERATURE = 1.0 (Balanced)                              │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Scaled: [2.0, 1.0, 0.5, 0.2]                  │        │
+│  │  Probs:  [47%, 27%, 17%, 9%]                   │        │
+│  │  ████████████░░░░░░░░                          │        │
+│  │  More diversity                                │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  TEMPERATURE = 2.0 (Creative/random)                       │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Scaled: [1.0, 0.5, 0.25, 0.1]                 │        │
+│  │  Probs:  [34%, 28%, 22%, 16%]                  │        │
+│  │  ████████░░░░░░░░░░░░                          │        │
+│  │  Near-uniform distribution                     │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  Formula: P(token) = softmax(logits / temperature)         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Recommended settings by task:**
+| Task | Temperature | Rationale |
+|------|-------------|-----------|
+| Code generation | 0.0-0.3 | Precision required |
+| Factual Q&A | 0.1-0.5 | Accuracy over creativity |
+| Conversation | 0.7-0.9 | Natural variation |
+| Creative writing | 0.9-1.2 | Encourage novelty |
+
+## Common questions
+
+**Q: What does temperature 0 mean?**
+
+A: Temperature 0 (or near-zero) makes the model always pick the highest-probability token—deterministic, [greedy decoding](/en/glossary/greedy-decoding/). Useful when you need consistent, reproducible outputs.
+
+**Q: Can temperature be greater than 1?**
+
+A: Yes. Values above 1 flatten the probability distribution, making rare tokens more likely. This increases creativity but risks incoherence. Generally stay below 1.5 for usable output.
+
+**Q: How does temperature interact with top-p?**
+
+A: They're complementary. Temperature adjusts the distribution shape; top-p/top-k then sample from it. Using both gives fine-grained control. Many APIs apply temperature first, then top-p filtering.
+
+**Q: What's a good default temperature?**
+
+A: 0.7 is a common default—balanced between consistency and variation. Adjust based on your specific task requirements and test with real examples.
+
+## Related terms
+
+- [Top-p Sampling](/en/glossary/top-p/) — nucleus sampling parameter
+- [Top-k Sampling](/en/glossary/top-k/) — limits token candidates
+- [Inference](/en/glossary/inference/) — generation process where temperature applies
+- [LLM](/en/glossary/llm/) — models controlled by temperature
+
+---
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Ackley et al. (1985), "[A Learning Algorithm for Boltzmann Machines](https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf)", Cognitive Science. [5,000+ citations]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Ficler & Goldberg (2017), "[Controlling Linguistic Style Aspects in Neural Language Generation](https://arxiv.org/abs/1707.02633)", arXiv. [400+ citations]

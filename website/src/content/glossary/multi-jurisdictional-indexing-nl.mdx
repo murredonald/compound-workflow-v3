@@ -1,0 +1,69 @@
+---
+term: "Multi-jurisdictie-indexering"
+termSlug: "multi-jurisdictional-indexing"
+short: "Multi-jurisdictie-indexering structureert een index over landen/regio’s zodat retrieval rekening houdt met jurisdictie, taal en toepasbaarheid."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["indexing-strategy", "query-understanding", "semantic-expansion", "authority-ranking-model", "legal-dependency-mapping"]
+synonyms: ["Cross-jurisdiction indexing", "Multi-country indexing", "Jurisdiction-aware indexing"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Multi-jurisdictie-indexering is het ontwerpen van een index en metadatamodel dat zoeken over meerdere jurisdicties (landen, regio’s, rechtsstelsels) ondersteunt zonder resultaten op een misleidende manier te vermengen. Jurisdictie wordt een expliciet retrieval- en rankingsignaal.
+
+## Waarom het belangrijk is
+
+- **Toepasbaarheid**: de "juiste" regel hangt af van jurisdictie (en soms sub-regio).
+- **Taalvariatie**: dezelfde concepten bestaan in meerdere talen en citatiestijlen.
+- **Verschil in autoriteit**: rechtbanken en administraties hebben per jurisdictie ander gewicht.
+- **Betere UX**: heldere filters, routering en groepering per jurisdictie.
+
+## Hoe het werkt
+
+Meestal combineer je metadata, routing en ranking:
+
+```
+Query -> detecteer jurisdictiesignalen -> route/search -> rank met autoriteit -> presenteer met labels
+```
+
+Bouwblokken:
+
+- Verplichte metadata (jurisdictie, geldigheidsdata, brontype, instantie)
+- Partities of aparte indexen per jurisdictie/taal waar nodig
+- Query understanding voor jurisdictiehints ("BE", "NL", verdragsnamen, lokale afkortingen)
+- Cross-linguale semantische uitbreiding voor gedeelde concepten en [citaties](/nl/glossary/citation/)
+
+## Praktisch voorbeeld
+
+Een query zoals "roerende voorheffing dividend" verschilt in België en Nederland. Een multi-jurisdictie-index routeert of filtert op basis van detecteerde jurisdictie-intentie en labelt resultaten duidelijk als meerdere jurisdicties mogelijk zijn.
+
+## Veelgestelde vragen
+
+**Q: Heb je altijd aparte indexen per jurisdictie nodig?**
+
+A: Niet altijd. Eén index met sterke metadata en filters kan werken. Aparte partities helpen wanneer talen, schema’s of autoriteitsmodellen sterk verschillen.
+
+**Q: Wat is het grootste risico?**
+
+A: Een correcte regel tonen voor de *verkeerde jurisdictie* zonder dat duidelijk te maken.
+
+## Gerelateerde termen
+
+- [Indexing Strategy](/nl/glossary/indexing-strategy/) - structuur en onderhoud van je index
+- [Query Understanding](/nl/glossary/query-understanding/) - jurisdictie en constraints herkennen
+- [Semantische uitbreiding](/nl/glossary/semantic-expansion/) - taal- en woordvariantbrug
+- [Autoriteitsrankingmodel](/nl/glossary/authority-ranking-model/) - autoriteit in ranking verwerken
+- [Juridische afhankelijkheidsmapping](/nl/glossary/legal-dependency-mapping/) - cross-references en toepasbaarheid modelleren
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

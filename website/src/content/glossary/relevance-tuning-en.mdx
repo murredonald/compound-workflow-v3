@@ -1,0 +1,59 @@
+---
+term: "Relevance Tuning"
+termSlug: "relevance-tuning"
+short: "Relevance tuning is the systematic process of improving search ranking by adjusting signals, weights, and rules based on evidence and evaluation."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["full-text-search", "boolean-search", "semantic-expansion", "search-analytics", "query-intent"]
+synonyms: ["Ranking tuning", "Relevance optimization", "Search tuning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Relevance tuning is the practice of improving how a search engine ranks results for real user queries. It includes adjusting field weights, boosting trusted sources, refining analyzers and synonyms, and validating changes with offline judgments and online analytics.
+
+## Why it matters
+
+- **User trust**: small ranking errors can break confidence in high-stakes domains.
+- **Consistency**: reduces "random-feeling" results across similar queries.
+- **Business impact**: better relevance improves conversions and reduces support load.
+- **Safety**: tuning can prefer authoritative sources and reduce risky matches.
+
+## How it works
+
+```
+Measure -> hypothesize -> adjust ranking -> evaluate -> deploy -> monitor
+```
+
+Good tuning starts with clear success metrics (time-to-result, satisfaction, task completion) and a representative query set.
+
+## Practical example
+
+If users searching "[WIB92](/en/glossary/wib-cir/) article 26" often click the official text, you can boost pages with official [citations](/en/glossary/citation/) and demote generic commentary for that intent.
+
+## Common questions
+
+**Q: Should we tune with rules or [machine learning](/en/glossary/machine-learning/)?**
+
+A: Both can work. Rules are transparent and fast to iterate; ML can capture complex patterns but needs data and careful evaluation.
+
+**Q: What’s the fastest way to find tuning opportunities?**
+
+A: Look at search analytics for zero-result queries, high reformulation rates, and queries with low click satisfaction.
+
+## Related terms
+
+- [Full-Text Search](/en/glossary/full-text-search/) - classic scoring and field weights
+- [Boolean Search](/en/glossary/boolean-search/) - filtering before ranking
+- [Semantic Expansion](/en/glossary/semantic-expansion/) - expansion changes ranking behavior
+- [Search Analytics](/en/glossary/search-analytics/) - measure tuning outcomes
+- [Query Intent](/en/glossary/query-intent/) - tune ranking per intent
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

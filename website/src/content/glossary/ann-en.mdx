@@ -1,0 +1,223 @@
+---
+term: "Approximate Nearest Neighbor"
+termSlug: "ann"
+short: "Algorithms that find approximately similar vectors quickly by trading perfect accuracy for massive speed improvements."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["hnsw", "faiss", "embedding", "dense-retrieval"]
+synonyms: ["ANN", "Approximate NN", "Vector search"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Approximate Nearest Neighbor (ANN) refers to algorithms that find vectors similar to a [query](/en/glossary/prompt/) vector without exhaustively comparing against every vector in a database. While exact [nearest neighbor search](/en/glossary/nearest-neighbor-search/) requires O(n) comparisons, ANN algorithms achieve sub-linear time complexity by accepting a small accuracy trade-off—they might return the 2nd or 5th closest vector occasionally, but run 100-1000x faster. This makes them essential for [semantic search](/en/glossary/semantic-search/), recommendation systems, and RAG pipelines operating over millions of documents.
+
+## Why it matters
+
+[ANN](/en/glossary/neural-network/) enables practical vector search at scale:
+
+- **Speed** — search millions of vectors in milliseconds vs seconds
+- **[RAG](/en/glossary/rag/) systems** — retrieve relevant context from massive [knowledge bases](/en/glossary/knowledge-base/)
+- **Semantic search** — find similar documents beyond [keyword matching](/en/glossary/sparse-retrieval/)
+- **Recommendations** — find similar items/users from embedding representations
+- **Image/audio search** — content-based retrieval using feature vectors
+- **Cost efficiency** — serve more queries per machine, reduce infrastructure
+
+Without ANN, vector-based AI applications would be economically infeasible at scale.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│            APPROXIMATE NEAREST NEIGHBOR (ANN)               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE FUNDAMENTAL PROBLEM:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  You have: 1 million 768-dimension vectors                │
+│  Query:    Find 10 most similar vectors                    │
+│                                                            │
+│  EXACT SEARCH (k-NN):                                      │
+│  • Compute distance to all 1M vectors                     │
+│  • Sort and return top 10                                  │
+│  • Time: O(n × d) = 768 million operations                │
+│  • Latency: ~500ms-2s per query                           │
+│                                                            │
+│  APPROXIMATE SEARCH (ANN):                                 │
+│  • Use index structure to check ~1000 vectors             │
+│  • Returns top 10 (might miss true #1 sometimes)          │
+│  • Time: O(log n × d) or better                           │
+│  • Latency: ~1-10ms per query                             │
+│                                                            │
+│                                                            │
+│  MAIN ANN ALGORITHM FAMILIES:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. TREE-BASED (Annoy, KD-tree)                     │  │
+│  │     • Partition space into regions                  │  │
+│  │     • Search only nearby regions                    │  │
+│  │     • Good for low dimensions (<20)                 │  │
+│  │                                                      │  │
+│  │  2. GRAPH-BASED (HNSW, NSG)                         │  │
+│  │     • Build navigation graph connecting vectors     │  │
+│  │     • Walk graph toward query point                 │  │
+│  │     • Best accuracy/speed for high dimensions       │  │
+│  │     • State-of-the-art for most use cases          │  │
+│  │                                                      │  │
+│  │  3. HASH-BASED (LSH)                                │  │
+│  │     • Hash similar vectors to same buckets         │  │
+│  │     • Check only same-bucket vectors               │  │
+│  │     • Fast but lower recall                        │  │
+│  │                                                      │  │
+│  │  4. QUANTIZATION (PQ, OPQ)                          │  │
+│  │     • Compress vectors by quantization             │  │
+│  │     • Approximate distances in compressed space    │  │
+│  │     • Trades accuracy for memory                   │  │
+│  │                                                      │  │
+│  │  5. HYBRID (IVF+PQ, IVFHNSW)                        │  │
+│  │     • Combine approaches for best tradeoffs        │  │
+│  │     • Cluster + quantize + graph navigation        │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  HOW GRAPH-BASED ANN WORKS (HNSW):                         │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Build phase - create navigable graph:                     │
+│                                                            │
+│     ●────────────●────────────●   Layer 2 (sparse)        │
+│     │            │            │   Long-range connections   │
+│     │            │            │                            │
+│     ●──●──●──────●──●──●──────●   Layer 1                  │
+│     │  │  │      │  │  │      │   Medium connections       │
+│     │  │  │      │  │  │      │                            │
+│     ●●●●●●●●●●●●●●●●●●●●●●●●●●●   Layer 0 (dense)          │
+│                                   All vectors              │
+│                                                            │
+│  Search phase - greedy navigation:                         │
+│                                                            │
+│  1. Start at entry point (top layer)                      │
+│  2. Move to neighbor closest to query                     │
+│  3. If no closer neighbor, go down layer                  │
+│  4. Repeat until layer 0                                   │
+│  5. Explore local neighborhood in layer 0                 │
+│                                                            │
+│     Query ●                                                │
+│           ↓                                                │
+│     [L2]  ●───────────→ ●                                 │
+│                          ↓                                 │
+│     [L1]        ●──→ ● ──→ ●                              │
+│                          ↓                                 │
+│     [L0]           ●●●●●●●●●  ← local exploration         │
+│                        ↑                                   │
+│                    nearest neighbors found!                │
+│                                                            │
+│                                                            │
+│  KEY METRICS:                                              │
+│  ────────────                                              │
+│                                                            │
+│  Recall@k: What fraction of true top-k did we find?       │
+│                                                            │
+│    True top-10:     [A, B, C, D, E, F, G, H, I, J]        │
+│    ANN returned:    [A, B, D, E, F, G, H, I, J, K]        │
+│                                                            │
+│    Recall@10 = 9/10 = 90% (missed C, returned K)          │
+│                                                            │
+│  QPS (Queries Per Second): Throughput measure             │
+│                                                            │
+│  Latency: Time per query (p50, p99)                       │
+│                                                            │
+│  Memory: RAM needed for index                             │
+│                                                            │
+│                                                            │
+│  ACCURACY vs SPEED TRADEOFF:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Recall                                             │   │
+│  │   │                                                │   │
+│  │ 99%│    ●                 More search effort       │   │
+│  │    │      ●●                                       │   │
+│  │ 95%│         ●●●                                   │   │
+│  │    │             ●●●●                              │   │
+│  │ 90%│                  ●●●●●●                       │   │
+│  │    │                          ●●●●●●●             │   │
+│  │ 80%│                                   ●●●●●●●    │   │
+│  │    │                                              │   │
+│  │    │────────────────────────────────────────────  │   │
+│  │      1ms    5ms    10ms    50ms    100ms          │   │
+│  │                    Latency                        │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  Tuning parameters control this tradeoff:                  │
+│  • ef_search (HNSW): more neighbors to explore            │
+│  • nprobe (IVF): more clusters to search                  │
+│                                                            │
+│                                                            │
+│  POPULAR ANN IMPLEMENTATIONS:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  • FAISS (Facebook) - most comprehensive, CPU/GPU         │
+│  • HNSW (hnswlib) - best graph-based implementation       │
+│  • Annoy (Spotify) - fast tree-based, read-only index     │
+│  • ScaNN (Google) - optimized for x86                     │
+│                                                            │
+│  Vector Databases:                                         │
+│  • Pinecone - managed service                             │
+│  • Weaviate - open source, hybrid search                  │
+│  • Milvus - open source, scalable                         │
+│  • Qdrant - open source, Rust                             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**ANN algorithm comparison:**
+| Algorithm | Speed | Recall | Memory | Best For |
+|-----------|-------|--------|--------|----------|
+| HNSW | Very fast | High | High | Production search |
+| IVF-PQ | Fast | Good | Low | Large-scale (billions) |
+| Annoy | Fast | Medium | Medium | Read-heavy, low-dim |
+| LSH | Very fast | Lower | Low | Approximate dedup |
+
+## Common questions
+
+**Q: How much accuracy do I lose with ANN vs exact search?**
+
+A: With well-tuned HNSW, you typically achieve 95-99% recall—meaning you find 95-99 of the true top-100 nearest neighbors. For RAG and semantic search, this is usually acceptable since you're retrieving multiple candidates anyway. If you need 100% recall, ANN can still help as a first stage to reduce candidates before exact reranking.
+
+**Q: When should I use HNSW vs IVF-PQ?**
+
+A: HNSW provides best accuracy/speed tradeoff up to ~10 million vectors and fits in memory. For billions of vectors or when memory is constrained, use IVF-PQ which compresses vectors heavily. Many production systems use hybrid approaches (e.g., IVF+HNSW) for scalability with good recall.
+
+**Q: How do I choose ANN parameters?**
+
+A: Start with defaults, benchmark on your data and query patterns. Key parameters: for HNSW, tuning `ef_construction` (build quality) and `ef_search` (search quality vs speed); for IVF, tuning `nlist` (number of clusters) and `nprobe` (clusters to search). Plot recall vs latency curves to find your sweet spot.
+
+**Q: Do I need a vector database or can I use a library?**
+
+A: Libraries (FAISS, hnswlib) are faster and more flexible but require you to manage persistence, updates, and scaling. Vector databases (Pinecone, Weaviate) provide managed indexing, filtering, updates, and horizontal scaling. Use libraries for prototyping and moderate scale; databases for production with complex requirements.
+
+## Related terms
+
+- [HNSW](/en/glossary/hnsw/) — hierarchical navigable small world graphs
+- [FAISS](/en/glossary/faiss/) — Facebook AI Similarity Search library
+- Embedding — vectors searched by ANN
+- [Dense retrieval](/en/glossary/dense-retrieval/) — uses ANN for semantic search
+
+---
+
+## References
+
+> Malkov & Yashunin (2018), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [HNSW paper]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [FAISS paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://www.sciencedirect.com/science/article/pii/S0306437919303758)", Information Systems. [Comprehensive benchmark]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Updated FAISS overview]

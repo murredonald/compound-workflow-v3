@@ -16,12 +16,20 @@ const locale = "en";
   path="/waitlist/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
+    <Section class="pt-12 md:pt-16">
       <div class="mx-auto max-w-xl text-center">
         <h1 class="text-display text-foreground">{t("waitlist.title", locale)}</h1>
         <p class="mt-4 text-body-lg text-muted-foreground">
           {t("waitlist.subtitle", locale)}
         </p>
+
+        {/* Selected plan badge - populated by client script */}
+        <div id="selected-plan-badge" class="mt-4 hidden">
+          <span class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-body-sm font-medium text-primary">
+            <span>Interested in:</span>
+            <span id="selected-plan-name" class="font-semibold"></span>
+          </span>
+        </div>
 
         <div class="mt-8">
           <ScarcityBanner text={t("scarcity.banner", locale)} />
@@ -35,6 +43,7 @@ const locale = "en";
               emailPlaceholder: t("waitlist.placeholder", locale),
               submit: t("waitlist.submit", locale),
               success: t("waitlist.success", locale),
+              successDuplicate: t("waitlist.success_duplicate", locale),
               consent: t("waitlist.consent", locale),
               privacyLinkText: t("waitlist.privacy_link", locale),
               privacyHref: `/${locale}/privacy/`,
@@ -56,12 +65,32 @@ const locale = "en";
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-h2 text-foreground">{t("pricing.founding_offer", locale)}</h2>
         <ul class="mt-6 space-y-2 text-body-sm text-muted-foreground text-left max-w-md mx-auto">
-          <li>30% discount applies to all paid plans for your first 12 months.</li>
-          <li>100 founding member spots selected by lottery from the waitlist.</li>
+          <li>20% discount applies to all paid plans for your first 12 months.</li>
+          <li>50 founding member spots selected by lottery from the waitlist.</li>
           <li>Standard pricing applies after the first year.</li>
           <li>Final pricing will be confirmed before launch.</li>
         </ul>
       </div>
     </Section>
   </main>
+
+  <script>
+    // Show selected plan badge if plan param exists
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get('plan');
+    if (plan) {
+      const planNames: Record<string, string> = {
+        solo: 'Solo',
+        team: 'Team',
+        firm: 'Firm',
+        enterprise: 'Enterprise'
+      };
+      const badge = document.getElementById('selected-plan-badge');
+      const nameEl = document.getElementById('selected-plan-name');
+      if (badge && nameEl && planNames[plan]) {
+        nameEl.textContent = planNames[plan];
+        badge.classList.remove('hidden');
+      }
+    }
+  </script>
 </BaseLayout>

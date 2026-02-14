@@ -1,0 +1,193 @@
+---
+term: "Ground Truth"
+termSlug: "ground-truth"
+short: "De gezaghebbende, geverifieerde referentiedata gebruikt om machine learning-modellen te trainen en evalueren—de 'correcte' antwoorden waartegen modelvoorspellingen worden gemeten."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["training-data", "annotation", "labeling", "evaluation-metrics", "gold-standard"]
+synonyms: ["Gouden standaard", "Referentiedata", "Labels", "Geannoteerde data"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Ground truth is de gezaghebbende, geverifieerde data die de "correcte" antwoorden vertegenwoordigt in [machine learning](/nl/glossary/machine-learning/). Het is de benchmark waartegen modelvoorspellingen worden geëvalueerd. Ground truth kan bestaan uit door mensen geannoteerde labels (beeldclassificaties, entiteitstags, sentimentscores), sensormetingen (GPS-coördinaten, temperatuurmetingen), of domeinexpert-beoordelingen (medische diagnoses, juridische interpretaties). De kwaliteit van ground truth bepaalt direct het plafond voor modelprestaties—modellen kunnen niet betrouwbaar de nauwkeurigheid van hun trainingslabels overtreffen.
+
+## Waarom het belangrijk is
+
+Ground truth is de basis van [supervised learning](/nl/glossary/supervised-learning/):
+
+- **Modeltraining** — leert patronen van gelabelde voorbeelden
+- **Evaluatie** — meet nauwkeurigheid tegen bekende correcte antwoorden
+- **[Benchmarking](/nl/glossary/benchmarking/)** — maakt vergelijking tussen verschillende modellen mogelijk
+- **Kwaliteitscontrole** — identificeert systematische modelfalen
+- **Regelgevingscompliance** — bewijst modelvaliditeit voor audits
+- **Debugging** — diagnosticeert waar en waarom modellen falen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GROUND TRUTH                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAT GROUND TRUTH IS:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │   RUWE DATA                      GROUND TRUTH        │ │
+│  │   (Input)                        (Label)             │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │ [Afbeelding │              │  "Kat"      │      │ │
+│  │   │  van kat]   │  ──────────► │             │      │ │
+│  │   │             │   Menselijke │  (geverifi- │      │ │
+│  │   │             │   Annotator  │   eerd)     │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │ "Geweldig   │              │ POSITIEF    │      │ │
+│  │   │  product!"  │  ──────────► │ sentiment   │      │ │
+│  │   │             │   Expert     │ score: 0.9  │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH BRONNEN:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. MENSELIJKE ANNOTATIE                            │ │
+│  │     ┌─────────┐    ┌─────────┐    ┌─────────┐      │ │
+│  │     │Annotator│    │Annotator│    │Annotator│      │ │
+│  │     │    A    │    │    B    │    │    C    │      │ │
+│  │     └────┬────┘    └────┬────┘    └────┬────┘      │ │
+│  │          │              │              │           │ │
+│  │          └──────────────┼──────────────┘           │ │
+│  │                         ▼                          │ │
+│  │                  ┌───────────┐                     │ │
+│  │                  │ Consensus │                     │ │
+│  │                  └───────────┘                     │ │
+│  │                                                      │ │
+│  │     Meerdere annotators verminderen bias            │ │
+│  │     Inter-annotator agreement = kwaliteitsmetriek   │ │
+│  │                                                      │ │
+│  │  2. EXPERT/GEZAGHEBBENDE BRON                       │ │
+│  │     • Medische diagnose door arts                   │ │
+│  │     • Juridische classificatie door advocaat       │ │
+│  │     • Financiële data uit officiële rapportages    │ │
+│  │                                                      │ │
+│  │  3. FYSIEKE/SENSOR WAARHEID                         │ │
+│  │     • GPS-coördinaten (autonoom rijden)            │ │
+│  │     • Temperatuurmetingen (IoT/voorspelling)       │ │
+│  │     • Werkelijke klik/conversie (advertentiemodellen)│ │
+│  │                                                      │ │
+│  │  4. PROGRAMMATISCH/REGEL-GEBASEERD                  │ │
+│  │     • Regex-patronen (e-mailvalidatie)             │ │
+│  │     • Wiskundige correctheid (calculator)          │ │
+│  │     • Database-lookups (entiteitsresolutie)        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH IN ML WORKFLOW:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Ruwe Data                                          │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  ANNOTATIE (Ground truth labels maken)              │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  GELABELDE DATASET                                  │ │
+│  │  (Input, Ground Truth) paren                        │ │
+│  │     │                                               │ │
+│  │     ├───────────────────────┐                      │ │
+│  │     ▼                       ▼                      │ │
+│  │  TRAINSET (80%)        TESTSET (20%)               │ │
+│  │     │                       │                      │ │
+│  │     ▼                       │                      │ │
+│  │  TRAINING                   │                      │ │
+│  │  Model leert patronen       │                      │ │
+│  │     │                       │                      │ │
+│  │     ▼                       ▼                      │ │
+│  │  ┌──────────────────────────────────────────────┐ │ │
+│  │  │              EVALUATIE                        │ │ │
+│  │  │                                               │ │ │
+│  │  │  Modelvoorspelling: "Kat"                    │ │ │
+│  │  │  Ground Truth:      "Kat"                    │ │ │
+│  │  │  Resultaat:         ✓ Correct                │ │ │
+│  │  │                                               │ │ │
+│  │  │  Nauwkeurigheid = Correct / Totaal           │ │ │
+│  │  │                                               │ │ │
+│  │  └──────────────────────────────────────────────┘ │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  KWALITEITSPROBLEMEN:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Probleem            │ Impact                        │ │
+│  │  ────────────────────┼──────────────────────────────│ │
+│  │  Labelruis           │ Model leert verkeerde patro. │ │
+│  │  (incorrecte labels) │                               │ │
+│  │                      │                               │ │
+│  │  Subjectieve         │ Lage overeenstemming,        │ │
+│  │  onenigheid          │ inconsistent modelgedrag     │ │
+│  │                      │                               │ │
+│  │  Distributieverschuiving │ Werkt in lab, faalt     │ │
+│  │                      │ in productie                 │ │
+│  │                      │                               │ │
+│  │  Annotatiebias       │ Systematisch vertekende     │ │
+│  │                      │ voorspellingen               │ │
+│  │                      │                               │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoeveel ground truth data heb ik nodig?**
+
+A: Hangt af van taakcomplexiteit. Simpele classificatie: 1.000-10.000 voorbeelden. Complexe NLP/vision taken: 100.000+. [Deep learning](/nl/glossary/deep-learning/) vereist over het algemeen meer dan traditionele ML.
+
+**V: Wat als ground truth verkeerd is?**
+
+A: Labelruis beperkt direct de modelnauwkeurigheid. Gebruik meerdere annotators, meet inter-annotator agreement, implementeer kwaliteitscontrole-workflows.
+
+**V: Kan ik [LLM](/nl/glossary/llm/)'s gebruiken om ground truth te genereren?**
+
+A: Voor bootstrapping of augmentatie, ja—maar menselijke verificatie is essentieel. LLM-gegenereerde labels erven modelbiases.
+
+## Gerelateerde termen
+
+- Trainingsdata — de dataset om modellen te trainen
+- Annotatie — het proces om ground truth te creëren
+
+---
+
+## Referenties
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Weak supervision en programmatisch labelen]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations](https://aclanthology.org/D08-1027/)", ACL. [Crowdsourced annotatiekwaliteit]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets](https://arxiv.org/abs/2103.14749)", NeurIPS. [Impact van labelruis]
+
+## References
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Weak supervision and programmatic labeling]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations for Natural Language Tasks](https://aclanthology.org/D08-1027/)", ACL. [Crowdsourced annotation quality]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets Destabilize Machine Learning Benchmarks](https://arxiv.org/abs/2103.14749)", NeurIPS. [Impact of label noise on benchmarks]

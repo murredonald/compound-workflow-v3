@@ -1,0 +1,122 @@
+---
+term: "Top-p Sampling"
+termSlug: "top-p"
+short: "Een samplingmethode die selecteert uit de kleinste set tokens waarvan de cumulatieve kans een drempel p overschrijdt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["temperature", "top-k", "inference", "llm"]
+synonyms: ["Nucleus sampling", "Top-p decodering", "Kansmassa-sampling"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Top-p sampling (ook nucleus sampling genoemd) is een tekstgeneratiestrategie die dynamisch selecteert uit de kleinst mogelijke set tokens waarvan de cumulatieve kans een drempel p overschrijdt. In tegenstelling tot top-k dat een vast aantal gebruikt, past top-p zich aan aan het vertrouwen van het model—selecteert minder tokens wanneer het model zeker is, meer wanneer onzeker.
+
+## Waarom het belangrijk is
+
+Top-p biedt intelligente controle over outputdiversiteit:
+
+- **Adaptieve selectie** — past kandidaatpool aan op basis van modelvertrouwen
+- **Kwaliteitsbalans** — sluit tokens met lage kans uit die incoherentie veroorzaken
+- **Flexibiliteit** — werkt in verschillende contexten zonder handmatige tuning
+- **Complementair** — combineert goed met temperatuur voor fijne controle
+- **Productiestandaard** — standaard samplingmethode in de meeste [LLM](/nl/glossary/llm/) APIs
+
+Top-p produceert vaak natuurlijkere tekst dan vaste top-k sampling.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   TOP-P (NUCLEUS) SAMPLING                 │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Tokenkansen (gesorteerd hoog naar laag):                  │
+│                                                            │
+│  Token    Kans    Cumulatief                               │
+│  ─────────────────────────────                             │
+│  "de"     0.35    0.35                                     │
+│  "een"    0.25    0.60                                     │
+│  "deze"   0.15    0.75                                     │
+│  "die"    0.10    0.85  ◄── p=0.9 drempel                 │
+│  "het"    0.08    0.93  ◄── opgenomen (overschrijdt 0.9)  │
+│  "enige"  0.04    0.97      uitgesloten                    │
+│  "mijn"   0.02    0.99      uitgesloten                    │
+│  "jouw"   0.01    1.00      uitgesloten                    │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  TOP-P = 0.9                                   │        │
+│  │                                                │        │
+│  │  Geselecteerde nucleus: [de, een, deze, die,  │        │
+│  │                          het]                  │        │
+│  │  Sample alleen uit deze 5 tokens              │        │
+│  │                                                │        │
+│  │  ████████████████████████░░░░░░░░             │        │
+│  │  ▲                      ▲                     │        │
+│  │  Opgenomen (93%)        Uitgesloten (7%)      │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  ADAPTIEF GEDRAG:                                          │
+│  • Zekere voorspelling → selecteert 2-3 tokens             │
+│  • Onzekere voorspelling → selecteert 10-20 tokens         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Veelgebruikte top-p waarden:**
+| Waarde | Gedrag | Toepassing |
+|--------|--------|------------|
+| 0.1 | Zeer restrictief | Deterministische taken |
+| 0.5 | Matig gefocust | Feitelijke generatie |
+| 0.9 | Gebalanceerd (standaard) | Algemeen gebruik |
+| 0.95 | Meer divers | Creatief schrijven |
+| 1.0 | Alle tokens | Maximale diversiteit |
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen top-p en top-k?**
+
+A: Top-k selecteert altijd exact k tokens ongeacht hun kansen. Top-p selecteert een variabel aantal op basis van cumulatieve kans. Top-p past zich aan: als één token 95% kans heeft, selecteert het alleen die ene; als kansen verspreid zijn, selecteert het veel.
+
+**V: Wat is een goede standaard top-p waarde?**
+
+A: 0.9 is een veelgebruikte standaard. Het omvat de meeste redelijke tokens terwijl de lange staart van onwaarschijnlijke opties uitgesloten wordt. Voor meer gefocuste output, probeer 0.5-0.7; voor creatiever, 0.95.
+
+**V: Moet ik top-p met temperatuur gebruiken?**
+
+A: Ja, ze vullen elkaar aan. Temperatuur hervormt de kansverdeling; top-p samplet dan uit de aangepaste verdeling. Een veelgebruikte combinatie: temperatuur 0.7 + top-p 0.9.
+
+**V: Betekent top-p = 1.0 geen filtering?**
+
+A: Effectief ja—alle tokens zijn opgenomen aangezien cumulatieve kans altijd 1.0 bereikt. Dit geeft maximale diversiteit maar kan onzinnige tokens met lage kans bevatten.
+
+## Gerelateerde termen
+
+- [Temperatuur](/nl/glossary/temperature/) — hervormt kansverdeling
+- [Top-k Sampling](/nl/glossary/top-k/) — vast-aantal alternatief
+- [Beam Search](/nl/glossary/beam-search/) — andere decoderingsstrategie
+- [Inferentie](/nl/glossary/inference/) — generatieproces
+
+---
+
+## Referenties
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ [citaties](/nl/glossary/citation/)]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1.000+ citaties]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10.000+ citaties]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citaties]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10,000+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]

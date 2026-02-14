@@ -1,0 +1,248 @@
+---
+term: "HNSW"
+termSlug: "hnsw"
+short: "Hierarchical Navigable Small World graphs - the state-of-the-art algorithm for fast approximate nearest neighbor search in high-dimensional spaces."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["ann", "faiss", "embedding", "dense-retrieval"]
+synonyms: ["Hierarchical Navigable Small World", "hnswlib"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+HNSW (Hierarchical Navigable Small World) is a graph-based algorithm for approximate [nearest neighbor search](/en/glossary/nearest-neighbor-search/) that achieves state-of-the-art performance by combining navigable small-world graph principles with hierarchical layers. Each vector becomes a node, connected to its nearest neighbors. Upper layers contain sparse long-range connections for fast navigation; lower layers contain dense local connections for precise search. This multi-layer structure enables logarithmic search complexity, making HNSW the default choice for most vector search applications including [RAG](/en/glossary/rag/) systems.
+
+## Why it matters
+
+HNSW dominates modern vector search:
+
+- **Best recall/speed tradeoff** — consistently outperforms other [ANN](/en/glossary/neural-network/) algorithms
+- **High-dimensional friendly** — works well with 768+ dimension [embeddings](/en/glossary/embeddings/)
+- **Production proven** — used by Pinecone, [Weaviate](/en/glossary/weaviate/), Qdrant, pgvector, Milvus
+- **RAG essential** — enables millisecond [semantic search](/en/glossary/semantic-search/) over millions of chunks
+- **No parameter sensitivity** — robust default parameters work for most cases
+- **Incremental updates** — supports adding vectors without full rebuild
+
+HNSW is the algorithm behind most successful AI applications doing [similarity search](/en/glossary/similarity-search/).
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               HNSW - HIERARCHICAL NAVIGABLE                │
+│                    SMALL WORLD GRAPHS                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE KEY INSIGHT:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Small-world networks: Most nodes can reach any other     │
+│  node through a small number of hops (like "6 degrees     │
+│  of separation"). HNSW exploits this for vector search.   │
+│                                                            │
+│                                                            │
+│  HIERARCHICAL STRUCTURE:                                   │
+│  ──────────────────────                                    │
+│                                                            │
+│            LAYER 2 (top): Few nodes, long-range links     │
+│                                                            │
+│                 ●═══════════════════●                      │
+│                 ║                   ║                      │
+│                 ║                   ║                      │
+│            LAYER 1: More nodes, medium links              │
+│                                                            │
+│           ●════●════●═══════●════●════●                   │
+│           ║    ║    ║       ║    ║    ║                   │
+│           ║    ║    ║       ║    ║    ║                   │
+│            LAYER 0 (base): All nodes, local links         │
+│                                                            │
+│        ●──●──●──●──●──●──●──●──●──●──●──●──●──●──●        │
+│                                                            │
+│                                                            │
+│  LAYER ASSIGNMENT:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Each vector is randomly assigned to a maximum layer      │
+│  using exponential distribution:                          │
+│                                                            │
+│    max_layer = floor(-ln(random()) × mL)                  │
+│                                                            │
+│  Where mL = 1/ln(M) and M is edges per node              │
+│                                                            │
+│  Result: ~63% nodes only in layer 0                       │
+│          ~23% nodes reach layer 1                         │
+│          ~9%  nodes reach layer 2                         │
+│          ...exponentially fewer at higher layers          │
+│                                                            │
+│                                                            │
+│  INDEX CONSTRUCTION:                                       │
+│  ──────────────────                                        │
+│                                                            │
+│  For each new vector v to insert:                         │
+│                                                            │
+│  1. Assign max layer L = floor(-ln(random()) × mL)        │
+│                                                            │
+│  2. Find entry point at top layer                         │
+│     ┌──────────────────────────────────────────┐          │
+│     │  Starting at graph entry point:          │          │
+│     │  ● (current entry point)                 │          │
+│     └──────────────────────────────────────────┘          │
+│                                                            │
+│  3. Greedy search to find closest node at each layer     │
+│     above L (just navigation, no connections)             │
+│                                                            │
+│  4. At layers L down to 0:                                │
+│     - Find M closest neighbors by greedy search           │
+│     - Connect v to those M neighbors bidirectionally      │
+│     - Prune if any node exceeds M_max connections        │
+│                                                            │
+│                                                            │
+│  SEARCH ALGORITHM:                                         │
+│  ────────────────                                          │
+│                                                            │
+│  Query: q = [0.12, -0.34, 0.56, ...]                      │
+│  Find: k nearest neighbors                                 │
+│                                                            │
+│  Step 1: Start at entry point (top layer)                 │
+│                                                            │
+│     Layer 2:  [q]→→→→●                                    │
+│                      ↓                                     │
+│                                                            │
+│  Step 2: Greedy descent - at each layer, move to          │
+│          neighbor closest to q until no improvement       │
+│                                                            │
+│     Layer 1:     ●→→→●→→→●                                │
+│                          ↓                                 │
+│                                                            │
+│  Step 3: At layer 0, expand search with ef_search         │
+│          candidates (not just 1)                          │
+│                                                            │
+│     Layer 0:         ●←●→●                                │
+│                     ↙  ↓  ↘                               │
+│                    ●   ●   ●                               │
+│                   ↙ ↘  ↓                                  │
+│                  ●   ● ●                                   │
+│                                                            │
+│  Step 4: Return top-k from explored candidates            │
+│                                                            │
+│                                                            │
+│  KEY PARAMETERS:                                           │
+│  ──────────────                                            │
+│                                                            │
+│  ┌─────────────┬───────────────────────────────────────┐  │
+│  │ Parameter   │ Effect                                 │  │
+│  ├─────────────┼───────────────────────────────────────┤  │
+│  │ M           │ Edges per node (default 16)           │  │
+│  │             │ Higher = better recall, more memory   │  │
+│  │             │                                        │  │
+│  │ ef_const    │ Construction search depth (def 200)   │  │
+│  │             │ Higher = better index, slower build   │  │
+│  │             │                                        │  │
+│  │ ef_search   │ Query search depth (def 10)          │  │
+│  │             │ Higher = better recall, slower query  │  │
+│  │             │ Must be >= k (neighbors requested)    │  │
+│  └─────────────┴───────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  RECALL vs LATENCY TRADEOFF:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ef_search controls search quality/speed:                 │
+│                                                            │
+│    ef_search │ Recall@10 │ Latency │ Distance calcs      │
+│    ──────────┼───────────┼─────────┼────────────────     │
+│         10   │   85%     │  0.5ms  │    ~300             │
+│         50   │   95%     │  1.5ms  │   ~1000             │
+│        100   │   98%     │  3.0ms  │   ~2000             │
+│        200   │   99%     │  5.0ms  │   ~4000             │
+│        500   │  99.5%    │ 10.0ms  │  ~10000             │
+│                                                            │
+│  (Example values - actual vary by dataset)                │
+│                                                            │
+│                                                            │
+│  EDGE SELECTION HEURISTIC:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  When a node has too many connections (> M_max),          │
+│  HNSW prunes using a heuristic that prefers diverse       │
+│  directions over just closest neighbors:                  │
+│                                                            │
+│    Bad (clustered):     Good (diverse):                   │
+│                                                            │
+│         ●●●                    ●                          │
+│        ●●●●●                  /│\                         │
+│        ↓↓↓↓↓                 / │ \                        │
+│          N                  ●──N──●                       │
+│                               / \                         │
+│                              ●   ●                        │
+│                                                            │
+│  This ensures good connectivity even in clustered data.   │
+│                                                            │
+│                                                            │
+│  MEMORY FOOTPRINT:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  For n vectors of dimension d:                            │
+│                                                            │
+│  Memory ≈ n × (d × 4 bytes + M × 2 × 4 bytes)            │
+│               ↑                ↑                          │
+│          vectors         graph edges                      │
+│                                                            │
+│  Example: 1M vectors × 768d × M=16                        │
+│  = 1M × (768×4 + 16×2×4) = ~3.2 GB                        │
+│                                                            │
+│                                                            │
+│  COMPARISON WITH OTHER ALGORITHMS:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  ┌───────────┬────────┬────────┬────────┬─────────────┐  │
+│  │ Algorithm │ Speed  │ Recall │ Memory │ Incremental │  │
+│  ├───────────┼────────┼────────┼────────┼─────────────┤  │
+│  │ HNSW      │ Fast   │ High   │ High   │ Yes         │  │
+│  │ IVF       │ Fast   │ Medium │ Medium │ Limited     │  │
+│  │ Annoy     │ Fast   │ Medium │ Medium │ No          │  │
+│  │ LSH       │ V.Fast │ Low    │ Low    │ Yes         │  │
+│  │ PQ        │ Fast   │ Medium │ V.Low  │ No          │  │
+│  └───────────┴────────┴────────┴────────┴─────────────┘  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: What's the relationship between HNSW and [vector databases](/en/glossary/vector-database/)?**
+
+A: HNSW is an algorithm; vector databases are systems that use it. Nearly all major vector databases (Pinecone, Weaviate, Qdrant, [Milvus](/en/glossary/milvus/), pgvector) use HNSW as their primary indexing algorithm. When you create an index in these systems, you're often configuring HNSW parameters (M, ef_construction, ef_search) even if not explicitly named.
+
+**Q: How do I tune HNSW parameters for my use case?**
+
+A: Start with defaults (M=16, ef_construction=200). For querying, tune ef_search based on your recall/latency requirements—start at k×2 (where k is neighbors needed) and increase until recall plateaus. If recall is still insufficient, consider increasing M and rebuilding the index (more expensive but better connectivity).
+
+**Q: Does HNSW support filtering (metadata search)?**
+
+A: HNSW alone doesn't filter—it just finds nearest vectors. Vector databases add filtering on top: either pre-filtering (filter then search, may miss good candidates) or post-filtering (search then filter, wasteful if filter is selective). Modern systems use hybrid approaches. This is why vector databases add value beyond raw HNSW.
+
+**Q: How does HNSW handle updates and deletions?**
+
+A: HNSW supports incremental insertions efficiently—new vectors connect to existing graph. Deletions are trickier: most implementations mark vectors as deleted but keep graph edges (lazy deletion). Hard deletions require removing edges, which can degrade graph quality over time. For heavy update workloads, periodic reindexing may be needed.
+
+## Related terms
+
+- [ANN](/en/glossary/ann/) — approximate nearest neighbor algorithms
+- [FAISS](/en/glossary/faiss/) — includes HNSW implementation
+- [Pinecone](/en/glossary/pinecone/) — vector database using HNSW
+- [Dense retrieval](/en/glossary/dense-retrieval/) — relies on HNSW for search
+
+---
+
+## References
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://ieeexplore.ieee.org/document/8594636)", IEEE Transactions on Pattern Analysis and Machine Intelligence. [Original HNSW paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [HNSW benchmark comparisons]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [HNSW in FAISS context]
+
+> Fu et al. (2019), "[Fast Approximate Nearest Neighbor Search With The Navigating Spreading-out Graph](https://www.vldb.org/pvldb/vol12/p461-fu.pdf)", VLDB. [NSG comparison paper]

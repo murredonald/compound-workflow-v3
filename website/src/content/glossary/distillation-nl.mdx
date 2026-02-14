@@ -1,0 +1,182 @@
+---
+term: "Knowledge Distillation"
+termSlug: "distillation"
+short: "Het trainen van een kleiner student-model om een groter teacher-model na te bootsen, kennisoverdracht met drastisch verminderde grootte en kosten."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["model-compression", "fine-tuning", "transfer-learning", "llm"]
+synonyms: ["Model distillatie", "Teacher-student leren", "Kennisoverdracht"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Knowledge distillation is een modelcompressietechniek waarbij een kleiner "student" model wordt getraind om het gedrag van een groter "teacher" model te repliceren. In plaats van te leren van harde labels (0 of 1), leert de student van de soft waarschijnlijkheidsverdelingen van de teacher, die rijkere informatie bevatten over relaties tussen klassen. Dit draagt de geleerde kennis van de teacher over naar een model dat 10-100x kleiner kan zijn terwijl 90-99% van de prestaties behouden blijft.
+
+## Waarom het belangrijk is
+
+Distillatie maakt AI-deployment op schaal mogelijk:
+
+- **Dramatische grootteverkleining** — comprimeer 175B modellen naar 7B met vergelijkbare capaciteiten
+- **Snellere [inferentie](/nl/glossary/inference/)** — kleinere modellen draaien sneller en goedkoper
+- **Edge deployment** — breng grote modelintelligentie naar apparaten
+- **Kostenefficiëntie** — bedien miljoenen gebruikers betaalbaar
+- **Privacy** — draai modellen lokaal zonder data naar cloud te sturen
+
+Distillatie is hoe bedrijven zoals OpenAI en Anthropic efficiënte productiemodellen creëren.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  KNOWLEDGE DISTILLATION                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET KERNPUNT:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  Soft labels zijn informatiever dan harde labels!          │
+│                                                            │
+│  Classificatie voorbeeld (is het een kat, hond of auto?):  │
+│                                                            │
+│  Hard label:  [1, 0, 0]  ← "Het is een kat, punt"         │
+│  Soft label:  [0.7, 0.25, 0.05]                           │
+│               ↑     ↑      ↑                               │
+│             kat   hond   auto                              │
+│                                                            │
+│  Het soft label zegt: "Het is waarschijnlijk een kat,     │
+│  maar heeft hondachtige kenmerken. Zeker geen auto."      │
+│                                                            │
+│  Deze RELATIE-informatie helpt de student leren!          │
+│                                                            │
+│                                                            │
+│  DISTILLATIE ARCHITECTUUR:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│                 ┌───────────────────┐                     │
+│                 │   Teacher Model   │                     │
+│                 │   (Groot: 175B)   │                     │
+│                 │   [BEVROREN]      │                     │
+│                 └─────────┬─────────┘                     │
+│                           │                                │
+│                           │ Soft voorspellingen            │
+│                           │ (waarschijnlijkheidsverd.)    │
+│                           ▼                                │
+│              ┌────────────────────────┐                   │
+│    Input ───►│    Distillatie Loss    │                   │
+│              │  KL(student || teacher) │                   │
+│              │  + α × CrossEntropy     │                   │
+│              └────────────┬───────────┘                   │
+│                           │                                │
+│                           │ Gradiënten                     │
+│                           ▼                                │
+│                 ┌───────────────────┐                     │
+│                 │   Student Model   │                     │
+│                 │   (Klein: 7B)     │                     │
+│                 │   [TRAINING]      │                     │
+│                 └───────────────────┘                     │
+│                                                            │
+│                                                            │
+│  TEMPERATUUR VERZACHTING:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Probleem: Model outputs zijn vaak te zelfverzekerd       │
+│                                                            │
+│  Zonder temperatuur (T=1):                                │
+│  [0.99, 0.009, 0.001]  ← Bijna geen info over relaties    │
+│                                                            │
+│  Met hoge temperatuur (T=5):                              │
+│  [0.65, 0.25, 0.10]    ← Rijke relationele informatie     │
+│                                                            │
+│  Formule: softmax(logits / T)                             │
+│                                                            │
+│  Hogere T → zachtere verdelingen → meer kennisoverdracht  │
+│                                                            │
+│                                                            │
+│  DISTILLATIE VOOR LLMs:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │                                                       │ │
+│  │  Teacher (GPT-4):    "Wat is 2+2?"                   │ │
+│  │  Antwoord:           "Het antwoord is 4. Optellen..."│ │
+│  │                                                       │ │
+│  │  Student leert om:                                    │ │
+│  │  1. Teacher's outputverdeling te matchen              │ │
+│  │  2. Vergelijkbare tekstkwaliteit te genereren         │ │
+│  │  3. Vergelijkbare redeneerpatronen te vertonen        │ │
+│  │                                                       │ │
+│  │  Methoden:                                            │ │
+│  │  • Token-niveau distillatie (match next-token probs) │ │
+│  │  • Sequentie-niveau (match volledige response prob.) │ │
+│  │  • Feature-niveau (match interne representaties)     │ │
+│  │                                                       │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BEKENDE GEDISTILLEERDE MODELLEN:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  • DistilBERT: 40% kleiner, 60% sneller, 97% prestaties  │
+│  • TinyBERT: 7x kleiner, 9x sneller                      │
+│  • Alpaca: Gedistilleerd van GPT-3.5 met 52K voorbeelden │
+│  • Vicuna: Gedistilleerd van ChatGPT gesprekken          │
+│  • Phi modellen: Klein maar boven gewichtsklasse         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Distillatie efficiëntie:**
+| Model | Origineel | Gedistilleerd | Prestatie Behouden |
+|-------|-----------|---------------|-------------------|
+| BERT-base | 110M | DistilBERT 66M | 97% |
+| GPT-3 | 175B | Alpaca 7B | ~85% |
+| LLaMA 65B | 65B | Vicuna 13B | ~90% |
+
+## Veelgestelde vragen
+
+**V: Is distillatie hetzelfde als fine-tuning?**
+
+A: Nee. Fine-tuning update de gewichten van een model op nieuwe data. Distillatie traint een ander (meestal kleiner) model om het gedrag van een ander model na te bootsen. Je kunt ze combineren: eerst een groot model distilleren naar een kleiner, dan het kleine model fine-tunen voor specifieke taken.
+
+**V: Kan ik elk model in elk ander model distilleren?**
+
+A: De student-architectuur hoeft niet overeen te komen met die van de teacher, maar vergelijkbare architecturen werken vaak beter. De student moet voldoende capaciteit hebben om het gedrag van de teacher te leren—een minuscuul model kan niet alles vangen wat een gigantisch model weet. Typisch zijn studenten 5-20x kleiner dan teachers.
+
+**V: Is distilleren van ChatGPT/GPT-4 legaal?**
+
+A: Het is gecompliceerd. OpenAI's gebruiksvoorwaarden verbieden het gebruik van outputs om concurrerende modellen te trainen. Echter, veel open-source gedistilleerde modellen bestaan. Het juridische landschap evolueert. Voor commercieel gebruik, controleer de specifieke voorwaarden van het teacher-model dat u gebruikt.
+
+**V: Hoeveel data heb ik nodig voor distillatie?**
+
+A: Minder dan training from scratch, maar meer dan fine-tuning. Voor LLM-distillatie is 10K-1M voorbeelden typisch. Kwaliteit is belangrijker dan kwantiteit—diverse, hoogwaardige teacher outputs produceren betere studenten.
+
+## Gerelateerde termen
+
+- [Model compression](/nl/glossary/model-compression/) — bredere categorie inclusief distillatie
+- [Fine-tuning](/nl/glossary/fine-tuning/) — gerelateerde maar andere techniek
+- Transfer learning — onderliggend concept
+- [LLM](/nl/glossary/llm/) — modellen die vaak gedistilleerd worden
+
+---
+
+## Referenties
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Fundamentele distillatie paper]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Praktische BERT distillatie]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Efficiënte LLM training inclusief distillatieconcepten]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [LLM distillatie van GPT-3.5]
+
+## References
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Foundational distillation paper]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Practical BERT distillation]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Efficient LLM training including distillation concepts]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [LLM distillation from GPT-3.5]

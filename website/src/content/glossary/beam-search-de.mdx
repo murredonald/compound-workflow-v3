@@ -1,0 +1,131 @@
+---
+term: "Beam Search"
+termSlug: "beam-search"
+short: "Ein Dekodierungsalgorithmus, der mehrere Kandidatensequenzen parallel erkundet und die top-k vielversprechendsten Pfade bei jedem Schritt behält."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["top-p", "top-k", "temperature", "inference", "llm"]
+synonyms: ["Strahlsuche", "Beam-Dekodierung", "Multi-Pfad-Suche"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Beam Search ist ein Dekodierungsalgorithmus, der Text generiert, indem er mehrere Kandidatensequenzen gleichzeitig erkundet. Bei jedem Schritt erweitert er alle aktuellen Sequenzen mit möglichen nächsten Tokens, bewertet sie und behält nur die b höchstbewerteten Kandidaten (wobei b die Strahlbreite ist). Dieser Breiten-zuerst-Ansatz findet oft bessere Gesamtsequenzen als gieriges Einzelpfad-Dekodieren.
+
+## Warum es wichtig ist
+
+Beam Search balanciert Qualität und Rechenkosten:
+
+- **Bessere Sequenzen** — erkundet mehrere Pfade, um Outputs höherer Wahrscheinlichkeit zu finden
+- **Vermeidet lokale Optima** — bindet sich nicht früh an suboptimale Token-Wahlen
+- **Kontrollierbare Exploration** — Strahlbreite justiert Qualität-vs-Geschwindigkeit-Kompromiss
+- **Übersetzungsstandard** — Standard in maschinellen Übersetzungssystemen
+- **Deterministischer Output** — produziert konsistente Ergebnisse für gleiche Eingabe
+
+Beam Search ist essentiell für Aufgaben, wo Sequenz-Level-Qualität wichtig ist.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       BEAM SEARCH                          │
+│                     (Strahlbreite = 2)                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Schritt 0: Beginne mit <start> Token                      │
+│                                                            │
+│                      [<start>]                             │
+│                          │                                 │
+│  Schritt 1: Erweitere zu Vokabular, behalte top-2          │
+│                          │                                 │
+│          ┌───────────────┴───────────────┐                 │
+│          ▼                               ▼                 │
+│      ["Der"]                         ["Ein"]               │
+│      p=0.40                          p=0.35                │
+│          │                               │                 │
+│  Schritt 2: Erweitere jeden, bewerte alle, behalte top-2   │
+│          │                               │                 │
+│    ┌─────┼─────┐                   ┌─────┼─────┐           │
+│    ▼     ▼     ▼                   ▼     ▼     ▼           │
+│  "Der   "Der   "Der             "Ein   "Ein   "Ein         │
+│  Katze" Hund"  Vogel"           Katze" Hund"  Mann"        │
+│  0.38   0.35   0.32             0.30   0.28   0.25         │
+│                                                            │
+│  SCORES (kumulative Log-Wahrsch.):                         │
+│  ─────────────────────────────                             │
+│  "Der Katze" = -0.97  ◄── BEHALTEN (beste)                │
+│  "Der Hund"  = -1.05  ◄── BEHALTEN (2t beste)             │
+│  "Ein Katze" = -1.20      beschnitten                      │
+│  "Der Vogel" = -1.14      beschnitten                      │
+│  ...                                                       │
+│                                                            │
+│  Schritt 3: Fortfahren bis <ende> Token...                 │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  STRAHLBREITE-EFFEKTE:                         │        │
+│  │                                                │        │
+│  │  b=1: Gieriges Dekodieren (schnell, niedrig)  │        │
+│  │  b=4-5: Üblicher Standard (ausgewogen)        │        │
+│  │  b=10+: Hohe Qualität (langsamer)             │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Strahlbreiten-Vergleich:**
+| Breite | Verhalten | Kompromiss |
+|--------|-----------|------------|
+| 1 | [Gieriges Dekodieren](/de/glossary/greedy-decoding/) | Schnell aber kann bessere Sequenzen verpassen |
+| 2-3 | Minimale Exploration | Leichter Qualitätsgewinn |
+| 4-5 | Standard | Gute Balance für die meisten Aufgaben |
+| 10+ | Umfangreich | Abnehmende Erträge, langsamer |
+| 50+ | Erschöpfend | Selten benötigt |
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Beam Search von Sampling-Methoden?**
+
+A: Beam Search ist deterministisch—es wählt immer die höchstbewerteten Sequenzen. Sampling (top-k, top-p, Temperatur) führt Zufälligkeit für Diversität ein. Beam Search optimiert für Wahrscheinlichkeit; Sampling tauscht etwas Wahrscheinlichkeit gegen Vielfalt und Kreativität.
+
+**F: Was ist eine gute Strahlbreite?**
+
+A: 4-5 ist üblich für die meisten Aufgaben. Maschinelle Übersetzung verwendet oft 4-10. Höhere Werte geben abnehmende Erträge bei steigender Berechnung. Für kreatives Schreiben werden Sampling-Methoden meist gegenüber Beam Search bevorzugt.
+
+**F: Garantiert Beam Search das Finden der besten Sequenz?**
+
+A: Nein—es ist eine Approximation. Echte Beste-zuerst-Suche ist für Sprachmodelle rechnerisch nicht machbar. Beam Search kann die global optimale Sequenz durch sein Beschneiden mit fester Breite immer noch verfehlen.
+
+**F: Warum kann Beam Search repetitiven Text produzieren?**
+
+A: Beam Search optimiert für Wahrscheinlichkeit, und das Wiederholen häufiger Phrasen kann hohe lokale Wahrscheinlichkeit haben. Deshalb werden Längenstrafen und N-Gramm-Blocking in der Praxis oft hinzugefügt.
+
+## Verwandte Begriffe
+
+- [Top-k Sampling](/de/glossary/top-k/) — stochastische Alternative
+- [Top-p Sampling](/de/glossary/top-p/) — adaptives Sampling
+- [Temperatur](/de/glossary/temperature/) — Wahrscheinlichkeitsumformung
+- [Inferenz](/de/glossary/inference/) — Generierungsprozess
+
+---
+
+## Referenzen
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2.000+ Zitationen]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ Zitationen]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ Zitationen]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ Zitationen]
+
+## References
+
+> Graves (2012), "[Sequence Transduction with Recurrent Neural Networks](https://arxiv.org/abs/1211.3711)", arXiv. [2,000+ citations]
+
+> Freitag & Al-Onaizan (2017), "[Beam Search Strategies for Neural Machine Translation](https://arxiv.org/abs/1702.01806)", WNMT. [500+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]

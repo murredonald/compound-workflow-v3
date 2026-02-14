@@ -1,0 +1,153 @@
+---
+title: "Qu'est-ce que le versionage temporel — et pourquoi votre outil d'IA juridique vous sert probablement la loi d'hier"
+description: "La législation fiscale belge change au minimum deux fois par an. Si votre outil d'IA ne peut pas distinguer 2019 de 2026, sa réponse n'est pas fausse — elle concerne simplement la mauvaise année. Voici ce qu'est le versionage temporel et pourquoi c'est important."
+publishDate: 2026-02-19
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Confiance & transparence"
+tags: ["temporal versioning", "point-in-time retrieval", "Belgian tax", "legal AI", "data freshness"]
+locale: "fr"
+draft: false
+---
+
+Le taux de l'impôt des sociétés belge est de 25 %. Il est également de 29,58 %. Et de 33,99 %. Les trois sont corrects — selon le moment où vous posez la question.
+
+Avant 2018 : 33,99 %. À partir de 2018 : 29,58 % (taux de base de 29 % plus contribution de crise). À partir de 2020 : 25 %. Trois taux distincts en sept ans, chacun affectant différents exercices d'imposition, chacun étant la bonne réponse pour le bon moment dans le temps.
+
+Demandez à un outil d'IA générique « quel est le taux de l'impôt des sociétés belge ? » et vous obtiendrez un chiffre. On ne vous dira pas à quelle période il s'applique. On ne vous dira pas qu'il était différent il y a trois ans. On ne vous dira pas que la déclaration fiscale 2019 d'un client utilise un taux complètement différent de celle de 2024.
+
+C'est le problème du versionage temporel — et il affecte chaque question en droit fiscal belge.
+
+![Chronologie montrant comment les dispositions fiscales belges évoluent dans le temps à travers les lois-programmes](/blog/temporele-versionering-juridische-ai/version-timeline-fr-dark.png)
+
+## Ce que signifie le versionage temporel
+
+**Le versionage temporel** est la capacité de suivre plusieurs versions d'une même disposition légale au fil du temps et de récupérer la version correcte pour une date ou période spécifique.
+
+Chaque texte législatif a un cycle de vie. Il est adopté à une date, entre en vigueur à une autre, est modifié à une troisième, et peut être abrogé à une quatrième. Une disposition qui existe aujourd'hui peut ne pas avoir existé l'année dernière. Un taux qui s'applique cette année peut ne pas s'appliquer l'année prochaine.
+
+Dans un système avec versionage temporel, chaque disposition comporte des métadonnées :
+
+- **effective_from** — quand la disposition entre en vigueur
+- **effective_to** — quand elle cesse de s'appliquer (ou « actuelle » si toujours en vigueur)
+- **assessment_year** — pour les dispositions fiscales, quel(s) exercice(s) d'imposition elle couvre
+- **amendment_chain** — quelle version antérieure elle a remplacée, et ce qui l'a remplacée
+
+Sans ces métadonnées, une base de données juridique est un instantané. Avec elles, elle devient une chronologie.
+
+> La question n'est jamais simplement « que dit la loi ? ». C'est toujours « que disait la loi *quand* ? »
+
+## Pourquoi le droit fiscal belge rend cela particulièrement difficile
+
+Le droit fiscal belge change constamment. Le gouvernement fédéral adopte des **lois-programmes** au minimum deux fois par an — généralement en juin et décembre dans le cadre du cycle budgétaire. Des lois supplémentaires, des arrêtés royaux et des circulaires sont publiés tout au long de l'année.
+
+Rien qu'en 2023-2024, la fiscalité belge a connu :
+
+- **L'abolition** de la déduction pour capital à risque (loi omnibus de décembre 2022, effective pour les périodes imposables se terminant à partir du 31 décembre 2023)
+- **L'introduction** de la taxation minimale Pilier Deux à 15 % (règle d'inclusion du revenu à partir du 31 décembre 2023 ; règle relative aux bénéfices sous-imposés à partir du 31 décembre 2024)
+- **L'introduction** d'un impôt sur les plus-values de 10 % (effectif au 1er janvier 2026, avec protection des plus-values antérieures à 2026 sur base de la valeur au 31 décembre 2025)
+- **La réforme** des droits de succession régionaux en Flandre (2026) et en Wallonie (2028) — même pays, dates d'entrée en vigueur différentes
+
+Chacun de ces changements crée une nouvelle version d'une ou plusieurs dispositions légales. Chaque version a des règles d'applicabilité différentes. Chaque version est la réponse correcte — pour sa période.
+
+### Le piège de l'exercice d'imposition
+
+La fiscalité belge ajoute une couche de complexité supplémentaire : la distinction entre **année de revenus** (inkomstenjaar) et **exercice d'imposition** (aanslagjaar). L'exercice d'imposition est toujours l'année suivant l'année de revenus — donc l'exercice d'imposition 2026 couvre les revenus perçus en 2025.
+
+Les modifications de la loi fiscale sont souvent exprimées comme « applicable à partir de l'exercice d'imposition X ». Pour une société dont l'exercice fiscal se termine le 31 mars, l'exercice d'imposition 2026 couvre les revenus du 1er avril 2024 au 31 mars 2025. Pour une société avec un exercice fiscal calendaire, il couvre le 1er janvier au 31 décembre 2025.
+
+Même exercice d'imposition. Périodes calendaires différentes. Loi applicable différente.
+
+Un système qui ne suit que les dates calendaires se trompera. Un système qui comprend la relation entre l'année de revenus, l'exercice d'imposition et la date de clôture de l'exercice fiscal aura raison.
+
+## Ce qui se passe sans conscience temporelle
+
+Sans versionage temporel, trois modes de défaillance sont courants :
+
+**1. Servir la loi actuelle pour des questions historiques.** Un client pose une question sur une transaction de 2019. Le système renvoie le taux d'impôt des sociétés 2026 (25 %) au lieu du taux 2019 (29,58 %). La différence : 4,58 points de pourcentage sur l'ensemble de la base imposable.
+
+**2. Servir des dispositions abrogées comme actuelles.** La déduction pour capital à risque était une pierre angulaire de la planification fiscale des sociétés belges pendant près de deux décennies. Elle a été abolie avec effet en 2023 — mais le stock de report des années antérieures reste déductible. Un système sans suivi de version pourrait soit manquer l'abolition, soit manquer l'exception de report.
+
+**3. Manquer les règles transitoires.** Le nouvel impôt sur les plus-values protège les plus-values antérieures à 2026 en utilisant la valeur au 31 décembre 2025 comme base d'acquisition. Il s'agit d'une règle transitoire qui ne s'applique qu'aux contrats existant avant l'entrée en vigueur de la loi. Sans conscience temporelle, le système ne peut pas distinguer entre un contrat ouvert en 2024 et un ouvert en 2027.
+
+Chaque mode de défaillance produit des réponses qui semblent correctes — elles citent une législation réelle, utilisent les bons numéros d'articles, appliquent la bonne logique — mais pour le mauvais moment dans le temps.
+
+## Le problème du décalage des bases de données
+
+Même si un système a l'intention d'être à jour, il existe un délai structurel entre la législation et sa disponibilité :
+
+- Le **Moniteur belge / Belgisch Staatsblad** publie quotidiennement (électronique uniquement depuis 2003)
+- L'**index législatif** est mis à jour J+1 — un jour après publication
+- **Les textes consolidés complets** dans les bases de données peuvent avoir **3 à 5 mois de retard** pour les dispositions plus anciennes
+
+Cela signifie qu'une disposition publiée aujourd'hui peut apparaître comme une modification brute demain mais peut ne pas être reflétée dans les textes consolidés pendant des mois. Pendant cette fenêtre, une recherche en texte intégral sur la version consolidée renvoie l'ancienne loi, tandis que la modification n'existe que dans le journal officiel.
+
+Un système temporellement conscient suit les deux : la modification telle que publiée, et la version antérieure qu'elle modifie — avec une indication claire de laquelle s'applique quand.
+
+## Comment les systèmes existants gèrent cela
+
+**EUR-Lex** (pour la législation de l'UE) propose des versions consolidées qui montrent l'acte tel qu'applicable à un moment précis. Les utilisateurs peuvent visualiser toutes les versions et comparer les changements. Mais ces textes consolidés n'ont aucune force juridique — ce sont uniquement des documents.
+
+**Jura** (Wolters Kluwer Belgique) inclut la législation consolidée depuis 2000 et propose désormais une comparaison côte à côte des versions de loi avec les différences mises en évidence.
+
+**Les outils d'IA génériques** — ChatGPT, [Perplexity](/fr/glossary/perplexity/), Claude — n'ont rien de tout cela. Leurs données d'entraînement ont une date limite de connaissances. Ils ne peuvent pas distinguer entre les versions actuelles et anciennes d'une disposition. Ils ne peuvent pas vous dire ce que disait la loi à une date spécifique. Ils ne savent pas que la loi qu'ils citent a été modifiée six mois après la compilation de leurs données d'entraînement.
+
+Ce n'est pas une limitation qui peut être corrigée avec un modèle plus grand ou un meilleur entraînement. C'est une lacune architecturale — l'absence de métadonnées temporelles dans la couche de données du système.
+
+## Le point d'inflexion 2026
+
+L'introduction du premier impôt général belge sur les plus-values le 1er janvier 2026 crée la frontière temporelle la plus significative de l'histoire fiscale belge récente.
+
+Avant 2026 : pas d'impôt sur les plus-values d'instruments financiers (pour les particuliers). Après 2026 : 10 % sur les gains réalisés au-dessus d'une exonération annuelle de 10 000 €. La valeur d'acquisition pour les contrats antérieurs à 2026 est fixée à la valeur de marché au 31 décembre 2025.
+
+Chaque contrat branche 23, chaque portefeuille d'investissement, chaque position ETF a maintenant une division temporelle : le gain avant la date limite (non taxé) et le gain après (taxé à 10 %). Tout système qui ne peut pas distinguer « avant le 1er janvier 2026 » de « après le 1er janvier 2026 » calculera mal le gain imposable.
+
+Ajoutez à cela les réformes régionales des droits de succession — Flandre à partir de 2026, Wallonie à partir de 2028, Bruxelles inchangée — et une seule question de planification successorale nécessite maintenant une précision temporelle à travers plusieurs juridictions avec des calendriers de réforme différents.
+
+## Ce que le versionage temporel nécessite architecturalement
+
+Construire le versionage temporel n'est pas un simple bouton. Cela nécessite des décisions structurelles à chaque couche :
+
+**Ingestion** : chaque document doit être analysé pour les dates d'entrée en vigueur, les [références](/fr/glossary/citation/) d'amendement et les clauses d'abrogation. Cela va au-delà de l'indexation en texte intégral — cela nécessite de comprendre la structure législative du document.
+
+**Stockage** : chaque disposition existe comme une chaîne de versions, pas comme un enregistrement unique. La version N pointe vers la version N-1 (ce qu'elle a remplacé) et la version N+1 (ce qui l'a remplacée, le cas échéant). Chaque version porte sa plage de dates d'entrée en vigueur.
+
+**Récupération** : lorsqu'un utilisateur pose une question, le système doit déterminer la période temporelle pertinente — soit explicitement indiquée, soit déduite du contexte — et récupérer uniquement les dispositions qui étaient en vigueur pendant cette période.
+
+**Présentation** : la sortie doit indiquer quelle version de la loi elle cite, quand cette version est entrée en vigueur, et si une version plus récente existe.
+
+C'est architecturalement coûteux. C'est pourquoi la plupart des outils d'IA juridique ne l'offrent pas. La recherche en texte intégral sur un [corpus](/fr/glossary/corpus/) à état actuel est largement plus simple et moins chère que le maintien d'un graphe de versions indexé temporellement.
+
+Mais pour le droit fiscal belge — où le taux d'impôt des sociétés a changé trois fois en sept ans, où un nouvel impôt sur les plus-values crée une frontière temporelle stricte, où les réformes régionales entrent en vigueur à des années différentes — la précision temporelle n'est pas optionnelle. C'est la différence entre une réponse correcte et une réponse correcte pour la mauvaise année.
+
+---
+
+## Articles connexes
+
+- [Qu'est-ce que le classement d'autorité — et pourquoi votre outil d'IA juridique l'ignore probablement →](/blog/authority-ranking-juridische-ai-fr)
+- [Qu'est-ce que le scoring de confiance — et pourquoi c'est plus honnête qu'une réponse confiante →](/blog/confidence-scoring-uitgelegd-fr)
+- [Étude de cas : branche 23 — pourquoi un produit nécessite cinq réponses fiscales →](/blog/case-study-tak-23-cross-domain-fr)
+
+---
+
+## Comment Auryth TX applique cela
+
+Chaque disposition dans notre système porte une date d'entrée en vigueur. Lorsque le taux d'impôt des sociétés est passé de 29,58 % à 25 %, nous n'avons pas remplacé l'ancien enregistrement — nous avons ajouté une nouvelle version liée à la précédente, avec la date d'entrée en vigueur du changement.
+
+Lorsque vous posez une question à Auryth TX, le système identifie la période temporelle pertinente et récupère uniquement les dispositions qui étaient en vigueur pendant cette période. Si vous posez une question sur une transaction de 2019, vous obtenez la loi de 2019. Si vous posez une question sur une transaction de 2026, vous obtenez la loi de 2026. Si vous posez une question sur l'impôt sur les plus-values, le système distingue automatiquement entre les gains antérieurs à 2026 et les gains postérieurs à 2026.
+
+Lorsqu'une disposition a été modifiée, la sortie structurée montre la chaîne de versions — ce que disait la loi avant, ce qu'elle dit maintenant, et quand le changement est entré en vigueur. Ce n'est pas cosmétique. C'est la différence entre un conseil techniquement correct et un conseil correct pour la situation réelle du client.
+
+*Chaque disposition porte une date. Nous ne confondons jamais 2019 avec 2026.*
+
+---
+
+*Sources :*
+*1. PwC Tax Summaries. « Belgium — Corporate — Taxes on corporate income. » taxsummaries.pwc.com.*
+*2. Deloitte Belgium. « Belgium tax reforms — The latest federal and regional tax measures. » deloitte.com/be.*
+*3. PwC Belgium (2026). « Belgium's comprehensive capital gains tax changes: key updates and implications starting January 2026. »*
+*4. Bird & Bird (2023). « Belgium: New corporate tax measures in force as of 1 January 2023. »*
+*5. European Forum of Official Gazettes. « Belgium — Official Journal. » op.europa.eu.*
+*6. CMS Law-Now (2024). « Belgium's regions pass new registration and inheritance tax rates. »*
+
+---

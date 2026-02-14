@@ -1,0 +1,153 @@
+---
+title: "Wat is authority ranking — en waarom uw juridische AI-tool het waarschijnlijk negeert"
+description: "Een ministeriële omzendbrief en een arrest van het Hof van Cassatie zien er hetzelfde uit voor de meeste AI-zoeksystemen. Dat is geen klein gebrek — het is een fundamentele kloof die elk antwoord onbetrouwbaar maakt."
+publishDate: 2026-02-16
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "AI uitgelegd"
+tags: ["authority ranking", "hiërarchie der normen", "RAG", "Belgische fiscaliteit", "zoekarchitectuur"]
+locale: "nl"
+draft: false
+---
+
+Vraag een generieke AI-tool naar een Belgische fiscale bepaling en het systeem geeft u documenten terug. Mogelijk de juiste. Het probleem is welk document het eerst komt — en waarom.
+
+Standaard AI-zoeksystemen rangschikken resultaten op [semantische gelijkenis](/nl/glossary/semantic-similarity/): hoe nauw de opgehaalde tekst aansluit bij de betekenis van uw vraag. Het document dat de meest gelijkaardige taal gebruikt, wint. Dit werkt goed voor restaurantrecensies. Voor juridisch onderzoek is het een structureel falen.
+
+Een ministeriële omzendbrief kan bijna identieke bewoordingen gebruiken als de wet die hij interpreteert — maar nul bindende rechtskracht hebben. Een arrest van het Hof van Cassatie kan helemaal andere terminologie gebruiken maar de definitieve interpretatie vormen. [Semantisch zoeken](/nl/glossary/semantic-search/) kan het verschil niet zien.
+
+Dit is geen klein rangschikkingsprobleem. Het is het verschil tussen het citeren van bindend recht en het citeren van een administratieve interpretatie die een rechtbank kan negeren.
+
+## De Belgische hiërarchie der normen
+
+Elke Belgische fiscalist leert de hiërarchie der normen in het eerste jaar. Het is de basis van juridisch redeneren:
+
+| Niveau | Type bron | Voorbeeld | Bindende kracht |
+|--------|-----------|-----------|-----------------|
+| 1 | Grondwet | Grondwet, Art. 159, 170, 172 | Hoogste — alle andere normen moeten conform zijn |
+| 2 | Internationaal/EU-recht | EU-verordeningen, richtlijnen, verdragen | Gaat voor op nationaal recht |
+| 3 | Bijzondere wetten | Bijzondere wetten (bijzondere meerderheid) | Hoger dan gewone wetgeving |
+| 4 | Federale/gewestelijke wetgeving | WIB 92, WBTW, VCF, gewestelijke belastingcodes | Bindend voor iedereen |
+| 5 | Koninklijke besluiten | KB — uitvoerende implementatie | Bindend, maar moet conform zijn aan wetten |
+| 6 | Ministeriële besluiten | MB — departementale implementatie | Beperktere draagwijdte dan koninklijke besluiten |
+| 7 | Administratieve omzendbrieven | Omzendbrieven/Circulaires | Niet bindend voor rechtbanken of belastingplichtigen |
+| 8 | Rechtspraak | Cass., Grondwettelijk Hof, hoven van beroep | Interpretatief gezag varieert per rechterlijk niveau |
+| 9 | Rechtsleer | Academisch commentaar, juridische handboeken | Geen bindende kracht |
+
+Deze hiërarchie is geen academische trivia. Artikel 159 van de Belgische Grondwet geeft rechtbanken expliciet de bevoegdheid om elke administratieve handeling — inclusief omzendbrieven — buiten toepassing te laten die in strijd is met hogergeplaatste normen. Wanneer een omzendbrief in conflict is met de wet die hij beoogt te interpreteren, wint de wet. Altijd.
+
+## Wat uw AI-tool eigenlijk doet
+
+Standaard RAG-systemen ([retrieval-augmented generation](/nl/glossary/rag/)) werken in twee stappen: relevante documenten ophalen, dan een antwoord genereren op basis daarvan. De ophalingsstap gebruikt embedding-gelijkenis — uw vraag en het documentencorpus omzetten in vectoren en de nauwste match vinden.
+
+De rangschikkingsformule is ongeveer: **relevantie = semantische gelijkenis met vraag**.
+
+Merk op wat ontbreekt. Er is geen concept van:
+- Welk document een ander overtreft in de juridische hiërarchie
+- Of een omzendbrief de wet tegenspreekt die hij interpreteert
+- Of een arrest van het Hof van Cassatie een andere interpretatie heeft vastgelegd
+- Of de bron bindend recht is, interpretatieve leidraad, of academische mening
+
+Onderzoek bevestigt dat deze kloof fundamenteel is, niet cosmetisch. Een studie gepubliceerd in Artificial Intelligence and Law merkt op dat "information retrieval-systemen zich bewust moeten zijn van het gezag van de jurisdictie, aangezien een zaak van een bindend gezag doorgaans waardevoller is dan één van een niet-bindend gezag." Het juridische domein "definieert een hiërarchische organisatie met betrekking tot het type documenten en hun gezag" — maar standaard ophalingssystemen behandelen alle documenten als tekst met gelijk gewicht.
+
+Het resultaat: uw AI-tool kan een omzendbrief uit 2019 hoger rangschikken dan de wet uit 2020 die de bepaling wijzigde die de omzendbrief interpreteerde. Het systeem heeft geen manier om te weten dat de omzendbrief nu gedeeltelijk verouderd is. Het vond de meest gelijkaardige tekst en plaatste die eerst.
+
+## Wanneer platte rangschikking faalt: een Belgisch voorbeeld
+
+Beschouw een vraag over de verjaringstermijn voor Belgische terugvorderingen van roerende voorheffing.
+
+In december 2023 oordeelde het Hof van Cassatie over de vraag of belastingplichtigen administratieve beroepsmogelijkheden moeten uitputten alvorens een gerechtelijke procedure te starten — in tegenstelling tot eerdere rechtspraak uit 2018. Als reactie gaf de belastingadministratie Circulaire 2025/C/56 uit, waarbij zij haar eerdere standpunt handhaafde ondanks het arrest van het Hof van Cassatie.
+
+Een plat gerangschikt AI-systeem kan ophalen:
+1. De omzendbrief uit 2025 (meest recent, meest semantisch gelijkend op de vraag)
+2. De rechtspraak uit 2018 (ondersteunt het standpunt van de administratie)
+3. Het arrest van het Hof van Cassatie uit 2023 (begraven onder de omzendbrief)
+
+De gebruiker krijgt het standpunt van de administratie als primair antwoord. Maar de interpretatie van het Hof van Cassatie — die hiërarchisch gezaghebbend is — staat derde. De omzendbrief, die niemand buiten de administratie bindt, staat eerste.
+
+Dit is geen hypothese. Zo werkt semantisch zoeken werkelijk. En daarom is vertrouwen op generieke AI voor vragen waar omzendbrieven en wetten uiteenlopen professioneel gevaarlijk.
+
+## Hoe authority-aware ranking het antwoord verandert
+
+Een authority-ranked systeem vindt niet alleen relevante documenten. Het weegt ze volgens hun positie in de juridische hiërarchie voordat resultaten worden gepresenteerd.
+
+De rangschikkingsformule wordt: **relevantie = (semantische gelijkenis × autoriteitgewicht × temporele recentheid)**.
+
+In de praktijk betekent dit:
+
+| Type bron | Autoriteitgewicht | Effect |
+|-----------|------------------|--------|
+| Grondwetsbepalingen | Hoogst | Verschijnt altijd boven ondergeschikte normen |
+| Federale/gewestelijke wetgeving | Hoog | Overtreft uitvoerende en administratieve handelingen |
+| Koninklijke besluiten | Middelhoog | Overtreft omzendbrieven, conform aan wetten |
+| Arresten Hof van Cassatie | Hoog (interpretatief) | Definitieve interpretatie — overtreft admin. leidraad |
+| Administratieve omzendbrieven | Laag | Nuttige context, nooit behandeld als bindend |
+| Rechtsleer | Laagst | Alleen achtergrond |
+
+![De Belgische juridische hiërarchie en hoe ze in kaart wordt gebracht op authority-weighted zoeken](/blog/authority-ranking-juridische-ai/legal-hierarchy-nl-dark.png)
+
+Voor de roerende voorheffing-vraag zou een authority-ranked systeem presenteren:
+1. De relevante wettelijke bepalingen (bindend)
+2. Het arrest van het Hof van Cassatie uit 2023 (gezaghebbende interpretatie)
+3. De omzendbrief uit 2025 (administratief standpunt — gemarkeerd als niet-bindende context)
+
+Dezelfde documenten. Compleet andere presentatie. En een compleet ander professioneel risicoprofiel voor de gebruiker.
+
+## De cross-encoder upgrade
+
+Authority ranking werkt het best in combinatie met [cross-encoder reranking](/nl/glossary/reranking/) — een tweefasige ophalingsarchitectuur.
+
+**Fase 1: Brede ophaling.** Een embedding-model haalt de top 50-100 semantisch relevante documenten op. Snel, breed, maar authority-blind.
+
+**Fase 2: [Cross-encoder](/nl/glossary/cross-encoder/) reranking.** Een gespecialiseerd model herbeoordeelt elk vraag-document-paar met volledige aandacht voor beide teksten. Dit is waar authority-metadata wordt geïnjecteerd: de reranker verhoogt of verlaagt op basis van brontype, rechtelijk niveau, temporele status en jurisdictionele draagwijdte.
+
+Onderzoek van [Pinecone](/nl/glossary/pinecone/) toont aan dat cross-encoder reranking "veel nauwkeuriger is dan embedding-modellen" voor ophalingskwaliteit. Onderzoek van Databricks toont aan dat reranking de ophaalnauwkeurigheid gemiddeld met 15 procentpunten kan verhogen op enterprise-benchmarks.
+
+Maar het centrale inzicht is niet alleen betere reranking — het is waarop u rerankt. Standaard rerankers optimaliseren voor topische relevantie. Juridische rerankers moeten optimaliseren voor **gezaghebbende relevantie**: is dit de hoogst gerangschikte bron die deze vraag behandelt?
+
+## Waarom dit meer uitmaakt in België
+
+De Belgische juridische structuur maakt authority ranking bijzonder kritiek:
+
+**Drie gewestelijke fiscale regimes.** Vlaamse, Brusselse en Waalse successierechten, registratierechten en onroerende voorheffing volgen verschillende regels. Een plat gerangschikt systeem kan Vlaamse regels ophalen voor een Brusselse vraag omdat de tekst meer gelijkt op de vraag.
+
+**Geen hiërarchie tussen federaal en gewestelijk recht.** In tegenstelling tot andere federale staten rangschikt Belgisch recht federaal niet boven gewestelijke wetgeving. Elk opereert in gedefinieerde competentiedomeinen. De AI heeft jurisdictionele metadata nodig — niet alleen autoriteitsniveau — om te weten welk rechtsgebied van toepassing is.
+
+**Omzendbrieven hebben buitensporig praktisch gewicht.** In de Belgische fiscale praktijk wordt sterk gesteund op omzendbrieven van de FOD Financiën ondanks het ontbreken van bindende kracht. Fisconetplus — de [kennisbank](/nl/glossary/knowledge-base/) van de belastingadministratie met ongeveer 180.000 documenten — bevat een aanzienlijk aandeel omzendbrieven en administratieve commentaren. Een AI-systeem zonder authority ranking behandelt deze hetzelfde als bindende wetgeving.
+
+**De administratie is het soms oneens met de rechtbanken.** Zoals het roerende voorheffing-voorbeeld toont, handhaaft de Belgische belastingadministratie soms standpunten in omzendbrieven die in strijd zijn met arresten van het Hof van Cassatie. Zonder authority ranking presenteert de AI het standpunt van de administratie zonder te markeren dat een hiërarchisch superieure bron anders heeft geoordeeld.
+
+---
+
+## Gerelateerde artikelen
+
+- [Wat is RAG — en waarom het de enige architectuur is die juridische AI verdedigbaar maakt](/nl/blog/wat-is-rag-nl/)
+- [5 Belgische fiscale vragen waar generieke AI gegarandeerd faalt](/nl/blog/5-vragen-generieke-ai-faalt-nl/)
+- [Waarom transparantie meer uitmaakt dan nauwkeurigheid in juridische AI](/nl/blog/transparantie-vs-nauwkeurigheid-nl/)
+- [Wat is confidence scoring — en waarom het eerlijker is dan een zeker antwoord](/nl/blog/confidence-scoring-uitgelegd-nl/)
+
+---
+
+## Hoe Auryth TX authority ranking implementeert
+
+Elk document in het Auryth TX-[corpus](/nl/glossary/corpus/) draagt gestructureerde metadata inclusief brontype, autoriteitsniveau, jurisdictie en temporele geldigheid.
+
+Tijdens het ophalen past onze cross-encoder reranking-fase authority weighting toe: een wet overtreft een omzendbrief, een arrest van het Hof van Cassatie overtreft een beslissing van een hof van beroep, en bindend recht verschijnt altijd boven interpretatieve leidraad.
+
+Wanneer een omzendbrief en een wet uiteenlopen, worden beide gepresenteerd — maar duidelijk gelabeld met hun respectieve autoriteitsniveaus. U ziet de hiërarchie, niet alleen de gelijkenis.
+
+Dit gaat niet over het filteren van bronnen met lager gezag. Omzendbrieven zijn nuttig — ze weerspiegelen hoe de administratie de wet in de praktijk toepast. Maar ze mogen nooit de primaire bron zijn wanneer bindend recht iets anders zegt.
+
+Authority ranking is hoe een [zoeksysteem](/nl/glossary/information-retrieval-system/) professioneel vertrouwen verdient: niet door de meest gelijkaardige tekst te vinden, maar door de meest gezaghebbende tekst te vinden.
+
+[Zie authority ranking in actie — schrijf u in op de wachtlijst →](/nl/waitlist/)
+
+---
+
+*Bronnen:*
+*1. Belgische Grondwet, Art. 159: rechtbanken mogen alleen administratieve handelingen toepassen die conform zijn aan de wet.*
+*2. European e-Justice Portal, "National legislation — Belgium": formele hiërarchie der normen.*
+*3. van Opijnen, M. & Santos, C. (2017). "[On the concept of relevance in legal information retrieval](https://doi.org/10.1007/s10506-017-9195-8)." Artificial Intelligence and Law, 25, 65-87.*
+*4. Pinecone, "[Rerankers and Two-Stage Retrieval](https://www.pinecone.io/learn/series/rag/rerankers/)": cross-encoder reranking-architectuur.*
+*5. EY Belgium, "[Recent case law creates uncertainty regarding statute of limitations for Belgian WHT reclaims](https://www.ey.com/en_be/technical/financial-services/financial-services-alerts/recent-case-law-creates-uncertainty-regarding-statute-of-limitations-for-belgian-wht-reclaims)" (2025): omzendbrief vs. Hof van Cassatie divergentie.*
+*6. Fisconetplus, FOD Financiën: ~180.000 documenten, bedient 21.000+ ambtenaren plus externe professionals.*

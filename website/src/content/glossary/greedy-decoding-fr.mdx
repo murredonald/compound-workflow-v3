@@ -1,0 +1,133 @@
+---
+term: "Décodage Glouton"
+termSlug: "greedy-decoding"
+short: "Une stratégie simple de génération de texte qui sélectionne toujours le token de plus haute probabilité à chaque étape."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["beam-search", "top-k", "top-p", "inference", "llm"]
+synonyms: ["Recherche gloutonne", "Décodage argmax", "Décodage maximum de vraisemblance"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Le décodage glouton est la stratégie de génération de texte la plus simple où le modèle sélectionne toujours le token avec la plus haute probabilité à chaque étape de génération. Il fait des choix localement optimaux sans considérer comment les décisions actuelles affectent les possibilités de tokens futurs, résultant en des séquences rapides mais potentiellement sous-optimales.
+
+## Pourquoi c'est important
+
+Le décodage glouton offre des avantages clés dans des scénarios spécifiques :
+
+- **Vitesse** — méthode de décodage la plus rapide, une seule passe forward par token
+- **Déterministe** — même entrée produit toujours même sortie
+- **Simplicité** — pas d'hyperparamètres à ajuster
+- **[Référence](/fr/glossary/citation/)** — point de comparaison standard pour autres méthodes
+- **Tâches structurées** — fonctionne bien pour sorties factuelles, contraintes
+
+Cependant, le décodage glouton produit souvent du texte répétitif ou générique.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     DÉCODAGE GLOUTON                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  À chaque étape: Choisir argmax(probabilité)               │
+│                                                            │
+│  Étape 1: "Le" → probabilités:                            │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  chat:  0.35  ◄── SÉLECTIONNÉ (plus haut)  │           │
+│  │  chien: 0.25                                │           │
+│  │  homme: 0.15                                │           │
+│  │  car:   0.10                                │           │
+│  │  ...                                        │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Étape 2: "Le chat" → probabilités:                       │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  dort: 0.40  ◄── SÉLECTIONNÉ (plus haut)   │           │
+│  │  court: 0.20                                │           │
+│  │  est:   0.18                                │           │
+│  │  était: 0.12                                │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Résultat: "Le chat dort..."                              │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  PROBLÈME: OPTIMA LOCAL VS GLOBAL             │        │
+│  │                                                │        │
+│  │  Glouton: "Le chat dort" (p=0.35×0.40=0.14)  │        │
+│  │  Mieux: "Le chien court" (p=0.25×0.55=0.14)  │        │
+│  │                                                │        │
+│  │  Second chemin peut mener à meilleure séq.!   │        │
+│  │  Glouton ne voit pas—s'engage sur "chat"     │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  GLOUTON VS ALTERNATIVES:                                  │
+│  ────────────────────────                                  │
+│  Glouton:    Choisir top-1 toujours  → déterministe       │
+│  Top-k:      Échantillonner top-k    → divers             │
+│  Top-p:      Échantillonner nucleus  → adaptatif          │
+│  Faisceau:   Suivre plusieurs chemins→ meilleures séq.    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Quand utiliser le décodage glouton:**
+| Scénario | Recommandation |
+|----------|----------------|
+| Génération de code | Souvent bon (sortie structurée) |
+| Traduction | Faisceau généralement préféré |
+| Écriture créative | Utiliser échantillonnage |
+| Q&A factuel | Peut bien fonctionner |
+| Classification | Approprié |
+| Chat général | Utiliser échantillonnage |
+
+## Questions fréquentes
+
+**Q : Pourquoi le décodage glouton produit du texte répétitif ?**
+
+R : Une fois que le modèle génère une phrase commune, cette phrase a souvent haute probabilité de continuer. Le modèle peut se bloquer en boucles comme "Je pense que je pense que je pense..." car chaque répétition est localement optimale.
+
+**Q : Quand dois-je utiliser le décodage glouton ?**
+
+R : Utilisez-le pour tâches structurées avec réponses correctes claires : complétion de code, classification, extraction simple. Évitez-le pour génération créative ou ouverte où la diversité compte.
+
+**Q : Le décodage glouton est-il équivalent à température = 0 ?**
+
+R : Effectivement oui. La température approchant 0 rend la distribution de probabilité de plus en plus piquée sur le token de plus haute probabilité, convergeant vers sélection gloutonne.
+
+**Q : Comment glouton se compare à recherche en faisceau ?**
+
+R : Glouton est recherche en faisceau avec largeur 1. La recherche en faisceau explore plusieurs chemins et trouve souvent des séquences complètes de plus haute probabilité, au coût de plus de calcul.
+
+## Termes associés
+
+- [Recherche en Faisceau](/fr/glossary/beam-search/) — explore plusieurs séquences
+- [Échantillonnage Top-k](/fr/glossary/top-k/) — ajoute du hasard
+- [Échantillonnage Top-p](/fr/glossary/top-p/) — échantillonnage adaptatif
+- [Température](/fr/glossary/temperature/) — contrôle forme de distribution
+- [Inférence](/fr/glossary/inference/) — processus de génération
+
+---
+
+## Références
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2 500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3 500+ citations]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3,500+ citations]

@@ -1,0 +1,150 @@
+---
+term: "Apprentissage Automatique"
+termSlug: "machine-learning"
+short: "Un domaine de l'IA où les systèmes apprennent des patterns à partir de données pour faire des prédictions sans programmation explicite."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["deep-learning", "neural-network", "supervised-learning", "llm"]
+synonyms: ["ML", "Apprentissage statistique", "Modélisation prédictive", "Reconnaissance de patterns"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'apprentissage automatique est une branche de l'intelligence artificielle où les algorithmes apprennent des patterns directement à partir des données plutôt que d'être explicitement programmés avec des règles. Étant donné des exemples d'entraînement, les systèmes ML identifient automatiquement des patterns, construisent des modèles mathématiques, et utilisent ces modèles pour faire des [prédictions](/fr/glossary/inference/) ou des décisions sur de nouvelles données non vues.
+
+## Pourquoi c'est important
+
+L'apprentissage automatique a transformé la technologie :
+
+- **Décisions basées sur les données** — apprend des preuves, pas des suppositions
+- **Gère la complexité** — résout des problèmes trop complexes pour des règles manuelles
+- **Amélioration continue** — les modèles s'améliorent avec plus de données
+- **Automatisation à l'échelle** — permet des systèmes intelligents dans toutes les industries
+- **Fondement de l'IA** — alimente tout, de la recherche aux voitures autonomes
+
+Le ML est le moteur derrière la personnalisation, la détection de fraude, le diagnostic médical et les LLMs.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                 APPRENTISSAGE AUTOMATIQUE                  │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PROGRAMMATION TRADITIONNELLE VS ML:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  Traditionnel:                   Machine Learning:         │
+│  ┌──────────┐                    ┌──────────┐             │
+│  │ Données  │────┐               │ Données  │────┐        │
+│  └──────────┘    │               └──────────┘    │        │
+│                  ▼                               ▼        │
+│  ┌──────────┐  ┌──────────┐      ┌──────────┐  ┌─────┐   │
+│  │  Règles  │──│Ordinateur│──►   │   Algo   │──│Modèle│  │
+│  └──────────┘  └──────────┘      │   ML     │  └─────┘   │
+│       │              │           └──────────┘      │      │
+│       ▼              ▼                 ▲           ▼      │
+│  (manuelles)     Réponses         ┌────────┐   Réponses  │
+│                                    │ Labels │             │
+│                                    └────────┘             │
+│                                                            │
+│  LE WORKFLOW ML:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  1. COLLECTER DONNÉES                                      │
+│     ┌─────────────────────────────────────┐               │
+│     │ Données d'entraînement (étiq. ou non)│               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  2. ENTRAÎNER MODÈLE                                       │
+│     ┌─────────────────────────────────────┐               │
+│     │ Algo apprend patterns des données    │               │
+│     │ Ajuste params pour minimiser erreur  │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  3. ÉVALUER                                                │
+│     ┌─────────────────────────────────────┐               │
+│     │ Tester sur données retenues          │               │
+│     │ Mesurer précision, rappel            │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  4. DÉPLOYER & PRÉDIRE                                     │
+│     ┌─────────────────────────────────────┐               │
+│     │ Nouvelles Données ──► Modèle ──► Préd.│              │
+│     └─────────────────────────────────────┘               │
+│                                                            │
+│  TROIS TYPES DE ML:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  SUPERVISÉ:         NON-SUPERVISÉ:      RENFORCEMENT:     │
+│  Apprend de         Trouve patterns     Apprend de        │
+│  données étiquetées dans données brutes récompenses       │
+│                                                            │
+│  Entrée → Label     Entrée → ?          État → Action     │
+│  "Chat" → "Chat"    Clusters            +10 ou -5 récomp. │
+│                     Anomalies                              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Comparaison des algorithmes ML:**
+| Type | Algorithme | Application |
+|------|------------|-------------|
+| Supervisé | Régression Linéaire | Prédire nombres |
+| Supervisé | Arbres de Décision | Classification |
+| Supervisé | Réseaux Neuronaux | Patterns complexes |
+| Non-supervisé | K-Means | Clustering |
+| Non-supervisé | ACP | Réduction dimensions |
+| Renforcement | Q-Learning | Jeux, robotique |
+
+## Questions fréquentes
+
+**Q : Quelle différence entre IA, ML et deep learning ?**
+
+R : L'IA est le terme le plus large (machines agissant intelligemment). Le ML est un sous-ensemble de l'IA (apprentissage des données). Le deep learning est un sous-ensemble du ML (réseaux neuronaux profonds). Tout le deep learning est du ML, tout le ML est de l'IA, mais pas l'inverse.
+
+**Q : De combien de données l'apprentissage automatique a-t-il besoin ?**
+
+R : Cela dépend de la complexité. Les modèles linéaires simples peuvent avoir besoin de centaines d'exemples. Le deep learning en nécessite souvent des milliers à des millions. Le transfer learning réduit cela avec des modèles pré-entraînés. Règle générale : 10× plus d'échantillons que de features pour le ML traditionnel.
+
+**Q : L'apprentissage automatique peut-il se tromper ?**
+
+R : Oui, fréquemment. Les modèles ML peuvent être biaisés par les données d'entraînement, sur-apprendre le bruit, échouer sur des cas limites, ou produire des sorties erronées avec confiance. Ils excellent sur des patterns similaires aux données d'entraînement mais peuvent échouer sur des situations nouvelles. La [supervision humaine](/fr/glossary/human-oversight/) reste essentielle.
+
+**Q : Comment l'apprentissage automatique se rapporte aux LLMs ?**
+
+R : Les LLMs sont une application spécifique de l'apprentissage automatique—spécifiquement le deep learning avec des réseaux [transformers](/fr/glossary/transformer-architecture/) entraînés sur du texte. Le ML est la discipline large; les LLMs sont une implémentation (très réussie) des techniques ML.
+
+## Termes associés
+
+- [Apprentissage Profond](/fr/glossary/deep-learning/) — ML utilisant réseaux profonds
+- [Réseau Neuronal](/fr/glossary/neural-network/) — modèle computationnel pour ML
+- [Apprentissage Supervisé](/fr/glossary/supervised-learning/) — apprentissage d'exemples étiquetés
+- [LLM](/fr/glossary/llm/) — ML appliqué au langage
+
+---
+
+## Références
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Manuel fondateur]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40 000+ [citations](/fr/glossary/citation/)]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70 000+ citations]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Vue d'ensemble complète]
+
+## References
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Foundational textbook]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40,000+ citations]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Comprehensive overview]

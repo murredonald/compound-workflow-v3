@@ -1,0 +1,121 @@
+---
+term: "Stratégie de Chunking"
+termSlug: "chunking-strategy"
+short: "La méthode de division des documents en segments plus petits pour une récupération et un traitement efficaces dans les systèmes RAG."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["rag", "embeddings", "context-window", "semantic-search"]
+synonyms: ["Segmentation de texte", "Découpage de documents", "Optimisation des chunks"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Une stratégie de chunking définit comment les documents sont divisés en morceaux plus petits ([chunks](/fr/glossary/document-chunk/)) pour le stockage dans des bases de données vectorielles et la récupération dans les systèmes RAG. La stratégie détermine la taille des chunks, le chevauchement et les limites—des décisions critiques qui impactent significativement la qualité de récupération et la pertinence des réponses générées.
+
+## Pourquoi c'est important
+
+Un chunking efficace est fondamental pour la performance des systèmes RAG :
+
+- **[Précision de récupération](/fr/glossary/retrieval-precision/)** — des chunks correctement dimensionnés améliorent l'exactitude de la correspondance sémantique
+- **Préservation du contexte** — de bonnes limites gardent les informations liées ensemble
+- **Efficacité des tokens** — des tailles optimales équilibrent richesse du contexte et limites [LLM](/fr/glossary/llm/)
+- **Qualité des réponses** — de meilleurs chunks mènent à de meilleures réponses générées
+- **Gestion des coûts** — un dimensionnement approprié réduit les appels API inutiles
+
+Un mauvais chunking est l'une des causes les plus courantes de sous-performance des systèmes RAG.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   STRATÉGIES DE CHUNKING                   │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CHUNKING À TAILLE FIXE                                    │
+│  ┌──────────┬──────────┬──────────┬──────────┐             │
+│  │  500 tok │  500 tok │  500 tok │  500 tok │             │
+│  └──────────┴──────────┴──────────┴──────────┘             │
+│  Simple mais peut couper en milieu de phrase               │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CHUNKS AVEC CHEVAUCHEMENT                                 │
+│  ┌──────────────┐                                          │
+│  │   Chunk 1    │                                          │
+│  └────────┬─────┴───────┐                                  │
+│           │   Chunk 2   │    50-100 tokens de chevauche.   │
+│           └────────┬────┴───────┐                          │
+│                    │   Chunk 3  │                          │
+│                    └────────────┘                          │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CHUNKING SÉMANTIQUE                                       │
+│  ┌─────────────────┐ ┌────────────┐ ┌──────────────────┐   │
+│  │ Idée complète A │ │  Idée B    │ │ Idée complète C  │   │
+│  └─────────────────┘ └────────────┘ └──────────────────┘   │
+│  Divise aux limites naturelles (paragraphes, sections)     │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CHUNKING HIÉRARCHIQUE                                     │
+│  Document → Section → Paragraphe → Phrase                  │
+│  Plusieurs granularités stockées ensemble                  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Paramètres clés :**
+1. **Taille de chunk** — typiquement 256-1024 tokens; dépend du type de contenu
+2. **Chevauchement** — généralement 10-20% évite la perte d'information aux limites
+3. **Méthode de division** — caractère, token, phrase, paragraphe ou sémantique
+4. **Métadonnées** — source, position et information de hiérarchie préservées
+
+## Questions fréquentes
+
+**Q : Quelle est la meilleure taille de chunk ?**
+
+R : Cela dépend de votre contenu. Les docs techniques fonctionnent souvent bien avec 500-1000 tokens. Le contenu Q&A peut nécessiter des chunks plus courts (256-500). Testez différentes tailles avec vos vraies [requêtes](/fr/glossary/prompt/) pour trouver l'optimum.
+
+**Q : Les chunks doivent-ils se chevaucher ?**
+
+R : Généralement oui. Un chevauchement de 50-100 tokens aide à préserver le contexte qui chevauche les limites. Sans chevauchement, des phrases ou du contexte important peuvent être coupés en deux.
+
+**Q : Qu'est-ce que le chunking sémantique ?**
+
+R : Au lieu de tailles fixes, le chunking sémantique divise aux limites naturelles—paragraphes, sections, ou même changements de sujet détectés. Il garde les idées cohérentes ensemble mais produit des chunks de taille variable.
+
+**Q : Comment le chunking affecte-t-il la récupération ?**
+
+R : Trop grand = pertinence diluée, peut dépasser les limites de contexte. Trop petit = information fragmentée, contexte manquant. Trouver le bon équilibre pour votre cas d'usage est essentiel.
+
+## Termes associés
+
+- [RAG](/fr/glossary/rag/) — système qui utilise des documents chunkés
+- [Embeddings](/fr/glossary/embeddings/) — vecteurs générés à partir des chunks
+- [Base de Données Vectorielle](/fr/glossary/vector-database/) — stocke les [embeddings](/fr/glossary/vector-embeddings/) de chunks
+- [Fenêtre de Contexte](/fr/glossary/context-window/) — limite combien de chunks tiennent
+
+---
+
+## Références
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [4 000+ [citations](/fr/glossary/citation/)]
+
+> Gao et al. (2024), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [500+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3 500+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain QA](https://arxiv.org/abs/2007.01282)", EACL. [1 500+ citations]
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [4,000+ citations]
+
+> Gao et al. (2024), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [500+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain QA](https://arxiv.org/abs/2007.01282)", EACL. [1,500+ citations]

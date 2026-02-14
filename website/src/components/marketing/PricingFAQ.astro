@@ -14,7 +14,7 @@ const { faqs } = Astro.props;
 <div class="space-y-4">
   {faqs.map((faq) => (
     <details class="group rounded-lg border border-border bg-card">
-      <summary class="flex min-h-[44px] cursor-pointer items-center justify-between p-4 text-body font-medium text-foreground md:p-6">
+      <summary class="flex min-h-[44px] cursor-pointer items-center justify-between rounded-lg p-4 text-body font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:p-6">
         <span>{faq.question}</span>
         <svg
           class="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"

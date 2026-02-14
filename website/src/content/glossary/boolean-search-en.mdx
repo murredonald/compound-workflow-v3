@@ -1,0 +1,57 @@
+---
+term: "Boolean Search"
+termSlug: "boolean-search"
+short: "Boolean search is a query style that combines terms with operators like AND, OR, and NOT to control inclusion and exclusion with high precision."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["full-text-search", "query-understanding", "relevance-tuning"]
+synonyms: ["Boolean query", "Boolean retrieval", "AND/OR/NOT search"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Boolean search is a way of expressing exact constraints using logical operators such as AND, OR, and NOT (often combined with parentheses and quotes). It is commonly used in full-text systems to increase precision and reduce noise.
+
+## Why it matters
+
+- **Precision**: exclude common false positives (e.g., "tax credit" NOT "VAT").
+- **Auditability**: the query clearly describes why a document matches.
+- **Power users**: legal and research users often expect Boolean control.
+- **Deterministic behavior**: helpful when you need repeatable results.
+
+## How it works
+
+```
+(termA AND termB) OR ("exact phrase") AND NOT termC
+```
+
+Operator support varies by engine (case sensitivity, default operators, phrase rules), so query understanding and documentation matter.
+
+## Practical example
+
+`("withholding tax" OR "dividend tax") AND Belgium AND NOT "US treaty"` can narrow results to the exact jurisdiction and topic, excluding an unwanted subtopic.
+
+## Common questions
+
+**Q: Does Boolean search replace ranking?**
+
+A: No. Boolean logic selects a candidate set; ranking still decides which candidates appear first.
+
+**Q: Why do my operators behave unexpectedly?**
+
+A: Many engines apply implicit operators, stopword removal, or special parsing rules. Consistent query parsing is part of good query understanding.
+
+## Related terms
+
+- [Full-Text Search](/en/glossary/full-text-search/) - keyword retrieval and operators
+- [Query Understanding](/en/glossary/query-understanding/) - parse and normalize operator queries
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - improve ranking on top of Boolean filters
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

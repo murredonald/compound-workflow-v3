@@ -4,6 +4,7 @@ import Section from "@/components/layout/Section.astro";
 import Card from "@/components/ui/Card.astro";
 import ScarcityBanner from "@/components/marketing/ScarcityBanner.astro";
 import WaitlistCounter from "@/components/marketing/WaitlistCounter";
+import ScreenshotPlaceholder from "@/components/ui/ScreenshotPlaceholder.astro";
 import { t } from "@/i18n/utils";
 
 const locale = "de";
@@ -16,9 +17,10 @@ const locale = "de";
   path="/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
+    {/* Hero */}
+    <Section>
       <div class="mx-auto max-w-3xl text-center">
-        <h1 class="text-display text-foreground">
+        <h1 class="text-display font-bold tracking-tight text-foreground">
           {t("hero.headline", locale)}
         </h1>
         <p class="mt-6 text-body-lg text-muted-foreground">
@@ -50,12 +52,69 @@ const locale = "de";
             text={t("waitlist.counter", locale)}
           />
         </div>
+
+        {/* Product screenshot */}
+        <div class="mt-12 max-w-4xl mx-auto">
+          <ScreenshotPlaceholder label="Screenshot: Product interface" suggestion="Show a research answer card with confidence score badge (e.g. 87%), jurisdiction tag, cited article excerpts, and 'View sources' expandable. Use a real Belgian tax law question." />
+        </div>
       </div>
     </Section>
 
+    {/* Problem */}
     <Section muted>
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Das Problem mit KI-Steuertools heute</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Allgemeine KI gibt Ihnen selbstsichere Antworten auf Steuerfragen. Genau das macht sie gefährlich.
+        </p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Erfundene Quellen</strong> — zitiert Urteile und Artikel, die nicht existieren, ohne Möglichkeit zur Überprüfung</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Veraltetes Wissen</strong> — Trainingsdaten Monate oder Jahre veraltet, während sich Steuerrecht ständig ändert</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Kein Hierarchie-Bewusstsein</strong> — behandelt einen Blogbeitrag und ein Urteil des Kassationshofs gleich</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Jurisdiktions-blind</strong> — vermischt flämische, wallonische und Brüsseler Regeln sowie jene der Niederlande und Frankreichs ohne Unterscheidung</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Zeitblindheit</strong> — Fragen Sie "Wie hoch war die Abzugsgrenze im Jahr 2019?" und erhalten Sie die Antwort von heute. Keine Fähigkeit, über das Gesetz zu argumentieren, wie es zu einem bestimmten Zeitpunkt existierte.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive text-body-sm font-bold">&times;</span>
+            <p class="text-body-sm text-muted-foreground"><strong class="text-foreground">Falsches Vertrauen</strong> — Präsentiert jede Antwort mit gleicher Gewissheit, egal ob durch 10 Quellen gestützt oder bloße Spekulation. Keine Möglichkeit zu wissen, wann man tiefer graben muss.</p>
+          </div>
+        </div>
+      </div>
+    </Section>
+
+    {/* Vertrauenssäulen */}
+    <Section>
+      <div class="mx-auto max-w-4xl text-center mb-12">
+        <p class="text-body-sm font-medium text-primary uppercase tracking-wider mb-2">Entwickelt für</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Steueranwälte</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Steuerberater</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Wirtschaftsprüfer</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Unternehmensjuristen</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Single Family Offices</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Multi Family Offices</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Privatbanken</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Nachlassplaner</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Notare</span>
+          <span class="inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-body-sm text-foreground">Steuerabteilungen</span>
+        </div>
+      </div>
       <div class="mx-auto max-w-3xl text-center">
-        <h2 class="text-h2 text-foreground">{t("trust.transparency", locale)}</h2>
+        <h2 class="text-h2 font-bold text-foreground">{t("trust.section_title", locale)}</h2>
         <p class="mt-2 text-body text-muted-foreground">{t("site.tagline", locale)}</p>
       </div>
       <div class="mt-12 grid gap-6 sm:grid-cols-3">
@@ -74,9 +133,80 @@ const locale = "de";
       </div>
     </Section>
 
+    {/* Wie es funktioniert Teaser */}
+    <Section muted>
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Gezielt gebaut für belgisches Steuerrecht</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Keine allgemeine KI mit einem Steuer-Plugin. Eine spezialisierte Rechercheplattform, von Grund auf entwickelt.
+        </p>
+        <div class="mt-8 space-y-6">
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">13</span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Autoritätshierarchie</p>
+              <p class="text-body-sm text-muted-foreground">Verfassung &gt; Gesetze &gt; Königliche Erlasse &gt; Rundschreiben &gt; Rechtslehre — das System weiß, welche Quelle bei Konflikten Vorrang hat.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Temporale Versionierung</p>
+              <p class="text-body-sm text-muted-foreground">"Wie hoch war der Körperschaftsteuersatz 2019?" — beantwortet mit dem Gesetz, wie es damals galt, nicht wie es heute ist.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
+            </span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Dreisprachig NL/FR/EN</p>
+              <p class="text-body-sm text-muted-foreground">Fragen Sie auf Niederländisch, Französisch oder Englisch — finden Sie Bestimmungen in jeder Sprache. Mit juristisch korrekter Terminologie in allen drei.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </span>
+            <div>
+              <p class="text-body font-semibold text-foreground">Quellentransparenz</p>
+              <p class="text-body-sm text-muted-foreground">Jede Antwort zeigt ihre Quellen. Jede Aussage kann überprüft werden. Wenn wir nicht sicher sind, sagen wir es.</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8">
+          <a href={`/${locale}/how-it-works/`} class="text-body-sm font-medium text-primary hover:underline">
+            Erfahren Sie, wie es funktioniert &rarr;
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    {/* Versprechen */}
     <Section>
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-h2 text-foreground">{t("waitlist.title", locale)}</h2>
+        <blockquote class="border-l-4 border-primary pl-6 py-2 text-left">
+          <p class="text-h3 font-semibold text-foreground">
+            "Im Steuerrecht ist 'wahrscheinlich richtig' nicht gut genug."
+          </p>
+        </blockquote>
+        <p class="mt-6 text-body text-muted-foreground">
+          Wir geben Ihnen lieber ein ehrliches „wir sind uns nicht sicher" als eine überzeugende Antwort auf dünner Beweislage. Das ist unser Versprechen — nicht dass wir immer recht haben, sondern dass Sie immer wissen, woran Sie sind.
+        </p>
+        <div class="mt-6">
+          <a href={`/${locale}/about/`} class="text-body-sm font-medium text-primary hover:underline">
+            Lesen Sie unsere Geschichte &rarr;
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    {/* CTA */}
+    <Section muted>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-h2 font-bold text-foreground">{t("waitlist.title", locale)}</h2>
         <p class="mt-4 text-body text-muted-foreground">{t("waitlist.subtitle", locale)}</p>
         <div class="mt-8">
           <a

@@ -1,0 +1,185 @@
+---
+term: "Récupération Sparse"
+termSlug: "sparse-retrieval"
+short: "Récupération d'information utilisant des vecteurs creux haute dimension basés sur les fréquences de termes, comme BM25 et TF-IDF."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["dense-retrieval", "bm25", "tf-idf", "inverted-index"]
+synonyms: ["Récupération lexicale", "Récupération basée sur les termes", "Correspondance par mots-clés"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La récupération sparse est une approche de récupération d'information qui représente les [requêtes](/fr/glossary/prompt/) et documents comme des vecteurs haute dimension où la plupart des valeurs sont nulles. Chaque dimension correspond à un terme du vocabulaire, et les valeurs non-nulles indiquent l'importance du terme (fréquence, poids TF-IDF, ou score BM25). Avec des tailles de vocabulaire de 30 000+ termes, ces vecteurs sont extrêmement creux—un document typique pourrait avoir des valeurs non-nulles dans seulement 100-500 dimensions.
+
+## Pourquoi c'est important
+
+La récupération sparse reste fondamentale pour les systèmes de recherche :
+
+- **Fiabilité éprouvée** — des décennies d'optimisation et comportement bien compris
+- **Performance zero-shot** — fonctionne bien sur tout domaine sans entraînement
+- **Correspondance exacte** — essentielle pour SKUs produit, [citations](/fr/glossary/citation/) légales, identifiants techniques
+- **[Interprétabilité](/fr/glossary/explainability/)** — vous voyez exactement quels termes ont correspondu
+- **Efficacité** — les index inversés permettent une recherche sub-milliseconde sur des milliards de documents
+- **[Recherche hybride](/fr/glossary/hybrid-search/)** — se combine avec la récupération dense
+
+La plupart des systèmes de recherche en production utilisent la récupération sparse.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  RÉCUPÉRATION SPARSE                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  REPRÉSENTATION VECTEUR SPARSE:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Vocabulaire: [pomme, voiture, climat, document, ...]      │
+│  (30 000+ termes)                                          │
+│                                                            │
+│  Document: "Le changement climatique affecte les éco."    │
+│                                                            │
+│  Vecteur Sparse (montrant seulement non-zéro):            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  Index:     142    387    912    1523   2891       │   │
+│  │  Terme:   climat chgmnt affecte global écosys     │   │
+│  │  Valeur:   0.82   0.67   0.34   0.28   0.71       │   │
+│  │                                                     │   │
+│  │  Dimensions: 30 000+                               │   │
+│  │  Non-zéro:   ~50-200 (sparse!)                     │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  SPARSE VS DENSE COMPARAISON:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  SPARSE:                                                   │
+│  [0, 0, 0, 0.8, 0, 0, 0.5, 0, 0, 0, 0, 0.3, 0, 0, ...]   │
+│   │  Surtout des zéros                                    │
+│   │  30 000+ dimensions (taille vocabulaire)              │
+│   │  Interprétable (chaque dim = mot spécifique)         │
+│                                                            │
+│  DENSE:                                                    │
+│  [0.23, -0.45, 0.89, 0.12, -0.67, 0.34, 0.91, -0.28...]  │
+│   │  Pas de zéros (toutes dimensions utilisées)          │
+│   │  768-4096 dimensions (apprises)                       │
+│   │  Pas interprétable                                    │
+│                                                            │
+│                                                            │
+│  MÉTHODES SPARSE COURANTES:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. FRÉQUENCE DE TERMES (TF):                       │  │
+│  │     Compte occurrences du terme dans document       │  │
+│  │     Simple mais ignore rare vs commun               │  │
+│  │                                                      │  │
+│  │  2. TF-IDF:                                         │  │
+│  │     TF × log(N / df)                                │  │
+│  │     Rehausse termes rares, abaisse communs         │  │
+│  │                                                      │  │
+│  │  3. BM25:                                           │  │
+│  │     TF-IDF avec saturation et norm. longueur       │  │
+│  │     État de l'art récupération sparse               │  │
+│  │                                                      │  │
+│  │  4. SPARSE APPRIS (SPLADE, etc):                    │  │
+│  │     Réseau neuronal prédit poids sparse            │  │
+│  │     Meilleur des deux mondes                        │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  INDEX INVERSÉ - STRUCTURE CLÉ:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Documents:                                                │
+│  D1: "politique climatique changement"                    │
+│  D2: "science climatique recherche"                       │
+│  D3: "politique économique changements"                   │
+│                                                            │
+│  Index Inversé:                                            │
+│  ┌──────────────────────────────────────────────┐         │
+│  │ Terme       │ Liste Posting (doc_id: score)  │         │
+│  ├─────────────┼────────────────────────────────┤         │
+│  │ climat      │ D1: 0.8, D2: 0.8              │         │
+│  │ changement  │ D1: 0.6                        │         │
+│  │ politique   │ D1: 0.5, D3: 0.5              │         │
+│  │ science     │ D2: 0.7                        │         │
+│  │ économique  │ D3: 0.7                        │         │
+│  └──────────────────────────────────────────────┘         │
+│                                                            │
+│  Requête: "climat politique" → Chercher climat, politique │
+│         → Intersection/union listes posting               │
+│         → D1 a les deux (score le plus haut)             │
+│                                                            │
+│                                                            │
+│  FORCES ET FAIBLESSES:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ✓ Forces:                                                │
+│    • Correspondance exacte de termes                      │
+│    • Rapide (sub-milliseconde)                           │
+│    • Pas d'entraînement nécessaire                       │
+│    • Fonctionne sur tout domaine                         │
+│    • Résultats interprétables                            │
+│                                                            │
+│  ✗ Faiblesses:                                            │
+│    • Décalage vocabulaire (voiture ≠ automobile)         │
+│    • Pas de compréhension sémantique                     │
+│    • Besoin expansion requête pour synonymes             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q : La récupération sparse est-elle encore pertinente avec la récupération dense ?**
+
+R : Absolument. La récupération sparse est essentielle pour la correspondance exacte (IDs produit, citations légales, termes techniques) et fonctionne bien zero-shot. La plupart des systèmes de production utilisent des approches hybrides combinant sparse et dense.
+
+**Q : Quand la récupération sparse surpasse-t-elle la dense ?**
+
+R : La récupération sparse excelle quand : les termes exacts importent (domaines légal, médical, technique), vous n'avez pas de données d'entraînement pour les modèles denses, l'[interprétabilité](/fr/glossary/model-interpretability/) est requise, ou la requête utilise le même vocabulaire que les documents.
+
+**Q : Qu'est-ce que la récupération sparse apprise (SPLADE) ?**
+
+R : Les méthodes sparse apprises comme SPLADE utilisent des réseaux neuronaux pour prédire les poids sparse au lieu de formules fixes. Elles peuvent faire de l'expansion de vocabulaire tout en maintenant la forme vecteur sparse.
+
+**Q : Comment choisir entre BM25 et TF-IDF ?**
+
+R : Utilisez BM25. C'est strictement meilleur que TF-IDF car il ajoute la saturation de fréquence de termes et la normalisation de longueur de document.
+
+## Termes associés
+
+- [Dense retrieval](/fr/glossary/dense-retrieval/) — alternative vecteur neuronal
+- [BM25](/fr/glossary/bm25/) — algorithme sparse état de l'art
+- [TF-IDF](/fr/glossary/tf-idf/) — schéma de pondération fondamental
+- [Inverted index](/fr/glossary/inverted-index/) — structure de données pour recherche sparse
+
+---
+
+## Références
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [Fondements BM25]
+
+> Formal et al. (2021), "[SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking](https://arxiv.org/abs/2107.05720)", SIGIR. [Récupération sparse apprise]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [Comparaison neuronal vs sparse]
+
+> Bajaj et al. (2016), "[MS MARCO: A Human Generated MAchine Reading COmprehension Dataset](https://arxiv.org/abs/1611.09268)", arXiv. [Benchmark récupération majeur]
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [BM25 foundations]
+
+> Formal et al. (2021), "[SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking](https://arxiv.org/abs/2107.05720)", SIGIR. [Learned sparse retrieval]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [Neural vs sparse comparison]
+
+> Bajaj et al. (2016), "[MS MARCO: A Human Generated MAchine Reading COmprehension Dataset](https://arxiv.org/abs/1611.09268)", arXiv. [Major retrieval benchmark]

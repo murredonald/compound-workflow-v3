@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+    --row-alt: hsl(220 9% 14%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+    --row-alt: hsl(220 12% 96%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+
+  /* ── Multi-column matrix ── */
+  .matrix {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .matrix thead th {
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .matrix thead th:last-child {
+    border-right: none;
+  }
+
+  .matrix thead th.col-label {
+    width: 180px;
+    background: var(--card);
+    color: var(--muted-fg);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .matrix thead th.col-header {
+    background: hsl(220 9% 13%);
+    color: var(--fg);
+    text-align: center;
+  }
+
+  .light .matrix thead th.col-header {
+    background: hsl(220 10% 94%);
+  }
+
+  .matrix thead th.col-highlight {
+    background: var(--primary);
+    color: var(--primary-fg);
+    text-align: center;
+  }
+
+  .matrix tbody tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .matrix tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .matrix tbody tr:nth-child(even) {
+    background: var(--row-alt);
+  }
+
+  .matrix td {
+    padding: 14px 20px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--fg);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .matrix td:last-child {
+    border-right: none;
+  }
+
+  .matrix tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .matrix td.row-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted-fg);
+    text-align: left;
+  }
+
+  /* Icon cells */
+  .matrix .icon-yes { color: var(--success); font-size: 20px; }
+  .matrix .icon-no { color: var(--destructive); font-size: 20px; }
+  .matrix .icon-partial { color: var(--warning); font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">Feature matrix: AI tax research tools compared</div>
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th class="col-label">Feature</th>
+        <th class="col-header">ChatGPT</th>
+        <th class="col-header">Westlaw AI</th>
+        <th class="col-highlight">Auryth TX</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-label">Source citations</td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-yes">&check;</span></td>
+        <td><span class="icon-yes">&check;</span></td>
+      </tr>
+      <tr>
+        <td class="row-label">Belgian tax corpus</td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-partial">~</span></td>
+        <td><span class="icon-yes">&check;</span></td>
+      </tr>
+      <tr>
+        <td class="row-label">Confidence scoring</td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-yes">&check;</span></td>
+      </tr>
+      <tr>
+        <td class="row-label">Temporal versioning</td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-partial">~</span></td>
+        <td><span class="icon-yes">&check;</span></td>
+      </tr>
+      <tr>
+        <td class="row-label">Cross-domain detection</td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-no">&times;</span></td>
+        <td><span class="icon-yes">&check;</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

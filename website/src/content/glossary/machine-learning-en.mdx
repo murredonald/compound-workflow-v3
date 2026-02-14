@@ -1,0 +1,140 @@
+---
+term: "Machine Learning"
+termSlug: "machine-learning"
+short: "A field of AI where systems learn patterns from data to make predictions or decisions without explicit programming."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["deep-learning", "neural-network", "supervised-learning", "llm"]
+synonyms: ["ML", "Statistical learning", "Predictive modeling", "Pattern recognition"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Machine learning is a branch of artificial intelligence where algorithms learn patterns directly from data rather than being explicitly programmed with rules. Given training examples, ML systems automatically identify patterns, build mathematical models, and use those models to make [predictions](/en/glossary/inference/) or decisions on new, unseen data. This data-driven approach enables computers to improve performance on tasks through experience.
+
+## Why it matters
+
+Machine learning transformed technology:
+
+- **Data-driven decisions** — learns from evidence, not assumptions
+- **Handles complexity** — solves problems too complex for manual rules
+- **Continuous improvement** — models get better with more data
+- **Automation at scale** — enables intelligent systems across industries
+- **Foundation for AI** — powers everything from search to self-driving cars
+
+ML is the engine behind personalization, fraud detection, medical diagnosis, and LLMs.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    MACHINE LEARNING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRADITIONAL PROGRAMMING VS ML:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Traditional:                    Machine Learning:         │
+│  ┌──────────┐                    ┌──────────┐             │
+│  │   Data   │────┐               │   Data   │────┐        │
+│  └──────────┘    │               └──────────┘    │        │
+│                  ▼                               ▼        │
+│  ┌──────────┐  ┌──────────┐      ┌──────────┐  ┌─────┐   │
+│  │  Rules   │──│ Computer │──►   │   ML     │──│Model│   │
+│  └──────────┘  └──────────┘      │Algorithm │  └─────┘   │
+│       │              │           └──────────┘      │      │
+│       ▼              ▼                 ▲           ▼      │
+│  (hand-coded)    Answers          ┌────────┐   Answers   │
+│                                    │ Labels │             │
+│                                    └────────┘             │
+│                                                            │
+│  THE ML WORKFLOW:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  1. COLLECT DATA                                           │
+│     ┌─────────────────────────────────────┐               │
+│     │ Training Data (labeled or unlabeled) │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  2. TRAIN MODEL                                            │
+│     ┌─────────────────────────────────────┐               │
+│     │ Algorithm learns patterns from data  │               │
+│     │ Adjusts parameters to minimize error │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  3. EVALUATE                                               │
+│     ┌─────────────────────────────────────┐               │
+│     │ Test on held-out data                │               │
+│     │ Measure accuracy, precision, recall  │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  4. DEPLOY & PREDICT                                       │
+│     ┌─────────────────────────────────────┐               │
+│     │ New Data ──► Model ──► Predictions   │               │
+│     └─────────────────────────────────────┘               │
+│                                                            │
+│  THREE TYPES OF ML:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  SUPERVISED:        UNSUPERVISED:       REINFORCEMENT:    │
+│  Learn from         Find patterns       Learn from         │
+│  labeled data       in unlabeled data   rewards/penalties  │
+│                                                            │
+│  Input → Label      Input → ?           State → Action     │
+│  "Cat" → "Cat"      Clusters            +10 or -5 reward   │
+│                     Anomalies                              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**ML algorithm comparison:**
+| Type | Algorithm | Use Case |
+|------|-----------|----------|
+| Supervised | Linear Regression | Predict numbers |
+| Supervised | Decision Trees | Classification |
+| Supervised | Neural Networks | Complex patterns |
+| Unsupervised | K-Means | Clustering |
+| Unsupervised | PCA | [Dimensionality reduction](/en/glossary/dimensionality-reduction/) |
+| Reinforcement | Q-Learning | Games, robotics |
+
+## Common questions
+
+**Q: What's the difference between AI, ML, and deep learning?**
+
+A: AI is the broadest term (machines that act intelligently). ML is a subset of AI (learning from data). Deep learning is a subset of ML (using deep neural networks). All deep learning is ML, all ML is AI, but not vice versa.
+
+**Q: How much data does machine learning need?**
+
+A: It depends on complexity. Simple linear models might need hundreds of examples. Deep learning often needs thousands to millions. Transfer learning reduces this by using pretrained models. Rule of thumb: 10× more samples than features for traditional ML.
+
+**Q: Can machine learning be wrong?**
+
+A: Yes, frequently. ML models can be biased by training data, overfit to noise, fail on edge cases, or confidently produce wrong outputs. They excel at patterns similar to training data but may fail on novel situations. [Human oversight](/en/glossary/human-oversight/) remains essential.
+
+**Q: How does machine learning relate to LLMs?**
+
+A: LLMs are a specific application of machine learning—specifically deep learning with [transformer neural networks](/en/glossary/transformer-architecture/) trained on text data. ML is the broad discipline; LLMs are one (very successful) implementation of ML techniques.
+
+## Related terms
+
+- [Deep Learning](/en/glossary/deep-learning/) — ML using deep neural networks
+- [Neural Network](/en/glossary/neural-network/) — computational model for ML
+- [Supervised Learning](/en/glossary/supervised-learning/) — learning from labeled examples
+- [LLM](/en/glossary/llm/) — ML applied to language
+
+---
+
+## References
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Foundational textbook]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40,000+ citations]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Comprehensive overview]

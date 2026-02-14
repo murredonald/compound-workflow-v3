@@ -1,0 +1,105 @@
+---
+term: "Semantic Similarity"
+termSlug: "semantic-similarity"
+short: "A measure of how alike two pieces of text are in meaning, regardless of the specific words used."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["embeddings", "cosine-similarity", "semantic-search", "vector-database"]
+synonyms: ["Meaning similarity", "Conceptual similarity", "Text similarity"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Semantic similarity measures how close two texts are in meaning, not just in word overlap. Unlike [keyword matching](/en/glossary/sparse-retrieval/), it captures that "car" and "automobile" are similar, or that "tax deduction rules" relates to "fiscal exemption guidelines." This is typically computed by comparing [vector embeddings](/en/glossary/vector-embeddings/) of text using distance metrics.
+
+## Why it matters
+
+Semantic similarity enables meaning-based understanding in AI systems:
+
+- **Beyond keywords** — finds relevant content even with different terminology
+- **Search quality** — powers semantic search and [RAG](/en/glossary/rag/) retrieval
+- **[Deduplication](/en/glossary/deduplication/)** — identifies semantically similar documents or issues
+- **Content matching** — enables recommendation systems and Q&A pairs
+- **Multilingual** — can match meaning across languages with the right models
+
+It's the foundation of how modern AI systems understand and compare text.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               SEMANTIC SIMILARITY COMPUTATION              │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TEXT A: "The automobile requires fuel"                    │
+│  TEXT B: "The car needs gasoline"                          │
+│                                                            │
+│           │                           │                    │
+│           ▼                           ▼                    │
+│  ┌─────────────────┐        ┌─────────────────┐            │
+│  │ EMBEDDING MODEL │        │ EMBEDDING MODEL │            │
+│  │  (BERT, etc.)   │        │  (Same model)   │            │
+│  └────────┬────────┘        └────────┬────────┘            │
+│           │                          │                     │
+│           ▼                          ▼                     │
+│     Vector A                    Vector B                   │
+│   [0.23, 0.87, ...]          [0.21, 0.89, ...]             │
+│           │                          │                     │
+│           └──────────┬───────────────┘                     │
+│                      ▼                                     │
+│         ┌─────────────────────────┐                        │
+│         │   SIMILARITY METRIC     │                        │
+│         │   • Cosine similarity   │                        │
+│         │   • Euclidean distance  │                        │
+│         │   • Dot product         │                        │
+│         └───────────┬─────────────┘                        │
+│                     ▼                                      │
+│              Similarity Score                              │
+│                  0.94                                      │
+│           (High = Very Similar)                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Key components:**
+1. **Text encoding** — convert both texts to embeddings using the same model
+2. **Vector comparison** — apply a similarity metric to the embedding pair
+3. **Score interpretation** — higher scores (typically 0-1) indicate greater similarity
+
+## Common questions
+
+**Q: What's the difference between semantic and lexical similarity?**
+
+A: Lexical similarity compares exact words (string matching). Semantic similarity compares meaning. "Big" and "large" have low lexical similarity but high semantic similarity. "Bank" (river) and "bank" (financial) have identical lexical form but different semantic meanings.
+
+**Q: What similarity score indicates a good match?**
+
+A: It varies by model and domain. Generally: `> 0.8` = very similar, `0.6-0.8` = related, `< 0.5` = different topics. Always calibrate thresholds with real examples from your data.
+
+**Q: Can semantic similarity work across languages?**
+
+A: Yes, with multilingual embedding models. Models like multilingual-e5 and LaBSE encode different languages into the same vector space, enabling cross-lingual similarity computation.
+
+**Q: How is this different from semantic search?**
+
+A: Semantic similarity is the underlying comparison technique. Semantic search applies it at scale—comparing a query against many documents to find the most similar ones.
+
+## Related terms
+
+- [Embeddings](/en/glossary/embeddings/) — vector representations for similarity computation
+- [Cosine Similarity](/en/glossary/cosine-similarity/) — common similarity metric
+- [Semantic Search](/en/glossary/semantic-search/) — uses semantic similarity for retrieval
+- [Vector Database](/en/glossary/vector-database/) — stores embeddings for fast comparison
+
+---
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [5,000+ citations]
+
+> Cer et al. (2018), "[Universal Sentence Encoder](https://arxiv.org/abs/1803.11175)", arXiv. [3,000+ citations]
+
+> Mikolov et al. (2013), "[Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/abs/1310.4546)", NeurIPS. [30,000+ citations]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [500+ citations]

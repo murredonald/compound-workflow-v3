@@ -1,0 +1,186 @@
+---
+term: "Adapter"
+termSlug: "adapter"
+short: "Kleine trainierbare Module, die in eingefrorene vortrainierte Modelle eingefügt werden und effizientes aufgabenspezifisches Fine-Tuning ermöglichen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["lora", "fine-tuning", "transfer-learning", "llm"]
+synonyms: ["Adapter-Module", "Adapter-Schichten", "Bottleneck-Adapter"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Adapter sind kleine neuronale Netzwerkmodule, die zwischen den Schichten eines vortrainierten Modells eingefügt werden. Während des Fine-Tunings werden die originalen Modellgewichte eingefroren und nur die Adapter-Parameter trainiert. Dieser Ansatz ermöglicht effizientes Transfer Learning—große Modelle an neue Aufgaben anpassen mit einem Bruchteil der Parameter (typisch 1-5% des Originalmodells). Mehrere aufgabenspezifische Adapter können dasselbe Basismodell teilen.
+
+## Warum es wichtig ist
+
+Adapter transformierten die Anpassung großer Modelle:
+
+- **Parametereffizienz** — trainiere 1-5% der Parameter vs 100% bei vollem Fine-Tuning
+- **Multi-Task-Deployment** — ein Basismodell + viele leichtgewichtige Adapter
+- **Reduziertes katastrophales Vergessen** — eingefrorene Basis bewahrt originale Fähigkeiten
+- **Niedrigere Speicherkosten** — Adapter sind MBs vs GBs für vollständige Modellkopien
+- **Schneller Aufgabenwechsel** — Adapter zur Laufzeit für verschiedene Aufgaben tauschen
+
+Adapter ermöglichen praktisches Multi-Tenant-Deployment von Foundation-Modellen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    ADAPTER-ARCHITEKTUR                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  BOTTLENECK-ADAPTER-DESIGN (Original 2019):                │
+│  ──────────────────────────────────────────                │
+│                                                            │
+│  Eingefügt nach jeder Transformer-Unterschicht:            │
+│                                                            │
+│  ┌─────────────────────────────────────┐                  │
+│  │         Transformer-Block           │                  │
+│  │                                      │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │  Self-Attention (eingefroren)│    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  │                 ▼                    │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │    Adapter-Modul            │    │                  │
+│  │  │    (TRAINIERBAR)            │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  │                 ▼                    │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │  Feed-Forward (eingefroren)  │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  │                 ▼                    │                  │
+│  │  ┌─────────────────────────────┐    │                  │
+│  │  │    Adapter-Modul            │    │                  │
+│  │  │    (TRAINIERBAR)            │    │                  │
+│  │  └──────────────┬───────────────┘    │                  │
+│  │                 │                    │                  │
+│  └─────────────────┼────────────────────┘                  │
+│                    ▼                                       │
+│                                                            │
+│  ADAPTER-MODUL INTERNA:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  Eingabe (hidden_dim = 768)                                │
+│         │                                                  │
+│         ▼                                                  │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Down-Project: 768 → 64 (Engpass)        │             │
+│  │  [W_down: 768 × 64 = 49K Params]         │             │
+│  └─────────────────┬────────────────────────┘             │
+│                    │                                       │
+│                    ▼                                       │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Nichtlinearität (GELU/ReLU)             │             │
+│  └─────────────────┬────────────────────────┘             │
+│                    │                                       │
+│                    ▼                                       │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Up-Project: 64 → 768                    │             │
+│  │  [W_up: 64 × 768 = 49K Params]           │             │
+│  └─────────────────┬────────────────────────┘             │
+│                    │                                       │
+│                    ▼                                       │
+│  ┌──────────────────────────────────────────┐             │
+│  │  Residualverbindung: Ausgabe + Eingabe   │             │
+│  └──────────────────────────────────────────┘             │
+│                                                            │
+│  Gesamt pro Adapter: ~98K Params (vs Millionen/Schicht)   │
+│                                                            │
+│                                                            │
+│  ADAPTER-FAMILIEN-VERGLEICH:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │ Methode       │ Wo eingefügt      │ Trainierbar %  │  │
+│  ├─────────────────────────────────────────────────────┤  │
+│  │ Bottleneck    │ Nach Unterschichten│ 2-5%          │  │
+│  │ LoRA          │ Parallel zu W     │ 0.1-1%         │  │
+│  │ Prefix-Tuning │ Vor Eingabe       │ 0.1%           │  │
+│  │ Prompt-Tuning │ Input-Embeddings  │ <0.1%          │  │
+│  │ (IA)³         │ Skaliert Aktivier.│ <0.1%          │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│  MULTI-TASK-DEPLOYMENT:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│              ┌──────────────────┐                         │
+│              │Eingefror. Basis- │                         │
+│              │modell (7B Params)│                         │
+│              └────────┬─────────┘                         │
+│                       │                                    │
+│       ┌───────────────┼───────────────┐                   │
+│       │               │               │                    │
+│       ▼               ▼               ▼                    │
+│  ┌─────────┐    ┌─────────┐    ┌─────────┐               │
+│  │Adapter A│    │Adapter B│    │Adapter C│               │
+│  │ (Code)  │    │(Medizin)│    │(Recht)  │               │
+│  │  ~50MB  │    │  ~50MB  │    │  ~50MB  │               │
+│  └─────────┘    └─────────┘    └─────────┘               │
+│                                                            │
+│  vs. Volles Fine-Tuning: 3 × 14GB = 42GB Modelle nötig   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Adapter-Effizienzvergleich:**
+| Ansatz | Trainierbare Params | Speicher/Aufgabe | Geschwindigkeit |
+|--------|---------------------|------------------|-----------------|
+| Volles Fine-Tuning | 100% | Volles Modell | Langsam |
+| Bottleneck-Adapter | 2-5% | ~50-200MB | Schnell |
+| LoRA | 0.1-1% | ~10-100MB | Sehr schnell |
+| Prompt-Tuning | `<0.1%` | ~1MB | Am schnellsten |
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich LoRA von Bottleneck-Adaptern?**
+
+A: Bottleneck-Adapter fügen neue Schichten (Down-Project → Nichtlinearität → Up-Project) in Serie hinzu. LoRA fügt parallele Low-Rank-Updates zu bestehenden Gewichtsmatrizen hinzu. LoRA ist noch parametereffizienter und populärer geworden, aber Bottleneck-Adapter erreichen manchmal bessere Ergebnisse bei komplexen Aufgaben durch ihre größere Ausdrucksfähigkeit.
+
+**F: Kann ich mehrere Adapter kombinieren?**
+
+A: Ja! AdapterFusion und ähnliche Techniken ermöglichen das Kombinieren mehrerer aufgabenspezifischer Adapter. Sie können auch Adapter stapeln (z.B. Sprachadapter + Aufgabenadapter) für cross-lingualen Transfer oder Domänenanpassung. Einige Frameworks unterstützen gewichtete Kombinationen zur Inferenzzeit.
+
+**F: Schaden Adapter der Inferenzgeschwindigkeit?**
+
+A: Minimal. Bottleneck-Adapter fügen sequentielle Berechnung hinzu und erhöhen die Latenz um 2-5%. LoRA-Stil-Adapter können bei der Bereitstellung in Basisgewichte zusammengeführt werden, ohne Inferenz-Overhead. Die Multi-Task-Speichereinsparungen überwiegen normalerweise die kleinen Geschwindigkeitskosten.
+
+**F: Wann sollte ich Adapter vs. volles Fine-Tuning verwenden?**
+
+A: Verwenden Sie Adapter wenn: (1) Sie begrenzten GPU-Speicher haben, (2) Sie mehrere aufgabenspezifische Modelle brauchen, (3) Sie Basismodell-Fähigkeiten bewahren wollen, oder (4) Ihre Fine-Tuning-Daten begrenzt sind (Adapter regularisieren besser). Verwenden Sie volles Fine-Tuning wenn Sie reichlich Ressourcen haben und maximale Aufgabenleistung brauchen.
+
+## Verwandte Begriffe
+
+- [LoRA](/de/glossary/lora/) — populäre Adapter-Variante mit Low-Rank-Zerlegung
+- [Fine-tuning](/de/glossary/fine-tuning/) — vollständiges Parameter-Training, das Adapter verbessern
+- Transfer learning — breiteres Konzept, das Adapter ermöglichen
+- [LLM](/de/glossary/llm/) — Modelle, die von Adaptern profitieren
+
+---
+
+## Referenzen
+
+> Houlsby et al. (2019), "[Parameter-Efficient Transfer Learning for NLP](https://arxiv.org/abs/1902.00751)", ICML. [Originales Adapter-Paper]
+
+> Pfeiffer et al. (2020), "[AdapterHub: A Framework for Adapting Transformers](https://arxiv.org/abs/2007.07779)", EMNLP. [Adapter-Ökosystem und Fusion]
+
+> He et al. (2022), "[Towards a Unified View of Parameter-Efficient Transfer Learning](https://arxiv.org/abs/2110.04366)", ICLR. [Vergleich der Adapter-Methoden]
+
+> Hu et al. (2021), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [LoRA als Adapter-Alternative]
+
+## References
+
+> Houlsby et al. (2019), "[Parameter-Efficient Transfer Learning for NLP](https://arxiv.org/abs/1902.00751)", ICML. [Original adapter paper]
+
+> Pfeiffer et al. (2020), "[AdapterHub: A Framework for Adapting Transformers](https://arxiv.org/abs/2007.07779)", EMNLP. [Adapter ecosystem and fusion]
+
+> He et al. (2022), "[Towards a Unified View of Parameter-Efficient Transfer Learning](https://arxiv.org/abs/2110.04366)", ICLR. [Comparison of adapter methods]
+
+> Hu et al. (2021), "[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)", ICLR. [LoRA as adapter alternative]

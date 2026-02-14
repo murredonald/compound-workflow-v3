@@ -1,0 +1,60 @@
+---
+term: "Recherche boolÃ©enne"
+termSlug: "boolean-search"
+short: "La recherche boolÃ©enne combine des termes avec des opÃ©rateurs comme AND, OR et NOT pour inclure ou exclure des rÃ©sultats avec prÃ©cision."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["full-text-search", "query-understanding", "relevance-tuning"]
+synonyms: ["RequÃªte boolÃ©enne", "Boolean retrieval", "Recherche AND/OR/NOT"]
+locale: "fr"
+draft: false
+---
+
+## DÃ©finition
+
+La recherche boolÃ©enne exprime des contraintes exactes avec des opÃ©rateurs logiques (AND, OR, NOT), souvent avec des parenthÃ¨ses et des guillemets. Elle est courante dans les moteurs plein texte pour augmenter la prÃ©cision.
+
+## Pourquoi c'est important
+
+- **PrÃ©cision**: exclure des faux positifs frÃ©quents.
+- **TraÃ§abilitÃ©**: la requÃªte explique clairement pourquoi un document matche.
+- **Utilisateurs experts**: souvent indispensable en juridique et en recherche.
+- **Comportement dÃ©terministe**: utile pour des rÃ©sultats reproductibles.
+
+## Comment Ã§a fonctionne
+
+```
+(termeA AND termeB) OR ("phrase exacte") AND NOT termeC
+```
+
+Les rÃ¨gles varient selon le moteur (parsing, stopwords, casse), donc la comprÃ©hension de requÃªte est essentielle.
+
+## Exemple pratique
+
+`("prÃ©compte mobilier" OR "taxe sur dividendes") AND Belgique AND NOT "traitÃ© USA"` rÃ©duit le bruit et cible la juridiction.
+
+## Questions frÃ©quentes
+
+**Q: La recherche boolÃ©enne remplace-t-elle le ranking?**
+
+R: Non. Le boolÃ©en filtre un ensemble de candidats; le ranking les ordonne.
+
+**Q: Pourquoi mes opÃ©rateurs donnent-ils des surprises?**
+
+R: Certains moteurs appliquent des opÃ©rateurs implicites ou des rÃ¨gles de parsing. Une bonne comprÃ©hension de requÃªte limite ces effets.
+
+## Termes associÃ©s
+
+- [Recherche plein texte](/fr/glossary/full-text-search/) - couche mots-clÃ©s et opÃ©rateurs
+- [ComprÃ©hension de requÃªte](/fr/glossary/query-understanding/) - parser correctement
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - amÃ©liorer le classement
+
+---
+
+## RÃ©fÃ©rences
+
+> Manning, Raghavan & SchÃ¼tze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

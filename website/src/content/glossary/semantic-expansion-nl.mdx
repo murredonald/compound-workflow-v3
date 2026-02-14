@@ -1,0 +1,62 @@
+---
+term: "Semantische uitbreiding"
+termSlug: "semantic-expansion"
+short: "Semantische uitbreiding verbreedt een query met verwante termen of betekenissen (synoniemen, entiteiten, embeddings) om recall te verhogen zonder intent te verliezen."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["query-understanding", "query-intent", "embeddings", "full-text-search", "relevance-tuning"]
+synonyms: ["Query expansion", "Semantische query expansion", "Synoniemenuitbreiding"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Semantische uitbreiding (vaak [query expansion](/nl/glossary/query-expansion/) genoemd) voegt betekenisgerichte varianten toe aan een query, zoals synoniemen, gerelateerde concepten of entiteitsvarianten. Het doel is relevante content te vinden die niet exact dezelfde woorden bevat.
+
+## Waarom het belangrijk is
+
+- **Hogere recall**: vangt variatie in woordkeuze op.
+- **Betere domekking**: koppelt afkortingen, referenties en jargon aan standaardvormen.
+- **Betere UX**: minder "geen resultaten" en minder herformuleringen.
+- **Hybride inzetbaar**: werkt met zowel full-text als [vector retrieval](/nl/glossary/dense-retrieval/).
+
+## Hoe het werkt
+
+```
+Query -> begrip -> veilige uitbreiding -> retrieval -> ranking -> valideren met analytics
+```
+
+Bronnen zijn o.a. curatie van synoniemen, taxonomieën en embedding-neighbors. De uitdaging is uitbreiden zonder de intent te veranderen.
+
+## Praktisch voorbeeld
+
+Als gebruikers "CIR92" zoeken, kan uitbreiding ook "WIB92" en "[Code des impôts sur les revenus](/nl/glossary/wib-cir/)" meenemen zodat dezelfde bron gevonden wordt over taalvarianten heen.
+
+## Veelgestelde vragen
+
+**Q: Waarom kan uitbreiding relevantie schaden?**
+
+A: Te brede uitbreiding voegt ruis toe. Goede systemen expanden selectief, geven lagere weging aan uitbreidingen en monitoren het effect.
+
+**Q: Is dit hetzelfde als synoniemen in de index?**
+
+A: Verwant, maar niet identiek. Uitbreiding kan bij query-time of index-time (of beide). Query-time is meestal makkelijker te auditen en bij te sturen.
+
+## Gerelateerde termen
+
+- [Query Understanding](/nl/glossary/query-understanding/) - betekenis begrijpen vóór uitbreiding
+- [Zoekintentie](/nl/glossary/query-intent/) - uitbreiden in lijn met het doel
+- [Embeddings](/nl/glossary/embeddings/) - basis voor betekenisgerichte uitbreiding
+- [Full-Text Search](/nl/glossary/full-text-search/) - keywordvarianten toevoegen
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - impact meten en bijsturen
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

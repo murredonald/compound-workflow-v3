@@ -1,0 +1,64 @@
+---
+term: "Analyse de couverture de retrieval"
+termSlug: "retrieval-coverage-analysis"
+short: "L’analyse de couverture de retrieval vérifie si l’index et le pipeline peuvent retrouver les sources nécessaires pour un périmètre défini de questions et sujets."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["search-analytics", "relevance-tuning", "indexing-strategy", "content-discoverability", "full-text-search"]
+synonyms: ["Coverage testing", "Retrieval gap analysis", "Corpus coverage analysis"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L’analyse de couverture de retrieval est une méthode d’évaluation qui mesure la capacité d’un moteur de recherche ou système [RAG](/fr/glossary/rag/) à récupérer les *bonnes* sources pour un périmètre défini (sujets, juridictions, types de documents). Elle répond à : "a-t-on les sources et sait-on les retrouver ?".
+
+## Pourquoi c'est important
+
+- **Éviter les angles morts** : un bon ranking ne compense pas une absence d’indexation.
+- **Meilleure QA** : révèle sources manquantes, ingestion défaillante, ou compréhension de [requête](/fr/glossary/prompt/) faible.
+- **Priorisation** : indique où investir pour un impact maximal.
+- **Gouvernance** : apporte des éléments de preuve sur l’adéquation au cas d’usage.
+
+## Comment ça fonctionne
+
+On mesure souvent la couverture via une liste de sources requises et un set de requêtes représentatives :
+
+```
+Définir périmètre -> construire requêtes -> récupérer -> juger "sources requises trouvées ?" -> corriger -> re-tester
+```
+
+Livrables typiques : % de couverture par sujet/juridiction, liste de sources manquantes ou difficiles à trouver, et patterns d’échec (métadonnées, langue, accès).
+
+## Exemple pratique
+
+Vous définissez 50 questions représentatives sur un sujet fiscal. L’analyse montre que les circulaires sont indexées, mais que certaines versions consolidées manquent, ce qui fait chuter la récupération. La solution est ingestion/indexation, pas des changements de prompt.
+
+## Questions fréquentes
+
+**Q: Est-ce juste précision/rappel ?**
+
+R: On peut s’en servir, mais la couverture est souvent orientée "sources" : "retrouve-t-on les documents autoritatifs indispensables ?"
+
+**Q: À quelle fréquence le faire ?**
+
+R: Après changements d’ingestion, après mises à jour légales majeures, et régulièrement pour les domaines à risque.
+
+## Termes associés
+
+- [Search Analytics](/fr/glossary/search-analytics/) - suivre résultats et échecs
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - optimiser le ranking une fois la couverture assurée
+- [Indexing Strategy](/fr/glossary/indexing-strategy/) - garantir l’indexation des sources nécessaires
+- [Content Discoverability](/fr/glossary/content-discoverability/) - améliorer la trouvabilité via structure/métadonnées
+- [Full-Text Search](/fr/glossary/full-text-search/) - couche de base à évaluer
+
+---
+
+## Références
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

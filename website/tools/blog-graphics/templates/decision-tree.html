@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 20%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  /* ── Enhanced Decision Tree (multi-level) ── */
+  .dtree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .dtree-node {
+    background: var(--primary);
+    color: var(--primary-fg);
+    padding: 18px 36px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    max-width: 500px;
+  }
+
+  .dtree-node.secondary {
+    background: var(--muted);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    font-size: 17px;
+    padding: 14px 28px;
+  }
+
+  .dtree-connector {
+    width: 2px;
+    height: 24px;
+    background: var(--border);
+  }
+
+  .dtree-connector-h {
+    position: relative;
+    width: 100%;
+    height: 2px;
+  }
+
+  .dtree-connector-h::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .dtree-branches {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dtree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    max-width: 320px;
+  }
+
+  .dtree-branch-connector {
+    width: 2px;
+    height: 20px;
+    background: var(--border);
+  }
+
+  .dtree-condition {
+    font-size: 14px;
+    color: var(--muted-fg);
+    text-align: center;
+    font-style: italic;
+    padding: 4px 0 8px;
+  }
+
+  .dtree-leaf {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 24px;
+    text-align: center;
+    width: 100%;
+    background: var(--muted);
+  }
+
+  .dtree-leaf.recommended {
+    border-color: var(--primary);
+    border-width: 2px;
+    background: hsla(36 32% 38% / 0.08);
+  }
+
+  .dtree-leaf.warning {
+    border-color: var(--warning);
+    border-width: 2px;
+    background: hsla(38 92% 50% / 0.05);
+  }
+
+  .dtree-leaf.danger {
+    border-color: var(--destructive);
+    border-width: 2px;
+    background: hsla(2 62% 56% / 0.05);
+  }
+
+  .dtree-leaf-label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--fg);
+  }
+
+  .dtree-leaf.recommended .dtree-leaf-label {
+    color: var(--primary-text);
+  }
+
+  .dtree-leaf-desc {
+    font-size: 14px;
+    color: var(--muted-fg);
+    line-height: 1.5;
+  }
+
+  .dtree-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .dtree-tag.best { background: hsla(36 32% 38% / 0.2); color: var(--primary-text); }
+  .dtree-tag.ok { background: hsla(142 64% 55% / 0.15); color: var(--success); }
+  .dtree-tag.warn { background: hsla(38 92% 50% / 0.15); color: var(--warning); }
+  .dtree-tag.bad { background: hsla(2 62% 56% / 0.15); color: var(--destructive); }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="dtree">
+    <div class="dtree-node">Do you need verifiable sources?</div>
+    <div class="dtree-connector"></div>
+    <div class="dtree-connector-h"></div>
+    <div class="dtree-branches">
+      <div class="dtree-branch">
+        <div class="dtree-branch-connector"></div>
+        <div class="dtree-condition">No — just brainstorming</div>
+        <div class="dtree-leaf">
+          <div class="dtree-leaf-label">General LLM</div>
+          <div class="dtree-leaf-desc">ChatGPT, Claude, etc. Fine for ideation, not for professional advice.</div>
+          <div class="dtree-tag ok">Acceptable</div>
+        </div>
+      </div>
+      <div class="dtree-branch">
+        <div class="dtree-branch-connector"></div>
+        <div class="dtree-condition">Yes — client-facing work</div>
+        <div class="dtree-node secondary">Is it Belgian tax law?</div>
+        <div class="dtree-connector"></div>
+        <div class="dtree-connector-h"></div>
+        <div class="dtree-branches">
+          <div class="dtree-branch">
+            <div class="dtree-branch-connector"></div>
+            <div class="dtree-condition">No — other jurisdictions</div>
+            <div class="dtree-leaf warning">
+              <div class="dtree-leaf-label">Westlaw / Lexis</div>
+              <div class="dtree-leaf-desc">Broad coverage but 17–33% hallucination rate.</div>
+              <div class="dtree-tag warn">Caution</div>
+            </div>
+          </div>
+          <div class="dtree-branch">
+            <div class="dtree-branch-connector"></div>
+            <div class="dtree-condition">Yes — Belgian fiscal law</div>
+            <div class="dtree-leaf recommended">
+              <div class="dtree-leaf-label">Auryth TX</div>
+              <div class="dtree-leaf-desc">Purpose-built for Belgian tax with confidence scoring and temporal versioning.</div>
+              <div class="dtree-tag best">Best fit</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

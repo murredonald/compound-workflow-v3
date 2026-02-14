@@ -1,0 +1,115 @@
+---
+term: "Hybrid Search"
+termSlug: "hybrid-search"
+short: "Een retrieval-aanpak die keyword-gebaseerde en semantische vectorzoekopdrachten combineert om de sterke punten van beide te benutten."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["semantic-search", "bm25", "embeddings", "rag", "reranking"]
+synonyms: ["Gecombineerd zoeken", "Multi-modale retrieval", "Hybride retrieval"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Hybrid search combineert traditionele keyword-gebaseerde zoekopdrachten (zoals BM25) met moderne semantische vectorzoekopdrachten om relevante documenten te vinden. Door deze twee aanpakken te fuseren, vangt het zowel exacte keyword-matches als [conceptuele gelijkenis](/nl/glossary/semantic-similarity/) op, wat robuustere retrieval biedt dan een van beide methoden alleen.
+
+## Waarom het belangrijk is
+
+Hybrid search adresseert de beperkingen van pure aanpakken:
+
+- **Het beste van beide werelden** — vangt exacte termen EN conceptuele matches
+- **Faalmodusdekking** — wanneer de ene methode mist, slaagt de andere vaak
+- **Domeinflexibiliteit** — werkt met technische en natuurlijke taalqueries
+- **Productiebetrouwbaarheid** — consistentere resultaten over querytypes
+- **[RAG](/nl/glossary/rag/)-kwaliteit** — verbetert documentretrieval voor generatiepipelines
+
+Pure vectorzoekopdrachten kunnen exacte termen missen; pure keyword-zoekopdrachten missen synoniemen—hybrid vangt beide.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      HYBRID SEARCH                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│                      Gebruikersquery                       │
+│               "BTW regels artikel 15bis"                   │
+│                          │                                 │
+│              ┌───────────┴───────────┐                     │
+│              ▼                       ▼                     │
+│  ┌───────────────────┐   ┌───────────────────┐             │
+│  │  KEYWORD ZOEKEN   │   │  VECTOR ZOEKEN    │             │
+│  │  (BM25/TF-IDF)    │   │  (Embeddings)     │             │
+│  │                   │   │                   │             │
+│  │  Exacte matches:  │   │  Semantische:     │             │
+│  │  - "artikel 15bis"│   │  - BTW-regelingen │             │
+│  │  - "BTW regels"   │   │  - Vrijstellingen │             │
+│  │                   │   │  - Gerelateerd    │             │
+│  └─────────┬─────────┘   └─────────┬─────────┘             │
+│            │                       │                       │
+│            └───────────┬───────────┘                       │
+│                        ▼                                   │
+│            ┌───────────────────────┐                       │
+│            │   SCORE FUSIE         │                       │
+│            │   • Reciprocal Rank   │                       │
+│            │   • Gewogen Som       │                       │
+│            │   • Convexe Combinatie│                       │
+│            └───────────┬───────────┘                       │
+│                        ▼                                   │
+│              Gecombineerde Resultaten                      │
+│            (Beste van beide methoden)                      │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Fusiemethoden:**
+1. **Reciprocal Rank Fusion (RRF)** — rankt op basis van positie in elke resultatenlijst
+2. **Gewogen som** — combineert genormaliseerde scores met configureerbare gewichten
+3. **Convexe combinatie** — α × keyword_score + (1-α) × vector_score
+
+## Veelgestelde vragen
+
+**V: Welke verhouding van keyword tot vectorzoekopdracht werkt het beste?**
+
+A: Begin met 50/50, stem dan af op basis van je queries. Technische domeinen (juridisch, medisch) profiteren vaak van hoger keyword-gewicht (60-70%) voor precieze terminologie. Conversationele queries geven voorkeur aan vectorzoekopdracht (60-70%).
+
+**V: Wanneer helpt hybrid search het meest?**
+
+A: Wanneer queries specifieke termen mengen met conceptuele vragen. Bijvoorbeeld "Artikel 15bis BTW-vrijstellingen voor digitale diensten"—heeft exacte artikelmatch EN semantisch begrip van vrijstellingen nodig.
+
+**V: Voegt hybrid search latentie toe?**
+
+A: Enigszins—je draait twee zoekopdrachten. Maar beide kunnen parallel uitvoeren, dus overhead is minimaal (~10-50ms). De kwaliteitsverbetering rechtvaardigt meestal deze kosten.
+
+**V: Wat is Reciprocal Rank Fusion (RRF)?**
+
+A: RRF combineert rankings zonder vergelijkbare scores nodig te hebben. Voor elk document berekent het 1/(k + rank) voor beide methoden en sommeert ze. Het is robuust omdat het alleen positie gebruikt, niet scoremagnitude.
+
+## Gerelateerde termen
+
+- [Semantic Search](/nl/glossary/semantic-search/) — alleen-[vector retrieval](/nl/glossary/dense-retrieval/) component
+- [BM25](/nl/glossary/bm25/) — klassiek keyword-zoekalgoritme
+- [Embeddings](/nl/glossary/embeddings/) — vectoren voor semantisch zoeken
+- [Reranking](/nl/glossary/reranking/) — volgt vaak op hybrid search
+
+---
+
+## Referenties
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)", Foundations and Trends in Information Retrieval. [3.000+ [citaties](/nl/glossary/citation/)]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3.500+ citaties]
+
+> Cormack et al. (2009), "[Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)", SIGIR. [500+ citaties]
+
+> Ma et al. (2021), "[A Replication Study of Dense Passage Retriever](https://arxiv.org/abs/2104.05740)", arXiv. [200+ citaties]
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf)", Foundations and Trends in Information Retrieval. [3,000+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Cormack et al. (2009), "[Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)", SIGIR. [500+ citations]
+
+> Ma et al. (2021), "[A Replication Study of Dense Passage Retriever](https://arxiv.org/abs/2104.05740)", arXiv. [200+ citations]

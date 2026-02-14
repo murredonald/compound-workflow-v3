@@ -1,0 +1,171 @@
+---
+term: "Ground Truth"
+termSlug: "ground-truth"
+short: "Les données de référence faisant autorité et vérifiées utilisées pour entraîner et évaluer les modèles de machine learning—les réponses 'correctes' contre lesquelles les prédictions du modèle sont mesurées."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["training-data", "annotation", "labeling", "evaluation-metrics", "gold-standard"]
+synonyms: ["Vérité terrain", "Standard de référence", "Labels", "Données annotées"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La ground truth est la donnée faisant autorité et vérifiée qui représente les réponses "correctes" en [machine learning](/fr/glossary/machine-learning/). C'est la référence contre laquelle les [prédictions](/fr/glossary/inference/) du modèle sont évaluées. La ground truth peut être des labels annotés par humains (classifications d'images, tags d'entités, scores de sentiment), des lectures de capteurs (coordonnées GPS, mesures de [température](/fr/glossary/temperature/)), ou des évaluations d'experts du domaine (diagnostics médicaux, interprétations juridiques). La qualité de la ground truth détermine directement le plafond des performances du modèle.
+
+## Pourquoi c'est important
+
+La ground truth est le fondement de l'[apprentissage supervisé](/fr/glossary/supervised-learning/):
+
+- **Entraînement modèle** — apprend patterns des exemples labellisés
+- **Évaluation** — mesure précision contre réponses correctes connues
+- **[Benchmarking](/fr/glossary/benchmarking/)** — permet comparaison entre différents modèles
+- **Contrôle qualité** — identifie échecs systématiques du modèle
+- **Conformité réglementaire** — prouve validité du modèle pour audits
+- **Débogage** — diagnostique où et pourquoi les modèles échouent
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GROUND TRUTH                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  QU'EST-CE QUE LA GROUND TRUTH:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │   DONNÉES BRUTES                  GROUND TRUTH       │ │
+│  │   (Entrée)                        (Label)            │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │ [Image de   │              │  "Chat"     │      │ │
+│  │   │  chat]      │  ──────────► │             │      │ │
+│  │   │             │   Annotateur │  (vérifié   │      │ │
+│  │   │             │   Humain     │   correct)  │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │ "Excellent  │              │ POSITIF     │      │ │
+│  │   │  produit!"  │  ──────────► │ sentiment   │      │ │
+│  │   │             │   Expert     │ score: 0.9  │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  SOURCES DE GROUND TRUTH:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. ANNOTATION HUMAINE                              │ │
+│  │     ┌─────────┐    ┌─────────┐    ┌─────────┐      │ │
+│  │     │Annotateur│   │Annotateur│   │Annotateur│     │ │
+│  │     │    A    │    │    B    │    │    C    │      │ │
+│  │     └────┬────┘    └────┬────┘    └────┬────┘      │ │
+│  │          │              │              │           │ │
+│  │          └──────────────┼──────────────┘           │ │
+│  │                         ▼                          │ │
+│  │                  ┌───────────┐                     │ │
+│  │                  │ Consensus │                     │ │
+│  │                  └───────────┘                     │ │
+│  │                                                      │ │
+│  │     Plusieurs annotateurs réduisent le biais        │ │
+│  │     Accord inter-annotateur = métrique qualité      │ │
+│  │                                                      │ │
+│  │  2. SOURCE EXPERTE/AUTORITÉ                         │ │
+│  │     • Diagnostic médical par médecin agréé         │ │
+│  │     • Classification juridique par avocat          │ │
+│  │     • Données financières des dépôts officiels    │ │
+│  │                                                      │ │
+│  │  3. VÉRITÉ PHYSIQUE/CAPTEUR                         │ │
+│  │     • Coordonnées GPS (conduite autonome)          │ │
+│  │     • Lectures température (IoT/prédiction)        │ │
+│  │     • Clic/conversion réel (modèles pub)           │ │
+│  │                                                      │ │
+│  │  4. PROGRAMMATIQUE/BASÉ RÈGLES                      │ │
+│  │     • Patterns regex (validation email)            │ │
+│  │     • Exactitude mathématique (calculateur)        │ │
+│  │     • Lookups base de données                      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH DANS WORKFLOW ML:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Données Brutes                                     │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  ANNOTATION (Créer labels ground truth)             │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  DATASET LABELLISÉ                                  │ │
+│  │  paires (Entrée, Ground Truth)                      │ │
+│  │     │                                               │ │
+│  │     ├───────────────────────┐                      │ │
+│  │     ▼                       ▼                      │ │
+│  │  SET TRAIN (80%)       SET TEST (20%)              │ │
+│  │     │                       │                      │ │
+│  │     ▼                       │                      │ │
+│  │  ENTRAÎNEMENT              │                      │ │
+│  │  Modèle apprend patterns    │                      │ │
+│  │     │                       │                      │ │
+│  │     ▼                       ▼                      │ │
+│  │  ┌──────────────────────────────────────────────┐ │ │
+│  │  │              ÉVALUATION                       │ │ │
+│  │  │                                               │ │ │
+│  │  │  Prédiction Modèle: "Chat"                   │ │ │
+│  │  │  Ground Truth:      "Chat"                   │ │ │
+│  │  │  Résultat:          ✓ Correct                │ │ │
+│  │  │                                               │ │ │
+│  │  │  Précision = Corrects / Total                │ │ │
+│  │  │                                               │ │ │
+│  │  └──────────────────────────────────────────────┘ │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: De combien de ground truth ai-je besoin?**
+
+R: Dépend de la complexité. Classification simple: 1.000-10.000 exemples. Tâches NLP/vision complexes: 100.000+. [Deep learning](/fr/glossary/deep-learning/) requiert généralement plus que ML traditionnel.
+
+**Q: Et si la ground truth est fausse?**
+
+R: Le bruit des labels limite directement la précision du modèle. Utilisez plusieurs annotateurs, mesurez l'accord inter-annotateur, implémentez des workflows de contrôle qualité.
+
+**Q: Puis-je utiliser des [LLM](/fr/glossary/llm/) pour générer la ground truth?**
+
+R: Pour bootstrapping ou augmentation, oui—mais vérification humaine essentielle. Les labels générés par LLM héritent des biais du modèle.
+
+## Termes associés
+
+- Données d'entraînement — dataset pour entraîner modèles
+- Annotation — processus de création ground truth
+
+---
+
+## Références
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Supervision faible et labellisation programmatique]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations](https://aclanthology.org/D08-1027/)", ACL. [Qualité [annotation](/fr/glossary/metadata-enrichment/) crowdsourcée]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets](https://arxiv.org/abs/2103.14749)", NeurIPS. [Impact du bruit des labels]
+
+## References
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Weak supervision and programmatic labeling]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations for Natural Language Tasks](https://aclanthology.org/D08-1027/)", ACL. [Crowdsourced annotation quality]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets Destabilize Machine Learning Benchmarks](https://arxiv.org/abs/2103.14749)", NeurIPS. [Impact of label noise on benchmarks]

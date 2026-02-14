@@ -7,7 +7,8 @@ const blog = defineCollection({
     description: z.string(),
     publishDate: z.coerce.date(),
     author: z.string(),
-    category: z.enum(["tax-update", "product", "insight", "guide"]),
+    category: z.string(),
+    category_name: z.string(),
     tags: z.array(z.string()),
     locale: z.enum(["en", "nl", "fr", "de"]),
     draft: z.boolean().default(false),
@@ -50,4 +51,19 @@ const topics = defineCollection({
   }),
 });
 
-export const collections = { blog, guides, topics };
+const glossary = defineCollection({
+  type: "content",
+  schema: z.object({
+    term: z.string(),
+    termSlug: z.string(),
+    short: z.string(),
+    category: z.enum(["tax-law", "ai-ml", "ai-regulation", "search", "business"]),
+    category_name: z.string(),
+    related: z.array(z.string()).default([]),
+    synonyms: z.array(z.string()).default([]),
+    locale: z.enum(["en", "nl", "fr", "de"]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, guides, topics, glossary };

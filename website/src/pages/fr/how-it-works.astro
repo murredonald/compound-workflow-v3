@@ -1,0 +1,352 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import ScreenshotPlaceholder from "@/components/ui/ScreenshotPlaceholder.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "fr";
+---
+
+<BaseLayout
+  title={`${t("nav.how_it_works", locale)} — ${t("site.title", locale)}`}
+  description="Comment Auryth TX recherche, classe et valide le droit fiscal belge — de la question à la réponse citée."
+  locale={locale}
+  path="/how-it-works/"
+>
+  <main id="main-content">
+    {/* Hero */}
+    <Section>
+      <div class="max-w-3xl">
+        <p class="text-body-sm font-medium text-primary uppercase tracking-wider mb-4">Comment ça marche</p>
+        <h1 class="text-display font-bold tracking-tight mb-6">
+          De la question à la réponse citée.
+        </h1>
+        <p class="text-body-lg text-muted-foreground">
+          Pas un chatbot avec un plug-in juridique. Un système de recherche spécialisé qui parcourt le droit fiscal belge, classe les sources par autorité et vous montre exactement ce qui fonde chaque réponse.
+        </p>
+      </div>
+    </Section>
+
+    {/* Pipeline de recherche */}
+    <Section muted id="retrieval-pipeline">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Le pipeline de recherche</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Chaque question passe par cinq étapes avant que vous ne voyiez un seul mot. Chaque étape réduit le bruit et augmente la précision.
+        </p>
+        <div class="mt-10 space-y-0">
+          {/* Étape 1 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">1</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Votre question</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Vous posez votre question en langage courant — français, néerlandais ou anglais. Le système analyse votre intention, identifie le domaine fiscal et détermine la période temporelle pertinente.</p>
+            </div>
+          </div>
+          {/* Étape 2 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">2</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Recherche hybride</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Deux stratégies de recherche fonctionnent en parallèle : <strong class="text-foreground">BM25</strong> (correspondance exacte de termes juridiques) et <strong class="text-foreground">embeddings vectoriels</strong> (sens sémantique). Les résultats sont fusionnés via Reciprocal Rank Fusion — pour trouver des sources pertinentes même quand vous utilisez des termes différents de la législation.</p>
+            </div>
+          </div>
+          {/* Étape 3 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">3</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Classement par autorité</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Les résultats sont reclassés par poids juridique. Un arrêt de la Cour de cassation l'emporte sur une circulaire administrative. La Constitution l'emporte sur tout. Cela reflète le raisonnement réel d'un professionnel fiscal.</p>
+            </div>
+          </div>
+          {/* Étape 4 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">4</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Reclassement par cross-encoder</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Un modèle spécialisé lit chaque source en regard de votre question et évalue la pertinence réelle — en détectant les faux positifs que la seule correspondance par mots-clés manquerait.</p>
+            </div>
+          </div>
+          {/* Étape 5 */}
+          <div class="relative flex gap-4">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">5</span>
+            </div>
+            <div>
+              <p class="text-body font-semibold text-foreground">Réponse structurée</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">L'IA génère une fiche de recherche avec citations, score de confiance, portée temporelle et juridiction — pas un mur de texte. Chaque affirmation est liée à une source vérifiable.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Screenshot placeholder */}
+        <div class="mt-10">
+          <ScreenshotPlaceholder label="Screenshot: Research card" suggestion="Full research card: query at top, structured answer with inline citation markers [1][2][3], confidence badge (87%), temporal scope tag (valid until 2026-12-31), jurisdiction chip, and collapsed source accordion." />
+        </div>
+      </div>
+    </Section>
+
+    {/* Hiérarchie des autorités */}
+    <Section id="authority-hierarchy">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Classement par autorité des sources</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Le droit belge a un ordre de préséance. Le système applique une pondération d'autorité lors du classement des sources — les sources de plus grand poids apparaissent en premier. Voici comment cela fonctionne en pratique :
+        </p>
+        
+        {/* Exemples de comparaisons */}
+        <div class="mt-8 space-y-4">
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground mb-3">Exemple : Législatif vs. administratif</p>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-body-sm font-semibold text-primary">Loi fédérale (CIR)</span>
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-body-sm font-medium text-muted-foreground">Circulaire administrative</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Une disposition du Code des impôts sur les revenus prime sur une interprétation administrative de cette disposition.</p>
+          </div>
+          
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground mb-3">Exemple : Hiérarchie judiciaire</p>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-body-sm font-semibold text-primary">Cour de cassation</span>
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-body-sm font-medium text-muted-foreground">Cour d'appel</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Un arrêt de la Cour suprême a plus de poids qu'une décision d'appel régionale sur la même question.</p>
+          </div>
+          
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground mb-3">Exemple : Contraignant vs. informatif</p>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-body-sm font-semibold text-primary">Arrêté royal</span>
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-body-sm font-medium text-muted-foreground">Doctrine juridique</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Les instruments réglementaires contraignants priment sur les commentaires académiques, qui sont informatifs mais non autoritaires.</p>
+          </div>
+        </div>
+
+        {/* Catégories de sources */}
+        <div class="mt-8 rounded-lg border border-border bg-muted/30 p-5">
+          <p class="text-body font-semibold text-foreground mb-3">Catégories de sources que nous classons</p>
+          <p class="text-body-sm text-muted-foreground mb-4">Le système pondère les sources dans ces catégories — des dispositions constitutionnelles aux commentaires académiques :</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Constitution</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Droit UE</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Traités</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Lois fédérales</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Décrets régionaux</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Arrêtés royaux</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Cour de cassation</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Cour constitutionnelle</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Cours d'appel</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Rulings</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Circulaires</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Travaux parlementaires</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Doctrine</span>
+          </div>
+        </div>
+
+        <p class="mt-6 text-body-sm text-muted-foreground">
+          Lorsque les sources se contredisent, le système sait laquelle a plus de poids — automatiquement. Pas de devinettes, pas de listes de citations plates.
+        </p>
+      </div>
+    </Section>
+
+    {/* Versionnage temporel */}
+    <Section muted id="temporal-versioning">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Versionnage temporel</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Le droit fiscal change constamment. Le système suit quand chaque disposition était en vigueur — pour vous donner la bonne réponse pour la bonne année.
+        </p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground">Vous demandez :</p>
+            <p class="mt-2 text-body font-semibold text-foreground">"Quel était le taux d'impôt des sociétés en 2019 ?"</p>
+            <div class="mt-4 flex items-center gap-2">
+              <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-body-sm font-medium text-primary">Exercice d'imposition 2020</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Répondu avec la loi telle qu'elle était alors : taux standard de 29,58% (29% de base + 2% de contribution de crise).</p>
+          </div>
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground">Vous demandez :</p>
+            <p class="mt-2 text-body font-semibold text-foreground">"Quel est le taux d'impôt des sociétés aujourd'hui ?"</p>
+            <div class="mt-4 flex items-center gap-2">
+              <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-body-sm font-medium text-primary">Exercice d'imposition 2026</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Répondu avec la loi actuelle : taux standard de 25%. Le système récupère automatiquement la bonne version.</p>
+          </div>
+        </div>
+        <div class="mt-6 rounded-lg border border-border bg-background p-5">
+          <p class="text-body font-semibold text-foreground">Comment ça fonctionne en coulisses</p>
+          <p class="mt-2 text-body-sm text-muted-foreground">
+            Chaque document porte des métadonnées explicites : <strong class="text-foreground">effective_from</strong>, <strong class="text-foreground">effective_to</strong> et <strong class="text-foreground">assessment_year</strong>. Le pipeline de recherche filtre par portée temporelle avant le classement — pour ne jamais mélanger dispositions obsolètes et droit actuel.
+          </p>
+        </div>
+      </div>
+    </Section>
+
+    {/* Portes de qualité */}
+    <Section id="quality-gates">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">4 niveaux de contrôle qualité</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Chaque document passe par quatre étapes de validation avant de devenir consultable. Pas de raccourcis, pas d'imports en vrac.
+        </p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">1</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Validation structurelle</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Les documents sont découpés aux frontières juridiques naturelles — articles, sections, paragraphes — et non à des limites de caractères arbitraires.</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">2</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Contrôles de qualité</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Les vérifications d'encodage, de complétude et de formatage garantissent qu'aucun contenu corrompu ou tronqué n'entre dans le corpus.</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">3</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Enrichissement des métadonnées</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Niveau d'autorité, champs temporels, juridiction, langue et tags thématiques sont attachés à chaque fragment de document.</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">4</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Déduplication</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Le contenu en double ou quasi-double est détecté et consolidé — pour voir chaque disposition une seule fois, pas cinq fois depuis différentes sources.</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+        <p class="mt-6 text-body-sm text-muted-foreground">
+          Les nouveaux documents sont mis en quarantaine pour examen par un administrateur avant de devenir consultables. Le corpus grandit avec soin, pas à l'aveugle.
+        </p>
+      </div>
+    </Section>
+
+    {/* RAG vs Fine-tuning */}
+    <Section muted id="rag-vs-finetuning">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Pourquoi la recherche bat le fine-tuning</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Certains outils d'IA juridique intègrent les connaissances dans leurs modèles par fine-tuning. Nous avons choisi une autre voie — et voici pourquoi c'est important pour la fiscalité belge.
+        </p>
+        <div class="mt-8 space-y-4">
+          <div class="grid grid-cols-[1fr_1fr] gap-px rounded-lg border border-border overflow-hidden">
+            <div class="bg-muted/50 p-4">
+              <p class="text-body-sm font-semibold text-muted-foreground">Modèles fine-tunés</p>
+            </div>
+            <div class="bg-background p-4">
+              <p class="text-body-sm font-semibold text-primary">Auryth TX (RAG)</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Connaissances figées au moment de l'entraînement — déjà en retard de mois ou d'années</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Mises à jour en temps réel</strong> — les nouvelles lois entrent dans le corpus immédiatement, sans ré-entraînement</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Incapable de pointer fiablement vers le document source d'une affirmation</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Traçabilité complète des citations</strong> — chaque affirmation liée à un article et paragraphe précis</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Absorbe toutes les versions de la loi en un seul jeu de poids — confusion temporelle</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Précision temporelle</strong> — des métadonnées explicites suivent quelle version s'applique quand</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Coûteux et lent à ré-entraîner quand la loi change</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Économique</strong> — l'ajout de documents est rapide. Passer à un meilleur modèle de base est instantané.</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Verrouillé sur une version de modèle — le fine-tuning ne se transfère pas aux modèles plus récents</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Agnostique au modèle</strong> — quand un meilleur modèle IA sort, nous basculons. Notre corpus et notre pipeline restent.</p>
+            </div>
+          </div>
+        </div>
+        <p class="mt-6 text-body-sm text-muted-foreground">
+          Le fine-tuning peut fonctionner pour des domaines juridiques stables. Mais le droit fiscal belge est une cible mouvante — les taux changent, les exonérations apparaissent et disparaissent, les règles régionales divergent. La recherche vous maintient à jour.
+        </p>
+        <p class="mt-4">
+          <a href={`/${locale}/blog/rag-vs-finetuning-fr/`} class="text-body-sm font-medium text-primary hover:underline">Approfondissement : RAG vs fine-tuning pour l'IA juridique &rarr;</a>
+        </p>
+      </div>
+    </Section>
+
+    {/* Lien précision */}
+    <Section>
+      <div class="mx-auto max-w-3xl">
+        <div class="rounded-lg border border-border bg-background p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div class="flex-1">
+            <h2 class="text-body-lg font-bold text-foreground">Nous publions nos données de précision</h2>
+            <p class="mt-2 text-body-sm text-muted-foreground">
+              La plupart des outils d'IA prétendent être précis. Nous le montrons — avec de vraies métriques, mises à jour régulièrement et ouvertes à l'examen.
+            </p>
+          </div>
+          <a
+            href={`/${locale}/accuracy/`}
+            class="inline-flex h-10 items-center justify-center rounded-lg border border-input bg-background px-5 text-body-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 whitespace-nowrap"
+          >
+            Voir le tableau de bord
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    {/* CTA */}
+    <Section muted>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-h2 font-bold text-foreground">{t("waitlist.title", locale)}</h2>
+        <p class="mt-4 text-body text-muted-foreground">{t("waitlist.subtitle", locale)}</p>
+        <div class="mt-8">
+          <a
+            href={`/${locale}/waitlist/`}
+            class="inline-flex h-12 min-h-[44px] items-center justify-center gap-2 rounded-lg bg-primary px-8 text-body font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            {t("hero.cta", locale)}
+          </a>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,61 @@
+---
+term: "Retrieval Coverage Analysis"
+termSlug: "retrieval-coverage-analysis"
+short: "Retrieval coverage analysis checks whether your index and retrieval pipeline can find the sources needed for a defined set of questions and topics."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["search-analytics", "relevance-tuning", "indexing-strategy", "content-discoverability", "full-text-search"]
+synonyms: ["Coverage testing", "Retrieval gap analysis", "Corpus coverage analysis"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+[Retrieval coverage](/en/glossary/retrieval-coverage/) analysis is an evaluation method that measures how well a search or RAG system can retrieve the *right* sources for a defined scope (topics, jurisdictions, document types). It focuses on "Do we have the necessary material, and can we find it?", not just on ranking quality.
+
+## Why it matters
+
+- **Avoid blind spots**: a perfect ranker cannot retrieve documents that are not indexed.
+- **Better QA**: reveals missing sources, broken ingestion, or weak [query understanding](/en/glossary/query-understanding/).
+- **Prioritization**: tells you what to add or fix first for maximum impact.
+- **Governance**: supports evidence that coverage is appropriate for the intended use.
+
+## How it works
+
+Coverage is usually measured against a checklist of required sources and representative queries:
+
+```
+Define scope -> build query set -> retrieve -> judge "did we find required sources?" -> fix gaps -> re-test
+```
+
+Typical outputs: coverage percentage by topic/jurisdiction, lists of missing or hard-to-find sources, and recurring failure patterns (metadata gaps, language issues, access restrictions).
+
+## Practical example
+
+You define 50 representative questions for Belgian withholding tax. Coverage analysis shows that official circulars are indexed, but consolidated versions of some articles are missing, causing low retrieval for key queries. The fix is ingestion and indexing, not prompt changes.
+
+## Common questions
+
+**Q: Is this just precision/recall?**
+
+A: It can use those metrics, but coverage analysis is often more source-oriented: "Do we retrieve the specific authoritative documents we must rely on?"
+
+**Q: How often should we run it?**
+
+A: At least after ingestion changes, after major legal updates, and on a schedule for high-risk domains.
+
+## Related terms
+
+- [Search Analytics](/en/glossary/search-analytics/) - monitor outcomes and failure patterns
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - improve ranking once coverage exists
+- [Indexing Strategy](/en/glossary/indexing-strategy/) - ensures required sources are indexed
+- [Content Discoverability](/en/glossary/content-discoverability/) - make content findable via metadata and structure
+- [Full-Text Search](/en/glossary/full-text-search/) - baseline [retrieval layer](/en/glossary/retrieval-layer/) to evaluate
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

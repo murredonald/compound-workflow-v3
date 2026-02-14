@@ -1,0 +1,99 @@
+---
+term: "Hallucination"
+termSlug: "hallucination"
+short: "When an AI model generates false, fabricated, or unsupported information presented as fact."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "rag", "faithfulness", "source-grounding"]
+synonyms: ["AI hallucination", "Model hallucination", "Confabulation", "Fabrication"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Hallucination occurs when a language model generates content that is factually incorrect, nonsensical, or not supported by its training data or provided context—while presenting it with the same confidence as accurate information. The model essentially "makes up" facts, citations, events, or details that don't exist or are wrong.
+
+## Why it matters
+
+Hallucinations are a critical challenge for AI deployment in high-stakes domains:
+
+- **Trust erosion** — users cannot blindly trust model outputs without verification
+- **Legal risk** — fabricated citations or incorrect advice can have legal consequences
+- **Misinformation** — AI-generated falsehoods can spread rapidly
+- **Domain sensitivity** — tax, legal, and medical applications require [factual accuracy](/en/glossary/factuality/)
+
+Understanding and mitigating hallucinations is essential for [responsible AI](/en/glossary/responsible-ai/) deployment.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  HALLUCINATION TYPES                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  1. FACTUAL HALLUCINATION                                  │
+│     "The Eiffel Tower was built in 1887"                   │
+│     (Actually 1889)                                        │
+│                                                            │
+│  2. FABRICATED CITATIONS                                   │
+│     "According to Smith et al. (2020)..."                  │
+│     (Paper doesn't exist)                                  │
+│                                                            │
+│  3. CONTEXT CONTRADICTION                                  │
+│     Given: "Company revenue: €10M"                         │
+│     Output: "Revenue exceeded €15M"                        │
+│                                                            │
+│  4. LOGICAL INCONSISTENCY                                  │
+│     Same response contains contradictory claims            │
+│                                                            │
+│  WHY IT HAPPENS:                                           │
+│  ┌─────────────┐     ┌─────────────────────────┐           │
+│  │ Statistical │ ──► │ Plausible ≠ Accurate   │           │
+│  │ Prediction  │     │ Confident ≠ Correct    │           │
+│  └─────────────┘     └─────────────────────────┘           │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Root causes:**
+1. **Training data gaps** — model fills gaps with plausible-sounding completions
+2. **Pattern matching** — predicts likely tokens without [factual grounding](/en/glossary/grounding/)
+3. **No truth verification** — models optimize for fluency, not accuracy
+4. **Knowledge cutoff** — training data has a date limit
+
+## Common questions
+
+**Q: How does RAG reduce hallucinations?**
+
+A: RAG grounds responses in retrieved documents, giving the model factual context rather than relying solely on parametric memory. The model generates from provided sources, making claims verifiable.
+
+**Q: Can hallucinations be completely eliminated?**
+
+A: Not currently. Hallucinations can be reduced through RAG, [fine-tuning](/en/glossary/fine-tuning/), better prompts, and confidence thresholds, but cannot be eliminated entirely. Human verification remains important.
+
+**Q: How do you detect hallucinations?**
+
+A: Methods include fact-checking against [knowledge bases](/en/glossary/knowledge-base/), citation verification, semantic entailment checking, and self-consistency testing where multiple outputs are compared.
+
+**Q: Do larger models hallucinate less?**
+
+A: Larger models may have better factual knowledge but can still hallucinate confidently. Model size alone doesn't solve the problem—architecture and training approach matter more.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — models that can hallucinate
+- [RAG](/en/glossary/rag/) — technique to reduce hallucinations via grounding
+- [Faithfulness](/en/glossary/faithfulness/) — measure of output fidelity to sources
+- Source Grounding — anchoring outputs to retrieved documents
+
+---
+
+## References
+
+> Ji et al. (2023), "[Survey of Hallucination in Natural Language Generation](https://arxiv.org/abs/2202.03629)", ACM Computing Surveys. [1,500+ citations]
+
+> Huang et al. (2023), "[A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2311.05232)", arXiv. [400+ citations]
+
+> Maynez et al. (2020), "[On Faithfulness and Factuality in Abstractive Summarization](https://arxiv.org/abs/2005.00661)", ACL. [1,100+ citations]
+
+> Zhang et al. (2023), "[Siren's Song in the AI Ocean: A Survey on Hallucination in Large Language Models](https://arxiv.org/abs/2309.01219)", arXiv. [300+ citations]

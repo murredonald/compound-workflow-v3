@@ -1,0 +1,83 @@
+---
+term: "Self-Attention"
+termSlug: "self-attention"
+short: "A mechanism where each element in a sequence computes attention weights with all other elements in the same sequence."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["attention-mechanism", "transformer-architecture", "multi-head-attention", "llm"]
+synonyms: ["Intra-attention", "Self-attention mechanism"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Self-attention (also called intra-attention) is a mechanism where each position in a sequence attends to all positions within the same sequence to compute a representation. Unlike cross-attention, which relates two different sequences, self-attention captures relationships and dependencies between different parts of a single input, enabling the model to understand how words relate to each other within a sentence.
+
+## Why it matters
+
+Self-attention is the foundational mechanism of Transformer architectures:
+
+- **Contextual understanding** — each word's representation incorporates information from all other words in the sequence
+- **Long-range dependencies** — captures relationships between distant words without information degradation
+- **Bidirectional context** — in [encoder models](/en/glossary/embedding-model/), each word sees both preceding and following context
+- **Parallelizable** — all attention computations can run simultaneously, unlike recurrent approaches
+
+This enables language models to understand meaning in context rather than treating words in isolation.
+
+## How it works
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                      SELF-ATTENTION                      │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  Sequence: [The] [cat] [sat] [on] [the] [mat]           │
+│               │     │     │    │    │     │              │
+│               ▼     ▼     ▼    ▼    ▼     ▼              │
+│  Each token:  Q ────────────────────────────┐            │
+│               K ◄───────────────────────────┤            │
+│               V ◄───────────────────────────┘            │
+│                                                          │
+│  "cat" attends to: The(0.1) cat(0.3) sat(0.4) on(0.1)...│
+│                                                          │
+│  Output: contextualized representation for each token    │
+└──────────────────────────────────────────────────────────┘
+```
+
+1. **Project to Q, K, V** — each token generates Query, Key, and Value vectors
+2. **Compute scores** — each Query attends to all Keys in the sequence
+3. **Apply softmax** — normalize scores to attention weights
+4. **Aggregate values** — weighted sum of all Values gives contextualized output
+5. **Result** — each position's representation now incorporates global context
+
+## Common questions
+
+**Q: How is self-attention different from cross-attention?**
+
+A: Self-attention computes relationships within one sequence (Q, K, V all come from the same input). Cross-attention relates two sequences—typically decoder queries attending to encoder outputs.
+
+**Q: What is causal/masked self-attention?**
+
+A: In decoder models (like GPT), tokens can only attend to previous tokens, not future ones. This is enforced by masking future positions, enabling autoregressive generation.
+
+**Q: Does self-attention scale quadratically?**
+
+A: Yes, complexity is O(n²) where n is [sequence length](/en/glossary/context-window/), since each token attends to all others. This limits practical context window sizes and has driven research into efficient attention variants.
+
+## Related terms
+
+- [Attention Mechanism](/en/glossary/attention-mechanism/) — the general technique self-attention builds on
+- [Transformer Architecture](/en/glossary/transformer-architecture/) — uses self-attention as its core component
+- [Multi-Head Attention](/en/glossary/multi-head-attention/) — runs multiple self-attention operations in parallel
+- [LLM](/en/glossary/llm/) — language models built on self-attention
+
+---
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Cheng et al. (2016), "[Long Short-Term Memory-Networks for Machine Reading](https://arxiv.org/abs/1601.06733)", EMNLP. [1,800+ citations]
+
+> Lin et al. (2017), "[A Structured Self-Attentive Sentence Embedding](https://arxiv.org/abs/1703.03130)", ICLR. [3,200+ citations]

@@ -1,0 +1,85 @@
+---
+term: "Attention Mechanism"
+termSlug: "attention-mechanism"
+short: "A neural network technique that allows models to focus on relevant parts of input when producing output, enabling context-aware processing."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["transformer-architecture", "self-attention", "multi-head-attention", "llm"]
+synonyms: ["Attention", "Neural attention", "Attention layer"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+An attention mechanism is a component in [neural networks](/en/glossary/neural-network/) that enables models to dynamically focus on relevant parts of the input sequence when generating each part of the output. Rather than compressing all input into a single fixed-size representation, attention allows the model to selectively "attend to" different input elements based on their relevance to the current task.
+
+## Why it matters
+
+Attention mechanisms solve fundamental limitations of earlier sequence models:
+
+- **Handling long sequences** — attention directly connects distant elements without information loss through many steps
+- **[Interpretability](/en/glossary/explainability/)** — attention weights reveal which inputs influenced each output, aiding debugging and trust
+- **Parallelization** — attention computations can run simultaneously, unlike sequential RNNs
+- **Dynamic context** — the model learns what to focus on rather than using fixed patterns
+
+Attention is the core innovation behind Transformers and modern language models.
+
+## How it works
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  ATTENTION MECHANISM                 │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  Query (Q) ─────┐                                    │
+│                 ├──→ Score ──→ Softmax ──→ Weights   │
+│  Key (K) ───────┘                           │        │
+│                                             ▼        │
+│  Value (V) ─────────────────────────→ Weighted Sum   │
+│                                             │        │
+│                                             ▼        │
+│                                         Output       │
+└──────────────────────────────────────────────────────┘
+```
+
+1. **Query, Key, Value** — input is transformed into three representations
+2. **Scoring** — queries are compared against keys to compute relevance scores
+3. **Softmax** — scores are normalized to sum to 1 (attention weights)
+4. **Weighted combination** — values are combined using attention weights
+5. **Output** — contextually-informed representation for each position
+
+The formula: `Attention(Q,K,V) = softmax(QK^T / √d_k) × V`
+
+## Common questions
+
+**Q: What is the difference between attention and self-attention?**
+
+A: Standard attention computes relevance between two different sequences (e.g., encoder outputs and decoder state). Self-attention computes relevance within a single sequence—each element attends to all others in the same sequence.
+
+**Q: Why divide by √d_k in the attention formula?**
+
+A: This "scaled dot-product attention" prevents dot products from growing too large in high dimensions, which would push softmax into regions with vanishing gradients.
+
+**Q: Can attention be visualized?**
+
+A: Yes, attention weights can be plotted as heatmaps showing which input tokens each output token attended to, providing [interpretability](/en/glossary/model-interpretability/).
+
+## Related terms
+
+- [Transformer Architecture](/en/glossary/transformer-architecture/) — built entirely on attention mechanisms
+- [Self-Attention](/en/glossary/self-attention/) — attention within a single sequence
+- [Multi-Head Attention](/en/glossary/multi-head-attention/) — parallel attention for diverse representations
+- [LLM](/en/glossary/llm/) — language models powered by attention
+
+---
+
+## References
+
+> Bahdanau et al. (2015), "[Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)", ICLR. [35,000+ citations]
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Luong et al. (2015), "[Effective Approaches to Attention-based Neural Machine Translation](https://arxiv.org/abs/1508.04025)", EMNLP. [12,000+ citations]
+
+> Galassi et al. (2020), "[Attention in Natural Language Processing](https://arxiv.org/abs/1902.02181)", IEEE TNNLS. [1,000+ citations]

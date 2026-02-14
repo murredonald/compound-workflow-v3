@@ -1,0 +1,93 @@
+---
+term: "Embeddings"
+termSlug: "embeddings"
+short: "Dense vector representations of data (text, images, etc.) that capture semantic meaning in a continuous numerical space."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "vector-database", "semantic-similarity", "llm"]
+synonyms: ["Vector embeddings", "Dense embeddings", "Neural embeddings"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Embeddings are dense, continuous vector representations of discrete data (words, sentences, images, etc.) in a high-dimensional space. Unlike sparse representations like one-hot encoding, embeddings compress information into fixed-size vectors where similar items are located close together in the [embedding space](/en/glossary/embedding-space/). This enables mathematical operations on semantic concepts.
+
+## Why it matters
+
+Embeddings are foundational to modern AI systems:
+
+- **Semantic similarity** — similar meanings map to nearby vectors, enabling [similarity search](/en/glossary/similarity-search/)
+- **Transfer learning** — pre-trained embeddings capture general knowledge usable across tasks
+- **[Dimensionality reduction](/en/glossary/dimensionality-reduction/)** — millions of possible words compress into hundreds of dimensions
+- **Mathematical operations** — vector arithmetic reveals semantic relationships (king - man + woman ≈ queen)
+
+Every RAG system, search engine, and recommendation system relies on embeddings to understand content.
+
+## How it works
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   EMBEDDING PROCESS                     │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  Input Text ─────→ Tokenize ─────→ Model ─────→ Vector  │
+│                                                         │
+│  "tax law"   →   [123, 456]   →   Neural   →  [0.12,   │
+│                                   Network      0.45,   │
+│                                               -0.23,   │
+│                                                ...]    │
+│                                               (768-D)  │
+│                                                         │
+│  Semantic space:                                        │
+│     "tax law" ●────────● "fiscal regulation"           │
+│                    close                                │
+│     "weather" ●                                        │
+│               far                                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+1. **Tokenization** — input text is split into tokens
+2. **Model encoding** — neural network processes tokens
+3. **Pooling** — token representations are combined (mean, CLS token, etc.)
+4. **Output vector** — fixed-size dense vector (e.g., 384, 768, or 1536 dimensions)
+
+The [embedding model](/en/glossary/embedding-model/) is trained so that semantically similar inputs produce vectors with high [cosine similarity](/en/glossary/cosine-similarity/).
+
+## Common questions
+
+**Q: What embedding dimensions are common?**
+
+A: Typical sizes range from 384 (lightweight) to 1536 (OpenAI) to 4096 (large models). Higher dimensions can capture more nuance but require more storage and computation.
+
+**Q: How do sentence embeddings differ from word embeddings?**
+
+A: Word embeddings (Word2Vec, GloVe) represent individual words. Sentence embeddings (from models like sentence-transformers) capture entire sentence meaning, handling context and word order.
+
+**Q: What are bilingual/multilingual embeddings?**
+
+A: These models map multiple languages into a shared embedding space, so "legal advice" and "juridisch advies" produce similar vectors, enabling cross-lingual search.
+
+**Q: Do embeddings drift over time?**
+
+A: Embedding models are static once trained, but if you update your embedding model, all vectors must be regenerated since different models produce incompatible spaces.
+
+## Related terms
+
+- [RAG](/en/glossary/rag/) — uses embeddings for retrieval
+- [Vector Database](/en/glossary/vector-database/) — stores and searches embeddings
+- [Semantic Similarity](/en/glossary/semantic-similarity/) — measured via embedding distance
+- [LLM](/en/glossary/llm/) — uses embeddings internally
+
+---
+
+## References
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [40,000+ citations]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [8,000+ citations]
+
+> Pennington et al. (2014), "[GloVe: Global Vectors for Word Representation](https://nlp.stanford.edu/pubs/glove.pdf)", EMNLP. [35,000+ citations]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [700+ citations]

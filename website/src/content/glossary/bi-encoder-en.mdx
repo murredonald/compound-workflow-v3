@@ -1,0 +1,241 @@
+---
+term: "Bi-Encoder"
+termSlug: "bi-encoder"
+short: "A neural architecture that separately encodes queries and documents into fixed-size vectors, enabling efficient similarity search through pre-computed embeddings and approximate nearest neighbor indexes."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["cross-encoder", "dense-retrieval", "semantic-search", "embedding"]
+synonyms: ["Dual encoder", "Two-tower model", "Siamese encoder"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A bi-encoder (also called dual encoder or two-tower model) is a neural architecture that encodes queries and documents independently into dense vector representations. Each input passes through a separate encoder (or shared-weight encoder) to produce a fixed-size embedding. Relevance is computed by measuring similarity (typically cosine or dot product) between these pre-computed vectors. This architecture enables scalable retrieval: document [embeddings](/en/glossary/embeddings/) can be computed offline and indexed in approximate nearest neighbor ([ANN](/en/glossary/ann/)) data structures, allowing sub-second search over millions of documents.
+
+## Why it matters
+
+Bi-encoders are the foundation of modern retrieval:
+
+- **Scalable search** — pre-compute document embeddings once, reuse for all queries
+- **Real-time retrieval** — millisecond latency over billion-scale corpora
+- **Semantic matching** — understand meaning beyond keyword overlap
+- **Dense retrieval** — the dominant paradigm replacing sparse methods
+- **RAG enabler** — power retrieval in [retrieval-augmented generation](/en/glossary/rag/) systems
+- **Hybrid systems** — combine with [BM25](/en/glossary/bm25/) and cross-encoders for best results
+
+Without bi-encoders, semantic search at scale would be computationally infeasible.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      BI-ENCODER                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ARCHITECTURE:                                              │
+│  ─────────────                                              │
+│                                                            │
+│  TWO-TOWER DESIGN:                                         │
+│                                                            │
+│        Query                          Document             │
+│          │                               │                 │
+│          ↓                               ↓                 │
+│  ┌──────────────┐               ┌──────────────┐          │
+│  │    Query     │               │   Document   │          │
+│  │   Encoder    │               │   Encoder    │          │
+│  │  (Tower 1)   │               │  (Tower 2)   │          │
+│  └──────────────┘               └──────────────┘          │
+│          │                               │                 │
+│          ↓                               ↓                 │
+│   ┌───────────┐                  ┌───────────┐            │
+│   │ Query Vec │                  │ Doc Vec   │            │
+│   │ [768-dim] │                  │ [768-dim] │            │
+│   └───────────┘                  └───────────┘            │
+│          \                           /                     │
+│           \                         /                      │
+│            \                       /                       │
+│             → similarity(q, d) ←                          │
+│               cosine / dot product                         │
+│                      │                                     │
+│                      ↓                                     │
+│               Relevance Score                              │
+│                                                            │
+│                                                            │
+│  ENCODER CONFIGURATIONS:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  1. Shared weights (Siamese):                             │
+│     Query ─┐                                               │
+│            ├──→ Same Encoder ──→ Same vector space        │
+│     Doc ───┘                                               │
+│                                                            │
+│  2. Separate weights (Dual):                              │
+│     Query ──→ Encoder A ──→ ┐                             │
+│                             ├──→ Aligned space            │
+│     Doc ────→ Encoder B ──→ ┘                             │
+│                                                            │
+│  Most models use shared weights for simplicity            │
+│                                                            │
+│                                                            │
+│  INDEXING AND RETRIEVAL WORKFLOW:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  OFFLINE (Indexing Phase):                                 │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                     │  │
+│  │  Document Collection                               │  │
+│  │  ┌─────┬─────┬─────┬─────┬─────┬───────┐         │  │
+│  │  │Doc 1│Doc 2│Doc 3│Doc 4│ ... │Doc N  │         │  │
+│  │  └─────┴─────┴─────┴─────┴─────┴───────┘         │  │
+│  │      │     │     │     │           │              │  │
+│  │      ↓     ↓     ↓     ↓           ↓              │  │
+│  │  ┌─────────────────────────────────────────┐     │  │
+│  │  │           Document Encoder               │     │  │
+│  │  └─────────────────────────────────────────┘     │  │
+│  │      │     │     │     │           │              │  │
+│  │      ↓     ↓     ↓     ↓           ↓              │  │
+│  │   [v₁]  [v₂]  [v₃]  [v₄]  ...   [vₙ]            │  │
+│  │      │     │     │     │           │              │  │
+│  │      └─────┴─────┴─────┴───────────┘              │  │
+│  │                    │                              │  │
+│  │                    ↓                              │  │
+│  │           ┌─────────────────┐                    │  │
+│  │           │   ANN Index     │                    │  │
+│  │           │ (FAISS, HNSW)   │                    │  │
+│  │           └─────────────────┘                    │  │
+│  │                                                     │  │
+│  │  One-time cost: N encoder passes                   │  │
+│  │                                                     │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│  ONLINE (Query Phase):                                     │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                     │  │
+│  │  User Query: "What is machine learning?"           │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │  ┌─────────────────┐                               │  │
+│  │  │  Query Encoder  │  (~5-10ms on GPU)            │  │
+│  │  └─────────────────┘                               │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │    [q_vec]                                          │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │  ┌─────────────────┐                               │  │
+│  │  │   ANN Search    │  (~1-5ms)                    │  │
+│  │  │  top-k nearest  │                               │  │
+│  │  └─────────────────┘                               │  │
+│  │       │                                             │  │
+│  │       ↓                                             │  │
+│  │  Ranked results: Doc₄, Doc₁, Doc₇, ...            │  │
+│  │                                                     │  │
+│  │  Total latency: ~10-20ms for millions of docs!    │  │
+│  │                                                     │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  COMPARISON: BI-ENCODER vs CROSS-ENCODER:                  │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  ┌─────────────────┬───────────────────────────────────┐ │
+│  │ Aspect          │ Bi-Encoder    │ Cross-Encoder    │ │
+│  ├─────────────────┼───────────────┼──────────────────┤ │
+│  │ Encoding        │ Separate      │ Joint            │ │
+│  │ Pre-compute     │ ✓ Yes         │ ✗ No             │ │
+│  │ Latency (1M)    │ ~10ms         │ ~hours           │ │
+│  │ Accuracy        │ Good          │ Better           │ │
+│  │ Use case        │ Retrieval     │ Reranking        │ │
+│  │ Token interact. │ None          │ Full attention   │ │
+│  └─────────────────┴───────────────┴──────────────────┘ │
+│                                                            │
+│                                                            │
+│  POPULAR BI-ENCODER MODELS:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌──────────────────────────────┬─────────────────────┐  │
+│  │ Model                        │ Notes               │  │
+│  ├──────────────────────────────┼─────────────────────┤  │
+│  │ all-MiniLM-L6-v2            │ Fast, 384-dim       │  │
+│  │ all-mpnet-base-v2           │ Better quality      │  │
+│  │ e5-large-v2                 │ Strong general      │  │
+│  │ bge-large-en-v1.5           │ Top performance     │  │
+│  │ gte-large                   │ Alibaba model       │  │
+│  │ OpenAI text-embedding-3     │ API, 3072-dim       │  │
+│  │ Cohere embed-v3             │ API, multilingual   │  │
+│  │ voyage-2                    │ API, high quality   │  │
+│  └──────────────────────────────┴─────────────────────┘  │
+│                                                            │
+│                                                            │
+│  CODE EXAMPLE:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  from sentence_transformers import SentenceTransformer    │
+│  import numpy as np                                        │
+│                                                            │
+│  # Load bi-encoder model                                   │
+│  model = SentenceTransformer('all-MiniLM-L6-v2')          │
+│                                                            │
+│  # Encode documents (offline)                              │
+│  documents = [                                             │
+│      "Machine learning is a subset of AI.",               │
+│      "Deep learning uses neural networks.",               │
+│      "The cat sat on the mat."                            │
+│  ]                                                         │
+│  doc_embeddings = model.encode(documents)                  │
+│                                                            │
+│  # Encode query (online)                                   │
+│  query = "What is artificial intelligence?"                │
+│  query_embedding = model.encode(query)                     │
+│                                                            │
+│  # Compute similarities                                    │
+│  from sklearn.metrics.pairwise import cosine_similarity   │
+│  similarities = cosine_similarity(                         │
+│      [query_embedding],                                    │
+│      doc_embeddings                                        │
+│  )[0]                                                      │
+│                                                            │
+│  # Results: [0.62, 0.45, 0.08]                            │
+│  # Doc 1 most relevant (about AI)                         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: Why are bi-encoders less accurate than cross-encoders?**
+
+A: Bi-encoders compress each text into a fixed-size vector independently—no token-level interaction between query and document. Cross-encoders see both together, allowing attention between "python" in [query](/en/glossary/prompt/) and "snake" or "programming" in document. This information bottleneck trades accuracy for efficiency.
+
+**Q: How do I choose between bi-[encoder models](/en/glossary/embedding-model/)?**
+
+A: Consider: (1) dimension vs. storage cost, (2) [inference](/en/glossary/inference/) speed requirements, (3) task/domain fit—check MTEB leaderboard, (4) multilingual needs. Start with all-mpnet-base-v2 for general use, e5-large for quality, MiniLM for speed.
+
+**Q: Can bi-encoders handle long documents?**
+
+A: Most bi-encoders have 512 token limits. For long documents: (1) chunk into [passages](/en/glossary/document-chunk/), embed each, (2) use max-pooling or attentive pooling over chunks, (3) consider models with longer context (LongFormer-based), or (4) use late interaction models like ColBERT.
+
+**Q: What's late interaction?**
+
+A: Models like ColBERT keep token-level embeddings instead of single-vector representations. Query tokens match against document tokens via MaxSim. This preserves some cross-encoder accuracy while enabling pre-computation—a middle ground between bi-encoders and cross-encoders.
+
+## Related terms
+
+- [Cross-encoder](/en/glossary/cross-encoder/) — higher-accuracy alternative for [reranking](/en/glossary/reranking/)
+- [Dense retrieval](/en/glossary/dense-retrieval/) — retrieval using bi-encoder embeddings
+- Embedding — vector representation produced
+- [Semantic search](/en/glossary/semantic-search/) — primary application
+
+---
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Foundational bi-encoder paper]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR bi-encoder for QA]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [Bi-encoder evaluation benchmark]
+
+> Khattab & Zaharia (2020), "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction](https://arxiv.org/abs/2004.12832)", SIGIR. [Late interaction advancement]

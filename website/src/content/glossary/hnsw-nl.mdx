@@ -1,0 +1,197 @@
+---
+term: "HNSW"
+termSlug: "hnsw"
+short: "Hierarchical Navigable Small World grafen - het state-of-the-art algoritme voor snelle approximate nearest neighbor zoekacties in hoog-dimensionale ruimtes."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["ann", "faiss", "embedding", "dense-retrieval"]
+synonyms: ["Hierarchical Navigable Small World", "hnswlib"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+HNSW (Hierarchical Navigable Small World) is een graaf-gebaseerd algoritme voor approximate nearest neighbor zoekacties dat state-of-the-art prestaties bereikt door navigeerbare small-world graafprincipes te combineren met hiërarchische lagen. Elke vector wordt een node, verbonden met zijn dichtstbijzijnde buren. Bovenste lagen bevatten sparse lange-afstandsverbindingen voor snelle navigatie; onderste lagen bevatten dense lokale verbindingen voor precieze zoekacties. Deze meerlaagse structuur maakt logaritmische zoekcomplexiteit mogelijk, waardoor HNSW de standaardkeuze is voor de meeste vector-zoektoepassingen inclusief [RAG](/nl/glossary/rag/)-systemen.
+
+## Waarom het belangrijk is
+
+HNSW domineert moderne vector-zoekacties:
+
+- **Beste recall/snelheid tradeoff** — presteert consistent beter dan andere [ANN](/nl/glossary/neural-network/)-algoritmen
+- **Hoog-dimensionaal vriendelijk** — werkt goed met 768+ dimensie [embeddings](/nl/glossary/embeddings/)
+- **Productie bewezen** — gebruikt door Pinecone, [Weaviate](/nl/glossary/weaviate/), Qdrant, pgvector, Milvus
+- **RAG essentieel** — maakt milliseconde [semantisch zoeken](/nl/glossary/semantic-search/) over miljoenen chunks mogelijk
+- **Geen parameter gevoeligheid** — robuuste standaard parameters werken voor de meeste cases
+- **Incrementele updates** — ondersteunt toevoegen van vectoren zonder volledige herbouw
+
+HNSW is het algoritme achter de meeste succesvolle AI-toepassingen die [similarity search](/nl/glossary/similarity-search/) doen.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               HNSW - HIERARCHICAL NAVIGABLE                │
+│                    SMALL WORLD GRAFEN                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET BELANGRIJKE INZICHT:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Small-world netwerken: De meeste nodes kunnen elke       │
+│  andere node bereiken via een klein aantal hops (zoals    │
+│  "6 graden van scheiding"). HNSW benut dit voor           │
+│  vector-zoekacties.                                        │
+│                                                            │
+│                                                            │
+│  HIËRARCHISCHE STRUCTUUR:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│            LAAG 2 (top): Weinig nodes, lange-afstand      │
+│                                                            │
+│                 ●═══════════════════●                      │
+│                 ║                   ║                      │
+│                 ║                   ║                      │
+│            LAAG 1: Meer nodes, medium verbindingen        │
+│                                                            │
+│           ●════●════●═══════●════●════●                   │
+│           ║    ║    ║       ║    ║    ║                   │
+│           ║    ║    ║       ║    ║    ║                   │
+│            LAAG 0 (basis): Alle nodes, lokale links       │
+│                                                            │
+│        ●──●──●──●──●──●──●──●──●──●──●──●──●──●──●        │
+│                                                            │
+│                                                            │
+│  LAAG TOEWIJZING:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Elke vector wordt willekeurig toegewezen aan een         │
+│  maximale laag met exponentiële verdeling:                │
+│                                                            │
+│    max_laag = floor(-ln(random()) × mL)                   │
+│                                                            │
+│  Resultaat: ~63% nodes alleen in laag 0                   │
+│             ~23% nodes bereikt laag 1                      │
+│             ~9%  nodes bereikt laag 2                      │
+│             ...exponentieel minder op hogere lagen        │
+│                                                            │
+│                                                            │
+│  ZOEKALGORITME:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  Query: q = [0.12, -0.34, 0.56, ...]                      │
+│  Vind: k dichtstbijzijnde buren                           │
+│                                                            │
+│  Stap 1: Start bij ingangspunt (bovenste laag)           │
+│                                                            │
+│     Laag 2:  [q]→→→→●                                     │
+│                     ↓                                      │
+│                                                            │
+│  Stap 2: Greedy afdaling - op elke laag, ga naar         │
+│          buur dichtst bij q tot geen verbetering         │
+│                                                            │
+│     Laag 1:     ●→→→●→→→●                                 │
+│                         ↓                                  │
+│                                                            │
+│  Stap 3: Op laag 0, breid zoekactie uit met ef_search    │
+│          kandidaten (niet slechts 1)                      │
+│                                                            │
+│     Laag 0:         ●←●→●                                 │
+│                    ↙  ↓  ↘                                │
+│                   ●   ●   ●                                │
+│                                                            │
+│  Stap 4: Retourneer top-k van verkende kandidaten        │
+│                                                            │
+│                                                            │
+│  BELANGRIJKE PARAMETERS:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────┬───────────────────────────────────────┐  │
+│  │ Parameter   │ Effect                                 │  │
+│  ├─────────────┼───────────────────────────────────────┤  │
+│  │ M           │ Randen per node (standaard 16)        │  │
+│  │             │ Hoger = betere recall, meer geheugen  │  │
+│  │             │                                        │  │
+│  │ ef_const    │ Constructie zoekdiepte (std 200)      │  │
+│  │             │ Hoger = betere index, langzamer bouw  │  │
+│  │             │                                        │  │
+│  │ ef_search   │ Query zoekdiepte (std 10)            │  │
+│  │             │ Hoger = betere recall, langzamer      │  │
+│  │             │ Moet >= k zijn (gevraagde buren)      │  │
+│  └─────────────┴───────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  RECALL vs LATENTIE TRADEOFF:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ef_search bepaalt zoekkwaliteit/snelheid:                │
+│                                                            │
+│    ef_search │ Recall@10 │ Latentie │ Afstandsberek.     │
+│    ──────────┼───────────┼──────────┼────────────────    │
+│         10   │   85%     │  0.5ms   │    ~300            │
+│         50   │   95%     │  1.5ms   │   ~1000            │
+│        100   │   98%     │  3.0ms   │   ~2000            │
+│        200   │   99%     │  5.0ms   │   ~4000            │
+│                                                            │
+│                                                            │
+│  GEHEUGENGEBRUIK:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Voor n vectoren van dimensie d:                          │
+│                                                            │
+│  Geheugen ≈ n × (d × 4 bytes + M × 2 × 4 bytes)          │
+│                ↑                ↑                          │
+│           vectoren        graaf randen                    │
+│                                                            │
+│  Voorbeeld: 1M vectoren × 768d × M=16                     │
+│  = 1M × (768×4 + 16×2×4) = ~3.2 GB                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wat is de relatie tussen HNSW en [vector databases](/nl/glossary/vector-database/)?**
+
+A: HNSW is een algoritme; vector databases zijn systemen die het gebruiken. Vrijwel alle grote vector databases (Pinecone, Weaviate, Qdrant, [Milvus](/nl/glossary/milvus/), pgvector) gebruiken HNSW als hun primaire indexeringsalgoritme. Wanneer je een index maakt in deze systemen, configureer je vaak HNSW parameters.
+
+**V: Hoe tune ik HNSW parameters voor mijn use case?**
+
+A: Begin met standaardwaarden (M=16, ef_construction=200). Voor queries, tune ef_search gebaseerd op je recall/latentie eisen—begin bij k×2 (waarbij k het aantal benodigde buren is) en verhoog tot recall plateaueert.
+
+**V: Ondersteunt HNSW filtering (metadata zoeken)?**
+
+A: HNSW alleen filtert niet—het vindt alleen dichtstbijzijnde vectoren. Vector databases voegen filtering toe bovenop: pre-filtering (filter dan zoek) of post-filtering (zoek dan filter). Dit is waarom vector databases waarde toevoegen boven rauwe HNSW.
+
+**V: Hoe gaat HNSW om met updates en verwijderingen?**
+
+A: HNSW ondersteunt incrementele invoegingen efficiënt. Verwijderingen zijn lastiger: de meeste implementaties markeren vectoren als verwijderd maar behouden graaf-randen. Voor zware update-workloads kan periodieke herindexering nodig zijn.
+
+## Gerelateerde termen
+
+- [ANN](/nl/glossary/ann/) — approximate nearest neighbor algoritmen
+- [FAISS](/nl/glossary/faiss/) — bevat HNSW implementatie
+- [Pinecone](/nl/glossary/pinecone/) — vector database met HNSW
+- [Dense retrieval](/nl/glossary/dense-retrieval/) — vertrouwt op HNSW voor zoeken
+
+---
+
+## Referenties
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://ieeexplore.ieee.org/document/8594636)", IEEE Transactions on Pattern Analysis and Machine Intelligence. [Originele HNSW paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [HNSW benchmark vergelijkingen]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [HNSW in FAISS context]
+
+> Fu et al. (2019), "[Fast Approximate Nearest Neighbor Search With The Navigating Spreading-out Graph](https://www.vldb.org/pvldb/vol12/p461-fu.pdf)", VLDB. [NSG vergelijkingspaper]
+
+## References
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://ieeexplore.ieee.org/document/8594636)", IEEE Transactions on Pattern Analysis and Machine Intelligence. [Original HNSW paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [HNSW benchmark comparisons]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [HNSW in FAISS context]
+
+> Fu et al. (2019), "[Fast Approximate Nearest Neighbor Search With The Navigating Spreading-out Graph](https://www.vldb.org/pvldb/vol12/p461-fu.pdf)", VLDB. [NSG comparison paper]

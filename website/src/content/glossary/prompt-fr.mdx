@@ -1,0 +1,107 @@
+---
+term: "Prompt"
+termSlug: "prompt"
+short: "Le texte d'entrée ou l'instruction donnée à un modèle de langage pour guider la génération de sa réponse."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["llm", "system-prompt", "prompt-engineering", "context-window"]
+synonyms: ["Invite", "Requête", "Instruction"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Un prompt est le texte d'entrée fourni à un modèle de langage qui lui indique quoi faire ou à quoi répondre. Il peut aller d'une simple question à des instructions complexes en plusieurs parties incluant le contexte, des exemples et des exigences de formatage. L'art de créer des prompts efficaces—le prompt engineering—est crucial pour obtenir des sorties de haute qualité des modèles de langage.
+
+## Pourquoi c'est important
+
+Les prompts sont l'interface principale entre les utilisateurs et les modèles de langage :
+
+- **Qualité des sorties** — des prompts bien conçus améliorent considérablement l'exactitude et la pertinence des réponses
+- **Définition de tâche** — les prompts indiquent au modèle quelle tâche effectuer (résumer, traduire, analyser)
+- **Contrôle du comportement** — les prompts peuvent définir le ton, le format, la longueur et les contraintes
+- **Apprentissage zero-shot** — de bons prompts permettent aux modèles d'effectuer des tâches sans [fine-tuning](/fr/glossary/fine-tuning/)
+
+Le même modèle peut produire des sorties très différentes selon la façon dont il est prompté.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    STRUCTURE DU PROMPT                     │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ PROMPT SYSTÈME (définit comportement/persona)       │   │
+│  │ "Vous êtes un conseiller fiscal utile..."           │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ CONTEXTE (documents récupérés, conversation)        │   │
+│  │ "Sur la base des réglementations fiscales..."       │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ PROMPT UTILISATEUR (la question/tâche réelle)       │   │
+│  │ "Expliquez les règles de déduction pour le bureau"  │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│                          ▼                                 │
+│                   RÉPONSE DU MODÈLE                        │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Composants clés du prompt :**
+1. **Prompt système** — instructions persistantes définissant le comportement du modèle
+2. **Contexte** — informations de fond ou documents récupérés
+3. **Exemples** — démonstrations de paires entrée/sortie désirées (few-shot)
+4. **Question utilisateur** — la question ou tâche spécifique
+5. **Format de sortie** — spécification de comment structurer la réponse
+
+## Questions fréquentes
+
+**Q : Qu'est-ce que le prompt engineering ?**
+
+R : Le prompt engineering est la pratique de conception et d'optimisation des prompts pour obtenir de meilleurs résultats des modèles de langage. Il inclut des techniques comme le chain-of-thought, les exemples few-shot et le formatage structuré.
+
+**Q : Quelle différence entre [prompting zero-shot](/fr/glossary/zero-shot/) et few-shot ?**
+
+R : Le zero-shot ne donne pas d'exemples—seulement des instructions. Le few-shot inclut des exemples du motif entrée/sortie désiré. Le few-shot améliore généralement l'exactitude pour les tâches complexes.
+
+**Q : Quelle longueur doit avoir un prompt ?**
+
+R : Aussi long que nécessaire pour la clarté, mais dans les limites de contexte. Plus de contexte n'est pas toujours mieux—des prompts ciblés et bien structurés surpassent souvent les verbeux.
+
+**Q : Les prompts peuvent-ils être « jailbreakés » ?**
+
+R : Des utilisateurs malveillants créent parfois des prompts pour contourner les directives de sécurité. C'est pourquoi les systèmes de production nécessitent des défenses robustes contre l'[injection de prompts](/fr/glossary/prompt-injection/) et un filtrage de contenu.
+
+## Termes associés
+
+- [LLM](/fr/glossary/llm/) — modèles qui répondent aux prompts
+- [Prompt Système](/fr/glossary/system-prompt/) — prompt de configuration persistant
+- [Fenêtre de Contexte](/fr/glossary/context-window/) — limite la taille totale du prompt
+- [Chain-of-Thought](/fr/glossary/chain-of-thought/) — technique de prompting pour le raisonnement
+
+---
+
+## Références
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25 000+ [citations](/fr/glossary/citation/)]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5 000+ citations]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3 000+ citations]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ citations]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25,000+ citations]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5,000+ citations]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3,000+ citations]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ citations]

@@ -1,0 +1,206 @@
+---
+term: "FAISS"
+termSlug: "faiss"
+short: "Facebook AI Similarity Search - die umfassendste Open-Source-Bibliothek für effiziente Ähnlichkeitssuche und Clustering von dichten Vektoren."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["ann", "hnsw", "embedding", "dense-retrieval", "pinecone"]
+synonyms: ["Facebook AI Similarity Search", "faiss-cpu", "faiss-gpu"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+FAISS (Facebook AI [Similarity Search](/de/glossary/similarity-search/)) ist eine Open-Source-Bibliothek, die von Meta AI Research entwickelt wurde und hochoptimierte Implementierungen von Algorithmen für Ähnlichkeitssuche und Clustering von dichten Vektoren bereitstellt. Sie unterstützt mehrere Index-Typen (flat, IVF, HNSW, PQ) mit CPU- und GPU-Beschleunigung und ist damit der fundamentale Baustein für [Vektorsuche](/de/glossary/semantic-search/) bei Skalen von Tausenden bis Milliarden von Vektoren. FAISS betreibt oder inspiriert die Indexierungs-Engines in den meisten Vektor-Datenbanken.
+
+## Warum es wichtig ist
+
+FAISS ist die de-facto Standardbibliothek für Vektor-Ähnlichkeitssuche:
+
+- **Umfassend** — implementiert alle wichtigen ANN-Algorithmen in einer Bibliothek
+- **Hochoptimiert** — SIMD, Multi-Threading, GPU-Kernel für maximale Performance
+- **Bewährt im Maßstab** — kampferprobt in Facebook-Skala-Anwendungen (Milliarden Vektoren)
+- **Frei und offen** — MIT-lizenziert, aktive Entwicklung durch Meta AI Research
+- **Grundlage für die Industrie** — Pinecone, [Milvus](/de/glossary/milvus/) und andere bauen auf FAISS-Algorithmen
+- **Forschungsstandard** — als Baseline in fast allen Vektorsuche-Papern verwendet
+
+Wenn Sie Vektorsuche machen, verwenden Sie wahrscheinlich FAISS direkt oder indirekt.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               FAISS - FACEBOOK AI SIMILARITY SEARCH         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  KERNKONZEPT:                                              │
+│  ────────────                                              │
+│                                                            │
+│  FAISS beantwortet eine Frage effizient:                  │
+│                                                            │
+│  "Gegeben Abfragevektor q, finde k Vektoren, die q am     │
+│   ähnlichsten sind, aus Datenbank von n Vektoren"         │
+│                                                            │
+│  Input:  q = [0.12, -0.34, 0.56, ...] (d Dimensionen)     │
+│  Output: [(id₁, dist₁), (id₂, dist₂), ..., (idₖ, distₖ)] │
+│                                                            │
+│                                                            │
+│  INDEX-TYP HIERARCHIE:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  FLAT (Exakte Suche)                               │   │
+│  │  ═══════════════════                               │   │
+│  │  • IndexFlatL2 - L2/Euklidische Distanz           │   │
+│  │  • IndexFlatIP - Inner Product (für Cosine Sim)   │   │
+│  │  • Brute Force - vergleicht mit ALLEN Vektoren    │   │
+│  │  • 100% genau aber O(n×d) pro Anfrage            │   │
+│  │  • Verwenden für: <100K Vektoren oder Ground Truth│   │
+│  │                                                     │   │
+│  │  IVF (Inverted File Index)                         │   │
+│  │  ═════════════════════════                         │   │
+│  │  • IndexIVFFlat - clustern dann suchen            │   │
+│  │  • IndexIVFPQ - clustern + Vektoren komprimieren  │   │
+│  │  • k-means Cluster trainieren, jeden Vektor zuord.│   │
+│  │  • Anfrage sucht nur nprobe nächste Cluster       │   │
+│  │  • Verwenden für: 100K-100M Vektoren             │   │
+│  │                                                     │   │
+│  │  HNSW (Graph-Basiert)                              │   │
+│  │  ════════════════════                              │   │
+│  │  • IndexHNSWFlat - navigierbarer Small World Graph│   │
+│  │  • Bester Recall/Geschwindigkeit Tradeoff         │   │
+│  │  • Höherer Speicher als IVF                        │   │
+│  │  • Verwenden für: hohe Genauigkeitsanforderungen  │   │
+│  │                                                     │   │
+│  │  PQ (Product Quantization)                         │   │
+│  │  ═════════════════════════                         │   │
+│  │  • IndexPQ - komprimiert via Quantisierung        │   │
+│  │  • Reduziert Speicher 4-32x                       │   │
+│  │  • Approximiert Distanzen im kompr. Raum          │   │
+│  │  • Verwenden für: Speicher-begrenzt, Milliarden  │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  WIE IVF FUNKTIONIERT:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Trainingsphase (einmalig):                               │
+│                                                            │
+│  1. Vektoren aus Ihrem Dataset samplen                   │
+│  2. k-means ausführen um nlist Zentroide zu erstellen    │
+│                                                            │
+│     ┌────────────────────────────────────────────┐        │
+│     │    Dataset Vektoren:                        │        │
+│     │    . . . . . . . . . .                     │        │
+│     │         ↓ k-means                          │        │
+│     │    ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐  (nlist Zentroide) │        │
+│     │    │●│ │●│ │●│ │●│ │●│                    │        │
+│     │    └─┘ └─┘ └─┘ └─┘ └─┘                    │        │
+│     └────────────────────────────────────────────┘        │
+│                                                            │
+│  Index-Aufbau:                                             │
+│                                                            │
+│  3. Jeden Vektor dem nächsten Zentroid zuweisen          │
+│  4. Vektoren in invertierte Listen pro Cluster speichern │
+│                                                            │
+│  Suche (pro Anfrage):                                      │
+│                                                            │
+│  5. nprobe nächste Zentroide zur Anfrage finden          │
+│  6. Nur Vektoren in diesen Clustern durchsuchen          │
+│                                                            │
+│                                                            │
+│  PRODUCT QUANTIZATION (PQ):                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Komprimiert Vektoren durch Quantisierung von Sub-Vekt.: │
+│                                                            │
+│  Original: [0.12, -0.34, 0.56, 0.78, -0.23, 0.45, ...]   │
+│            \_____/\_____/\_____/                          │
+│             Sub-   Sub-   Sub-                            │
+│            raum₁  raum₂  raum₃                             │
+│              ↓      ↓      ↓                              │
+│             [3]    [7]    [2]   (zu Codes quantisiert)    │
+│                                                            │
+│  768-dim × 4 Bytes = 3072 Bytes pro Vektor               │
+│  → 96 Codes × 1 Byte = 96 Bytes (32x Kompression!)       │
+│                                                            │
+│                                                            │
+│  GPU-BESCHLEUNIGUNG:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  FAISS hat umfangreiche GPU-Unterstützung:                │
+│                                                            │
+│  • 5-10x schnellerer Index-Aufbau                        │
+│  • 10-100x schnellere Suche für große Batches            │
+│  • Multi-GPU Sharding für sehr große Indizes             │
+│                                                            │
+│  import faiss                                              │
+│  gpu_res = faiss.StandardGpuResources()                   │
+│  gpu_index = faiss.index_cpu_to_gpu(gpu_res, 0, cpu_idx)  │
+│                                                            │
+│                                                            │
+│  INDEX FACTORY STRING:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  FAISS bietet Kurzschrift für komplexe Indizes:          │
+│                                                            │
+│  index = faiss.index_factory(d, "IVF4096,PQ64")          │
+│                                                            │
+│  Häufige Factory Strings:                                  │
+│  • "Flat"          - exakte Suche                         │
+│  • "IVF4096,Flat"  - 4096 Cluster, exakt                 │
+│  • "IVF4096,PQ64"  - 4096 Cluster, 64-Byte PQ            │
+│  • "HNSW32"        - HNSW mit M=32                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wann sollte ich FAISS vs eine Vektor-Datenbank verwenden?**
+
+A: Verwenden Sie FAISS direkt für Forschung/Prototyping, Single-Node-Anwendungen oder wenn Sie maximale Kontrolle und Performance benötigen. Verwenden Sie eine Vektor-Datenbank (Pinecone, Weaviate, Milvus) wenn Sie verwaltete Persistenz, Metadata-Filterung, horizontale Skalierung benötigen.
+
+**F: Wie wähle ich den richtigen FAISS-Index?**
+
+A: Beginnen Sie mit IndexFlatL2/IP für <100K Vektoren (exakt, einfach). Für 100K-10M verwenden Sie IndexIVFFlat oder IndexHNSWFlat. Für 10M-1B verwenden Sie IndexIVFPQ. Für >1B erwägen Sie verteilte Lösungen. Benchmarken Sie immer auf Ihren tatsächlichen Daten.
+
+**F: Was ist der Unterschied zwischen IndexFlatIP und IndexFlatL2?**
+
+A: IndexFlatL2 verwendet [Euklidische Distanz](/de/glossary/euclidean-distance/), IndexFlatIP verwendet Inner Product. Für normalisierte Vektoren (Einheitslänge) entspricht Inner Product der Cosinus-Ähnlichkeit. Die meisten Embedding-Modelle produzieren Unit-Vektoren.
+
+**F: Wie handhabe ich Vektor-Updates und Löschungen in FAISS?**
+
+A: Basis-FAISS-Indizes unterstützen keine Entfernung—Sie bauen neu. IndexIDMap ermöglicht Tracking externer IDs. In der Praxis, für häufige Updates, verwenden Sie HNSW oder Batch-Neuaufbauten. Diese Einschränkung ist der Grund warum Vektor-Datenbanken existieren.
+
+## Verwandte Begriffe
+
+- [ANN](/de/glossary/ann/) — Approximate-Nearest-Neighbor-Algorithmen
+- [HNSW](/de/glossary/hnsw/) — in FAISS verfügbarer Algorithmus
+- [Pinecone](/de/glossary/pinecone/) — verwaltete [Vektor-Datenbank](/de/glossary/vector-database/)
+- Embedding — von FAISS indizierte Vektoren
+
+---
+
+## Referenzen
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE Transactions on Big Data. [Originales FAISS-Paper]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Aktualisierte umfassende Übersicht]
+
+> Meta AI, "[FAISS Wiki](https://github.com/facebookresearch/faiss/wiki)", GitHub. [Offizielle Dokumentation]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [FAISS-Benchmark-Vergleiche]
+
+## References
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE Transactions on Big Data. [Original FAISS paper]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Updated comprehensive overview]
+
+> Meta AI, "[FAISS Wiki](https://github.com/facebookresearch/faiss/wiki)", GitHub. [Official documentation and guidelines]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [FAISS benchmark comparisons]

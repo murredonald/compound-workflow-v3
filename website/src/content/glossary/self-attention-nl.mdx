@@ -1,0 +1,91 @@
+---
+term: "Self-Attention"
+termSlug: "self-attention"
+short: "Een mechanisme waarbij elk element in een sequentie attention-gewichten berekent met alle andere elementen in dezelfde sequentie."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["attention-mechanism", "transformer-architecture", "multi-head-attention", "llm"]
+synonyms: ["Intra-attention", "Self-attention mechanisme"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Self-attention (ook wel intra-attention genoemd) is een mechanisme waarbij elke positie in een sequentie attendeert aan alle posities binnen dezelfde sequentie om een representatie te berekenen. In tegenstelling tot cross-attention, die twee verschillende sequenties relateert, legt self-attention relaties en afhankelijkheden vast tussen verschillende delen van één enkele invoer, waardoor het model kan begrijpen hoe woorden zich tot elkaar verhouden binnen een zin.
+
+## Waarom het belangrijk is
+
+Self-attention is het fundamentele mechanisme van Transformer-architecturen:
+
+- **Contextueel begrip** — de representatie van elk woord bevat informatie van alle andere woorden in de sequentie
+- **Lange-afstandsafhankelijkheden** — legt relaties vast tussen verre woorden zonder informatiedegradatie
+- **Bidirectionele context** — in encoder-modellen ziet elk woord zowel voorafgaande als volgende context
+- **Parallelliseerbaar** — alle attention-berekeningen kunnen gelijktijdig worden uitgevoerd, in tegenstelling tot recurrente benaderingen
+
+Dit stelt taalmodellen in staat om betekenis in context te begrijpen in plaats van woorden geïsoleerd te behandelen.
+
+## Hoe het werkt
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                      SELF-ATTENTION                      │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  Sequentie: [De] [kat] [zat] [op] [de] [mat]            │
+│              │     │     │    │    │     │               │
+│              ▼     ▼     ▼    ▼    ▼     ▼               │
+│  Elk token:  Q ────────────────────────────┐             │
+│              K ◄───────────────────────────┤             │
+│              V ◄───────────────────────────┘             │
+│                                                          │
+│  "kat" attendeert aan: De(0.1) kat(0.3) zat(0.4) op(0.1)│
+│                                                          │
+│  Output: gecontextualiseerde representatie per token     │
+└──────────────────────────────────────────────────────────┘
+```
+
+1. **Projecteer naar Q, K, V** — elk token genereert Query, Key en Value vectoren
+2. **Bereken scores** — elke Query attendeert aan alle Keys in de sequentie
+3. **Pas softmax toe** — normaliseer scores naar attention-gewichten
+4. **Aggregeer values** — gewogen som van alle Values geeft gecontextualiseerde output
+5. **Resultaat** — de representatie van elke positie bevat nu globale context
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt self-attention van cross-attention?**
+
+A: Self-attention berekent relaties binnen één sequentie (Q, K, V komen allemaal van dezelfde invoer). Cross-attention relateert twee sequenties—typisch decoder queries die attenderen aan encoder outputs.
+
+**V: Wat is causale/gemaskeerde self-attention?**
+
+A: In decoder-modellen (zoals GPT) kunnen tokens alleen attenderen aan voorgaande tokens, niet aan toekomstige. Dit wordt afgedwongen door toekomstige posities te maskeren, wat autoregressieve generatie mogelijk maakt.
+
+**V: Schaalt self-attention kwadratisch?**
+
+A: Ja, complexiteit is O(n²) waarbij n de [sequentielengte](/nl/glossary/context-window/) is, aangezien elk token aan alle andere attendeert. Dit beperkt praktische context window-groottes en heeft onderzoek naar efficiënte attention-varianten gestimuleerd.
+
+## Gerelateerde termen
+
+- [Attention-mechanisme](/nl/glossary/attention-mechanism/) — de algemene techniek waarop self-attention voortbouwt
+- [Transformer-architectuur](/nl/glossary/transformer-architecture/) — gebruikt self-attention als kerncomponent
+- [Multi-Head Attention](/nl/glossary/multi-head-attention/) — voert meerdere self-attention operaties parallel uit
+- [LLM](/nl/glossary/llm/) — taalmodellen gebouwd op self-attention
+
+---
+
+## Referenties
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ [citaties](/nl/glossary/citation/)]
+
+> Cheng et al. (2016), "[Long Short-Term Memory-Networks for Machine Reading](https://arxiv.org/abs/1601.06733)", EMNLP. [1.800+ citaties]
+
+> Lin et al. (2017), "[A Structured Self-Attentive Sentence Embedding](https://arxiv.org/abs/1703.03130)", ICLR. [3.200+ citaties]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Cheng et al. (2016), "[Long Short-Term Memory-Networks for Machine Reading](https://arxiv.org/abs/1601.06733)", EMNLP. [1,800+ citations]
+
+> Lin et al. (2017), "[A Structured Self-Attentive Sentence Embedding](https://arxiv.org/abs/1703.03130)", ICLR. [3,200+ citations]

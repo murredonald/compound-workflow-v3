@@ -1,0 +1,35 @@
+---
+interface Props {
+  label: string;
+  suggestion?: string;
+  aspectRatio?: "video" | "square" | "wide";
+  class?: string;
+}
+
+const { label, suggestion, aspectRatio = "video", class: className = "" } = Astro.props;
+
+const aspectClasses = {
+  video: "aspect-video",
+  square: "aspect-square",
+  wide: "aspect-[21/9]"
+};
+---
+
+<div class={`relative ${aspectClasses[aspectRatio]} w-full rounded-lg border-2 border-dashed border-violet-500 bg-violet-500/10 overflow-hidden ${className}`}>
+  {/* Diagonal cross */}
+  <svg class="absolute inset-0 w-full h-full text-violet-400" preserveAspectRatio="none">
+    <line x1="0" y1="0" x2="100%" y2="100%" stroke="currentColor" stroke-width="1" />
+    <line x1="100%" y1="0" x2="0" y2="100%" stroke="currentColor" stroke-width="1" />
+  </svg>
+  {/* Label and suggestion */}
+  <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4">
+    <span class="bg-violet-600 px-4 py-2 rounded text-body-sm text-white font-semibold text-center">
+      {label}
+    </span>
+    {suggestion && (
+      <span class="bg-violet-900/80 px-3 py-1.5 rounded text-body-xs text-violet-200 text-center max-w-md">
+        💡 {suggestion}
+      </span>
+    )}
+  </div>
+</div>

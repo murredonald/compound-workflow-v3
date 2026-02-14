@@ -75,13 +75,55 @@ export const POST: APIRoute = async ({ request }) => {
   const BREVO_API_KEY = import.meta.env.BREVO_API_KEY;
   const BREVO_LIST_ID = Number(import.meta.env.BREVO_LIST_ID) || 2;
 
+  if (!BREVO_API_KEY) {
+    console.error("BREVO_API_KEY is not set");
+    return json({ success: false, error: "Service temporarily unavailable" }, 502);
+  }
+
   // UTM parameter forwarding (BACK-05)
   const utm_source = typeof body.utm_source === "string" ? body.utm_source : "";
   const utm_medium = typeof body.utm_medium === "string" ? body.utm_medium : "";
   const utm_campaign =
     typeof body.utm_campaign === "string" ? body.utm_campaign : "";
+  
+  // Plan interest tracking
+  const plan = typeof body.plan === "string" ? body.plan : "";
 
   try {
+    // Check if contact already exists
+    const checkRes = await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+      method: "GET",
+      headers: {
+        "api-key": BREVO_API_KEY,
+        Accept: "application/json",
+      },
+    });
+    
+    const contactExists = checkRes.ok;
+    
+    // If exists, update their attributes (UTM, plan) but flag as duplicate
+    if (contactExists) {
+      // Update existing contact with new attributes
+      await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+        method: "PUT",
+        headers: {
+          "api-key": BREVO_API_KEY,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          attributes: {
+            ...(utm_source && { UTM_SOURCE: utm_source }),
+            ...(utm_medium && { UTM_MEDIUM: utm_medium }),
+            ...(utm_campaign && { UTM_CAMPAIGN: utm_campaign }),
+            ...(plan && { INTERESTED_PLAN: plan.toUpperCase() }),
+          },
+        }),
+      });
+      return json({ success: true, duplicate: true }, 200);
+    }
+
+    // Create new contact
     const res = await fetch("https://api.brevo.com/v3/contacts", {
       method: "POST",
       headers: {
@@ -96,23 +138,19 @@ export const POST: APIRoute = async ({ request }) => {
           ...(utm_source && { UTM_SOURCE: utm_source }),
           ...(utm_medium && { UTM_MEDIUM: utm_medium }),
           ...(utm_campaign && { UTM_CAMPAIGN: utm_campaign }),
+          ...(plan && { INTERESTED_PLAN: plan.toUpperCase() }),
         },
-        updateEnabled: true,
       }),
     });
 
     if (!res.ok) {
       const brevoErr = await res.json().catch(() => null);
-      // Duplicate contact is acceptable — treat as success
-      if (brevoErr?.code === "duplicate_parameter") {
-        return json({ success: true }, 200);
-      }
       // Log server-side only, never expose to client (BACK-07)
       console.error("Brevo API error:", res.status, brevoErr);
       return json({ success: false, error: "Service temporarily unavailable" }, 502);
     }
 
-    return json({ success: true }, 200);
+    return json({ success: true, duplicate: false }, 200);
   } catch (err) {
     // Network/timeout — log server-side, generic client error (BACK-07)
     console.error("Brevo fetch failed:", err);

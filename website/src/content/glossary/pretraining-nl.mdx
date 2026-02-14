@@ -1,0 +1,184 @@
+---
+term: "Pretraining"
+termSlug: "pretraining"
+short: "De initiële trainingsfase van een groot taalmodel op massale tekstcorpora om algemene taalpatronen, wereldkennis en redeneervermogen te leren vóór taakspecifieke fine-tuning."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["fine-tuning", "llm", "transformer-architecture", "instruction-tuning"]
+synonyms: ["Voortraining", "Basistraining", "Foundation-training"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Pretraining is de fundamentele trainingsfase waarin een taalmodel leert van enorme hoeveelheden ongelabelde tekstdata. Tijdens pretraining ontwikkelt het model zijn kernvermogens: grammatica begrijpen, feiten over de wereld leren, redeneerpatronen verwerven en representaties van taal opbouwen. Deze fase omvat typisch het voorspellen van volgende tokens (causale taalmodellering) of het invullen van gemaskeerde woorden over miljarden tekstmonsters. Pretraining creëert een "foundation model" dat later kan worden aangepast voor specifieke taken via fine-tuning.
+
+## Waarom het belangrijk is
+
+Pretraining is de meest kritische en dure fase van LLM-ontwikkeling:
+
+- **Bepaalt capaciteiten** — wat een model weet komt van pretraining-data
+- **Vestigt redeneren** — logische patronen ontstaan tijdens deze fase
+- **Creëert fundament** — alle downstream-taken bouwen op pretrained kennis
+- **Grote investering** — kost miljoenen aan compute, duurt weken/maanden
+- **Stelt beperkingen** — kenniscutoff, biases ingebakken tijdens pretraining
+- **Maakt transfer mogelijk** — één pretrained model dient vele toepassingen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      PRETRAINING                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PRETRAINING IN DE MODEL-LEVENSCYCLUS:                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. PRETRAINING (deze fase)                         │ │
+│  │     │  Leer algemene taal & kennis                  │ │
+│  │     │  Biljoenen tokens, maanden training           │ │
+│  │     │  Output: Foundation/Basismodel                │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  2. FINE-TUNING                                      │ │
+│  │     │  Pas aan voor specifieke taken/domeinen       │ │
+│  │     │  Kleinere datasets, dagen training            │ │
+│  │     │  Output: Taakspecifiek model                  │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  3. ALIGNMENT (RLHF/Constitutional AI)              │ │
+│  │     │  Lijn uit met menselijke voorkeuren           │ │
+│  │     │  Menselijke feedback, veiligheidstraining     │ │
+│  │     │  Output: Assistent-model                      │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  4. DEPLOYMENT                                       │ │
+│  │        Productiegebruik met guardrails              │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PRETRAINING DOELSTELLINGEN:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Causale Taalmodellering (GPT-stijl):                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Input:  "De hoofdstad van Frankrijk is"            │ │
+│  │                                                      │ │
+│  │  Taak: Voorspel volgende token                      │ │
+│  │                                                      │ │
+│  │  Model voorspelt: "Parijs" (met waarschijnlijkheid) │ │
+│  │                                                      │ │
+│  │  ┌─────┬──────┬─────┬──────┬─────┬─────────┐       │ │
+│  │  │ De  │hoofd-│ van │Frank-│ is  │  [?]    │       │ │
+│  │  │     │stad  │     │rijk  │     │         │       │ │
+│  │  └──┬──┴──┬───┴──┬──┴──┬───┴──┬──┴────┬────┘       │ │
+│  │     │     │      │     │      │       │             │ │
+│  │     ▼     ▼      ▼     ▼      ▼       ▼             │ │
+│  │  [Transformer verwerkt links-naar-rechts]          │ │
+│  │                                 │                   │ │
+│  │                                 ▼                   │ │
+│  │                            "Parijs"                 │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PRETRAINING DATA:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Typische datamix voor moderne LLMs:                │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Webpagina's (Common Crawl)   │  ~60%      │   │ │
+│  │  │  Boeken                        │  ~15%      │   │ │
+│  │  │  Wikipedia                     │  ~5%       │   │ │
+│  │  │  Code (GitHub)                 │  ~10%      │   │ │
+│  │  │  Wetenschappelijke papers      │  ~5%       │   │ │
+│  │  │  Overig (nieuws, forums, etc.) │  ~5%       │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Schaalvoorbeelden:                                  │ │
+│  │  • GPT-3: 300B tokens                               │ │
+│  │  • LLaMA: 1.4T tokens                               │ │
+│  │  • GPT-4: Geschat 10T+ tokens                       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  WAT MODELLEN LEREN TIJDENS PRETRAINING:                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Grammatica & Syntaxis:                             │ │
+│  │  • Onderwerp-werkwoord overeenstemming             │ │
+│  │  • Zinsstructuur                                    │ │
+│  │  • Interpunctieregels                              │ │
+│  │                                                      │ │
+│  │  Wereldkennis:                                       │ │
+│  │  • Feiten (hoofdsteden, data, namen)               │ │
+│  │  • Gezond verstand                                  │ │
+│  │  • Domeinkennis (wetenschap, recht, etc.)          │ │
+│  │                                                      │ │
+│  │  Redeneerpatronen:                                  │ │
+│  │  • Logische inferentie                             │ │
+│  │  • Wiskundige operaties                            │ │
+│  │  • Oorzaak en gevolg                               │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt pretraining van fine-tuning?**
+
+A: Pretraining leert algemeen taalbegrip van massale ongelabelde data (zelfgesuperviseerd). Fine-tuning past het gepretrainde model aan voor specifieke taken met kleinere gelabelde datasets. Pretraining creëert capaciteiten; fine-tuning kanaliseert ze.
+
+**V: Waarom kunnen we niet gewoon vanaf het begin op taakspecifieke data trainen?**
+
+A: Taakspecifieke datasets zijn te klein om algemeen taalbegrip te leren. Pretraining op miljarden tokens vangt taalpatronen, wereldkennis en redeneren die overdragen naar elke downstream-taak.
+
+**V: Wat bepaalt de kenniscutoff-datum?**
+
+A: De pretraining-data heeft een verzamelcutoff—het model weet alleen wat in zijn trainingskorpus stond. Gebeurtenissen na deze datum zijn onbekend voor het model.
+
+**V: Kunnen pretraining-biases volledig worden verwijderd via fine-tuning?**
+
+A: Moeilijk. Biases geleerd tijdens pretraining zijn diep ingebed in de modelgewichten. Fine-tuning kan problematische outputs verminderen maar onderliggende biases mogelijk niet elimineren.
+
+## Gerelateerde termen
+
+- [Fine-tuning](/nl/glossary/fine-tuning/) — aanpassen van gepretrainde modellen
+- [LLM](/nl/glossary/llm/) — groot taalmodel
+- [Instruction tuning](/nl/glossary/instruction-tuning/) — leren [instructies](/nl/glossary/prompt/) te volgen
+- [RLHF](/nl/glossary/rlhf/) — [alignment](/nl/glossary/alignment/) via menselijke feedback
+
+---
+
+## Referenties
+
+> Radford et al. (2018), "[Improving Language Understanding by Generative Pre-Training](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)", OpenAI. [Originele GPT pretraining]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [Masked language modeling pretraining]
+
+> Hoffmann et al. (2022), "[Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)", arXiv. [Optimale pretraining data/compute ratio's]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Moderne pretraining-praktijken]
+
+## References
+
+> Radford et al. (2018), "[Improving Language Understanding by Generative Pre-Training](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)", OpenAI. [Original GPT pretraining]
+
+> Devlin et al. (2019), "[BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)", NAACL. [Masked language modeling pretraining]
+
+> Hoffmann et al. (2022), "[Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)", arXiv (Chinchilla). [Optimal pretraining data/compute ratios]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Modern pretraining practices]

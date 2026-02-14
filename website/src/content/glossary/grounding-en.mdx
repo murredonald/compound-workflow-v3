@@ -1,0 +1,138 @@
+---
+term: "Grounding"
+termSlug: "grounding"
+short: "The technique of anchoring AI model outputs to verifiable sources, facts, or retrieved documents to reduce hallucinations and increase response accuracy and trustworthiness."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "hallucination", "citation", "factuality"]
+synonyms: ["Factual grounding", "Knowledge grounding", "Source grounding"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Grounding is the practice of connecting AI-generated responses to verifiable external information sources—documents, databases, APIs, or knowledge bases—rather than relying solely on information encoded in model parameters. In RAG (Retrieval-Augmented Generation) systems, grounding means constraining model outputs to information actually present in retrieved documents. Effective grounding reduces hallucinations, increases factual accuracy, enables verification, and makes AI systems more trustworthy for enterprise and high-stakes applications. Grounding transforms [LLMs](/en/glossary/llm/) from creative text generators into reliable information retrieval and synthesis tools.
+
+## Why it matters
+
+Grounding is essential for production AI systems:
+
+- **Reduces hallucinations** — outputs tied to real sources, not fabricated
+- **Enables verification** — users can check claims against sources
+- **Increases trust** — auditable, traceable responses
+- **Supports compliance** — required for legal, medical, financial domains
+- **Improves accuracy** — leverages current, authoritative information
+- **Unlocks enterprise use** — prerequisite for business-critical applications
+
+Without grounding, LLMs are creative writers. With grounding, they become reliable assistants.
+
+## How it works
+
+**Ungrounded vs grounded response:**
+
+```
+UNGROUNDED (pure LLM):
+  User: "What is the refund policy?"
+  LLM → "We offer a 30-day money-back guarantee..."
+        ⚠️ Hallucinated — model never saw actual policy
+
+GROUNDED (RAG):
+  User: "What is the refund policy?"
+  1. Retrieve: terms-of-service.pdf, p.12
+     "Subscribers may cancel within 14 days for a full refund..."
+  2. Generate from source:
+     "Per our Terms of Service, there is a 14-day full refund
+      window. Annual plans receive pro-rated refunds." [1]
+      [1] terms-of-service.pdf, p.12
+      ✓ Verifiable — user can check the source
+```
+
+**Grounding architecture:**
+
+```
+         User query
+              │
+              ▼
+  ┌──────────────────────┐
+  │   Query processing   │
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐    ┌─────────────────┐
+  │   Retrieval system   │───▶│ Knowledge base  │
+  │   (find sources)     │◀───│ • Documents     │
+  └──────────────────────┘    │ • Databases     │
+              │               │ • APIs          │
+              ▼               └─────────────────┘
+  ┌──────────────────────┐
+  │   LLM generation     │ ← constrained to retrieved context
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐
+  │  Verification layer  │ ← check claims against sources
+  └──────────────────────┘
+              │
+              ▼
+  ┌──────────────────────┐
+  │  Grounded response   │
+  │  + source citations  │
+  └──────────────────────┘
+```
+
+**Types of grounding:**
+
+| Type | Source | Example |
+|---|---|---|
+| Document | PDFs, web pages, [knowledge bases](/en/glossary/knowledge-base/) | Enterprise RAG over internal docs |
+| Database | SQL/NoSQL query results | "Show Q4 sales" → actual numbers |
+| API | Live external data | "AAPL price?" → real-time quote |
+| Tool | Calculator/code outputs | "15% of €2,340" → exact result |
+
+**Quality [metrics](/en/glossary/distance-metric/):**
+
+| Metric | Measures |
+|---|---|
+| [Faithfulness](/en/glossary/faithfulness/) | Response matches sources |
+| [Attribution](/en/glossary/attribution/) | Claims linked to sources |
+| Coverage | Key source info included |
+| Precision | No extra ungrounded claims |
+| Citation accuracy | Citations point to correct source |
+
+## Common questions
+
+**Q: How does grounding differ from [fine-tuning](/en/glossary/fine-tuning/)?**
+
+A: Fine-tuning bakes information into model parameters permanently—it changes what the model "knows." Grounding provides information at [inference](/en/glossary/inference/) time via retrieval, keeping the model unchanged. Grounding is more flexible (update documents anytime), auditable (trace answers to sources), and current (retrieve fresh information).
+
+**Q: Can grounding completely eliminate hallucinations?**
+
+A: No, but it significantly reduces them. Models can still misinterpret sources, combine information incorrectly, or generate plausible-sounding but unsupported claims. Best practice combines grounding with verification layers, citation requirements, and confidence indicators.
+
+**Q: What's the relationship between grounding and RAG?**
+
+A: RAG is the architecture; grounding is the goal. RAG (Retrieval-Augmented Generation) achieves grounding by retrieving relevant documents and including them in context. Grounding can also be achieved through other means like database queries, API calls, or tool use.
+
+**Q: How do I measure grounding quality?**
+
+A: Key metrics include: faithfulness (response matches sources), attribution (claims linked to sources), groundedness scores (automated evaluation), and citation accuracy (citations correct). Tools like RAGAS, TruLens, and LangChain evaluation can help measure these.
+
+## Related terms
+
+- [RAG](/en/glossary/rag/) — retrieval-augmented generation architecture
+- [Hallucination](/en/glossary/hallucination/) — what grounding prevents
+- [Citation](/en/glossary/citation/) — making grounding transparent
+- [Factuality](/en/glossary/factuality/) — accuracy goal of grounding
+
+---
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [Foundational RAG paper]
+
+> Thoppilan et al. (2022), "[LaMDA: Language Models for Dialog Applications](https://arxiv.org/abs/2201.08239)", arXiv. [Grounding in dialog systems]
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [Attribution metrics]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [Comprehensive RAG/grounding survey]

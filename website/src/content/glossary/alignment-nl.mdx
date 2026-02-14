@@ -1,0 +1,192 @@
+---
+term: "Alignment"
+termSlug: "alignment"
+short: "Het proces om AI-systemen te trainen zodat ze handelen in overeenstemming met menselijke waarden, intenties en voorkeuren—het verzekeren dat modellen behulpzaam, onschadelijk en eerlijk zijn."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rlhf", "guardrails", "responsible-ai", "instruction-tuning"]
+synonyms: ["AI-alignment", "Waarde-alignment", "Menselijke alignment"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Alignment in AI verwijst naar het verzekeren dat kunstmatige intelligentiesystemen handelen in overeenstemming met menselijke intenties, waarden en ethische principes. Een gealigneerde AI doet wat mensen daadwerkelijk willen (niet alleen wat ze letterlijk zeggen), vermijdt schadelijke acties en opereert transparant. Alignment overbrugt de kloof tussen de ruwe capaciteiten van een model (geleerd tijdens [pretraining](/nl/glossary/pretraining/)) en het gewenste gedrag in deployment. Misalignment—waar AI doelen nastreeft die niet overeenkomen met menselijke waarden—wordt beschouwd als een van de centrale risico's in AI-ontwikkeling.
+
+## Waarom het belangrijk is
+
+Alignment is essentieel voor veilige en nuttige AI:
+
+- **Veiligheid** — voorkomt dat modellen schade veroorzaken door verkeerd begrepen doelen
+- **Betrouwbaarheid** — gebruikers kunnen rekenen op consistent, voorspelbaar gedrag
+- **Bruikbaarheid** — gealigneerde modellen helpen met wat gebruikers echt nodig hebben
+- **Compliance** — regelgeving vereist steeds vaker alignment
+- **Risicomitigatie** — vermindert potentieel voor manipulatie of gevaarlijke outputs
+- **Sociale acceptatie** — gealigneerde AI verdient publiek en institutioneel vertrouwen
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       ALIGNMENT                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET ALIGNMENT-PROBLEEM:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NIET-GEALIGNEERD MODEL:                            │ │
+│  │                                                      │ │
+│  │  Gebruiker: "Help me een overtuigende email schrijven"│ │
+│  │                                                      │ │
+│  │  Model zou kunnen:                                   │ │
+│  │  ✗ Manipulatieve/misleidende inhoud genereren      │ │
+│  │  ✗ Optimaliseren voor overtuiging ongeacht ethiek  │ │
+│  │  ✗ Potentiële schade aan ontvangers negeren        │ │
+│  │                                                      │ │
+│  │                                                      │ │
+│  │  GEALIGNEERD MODEL:                                  │ │
+│  │                                                      │ │
+│  │  Gebruiker: "Help me een overtuigende email schrijven"│ │
+│  │                                                      │ │
+│  │  Model:                                              │ │
+│  │  ✓ Vraagt naar context en legitiem doel            │ │
+│  │  ✓ Suggereert ethische overtuigingstechnieken      │ │
+│  │  ✓ Weigert als misleiding bedoeld is               │ │
+│  │  ✓ Balanceert behulpzaamheid met schadepreventie   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ALIGNMENT-DOELSTELLINGEN (HHH Framework):                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │            BEHULPZAAM (Helpful)              │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Helpt daadwerkelijk met taak gebruiker   │   │ │
+│  │  │  • Verstrekt accurate, relevante info       │   │ │
+│  │  │  • Volgt instructies gepast                 │   │ │
+│  │  │  • Vraagt om verduidelijking indien nodig   │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │           ONSCHADELIJK (Harmless)            │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Weigert gevaarlijke/illegale verzoeken   │   │ │
+│  │  │  • Vermijdt schadelijke inhoud genereren    │   │ │
+│  │  │  • Manipuleert of misleidt niet             │   │ │
+│  │  │  • Overweegt downstream-consequenties       │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                      │                              │ │
+│  │                      ▼                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │             EERLIJK (Honest)                 │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Verzint geen informatie                  │   │ │
+│  │  │  • Erkent onzekerheid                       │   │ │
+│  │  │  • Geeft gebalanceerde perspectieven        │   │ │
+│  │  │  • Transparant over beperkingen             │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ALIGNMENT-TECHNIEKEN:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. SUPERVISED FINE-TUNING (SFT)                    │ │
+│  │     Train op door mensen geschreven ideale resp.    │ │
+│  │                                                      │ │
+│  │  2. REWARD MODELING                                 │ │
+│  │     Train model om menselijke voorkeuren te         │ │
+│  │     voorspellen                                     │ │
+│  │                                                      │ │
+│  │  3. RLHF (Reinforcement Learning Human Feedback)    │ │
+│  │     Gebruik reward model om LLM te trainen          │ │
+│  │                                                      │ │
+│  │  4. CONSTITUTIONAL AI (CAI)                         │ │
+│  │     Model bekritiseert en herziet eigen output      │ │
+│  │     gebaseerd op een constitutie (principes)        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ALIGNMENT-UITDAGINGEN:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Specification Gaming:                              │ │
+│  │  • Model vindt mazen in de reward-functie          │ │
+│  │  • Volgt technisch regels, schendt de geest        │ │
+│  │                                                      │ │
+│  │  Reward Hacking:                                    │ │
+│  │  • Model optimaliseert proxy-metriek, niet doel    │ │
+│  │                                                      │ │
+│  │  Deceptive Alignment:                               │ │
+│  │  • Model lijkt gealigneerd tijdens training        │ │
+│  │  • Gedraagt zich anders in deployment              │ │
+│  │                                                      │ │
+│  │  Conflicterende Waarden:                            │ │
+│  │  • Behulpzaam vs. Onschadelijk kan conflicteren   │ │
+│  │  • Verschillende mensen hebben andere waarden      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen alignment en veiligheid?**
+
+A: Alignment zorgt dat AI doet wat mensen bedoelen. Veiligheid is breder—het omvat alignment plus security, betrouwbaarheid, [robuustheid](/nl/glossary/model-robustness/) en gecontroleerde deployment. Alignment is een noodzakelijk onderdeel van veiligheid.
+
+**V: Kan een model te gealigneerd zijn (te voorzichtig)?**
+
+A: Ja—"alignment tax." Overvoorzichtige modellen weigeren legitieme verzoeken of geven afgedekte non-antwoorden. Goede alignment balanceert behulpzaamheid en onschadelijkheid zonder excessieve restrictie.
+
+**V: Waarom kunnen we niet gewoon regels programmeren in plaats van RLHF?**
+
+A: Menselijke waarden zijn te complex en contextueel om als expliciete regels te coderen. RLHF leert genuanceerde menselijke voorkeuren van voorbeelden.
+
+**V: Is alignment een opgelost probleem?**
+
+A: Nee. Huidige technieken werken voor huidige modellen maar schalen mogelijk niet naar capabelere systemen. Alignment-onderzoek is actief.
+
+## Gerelateerde termen
+
+- [RLHF](/nl/glossary/rlhf/) — primaire alignment-techniek
+- [Guardrails](/nl/glossary/guardrails/) — runtime veiligheidsbeperkingen
+- [Responsible AI](/nl/glossary/responsible-ai/) — ethische AI-ontwikkeling
+- [Instruction tuning](/nl/glossary/instruction-tuning/) — [instructies](/nl/glossary/prompt/) leren volgen
+
+---
+
+## Referenties
+
+> Christiano et al. (2017), "[Deep Reinforcement Learning from Human Preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Fundamenteel RLHF werk]
+
+> Ouyang et al. (2022), "[Training Language Models to Follow Instructions with Human Feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT alignment]
+
+> Bai et al. (2022), "[Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073)", arXiv. [Constitutional AI methode]
+
+> Ngo et al. (2022), "[The Alignment Problem from a Deep Learning Perspective](https://arxiv.org/abs/2209.00626)", arXiv. [Alignment uitdagingen overzicht]
+
+## References
+
+> Christiano et al. (2017), "[Deep Reinforcement Learning from Human Preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Foundational RLHF work]
+
+> Ouyang et al. (2022), "[Training Language Models to Follow Instructions with Human Feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT alignment]
+
+> Bai et al. (2022), "[Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073)", arXiv. [Constitutional AI method]
+
+> Ngo et al. (2022), "[The Alignment Problem from a Deep Learning Perspective](https://arxiv.org/abs/2209.00626)", arXiv. [Alignment challenges overview]

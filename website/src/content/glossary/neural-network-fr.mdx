@@ -1,0 +1,135 @@
+---
+term: "Réseau Neuronal"
+termSlug: "neural-network"
+short: "Un modèle d'apprentissage automatique composé de couches interconnectées de neurones artificiels qui apprennent des patterns à partir de données."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["deep-learning", "backpropagation", "transformer-architecture", "llm"]
+synonyms: ["Réseau neuronal artificiel", "ANN", "Réseau de neurones", "Modèle connexionniste"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Un réseau neuronal est un modèle computationnel vaguement inspiré du cerveau humain, composé de couches de neurones artificiels (nœuds) interconnectés. Chaque neurone reçoit des entrées, applique des poids et un biais, passe le résultat à travers une fonction d'activation, et envoie la sortie à la couche suivante. Par l'entraînement avec rétropropagation, les réseaux neuronaux apprennent à reconnaître des patterns, faire des [prédictions](/fr/glossary/inference/) et générer des sorties à partir de données.
+
+## Pourquoi c'est important
+
+Les réseaux neuronaux sont le fondement de l'IA moderne :
+
+- **Approximateurs universels** — peuvent apprendre toute fonction continue avec assez de neurones
+- **Apprentissage de features** — découvrent automatiquement les patterns pertinents dans les données
+- **Évolutivité** — les performances s'améliorent avec plus de données et de calcul
+- **Polyvalence** — vision, langage, parole, jeux, science et plus
+- **État de l'art** — alimentent tous les systèmes d'IA leaders incluant les LLMs
+
+De la reconnaissance d'images à la génération de langage, les réseaux neuronaux dominent l'IA.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    RÉSEAU NEURONAL                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STRUCTURE D'UN RÉSEAU FEEDFORWARD:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Couche Entrée  Couches Cachées   Couche Sortie            │
+│      │                │               │                    │
+│      ○ ─────┬────► ○ ────┬────► ○ ────┬────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┼────► ○ ────┼────► ○ ────┼────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┴────► ○ ────┴────► ○ ────┴────► (sortie)      │
+│                                                            │
+│     x₁,x₂,x₃      h₁,h₂,h₃      h₄,h₅,h₆       ŷ          │
+│                                                            │
+│  NEURONE UNIQUE:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Entrées       Poids     Somme+Biais  Activation│       │
+│  │                                                 │        │
+│  │    x₁ ──────► w₁ ──┐                           │        │
+│  │                    │                           │        │
+│  │    x₂ ──────► w₂ ──┼──► Σ + b ──► f(·) ──► y  │        │
+│  │                    │                           │        │
+│  │    x₃ ──────► w₃ ──┘                           │        │
+│  │                                                 │        │
+│  │  y = f(w₁x₁ + w₂x₂ + w₃x₃ + b)                │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  FONCTIONS D'ACTIVATION COURANTES:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  ReLU:    f(x) = max(0, x)         ___/                   │
+│  Sigmoid: f(x) = 1/(1+e⁻ˣ)        _/⁻⁻                    │
+│  Tanh:    f(x) = (eˣ-e⁻ˣ)/(eˣ+e⁻ˣ)  _/‾                  │
+│  Softmax: Distribution de probabilité (pour classif.)      │
+│                                                            │
+│  TYPES DE RÉSEAUX:                                         │
+│  ─────────────────                                         │
+│  Feedforward (MLP):    Données dans une direction         │
+│  Convolutionnel (CNN): Patterns spatiaux (images)         │
+│  Récurrent (RNN):      Données séquentielles (texte,temps)│
+│  Transformer:          Basé sur attention (LLMs)          │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Comparaison des architectures:**
+| Type | Force | Cas d'usage |
+|------|-------|-------------|
+| MLP | [Données tabulaires](/fr/glossary/structured-data/) simples | Classification, régression |
+| CNN | Hiérarchies spatiales | Images, vidéo, audio |
+| RNN/LSTM | Patterns séquentiels | Séries temporelles, NLP ancien |
+| Transformer | Dépendances longue distance | LLMs, NLP moderne, vision |
+
+## Questions fréquentes
+
+**Q : Quelle doit être la profondeur d'un réseau neuronal ?**
+
+R : Cela dépend de la complexité de la tâche. Les tâches simples nécessitent peu de couches; les patterns complexes (comme le langage) en nécessitent beaucoup. Les LLMs modernes ont 32-100+ couches. Commencez simple et ajoutez de la profondeur si sous-apprentissage.
+
+**Q : Quelle différence entre neurones et paramètres ?**
+
+R : Les neurones sont les unités de calcul; les paramètres sont les poids et biais les connectant. Un réseau avec 1000 neurones peut avoir des millions de paramètres (chaque neurone se connecte à beaucoup d'autres).
+
+**Q : Pourquoi les réseaux neuronaux ont-ils besoin de fonctions d'activation ?**
+
+R : Sans activations non-linéaires, plusieurs couches s'effondreraient en une seule transformation linéaire (peu importe le nombre de couches). Les fonctions d'activation permettent aux réseaux d'apprendre des patterns complexes et non-linéaires.
+
+**Q : Comment les réseaux neuronaux sont liés au "deep learning" ?**
+
+R : L'apprentissage profond fait spécifiquement [référence](/fr/glossary/citation/) aux réseaux neuronaux avec beaucoup de couches (architectures profondes). Un réseau à 2 couches est un réseau neuronal mais pas "profond." Les LLMs transformers modernes sont des réseaux neuronaux très profonds.
+
+## Termes associés
+
+- [Deep Learning](/fr/glossary/deep-learning/) — réseaux neuronaux avec beaucoup de couches
+- [Architecture Transformer](/fr/glossary/transformer-architecture/) — architecture neuronale moderne
+- [Rétropropagation](/fr/glossary/backpropagation/) — algorithme d'entraînement
+- [LLM](/fr/glossary/llm/) — réseaux neuronaux profonds pour le langage
+
+---
+
+## Références
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40 000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20 000+ citations]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25 000+ citations]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Article fondateur]
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20,000+ citations]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25,000+ citations]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Foundational paper]

@@ -1,0 +1,60 @@
+---
+term: "Booleaanse zoekopdracht"
+termSlug: "boolean-search"
+short: "Een Booleaanse zoekopdracht combineert termen met operatoren zoals AND, OR en NOT om resultaten precies in- en uit te sluiten."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["full-text-search", "query-understanding", "relevance-tuning"]
+synonyms: ["Boolean query", "Boolean retrieval", "AND/OR/NOT zoeken"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een Booleaanse zoekopdracht drukt exacte voorwaarden uit met logische operatoren zoals AND, OR en NOT (vaak met haakjes en aanhalingstekens). In full-text systemen wordt dit gebruikt om precisie te verhogen en ruis te verminderen.
+
+## Waarom het belangrijk is
+
+- **Precisie**: sluit veelvoorkomende foutpositieven uit.
+- **Auditability**: de query maakt zichtbaar waarom een document matcht.
+- **Power users**: juridische en research gebruikers verwachten vaak Booleaanse controle.
+- **Deterministisch**: handig als je herhaalbare resultaten nodig hebt.
+
+## Hoe het werkt
+
+```
+(termA AND termB) OR ("exacte frase") AND NOT termC
+```
+
+De exacte operatorregels verschillen per zoekengine, dus query parsing en documentatie zijn belangrijk.
+
+## Praktisch voorbeeld
+
+`("roerende voorheffing" OR "dividendbelasting") AND België AND NOT "VS verdrag"` beperkt resultaten tot het juiste domein en sluit een ongewenst subthema uit.
+
+## Veelgestelde vragen
+
+**Q: Vervangt Booleaanse zoekopdracht ranking?**
+
+A: Nee. Boolean selecteert kandidaten; ranking bepaalt welke bovenaan staan.
+
+**Q: Waarom gedragen operatoren zich soms vreemd?**
+
+A: Engines hebben vaak impliciete operatoren, stopwoorden of parsingregels. Consistente parsing is onderdeel van goed querybegrip.
+
+## Gerelateerde termen
+
+- [Full-Text Search](/nl/glossary/full-text-search/) - [keyword search](/nl/glossary/lexical-search/) met operatoren
+- [Query Understanding](/nl/glossary/query-understanding/) - Booleaanse queries correct parsen
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - ranking verbeteren bovenop filters
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

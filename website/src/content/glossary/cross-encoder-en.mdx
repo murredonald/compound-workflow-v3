@@ -1,0 +1,253 @@
+---
+term: "Cross-Encoder"
+termSlug: "cross-encoder"
+short: "A neural architecture that jointly encodes query and document pairs to produce relevance scores, providing higher accuracy than bi-encoders but at greater computational cost."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["bi-encoder", "reranking", "dense-retrieval", "semantic-search"]
+synonyms: ["Cross-attention encoder", "Joint encoder", "Reranker model"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A cross-encoder is a [transformer](/en/glossary/transformer-architecture/)-based model that takes a query-document pair as a single input sequence and outputs a relevance score. Unlike bi-encoders that separately encode query and document into independent vectors, cross-encoders allow full attention between all tokens in both sequences, enabling richer interaction modeling. This joint encoding captures nuanced semantic relationships but requires computing a forward pass for every query-document pair, making cross-encoders too slow for initial retrieval but ideal for reranking a small candidate set.
+
+## Why it matters
+
+Cross-encoders are essential for high-quality search:
+
+- **Superior accuracy** — capture token-level interactions that bi-encoders miss
+- **Reranking standard** — used in virtually all production [search pipelines](/en/glossary/retrieval-pipeline/)
+- **RAG quality** — better ranking means more relevant context for [LLMs](/en/glossary/llm/)
+- **Precision focus** — excel at distinguishing relevant from almost-relevant
+- **Complement bi-encoders** — two-stage retrieval (recall + precision) is optimal
+- **Evaluation tool** — often used as [ground truth](/en/glossary/ground-truth/) for training bi-encoders
+
+The bi-encoder → cross-encoder pipeline is the dominant paradigm in modern information retrieval.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      CROSS-ENCODER                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  BI-ENCODER vs CROSS-ENCODER ARCHITECTURE:                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  BI-ENCODER (separate encoding):                          │
+│                                                            │
+│    Query                   Document                        │
+│      │                        │                            │
+│      ↓                        ↓                            │
+│  ┌────────┐              ┌────────┐                       │
+│  │Encoder │              │Encoder │  (can be same model)  │
+│  └────────┘              └────────┘                       │
+│      │                        │                            │
+│      ↓                        ↓                            │
+│   [q_vec]                  [d_vec]                        │
+│      \                      /                              │
+│       \                    /                               │
+│        → cosine(q, d) = 0.87 ←                            │
+│                                                            │
+│  ✓ Pre-compute document embeddings                        │
+│  ✓ Fast retrieval via ANN                                 │
+│  ✗ No token-level interaction between q and d             │
+│                                                            │
+│                                                            │
+│  CROSS-ENCODER (joint encoding):                          │
+│                                                            │
+│    Input: [CLS] query tokens [SEP] document tokens [SEP]  │
+│                           │                                │
+│                           ↓                                │
+│                    ┌─────────────┐                        │
+│                    │ Transformer │                        │
+│                    │   Encoder   │                        │
+│                    │  (BERT etc) │                        │
+│                    └─────────────┘                        │
+│                           │                                │
+│          Full self-attention across ALL tokens            │
+│                           │                                │
+│                           ↓                                │
+│                    ┌─────────────┐                        │
+│                    │ [CLS] token │                        │
+│                    │  embedding  │                        │
+│                    └─────────────┘                        │
+│                           │                                │
+│                           ↓                                │
+│                    ┌─────────────┐                        │
+│                    │   Linear    │                        │
+│                    │   Layer     │                        │
+│                    └─────────────┘                        │
+│                           │                                │
+│                           ↓                                │
+│                   Score: 0.92 (relevance)                 │
+│                                                            │
+│  ✓ Token-level cross-attention between q and d            │
+│  ✓ Captures fine-grained semantic matches                 │
+│  ✗ Cannot pre-compute - must run for each pair           │
+│                                                            │
+│                                                            │
+│  WHY CROSS-ATTENTION MATTERS:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  Query: "python snake"                                     │
+│                                                            │
+│  Doc A: "Python programming tutorial"                     │
+│  Doc B: "Ball python care guide"                          │
+│                                                            │
+│  Bi-encoder might confuse them (both contain "python")    │
+│                                                            │
+│  Cross-encoder attention visualization:                   │
+│                                                            │
+│  Query: [python] [snake]                                   │
+│              │      │                                      │
+│              │      └──────────────┐                      │
+│              │                      │                      │
+│  Doc B: [Ball] [python] [care] [guide]                    │
+│               ↑           │      │                         │
+│               │           │      │                         │
+│              strong     weak   weak                        │
+│            attention                                       │
+│                                                            │
+│  Cross-encoder sees "snake" attends to "Ball python"      │
+│  → correctly identifies Doc B as more relevant            │
+│                                                            │
+│                                                            │
+│  COMPUTATIONAL COMPLEXITY:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  For N documents and Q queries:                           │
+│                                                            │
+│  Bi-encoder:                                               │
+│  • Index: N forward passes (one per doc)                  │
+│  • Query: Q forward passes + N×Q distance calculations   │
+│  • With ANN: ~O(Q log N) for retrieval                   │
+│                                                            │
+│  Cross-encoder:                                            │
+│  • No pre-computation possible                            │
+│  • Must compute: N × Q forward passes                     │
+│  • 1M docs × 1 query = 1M forward passes                  │
+│                                                            │
+│  Example latency (approximate):                           │
+│  ┌──────────────┬──────────────┬────────────────────┐    │
+│  │ Operation    │ Bi-encoder   │ Cross-encoder      │    │
+│  ├──────────────┼──────────────┼────────────────────┤    │
+│  │ Compare 1    │ ~0.001ms     │ ~5-10ms            │    │
+│  │ Compare 100  │ ~0.1ms       │ ~500-1000ms        │    │
+│  │ Compare 1M   │ ~10ms (ANN)  │ ~1-2 hours         │    │
+│  └──────────────┴──────────────┴────────────────────┘    │
+│                                                            │
+│                                                            │
+│  TWO-STAGE RETRIEVAL PIPELINE:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                     │  │
+│  │  Stage 1: RECALL (Bi-encoder)                      │  │
+│  │  ────────────────────────────                      │  │
+│  │  Query → Embed → ANN search → Top 100-1000 docs   │  │
+│  │  Latency: ~10ms                                    │  │
+│  │  Goal: High recall (find all relevant docs)       │  │
+│  │                                                     │  │
+│  │              ↓                                      │  │
+│  │                                                     │  │
+│  │  Stage 2: PRECISION (Cross-encoder)                │  │
+│  │  ──────────────────────────────────               │  │
+│  │  (Query, Doc₁) → Score₁                            │  │
+│  │  (Query, Doc₂) → Score₂                            │  │
+│  │  ...                                                │  │
+│  │  (Query, Doc₁₀₀) → Score₁₀₀                        │  │
+│  │                                                     │  │
+│  │  Sort by score → Return top 10                    │  │
+│  │  Latency: ~500ms                                   │  │
+│  │  Goal: High precision (best docs first)           │  │
+│  │                                                     │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  POPULAR CROSS-ENCODER MODELS:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌───────────────────────────────┬──────────────────────┐│
+│  │ Model                         │ Notes                 ││
+│  ├───────────────────────────────┼──────────────────────┤│
+│  │ ms-marco-MiniLM-L-6-v2       │ Fast, good accuracy   ││
+│  │ ms-marco-MiniLM-L-12-v2      │ Better accuracy       ││
+│  │ cross-encoder/ms-marco-      │                        ││
+│  │   electra-base               │ Strong baseline       ││
+│  │ bge-reranker-large           │ BGE series, accurate  ││
+│  │ Cohere Rerank                │ API, multilingual     ││
+│  │ Jina Reranker                │ Open source option    ││
+│  └───────────────────────────────┴──────────────────────┘│
+│                                                            │
+│                                                            │
+│  CODE EXAMPLE:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  from sentence_transformers import CrossEncoder           │
+│                                                            │
+│  # Load model                                              │
+│  model = CrossEncoder('cross-encoder/                     │
+│                        ms-marco-MiniLM-L-6-v2')           │
+│                                                            │
+│  # Score query-document pairs                             │
+│  query = "What is the capital of France?"                  │
+│  docs = [                                                  │
+│      "Paris is the capital of France.",                   │
+│      "London is the capital of England.",                 │
+│      "The Eiffel Tower is in Paris, France."              │
+│  ]                                                         │
+│                                                            │
+│  # Create pairs                                            │
+│  pairs = [(query, doc) for doc in docs]                   │
+│                                                            │
+│  # Get scores                                              │
+│  scores = model.predict(pairs)                             │
+│  # [9.2, -3.1, 4.5]  (higher = more relevant)            │
+│                                                            │
+│  # Rerank                                                  │
+│  ranked = sorted(zip(docs, scores),                       │
+│                  key=lambda x: x[1], reverse=True)        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: Why can't I just use cross-encoders for retrieval?**
+
+A: Cross-encoders require a forward pass for every query-document pair. With 1 million documents, that's 1 million forward passes per query (~hours of latency). Bi-encoders pre-compute document [embeddings](/en/glossary/embeddings/), enabling sub-second search via [ANN](/en/glossary/ann/) indexes. Use bi-encoders for recall, cross-encoders for precision.
+
+**Q: How many documents should cross-encoders rerank?**
+
+A: Typically 50-100 candidates, balancing accuracy gains against latency. Beyond 100, diminishing returns kick in (relevant docs are usually in top 50). For latency-critical applications, rerank 20-30. For maximum accuracy, up to 200-500 with batch processing.
+
+**Q: Can cross-encoders be distilled into bi-encoders?**
+
+A: Yes—this is a common training strategy. Use cross-encoder as teacher, generate relevance labels for query-document pairs, then train bi-encoder on these soft labels. This transfers cross-encoder accuracy to bi-encoder representations. Models like ColBERT use late interaction to get closer to cross-encoder accuracy while maintaining some bi-encoder efficiency.
+
+**Q: What's the relationship between cross-encoders and LLM reranking?**
+
+A: LLMs can also rerank by scoring relevance ([prompt](/en/glossary/prompt/): "Rate relevance 1-10..."). LLMs are more flexible but slower and more expensive than specialized cross-encoders. Fine-tuned cross-encoders often outperform zero-shot LLM ranking on specific domains. For cost-sensitive applications, use dedicated cross-encoders.
+
+## Related terms
+
+- [Bi-encoder](/en/glossary/bi-encoder/) — complementary architecture for retrieval
+- [Reranking](/en/glossary/reranking/) — task cross-encoders perform
+- [Dense retrieval](/en/glossary/dense-retrieval/) — bi-encoder based retrieval
+- [Semantic search](/en/glossary/semantic-search/) — application area
+
+---
+
+## References
+
+> Nogueira & Cho (2019), "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)", arXiv. [Cross-encoder reranking paper]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Bi-encoder vs cross-encoder comparison]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Cross-encoder benchmarks]
+
+> Khattab & Zaharia (2020), "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction](https://arxiv.org/abs/2004.12832)", SIGIR. [Late interaction middle ground]

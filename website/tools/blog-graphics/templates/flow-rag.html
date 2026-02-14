@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Dark theme (default) — from website tokens.css */
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+  }
+
+  /* Light theme override */
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  .flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    max-width: 180px;
+  }
+
+  .flow-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    background: var(--primary);
+    color: var(--primary-fg);
+  }
+
+  .flow-num.highlight {
+    box-shadow: 0 0 0 2px var(--primary-text);
+  }
+
+  .flow-label {
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--fg);
+  }
+
+  .flow-desc {
+    font-size: 14px;
+    color: var(--muted-fg);
+    text-align: center;
+    line-height: 1.4;
+    max-width: 160px;
+  }
+
+  .flow-arrow {
+    font-size: 24px;
+    color: var(--muted-fg);
+    flex-shrink: 0;
+    margin: 10px 8px 0;
+    opacity: 0.4;
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">Hoe RAG werkt: van vraag tot antwoord met bronnen</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-label">Uw vraag</div>
+      <div class="flow-desc">Fiscale vraag in natuurlijke taal</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-label">Zoeken</div>
+      <div class="flow-desc">Hybride search in het volledige corpus</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-num highlight">3</div>
+      <div class="flow-label">Ranken</div>
+      <div class="flow-desc">Reranking op relevantie + juridische hiërarchie</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-label">Genereren</div>
+      <div class="flow-desc">LLM formuleert antwoord met bronnen</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-label">Valideren</div>
+      <div class="flow-desc">Citatievalidatie + confidence scoring</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-num highlight">6</div>
+      <div class="flow-label">Antwoord</div>
+      <div class="flow-desc">Gestructureerd met bronnen + score</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

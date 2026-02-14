@@ -1,0 +1,151 @@
+---
+term: "Reinforcement Learning"
+termSlug: "reinforcement-learning"
+short: "Een machine learning aanpak waarbij agents optimaal gedrag leren door trial-and-error interacties met een omgeving."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["machine-learning", "rlhf", "deep-learning", "neural-network"]
+synonyms: ["RL", "Beloning-gebaseerd leren", "Trial-and-error leren", "Agent-gebaseerd leren"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Reinforcement learning (RL) is een machine learning paradigma waarbij een agent leert beslissingen te nemen door interactie met een omgeving. De agent neemt acties, ontvangt feedback in de vorm van beloningen of straffen, en leert een beleid dat cumulatieve beloning over tijd maximaliseert. In tegenstelling tot supervised learning (dat gelabelde voorbeelden nodig heeft) of unsupervised learning (dat patronen vindt), leert RL van de consequenties van acties door trial and error.
+
+## Waarom het belangrijk is
+
+Reinforcement learning stelt AI in staat complex gedrag te leren:
+
+- **Leert zonder [labels](/nl/glossary/ground-truth/)** — heeft alleen een beloningssignaal nodig, geen gelabelde voorbeelden
+- **Handelt sequentiële beslissingen** — optimaliseert langetermijn uitkomsten, niet alleen directe
+- **Bovenmenselijke prestaties** — AlphaGo, game-playing agents, robotica
+- **Real-world control** — autonome voertuigen, aanbevelingssystemen
+- **Fundament voor RLHF** — kerntechtiek voor het afstemmen van [LLMs](/nl/glossary/llm/) op menselijke voorkeuren
+
+RL overbrugt de kloof tussen AI en besluitvorming in complexe omgevingen.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  REINFORCEMENT LEARNING                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DE RL LOOP:                                               │
+│  ───────────                                               │
+│                                                            │
+│         ┌─────────────────────────────────────┐           │
+│         │           OMGEVING                  │           │
+│         │    (Game, Robot Wereld, Website)    │           │
+│         └──────────────┬──────────────────────┘           │
+│                        │                                   │
+│             Toestand s │   Beloning r                      │
+│                ↓       │       ↓                           │
+│         ┌──────────────▼───────────────────┐              │
+│         │              AGENT               │              │
+│         │                                  │              │
+│         │  1. Observeer toestand s        │              │
+│         │  2. Kies actie a (via beleid)   │              │
+│         │  3. Ontvang beloning r          │              │
+│         │  4. Update beleid om r te max.  │              │
+│         │                                  │              │
+│         └──────────────┬───────────────────┘              │
+│                        │                                   │
+│              Actie a   ↓                                   │
+│         ┌──────────────▼──────────────────────┐           │
+│         │           OMGEVING                  │           │
+│         │    (reageert op actie, nieuwe staat)│           │
+│         └─────────────────────────────────────┘           │
+│                                                            │
+│  KERNCONCEPTEN:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  Toestand (s): Huidige situatie                           │
+│  Actie (a):    Keuze die agent maakt                      │
+│  Beloning (r): Feedbacksignaal (+positief, -negatief)     │
+│  Beleid (π):   Strategie voor acties kiezen               │
+│  Waarde (V):   Verwachte toekomstige cumulatieve beloning │
+│                                                            │
+│  EXPLORATIE VS EXPLOITATIE:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────┐    ┌─────────────────┐               │
+│  │   EXPLORATIE    │    │   EXPLOITATIE   │               │
+│  │                 │    │                 │               │
+│  │  Probeer nieuwe │    │  Gebruik wat    │               │
+│  │  dingen om      │    │  werkt om       │               │
+│  │  betere opties  │    │  bekende belon. │               │
+│  │  te ontdekken   │    │  te maximaliseren│              │
+│  │                 │    │                 │               │
+│  │   "Verkennen"   │    │   "Benutten"    │               │
+│  └─────────────────┘    └─────────────────┘               │
+│                                                            │
+│           Moet BALANCEREN voor optimaal leren              │
+│                                                            │
+│  VEELGEBRUIKTE RL ALGORITMEN:                              │
+│  ────────────────────────────                              │
+│  Q-Learning:     Leer waarde van toestand-actie paren     │
+│  Policy Gradient: Direct het beleid optimaliseren         │
+│  Actor-Critic:   Combineer waardeschatting + beleid       │
+│  PPO:           Stabiele beleidsoptimalisatie (RLHF)      │
+│  DQN:           Deep Q-networks voor complexe toestanden  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**RL paradigma's:**
+| Aanpak | Hoe het leert | Voorbeeld |
+|--------|--------------|-----------|
+| Waardegebaseerd | Schat waarde van toestanden/acties | DQN speelt Atari |
+| Beleidsgebaseerd | Leer direct actiekansen | Policy gradient in robotica |
+| Modelgebaseerd | Leer omgevingsdynamiek | Planning in games |
+| Modelvrij | Leer direct van ervaring | Meeste game-playing agents |
+
+## Veelgestelde vragen
+
+**V: Hoe verschilt RL van [supervised learning](/nl/glossary/supervised-learning/)?**
+
+A: Bij supervised learning vertel je de agent het correcte antwoord voor elke input. Bij RL krijgt de agent alleen beloningssignalen—het moet goed gedrag ontdekken door exploratie. RL handelt sequentiële beslissingen waar acties toekomstige toestanden beïnvloeden; supervised learning handelt typisch onafhankelijke voorspellingen.
+
+**V: Wat is RLHF en hoe verhoudt het zich tot RL?**
+
+A: RLHF (Reinforcement Learning from Human Feedback) gebruikt RL om LLMs te fine-tunen. Menselijke voorkeuren worden het beloningssignaal—een apart model voorspelt hoeveel mensen de ene respons boven de andere zouden verkiezen, en RL optimaliseert het LLM om geprefereerde responsen te genereren.
+
+**V: Waarom is exploratie vs exploitatie belangrijk?**
+
+A: Als een agent alleen bekende goede acties exploiteert, mist het mogelijk betere opties. Als het alleen exploreert, benut het nooit wat het geleerd heeft. De juiste balans vinden is cruciaal—te weinig exploratie leidt tot suboptimaal beleid, te veel verspilt tijd aan slechte acties.
+
+**V: Kan RL elk beslissingsprobleem oplossen?**
+
+A: In theorie kan RL elk systeem met definieerbare beloningen optimaliseren. In de praktijk heeft RL moeite met: schaarse beloningen (zeldzame feedback), sample-efficiëntie (heeft veel trials nodig), credit assignment (welke actie veroorzaakte de beloning?), en het definiëren van goede beloningssignalen.
+
+## Gerelateerde termen
+
+- [Machine Learning](/nl/glossary/machine-learning/) — het bredere vakgebied
+- [RLHF](/nl/glossary/rlhf/) — RL gebruiken om LLMs af te stemmen op voorkeuren
+- [Deep Learning](/nl/glossary/deep-learning/) — maakt Deep RL mogelijk
+- [Neuraal Netwerk](/nl/glossary/neural-network/) — functie-approximators in Deep RL
+
+---
+
+## Referenties
+
+> Sutton & Barto (2018), "[Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html)", MIT Press. [Het fundamentele RL leerboek]
+
+> Mnih et al. (2015), "[Human-level control through deep reinforcement learning](https://www.nature.com/articles/nature14236)", Nature. [DQN paper, 20.000+ [citaties](/nl/glossary/citation/)]
+
+> Silver et al. (2016), "[Mastering the game of Go with deep neural networks](https://www.nature.com/articles/nature16961)", Nature. [AlphaGo paper]
+
+> Schulman et al. (2017), "[Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)", arXiv. [PPO - gebruikt in RLHF]
+
+## References
+
+> Sutton & Barto (2018), "[Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html)", MIT Press. [The foundational RL textbook]
+
+> Mnih et al. (2015), "[Human-level control through deep reinforcement learning](https://www.nature.com/articles/nature14236)", Nature. [DQN paper, 20,000+ citations]
+
+> Silver et al. (2016), "[Mastering the game of Go with deep neural networks](https://www.nature.com/articles/nature16961)", Nature. [AlphaGo paper]
+
+> Schulman et al. (2017), "[Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)", arXiv. [PPO - used in RLHF]

@@ -1,0 +1,59 @@
+---
+term: "Recherche plein texte"
+termSlug: "full-text-search"
+short: "La recherche plein texte rÃ©cupÃ¨re des documents en faisant correspondre des termes Ã  du texte indexÃ© (souvent via un index inversÃ©) puis classe les meilleurs rÃ©sultats."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["indexing-strategy", "boolean-search", "relevance-tuning", "content-discoverability"]
+synonyms: ["Recherche textuelle", "Recherche par mots-clÃ©s", "Recherche via index inversÃ©"]
+locale: "fr"
+draft: false
+---
+
+## DÃ©finition
+
+La recherche plein texte est une recherche par mots-clÃ©s dans des champs comme le titre, le corps et les mÃ©tadonnÃ©es. La plupart des moteurs construisent un **index inversÃ©** qui associe des termes aux documents (et positions) oÃ¹ ils apparaissent, ce qui rend les requÃªtes rapides.
+
+## Pourquoi c'est important
+
+- **PrÃ©cision**: termes exacts, phrases et filtres sont souvent essentiels en juridique/fiscal.
+- **Vitesse**: les index inversÃ©s passent Ã  lâ€™Ã©chelle.
+- **Transparence**: on peut expliquer le match (termes, champs, boosts).
+- **ContrÃ´le**: pondÃ©ration de champs, recherche de phrase, opÃ©rateurs boolÃ©ens.
+
+## Comment Ã§a fonctionne
+
+```
+Texte -> tokenise/normalise -> index inversÃ© -> requÃªte -> scoring -> classement
+```
+
+## Exemple pratique
+
+Une requÃªte comme `"prÃ©compte mobilier" AND Belgique` remonte des documents qui contiennent explicitement la phrase et la juridiction, mÃªme si un modÃ¨le sÃ©mantique dÃ©rive.
+
+## Questions frÃ©quentes
+
+**Q: Plein texte = recherche sÃ©mantique?**
+
+R: Non. Le plein texte matche des tokens/phrases. La recherche sÃ©mantique matche le sens (souvent via des [embeddings](/fr/glossary/embeddings/)). Beaucoup de systÃ¨mes font du hybride.
+
+**Q: Pourquoi des rÃ©sultats attendus manquent-ils?**
+
+R: Souvent Ã  cause des analyseurs (stemming, stopwords), de champs non indexÃ©s, ou de contenu exclu par la stratÃ©gie dâ€™indexation.
+
+## Termes associÃ©s
+
+- [StratÃ©gie d'indexation](/fr/glossary/indexing-strategy/) - dÃ©cider quoi et comment indexer
+- [Recherche boolÃ©enne](/fr/glossary/boolean-search/) - AND/OR/NOT strict
+- [Ajustement de la pertinence](/fr/glossary/relevance-tuning/) - amÃ©liorer le classement
+- [DÃ©couvrabilitÃ© du contenu](/fr/glossary/content-discoverability/) - rendre le contenu trouvable et indexable
+
+---
+
+## RÃ©fÃ©rences
+
+> Manning, Raghavan & SchÃ¼tze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

@@ -1,0 +1,206 @@
+---
+term: "OCR"
+termSlug: "ocr"
+short: "Optical Character Recognition—technologie die afbeeldingen van tekst (gescande documenten, foto's, PDF's) omzet naar machineleesbare tekst, waardoor zoeken, bewerken en AI-verwerking van gedrukte of handgeschreven content mogelijk wordt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["document-processing", "computer-vision", "data-extraction", "pdf-parsing"]
+synonyms: ["Optische tekenherkenning", "Tekstherkenning", "Document digitalisering"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Optical Character Recognition (OCR) is de technologie die afbeeldingen met tekst omzet naar machineleesbare tekstdata. Dit omvat gescande documenten, foto's van tekst, PDF-bestanden en handgeschreven notities. Moderne OCR-systemen gebruiken deep learning (CNN's, [transformers](/nl/glossary/transformer-architecture/)) om karakters, woorden en documentstructuur met hoge nauwkeurigheid te herkennen over meerdere talen en lettertypen. OCR is fundamenteel voor documentdigitalisering en maakt zoeken, bewerken, vertalen en AI-verwerking van voorheen ontoegankelijke tekstcontent mogelijk.
+
+## Waarom het belangrijk is
+
+OCR maakt kritieke documentworkflows mogelijk:
+
+- **Doorzoekbaarheid** — informatie vinden in gescande archieven
+- **Automatisering** — data extraheren uit facturen, formulieren, bonnen
+- **Toegankelijkheid** — documenten screenreader-compatibel maken
+- **Compliance** — records digitaliseren voor regelgevingseisen
+- **RAG-pipelines** — [LLM](/nl/glossary/llm/)'s in staat stellen documentcontent te verwerken
+- **Kostenreductie** — handmatige data-invoer elimineren
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                          OCR                                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAT OCR DOET:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │      INPUT                              OUTPUT       │ │
+│  │                                                      │ │
+│  │  ┌─────────────────┐         ┌─────────────────┐   │ │
+│  │  │                 │         │                 │   │ │
+│  │  │  ▓▓▓▓▓▓▓▓▓▓▓▓  │         │ "Factuur #1234" │   │ │
+│  │  │  ▓ Factuur    ▓  │   OCR  │                 │   │ │
+│  │  │  ▓ #1234      ▓  │  ───►  │ "Datum: 2024-01"│   │ │
+│  │  │  ▓▓▓▓▓▓▓▓▓▓▓▓  │         │                 │   │ │
+│  │  │  Datum: 2024-01 │         │ "Totaal: €500"  │   │ │
+│  │  │  Totaal: €500   │         │                 │   │ │
+│  │  │                 │         │  (bewerkbaar,   │   │ │
+│  │  │  (afbeelding)   │         │   doorzoekbaar) │   │ │
+│  │  └─────────────────┘         └─────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OCR PIPELINE:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. BEELDVOORBEWERKING                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Rechtzetten (scheve afbeeldingen)        │   │ │
+│  │  │  • Binarisatie (zwart/wit conversie)        │   │ │
+│  │  │  • Ruisverwijdering (artefacten opschonen)  │   │ │
+│  │  │  • Contrastverbetering                      │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  2. LAY-OUTANALYSE                                  │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Identificeert: tekstblokken, kolommen,     │   │ │
+│  │  │  tabellen, figuren, leesvolgorde            │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  3. TEKSTLIJNDETECTIE                               │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Segmenteert tekst in individuele lijnen    │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  4. KARAKTERHERKENNING                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  CNN/Transformer verwerkt elk karaktergebied│   │ │
+│  │  │                                              │   │ │
+│  │  │  Output: ['H','a','l','l','o']              │   │ │
+│  │  │  Betrouwbaarheid: [0.99, 0.97, 0.98, ...]   │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  5. NABEWERKING                                     │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Woordenboek/taalmodelcorrectie           │   │ │
+│  │  │    "Hal1o" → "Hallo" (1 lijkt op l)        │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Contextbewuste spellingscorrectie        │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Formaatbehoud                            │   │ │
+│  │  │    Alinea's, tabellen, lijsten behouden    │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OCR TECHNOLOGIEËN:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Tesseract (Open Source)                            │ │
+│  │  ├─ Door Google onderhouden, LSTM-gebaseerd        │ │
+│  │  ├─ 100+ talen                                     │ │
+│  │  └─ Best voor: gedrukte tekst, batchverwerking     │ │
+│  │                                                      │ │
+│  │  Google Cloud Vision / Document AI                  │ │
+│  │  ├─ Hoge nauwkeurigheid, formulierextractie       │ │
+│  │  └─ Best voor: complexe documenten, formulieren   │ │
+│  │                                                      │ │
+│  │  AWS Textract                                       │ │
+│  │  ├─ Formulieren, tabellen, key-value extractie    │ │
+│  │  └─ Best voor: AWS-ecosysteem, facturen           │ │
+│  │                                                      │ │
+│  │  PaddleOCR (Open Source)                            │ │
+│  │  ├─ Excellente CJK-taalondersteuning              │ │
+│  │  └─ Best voor: Aziatische talen, edge deployment  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OCR VOOR RAG PIPELINES:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  PDF/Scan ──► OCR ──► Tekst ──► Chunking ──► Embed │ │
+│  │                                      │              │ │
+│  │                                      ▼              │ │
+│  │                              Vectordatabase         │ │
+│  │                                      │              │ │
+│  │                                      ▼              │ │
+│  │  Gebruikersvraag ────────────► RAG Retrieval       │ │
+│  │                                      │              │ │
+│  │                                      ▼              │ │
+│  │                               LLM Antwoord          │ │
+│  │                                                      │ │
+│  │  Zonder OCR zijn gescande documenten onzichtbaar   │ │
+│  │  voor semantisch zoeken en LLM's                   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoe nauwkeurig is moderne OCR?**
+
+A: Voor schone, getypte documenten: 99%+ karakternauwkeurigheid. Voor handschrift, gedegradeerde scans of ongebruikelijke lettertypen: 85-95%. Nabewerking en domeinspecifieke training verbeteren resultaten.
+
+**V: Wat is het verschil tussen OCR en document-AI?**
+
+A: OCR extraheert ruwe tekst. Document-AI voegt begrip toe—[entiteitsextractie](/nl/glossary/ner/), tabelparsing, formulierveldmapping. Document-AI-systemen bevatten OCR als één component.
+
+**V: Kan OCR handschrift aan?**
+
+A: Moderne [deep learning](/nl/glossary/deep-learning/) OCR verwerkt gedrukt handschrift redelijk goed (80-90%). Aan-elkaar-geschreven of doktershandschrift blijft uitdagend.
+
+## Gerelateerde termen
+
+- Documentverwerking — bredere documentworkflow
+- [RAG](/nl/glossary/rag/) — gebruikt OCR-output voor retrieval
+- Computer vision — onderliggende technologie
+
+---
+
+## Referenties
+
+> Smith (2007), "[An Overview of the Tesseract OCR Engine](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/33418.pdf)", ICDAR. [Fundamentele Tesseract-architectuur]
+
+> Li et al. (2022), "[PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001)", arXiv. [PaddleOCR verbeteringen]
+
+> Google Cloud (2024), "[Document AI](https://cloud.google.com/document-ai)", Google. [Enterprise documentverwerking]
+
+> AWS (2024), "[Amazon Textract](https://aws.amazon.com/textract/)", Amazon. [Formulier- en tabelextractieservice]
+
+## References
+
+> Smith (2007), "[An Overview of the Tesseract OCR Engine](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/33418.pdf)", ICDAR. [Foundational Tesseract architecture]
+
+> Li et al. (2022), "[PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001)", arXiv. [PaddleOCR advances]
+
+> Google Cloud (2024), "[Document AI](https://cloud.google.com/document-ai)", Google. [Enterprise document processing]
+
+> AWS (2024), "[Amazon Textract](https://aws.amazon.com/textract/)", Amazon. [Form and table extraction service]

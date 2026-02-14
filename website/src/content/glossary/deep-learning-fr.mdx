@@ -1,0 +1,147 @@
+---
+term: "Apprentissage Profond"
+termSlug: "deep-learning"
+short: "Un sous-ensemble du machine learning utilisant des réseaux neuronaux avec de nombreuses couches pour apprendre des représentations hiérarchiques."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["neural-network", "transformer-architecture", "backpropagation", "llm"]
+synonyms: ["Réseaux neuronaux profonds", "DNN", "Apprentissage hiérarchique", "Apprentissage de représentations"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'apprentissage profond est une branche du machine learning qui utilise des réseaux neuronaux artificiels avec plusieurs couches (d'où "profond") pour apprendre automatiquement des représentations hiérarchiques des données. Contrairement aux modèles superficiels qui nécessitent des features créées manuellement, les systèmes d'apprentissage profond apprennent des features de plus en plus abstraites à chaque couche—des contours et textures dans les images aux concepts sémantiques, ou des caractères aux mots aux phrases au sens dans le texte.
+
+## Pourquoi c'est important
+
+L'apprentissage profond a révolutionné l'IA :
+
+- **Extraction automatique de features** — pas besoin d'ingénierie manuelle
+- **Abstraction hiérarchique** — apprend des concepts à plusieurs niveaux
+- **Performance évolutive** — s'améliore avec plus de données et de calcul
+- **Transfer learning** — les modèles pré-entraînés s'adaptent aux nouvelles tâches
+- **Résultats révolutionnaires** — alimente la reconnaissance d'images, le NLP, AlphaGo, les LLMs
+
+Chaque avancée majeure en IA depuis 2012 a été pilotée par l'apprentissage profond.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   APPRENTISSAGE PROFOND                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ARCHITECTURE SUPERFICIELLE VS PROFONDE:                   │
+│  ───────────────────────────────────────                   │
+│                                                            │
+│  SUPERFICIEL (1-2 couches):     PROFOND (nombreuses):     │
+│                                                            │
+│  Entrée ──► Caché ──► Sortie    Entrée                    │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Couche 1 (bas niveau)      │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Couche 2                   │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Couche 3                   │
+│                                   │                        │
+│                                   ▼                        │
+│                                 ...                        │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Couche N (haut niveau)     │
+│                                   │                        │
+│                                   ▼                        │
+│                                 Sortie                     │
+│                                                            │
+│  APPRENTISSAGE HIÉRARCHIQUE (Exemple Image):               │
+│  ───────────────────────────────────────────               │
+│                                                            │
+│  Couche 1:  ┌───┐ ┌───┐ ┌───┐                             │
+│  (Contours) │ / │ │ ─ │ │ \ │   Détecte contours         │
+│             └───┘ └───┘ └───┘                             │
+│                   │                                        │
+│                   ▼                                        │
+│  Couche 2:  ┌─────┐ ┌─────┐                               │
+│  (Formes)   │  ○  │ │ □── │   Combine en formes          │
+│             └─────┘ └─────┘                               │
+│                   │                                        │
+│                   ▼                                        │
+│  Couche 3:  ┌───────┐ ┌───────┐                           │
+│  (Parties)  │ (◕‿◕) │ │  🦻   │   Forme parties d'objets │
+│             └───────┘ └───────┘                           │
+│                   │                                        │
+│                   ▼                                        │
+│  Couche N:  ┌─────────────────┐                           │
+│  (Objet)    │     "CHAT"      │   Reconnaît objets       │
+│             └─────────────────┘                           │
+│                                                            │
+│  ARCHITECTURES D'APPRENTISSAGE PROFOND:                    │
+│  ──────────────────────────────────────                    │
+│  CNNs:        Images, patterns spatiaux                   │
+│  RNNs/LSTMs:  Séquences, séries temporelles              │
+│  Transformers: Langage, vision (dominant aujourd'hui)     │
+│  GANs:        Tâches génératives                          │
+│  Autoencoders: Compression, débruitage                    │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Pourquoi la profondeur compte:**
+| Aspect | Réseau Superficiel | Réseau Profond |
+|--------|-------------------|----------------|
+| Apprentissage features | Manuel ou limité | Automatique, hiérarchique |
+| Abstraction | Niveau unique | Niveaux multiples |
+| Expressivité | Complexité limitée | Fonctions très complexes |
+| Efficacité données | Plus de données par feature | Apprend features réutilisables |
+
+## Questions fréquentes
+
+**Q : Combien de couches rendent un réseau "profond" ?**
+
+R : Généralement 3+ couches cachées est considéré "profond", bien que les LLMs modernes aient 32-100+ couches. Le terme est relatif—ce qui était "profond" en 2010 (5-8 couches) est superficiel aujourd'hui. La profondeur concerne l'apprentissage de représentations hiérarchiques, pas un nombre fixe.
+
+**Q : Pourquoi l'apprentissage profond a-t-il décollé en 2012 ?**
+
+R : Trois facteurs ont convergé : (1) les GPUs ont permis l'entraînement de grands réseaux, (2) de grands datasets comme ImageNet sont devenus disponibles, (3) des améliorations algorithmiques comme l'activation ReLU et le dropout ont amélioré l'entraînement. La victoire d'AlexNet sur ImageNet a démontré le potentiel.
+
+**Q : Quelle relation entre apprentissage profond et IA ?**
+
+R : L'apprentissage profond est un sous-ensemble du machine learning, qui est un sous-ensemble de l'IA. Toute l'IA n'utilise pas l'apprentissage profond (les systèmes à règles non), et tout le machine learning n'est pas profond (arbres de décision, SVMs non). Mais l'apprentissage profond alimente maintenant la plupart des systèmes IA de pointe.
+
+**Q : L'apprentissage profond peut-il résoudre tout problème ?**
+
+R : Non. L'apprentissage profond excelle en [reconnaissance de patterns](/fr/glossary/machine-learning/) avec beaucoup de données mais a du mal avec : petits datasets, raisonnement, [inférence](/fr/glossary/inference/) causale, extrapolation au-delà des données d'entraînement, et tâches nécessitant une logique symbolique explicite. C'est un outil puissant, pas une solution universelle.
+
+## Termes associés
+
+- [Réseau Neuronal](/fr/glossary/neural-network/) — le fondement de l'apprentissage profond
+- [Architecture Transformer](/fr/glossary/transformer-architecture/) — architecture profonde dominante
+- [Rétropropagation](/fr/glossary/backpropagation/) — algorithme permettant l'apprentissage profond
+- [LLM](/fr/glossary/llm/) — apprentissage profond à grande échelle pour le langage
+
+---
+
+## Références
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40 000+ [citations](/fr/glossary/citation/)]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Manuel complet]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - a déclenché la révolution deep learning]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15 000+ citations]
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [Comprehensive textbook]
+
+> Krizhevsky et al. (2012), "[ImageNet Classification with Deep CNNs](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)", NeurIPS. [AlexNet - sparked deep learning revolution]
+
+> Bengio et al. (2013), "[Representation Learning: A Review](https://arxiv.org/abs/1206.5538)", IEEE TPAMI. [15,000+ citations]

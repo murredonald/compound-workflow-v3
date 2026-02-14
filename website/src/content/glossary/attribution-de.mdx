@@ -1,0 +1,218 @@
+---
+term: "Attribution"
+termSlug: "attribution"
+short: "Die KI-Fähigkeit, generierte Aussagen mit spezifischen Quellbelegen zu verknüpfen und festzustellen, welche Teile der Ausgabe von welchen Dokumenten gestützt werden."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["citation", "grounding", "rag", "factuality"]
+synonyms: ["Quellenattribution", "Beweisverknüpfung", "Aussagen-Attribution"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Attribution in KI-Systemen bezeichnet den Prozess der Herstellung expliziter Verbindungen zwischen generierten Aussagen und ihren unterstützenden Belegen. Während Zitation Referenzen zu Antworten hinzufügt, geht Attribution tiefer—sie bestimmt, ob eine spezifische Aussage tatsächlich von der zitierten Quelle impliziert (logisch gestützt) wird. Ein gut attributiertes KI-System kann "Welcher Beleg stützt diese Aussage?" für jede faktische Behauptung beantworten. Attribution ist entscheidend für [vertrauenswürdige KI](/de/glossary/responsible-ai/), da sie Verifikation ermöglicht und die Illusion von Grounding verhindert.
+
+## Warum es wichtig ist
+
+Attribution ist essentiell für verantwortungsvolle KI:
+
+- **Verhindert falsches Grounding** — stellt sicher, dass Quellen Aussagen tatsächlich stützen
+- **Ermöglicht Auditing** — jede Aussage zu spezifischem Beleg nachverfolgbar
+- **Unterstützt Compliance** — regulatorische Anforderungen an Entscheidungstransparenz
+- **Baut Vertrauen** — Benutzer können Argumentationskette verifizieren
+- **Fängt Halluzinationen** — nicht-attributierte Aussagen werden markiert
+- **Verbessert Zuverlässigkeit** — zwingt Modell bei Quellen zu bleiben
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      ATTRIBUTION                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ZITATION vs ATTRIBUTION:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  NUR ZITATION (kann oberflächlich sein):                  │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Antwort: "Die Deadline ist 15. Jan [1]"           │ │
+│  │  Quelle [1]: "Q4-Planung sollte bis Dez fertig sein"│ │
+│  │                                                      │ │
+│  │  ⚠️ Zitation existiert, stützt Aussage aber nicht! │ │
+│  │  Die Quelle sagt nichts über 15. Januar Deadline.  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  KORREKTE ATTRIBUTION:                                     │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Antwort: "Die Deadline ist 15. Jan [1]"           │ │
+│  │  Quelle [1]: "Finale Liefergegenstände bis 15. Jan" │ │
+│  │                                                      │ │
+│  │  ✓ Attribution verifiziert: Quelle impliziert Aussage│ │
+│  │  Die Quelle nennt explizit die Deadline.           │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIONS-KLASSIFIKATION:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  Für jedes Aussage + zitierte Quelle Paar:               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  ATTRIBUTIERBAR (Quelle stützt Aussage):           │ │
+│  │  ├── Exakte Übereinstimmung: gleiche Worte         │ │
+│  │  ├── Paraphrase: Aussage reformuliert Quellsinn    │ │
+│  │  └── Inferenz: Aussage folgt logisch aus Quelle    │ │
+│  │                                                      │ │
+│  │  NICHT ATTRIBUTIERBAR (Quelle stützt nicht):       │ │
+│  │  ├── Irrelevant: Quelle bespricht anderes Thema    │ │
+│  │  ├── Widersprochen: Quelle sagt Gegenteil          │ │
+│  │  ├── Extrapoliert: Aussage geht über Quelle hinaus │ │
+│  │  └── Fabriziert: keine Quellenbeziehung            │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIONS-PIPELINE:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. AUSSAGEN-EXTRAKTION                              │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Antwort: "Umsatz wuchs 15% [1] und Markt- │   │ │
+│  │  │  anteil stieg auf 23% [2] in Q4."           │   │ │
+│  │  │                                              │   │ │
+│  │  │  Extrahierte Aussagen:                       │   │ │
+│  │  │  • Aussage A: "Umsatz wuchs 15%" [zitiert 1]│   │ │
+│  │  │  • Aussage B: "Marktanteil ist 23%" [zit. 2]│   │ │
+│  │  │  • Aussage C: "Das war in Q4" [zitiert ?]   │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  2. QUELLEN-ABRUF                                   │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │  Quelle [1]: "FY24 sah Umsatzwachstum von   │   │ │
+│  │  │              15,2% verglichen mit Vorjahr"  │   │ │
+│  │  │                                              │   │ │
+│  │  │  Quelle [2]: "Marktanteil erreichte 22,8%   │   │ │
+│  │  │              Ende des Geschäftsjahres"      │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                     │                               │ │
+│  │                     ▼                               │ │
+│  │  3. IMPLIKATIONS-VERIFIZIERUNG                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Aussage A: "Umsatz wuchs 15%"              │   │ │
+│  │  │  Quelle 1: "Umsatzwachstum von 15,2%"       │   │ │
+│  │  │  → ATTRIBUTIERBAR ✓ (15% ≈ 15,2%)          │   │ │
+│  │  │                                              │   │ │
+│  │  │  Aussage B: "Marktanteil ist 23%"           │   │ │
+│  │  │  Quelle 2: "Marktanteil erreichte 22,8%"    │   │ │
+│  │  │  → ATTRIBUTIERBAR ✓ (23% ≈ 22,8%)          │   │ │
+│  │  │                                              │   │ │
+│  │  │  Aussage C: "Das war in Q4"                 │   │ │
+│  │  │  Quellen: erwähnen "FY" und "Geschäftsjahr" │   │ │
+│  │  │  → NICHT ATTRIBUTIERBAR ⚠️ (Q4 nicht erw.)│   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIONS-METHODEN:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  NLI-basiert (Natural Language Inference):                │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  NLI-Modell zur Klassifizierung:                    │ │
+│  │  Prämisse: [Quelltext]                               │ │
+│  │  Hypothese: [Aussage]                                │ │
+│  │                                                      │ │
+│  │  → Implikation: Quelle stützt Aussage ✓            │ │
+│  │  → Neutral: Quelle adressiert Aussage nicht        │ │
+│  │  → Widerspruch: Quelle widerspricht ✗              │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  LLM-basierte Verifikation:                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Prompt LLM:                                         │ │
+│  │  "Stützt diese Quelle diese Aussage?               │ │
+│  │                                                      │ │
+│  │   Quelle: [Quelltext]                               │ │
+│  │   Aussage: [Aussagentext]                           │ │
+│  │                                                      │ │
+│  │   Antwort: Gestützt / Nicht gestützt"              │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ATTRIBUTIONS-METRIKEN:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Metrik            │  Formel                        │ │
+│  │  ──────────────────┼─────────────────────────────── │ │
+│  │  Attributions-     │  # attributierte Aussagen      │ │
+│  │  Präzision         │  ─────────────────────         │ │
+│  │                    │  # Aussagen mit Zitationen     │ │
+│  │                    │                                 │ │
+│  │  Attributions-     │  # attributierte Aussagen      │ │
+│  │  Recall            │  ─────────────────────         │ │
+│  │                    │  # gesamt faktische Aussagen   │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich Attribution von Zitation?**
+
+A: Zitation fügt Referenzen hinzu; Attribution verifiziert sie. Eine Antwort kann perfekte Zitationen haben (jede Aussage hat [1], [2], [3]) aber schlechte Attribution (zitierte Quellen stützen Aussagen nicht tatsächlich). Attribution ist die Qualitätsprüfung auf Zitationen.
+
+**F: Wie implementiere ich Attributionsverifikation?**
+
+A: Gängige Ansätze: (1) NLI-Modelle, die Prämisse-Hypothese-Paare klassifizieren, (2) [LLM](/de/glossary/llm/)-als-Richter-Prompting zur Verifizierung von Quelle-Aussage-Unterstützung, (3) Menschliche Bewertung für kritische Anwendungen.
+
+**F: Muss jede Aussage attributiert sein?**
+
+A: Faktische Aussagen, die Belege erfordern, sollten attributiert sein. Allgemeinwissen, logische Inferenzen aus attributierten Fakten und Meinungen/Analysen benötigen keine Attribution.
+
+**F: Was ist ein akzeptabler Attributionswert?**
+
+A: Hängt von der Anwendung ab. Kritische Bereiche (juristisch, medizinisch) sollten 95%+ anstreben. Allgemeine Wissensassistenten akzeptieren möglicherweise 80-90%.
+
+## Verwandte Begriffe
+
+- [Zitation](/de/glossary/citation/) — Quellenreferenzen hinzufügen
+- [Grounding](/de/glossary/grounding/) — an Quellen verankern
+- [Faktizität](/de/glossary/factuality/) — Genauigkeit von Aussagen
+- [RAG](/de/glossary/rag/) — Retrieval ermöglicht Attribution
+
+---
+
+## Referenzen
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [AIS-Metrik und Attributionsbewertung]
+
+> Bohnet et al. (2022), "[Attributed Question Answering](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA Framework]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [LLM-basierte Attributionsbewertung]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Attributions-basierte Revision]
+
+## References
+
+> Rashkin et al. (2023), "[Measuring Attribution in Natural Language Generation Models](https://arxiv.org/abs/2112.12870)", ACL. [AIS metric and attribution evaluation]
+
+> Bohnet et al. (2022), "[Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models](https://arxiv.org/abs/2212.08037)", arXiv. [Attributed QA framework]
+
+> Yue et al. (2023), "[Automatic Evaluation of Attribution by Large Language Models](https://arxiv.org/abs/2305.06311)", EMNLP. [LLM-based attribution evaluation]
+
+> Gao et al. (2023), "[RARR: Researching and Revising What Language Models Say](https://arxiv.org/abs/2210.08726)", ACL. [Attribution-based revision]

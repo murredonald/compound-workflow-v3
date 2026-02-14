@@ -1,0 +1,182 @@
+---
+term: "Wissensdestillation"
+termSlug: "distillation"
+short: "Training eines kleineren Schüler-Modells, um ein größeres Lehrer-Modell nachzuahmen, Wissenstransfer bei drastisch reduzierter Größe und Kosten."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["model-compression", "fine-tuning", "transfer-learning", "llm"]
+synonyms: ["Modelldestillation", "Lehrer-Schüler-Lernen", "Wissenstransfer"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Wissensdestillation ist eine Modellkomprimierungstechnik, bei der ein kleineres "Schüler"-Modell trainiert wird, das Verhalten eines größeren "Lehrer"-Modells zu replizieren. Anstatt von harten Labels (0 oder 1) zu lernen, lernt der Schüler von den weichen Wahrscheinlichkeitsverteilungen des Lehrers, die reichere Informationen über Beziehungen zwischen Klassen enthalten. Dies überträgt das gelernte Wissen des Lehrers auf ein Modell, das 10-100x kleiner sein kann, während 90-99% der Leistung erhalten bleibt.
+
+## Warum es wichtig ist
+
+Destillation ermöglicht KI-Deployment im großen Maßstab:
+
+- **Dramatische Größenreduzierung** — komprimiere 175B-Modelle auf 7B mit ähnlichen Fähigkeiten
+- **Schnellere [Inferenz](/de/glossary/inference/)** — kleinere Modelle laufen schneller und günstiger
+- **Edge-Deployment** — bringe die Intelligenz großer Modelle auf Geräte
+- **Kosteneffizienz** — bediene Millionen von Nutzern erschwinglich
+- **Datenschutz** — führe Modelle lokal aus ohne Daten in die Cloud zu senden
+
+Destillation ist, wie Unternehmen wie OpenAI und Anthropic effiziente Produktionsmodelle erstellen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  WISSENSDESTILLATION                       │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE SCHLÜSSELERKENNTNIS:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  Weiche Labels sind informativer als harte Labels!         │
+│                                                            │
+│  Klassifikationsbeispiel (ist es Katze, Hund oder Auto?):  │
+│                                                            │
+│  Hartes Label: [1, 0, 0]  ← "Es ist eine Katze, Punkt"    │
+│  Weiches Label:[0.7, 0.25, 0.05]                          │
+│                 ↑     ↑      ↑                             │
+│               Katze Hund   Auto                            │
+│                                                            │
+│  Das weiche Label sagt: "Es ist wahrscheinlich eine Katze,│
+│  hat aber hundeartige Merkmale. Definitiv kein Auto."     │
+│                                                            │
+│  Diese BEZIEHUNGS-Info hilft dem Schüler zu lernen!       │
+│                                                            │
+│                                                            │
+│  DESTILLATIONS-ARCHITEKTUR:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│                 ┌───────────────────┐                     │
+│                 │   Lehrer-Modell   │                     │
+│                 │   (Groß: 175B)    │                     │
+│                 │   [EINGEFROREN]   │                     │
+│                 └─────────┬─────────┘                     │
+│                           │                                │
+│                           │ Weiche Vorhersagen             │
+│                           │ (Wahrscheinlichkeitsvert.)    │
+│                           ▼                                │
+│              ┌────────────────────────┐                   │
+│    Input ───►│   Destillations-Loss   │                   │
+│              │  KL(Schüler || Lehrer)  │                   │
+│              │  + α × CrossEntropy     │                   │
+│              └────────────┬───────────┘                   │
+│                           │                                │
+│                           │ Gradienten                     │
+│                           ▼                                │
+│                 ┌───────────────────┐                     │
+│                 │  Schüler-Modell   │                     │
+│                 │   (Klein: 7B)     │                     │
+│                 │   [TRAINING]      │                     │
+│                 └───────────────────┘                     │
+│                                                            │
+│                                                            │
+│  TEMPERATUR-GLÄTTUNG:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  Problem: Modell-Outputs sind oft zu selbstsicher         │
+│                                                            │
+│  Ohne Temperatur (T=1):                                   │
+│  [0.99, 0.009, 0.001]  ← Fast keine Beziehungs-Info       │
+│                                                            │
+│  Mit hoher Temperatur (T=5):                              │
+│  [0.65, 0.25, 0.10]    ← Reiche relationale Information   │
+│                                                            │
+│  Formel: softmax(logits / T)                              │
+│                                                            │
+│  Höheres T → weichere Verteilungen → mehr Wissenstransfer │
+│                                                            │
+│                                                            │
+│  DESTILLATION FÜR LLMs:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │                                                       │ │
+│  │  Lehrer (GPT-4):     "Was ist 2+2?"                  │ │
+│  │  Antwort:            "Die Antwort ist 4. Addition..."│ │
+│  │                                                       │ │
+│  │  Schüler lernt:                                       │ │
+│  │  1. Output-Verteilung des Lehrers zu matchen          │ │
+│  │  2. Ähnliche Textqualität zu generieren               │ │
+│  │  3. Ähnliche Denkmuster zu zeigen                     │ │
+│  │                                                       │ │
+│  │  Methoden:                                            │ │
+│  │  • Token-Ebene Destillation (match next-token probs) │ │
+│  │  • Sequenz-Ebene (match vollständige Antwort-Prob.)  │ │
+│  │  • Feature-Ebene (match interne Repräsentationen)    │ │
+│  │                                                       │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BERÜHMTE DESTILLIERTE MODELLE:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  • DistilBERT: 40% kleiner, 60% schneller, 97% Leistung  │
+│  • TinyBERT: 7x kleiner, 9x schneller                    │
+│  • Alpaca: Destilliert von GPT-3.5 mit 52K Beispielen    │
+│  • Vicuna: Destilliert von ChatGPT-Gesprächen            │
+│  • Phi-Modelle: Klein aber über Gewichtsklasse           │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Destillations-Effizienz:**
+| Modell | Original | Destilliert | Erhaltene Leistung |
+|--------|----------|-------------|-------------------|
+| BERT-base | 110M | DistilBERT 66M | 97% |
+| GPT-3 | 175B | Alpaca 7B | ~85% |
+| LLaMA 65B | 65B | Vicuna 13B | ~90% |
+
+## Häufige Fragen
+
+**F: Ist Destillation dasselbe wie Fine-Tuning?**
+
+A: Nein. Fine-Tuning aktualisiert die Gewichte eines Modells auf neuen Daten. Destillation trainiert ein anderes (normalerweise kleineres) Modell, um das Verhalten eines anderen Modells nachzuahmen. Sie können kombiniert werden: erst ein großes Modell in ein kleineres destillieren, dann das kleine Modell für spezifische Aufgaben fine-tunen.
+
+**F: Kann ich jedes Modell in jedes andere Modell destillieren?**
+
+A: Die Schüler-Architektur muss nicht mit der des Lehrers übereinstimmen, aber ähnliche Architekturen funktionieren oft besser. Der Schüler muss genug Kapazität haben, um das Verhalten des Lehrers zu lernen—ein winziges Modell kann nicht alles erfassen, was ein riesiges Modell weiß. Typischerweise sind Schüler 5-20x kleiner als Lehrer.
+
+**F: Ist das Destillieren von ChatGPT/GPT-4 legal?**
+
+A: Es ist kompliziert. OpenAIs Nutzungsbedingungen verbieten die Verwendung von Outputs zum Training konkurrierender Modelle. Allerdings existieren viele Open-Source destillierte Modelle. Die rechtliche Landschaft entwickelt sich. Für kommerzielle Nutzung prüfen Sie die spezifischen Bedingungen des Lehrer-Modells.
+
+**F: Wie viele Daten brauche ich für Destillation?**
+
+A: Weniger als Training from scratch, aber mehr als Fine-Tuning. Für LLM-Destillation sind 10K-1M Beispiele typisch. Qualität zählt mehr als Quantität—diverse, hochwertige Lehrer-Outputs produzieren bessere Schüler.
+
+## Verwandte Begriffe
+
+- [Model compression](/de/glossary/model-compression/) — breitere Kategorie einschließlich Destillation
+- [Fine-tuning](/de/glossary/fine-tuning/) — verwandte aber andere Technik
+- Transfer learning — zugrundeliegendes Konzept
+- [LLM](/de/glossary/llm/) — Modelle, die häufig destilliert werden
+
+---
+
+## Referenzen
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Grundlegendes Destillations-Paper]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Praktische BERT-Destillation]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Effizientes LLM-Training einschließlich Destillationskonzepte]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [LLM-Destillation von GPT-3.5]
+
+## References
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Foundational distillation paper]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Practical BERT distillation]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Efficient LLM training including distillation concepts]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [LLM distillation from GPT-3.5]

@@ -1,0 +1,172 @@
+---
+term: "Knowledge Distillation"
+termSlug: "distillation"
+short: "Training a smaller student model to mimic a larger teacher model, transferring knowledge while dramatically reducing size and cost."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["model-compression", "fine-tuning", "transfer-learning", "llm"]
+synonyms: ["Model distillation", "Teacher-student learning", "Knowledge transfer"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Knowledge distillation is a model compression technique where a smaller "student" model is trained to replicate the behavior of a larger "teacher" model. Rather than learning from hard labels (0 or 1), the student learns from the teacher's soft probability distributions, which contain richer information about relationships between classes. This transfers the teacher's learned knowledge to a model that can be 10-100x smaller while retaining 90-99% of the performance.
+
+## Why it matters
+
+Distillation enables deploying AI at scale:
+
+- **Dramatic size reduction** — compress 175B models to 7B with similar capabilities
+- **Faster [inference](/en/glossary/inference/)** — smaller models run faster and cheaper
+- **Edge deployment** — bring large model intelligence to devices
+- **Cost efficiency** — serve millions of users affordably
+- **Privacy** — run models locally without sending data to cloud
+
+Distillation is how companies like OpenAI and Anthropic create efficient production models.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  KNOWLEDGE DISTILLATION                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE KEY INSIGHT:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Soft labels are more informative than hard labels!        │
+│                                                            │
+│  Classification example (is it a cat, dog, or car?):       │
+│                                                            │
+│  Hard label:  [1, 0, 0]  ← "It's a cat, period"           │
+│  Soft label:  [0.7, 0.25, 0.05]                           │
+│               ↑     ↑      ↑                               │
+│             cat   dog    car                               │
+│                                                            │
+│  The soft label says: "It's probably a cat, but has        │
+│  some dog-like features. Definitely not a car."            │
+│                                                            │
+│  This RELATIONSHIP information helps the student learn!    │
+│                                                            │
+│                                                            │
+│  DISTILLATION ARCHITECTURE:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│                 ┌───────────────────┐                     │
+│                 │   Teacher Model   │                     │
+│                 │   (Large: 175B)   │                     │
+│                 │   [FROZEN]        │                     │
+│                 └─────────┬─────────┘                     │
+│                           │                                │
+│                           │ Soft predictions               │
+│                           │ (probability distributions)    │
+│                           ▼                                │
+│              ┌────────────────────────┐                   │
+│    Input ───►│    Distillation Loss   │                   │
+│              │  KL(student || teacher) │                   │
+│              │  + α × CrossEntropy     │                   │
+│              └────────────┬───────────┘                   │
+│                           │                                │
+│                           │ Gradients                      │
+│                           ▼                                │
+│                 ┌───────────────────┐                     │
+│                 │   Student Model   │                     │
+│                 │   (Small: 7B)     │                     │
+│                 │   [TRAINING]      │                     │
+│                 └───────────────────┘                     │
+│                                                            │
+│                                                            │
+│  TEMPERATURE SOFTENING:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  Problem: Model outputs are often too confident           │
+│                                                            │
+│  Without temperature (T=1):                                │
+│  [0.99, 0.009, 0.001]  ← Almost no info about relations   │
+│                                                            │
+│  With high temperature (T=5):                             │
+│  [0.65, 0.25, 0.10]    ← Rich relational information      │
+│                                                            │
+│  Formula: softmax(logits / T)                             │
+│                                                            │
+│  Higher T → softer distributions → more knowledge transfer │
+│                                                            │
+│                                                            │
+│  DISTILLATION FOR LLMs:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │                                                       │ │
+│  │  Teacher (GPT-4):    "What is 2+2?"                  │ │
+│  │  Response:           "The answer is 4. Addition..."  │ │
+│  │                                                       │ │
+│  │  Student learns to:                                   │ │
+│  │  1. Match teacher's output distribution               │ │
+│  │  2. Generate similar text quality                     │ │
+│  │  3. Exhibit similar reasoning patterns                │ │
+│  │                                                       │ │
+│  │  Methods:                                             │ │
+│  │  • Token-level distillation (match next-token probs) │ │
+│  │  • Sequence-level (match full response likelihood)   │ │
+│  │  • Feature-level (match internal representations)    │ │
+│  │                                                       │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FAMOUS DISTILLED MODELS:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  • DistilBERT: 40% smaller, 60% faster, 97% performance  │
+│  • TinyBERT: 7x smaller, 9x faster                       │
+│  • Alpaca: Distilled from GPT-3.5 using 52K examples     │
+│  • Vicuna: Distilled from ChatGPT conversations          │
+│  • Phi models: Small but punches above weight class      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Distillation efficiency:**
+| Model | Original | Distilled | Performance Retained |
+|-------|----------|-----------|---------------------|
+| BERT-base | 110M | DistilBERT 66M | 97% |
+| GPT-3 | 175B | Alpaca 7B | ~85% |
+| LLaMA 65B | 65B | Vicuna 13B | ~90% |
+
+## Common questions
+
+**Q: Is distillation the same as fine-tuning?**
+
+A: No. Fine-tuning updates a model's weights on new data. Distillation trains a different (usually smaller) model to mimic another model's behavior. You can combine them: first distill a large model into a smaller one, then fine-tune the small model for specific tasks.
+
+**Q: Can I distill any model into any other model?**
+
+A: The student architecture doesn't need to match the teacher's, but similar architectures often work better. The student must have enough capacity to learn the teacher's behavior—a tiny model can't capture everything a giant model knows. Typically, students are 5-20x smaller than teachers.
+
+**Q: Is distilling from ChatGPT/GPT-4 legal?**
+
+A: It's complicated. OpenAI's terms of service prohibit using outputs to train competing models. However, many open-source distilled models exist. The legal landscape is evolving. For commercial use, check the specific terms of the teacher model you're using.
+
+**Q: How much data do I need for distillation?**
+
+A: Less than training from scratch, but more than fine-tuning. For LLM distillation, 10K-1M examples is typical. Quality matters more than quantity—diverse, high-quality teacher outputs produce better students. Self-instruct and synthetic data generation help scale distillation data affordably.
+
+## Related terms
+
+- [Model compression](/en/glossary/model-compression/) — broader category including distillation
+- [Fine-tuning](/en/glossary/fine-tuning/) — related but different technique
+- Transfer learning — underlying concept
+- [LLM](/en/glossary/llm/) — models commonly distilled
+
+---
+
+## References
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Foundational distillation paper]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Practical BERT distillation]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Efficient LLM training including distillation concepts]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [LLM distillation from GPT-3.5]

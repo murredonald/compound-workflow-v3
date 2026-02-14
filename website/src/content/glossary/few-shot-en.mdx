@@ -1,0 +1,250 @@
+---
+term: "Few-Shot Learning"
+termSlug: "few-shot"
+short: "A machine learning paradigm where models learn to perform tasks from just a handful of examples, enabling rapid adaptation without extensive retraining or fine-tuning."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["zero-shot", "in-context-learning", "chain-of-thought", "prompt-engineering"]
+synonyms: ["Few-shot prompting", "K-shot learning", "Low-shot learning"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Few-shot learning is a machine learning approach where models perform tasks after seeing only a small number of examples (typically 1-10). In the context of [large language models](/en/glossary/llm/), few-shot learning is achieved through in-context learning: demonstrations are provided in the [prompt](/en/glossary/prompt/), and the model infers the pattern to apply to new inputs. This contrasts with traditional machine learning requiring thousands of training examples, enabling rapid task adaptation without weight updates or [fine-tuning](/en/glossary/fine-tuning/).
+
+## Why it matters
+
+Few-shot learning revolutionizes AI deployment:
+
+- **No training required** — adapt models instantly via prompting
+- **Data efficiency** — works with minimal labeled examples
+- **Rapid prototyping** — test ideas without ML infrastructure
+- **Cost reduction** — avoid expensive fine-tuning compute
+- **Flexibility** — same model handles diverse tasks
+- **Accessibility** — non-ML experts can customize behavior
+
+Few-shot prompting makes LLMs practical for thousands of niche applications.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    FEW-SHOT LEARNING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  LEARNING PARADIGM COMPARISON:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌────────────────┬───────────────────────────────────┐  │
+│  │ Paradigm       │ Examples Needed                    │  │
+│  ├────────────────┼───────────────────────────────────┤  │
+│  │ Traditional ML │ 10,000 - 1,000,000+ (training)    │  │
+│  │ Fine-tuning    │ 100 - 10,000 (training)           │  │
+│  │ Few-shot       │ 2 - 10 (in prompt, no training)   │  │
+│  │ One-shot       │ 1 (in prompt, no training)        │  │
+│  │ Zero-shot      │ 0 (just instructions)             │  │
+│  └────────────────┴───────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  FEW-SHOT PROMPT STRUCTURE:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  [Optional: Task description/instruction]           │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Example 1:                                   │   │ │
+│  │  │ Input: "The movie was absolutely fantastic" │   │ │
+│  │  │ Output: Positive                            │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Example 2:                                   │   │ │
+│  │  │ Input: "Terrible waste of time"             │   │ │
+│  │  │ Output: Negative                            │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ Example 3:                                   │   │ │
+│  │  │ Input: "It was okay, nothing special"       │   │ │
+│  │  │ Output: Neutral                             │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │ NEW INPUT (to be classified):               │   │ │
+│  │  │ Input: "Best purchase I ever made!"        │   │ │
+│  │  │ Output: ???                                 │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  Model completes: "Positive" ✓                      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  HOW FEW-SHOT WORKS (Pattern Recognition):                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  Input prompt with examples:                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Ex 1: "happy day" → Joy                             │ │
+│  │ Ex 2: "so angry"  → Anger                           │ │
+│  │ Ex 3: "feeling scared" → Fear                       │ │
+│  │ New: "love this" → ???                              │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                        │                                   │
+│                        ↓                                   │
+│           ┌────────────────────────┐                      │
+│           │   Model's Processing   │                      │
+│           ├────────────────────────┤                      │
+│           │ 1. Recognizes pattern: │                      │
+│           │    "text" → emotion    │                      │
+│           │                        │                      │
+│           │ 2. Extracts format:    │                      │
+│           │    Output is single    │                      │
+│           │    emotion word        │                      │
+│           │                        │                      │
+│           │ 3. Applies pattern:    │                      │
+│           │    "love" → positive   │ │
+│           │    emotion = Joy/Love  │                      │
+│           └────────────────────────┘                      │
+│                        │                                   │
+│                        ↓                                   │
+│              Output: "Joy" (or "Love")                    │
+│                                                            │
+│                                                            │
+│  EXAMPLE SELECTION MATTERS:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  BAD few-shot examples:                                    │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Ex 1: "great movie" → Positive                      │ │
+│  │ Ex 2: "great food" → Positive                       │ │
+│  │ Ex 3: "great book" → Positive  ← All same class!   │ │
+│  │                                                      │ │
+│  │ Problem: Model doesn't learn what "negative" looks  │ │
+│  │ like, may default to "Positive" for everything      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  GOOD few-shot examples:                                   │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │ Ex 1: "loved it" → Positive     ← Covers positive  │ │
+│  │ Ex 2: "hated it" → Negative     ← Covers negative  │ │
+│  │ Ex 3: "it's okay" → Neutral     ← Covers neutral   │ │
+│  │ Ex 4: "amazing!" → Positive     ← Short input      │ │
+│  │ Ex 5: "worst ever" → Negative   ← Edge case        │ │
+│  │                                                      │ │
+│  │ ✓ Balanced classes                                  │ │
+│  │ ✓ Varied input lengths                              │ │
+│  │ ✓ Edge cases included                               │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  FEW-SHOT VS FINE-TUNING:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────┬─────────────┬───────────────────┐   │
+│  │ Aspect          │ Few-Shot    │ Fine-Tuning       │   │
+│  ├─────────────────┼─────────────┼───────────────────┤   │
+│  │ Examples needed │ 2-10        │ 100-10,000        │   │
+│  │ Compute cost    │ $0 (API)    │ $10-$10,000+      │   │
+│  │ Setup time      │ Minutes     │ Hours-Days        │   │
+│  │ Flexibility     │ High        │ Task-specific     │   │
+│  │ Max accuracy    │ Good        │ Better            │   │
+│  │ Latency         │ Higher      │ Lower (smaller)   │   │
+│  │ Expertise       │ Low         │ Medium-High       │   │
+│  └─────────────────┴─────────────┴───────────────────┘   │
+│                                                            │
+│  When to use few-shot:                                     │
+│  • Quick prototyping and testing                          │
+│  • Limited training data available                        │
+│  • Many different tasks needed                            │
+│  • Cost constraints                                        │
+│                                                            │
+│  When to fine-tune:                                        │
+│  • Maximum accuracy required                              │
+│  • High-volume production use                             │
+│  • Specific domain expertise needed                       │
+│  • Latency critical                                        │
+│                                                            │
+│                                                            │
+│  CODE EXAMPLE:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  # Few-shot sentiment classification                       │
+│  prompt = """Classify the sentiment as Positive,          │
+│  Negative, or Neutral.                                     │
+│                                                            │
+│  Text: "This product exceeded my expectations"            │
+│  Sentiment: Positive                                       │
+│                                                            │
+│  Text: "Complete waste of money"                          │
+│  Sentiment: Negative                                       │
+│                                                            │
+│  Text: "It works as described"                            │
+│  Sentiment: Neutral                                        │
+│                                                            │
+│  Text: "Absolutely love it, best purchase ever!"          │
+│  Sentiment:"""                                             │
+│                                                            │
+│  # Model completes with "Positive"                        │
+│                                                            │
+│                                                            │
+│  # Few-shot entity extraction                              │
+│  prompt = """Extract the product and price.               │
+│                                                            │
+│  Text: "The iPhone 15 costs $999"                         │
+│  Product: iPhone 15                                        │
+│  Price: $999                                               │
+│                                                            │
+│  Text: "MacBook Air for $1,299"                           │
+│  Product: MacBook Air                                      │
+│  Price: $1,299                                             │
+│                                                            │
+│  Text: "Galaxy S24 Ultra is priced at $1,199"             │
+│  Product:"""                                               │
+│                                                            │
+│  # Model extracts Product and Price                       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How many examples should I include in few-shot prompts?**
+
+A: Typically 3-5 examples provide good results. More examples (up to 10-20) can improve accuracy but increase cost and latency. Diminishing returns set in around 5-10 examples for most tasks. Use the minimum needed to demonstrate the pattern clearly, covering all output classes and edge cases.
+
+**Q: How do I select which examples to include?**
+
+A: Choose diverse, representative examples covering all classes/patterns. Include edge cases. For classification, balance examples across all categories. Consider using examples similar to expected inputs ([semantic similarity](/en/glossary/semantic-similarity/) to test cases improves performance). Avoid redundant examples that don't add new information.
+
+**Q: Does example order matter in few-shot prompts?**
+
+A: Yes, order can significantly impact results. Recent research shows: (1) place most relevant examples closer to the query, (2) recency bias means last examples have more influence, (3) for classification, interleave classes rather than grouping. Experiment with ordering for your specific task.
+
+**Q: Can few-shot learning fail?**
+
+A: Yes. Common failures: (1) task too complex for [pattern recognition](/en/glossary/machine-learning/), (2) examples don't represent actual distribution, (3) ambiguous examples confuse the model, (4) prompt too long hits context limits. When few-shot fails consistently, consider fine-tuning or breaking the task into simpler subtasks.
+
+## Related terms
+
+- [Zero-shot learning](/en/glossary/zero-shot/) — performing tasks without examples
+- [In-context learning](/en/glossary/in-context-learning/) — learning mechanism behind few-shot
+- [Chain-of-thought](/en/glossary/chain-of-thought/) — few-shot with reasoning traces
+- Prompt engineering — crafting effective prompts
+
+---
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [GPT-3 few-shot capabilities paper]
+
+> Liu et al. (2021), "[What Makes Good In-Context Examples for GPT-3?](https://arxiv.org/abs/2101.06804)", DeeLIO Workshop. [Example selection strategies]
+
+> Min et al. (2022), "[Rethinking the Role of Demonstrations](https://arxiv.org/abs/2202.12837)", EMNLP. [Analysis of few-shot mechanics]
+
+> Lu et al. (2022), "[Fantastically Ordered Prompts and Where to Find Them](https://arxiv.org/abs/2104.08786)", ACL. [Example ordering effects]

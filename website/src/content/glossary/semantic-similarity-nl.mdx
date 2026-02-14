@@ -1,0 +1,115 @@
+---
+term: "Semantische Gelijkenis"
+termSlug: "semantic-similarity"
+short: "Een maat voor hoe vergelijkbaar twee stukken tekst zijn qua betekenis, ongeacht de specifieke woorden die worden gebruikt."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["embeddings", "cosine-similarity", "semantic-search", "vector-database"]
+synonyms: ["Betekenisgelijkenis", "Conceptuele gelijkenis", "Tekstgelijkenis"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Semantische gelijkenis meet hoe dicht twee teksten qua betekenis bij elkaar liggen, niet alleen qua woordoverlap. In tegenstelling tot keyword-matching vangt het op dat "auto" en "automobiel" vergelijkbaar zijn, of dat "belastingaftrekregels" gerelateerd is aan "fiscale vrijstellingsrichtlijnen." Dit wordt typisch berekend door vectorembeddings van tekst te vergelijken met afstandsmetrieken.
+
+## Waarom het belangrijk is
+
+Semantische gelijkenis maakt betekenisgebaseerd begrip in AI-systemen mogelijk:
+
+- **Voorbij keywords** — vindt relevante content zelfs met andere terminologie
+- **Zoekkwaliteit** — drijft semantisch zoeken en [RAG](/nl/glossary/rag/)-retrieval aan
+- **[Deduplicatie](/nl/glossary/deduplication/)** — identificeert semantisch vergelijkbare documenten of issues
+- **Content matching** — maakt aanbevelingssystemen en Q&A-paren mogelijk
+- **Meertalig** — kan betekenis over talen matchen met de juiste modellen
+
+Het is de basis van hoe moderne AI-systemen tekst begrijpen en vergelijken.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│            SEMANTISCHE GELIJKENIS BEREKENING               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TEKST A: "De automobiel heeft brandstof nodig"            │
+│  TEKST B: "De auto heeft benzine nodig"                    │
+│                                                            │
+│           │                           │                    │
+│           ▼                           ▼                    │
+│  ┌─────────────────┐        ┌─────────────────┐            │
+│  │ EMBEDDING MODEL │        │ EMBEDDING MODEL │            │
+│  │  (BERT, etc.)   │        │  (Zelfde model) │            │
+│  └────────┬────────┘        └────────┬────────┘            │
+│           │                          │                     │
+│           ▼                          ▼                     │
+│     Vector A                    Vector B                   │
+│   [0.23, 0.87, ...]          [0.21, 0.89, ...]             │
+│           │                          │                     │
+│           └──────────┬───────────────┘                     │
+│                      ▼                                     │
+│         ┌─────────────────────────┐                        │
+│         │   GELIJKENISMETRIEK     │                        │
+│         │   • Cosinus-gelijkenis  │                        │
+│         │   • Euclidische afstand │                        │
+│         │   • Dotproduct          │                        │
+│         └───────────┬─────────────┘                        │
+│                     ▼                                      │
+│              Gelijkenisscore                               │
+│                  0.94                                      │
+│           (Hoog = Zeer Gelijkend)                          │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Belangrijke componenten:**
+1. **Tekstcodering** — converteer beide teksten naar embeddings met hetzelfde model
+2. **Vectorvergelijking** — pas een gelijkenismetriek toe op het embeddingpaar
+3. **Score-interpretatie** — hogere scores (typisch 0-1) duiden op grotere gelijkenis
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen semantische en lexicale gelijkenis?**
+
+A: Lexicale gelijkenis vergelijkt exacte woorden (stringmatching). Semantische gelijkenis vergelijkt betekenis. "Groot" en "omvangrijk" hebben lage lexicale gelijkenis maar hoge semantische gelijkenis. "Bank" (rivier) en "bank" (financieel) hebben identieke lexicale vorm maar verschillende semantische betekenissen.
+
+**V: Welke gelijkenisscore duidt op een goede match?**
+
+A: Het varieert per model en domein. Algemeen: `> 0.8` = zeer vergelijkbaar, `0.6-0.8` = gerelateerd, `< 0.5` = verschillende onderwerpen. Kalibreer drempels altijd met echte voorbeelden uit je data.
+
+**V: Kan semantische gelijkenis over talen werken?**
+
+A: Ja, met meertalige embeddingmodellen. Modellen zoals multilingual-e5 en LaBSE coderen verschillende talen in dezelfde vectorruimte, wat cross-linguale gelijkenisberekening mogelijk maakt.
+
+**V: Hoe verschilt dit van semantisch zoeken?**
+
+A: Semantische gelijkenis is de onderliggende vergelijkingstechniek. Semantisch zoeken past het op schaal toe—vergelijkt een query met veel documenten om de meest vergelijkbare te vinden.
+
+## Gerelateerde termen
+
+- [Embeddings](/nl/glossary/embeddings/) — vectorrepresentaties voor gelijkenisberekening
+- [Cosinus-gelijkenis](/nl/glossary/cosine-similarity/) — veelgebruikte gelijkenismetriek
+- [Semantic Search](/nl/glossary/semantic-search/) — gebruikt semantische gelijkenis voor retrieval
+- [Vector Database](/nl/glossary/vector-database/) — slaat embeddings op voor snelle vergelijking
+
+---
+
+## Referenties
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [5.000+ [citaties](/nl/glossary/citation/)]
+
+> Cer et al. (2018), "[Universal Sentence Encoder](https://arxiv.org/abs/1803.11175)", arXiv. [3.000+ citaties]
+
+> Mikolov et al. (2013), "[Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/abs/1310.4546)", NeurIPS. [30.000+ citaties]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [500+ citaties]
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [5,000+ citations]
+
+> Cer et al. (2018), "[Universal Sentence Encoder](https://arxiv.org/abs/1803.11175)", arXiv. [3,000+ citations]
+
+> Mikolov et al. (2013), "[Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/abs/1310.4546)", NeurIPS. [30,000+ citations]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [500+ citations]

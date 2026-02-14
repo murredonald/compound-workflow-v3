@@ -1,0 +1,192 @@
+---
+term: "Knowledge Graph"
+termSlug: "knowledge-graph"
+short: "Een gestructureerd netwerk van entiteiten en relaties dat machines in staat stelt om real-world concepten te begrijpen en erover te redeneren."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["ner", "semantic-search", "embedding", "rag"]
+synonyms: ["Semantische graaf", "Ontologie", "Kennisbank"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een knowledge graph is een gestructureerde representatie van informatie als een netwerk van onderling verbonden entiteiten (knooppunten) en hun relaties (verbindingen). Elke entiteit vertegenwoordigt een real-world concept—een persoon, plaats, organisatie of idee—en relaties vangen hoe entiteiten aan elkaar gerelateerd zijn ("werkt voor," "gelegen in," "uitgevonden door"). Knowledge graphs stellen machines in staat om context te begrijpen, inferenties te maken en complexe queries te beantwoorden door deze verbindingen te doorlopen.
+
+## Waarom het belangrijk is
+
+Knowledge graphs drijven intelligente systemen aan:
+
+- **Verbeterde zoekresultaten** — Google's Knowledge Graph revolutioneerde webzoeken
+- **Aanbevelingen** — begrijp gebruikersvoorkeuren via verbindingen
+- **Vraagbeantwoording** — enable complexe multi-hop redenering
+- **Data-integratie** — verenig informatie uit verschillende bronnen
+- **RAG-verbetering** — bied gestructureerde context voor [LLMs](/nl/glossary/llm/)
+
+Grote techbedrijven onderhouden enorme knowledge graphs: Google (500B+ feiten), Facebook, Amazon, Microsoft en LinkedIn.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    KNOWLEDGE GRAPH                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  BASISSTRUCTUUR:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  Entiteiten (Knooppunten) + Relaties (Edges) = Kennis     │
+│                                                            │
+│                  ┌──────────────┐                         │
+│                  │   Einstein   │                         │
+│                  │   (Persoon)  │                         │
+│                  └──────┬───────┘                         │
+│                         │                                  │
+│       ┌─────────────────┼─────────────────┐               │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  ontwikkelde       geboren_in        werkte_bij           │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  ┌─────────┐       ┌─────────┐     ┌───────────────┐     │
+│  │Relativit.│      │  Ulm,   │     │   Princeton   │     │
+│  │ Theorie │       │Duitsland│     │  Universiteit │     │
+│  └─────────┘       └─────────┘     └───────────────┘     │
+│   (Theorie)          (Stad)          (Organisatie)       │
+│                                                            │
+│                                                            │
+│  TRIPLE REPRESENTATIE:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Subject ──relatie──▶ Object                              │
+│                                                            │
+│  (Einstein, ontwikkelde, Relativiteitstheorie)            │
+│  (Einstein, geboren_in, Ulm)                              │
+│  (Einstein, werkte_bij, Princeton)                        │
+│  (Ulm, gelegen_in, Duitsland)                             │
+│  (Duitsland, lid_van, Europese Unie)                      │
+│                                                            │
+│                                                            │
+│  MULTI-HOP REDENERING:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Vraag: "Welk land ontwikkelde relativiteit?"             │
+│                                                            │
+│  Pad doorlopen:                                           │
+│                                                            │
+│  Relativiteit ◄──ontwikkeld── Einstein                    │
+│                               │                            │
+│                          geboren_in                        │
+│                               ▼                            │
+│                             Ulm ──gelegen_in──▶ Duitsland │
+│                                                            │
+│  Antwoord: Duitsland (Einstein, die relativiteit          │
+│           ontwikkelde, werd geboren in Ulm, Duitsland)    │
+│                                                            │
+│                                                            │
+│  SCHEMA/ONTOLOGIE:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Definieert geldige entiteittypes en relaties:            │
+│                                                            │
+│  Entiteit Types:      Relaties:                            │
+│  ┌─────────────┐      ┌────────────────────────┐          │
+│  │ Persoon     │      │ geboren_in: Persoon→Plek│         │
+│  │ Plaats      │      │ werkt_bij: Persoon→Org  │         │
+│  │ Organisatie │      │ gelegen_in: Plek→Plek  │         │
+│  │ Gebeurtenis │      │ opgericht: Persoon→Org  │         │
+│  │ Concept     │      │ uitvond: Persoon→Ding   │         │
+│  └─────────────┘      └────────────────────────┘          │
+│                                                            │
+│                                                            │
+│  KNOWLEDGE GRAPH + LLMs (GraphRAG):                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  Query: "Hoe is Einstein aan Duitsland gerel.?" │      │
+│  │                                                  │      │
+│  │        ┌────────────┐      ┌────────────────┐  │      │
+│  │        │ Knowledge  │      │    LLM         │  │      │
+│  │  Query │   Graph    │─────►│   (Antwoord    │  │      │
+│  │  ─────►│  Opzoeken  │      │   Generatie)   │  │      │
+│  │        └────────────┘      └────────────────┘  │      │
+│  │              │                     │           │      │
+│  │              ▼                     ▼           │      │
+│  │        Gestructureerde       Natuurlijke Taal │      │
+│  │        Feiten:               Antwoord:         │      │
+│  │        (Einstein,geboren_in  "Einstein werd    │      │
+│  │         Ulm,Duitsland)       geboren in Ulm..."│      │
+│  │                                                │      │
+│  └─────────────────────────────────────────────────┘      │
+│                                                            │
+│                                                            │
+│  BELANGRIJKE KNOWLEDGE GRAPHS:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  • Google Knowledge Graph: 500B+ feiten, drijft Search    │
+│  • Wikidata: 100M+ items, open community-gedreven         │
+│  • DBpedia: Gestructureerde Wikipedia extractie           │
+│  • YAGO: Academische KG met hoge nauwkeurigheid           │
+│  • Microsoft Academic Graph: Wetenschappelijke literatuur │
+│  • Amazon Product Graph: E-commerce relaties              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Knowledge graph toepassingen:**
+| Domein | Toepassing | Voorbeeld |
+|--------|------------|-----------|
+| Zoeken | Verbeterde resultaten | Google's info-panelen |
+| E-commerce | Aanbevelingen | "Klanten kochten ook" |
+| Gezondheidszorg | Geneesmiddelinteracties | Medische beslissingssupport |
+| Financiën | Fraudedetectie | Transactienetwerken |
+| Juridisch | Jurisprudentieverbindingen | Precedentzoeken |
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen een knowledge graph en een database?**
+
+A: Traditionele databases slaan data op in rigide tabellen met voorgedefinieerde schema's. Knowledge graphs slaan data op als flexibele netwerken van relaties, waardoor queries over verbindingen mogelijk zijn die niet waren voorzien toen de data werd gecreëerd. Ze zijn geoptimaliseerd voor het doorlopen van relaties (graph queries) in plaats van het aggregeren van rijen (SQL queries).
+
+**V: Hoe worden knowledge graphs gebouwd?**
+
+A: Via meerdere benaderingen: handmatige curatie door experts, geautomatiseerde extractie uit tekst met NER en relatie-extractie, importeren uit gestructureerde bronnen zoals Wikipedia/Wikidata, en crowdsourcing. Moderne benaderingen combineren deze methoden—het gebruik van LLMs om entiteiten en relaties uit ongestructureerde tekst te extraheren, waarna mensen de resultaten valideren.
+
+**V: Kunnen LLMs knowledge graphs vervangen?**
+
+A: Nee, ze zijn complementair. LLMs slaan kennis impliciet op in parameters maar hallucineren en hebben kennislimieten. Knowledge graphs slaan kennis expliciet en verifieerbaar op maar missen natuurlijk taalbegrip. De beste systemen combineren beide: knowledge graphs bieden gegronde feiten, LLMs bieden natuurlijke interactie—dit is de GraphRAG-aanpak.
+
+**V: Hoe bevraag ik een knowledge graph?**
+
+A: Met graph [query](/nl/glossary/prompt/)-talen zoals SPARQL (voor RDF graphs), Cypher (voor Neo4j), of Gremlin. Hiermee kun je patronen uitdrukken zoals "vind alle mensen die werkten bij bedrijven opgericht door iemand uit dezelfde stad als Einstein." Moderne systemen ondersteunen ook natuurlijke taal queries die automatisch worden vertaald naar graph queries.
+
+## Gerelateerde termen
+
+- [NER](/nl/glossary/ner/) — extraheren van entiteiten voor knowledge graphs
+- [Semantic search](/nl/glossary/semantic-search/) — zoeken verbeterd door knowledge graphs
+- Embedding — [vectorrepresentaties](/nl/glossary/vector-embeddings/) van entiteiten
+- [RAG](/nl/glossary/rag/) — gebruik van knowledge graphs voor gegronde generatie
+
+---
+
+## Referenties
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Uitgebreide academische survey]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Google's originele aankondiging]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [LLM + KG integratie survey]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Technische deep dive]
+
+## References
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Comprehensive academic survey]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Google's original announcement]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [LLM + KG integration survey]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Technical deep dive]

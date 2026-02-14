@@ -1,0 +1,122 @@
+---
+term: "Inférence"
+termSlug: "inference"
+short: "Le processus d'utilisation d'un modèle entraîné pour générer des prédictions ou sorties sur de nouvelles données."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["llm", "fine-tuning", "embeddings", "latency"]
+synonyms: ["Inférence de modèle", "Prédiction", "Service de modèle"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+L'inférence est le processus d'exécution d'un modèle IA entraîné pour générer des sorties à partir de nouvelles entrées. Contrairement à l'entraînement (qui ajuste les poids du modèle), l'inférence utilise des poids fixes pour produire des prédictions, réponses, [embeddings](/fr/glossary/embeddings/) ou autres sorties. C'est ce qui se passe quand vous envoyez un prompt à ChatGPT ou interrogez une API d'embedding.
+
+## Pourquoi c'est important
+
+L'inférence est là où les modèles IA délivrent de la valeur en production :
+
+- **Expérience utilisateur** — la vitesse d'inférence détermine le temps de réponse
+- **Facteur de coût** — la plupart des coûts opérationnels IA viennent de l'inférence
+- **Scalabilité** — gérer les requêtes d'inférence concurrentes nécessite optimisation
+- **Exactitude** — la qualité d'inférence dépend du choix et configuration du modèle
+- **Déploiement** — les exigences d'inférence façonnent les décisions d'infrastructure
+
+Comprendre l'inférence est essentiel pour déployer efficacement les systèmes IA.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    PIPELINE D'INFÉRENCE                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│        ENTRÉE                         SORTIE               │
+│  "Quelles sont les              "Les exemptions TVA       │
+│   exemptions TVA?"               comprennent..."           │
+│        │                               ▲                   │
+│        │                               │                   │
+│        ▼                               │                   │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │                PRÉ-TRAITEMENT                    │      │
+│  │   • Tokenisation                                 │      │
+│  │   • Recherche d'embedding                        │      │
+│  │   • Assemblage du contexte                       │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              PASSE AVANT DU MODÈLE               │      │
+│  │   • Calcul couche par couche                     │      │
+│  │   • Calculs d'attention                          │      │
+│  │   • Multiplications matricielles                 │      │
+│  └──────────────────┬───────────────────────────────┘      │
+│                     ▼                                      │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │              POST-TRAITEMENT                     │      │
+│  │   • Échantillonnage/décodage de tokens           │      │
+│  │   • Formatage de sortie                          │      │
+│  │   • Filtrage de sécurité                         │      │
+│  └──────────────────────────────────────────────────┘      │
+│                                                            │
+│  MÉTRIQUES:                                                │
+│  • Latence: Temps au premier token (TTFT, ~100-500ms)      │
+│  • Débit: Tokens par seconde (TPS)                         │
+│  • Coût: € par million de tokens                           │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Concepts clés d'inférence :**
+1. **Inférence par lot** — traiter plusieurs entrées ensemble pour l'efficacité
+2. **Inférence temps réel** — réponse immédiate pour applications interactives
+3. **Streaming** — retourner tokens au fur et à mesure de leur génération
+4. **Inférence edge** — exécuter modèles localement sur l'appareil
+
+## Questions fréquentes
+
+**Q : Qu'affecte la vitesse d'inférence ?**
+
+R : Taille du modèle (paramètres), matériel (type GPU), taille de lot, [longueur de séquence](/fr/glossary/context-window/), et techniques d'optimisation ([quantification](/fr/glossary/quantization/), cache KV). Modèles plus grands et contextes plus longs augmentent la latence.
+
+**Q : Qu'est-ce que la quantification ?**
+
+R : Réduire la précision du modèle (ex. float32 → int8) pour accélérer l'inférence et réduire la mémoire. Une certaine exactitude peut être perdue, mais la quantification moderne préserve la plupart de la qualité en rendant l'inférence 2-4x plus rapide.
+
+**Q : Quelle différence entre inférence et entraînement ?**
+
+R : L'entraînement ajuste les poids du modèle avec les données; l'inférence utilise des poids fixes pour générer des sorties. L'entraînement est computationnellement coûteux et fait périodiquement; l'inférence est moins chère par [requête](/fr/glossary/prompt/) et tourne continuellement.
+
+**Q : Comment le coût d'inférence est-il calculé ?**
+
+R : Généralement par tokens traités. Les APIs facturent par million de tokens entrée/sortie. Les coûts d'inférence auto-hébergée incluent temps GPU, mémoire et infrastructure. Les tokens de sortie coûtent souvent plus cher que les tokens d'entrée.
+
+## Termes associés
+
+- [LLM](/fr/glossary/llm/) — modèles qui effectuent l'inférence
+- [Fine-Tuning](/fr/glossary/fine-tuning/) — processus d'entraînement avant inférence
+- Latence — métrique de temps pour l'inférence
+- Traitement par Lot — technique d'optimisation d'inférence
+
+---
+
+## Références
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ [citations](/fr/glossary/citation/)]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1 000+ citations]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ citations]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ citations]
+
+## References
+
+> Pope et al. (2023), "[Efficiently Scaling Transformer Inference](https://arxiv.org/abs/2211.05102)", MLSys. [200+ citations]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [1,000+ citations]
+
+> Kwon et al. (2023), "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)", SOSP. [500+ citations]
+
+> Leviathan et al. (2023), "[Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192)", ICML. [400+ citations]

@@ -1,0 +1,69 @@
+---
+term: "Résolution des conflits de sources"
+termSlug: "source-conflict-resolution"
+short: "La résolution des conflits de sources décrit comment un système de recherche/RAG détecte et traite des sources contradictoires, en privilégiant l’autorité contrôlante."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["authority-ranking-model", "source-reliability-weighting", "human-oversight", "algorithmic-transparency", "compliance-aware-retrieval"]
+synonyms: ["Conflict handling", "Contradiction management", "Source disagreement resolution"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La résolution des conflits de sources regroupe les règles et workflows utilisés par un système de retrieval ou de [RAG](/fr/glossary/rag/) lorsque des sources pertinentes ne sont pas alignées. En contexte juridique, un conflit peut être réel (règles différentes selon période ou juridiction) ou apparent (interprétations, contexte manquant, version remplacée).
+
+## Pourquoi c'est important
+
+- **Justesse** : il faut respecter l’autorité contrôlante et l’applicabilité.
+- **Sécurité** : masquer un conflit crée une fausse certitude et un risque de conformité.
+- **Confiance** : la transparence sur l’incertitude renforce la crédibilité.
+- **Triage** : les cas ambigus peuvent être escaladés vers un humain.
+
+## Comment ça fonctionne
+
+Souvent : détection + politique de décision :
+
+```
+Récupérer -> détecter conflits -> appliquer hiérarchie + applicabilité -> présenter avec citations -> escalader si ambigu
+```
+
+Stratégies fréquentes :
+
+- Préférer l’autorité la plus élevée et la plus applicable (juridiction, dates)
+- Distinguer "remplacé" vs "coexistant" (règles selon périodes)
+- Montrer les deux positions avec conditions explicites
+- Exiger supervision humaine pour les conflits non résolus ou à fort impact
+
+## Exemple pratique
+
+Deux sources indiquent des taux différents. L’une s’applique avant une date d’amendement. Le système met en évidence les dates d’effet, cite les deux versions et retient la version en vigueur pour la période demandée.
+
+## Questions fréquentes
+
+**Q: Un [LLM](/fr/glossary/llm/) peut-il résoudre un conflit tout seul ?**
+
+R: Il peut comparer et résumer, mais la politique d’autorité/applicabilité doit être appliquée par le système et l’escalade doit exister quand l’incertitude persiste.
+
+**Q: Faut-il toujours afficher les conflits ?**
+
+R: En droit et fiscalité, il est souvent plus sûr d’afficher le conflit (ou au moins signaler l’incertitude) que de le masquer.
+
+## Termes associés
+
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - privilégier les sources contrôlantes
+- [Pondération de la fiabilité des sources](/fr/glossary/source-reliability-weighting/) - limiter l’influence des sources faibles
+- [Supervision humaine](/fr/glossary/human-oversight/) - voie d’escalade en cas d’ambiguïté
+- [Transparence algorithmique](/fr/glossary/algorithmic-transparency/) - rendre le traitement explicable
+- [Retrieval sensible à la conformité](/fr/glossary/compliance-aware-retrieval/) - appliquer restrictions et policies
+
+---
+
+## Références
+
+> Règlement (UE) 2024/1689 ([EU AI Act](/fr/glossary/eu-ai-act/)).
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).

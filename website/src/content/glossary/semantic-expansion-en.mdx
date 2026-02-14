@@ -1,0 +1,59 @@
+---
+term: "Semantic Expansion"
+termSlug: "semantic-expansion"
+short: "Semantic expansion broadens a query with related terms or meanings (synonyms, entities, embeddings) to improve recall without sacrificing intent."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["query-understanding", "query-intent", "embeddings", "full-text-search", "relevance-tuning"]
+synonyms: ["Query expansion", "Semantic query expansion", "Synonym expansion"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Semantic expansion (often called [query expansion](/en/glossary/query-expansion/)) adds meaning-aware alternatives to a query, such as synonyms, related concepts, or entity variants. The goal is to retrieve relevant items that do not contain the exact words the user typed.
+
+## Why it matters
+
+- **Higher recall**: captures wording variation across documents and languages.
+- **Better domain coverage**: maps abbreviations, citations, and jargon to standard forms.
+- **Improved user experience**: fewer "no results" searches and fewer reformulations.
+- **Works with hybrid search**: expansion can feed both full-text and [vector retrieval](/en/glossary/dense-retrieval/).
+
+## How it works
+
+```
+Query -> understand meaning -> expand safely -> retrieve -> rank -> validate with analytics
+```
+
+Expansion sources include curated synonym lists, taxonomies, and embedding-based nearest neighbors. The hard part is avoiding expansions that change intent.
+
+## Practical example
+
+If users search "CIR92", expansion can include "WIB92" and "[Code des impôts sur les revenus](/en/glossary/wib-cir/)" so the same legal source is found across language variants.
+
+## Common questions
+
+**Q: Why can expansion hurt relevance?**
+
+A: Over-expansion adds noise. Good systems expand selectively, weight expansions lower, and monitor outcomes.
+
+**Q: Is this the same as synonyms in the index?**
+
+A: Related, but not identical. You can expand at query time, at index time, or both. Query-time expansion is usually easier to audit and adjust.
+
+## Related terms
+
+- [Query Understanding](/en/glossary/query-understanding/) - interpret meaning before expanding
+- [Query Intent](/en/glossary/query-intent/) - keep expansions aligned with the user goal
+- [Embeddings](/en/glossary/embeddings/) - power meaning-based expansion
+- [Full-Text Search](/en/glossary/full-text-search/) - expansion can add keyword variants
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - measure and refine expansion impact
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

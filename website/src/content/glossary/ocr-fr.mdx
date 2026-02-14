@@ -1,0 +1,184 @@
+---
+term: "OCR"
+termSlug: "ocr"
+short: "Reconnaissance Optique de Caractères—technologie qui convertit les images de texte (documents numérisés, photos, PDF) en texte lisible par machine, permettant recherche, édition et traitement IA du contenu imprimé ou manuscrit."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["document-processing", "computer-vision", "data-extraction", "pdf-parsing"]
+synonyms: ["Reconnaissance optique de caractères", "Reconnaissance de texte", "Numérisation de documents"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La Reconnaissance Optique de Caractères (OCR) est la technologie qui convertit les images contenant du texte en données textuelles lisibles par machine. Cela inclut les documents numérisés, les photographies de texte, les fichiers PDF et les notes manuscrites. Les systèmes OCR modernes utilisent le deep learning (CNN, [transformers](/fr/glossary/transformer-architecture/)) pour reconnaître les caractères, mots et structure de document avec haute précision à travers plusieurs langues et polices. L'OCR est fondamental pour la numérisation de documents, permettant recherche, édition, traduction et traitement IA du contenu textuel précédemment inaccessible.
+
+## Pourquoi c'est important
+
+L'OCR permet des flux de travail documentaires critiques:
+
+- **Recherchabilité** — trouver info dans archives numérisées
+- **Automatisation** — extraire données de factures, formulaires, reçus
+- **Accessibilité** — rendre documents compatibles lecteurs d'écran
+- **Conformité** — numériser enregistrements pour exigences réglementaires
+- **Pipelines RAG** — permettre aux [LLM](/fr/glossary/llm/) de traiter contenu documentaire
+- **Réduction coûts** — éliminer saisie manuelle de données
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                          OCR                                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CE QUE L'OCR FAIT:                                        │
+│  ──────────────────                                        │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │      ENTRÉE                            SORTIE       │ │
+│  │                                                      │ │
+│  │  ┌─────────────────┐         ┌─────────────────┐   │ │
+│  │  │                 │         │                 │   │ │
+│  │  │  ▓▓▓▓▓▓▓▓▓▓▓▓  │         │ "Facture #1234" │   │ │
+│  │  │  ▓ Facture    ▓  │   OCR  │                 │   │ │
+│  │  │  ▓ #1234      ▓  │  ───►  │ "Date: 2024-01" │   │ │
+│  │  │  ▓▓▓▓▓▓▓▓▓▓▓▓  │         │                 │   │ │
+│  │  │  Date: 2024-01  │         │ "Total: 500€"   │   │ │
+│  │  │  Total: 500€    │         │                 │   │ │
+│  │  │                 │         │  (éditable,     │   │ │
+│  │  │  (pixels image) │         │   recherchable) │   │ │
+│  │  └─────────────────┘         └─────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PIPELINE OCR:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. PRÉTRAITEMENT IMAGE                             │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Redressement (images pivotées)           │   │ │
+│  │  │  • Binarisation (conversion noir/blanc)     │   │ │
+│  │  │  • Suppression bruit (nettoyer artefacts)   │   │ │
+│  │  │  • Amélioration contraste                   │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  2. ANALYSE DE MISE EN PAGE                         │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Identifie: blocs texte, colonnes, tableaux,│   │ │
+│  │  │  figures, ordre de lecture                  │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  3. DÉTECTION LIGNES DE TEXTE                       │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Segmente texte en lignes individuelles     │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  4. RECONNAISSANCE DE CARACTÈRES                    │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  CNN/Transformer traite chaque région car.  │   │ │
+│  │  │                                              │   │ │
+│  │  │  Sortie: ['B','o','n','j','o','u','r']     │   │ │
+│  │  │  Confiance: [0.99, 0.97, 0.98, ...]        │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  5. POST-TRAITEMENT                                 │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Correction dictionnaire/modèle langue   │   │ │
+│  │  │    "Bonj0ur" → "Bonjour" (0 ressemble à o) │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Correction orthographique contextuelle   │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Préservation format                      │   │ │
+│  │  │    Maintenir paragraphes, tableaux, listes │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TECHNOLOGIES OCR:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Tesseract (Open Source)                            │ │
+│  │  ├─ Maintenu par Google, basé LSTM                 │ │
+│  │  ├─ 100+ langues                                   │ │
+│  │  └─ Meilleur pour: texte imprimé, batch            │ │
+│  │                                                      │ │
+│  │  Google Cloud Vision / Document AI                  │ │
+│  │  ├─ Haute précision, extraction formulaires       │ │
+│  │  └─ Meilleur pour: documents complexes            │ │
+│  │                                                      │ │
+│  │  AWS Textract                                       │ │
+│  │  ├─ Formulaires, tableaux, extraction clé-valeur  │ │
+│  │  └─ Meilleur pour: écosystème AWS, factures       │ │
+│  │                                                      │ │
+│  │  PaddleOCR (Open Source)                            │ │
+│  │  ├─ Excellent support langues CJK                 │ │
+│  │  └─ Meilleur pour: langues asiatiques, edge       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Quelle est la précision de l'OCR moderne?**
+
+R: Pour documents propres, tapés: 99%+ de précision caractère. Pour manuscrit, scans dégradés ou polices inhabituelles: 85-95%. Post-traitement et [entraînement spécifique](/fr/glossary/fine-tuning/) améliorent résultats.
+
+**Q: Quelle différence entre OCR et IA documentaire?**
+
+R: OCR extrait texte brut. IA documentaire ajoute compréhension—extraction entités, parsing tableaux. Systèmes IA documentaire incluent OCR comme composant.
+
+**Q: L'OCR peut-il gérer l'écriture manuscrite?**
+
+R: L'OCR [deep learning](/fr/glossary/deep-learning/) moderne gère assez bien l'écriture imprimée (80-90%). L'écriture attachée ou de médecin reste difficile.
+
+## Termes associés
+
+- Traitement documentaire — workflow document plus large
+- [RAG](/fr/glossary/rag/) — utilise sortie OCR pour récupération
+- Vision par ordinateur — technologie sous-jacente
+
+---
+
+## Références
+
+> Smith (2007), "[An Overview of the Tesseract OCR Engine](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/33418.pdf)", ICDAR. [Architecture Tesseract fondamentale]
+
+> Li et al. (2022), "[PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001)", arXiv. [Avancées PaddleOCR]
+
+> Google Cloud (2024), "[Document AI](https://cloud.google.com/document-ai)", Google. [Traitement document entreprise]
+
+> AWS (2024), "[Amazon Textract](https://aws.amazon.com/textract/)", Amazon. [Service extraction formulaires et tableaux]
+
+## References
+
+> Smith (2007), "[An Overview of the Tesseract OCR Engine](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/33418.pdf)", ICDAR. [Foundational Tesseract architecture]
+
+> Li et al. (2022), "[PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001)", arXiv. [PaddleOCR advances]
+
+> Google Cloud (2024), "[Document AI](https://cloud.google.com/document-ai)", Google. [Enterprise document processing]
+
+> AWS (2024), "[Amazon Textract](https://aws.amazon.com/textract/)", Amazon. [Form and table extraction service]

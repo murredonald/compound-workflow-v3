@@ -1,0 +1,184 @@
+---
+term: "Invertierter Index"
+termSlug: "inverted-index"
+short: "Eine Datenstruktur, die Begriffe auf Dokumentstandorte abbildet, für schnelle Volltextsuche über große Dokumentsammlungen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["bm25", "tf-idf", "sparse-retrieval", "dense-retrieval"]
+synonyms: ["Invertierte Datei", "Posting-Datei", "Posting-Liste"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein invertierter Index ist eine Datenstruktur, die Inhalte (typischerweise Wörter oder Begriffe) auf ihre Positionen in Dokumenten abbildet. Anstatt "Dokument → Wörter" zu speichern, speichert er "Wort → Dokumente", weshalb er "invertiert" genannt wird. Diese scheinbar einfache Umkehrung ermöglicht Sub-Millisekunden-Suche über Milliarden von Dokumenten—wenn Sie nach "Klimawandel" suchen, schlägt das System zwei Posting-Listen nach und kreuzt sie, anstatt jedes Dokument zu scannen. Der invertierte Index ist die grundlegende Datenstruktur, die Suchmaschinen von Google bis Elasticsearch antreibt.
+
+## Warum es wichtig ist
+
+Invertierte Indizes machen moderne Suche möglich:
+
+- **Geschwindigkeit** — O(1) Lookup pro Term vs O(n) Dokumentscannen
+- **Skalierung** — Milliarden Dokumente in Millisekunden durchsuchen
+- **Allgegenwart** — treibt Google, Bing, Elasticsearch, Solr, Lucene an
+- **Effizienz** — speichert nur relevante Dokumentreferenzen, nicht vollständigen Inhalt
+- **Fundament** — ermöglicht BM25, TF-IDF und alle Sparse-Retrieval-Methoden
+- **Kombinierbarkeit** — boolesche Operationen (AND, OR, NOT) sind schnelle Mengenoperationen
+
+Das Verständnis von invertierten Indizes ist essentiell für jeden, der Suchsysteme baut.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   INVERTIERTER INDEX                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DIE FUNDAMENTALE INVERSION:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  VORWÄRTSINDEX (wie Dokumente gespeichert werden):         │
+│                                                            │
+│  ┌──────────────────────────────────────────────────┐     │
+│  │ Doc 1: "Der schnelle braune Fuchs"               │     │
+│  │ Doc 2: "Der faule Hund schläft"                  │     │
+│  │ Doc 3: "Schnelle braune Hunde laufen"            │     │
+│  └──────────────────────────────────────────────────┘     │
+│                                                            │
+│  Um "braun" zu finden: ALLE Docs scannen → O(n) = LANGSAM │
+│                                                            │
+│                                                            │
+│  INVERTIERTER INDEX (Term → Dokument-Mapping):             │
+│                                                            │
+│  ┌──────────────────────────────────────────────────┐     │
+│  │ Term       │ Posting-Liste (Dokumente enthaltend)│     │
+│  ├────────────┼─────────────────────────────────────┤     │
+│  │ "braun"    │ → [Doc 1, Doc 3]                    │     │
+│  │ "hund"     │ → [Doc 2, Doc 3]                    │     │
+│  │ "fuchs"    │ → [Doc 1]                           │     │
+│  │ "faul"     │ → [Doc 2]                           │     │
+│  │ "schnell"  │ → [Doc 1, Doc 3]                    │     │
+│  │ "laufen"   │ → [Doc 3]                           │     │
+│  │ "schlafen" │ → [Doc 2]                           │     │
+│  │ "der"      │ → [Doc 1, Doc 2]                    │     │
+│  └──────────────────────────────────────────────────┘     │
+│                                                            │
+│  Um "braun" zu finden: Hash-Tabelle lookup → O(1) = SCHNELL│
+│                                                            │
+│                                                            │
+│  VOLLSTÄNDIGE INDEX-STRUKTUR:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  WÖRTERBUCH (Vokabular)                             │  │
+│  │  ┌────────────────────────────────────────────┐    │  │
+│  │  │ Term     │ Doc Freq │ Pointer zu Postings   │    │  │
+│  │  ├──────────┼──────────┼──────────────────────┤    │  │
+│  │  │ "braun"  │ 2        │ ────────┐             │    │  │
+│  │  │ "klima"  │ 156      │ ────────┼──┐          │    │  │
+│  │  │ "hund"   │ 3        │ ────────┼──┼──┐       │    │  │
+│  │  └──────────┴──────────┴────────┼──┼──┼───────┘    │  │
+│  │                                  │  │  │           │  │
+│  │  POSTING-LISTEN                  ▼  ▼  ▼           │  │
+│  │  ┌────────────────────────────────────────────┐    │  │
+│  │  │ "braun":  [D1:2, D3:1]                     │    │  │
+│  │  │           (doc_id: term_freq)              │    │  │
+│  │  │                                            │    │  │
+│  │  │ "klima":  [D5:3, D12:1, D45:2, D89:1..]   │    │  │
+│  │  │                                            │    │  │
+│  │  │ "hund":   [D2:1, D3:2, D99:1]             │    │  │
+│  │  └────────────────────────────────────────────┘    │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  QUERY-VERARBEITUNG:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  Query: "brauner Hund"                                     │
+│                                                            │
+│  Schritt 1: Query tokenisieren → ["braun", "hund"]        │
+│                                                            │
+│  Schritt 2: Posting-Listen nachschlagen                   │
+│             "braun" → [D1, D3]                            │
+│             "hund"  → [D2, D3]                            │
+│                                                            │
+│  Schritt 3: Boolesche Operationen                         │
+│                                                            │
+│  AND (beide Terme):                                        │
+│  [D1, D3] ∩ [D2, D3] = [D3]                              │
+│                                                            │
+│  OR (einer von beiden):                                    │
+│  [D1, D3] ∪ [D2, D3] = [D1, D2, D3]                      │
+│                                                            │
+│  Schritt 4: Bewerten und ranken (BM25, TF-IDF, etc.)      │
+│                                                            │
+│                                                            │
+│  POSTING-LISTEN-FORMATE:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  BASIS: Nur Dokument-IDs                            │  │
+│  │  "klima" → [5, 12, 45, 89, 156, ...]               │  │
+│  │                                                      │  │
+│  │  MIT FREQUENZ: doc_id:term_freq Paare              │  │
+│  │  "klima" → [5:3, 12:1, 45:2, 89:1, ...]            │  │
+│  │  (nötig für TF-IDF/BM25 Bewertung)                  │  │
+│  │                                                      │  │
+│  │  MIT POSITIONEN: doc_id:Positionsliste             │  │
+│  │  "klima" → [5:[12,45,89], 12:[3], ...]            │  │
+│  │  (nötig für Phrasensuche "Klimawandel")            │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie geht der invertierte Index mit Updates um?**
+
+A: Moderne Systeme verwenden eine "Merge"-Strategie: Neue Dokumente gehen in einen kleinen In-Memory-Index, der periodisch in größere On-Disk-Segmente mergt. Löschungen werden über ein Deletion-Bitmap gehandhabt. So erreichen Elasticsearch/Lucene sowohl schnelles Indexieren als auch schnelles Suchen.
+
+**F: Was ist der Unterschied zwischen invertiertem Index und Vektorindex?**
+
+A: Invertierte Indizes bilden Terme auf Dokumente ab (sparse, exakte Übereinstimmung). Vektorindizes ([FAISS](/de/glossary/faiss/), HNSW) bilden Embedding-Vektoren auf [approximate nearest neighbors](/de/glossary/ann/) ab (dense, semantische Übereinstimmung). Moderne Suche verwendet oft beides in hybrider Retrieval.
+
+**F: Wie funktionieren Phrasensuchen mit invertierten Indizes?**
+
+A: Positionsinformationen werden in Posting-Listen gespeichert. Für "Klimawandel" findet das System Dokumente mit beiden Termen, prüft dann ob "Klima" an Position N und "Wandel" an Position N+1 im selben Dokument erscheint.
+
+**F: Wie groß sind invertierte Indizes verglichen mit Originaldokumenten?**
+
+A: Typischerweise 10-30% der Originaldokumentgröße, abhängig von Kompression und was gespeichert wird. Schwere Kompression kann 5-10% erreichen.
+
+## Verwandte Begriffe
+
+- [BM25](/de/glossary/bm25/) — Ranking-Algorithmus mit invertiertem Index
+- [TF-IDF](/de/glossary/tf-idf/) — Gewichtungsschema für Index-Scores
+- [Sparse retrieval](/de/glossary/sparse-retrieval/) — Retrieval mit invertierten Indizes
+- [Dense retrieval](/de/glossary/dense-retrieval/) — vektorbasierte Alternative
+
+---
+
+## Referenzen
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [Definitives Lehrbuch über invertierte Indizes]
+
+> Zobel & Moffat (2006), "[Inverted Files for Text Search Engines](https://dl.acm.org/doi/10.1145/1132956.1132959)", ACM Computing Surveys. [Umfassende Übersicht]
+
+> Büttcher et al. (2010), "[Information Retrieval: Implementing and Evaluating Search Engines](https://mitpress.mit.edu/9780262026512/information-retrieval/)", MIT Press. [Implementierungsdetails]
+
+> Dean (2009), "[Challenges in Building Large-Scale Information Retrieval Systems](https://research.google/pubs/pub37043/)", WSDM Keynote. [Googles Index im Maßstab]
+
+## References
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [Definitive textbook on inverted indexes]
+
+> Zobel & Moffat (2006), "[Inverted Files for Text Search Engines](https://dl.acm.org/doi/10.1145/1132956.1132959)", ACM Computing Surveys. [Comprehensive survey]
+
+> Büttcher et al. (2010), "[Information Retrieval: Implementing and Evaluating Search Engines](https://mitpress.mit.edu/9780262026512/information-retrieval/)", MIT Press. [Implementation details]
+
+> Dean (2009), "[Challenges in Building Large-Scale Information Retrieval Systems](https://research.google/pubs/pub37043/)", WSDM Keynote. [Google's index at scale]

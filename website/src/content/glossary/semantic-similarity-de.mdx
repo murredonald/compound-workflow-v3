@@ -1,0 +1,115 @@
+---
+term: "Semantische Ähnlichkeit"
+termSlug: "semantic-similarity"
+short: "Ein Maß dafür, wie ähnlich zwei Texte in ihrer Bedeutung sind, unabhängig von den verwendeten Wörtern."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["embeddings", "cosine-similarity", "semantic-search", "vector-database"]
+synonyms: ["Bedeutungsähnlichkeit", "Konzeptuelle Ähnlichkeit", "Textähnlichkeit"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Semantische Ähnlichkeit misst, wie nahe zwei Texte in ihrer Bedeutung sind, nicht nur in ihrer Wortüberschneidung. Anders als Keyword-Matching erfasst sie, dass "Auto" und "PKW" ähnlich sind, oder dass "Steuerabzugsregeln" mit "fiskalischen Befreiungsrichtlinien" zusammenhängt. Dies wird typischerweise durch Vergleich von [Vektor-Embeddings](/de/glossary/vector-embeddings/) von Text mittels Distanzmetriken berechnet.
+
+## Warum es wichtig ist
+
+Semantische Ähnlichkeit ermöglicht bedeutungsbasiertes Verständnis in KI-Systemen:
+
+- **Über Keywords hinaus** — findet relevante Inhalte auch mit unterschiedlicher Terminologie
+- **Suchqualität** — treibt semantische Suche und [RAG](/de/glossary/rag/)-Retrieval an
+- **[Deduplizierung](/de/glossary/deduplication/)** — identifiziert semantisch ähnliche Dokumente oder Issues
+- **Content-Matching** — ermöglicht Empfehlungssysteme und Q&A-Paare
+- **Mehrsprachig** — kann Bedeutung über Sprachen hinweg matchen mit richtigen Modellen
+
+Es ist das Fundament, wie moderne KI-Systeme Text verstehen und vergleichen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│          SEMANTISCHE ÄHNLICHKEITSBERECHNUNG                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TEXT A: "Das Automobil benötigt Kraftstoff"               │
+│  TEXT B: "Das Auto braucht Benzin"                         │
+│                                                            │
+│           │                           │                    │
+│           ▼                           ▼                    │
+│  ┌─────────────────┐        ┌─────────────────┐            │
+│  │ EMBEDDING-MODELL│        │ EMBEDDING-MODELL│            │
+│  │  (BERT, etc.)   │        │  (Selbes Modell)│            │
+│  └────────┬────────┘        └────────┬────────┘            │
+│           │                          │                     │
+│           ▼                          ▼                     │
+│     Vektor A                    Vektor B                   │
+│   [0.23, 0.87, ...]          [0.21, 0.89, ...]             │
+│           │                          │                     │
+│           └──────────┬───────────────┘                     │
+│                      ▼                                     │
+│         ┌─────────────────────────┐                        │
+│         │   ÄHNLICHKEITSMETRIK    │                        │
+│         │   • Kosinus-Ähnlichkeit │                        │
+│         │   • Euklidische Distanz │                        │
+│         │   • Skalarprodukt       │                        │
+│         └───────────┬─────────────┘                        │
+│                     ▼                                      │
+│             Ähnlichkeitsscore                              │
+│                  0.94                                      │
+│           (Hoch = Sehr Ähnlich)                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wichtige Komponenten:**
+1. **Textkodierung** — beide Texte mit demselben Modell in Embeddings konvertieren
+2. **Vektorvergleich** — Ähnlichkeitsmetrik auf das Embedding-Paar anwenden
+3. **Score-Interpretation** — höhere Scores (typisch 0-1) zeigen größere Ähnlichkeit an
+
+## Häufige Fragen
+
+**F: Was ist der Unterschied zwischen semantischer und lexikalischer Ähnlichkeit?**
+
+A: Lexikalische Ähnlichkeit vergleicht exakte Wörter (String-Matching). Semantische Ähnlichkeit vergleicht Bedeutung. "Groß" und "umfangreich" haben niedrige lexikalische aber hohe semantische Ähnlichkeit. "Bank" (Fluss) und "Bank" (Finanzen) haben identische lexikalische Form aber unterschiedliche semantische Bedeutungen.
+
+**F: Welcher Ähnlichkeitsscore zeigt eine gute Übereinstimmung?**
+
+A: Es variiert nach Modell und Domäne. Allgemein: `> 0.8` = sehr ähnlich, `0.6-0.8` = verwandt, `< 0.5` = verschiedene Themen. Kalibrieren Sie Schwellenwerte immer mit echten Beispielen aus Ihren Daten.
+
+**F: Kann semantische Ähnlichkeit sprachübergreifend funktionieren?**
+
+A: Ja, mit mehrsprachigen Embedding-Modellen. Modelle wie multilingual-e5 und LaBSE kodieren verschiedene Sprachen in denselben Vektorraum, was sprachübergreifende Ähnlichkeitsberechnung ermöglicht.
+
+**F: Wie unterscheidet sich das von semantischer Suche?**
+
+A: Semantische Ähnlichkeit ist die zugrundeliegende Vergleichstechnik. Semantische Suche wendet sie im großen Maßstab an—vergleicht eine Anfrage mit vielen Dokumenten, um die ähnlichsten zu finden.
+
+## Verwandte Begriffe
+
+- [Embeddings](/de/glossary/embeddings/) — Vektordarstellungen für Ähnlichkeitsberechnung
+- [Kosinus-Ähnlichkeit](/de/glossary/cosine-similarity/) — gängige Ähnlichkeitsmetrik
+- [Semantische Suche](/de/glossary/semantic-search/) — nutzt semantische Ähnlichkeit für Retrieval
+- [Vektordatenbank](/de/glossary/vector-database/) — speichert Embeddings für schnellen Vergleich
+
+---
+
+## Referenzen
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [5.000+ Zitationen]
+
+> Cer et al. (2018), "[Universal Sentence Encoder](https://arxiv.org/abs/1803.11175)", arXiv. [3.000+ Zitationen]
+
+> Mikolov et al. (2013), "[Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/abs/1310.4546)", NeurIPS. [30.000+ Zitationen]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [500+ Zitationen]
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [5,000+ citations]
+
+> Cer et al. (2018), "[Universal Sentence Encoder](https://arxiv.org/abs/1803.11175)", arXiv. [3,000+ citations]
+
+> Mikolov et al. (2013), "[Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/abs/1310.4546)", NeurIPS. [30,000+ citations]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [500+ citations]

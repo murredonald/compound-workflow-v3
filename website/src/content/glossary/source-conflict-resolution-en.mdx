@@ -1,0 +1,66 @@
+---
+term: "Source Conflict Resolution"
+termSlug: "source-conflict-resolution"
+short: "Source conflict resolution is how a search or RAG system detects and handles contradictory sources, prioritizing controlling authority and making uncertainty explicit."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["authority-ranking-model", "source-reliability-weighting", "human-oversight", "algorithmic-transparency", "compliance-aware-retrieval"]
+synonyms: ["Conflict handling", "Contradiction management", "Source disagreement resolution"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Source conflict resolution is the set of rules and workflows a retrieval or [RAG](/en/glossary/rag/) system uses when relevant sources disagree. In legal settings, conflicts can be real (different rules across time or jurisdictions) or apparent (different interpretations, missing context, or superseded versions).
+
+## Why it matters
+
+- **Correctness**: legal answers must follow controlling authority and applicability.
+- **Safety**: hiding conflicts can create false certainty and compliance risk.
+- **Trust**: users value transparency when sources do not align.
+- **Better triage**: routes genuinely ambiguous cases to human review.
+
+## How it works
+
+Conflict resolution is usually a combination of detection + policy:
+
+```
+Retrieve -> detect conflicts -> apply hierarchy + applicability -> present outcome + citations -> escalate if ambiguous
+```
+
+Common strategies:
+
+- Prefer sources with higher authority and clearer applicability (jurisdiction, dates)
+- Distinguish "superseded" vs "co-existing" rules (e.g., different periods)
+- Show both positions with explicit conditions, not a single blended statement
+- Require human oversight for high-impact or unresolved conflicts
+
+## Practical example
+
+Two sources state different withholding tax rates. Investigation shows one applies before an amendment date. The system highlights the effective dates, cites both versions, and uses the in-force text for the requested period.
+
+## Common questions
+
+**Q: Can an [LLM](/en/glossary/llm/) resolve conflicts by itself?**
+
+A: It can summarize and compare, but the system should enforce authority/applicability policies and escalate when uncertainty remains.
+
+**Q: Should conflicts always be shown to users?**
+
+A: For legal and tax, it is usually safer to show conflicts (or at least signal uncertainty) rather than hiding them behind a single confident answer.
+
+## Related terms
+
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - prioritize controlling sources
+- [Source Reliability Weighting](/en/glossary/source-reliability-weighting/) - reduce low-trust influence
+- [Human Oversight](/en/glossary/human-oversight/) - escalation path for ambiguous cases
+- [Algorithmic Transparency](/en/glossary/algorithmic-transparency/) - make ranking and uncertainty explainable
+- [Compliance-Aware Retrieval](/en/glossary/compliance-aware-retrieval/) - enforce policies and restrictions
+
+---
+
+## References
+
+> Regulation (EU) 2024/1689 (EU AI Act).
+

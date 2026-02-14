@@ -1,0 +1,150 @@
+---
+term: "Machine Learning"
+termSlug: "machine-learning"
+short: "Een vakgebied van AI waar systemen patronen leren uit data om voorspellingen of beslissingen te maken zonder expliciete programmering."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["deep-learning", "neural-network", "supervised-learning", "llm"]
+synonyms: ["ML", "Statistisch leren", "Voorspellende modellering", "Patroonherkenning"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Machine learning is een tak van kunstmatige intelligentie waarbij algoritmen patronen rechtstreeks uit data leren in plaats van expliciet geprogrammeerd te worden met regels. Gegeven trainingsvoorbeelden identificeren ML-systemen automatisch patronen, bouwen wiskundige modellen, en gebruiken die modellen om voorspellingen of beslissingen te maken over nieuwe, ongeziene data. Deze datagedreven aanpak stelt computers in staat hun prestaties op taken te verbeteren door ervaring.
+
+## Waarom het belangrijk is
+
+Machine learning transformeerde technologie:
+
+- **Datagedreven beslissingen** — leert van bewijs, niet aannames
+- **Handelt complexiteit** — lost problemen op die te complex zijn voor handmatige regels
+- **Continue verbetering** — modellen worden beter met meer data
+- **Automatisering op schaal** — maakt intelligente systemen mogelijk in alle industrieën
+- **Fundament voor AI** — drijft alles van zoekmachines tot zelfrijdende auto's
+
+ML is de motor achter personalisatie, fraudedetectie, medische diagnose en LLMs.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    MACHINE LEARNING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  TRADITIONEEL PROGRAMMEREN VS ML:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  Traditioneel:                   Machine Learning:         │
+│  ┌──────────┐                    ┌──────────┐             │
+│  │   Data   │────┐               │   Data   │────┐        │
+│  └──────────┘    │               └──────────┘    │        │
+│                  ▼                               ▼        │
+│  ┌──────────┐  ┌──────────┐      ┌──────────┐  ┌─────┐   │
+│  │  Regels  │──│ Computer │──►   │   ML     │──│Model│   │
+│  └──────────┘  └──────────┘      │Algoritme │  └─────┘   │
+│       │              │           └──────────┘      │      │
+│       ▼              ▼                 ▲           ▼      │
+│  (handmatig)     Antwoorden       ┌────────┐   Antwoorden│
+│                                    │ Labels │             │
+│                                    └────────┘             │
+│                                                            │
+│  DE ML WORKFLOW:                                           │
+│  ───────────────                                           │
+│                                                            │
+│  1. VERZAMEL DATA                                          │
+│     ┌─────────────────────────────────────┐               │
+│     │ Trainingsdata (gelabeld of niet)     │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  2. TRAIN MODEL                                            │
+│     ┌─────────────────────────────────────┐               │
+│     │ Algoritme leert patronen uit data    │               │
+│     │ Past parameters aan om fout te min.  │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  3. EVALUEER                                               │
+│     ┌─────────────────────────────────────┐               │
+│     │ Test op apart gehouden data          │               │
+│     │ Meet accuracy, precisie, recall      │               │
+│     └─────────────────────────────────────┘               │
+│                      │                                     │
+│                      ▼                                     │
+│  4. DEPLOY & VOORSPEL                                      │
+│     ┌─────────────────────────────────────┐               │
+│     │ Nieuwe Data ──► Model ──► Voorsp.    │               │
+│     └─────────────────────────────────────┘               │
+│                                                            │
+│  DRIE TYPEN ML:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  SUPERVISED:        UNSUPERVISED:       REINFORCEMENT:    │
+│  Leer van           Vind patronen       Leer van          │
+│  gelabelde data     in ongelabelde data beloningen/straf  │
+│                                                            │
+│  Input → Label      Input → ?           Toestand → Actie  │
+│  "Kat" → "Kat"      Clusters            +10 of -5 beloning│
+│                     Anomalieën                             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**ML algoritme vergelijking:**
+| Type | Algoritme | Toepassing |
+|------|-----------|------------|
+| Supervised | Lineaire Regressie | Getallen voorspellen |
+| Supervised | Beslisbomen | Classificatie |
+| Supervised | Neurale Netwerken | Complexe patronen |
+| Unsupervised | K-Means | Clustering |
+| Unsupervised | PCA | [Dimensiereductie](/nl/glossary/dimensionality-reduction/) |
+| Reinforcement | Q-Learning | Games, robotica |
+
+## Veelgestelde vragen
+
+**V: Wat is het verschil tussen AI, ML en deep learning?**
+
+A: AI is de breedste term (machines die intelligent handelen). ML is een subset van AI (leren van data). Deep learning is een subset van ML (met diepe neurale netwerken). Alle deep learning is ML, alle ML is AI, maar niet andersom.
+
+**V: Hoeveel data heeft machine learning nodig?**
+
+A: Het hangt af van complexiteit. Eenvoudige lineaire modellen hebben misschien honderden voorbeelden nodig. Deep learning heeft vaak duizenden tot miljoenen nodig. Transfer learning vermindert dit door voorgetrainde modellen te gebruiken. Vuistregel: 10× meer samples dan features voor traditionele ML.
+
+**V: Kan machine learning fout zijn?**
+
+A: Ja, regelmatig. ML-modellen kunnen bevooroordeeld zijn door trainingsdata, overfitten op ruis, falen bij randgevallen, of zelfverzekerd verkeerde outputs produceren. Ze excelleren bij patronen vergelijkbaar met trainingsdata maar kunnen falen bij nieuwe situaties. [Menselijk toezicht](/nl/glossary/human-oversight/) blijft essentieel.
+
+**V: Hoe verhoudt machine learning zich tot LLMs?**
+
+A: LLMs zijn een specifieke toepassing van machine learning—specifiek deep learning met [transformer](/nl/glossary/transformer-architecture/) neurale netwerken getraind op tekstdata. ML is de brede discipline; LLMs zijn één (zeer succesvolle) implementatie van ML-technieken.
+
+## Gerelateerde termen
+
+- [Deep Learning](/nl/glossary/deep-learning/) — ML met diepe neurale netwerken
+- [Neuraal Netwerk](/nl/glossary/neural-network/) — rekenmodel voor ML
+- [Supervised Learning](/nl/glossary/supervised-learning/) — leren van gelabelde voorbeelden
+- [LLM](/nl/glossary/llm/) — ML toegepast op taal
+
+---
+
+## Referenties
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Fundamenteel leerboek]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40.000+ [citaties](/nl/glossary/citation/)]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70.000+ citaties]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Uitgebreid overzicht]
+
+## References
+
+> Mitchell (1997), "[Machine Learning](https://www.cs.cmu.edu/~tom/mlbook.html)", McGraw-Hill. [Foundational textbook]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/publication/pattern-recognition-machine-learning/)", Springer. [40,000+ citations]
+
+> Hastie et al. (2009), "[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)", Springer. [70,000+ citations]
+
+> Jordan & Mitchell (2015), "[Machine learning: Trends, perspectives, and prospects](https://www.science.org/doi/10.1126/science.aaa8415)", Science. [Comprehensive overview]

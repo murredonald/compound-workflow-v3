@@ -1,0 +1,171 @@
+---
+term: "Ground Truth"
+termSlug: "ground-truth"
+short: "Die maßgeblichen, verifizierten Referenzdaten zum Trainieren und Evaluieren von Machine-Learning-Modellen—die 'korrekten' Antworten, gegen die Modellvorhersagen gemessen werden."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["training-data", "annotation", "labeling", "evaluation-metrics", "gold-standard"]
+synonyms: ["Goldstandard", "Referenzdaten", "Labels", "Annotierte Daten"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ground Truth sind die maßgeblichen, verifizierten Daten, die die "korrekten" Antworten im [Machine Learning](/de/glossary/machine-learning/) repräsentieren. Es ist der Benchmark, gegen den Modellvorhersagen evaluiert werden. Ground Truth kann aus von Menschen annotierten Labels bestehen (Bildklassifikationen, Entity-Tags, Sentiment-Scores), Sensormessungen (GPS-Koordinaten, Temperaturmessungen) oder Domänenexpert-Bewertungen (medizinische Diagnosen, juristische Interpretationen). Die Qualität der Ground Truth bestimmt direkt die Obergrenze für die Modellleistung—Modelle können die Genauigkeit ihrer Trainingslabels nicht zuverlässig übertreffen.
+
+## Warum es wichtig ist
+
+Ground Truth ist die Grundlage des überwachten Lernens:
+
+- **Modelltraining** — lernt Muster aus gelabelten Beispielen
+- **Evaluation** — misst Genauigkeit gegen bekannte korrekte Antworten
+- **[Benchmarking](/de/glossary/benchmarking/)** — ermöglicht Vergleich zwischen verschiedenen Modellen
+- **Qualitätskontrolle** — identifiziert systematische Modellfehler
+- **Regulatorische Compliance** — beweist Modellvalidität für Audits
+- **Debugging** — diagnostiziert wo und warum Modelle versagen
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GROUND TRUTH                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WAS GROUND TRUTH IST:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │   ROHDATEN                        GROUND TRUTH       │ │
+│  │   (Input)                         (Label)            │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │ [Bild von   │              │  "Katze"    │      │ │
+│  │   │  Katze]     │  ──────────► │             │      │ │
+│  │   │             │   Menschlicher │ (verifiziert │    │ │
+│  │   │             │   Annotator  │   korrekt)  │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  │   ┌─────────────┐              ┌─────────────┐      │ │
+│  │   │ "Tolles     │              │ POSITIV     │      │ │
+│  │   │  Produkt!"  │  ──────────► │ Sentiment   │      │ │
+│  │   │             │   Expert     │ Score: 0.9  │      │ │
+│  │   └─────────────┘              └─────────────┘      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH QUELLEN:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. MENSCHLICHE ANNOTATION                          │ │
+│  │     ┌─────────┐    ┌─────────┐    ┌─────────┐      │ │
+│  │     │Annotator│    │Annotator│    │Annotator│      │ │
+│  │     │    A    │    │    B    │    │    C    │      │ │
+│  │     └────┬────┘    └────┬────┘    └────┬────┘      │ │
+│  │          │              │              │           │ │
+│  │          └──────────────┼──────────────┘           │ │
+│  │                         ▼                          │ │
+│  │                  ┌───────────┐                     │ │
+│  │                  │ Konsensus │                     │ │
+│  │                  └───────────┘                     │ │
+│  │                                                      │ │
+│  │     Mehrere Annotatoren reduzieren Bias             │ │
+│  │     Inter-Annotator-Agreement = Qualitätsmetrik     │ │
+│  │                                                      │ │
+│  │  2. EXPERTEN/AUTORITATIVE QUELLE                    │ │
+│  │     • Medizinische Diagnose durch Arzt             │ │
+│  │     • Juristische Klassifikation durch Anwalt      │ │
+│  │     • Finanzdaten aus offiziellen Einreichungen   │ │
+│  │                                                      │ │
+│  │  3. PHYSISCHE/SENSOR-WAHRHEIT                       │ │
+│  │     • GPS-Koordinaten (autonomes Fahren)           │ │
+│  │     • Temperaturmessungen (IoT/Vorhersage)         │ │
+│  │     • Tatsächliche Klicks/Conversion (Werbemodelle)│ │
+│  │                                                      │ │
+│  │  4. PROGRAMMATISCH/REGEL-BASIERT                    │ │
+│  │     • Regex-Muster (E-Mail-Validierung)            │ │
+│  │     • Mathematische Korrektheit (Rechner)          │ │
+│  │     • Datenbankabfragen (Entity Resolution)        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GROUND TRUTH IM ML-WORKFLOW:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Rohdaten                                           │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  ANNOTATION (Ground Truth Labels erstellen)         │ │
+│  │     │                                               │ │
+│  │     ▼                                               │ │
+│  │  GELABELTER DATENSATZ                               │ │
+│  │  (Input, Ground Truth) Paare                        │ │
+│  │     │                                               │ │
+│  │     ├───────────────────────┐                      │ │
+│  │     ▼                       ▼                      │ │
+│  │  TRAININGSSET (80%)    TESTSET (20%)               │ │
+│  │     │                       │                      │ │
+│  │     ▼                       │                      │ │
+│  │  TRAINING                   │                      │ │
+│  │  Modell lernt Muster        │                      │ │
+│  │     │                       │                      │ │
+│  │     ▼                       ▼                      │ │
+│  │  ┌──────────────────────────────────────────────┐ │ │
+│  │  │              EVALUATION                       │ │ │
+│  │  │                                               │ │ │
+│  │  │  Modellvorhersage: "Katze"                   │ │ │
+│  │  │  Ground Truth:     "Katze"                   │ │ │
+│  │  │  Ergebnis:         ✓ Korrekt                 │ │ │
+│  │  │                                               │ │ │
+│  │  │  Genauigkeit = Korrekt / Gesamt              │ │ │
+│  │  │                                               │ │ │
+│  │  └──────────────────────────────────────────────┘ │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie viel Ground Truth brauche ich?**
+
+A: Hängt von der Aufgabenkomplexität ab. Einfache Klassifikation: 1.000-10.000 Beispiele. Komplexe NLP/Vision-Aufgaben: 100.000+. [Deep Learning](/de/glossary/deep-learning/) benötigt generell mehr als traditionelles ML.
+
+**F: Was wenn Ground Truth falsch ist?**
+
+A: Label-Rauschen begrenzt direkt die Modellgenauigkeit. Verwenden Sie mehrere Annotatoren, messen Sie Inter-Annotator-Agreement, implementieren Sie Qualitätskontroll-Workflows.
+
+**F: Kann ich [LLMs](/de/glossary/llm/) zur Ground-Truth-Generierung verwenden?**
+
+A: Für Bootstrapping oder Augmentierung, ja—aber menschliche Verifizierung ist essentiell. LLM-generierte Labels erben Modell-Biases.
+
+## Verwandte Begriffe
+
+- Trainingsdaten — Datensatz zum Modelltraining
+- Annotation — Prozess zur Ground-Truth-Erstellung
+
+---
+
+## Referenzen
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Schwache Supervision und programmatisches Labeling]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations](https://aclanthology.org/D08-1027/)", ACL. [Crowdsourced Annotationsqualität]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets](https://arxiv.org/abs/2103.14749)", NeurIPS. [Auswirkungen von Label-Rauschen]
+
+## References
+
+> Ratner et al. (2017), "[Data Programming: Creating Large Training Sets, Quickly](https://arxiv.org/abs/1605.07723)", NeurIPS. [Weak supervision and programmatic labeling]
+
+> Snow et al. (2008), "[Cheap and Fast—But is it Good? Evaluating Non-Expert Annotations for Natural Language Tasks](https://aclanthology.org/D08-1027/)", ACL. [Crowdsourced annotation quality]
+
+> Northcutt et al. (2021), "[Pervasive Label Errors in Test Sets Destabilize Machine Learning Benchmarks](https://arxiv.org/abs/2103.14749)", NeurIPS. [Impact of label noise on benchmarks]

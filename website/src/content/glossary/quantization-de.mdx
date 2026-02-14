@@ -1,0 +1,170 @@
+---
+term: "Quantisierung"
+termSlug: "quantization"
+short: "Reduzierung der Modellpräzision von 32/16-Bit auf 8/4-Bit, was den Speicherverbrauch drastisch senkt und die Inferenz beschleunigt."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["qlora", "model-compression", "inference", "llm"]
+synonyms: ["Modellquantisierung", "Gewichtsquantisierung", "Low-Precision-Inferenz"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Quantisierung ist eine Modellkomprimierungstechnik, die die numerische Präzision von neuronalen Netzwerkgewichten und Aktivierungen von höheren Bit-Formaten (32-Bit Float, 16-Bit Float) auf niedrigere Bit-Darstellungen (8-Bit Int, 4-Bit Int oder sogar binär) reduziert. Dies reduziert den Speicherbedarf dramatisch und erhöht die Inferenzgeschwindigkeit bei typischerweise akzeptabler Genauigkeit. Moderne Quantisierungsmethoden können LLMs um das 4-8-fache komprimieren bei minimalem Qualitätsverlust.
+
+## Warum es wichtig ist
+
+Quantisierung ermöglicht praktisches Deployment großer Modelle:
+
+- **Speicherreduktion** — 4x weniger Speicher für 8-Bit, 8x weniger für 4-Bit
+- **Schnellere Inferenz** — Integer-Operationen schneller als Fließkomma
+- **Edge-Deployment** — LLMs auf Telefonen und eingebetteten Geräten ausführen
+- **Kosteneinsparungen** — kleinere Modelle brauchen günstigere Hardware
+- **Energieeffizienz** — niedrigere Präzision = weniger Stromverbrauch
+
+Quantisierung macht Milliarden-Parameter-Modelle auf Consumer-Hardware zugänglich.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   QUANTISIERUNGS-GRUNDLAGEN                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  PRÄZISIONSVERGLEICH:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  FP32 (32-Bit Float): ████████████████████████████████    │
+│  Bits pro Gewicht: 32                                      │
+│  LLaMA-7B Größe: 28 GB                                     │
+│                                                            │
+│  FP16 (16-Bit Float): ████████████████                    │
+│  Bits pro Gewicht: 16                                      │
+│  LLaMA-7B Größe: 14 GB                                     │
+│                                                            │
+│  INT8 (8-Bit Integer): ████████                           │
+│  Bits pro Gewicht: 8                                       │
+│  LLaMA-7B Größe: 7 GB                                      │
+│                                                            │
+│  INT4 (4-Bit Integer): ████                               │
+│  Bits pro Gewicht: 4                                       │
+│  LLaMA-7B Größe: 3.5 GB                                    │
+│                                                            │
+│                                                            │
+│  QUANTISIERUNGSPROZESS:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  Originales FP32-Gewicht: 0.12345678                      │
+│                                                            │
+│  1. Finde Bereich: [min_val, max_val]                     │
+│     z.B. [-0.5, 0.5]                                      │
+│                                                            │
+│  2. Berechne Skala: scale = (max - min) / (2^bits - 1)    │
+│     Für INT8: scale = 1.0 / 255 ≈ 0.00392                 │
+│                                                            │
+│  3. Quantisiere: q = round((val - min) / scale)           │
+│     0.12345678 → round((0.12345678 + 0.5) / 0.00392)      │
+│     = round(158.8) = 159                                  │
+│                                                            │
+│  4. Speichere als Integer: 159 (nutzt nur 8 Bits)         │
+│                                                            │
+│  5. Dequantisiere: val = q × scale + min                  │
+│     159 × 0.00392 - 0.5 = 0.12328 ≈ 0.12345678 ✓         │
+│                                                            │
+│                                                            │
+│  QUANTISIERUNGSTYPEN:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Post-Training-Quantisierung (PTQ)                    │ │
+│  │ ─────────────────────────────────                    │ │
+│  │ • Quantisiere NACH Training (kein Neutraining nötig) │ │
+│  │ • Schnell, einfach, funktioniert gut für 8-Bit       │ │
+│  │ • Kann bei 4-Bit Genauigkeit verlieren               │ │
+│  │                                                       │ │
+│  │ Trainiertes Modell ──► Kalibrierung ──► Quantisiert  │ │
+│  │                        (Beispieldaten)                │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Quantization-Aware Training (QAT)                    │ │
+│  │ ─────────────────────────────────                    │ │
+│  │ • Simuliere Quantisierung WÄHREND Training           │ │
+│  │ • Modell lernt robust gegenüber Quantisierung zu sein│ │
+│  │ • Bessere Genauigkeit, erfordert aber Training       │ │
+│  │                                                       │ │
+│  │ Training mit ──► Fake Quantize ──► Echte Quantisier. │ │
+│  │ sim. niedr. Prz.  (Gradienten)     (Deployment)      │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  BELIEBTE QUANTISIERUNGSMETHODEN:                          │
+│  ────────────────────────────────                          │
+│                                                            │
+│  LLM.int8()   - 8-Bit mit Ausreißer-Behandlung            │
+│  GPTQ         - 4-Bit mit schichtweiser Kalibrierung      │
+│  AWQ          - 4-Bit aktivierungsbewusste Quantisierung  │
+│  NF4          - 4-Bit optimiert für Normalverteilung      │
+│  GGML/GGUF   - CPU-optimierte Quantisierungsformate       │
+│                                                            │
+│  GENAUIGKEIT vs KOMPRIMIERUNG ABWÄGUNG:                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  Präzision │ Größe  │ Geschw. │ Qualitätsverlust          │
+│  ──────────┼────────┼─────────┼────────────────           │
+│  FP16      │ 1x     │ 1x      │ ~0%                       │
+│  INT8      │ 0.5x   │ 2-3x    │ ~0-1%                     │
+│  INT4      │ 0.25x  │ 3-4x    │ ~1-3%                     │
+│  INT2      │ 0.125x │ 4-5x    │ ~5-10%+                   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Schadet Quantisierung immer der Modellqualität?**
+
+A: Bei 8-Bit-Quantisierung ist der Qualitätsverlust typischerweise vernachlässigbar (`<0.5%`). Bei 4-Bit erreichen moderne Methoden wie GPTQ und AWQ 1-3% Degradation auf Benchmarks. Die Auswirkung variiert je nach Aufgabe—faktischer Abruf kann mehr leiden als allgemeine Flüssigkeit. Benchmarken Sie immer auf Ihrem spezifischen Anwendungsfall.
+
+**F: Welche Quantisierungsmethode sollte ich verwenden?**
+
+A: Für das Serving auf GPUs sind GPTQ oder AWQ beliebte Wahlen. Für CPU-Inferenz oder Consumer-Geräte funktioniert das GGUF-Format gut. Für Fine-Tuning bewahrt NF4 (in QLoRA verwendet) die Trainierbarkeit. Jede hat Abwägungen zwischen Geschwindigkeit, Qualität und Kompatibilität.
+
+**F: Kann ich jedes Modell quantisieren?**
+
+A: Die meisten modernen Transformer quantisieren gut. Kleinere Modelle (< 7B Parameter) können mehr unter aggressiver Quantisierung leiden. Sehr alte Architekturen ohne Layer-Normalisierung können problematisch sein. Im Zweifel benchmarken Sie Ihr spezifisches Modell.
+
+**F: Was ist Mixed-Precision-Quantisierung?**
+
+A: Verschiedene Teile des Modells verwenden verschiedene Präzisionen. Zum Beispiel Attention-Schichten in höherer Präzision halten, während MLPs aggressiver quantisiert werden. Dies kann bessere Qualität/Geschwindigkeits-Abwägungen als uniforme Quantisierung liefern.
+
+## Verwandte Begriffe
+
+- [QLoRA](/de/glossary/qlora/) — Quantisierung kombiniert mit LoRA für effizientes Fine-Tuning
+- [Model compression](/de/glossary/model-compression/) — breitere Kategorie einschließlich Quantisierung
+- [Inference](/de/glossary/inference/) — wo Quantisierungsvorteile realisiert werden
+- [LLM](/de/glossary/llm/) — Modelle, die häufig für Deployment quantisiert werden
+
+---
+
+## Referenzen
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Grundlegende 8-Bit-Quantisierung]
+
+> Frantar et al. (2022), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Beliebte 4-Bit-Methode]
+
+> Lin et al. (2023), "[AWQ: Activation-aware Weight Quantization](https://arxiv.org/abs/2306.00978)", arXiv. [Fortgeschrittene 4-Bit-Quantisierung]
+
+> Jacob et al. (2018), "[Quantization and Training of Neural Networks for Efficient Inference](https://arxiv.org/abs/1712.05877)", CVPR. [Grundlegende Quantisierungstechniken]
+
+## References
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Foundational 8-bit quantization]
+
+> Frantar et al. (2022), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Popular 4-bit method]
+
+> Lin et al. (2023), "[AWQ: Activation-aware Weight Quantization](https://arxiv.org/abs/2306.00978)", arXiv. [Advanced 4-bit quantization]
+
+> Jacob et al. (2018), "[Quantization and Training of Neural Networks for Efficient Inference](https://arxiv.org/abs/1712.05877)", CVPR. [Foundational quantization techniques]

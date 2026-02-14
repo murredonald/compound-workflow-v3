@@ -1,0 +1,182 @@
+---
+term: "Distillation des Connaissances"
+termSlug: "distillation"
+short: "Entraîner un petit modèle élève à imiter un grand modèle enseignant, transférant les connaissances tout en réduisant drastiquement taille et coût."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["model-compression", "fine-tuning", "transfer-learning", "llm"]
+synonyms: ["Distillation de modèle", "Apprentissage enseignant-élève", "Transfert de connaissances"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La distillation des connaissances est une technique de compression de modèle où un modèle "élève" plus petit est entraîné à répliquer le comportement d'un modèle "enseignant" plus grand. Plutôt que d'apprendre à partir d'étiquettes dures (0 ou 1), l'élève apprend des distributions de probabilités douces de l'enseignant, qui contiennent des informations plus riches sur les relations entre classes. Cela transfère les connaissances de l'enseignant vers un modèle 10-100x plus petit tout en conservant 90-99% des performances.
+
+## Pourquoi c'est important
+
+La distillation permet de déployer l'IA à l'échelle :
+
+- **Réduction drastique de taille** — compresser modèles 175B vers 7B avec capacités similaires
+- **[Inférence](/fr/glossary/inference/) plus rapide** — modèles plus petits fonctionnent plus vite et moins cher
+- **Déploiement edge** — apporter l'intelligence des grands modèles aux appareils
+- **Efficacité des coûts** — servir des millions d'utilisateurs abordablement
+- **Confidentialité** — exécuter les modèles localement sans envoyer de données au cloud
+
+La distillation est comment des entreprises comme OpenAI et Anthropic créent des modèles de production efficaces.
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│              DISTILLATION DES CONNAISSANCES                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  L'INTUITION CLÉ:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Les étiquettes douces sont plus informatives!             │
+│                                                            │
+│  Exemple classification (chat, chien ou voiture?):         │
+│                                                            │
+│  Étiquette dure: [1, 0, 0]  ← "C'est un chat, point"      │
+│  Étiquette douce:[0.7, 0.25, 0.05]                        │
+│                   ↑     ↑      ↑                           │
+│                 chat  chien  voiture                       │
+│                                                            │
+│  L'étiquette douce dit: "C'est probablement un chat,      │
+│  mais avec des traits canins. Définitivement pas voiture."│
+│                                                            │
+│  Cette info de RELATION aide l'élève à apprendre!         │
+│                                                            │
+│                                                            │
+│  ARCHITECTURE DE DISTILLATION:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│                 ┌───────────────────┐                     │
+│                 │  Modèle Enseignant│                     │
+│                 │   (Grand: 175B)   │                     │
+│                 │   [GELÉ]          │                     │
+│                 └─────────┬─────────┘                     │
+│                           │                                │
+│                           │ Prédictions douces             │
+│                           │ (distributions de prob.)       │
+│                           ▼                                │
+│              ┌────────────────────────┐                   │
+│    Entrée ──►│   Perte de Distillation │                   │
+│              │  KL(élève || enseignant) │                   │
+│              │  + α × CrossEntropy      │                   │
+│              └────────────┬────────────┘                   │
+│                           │                                │
+│                           │ Gradients                      │
+│                           ▼                                │
+│                 ┌───────────────────┐                     │
+│                 │   Modèle Élève    │                     │
+│                 │   (Petit: 7B)     │                     │
+│                 │   [ENTRAÎNEMENT]  │                     │
+│                 └───────────────────┘                     │
+│                                                            │
+│                                                            │
+│  ADOUCISSEMENT PAR TEMPÉRATURE:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Problème: Les sorties de modèle sont souvent trop sûres  │
+│                                                            │
+│  Sans température (T=1):                                  │
+│  [0.99, 0.009, 0.001]  ← Presque pas d'info sur relations │
+│                                                            │
+│  Avec haute température (T=5):                            │
+│  [0.65, 0.25, 0.10]    ← Info relationnelle riche        │
+│                                                            │
+│  Formule: softmax(logits / T)                             │
+│                                                            │
+│  T plus élevé → distributions plus douces → plus transfert │
+│                                                            │
+│                                                            │
+│  DISTILLATION POUR LLMs:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │                                                       │ │
+│  │  Enseignant (GPT-4): "Que fait 2+2?"                 │ │
+│  │  Réponse:            "La réponse est 4. L'addition..."│ │
+│  │                                                       │ │
+│  │  L'élève apprend à:                                   │ │
+│  │  1. Égaler la distribution de sortie de l'enseignant │ │
+│  │  2. Générer une qualité de texte similaire           │ │
+│  │  3. Exhiber des patterns de raisonnement similaires  │ │
+│  │                                                       │ │
+│  │  Méthodes:                                            │ │
+│  │  • Distillation niveau token (égaler probs next-tok) │ │
+│  │  • Niveau séquence (égaler prob. réponse complète)  │ │
+│  │  • Niveau features (égaler représentations internes) │ │
+│  │                                                       │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MODÈLES DISTILLÉS CÉLÈBRES:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  • DistilBERT: 40% plus petit, 60% plus rapide, 97% perf.│
+│  • TinyBERT: 7x plus petit, 9x plus rapide               │
+│  • Alpaca: Distillé de GPT-3.5 avec 52K exemples         │
+│  • Vicuna: Distillé de conversations ChatGPT             │
+│  • Modèles Phi: Petits mais au-dessus de leur catégorie  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Efficacité de la distillation:**
+| Modèle | Original | Distillé | Performance Conservée |
+|--------|----------|----------|----------------------|
+| BERT-base | 110M | DistilBERT 66M | 97% |
+| GPT-3 | 175B | Alpaca 7B | ~85% |
+| LLaMA 65B | 65B | Vicuna 13B | ~90% |
+
+## Questions fréquentes
+
+**Q : La distillation est-elle la même chose que le fine-tuning ?**
+
+R : Non. Le fine-tuning met à jour les poids d'un modèle sur de nouvelles données. La distillation entraîne un modèle différent (généralement plus petit) à imiter le comportement d'un autre modèle. Vous pouvez les combiner: d'abord distiller un grand modèle en un plus petit, puis fine-tuner le petit modèle pour des tâches spécifiques.
+
+**Q : Puis-je distiller n'importe quel modèle en n'importe quel autre ?**
+
+R : L'architecture de l'élève n'a pas besoin de correspondre à celle de l'enseignant, mais des architectures similaires fonctionnent souvent mieux. L'élève doit avoir assez de capacité pour apprendre le comportement de l'enseignant—un minuscule modèle ne peut pas capturer tout ce qu'un modèle géant connaît. Typiquement, les élèves sont 5-20x plus petits que les enseignants.
+
+**Q : Distiller depuis ChatGPT/GPT-4 est-il légal ?**
+
+R : C'est compliqué. Les conditions d'utilisation d'OpenAI interdisent d'utiliser les sorties pour entraîner des modèles concurrents. Cependant, de nombreux modèles distillés open-source existent. Le paysage juridique évolue. Pour usage commercial, vérifiez les termes spécifiques du modèle enseignant.
+
+**Q : De combien de données ai-je besoin pour la distillation ?**
+
+R : Moins que l'entraînement from scratch, mais plus que le fine-tuning. Pour la distillation LLM, 10K-1M exemples est typique. La qualité compte plus que la quantité—des sorties d'enseignant diverses et de haute qualité produisent de meilleurs élèves.
+
+## Termes associés
+
+- [Model compression](/fr/glossary/model-compression/) — catégorie plus large incluant distillation
+- [Fine-tuning](/fr/glossary/fine-tuning/) — technique liée mais différente
+- Transfer learning — concept sous-jacent
+- [LLM](/fr/glossary/llm/) — modèles couramment distillés
+
+---
+
+## Références
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Article fondateur sur la distillation]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Distillation pratique de BERT]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Entraînement LLM efficace incluant concepts de distillation]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [Distillation LLM depuis GPT-3.5]
+
+## References
+
+> Hinton et al. (2015), "[Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531)", NeurIPS Workshop. [Foundational distillation paper]
+
+> Sanh et al. (2019), "[DistilBERT, a distilled version of BERT](https://arxiv.org/abs/1910.01108)", arXiv. [Practical BERT distillation]
+
+> Touvron et al. (2023), "[LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971)", arXiv. [Efficient LLM training including distillation concepts]
+
+> Taori et al. (2023), "[Alpaca: A Strong, Replicable Instruction-Following Model](https://crfm.stanford.edu/2023/03/13/alpaca.html)", Stanford. [LLM distillation from GPT-3.5]

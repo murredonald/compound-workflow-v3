@@ -1,0 +1,122 @@
+---
+term: "Top-k Sampling"
+termSlug: "top-k"
+short: "Eine Sampling-Methode, die die Token-Auswahl auf die k wahrscheinlichsten nächsten Tokens bei jedem Generierungsschritt beschränkt."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["top-p", "temperature", "inference", "llm"]
+synonyms: ["Top-k Dekodierung", "K-beste Sampling", "Truncated Sampling"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Top-k Sampling ist eine Textgenerierungsstrategie, die den Auswahlpool auf die k Tokens mit der höchsten Wahrscheinlichkeit bei jedem Generierungsschritt beschränkt. Durch das Eliminieren von Tokens niedriger Wahrscheinlichkeit reduziert es das Risiko, inkohärenten oder unerwarteten Text zu generieren, während etwas Diversität in den Outputs erhalten bleibt.
+
+## Warum es wichtig ist
+
+Top-k bietet vorhersagbare Kontrolle über Generierungsdiversität:
+
+- **Rauschreduktion** — eliminiert unwahrscheinliche Tokens, die Inkohärenz verursachen
+- **Einfachheit** — einzelner Integer-Parameter, leicht zu verstehen
+- **Konsistenz** — feste Kandidatenpoolgrõße unabhängig von Verteilungsform
+- **Geschwindigkeit** — effizient zu berechnen durch einfaches Sortieren und Abschneiden
+- **Historische Bedeutung** — früher Standard, der spätere Methoden beeinflusste
+
+Top-k bleibt nützlich, obwohl top-p oft für adaptives Verhalten bevorzugt wird.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      TOP-K SAMPLING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Token-Wahrscheinlichkeiten (sortiert hoch nach niedrig):  │
+│                                                            │
+│  Rang  Token     Wahrsch.                                  │
+│  ─────────────────────                                     │
+│  1     "der"     0.35   ◄── inkludiert                    │
+│  2     "ein"     0.25   ◄── inkludiert                    │
+│  3     "dieser"  0.15   ◄── inkludiert                    │
+│  4     "jener"   0.10   ◄── inkludiert                    │
+│  5     "das"     0.08   ◄── inkludiert (k=5)              │
+│  6     "mein"    0.04       ausgeschlossen                 │
+│  7     "dein"    0.02       ausgeschlossen                 │
+│  8     "sein"    0.01       ausgeschlossen                 │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  TOP-K = 5                                     │        │
+│  │                                                │        │
+│  │  Immer aus genau 5 Tokens auswählen           │        │
+│  │                                                │        │
+│  │  Rang: [1] [2] [3] [4] [5] │ [6] [7] [8]...   │        │
+│  │        ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲│▲▲▲▲▲▲▲▲▲▲▲▲▲▲    │        │
+│  │        KANDIDATENPOOL     │  AUSGESCHLOSSEN   │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  FESTE AUSWAHL (unabhängig von Wahrscheinlichkeitsform):   │
+│                                                            │
+│  Sicheres Modell          Unsicheres Modell                │
+│  [0.90, 0.05, 0.02...]    [0.15, 0.14, 0.13...]            │
+│  Wählt immer noch k=5     Wählt immer noch k=5             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Übliche Top-k Werte:**
+| Wert | Verhalten | Anwendungsfall |
+|------|-----------|----------------|
+| 1 | Greedy (deterministisch) | Exakte Aufgaben |
+| 10 | Sehr fokussiert | Faktisches Q&A |
+| 40 | Ausgewogen (üblicher Standard) | Allgemeine Nutzung |
+| 100 | Divers | Kreative Aufgaben |
+| 0 | Deaktiviert (alle Tokens) | Nur mit top-p |
+
+## Häufige Fragen
+
+**F: Was ist der Unterschied zwischen top-k und top-p?**
+
+A: Top-k wählt immer genau k Tokens. Top-p (Nucleus Sampling) wählt eine variable Anzahl basierend auf kumulativer Wahrscheinlichkeit. Wenn Wahrscheinlichkeiten stark auf einem Token konzentriert sind, könnte top-p nur 1-2 Tokens wählen, während top-k immer noch alle k wählt.
+
+**F: Was ist ein guter top-k Wert?**
+
+A: 40-50 ist üblich für allgemeine Nutzung. Niedriger (5-20) für faktische Aufgaben, höher (100+) für kreative Arbeit. Der optimale Wert hängt von Vokabulargrõße und Aufgabenanforderungen ab.
+
+**F: Sollte ich top-k mit Temperatur verwenden?**
+
+A: Ja, sie funktionieren gut zusammen. Temperatur formt zuerst die Wahrscheinlichkeiten um, dann kürzt top-k auf die besten Kandidaten. Diese Kombination gibt Ihnen Kontrolle über sowohl Verteilungsform als auch Kandidatenpoolgrõße.
+
+**F: Was passiert mit top-k = 1?**
+
+A: Das ist äquivalent zu Greedy-Dekodierung—immer das wahrscheinlichste Token wählen. Output wird deterministisch (gleiche Eingabe → gleiche Ausgabe), kann aber repetitiv sein oder bessere Gesamtsequenzen verpassen.
+
+## Verwandte Begriffe
+
+- [Top-p Sampling](/de/glossary/top-p/) — wahrscheinlichkeitsbasierte Alternative
+- [Temperatur](/de/glossary/temperature/) — formt Wahrscheinlichkeitsverteilung um
+- [Beam Search](/de/glossary/beam-search/) — betrachtet mehrere Sequenzen
+- [Inferenz](/de/glossary/inference/) — Generierungsprozess
+
+---
+
+## Referenzen
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1.000+ Zitationen]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ Zitationen]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10.000+ Zitationen]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ Zitationen]
+
+## References
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10,000+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]

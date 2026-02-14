@@ -1,0 +1,256 @@
+---
+term: "FAISS"
+termSlug: "faiss"
+short: "Facebook AI Similarity Search - the most comprehensive open-source library for efficient similarity search and clustering of dense vectors."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["ann", "hnsw", "embedding", "dense-retrieval", "pinecone"]
+synonyms: ["Facebook AI Similarity Search", "faiss-cpu", "faiss-gpu"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+FAISS (Facebook AI [Similarity Search](/en/glossary/similarity-search/)) is an open-source library developed by Meta AI Research that provides highly optimized implementations of algorithms for similarity search and clustering of [dense vectors](/en/glossary/vector-embeddings/). It supports multiple index types (flat, IVF, HNSW, PQ) with CPU and GPU acceleration, making it the foundational building block for [vector search](/en/glossary/semantic-search/) at scales from thousands to billions of vectors. FAISS powers or inspires the indexing engines in most [vector databases](/en/glossary/vector-database/) and is widely used directly in research and production [RAG](/en/glossary/rag/) systems.
+
+## Why it matters
+
+FAISS is the de facto standard library for vector similarity search:
+
+- **Comprehensive** — implements all major [ANN](/en/glossary/neural-network/) algorithms in one library
+- **Highly optimized** — SIMD, multi-threading, GPU kernels for maximum performance
+- **Proven at scale** — battle-tested in Facebook-scale applications (billions of vectors)
+- **Free and open** — MIT licensed, active development by Meta AI Research
+- **Foundation for industry** — Pinecone, [Milvus](/en/glossary/milvus/), and others build on FAISS algorithms
+- **Research standard** — used as baseline in almost all vector search papers
+
+If you're doing vector search, you're probably using FAISS directly or indirectly.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               FAISS - FACEBOOK AI SIMILARITY SEARCH         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CORE CONCEPT:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  FAISS answers one question efficiently:                   │
+│                                                            │
+│  "Given query vector q, find k vectors most similar to q   │
+│   from database of n vectors"                              │
+│                                                            │
+│  Input:  q = [0.12, -0.34, 0.56, ...] (d dimensions)      │
+│  Output: [(id₁, dist₁), (id₂, dist₂), ..., (idₖ, distₖ)] │
+│                                                            │
+│                                                            │
+│  INDEX TYPE HIERARCHY:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  FLAT (Exact Search)                               │   │
+│  │  ═══════════════════                               │   │
+│  │  • IndexFlatL2 - L2/Euclidean distance            │   │
+│  │  • IndexFlatIP - Inner Product (for cosine sim)   │   │
+│  │  • Brute force - compares with ALL vectors        │   │
+│  │  • 100% accurate but O(n×d) per query            │   │
+│  │  • Use for: <100K vectors or ground truth        │   │
+│  │                                                     │   │
+│  │  IVF (Inverted File Index)                         │   │
+│  │  ═════════════════════════                         │   │
+│  │  • IndexIVFFlat - cluster then search             │   │
+│  │  • IndexIVFPQ - cluster + compress vectors        │   │
+│  │  • Train k-means clusters, assign each vector     │   │
+│  │  • Query searches only nprobe nearest clusters    │   │
+│  │  • Use for: 100K-100M vectors, tunable accuracy  │   │
+│  │                                                     │   │
+│  │  HNSW (Graph-Based)                                │   │
+│  │  ══════════════════                                │   │
+│  │  • IndexHNSWFlat - navigable small world graph    │   │
+│  │  • Best recall/speed tradeoff                     │   │
+│  │  • Higher memory than IVF                          │   │
+│  │  • Use for: high accuracy requirements            │   │
+│  │                                                     │   │
+│  │  PQ (Product Quantization)                         │   │
+│  │  ═════════════════════════                         │   │
+│  │  • IndexPQ - compress vectors via quantization    │   │
+│  │  • Reduces memory 4-32x                           │   │
+│  │  • Approximate distances in compressed space      │   │
+│  │  • Use for: memory-constrained, billions scale   │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  HOW IVF WORKS:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  Training phase (one-time):                               │
+│                                                            │
+│  1. Sample vectors from your dataset                      │
+│  2. Run k-means to create nlist centroids                │
+│                                                            │
+│     ┌────────────────────────────────────────────┐        │
+│     │    Dataset vectors:                         │        │
+│     │    . . . . . . . . . .                     │        │
+│     │     . . . . . . . . . .                    │        │
+│     │    . . . . . . . . . .                     │        │
+│     │         ↓ k-means                          │        │
+│     │    ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐  (nlist centroids)│        │
+│     │    │●│ │●│ │●│ │●│ │●│                    │        │
+│     │    └─┘ └─┘ └─┘ └─┘ └─┘                    │        │
+│     └────────────────────────────────────────────┘        │
+│                                                            │
+│  Index building:                                           │
+│                                                            │
+│  3. Assign each vector to nearest centroid               │
+│  4. Store vectors in per-cluster inverted lists          │
+│                                                            │
+│     Centroid 1: [v₁, v₅, v₁₂, v₃₃, ...]                  │
+│     Centroid 2: [v₂, v₇, v₁₅, v₄₁, ...]                  │
+│     Centroid 3: [v₃, v₈, v₂₀, v₅₅, ...]                  │
+│     ...                                                    │
+│                                                            │
+│  Search (per query):                                       │
+│                                                            │
+│  5. Find nprobe nearest centroids to query               │
+│  6. Search only vectors in those clusters                │
+│                                                            │
+│     Query ●─────→ Find closest centroids                  │
+│                          │                                 │
+│                   [C₁] [C₃] [C₇]  (nprobe=3)             │
+│                          │                                 │
+│                   Search vectors in those lists           │
+│                          │                                 │
+│                   Return top-k                             │
+│                                                            │
+│                                                            │
+│  PRODUCT QUANTIZATION (PQ):                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Compresses vectors by quantizing sub-vectors:            │
+│                                                            │
+│  Original: [0.12, -0.34, 0.56, 0.78, -0.23, 0.45, ...]   │
+│            \_____/\_____/\_____/                          │
+│             sub-   sub-   sub-                            │
+│            space₁ space₂ space₃   (m sub-spaces)         │
+│              ↓      ↓      ↓                              │
+│             [3]    [7]    [2]      (quantized to codes)   │
+│                                                            │
+│  768-dim × 4 bytes = 3072 bytes per vector               │
+│  → 96 codes × 1 byte = 96 bytes (32x compression!)       │
+│                                                            │
+│  Distance computed using pre-computed lookup tables       │
+│                                                            │
+│                                                            │
+│  COMPOSITE INDEXES:                                        │
+│  ─────────────────                                         │
+│                                                            │
+│  Combine techniques for best tradeoffs:                   │
+│                                                            │
+│  ┌──────────────────────────────────────────────────┐    │
+│  │ Index Name        │ Description          │ Use   │    │
+│  ├──────────────────────────────────────────────────┤    │
+│  │ IVF + Flat        │ Cluster, exact dist. │ 1-10M │    │
+│  │ IVF + PQ          │ Cluster + compress   │ 10M-1B│    │
+│  │ IVF + HNSW        │ Cluster + graph nav │ ?      │    │
+│  │ OPQ + IVF + PQ    │ Optimized rotation   │ 100M+ │    │
+│  │ HNSW + PQ         │ Graph + compression  │ 10M+  │    │
+│  └──────────────────────────────────────────────────┘    │
+│                                                            │
+│                                                            │
+│  GPU ACCELERATION:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  FAISS has extensive GPU support:                         │
+│                                                            │
+│  • 5-10x faster index building                           │
+│  • 10-100x faster search for large batches               │
+│  • Multi-GPU sharding for very large indexes             │
+│  • GpuIndexFlat, GpuIndexIVFFlat, GpuIndexIVFPQ          │
+│                                                            │
+│  import faiss                                              │
+│  gpu_res = faiss.StandardGpuResources()                   │
+│  gpu_index = faiss.index_cpu_to_gpu(gpu_res, 0, cpu_idx)  │
+│                                                            │
+│                                                            │
+│  TYPICAL USAGE PATTERN:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  import faiss                                              │
+│  import numpy as np                                        │
+│                                                            │
+│  # 1. Create index                                        │
+│  d = 768  # dimension                                      │
+│  index = faiss.IndexFlatL2(d)  # exact search             │
+│  # OR for large scale:                                     │
+│  # index = faiss.IndexIVFFlat(quantizer, d, nlist)        │
+│                                                            │
+│  # 2. Train (if IVF/PQ)                                   │
+│  # index.train(training_vectors)                          │
+│                                                            │
+│  # 3. Add vectors                                          │
+│  vectors = np.random.random((100000, d)).astype('float32')│
+│  index.add(vectors)                                        │
+│                                                            │
+│  # 4. Search                                               │
+│  k = 10                                                    │
+│  query = np.random.random((1, d)).astype('float32')       │
+│  distances, indices = index.search(query, k)              │
+│                                                            │
+│                                                            │
+│  INDEX FACTORY STRING:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  FAISS provides shorthand for complex indexes:            │
+│                                                            │
+│  index = faiss.index_factory(d, "IVF4096,PQ64")          │
+│                                                            │
+│  Common factory strings:                                   │
+│  • "Flat"          - exact search                         │
+│  • "IVF4096,Flat"  - 4096 clusters, exact                │
+│  • "IVF4096,PQ64"  - 4096 clusters, 64-byte PQ           │
+│  • "HNSW32"        - HNSW with M=32                       │
+│  • "OPQ64,IVF4096,PQ64" - with rotation optimization     │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: When should I use FAISS vs a vector database?**
+
+A: Use FAISS directly for research/prototyping, single-node applications, or when you need maximum control and performance. Use a vector database (Pinecone, Weaviate, Milvus) when you need managed persistence, metadata filtering, horizontal scaling, or don't want to manage infrastructure. Many vector databases use FAISS algorithms internally.
+
+**Q: How do I choose the right FAISS index?**
+
+A: Start with IndexFlatL2/IP for <100K vectors (exact, simple). For 100K-10M, use IndexIVFFlat or IndexHNSWFlat. For 10M-1B, use IndexIVFPQ. For >1B, consider distributed solutions or aggressive compression. Always benchmark on your actual data and query patterns—generic advice only goes so far.
+
+**Q: What's the difference between IndexFlatIP and IndexFlatL2?**
+
+A: IndexFlatL2 uses Euclidean distance (L2), IndexFlatIP uses inner product. For normalized vectors (unit length), inner product equals [cosine similarity](/en/glossary/cosine-similarity/). Most embedding models produce (or can be normalized to) unit vectors, so IndexFlatIP is common. Use the [distance metric](/en/glossary/distance-metric/) your embeddings were trained for.
+
+**Q: How do I handle vector updates and deletes in FAISS?**
+
+A: Basic FAISS indexes don't support removal—you rebuild. IndexIDMap allows tracking external IDs. For IVF indexes, you can use IndexIVFFlat with remove_ids() but it's slow. In practice, for frequent updates, use HNSW (supports lazy deletion) or batch rebuilds. This limitation is why vector databases exist.
+
+## Related terms
+
+- [ANN](/en/glossary/ann/) — approximate nearest neighbor algorithms
+- [HNSW](/en/glossary/hnsw/) — algorithm available in FAISS
+- [Pinecone](/en/glossary/pinecone/) — managed vector database
+- Embedding — vectors indexed by FAISS
+
+---
+
+## References
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE Transactions on Big Data. [Original FAISS paper]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Updated comprehensive overview]
+
+> Meta AI, "[FAISS Wiki](https://github.com/facebookresearch/faiss/wiki)", GitHub. [Official documentation and guidelines]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://ann-benchmarks.com/)", Information Systems. [FAISS benchmark comparisons]

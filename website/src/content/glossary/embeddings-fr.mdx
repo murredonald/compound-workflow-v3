@@ -1,0 +1,103 @@
+---
+term: "Embeddings"
+termSlug: "embeddings"
+short: "Représentations vectorielles denses de données (texte, images, etc.) capturant le sens sémantique dans un espace numérique continu."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["rag", "vector-database", "semantic-similarity", "llm"]
+synonyms: ["Plongements vectoriels", "Embeddings denses", "Embeddings neuronaux"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Les embeddings sont des [représentations vectorielles](/fr/glossary/vector-embeddings/) denses et continues de données discrètes (mots, phrases, images, etc.) dans un espace de haute dimension. Contrairement aux représentations creuses comme l'encodage one-hot, les embeddings compriment l'information en vecteurs de taille fixe où les éléments similaires sont situés proches les uns des autres dans l'espace d'embedding. Cela permet des opérations mathématiques sur les concepts sémantiques.
+
+## Pourquoi c'est important
+
+Les embeddings sont fondamentaux pour les systèmes d'IA modernes :
+
+- **Similarité sémantique** — les significations similaires correspondent à des vecteurs proches, permettant la [recherche par similarité](/fr/glossary/similarity-search/)
+- **Apprentissage par transfert** — les embeddings pré-entraînés capturent des connaissances générales utilisables pour diverses tâches
+- **[Réduction de dimensionnalité](/fr/glossary/dimensionality-reduction/)** — des millions de mots possibles sont comprimés en centaines de dimensions
+- **Opérations mathématiques** — l'arithmétique vectorielle révèle les relations sémantiques (roi - homme + femme ≈ reine)
+
+Tout système RAG, moteur de recherche et système de recommandation repose sur les embeddings pour comprendre le contenu.
+
+## Comment ça fonctionne
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  PROCESSUS D'EMBEDDING                  │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  Texte Input ────→ Tokeniser ────→ Modèle ────→ Vecteur │
+│                                                         │
+│  "droit fiscal" → [123, 456]   →  Réseau    →  [0.12,  │
+│                                   Neuronal      0.45,  │
+│                                                -0.23,  │
+│                                                 ...]   │
+│                                                (768-D) │
+│                                                         │
+│  Espace sémantique:                                     │
+│     "droit fiscal" ●────────● "réglementation fiscale" │
+│                        proche                           │
+│     "météo" ●                                           │
+│             loin                                        │
+└─────────────────────────────────────────────────────────┘
+```
+
+1. **[Tokenisation](/fr/glossary/tokenization/)** — le texte d'entrée est divisé en tokens
+2. **Encodage du modèle** — le [réseau neuronal](/fr/glossary/neural-network/) traite les tokens
+3. **Pooling** — les représentations de tokens sont combinées (moyenne, token CLS, etc.)
+4. **Vecteur de sortie** — vecteur dense de taille fixe (ex: 384, 768 ou 1536 dimensions)
+
+Le modèle d'embedding est entraîné pour que des entrées sémantiquement similaires produisent des vecteurs avec une haute [similarité cosinus](/fr/glossary/cosine-similarity/).
+
+## Questions fréquentes
+
+**Q : Quelles dimensions d'embedding sont courantes ?**
+
+R : Les tailles typiques vont de 384 (léger) à 1536 (OpenAI) à 4096 (grands modèles). Les dimensions plus élevées peuvent capturer plus de nuances mais nécessitent plus de stockage et de calcul.
+
+**Q : Comment les embeddings de phrases diffèrent-ils des embeddings de mots ?**
+
+R : Les embeddings de mots (Word2Vec, GloVe) représentent des mots individuels. Les embeddings de phrases (de modèles comme sentence-transformers) capturent le sens de phrases entières, gérant le contexte et l'ordre des mots.
+
+**Q : Que sont les embeddings bilingues/multilingues ?**
+
+R : Ces modèles projettent plusieurs langues dans un espace d'embedding partagé, donc "legal advice" et "conseil juridique" produisent des vecteurs similaires, permettant la recherche inter-linguistique.
+
+**Q : Les embeddings dérivent-ils avec le temps ?**
+
+R : Les modèles d'embedding sont statiques une fois entraînés, mais si vous mettez à jour votre modèle d'embedding, tous les vecteurs doivent être régénérés car différents modèles produisent des espaces incompatibles.
+
+## Termes associés
+
+- [RAG](/fr/glossary/rag/) — utilise les embeddings pour la récupération
+- [Base de Données Vectorielle](/fr/glossary/vector-database/) — stocke et recherche les embeddings
+- [Similarité Sémantique](/fr/glossary/semantic-similarity/) — mesurée via la distance d'embedding
+- [LLM](/fr/glossary/llm/) — utilise les embeddings en interne
+
+---
+
+## Références
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [40 000+ citations]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [8 000+ citations]
+
+> Pennington et al. (2014), "[GloVe: Global Vectors for Word Representation](https://nlp.stanford.edu/pubs/glove.pdf)", EMNLP. [35 000+ citations]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [700+ citations]
+
+## References
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [40,000+ citations]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [8,000+ citations]
+
+> Pennington et al. (2014), "[GloVe: Global Vectors for Word Representation](https://nlp.stanford.edu/pubs/glove.pdf)", EMNLP. [35,000+ citations]
+
+> Muennighoff et al. (2022), "[MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316)", arXiv. [700+ citations]

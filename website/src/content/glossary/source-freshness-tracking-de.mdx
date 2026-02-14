@@ -1,0 +1,69 @@
+---
+term: "Tracking der Quellenaktualität"
+termSlug: "source-freshness-tracking"
+short: "Quellenaktualitäts-Tracking erfasst, wie aktuell jede Quelle ist (Version, letzte Updates, Geltungsdaten), damit Retrieval mit sich änderndem Recht Schritt hält."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["regulatory-drift-detection", "search-analytics", "indexing-strategy", "content-discoverability", "authority-ranking-model"]
+synonyms: ["Freshness monitoring", "Source currency tracking", "Document freshness scoring"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Quellenaktualitäts-Tracking ist das Speichern und Nutzen von "Currency"-Metadaten pro Dokument: Publikationsdatum, letzte Aktualisierung, Geltungsdaten (Inkrafttreten) und Versionskennungen. Es hilft Retrieval, aktuelle und anwendbare Quellen zu bevorzugen und potenziell veraltetes Material zu markieren.
+
+## Warum es wichtig ist
+
+- **Recht ändert sich ständig**: über Änderungen, Konsolidierungen und neue Guidance.
+- **Weniger veraltete Zitate**: reduziert Antworten auf Basis überholter Fassungen.
+- **Besseres Ranking**: Aktualität ist ein guter Tie-Breaker bei ähnlicher Relevanz.
+- **Operatives Monitoring**: Alerts für Quellen, die lange nicht aktualisiert wurden.
+
+## Wie es funktioniert
+
+Typisch als Metadaten + Scoring-Regeln:
+
+```
+Ingest -> Daten/Versionen extrahieren -> Felder speichern -> mit Aktualität ranken -> Staleness alarmieren
+```
+
+Häufige Felder:
+
+- `published_at`, `updated_at`
+- `effective_from`, `effective_to` (oder Aufhebungsdatum)
+- `version_id` / Konsolidierungs-IDs
+- `last_checked_at` (Crawler-Check)
+
+## Praktisches Beispiel
+
+Wenn ein konsolidierter Artikel letzten Monat aktualisiert wurde, boostet das System ihn über einem älteren PDF-Auszug. Wenn eine Quelle lange nicht geprüft wurde, wird sie für Review markiert oder heruntergewichtet.
+
+## Häufige Fragen
+
+**Q: Ist "frisch" immer besser fürs Ranking?**
+
+A: Nein. Aktualität zählt nur, wenn die neuere Quelle auch anwendbar ist. Autorität und Anwendbarkeit bleiben wichtiger.
+
+**Q: Wie verhindert man "neu aber irrelevant" Boosting?**
+
+A: Aktualität als sekundäres Signal nutzen und mit starken Relevanz- und Anwendbarkeitsfiltern kombinieren.
+
+## Verwandte Begriffe
+
+- [Erkennung regulatorischer Drift](/de/glossary/regulatory-drift-detection/) - Änderungen erkennen, die Updates erfordern
+- [Search Analytics](/de/glossary/search-analytics/) - Staleness und Failures überwachen
+- [Indexing Strategy](/de/glossary/indexing-strategy/) - Ingestion und Refresh-Cadence designen
+- [Content Discoverability](/de/glossary/content-discoverability/) - Versionen und Daten auffindbar machen
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - Autorität mit Aktualität kombinieren
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

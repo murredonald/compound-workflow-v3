@@ -1,0 +1,188 @@
+---
+term: "Approximate Nearest Neighbor"
+termSlug: "ann"
+short: "Algoritmen die bij benadering gelijksoortige vectoren snel vinden door perfecte nauwkeurigheid in te ruilen voor enorme snelheidsverbeteringen."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["hnsw", "faiss", "embedding", "dense-retrieval"]
+synonyms: ["ANN", "Approximate NN", "Vector zoeken"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Approximate Nearest Neighbor ([ANN](/nl/glossary/neural-network/)) verwijst naar algoritmen die vectoren vinden die vergelijkbaar zijn met een [query](/nl/glossary/prompt/)-vector zonder uitputtend te vergelijken met elke vector in een database. Terwijl exacte nearest neighbor-zoekopdrachten O(n) vergelijkingen vereisen, bereiken ANN-algoritmen sub-lineaire tijdcomplexiteit door een kleine nauwkeurigheidsafweging te accepteren—ze kunnen af en toe de 2e of 5e dichtstbijzijnde vector retourneren, maar draaien 100-1000x sneller. Dit maakt ze essentieel voor [semantisch zoeken](/nl/glossary/semantic-search/), aanbevelingssystemen en RAG-pipelines die werken over miljoenen documenten.
+
+## Waarom het belangrijk is
+
+ANN maakt praktische vector-zoekopdrachten op schaal mogelijk:
+
+- **Snelheid** — zoek miljoenen vectoren in milliseconden vs seconden
+- **[RAG](/nl/glossary/rag/)-systemen** — haal relevante context op uit massieve kennisbanken
+- **Semantisch zoeken** — vind gelijksoortige documenten voorbij [trefwoordmatching](/nl/glossary/sparse-retrieval/)
+- **Aanbevelingen** — vind gelijksoortige items/gebruikers uit embedding-representaties
+- **Afbeelding/audio zoeken** — content-gebaseerde retrieval met feature-vectoren
+- **Kostenefficiëntie** — bedien meer queries per machine, verlaag infrastructuur
+
+Zonder ANN zouden vector-gebaseerde AI-toepassingen economisch onhaalbaar zijn op schaal.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│            APPROXIMATE NEAREST NEIGHBOR (ANN)               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  HET FUNDAMENTELE PROBLEEM:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Je hebt: 1 miljoen 768-dimensie vectoren                 │
+│  Query:   Vind 10 meest gelijksoortige vectoren           │
+│                                                            │
+│  EXACTE ZOEKEN (k-NN):                                     │
+│  • Bereken afstand tot alle 1M vectoren                   │
+│  • Sorteer en retourneer top 10                           │
+│  • Tijd: O(n × d) = 768 miljoen operaties                 │
+│  • Latentie: ~500ms-2s per query                          │
+│                                                            │
+│  APPROXIMATE ZOEKEN (ANN):                                 │
+│  • Gebruik indexstructuur om ~1000 vectoren te checken    │
+│  • Retourneert top 10 (mist soms echte #1)               │
+│  • Tijd: O(log n × d) of beter                            │
+│  • Latentie: ~1-10ms per query                            │
+│                                                            │
+│                                                            │
+│  HOOFD ANN ALGORITMEFAMILIES:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. BOOM-GEBASEERD (Annoy, KD-tree)                 │  │
+│  │     • Verdeel ruimte in regio's                     │  │
+│  │     • Zoek alleen nabije regio's                    │  │
+│  │     • Goed voor lage dimensies (<20)                │  │
+│  │                                                      │  │
+│  │  2. GRAAF-GEBASEERD (HNSW, NSG)                     │  │
+│  │     • Bouw navigatiegraaf die vectoren verbindt    │  │
+│  │     • Wandel graaf richting querypunt              │  │
+│  │     • Beste nauwkeurigheid/snelheid hoge dimensies │  │
+│  │     • State-of-the-art voor meeste use cases       │  │
+│  │                                                      │  │
+│  │  3. HASH-GEBASEERD (LSH)                            │  │
+│  │     • Hash gelijksoortige vectoren naar zelfde bak │  │
+│  │     • Check alleen vectoren in zelfde bak          │  │
+│  │     • Snel maar lagere recall                       │  │
+│  │                                                      │  │
+│  │  4. KWANTISATIE (PQ, OPQ)                           │  │
+│  │     • Comprimeer vectoren door kwantisatie         │  │
+│  │     • Benader afstanden in gecomprimeerde ruimte   │  │
+│  │     • Ruilt nauwkeurigheid voor geheugen           │  │
+│  │                                                      │  │
+│  │  5. HYBRIDE (IVF+PQ, IVFHNSW)                       │  │
+│  │     • Combineer benaderingen voor beste tradeoffs  │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  HOE GRAAF-GEBASEERDE ANN WERKT (HNSW):                    │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  Bouwfase - maak navigeerbare graaf:                      │
+│                                                            │
+│     ●────────────●────────────●   Laag 2 (sparse)         │
+│     │            │            │   Lange-afstandsverbind.  │
+│     │            │            │                            │
+│     ●──●──●──────●──●──●──────●   Laag 1                   │
+│     │  │  │      │  │  │      │   Medium verbindingen      │
+│     │  │  │      │  │  │      │                            │
+│     ●●●●●●●●●●●●●●●●●●●●●●●●●●●   Laag 0 (dense)           │
+│                                   Alle vectoren            │
+│                                                            │
+│  Zoekfase - greedy navigatie:                             │
+│                                                            │
+│  1. Start bij ingangspunt (bovenste laag)                 │
+│  2. Ga naar buur dichtst bij query                        │
+│  3. Als geen dichtere buur, ga laag omlaag               │
+│  4. Herhaal tot laag 0                                     │
+│  5. Verken lokale buurt in laag 0                         │
+│                                                            │
+│                                                            │
+│  BELANGRIJKE METRIEKEN:                                    │
+│  ─────────────────────                                     │
+│                                                            │
+│  Recall@k: Welk deel van echte top-k hebben we gevonden? │
+│                                                            │
+│    Echte top-10:    [A, B, C, D, E, F, G, H, I, J]        │
+│    ANN retourneerde: [A, B, D, E, F, G, H, I, J, K]       │
+│                                                            │
+│    Recall@10 = 9/10 = 90% (miste C, retourneerde K)       │
+│                                                            │
+│  QPS (Queries Per Seconde): Doorvoermaat                  │
+│                                                            │
+│  Latentie: Tijd per query (p50, p99)                      │
+│                                                            │
+│                                                            │
+│  POPULAIRE ANN IMPLEMENTATIES:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  • FAISS (Facebook) - meest uitgebreid, CPU/GPU           │
+│  • HNSW (hnswlib) - beste graaf-gebaseerde implementatie  │
+│  • Annoy (Spotify) - snelle boom-gebaseerd, read-only     │
+│  • ScaNN (Google) - geoptimaliseerd voor x86              │
+│                                                            │
+│  Vector Databases:                                         │
+│  • Pinecone - managed service                             │
+│  • Weaviate - open source, hybride zoeken                 │
+│  • Milvus - open source, schaalbaar                       │
+│  • Qdrant - open source, Rust                             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Hoeveel nauwkeurigheid verlies ik met ANN vs exact zoeken?**
+
+A: Met goed afgestelde HNSW bereik je typisch 95-99% recall—wat betekent dat je 95-99 van de echte top-100 nearest neighbors vindt. Voor RAG en semantisch zoeken is dit meestal acceptabel omdat je sowieso meerdere kandidaten ophaalt.
+
+**V: Wanneer moet ik HNSW vs IVF-PQ gebruiken?**
+
+A: HNSW biedt beste nauwkeurigheid/snelheid tradeoff tot ~10 miljoen vectoren en past in geheugen. Voor miljarden vectoren of wanneer geheugen beperkt is, gebruik IVF-PQ dat vectoren zwaar comprimeert.
+
+**V: Hoe kies ik ANN parameters?**
+
+A: Begin met defaults, benchmark op je data en querypatronen. Belangrijke parameters: voor HNSW, tune `ef_construction` (bouwkwaliteit) en `ef_search` (zoekkwaliteit vs snelheid). Plot recall vs latentie curven om je sweet spot te vinden.
+
+**V: Heb ik een vector database nodig of kan ik een library gebruiken?**
+
+A: Libraries (FAISS, hnswlib) zijn sneller en flexibeler maar vereisen dat je persistentie, updates en schaalbaarheid zelf beheert. Vector databases (Pinecone, Weaviate) bieden managed indexering, filtering en horizontale schaalbaarheid.
+
+## Gerelateerde termen
+
+- [HNSW](/nl/glossary/hnsw/) — hiërarchische navigeerbare small world grafen
+- [FAISS](/nl/glossary/faiss/) — Facebook AI Similarity Search library
+- Embedding — vectoren doorzocht door ANN
+- [Dense retrieval](/nl/glossary/dense-retrieval/) — gebruikt ANN voor semantisch zoeken
+
+---
+
+## Referenties
+
+> Malkov & Yashunin (2018), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [HNSW paper]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [FAISS paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://www.sciencedirect.com/science/article/pii/S0306437919303758)", Information Systems. [Uitgebreide benchmark]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Bijgewerkte FAISS overzicht]
+
+## References
+
+> Malkov & Yashunin (2018), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [HNSW paper]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [FAISS paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://www.sciencedirect.com/science/article/pii/S0306437919303758)", Information Systems. [Comprehensive benchmark]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Updated FAISS overview]

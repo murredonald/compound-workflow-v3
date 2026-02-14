@@ -1,0 +1,182 @@
+---
+term: "Cross-Encoder"
+termSlug: "cross-encoder"
+short: "Een neurale architectuur die query-document paren gezamenlijk encodeert om relevantiescore te produceren, met hogere nauwkeurigheid dan bi-encoders maar tegen hogere rekenkosten."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["bi-encoder", "reranking", "dense-retrieval", "semantic-search"]
+synonyms: ["Cross-attention encoder", "Joint encoder", "Reranker model"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een cross-encoder is een [transformer](/nl/glossary/transformer-architecture/)-gebaseerd model dat een query-document paar als enkele invoersequentie neemt en een [relevantiescore](/nl/glossary/retrieval-scoring/) uitvoert. In tegenstelling tot bi-encoders die [query](/nl/glossary/prompt/) en document apart encoderen naar onafhankelijke vectoren, staan cross-encoders volledige aandacht toe tussen alle tokens in beide sequenties, wat rijkere interactiemodellering mogelijk maakt. Deze gezamenlijke encoding vangt genuanceerde semantische relaties, maar vereist het berekenen van een forward pass voor elk query-document paar, waardoor cross-encoders te traag zijn voor initiële retrieval maar ideaal voor het herrangschikken van een kleine kandidatenset.
+
+## Waarom het belangrijk is
+
+Cross-encoders zijn essentieel voor hoogwaardige zoekopdrachten:
+
+- **Superieure nauwkeurigheid** — vang token-niveau interacties die bi-encoders missen
+- **Reranking standaard** — gebruikt in vrijwel alle productie zoekpipelines
+- **[RAG](/nl/glossary/rag/) kwaliteit** — betere ranking betekent relevantere context voor [LLMs](/nl/glossary/llm/)
+- **Precisie focus** — blinken uit in het onderscheiden van relevant en bijna-relevant
+- **Complementeren bi-encoders** — twee-stage retrieval (recall + precisie) is optimaal
+- **Evaluatie tool** — vaak gebruikt als [ground truth](/nl/glossary/ground-truth/) voor het trainen van bi-encoders
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      CROSS-ENCODER                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  BI-ENCODER vs CROSS-ENCODER ARCHITECTUUR:                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  BI-ENCODER (aparte encoding):                            │
+│                                                            │
+│    Query                   Document                        │
+│      │                        │                            │
+│      ↓                        ↓                            │
+│  ┌────────┐              ┌────────┐                       │
+│  │Encoder │              │Encoder │  (kan zelfde model)   │
+│  └────────┘              └────────┘                       │
+│      │                        │                            │
+│      ↓                        ↓                            │
+│   [q_vec]                  [d_vec]                        │
+│      \                      /                              │
+│       → cosine(q, d) = 0.87 ←                             │
+│                                                            │
+│  ✓ Pre-compute document embeddings                        │
+│  ✓ Snelle retrieval via ANN                               │
+│  ✗ Geen token-niveau interactie tussen q en d             │
+│                                                            │
+│                                                            │
+│  CROSS-ENCODER (gezamenlijke encoding):                   │
+│                                                            │
+│    Input: [CLS] query tokens [SEP] document tokens [SEP]  │
+│                           │                                │
+│                           ↓                                │
+│                    ┌─────────────┐                        │
+│                    │ Transformer │                        │
+│                    │   Encoder   │                        │
+│                    └─────────────┘                        │
+│                           │                                │
+│          Volledige self-attention over ALLE tokens        │
+│                           │                                │
+│                           ↓                                │
+│                    ┌─────────────┐                        │
+│                    │ [CLS] token │                        │
+│                    │  embedding  │                        │
+│                    └─────────────┘                        │
+│                           │                                │
+│                           ↓                                │
+│                   Score: 0.92 (relevantie)                │
+│                                                            │
+│  ✓ Token-niveau cross-aandacht tussen q en d              │
+│  ✓ Vangt fijnmazige semantische matches                   │
+│  ✗ Kan niet pre-computen - moet voor elk paar draaien    │
+│                                                            │
+│                                                            │
+│  TWEE-STAGE RETRIEVAL PIPELINE:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │                                                     │  │
+│  │  Stage 1: RECALL (Bi-encoder)                      │  │
+│  │  ────────────────────────────                      │  │
+│  │  Query → Embed → ANN zoeken → Top 100-1000 docs   │  │
+│  │  Latentie: ~10ms                                   │  │
+│  │  Doel: Hoge recall (vind alle relevante docs)     │  │
+│  │                                                     │  │
+│  │              ↓                                      │  │
+│  │                                                     │  │
+│  │  Stage 2: PRECISIE (Cross-encoder)                 │  │
+│  │  ─────────────────────────────────                 │  │
+│  │  (Query, Doc₁) → Score₁                            │  │
+│  │  (Query, Doc₂) → Score₂                            │  │
+│  │  ...                                                │  │
+│  │  (Query, Doc₁₀₀) → Score₁₀₀                        │  │
+│  │                                                     │  │
+│  │  Sorteer op score → Retourneer top 10             │  │
+│  │  Latentie: ~500ms                                  │  │
+│  │  Doel: Hoge precisie (beste docs eerst)           │  │
+│  │                                                     │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  BEREKEN COMPLEXITEIT:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  Voor N documenten en Q queries:                          │
+│                                                            │
+│  Bi-encoder:                                               │
+│  • Index: N forward passes (een per doc)                  │
+│  • Query: Q forward passes + N×Q afstandsberekeningen    │
+│                                                            │
+│  Cross-encoder:                                            │
+│  • Geen pre-berekening mogelijk                           │
+│  • Moet berekenen: N × Q forward passes                   │
+│  • 1M docs × 1 query = 1M forward passes                  │
+│                                                            │
+│                                                            │
+│  POPULAIRE CROSS-ENCODER MODELLEN:                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│  • ms-marco-MiniLM-L-6-v2  - Snel, goede nauwkeurigheid  │
+│  • ms-marco-MiniLM-L-12-v2 - Betere nauwkeurigheid       │
+│  • bge-reranker-large      - BGE serie, nauwkeurig       │
+│  • Cohere Rerank           - API, meertalig              │
+│  • Jina Reranker           - Open source optie           │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Waarom kan ik niet gewoon cross-encoders gebruiken voor retrieval?**
+
+A: Cross-encoders vereisen een forward pass voor elk query-document paar. Met 1 miljoen documenten is dat 1 miljoen forward passes per query (~uren latentie). Bi-encoders pre-computen document [embeddings](/nl/glossary/embeddings/), wat sub-seconde zoeken via [ANN](/nl/glossary/ann/) indexes mogelijk maakt.
+
+**V: Hoeveel documenten moeten cross-encoders herrangschikken?**
+
+A: Typisch 50-100 kandidaten, balancerend nauwkeurigheidswinst tegen latentie. Boven 100 treden afnemende meeropbrengsten op (relevante docs zijn meestal in top 50).
+
+**V: Kunnen cross-encoders gedistilleerd worden naar bi-encoders?**
+
+A: Ja—dit is een veelgebruikte trainingsstrategie. Gebruik cross-encoder als leraar, genereer relevantielabels voor query-document paren, train dan bi-encoder op deze zachte labels.
+
+**V: Wat is de relatie tussen cross-encoders en LLM reranking?**
+
+A: LLMs kunnen ook herrangschikken door relevantie te scoren. LLMs zijn flexibeler maar langzamer en duurder dan gespecialiseerde cross-encoders. Fine-tuned cross-encoders presteren vaak beter dan zero-shot LLM ranking op specifieke domeinen.
+
+## Gerelateerde termen
+
+- [Bi-encoder](/nl/glossary/bi-encoder/) — complementaire architectuur voor retrieval
+- [Reranking](/nl/glossary/reranking/) — taak die cross-encoders uitvoeren
+- [Dense retrieval](/nl/glossary/dense-retrieval/) — bi-encoder gebaseerde retrieval
+- [Semantic search](/nl/glossary/semantic-search/) — toepassingsgebied
+
+---
+
+## Referenties
+
+> Nogueira & Cho (2019), "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)", arXiv. [Cross-encoder reranking paper]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Bi-encoder vs cross-encoder vergelijking]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Cross-encoder benchmarks]
+
+> Khattab & Zaharia (2020), "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction](https://arxiv.org/abs/2004.12832)", SIGIR. [Late interaction middenweg]
+
+## References
+
+> Nogueira & Cho (2019), "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)", arXiv. [Cross-encoder reranking paper]
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Bi-encoder vs cross-encoder comparison]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Cross-encoder benchmarks]
+
+> Khattab & Zaharia (2020), "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction](https://arxiv.org/abs/2004.12832)", SIGIR. [Late interaction middle ground]

@@ -1,0 +1,246 @@
+---
+term: "Factualité"
+termSlug: "factuality"
+short: "Le degré auquel le contenu généré par l'IA reflète avec précision la vérité vérifiable, distinguant les déclarations correctes des fabrications et hallucinations."
+category: "ai-ml"
+category_name: "IA & Machine Learning"
+related: ["grounding", "citation", "attribution", "hallucination"]
+synonyms: ["Précision factuelle", "Véracité", "Exactitude factuelle"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+La factualité en IA fait référence à la précision et la véracité du contenu généré—si les déclarations correspondent à des faits vérifiables. Une réponse IA factuelle contient des affirmations qui peuvent être validées contre des sources faisant autorité ou des connaissances établies. La factualité diffère de la fluidité (naturel du texte) et de la pertinence (qualité de la réponse); une réponse peut être parfaitement fluide et pertinente mais factuellement incorrecte. La factualité répond: "Ce que l'IA a dit est-il réellement vrai?"
+
+## Pourquoi c'est important
+
+La factualité est non négociable pour l'IA fiable:
+
+- **Prévient la désinformation** — erreurs factuelles se propagent quand IA est fiable
+- **Permet déploiement sûr** — critique dans domaines médical, juridique, financier
+- **Construit confiance utilisateur** — inexactitudes répétées détruisent crédibilité
+- **Supporte conformité** — réglementations exigent informations précises
+- **Réduit responsabilité** — erreurs factuelles peuvent avoir conséquences légales
+- **Distingue qualité** — factualité sépare IA utile d'IA dangereuse
+
+## Comment ça fonctionne
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      FACTUALITÉ                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SPECTRE DE FACTUALITÉ:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  FACTUEL ◄────────────────────────► FABRIQUÉ       │ │
+│  │     │                                    │           │ │
+│  │     ▼                                    ▼           │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │ │
+│  │  │ Vérifié  │ │ Précis   │ │ Erroné   │ │ Hallu- │ │ │
+│  │  │ correct  │ │ (prob.   │ │ (faits   │ │ ciné   │ │ │
+│  │  │ (prouvé) │ │ vrai)    │ │ faux)    │ │(inventé│ │ │
+│  │  └──────────┘ └──────────┘ └──────────┘ └────────┘ │ │
+│  │                                                      │ │
+│  │  Exemples:                                           │ │
+│  │  • Vérifié: "L'eau bout à 100°C niveau mer"        │ │
+│  │  • Précis: "Le projet était terminé au Q3"         │ │
+│  │  • Erroné: "Einstein a découvert la gravité"       │ │
+│  │  • Halluciné: "Les JO 2025 sur Mars"               │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TYPES D'ERREURS FACTUELLES:                               │
+│  ───────────────────────────                               │ 
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  TYPE ERREUR   │  DESCRIPTION       │  EXEMPLE      │ │
+│  │  ──────────────┼────────────────────┼────────────── │ │
+│  │  Erreur        │  Mauvais noms,     │  "Microsoft   │ │
+│  │  d'entité      │  dates, lieux      │  fondé en     │ │
+│  │                │                    │  1976"        │ │
+│  │  ──────────────┼────────────────────┼────────────── │ │
+│  │  Erreur        │  Mauvaises         │  "Einstein    │ │
+│  │  de relation   │  connexions entre  │  a découvert  │ │
+│  │                │  entités           │  pénicilline" │ │
+│  │  ──────────────┼────────────────────┼────────────── │ │
+│  │  Erreur        │  Mauvais chiffres  │  "La Terre    │ │
+│  │  numérique     │  statistiques      │  a 4 milliards│ │
+│  │                │                    │  d'années"    │ │
+│  │  ──────────────┼────────────────────┼────────────── │ │
+│  │  Erreur        │  Mauvais timing    │  "La SGM s'est│ │
+│  │  temporelle    │  séquence          │  terminée en  │ │
+│  │                │                    │  1944"        │ │
+│  │  ──────────────┼────────────────────┼────────────── │ │
+│  │  Fabrication   │  Entités/événe-    │  "La Loi      │ │
+│  │                │  ments inventés    │  Smith de     │ │
+│  │                │                    │  2022..."     │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  PIPELINE ÉVALUATION FACTUALITÉ:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. EXTRACTION AFFIRMATIONS                          │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  Réponse IA: "Apple a été fondée en 1976    │  │ │
+│  │  │  par Steve Jobs et Bill Gates en Californie. │  │ │
+│  │  │  Le premier produit était l'Apple I."       │  │ │
+│  │  │                                              │  │ │
+│  │  │  Affirmations Extraites:                     │  │ │
+│  │  │  C1: "Apple fondée en 1976"                 │  │ │
+│  │  │  C2: "Steve Jobs a fondé Apple"             │  │ │
+│  │  │  C3: "Bill Gates a fondé Apple"             │  │ │
+│  │  │  C4: "Apple fondée en Californie"           │  │ │
+│  │  │  C5: "Premier produit était Apple I"        │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  2. VÉRIFICATION FAITS (par affirmation)            │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  C1: "Apple fondée en 1976" ✓               │  │ │
+│  │  │      Source: Wikipedia, documents SEC        │  │ │
+│  │  │      → FACTUEL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C2: "Steve Jobs a fondé Apple" ✓           │  │ │
+│  │  │      Source: Histoire entreprise            │  │ │
+│  │  │      → FACTUEL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C3: "Bill Gates a fondé Apple" ✗           │  │ │
+│  │  │      Contradiction: Gates → Microsoft       │  │ │
+│  │  │      → NON-FACTUEL (mauvaise relation)      │  │ │
+│  │  │                                              │  │ │
+│  │  │  C4: "Apple en Californie" ✓                │  │ │
+│  │  │      Source: Documents incorporation        │  │ │
+│  │  │      → FACTUEL                               │  │ │
+│  │  │                                              │  │ │
+│  │  │  C5: "Premier produit Apple I" ✓            │  │ │
+│  │  │      Source: Histoire produit               │  │ │
+│  │  │      → FACTUEL                               │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                       │                             │ │
+│  │                       ▼                             │ │
+│  │  3. SCORE FACTUALITÉ                                │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │                                              │  │ │
+│  │  │  Total affirmations: 5                       │  │ │
+│  │  │  Affirmations factuelles: 4                  │  │ │
+│  │  │  Affirmations non-factuelles: 1              │  │ │
+│  │  │                                              │  │ │
+│  │  │  Score Factualité: 4/5 = 80%                │  │ │
+│  │  │                                              │  │ │
+│  │  │  Analyse erreur:                             │  │ │
+│  │  │  • 1 erreur entité/relation (Bill Gates)    │  │ │
+│  │  │  • Sévérité: HAUTE (mauvais co-fondateur)   │  │ │
+│  │  │                                              │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  MÉTHODES VÉRIFICATION FACTUALITÉ:                        │
+│  ─────────────────────────────────                        │
+│                                                            │
+│  Recherche Base Connaissances:                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Interroger bases connaissances (Wikidata, etc.)   │ │
+│  │                                                      │ │
+│  │  Affirmation: "Paris est capitale de France"       │ │
+│  │  Requête: capitale_de(Paris, ?)                     │ │
+│  │  Résultat: capitale_de(Paris, France) = VRAI       │ │
+│  │  → FACTUEL ✓                                        │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│  Vérification Recherche Web:                              │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │  Chercher preuves supportant/contredisant          │ │
+│  │                                                      │ │
+│  │  Affirmation: "Produit X a gagné Prix 2023"        │ │
+│  │  Recherche: "Produit X" "Prix Innovation 2023"      │ │
+│  │  Résultats: Sources multiples confirment → FACTUEL │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  AMÉLIORER FACTUALITÉ:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  RAG (Retrieval-Augmented Generation):             │ │
+│  │  ├── Ancrer réponses dans documents récupérés      │ │
+│  │  └── Réduit dépendance connaissances paramétriques │ │
+│  │                                                      │ │
+│  │  Vérification Chain-of-Thought:                    │ │
+│  │  ├── Modèle montre raisonnement étape par étape   │ │
+│  │  └── Chaque étape peut être vérifiée              │ │
+│  │                                                      │ │
+│  │  Expression Incertitude:                           │ │
+│  │  ├── Modèle exprime niveaux confiance             │ │
+│  │  └── "Je suis incertain..." réduit erreurs        │ │
+│  │                                                      │ │
+│  │  Vérification Post-Génération:                     │ │
+│  │  ├── Vérifier affirmations après génération       │ │
+│  │  └── Filtrer ou marquer contenu non-factuel       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Questions fréquentes
+
+**Q: Comment la factualité diffère de l'hallucination?**
+
+R: L'hallucination est un type d'échec de factualité—spécifiquement, générer du contenu sans base dans les données d'entraînement ou le contexte fourni. La factualité est le concept plus large englobant tous les types de véracité.
+
+**Q: Comment mesurer la factualité dans mon système IA?**
+
+R: Approches communes: (1) Utiliser benchmarks comme FactScore, TruthfulQA ou FEVER, (2) Créer ensembles test spécifiques au domaine avec faits vérifiés, (3) Implémenter pipelines extraction + vérification affirmations, (4) Évaluation humaine pour applications critiques.
+
+**Q: [RAG](/fr/glossary/rag/) peut-il garantir la factualité?**
+
+R: RAG améliore factualité par ancrage dans sources récupérées mais ne la garantit pas. Le modèle peut encore mal interpréter sources ou récupérer sources inexactes.
+
+**Q: Quel taux de factualité acceptable?**
+
+R: Dépend du risque domaine. Médical/juridique/financier: 99%+ (erreurs nuisent). Connaissances générales: 90-95% acceptable avec expression incertitude.
+
+## Termes associés
+
+- [Grounding](/fr/glossary/grounding/) — ancrer aux documents sources
+- [Citation](/fr/glossary/citation/) — ajouter références sources
+- [Attribution](/fr/glossary/attribution/) — vérifier support source
+- [Hallucination](/fr/glossary/hallucination/) — contenu fabriqué
+
+---
+
+## Références
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision](https://arxiv.org/abs/2305.14251)", EMNLP. [Méthode évaluation factualité]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Benchmark véracité]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Dataset vérification faits]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Recherche récente factualité]
+
+## References
+
+> Min et al. (2023), "[FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation](https://arxiv.org/abs/2305.14251)", EMNLP. [Factuality evaluation method]
+
+> Lin et al. (2022), "[TruthfulQA: Measuring How Models Mimic Human Falsehoods](https://arxiv.org/abs/2109.07958)", ACL. [Truthfulness benchmark]
+
+> Thorne et al. (2018), "[FEVER: a Large-scale Dataset for Fact Extraction and VERification](https://arxiv.org/abs/1803.05355)", NAACL. [Fact verification dataset]
+
+> Wei et al. (2024), "[Long-form factuality in large language models](https://arxiv.org/abs/2403.18802)", arXiv. [Recent factuality research]

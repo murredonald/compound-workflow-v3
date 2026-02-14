@@ -1,0 +1,62 @@
+---
+term: "Indexierungsstrategie"
+termSlug: "indexing-strategy"
+short: "Eine Indexierungsstrategie ist der Plan, was indexiert wird, wie Inhalte strukturiert werden und wie der Index aktuell bleibt, damit die Suche zuverlässig ist."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["full-text-search", "semantic-expansion", "relevance-tuning", "content-discoverability", "search-analytics"]
+synonyms: ["Search indexing strategy", "Indexierungsplan", "Index-Design"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Eine Indexierungsstrategie umfasst die Entscheidungen, was Sie indexieren (und was Sie ausschließen), wie Inhalte im Index repräsentiert werden und wie Updates verarbeitet werden. Sie verbindet die Content-Schicht (Dokumente, Seiten, PDFs) mit der Retrieval-Schicht (Suchergebnisse, Empfehlungen, [RAG](/de/glossary/rag/)).
+
+## Warum es wichtig ist
+
+- **Suchqualität**: gute Index-Entscheidungen erhöhen Recall und reduzieren irrelevante Treffer.
+- **Aktualität und Vertrauen**: klare Update-Regeln vermeiden veraltete oder widersprüchliche Ergebnisse.
+- **Kosten und Performance**: alles zu indexieren ist teuer; das Richtige zu indexieren ist effizient.
+- **Compliance**: Zugriffsrechte und Aufbewahrung müssen oft bereits beim Indexieren durchgesetzt werden.
+
+## Wie es funktioniert
+
+```
+Content -> parsen/normalisieren -> Felder -> Index -> Ranking -> Messen -> Iteration
+```
+
+Typische Entscheidungen: Granularität (Seite vs Abschnitt), Felder (Titel/Text/Metadaten), Analyse (Stemming, Synonyme), Berechtigungen und Update-Takt (Batch vs nahezu in Echtzeit).
+
+## Praktisches Beispiel
+
+Für eine juristische [Wissensdatenbank](/de/glossary/knowledge-base/) können Sie Gesetze auf **Artikel**-Ebene indexieren, **Geltungsdaten** als Metadaten speichern und ein Feld für **amtliche Zitate** vorsehen, um präzise zu filtern und zu ranken.
+
+## Häufige Fragen
+
+**Q: Ganze Dokumente oder kleinere Einheiten indexieren?**
+
+A: Kleinere Einheiten (Abschnitte/Artikel) verbessern oft Präzision und Snippets, erfordern aber saubere Metadaten für Kontext.
+
+**Q: Wann brauche ich mehr als einen Index?**
+
+A: Wenn Inhalte unterschiedliche Update-Zyklen, Zugriffsregeln oder Ranking-Logik haben (z.B. öffentlich vs vertraulich).
+
+## Verwandte Begriffe
+
+- [Volltextsuche](/de/glossary/full-text-search/) - Keyword-Suche im Text
+- [Semantische Erweiterung](/de/glossary/semantic-expansion/) - Erweiterung über exakte Begriffe hinaus
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Ranking gezielt verbessern
+- [Auffindbarkeit von Inhalten](/de/glossary/content-discoverability/) - Inhalte auffindbar und indexierbar machen
+- [Suchanalyse](/de/glossary/search-analytics/) - Suche messen und optimieren
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

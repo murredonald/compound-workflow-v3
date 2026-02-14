@@ -1,0 +1,69 @@
+---
+term: "Mapping rechtlicher Abhängigkeiten"
+termSlug: "legal-dependency-mapping"
+short: "Mapping rechtlicher Abhängigkeiten baut einen Graphen aus Zitationen und Beziehungen zwischen Rechtsquellen, damit Retrieval und Analysen nachvollziehen können, was wovon abhängt."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["knowledge-graph", "semantic-expansion", "authority-ranking-model", "source-conflict-resolution", "multi-jurisdictional-indexing"]
+synonyms: ["Legal citation graph", "Dependency graph for law", "Legal reference mapping"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Mapping rechtlicher Abhängigkeiten ist das Extrahieren und Modellieren von Beziehungen zwischen Rechtsquellen: Zitationen, Querverweise, Änderungen, Ausführungsakte und Hierarchie-Links. Das Ergebnis ist häufig ein Graph, der zeigt, wie Texte zusammenhängen und welche Quellen kontrollieren oder Vorrang haben.
+
+## Warum es wichtig ist
+
+- **Besseres Retrieval**: zu einem Artikel gehören oft Definitionen oder Ausführungsregeln.
+- **Impact-Analyse**: bei Änderungen sieht man, welche Texte potenziell betroffen sind.
+- **[Erklärbarkeit](/de/glossary/algorithmic-transparency/)**: macht Relevanz über Zitationen und Pfade nachvollziehbar.
+- **Konfliktbehandlung**: unterstützt das Erkennen widersprüchlicher oder überholter Quellen.
+
+## Wie es funktioniert
+
+Typisch ist die Kombination aus [Referenz](/de/glossary/citation/)-Extraktion und Normalisierung:
+
+```
+Dokumente parsen -> Referenzen extrahieren -> Identifier normalisieren -> Graph bauen -> in Retrieval/UI nutzen
+```
+
+Beziehungsarten:
+
+- "zitiert" / "wird zitiert von"
+- "ändert" / "wird geändert von"
+- "implementiert" / "wird implementiert von"
+- "definiert" / "wird definiert in"
+
+## Praktisches Beispiel
+
+Ein Nutzer sucht nach einer Steuernorm. Das System retrieved zusätzlich die Definitionsnorm, den Ausführungsakt und die letzte Änderung. Die Antwort enthält Zitate und einen kurzen "Dependency-Pfad", der erklärt, warum diese Quellen enthalten sind.
+
+## Häufige Fragen
+
+**Q: Ist das dasselbe wie ein Knowledge Graph?**
+
+A: Es kann ein Teil davon sein, ist aber enger: Dependency Mapping fokussiert auf Dokument-zu-Dokument-Beziehungen und rechtliche Referenzen, die Anwendbarkeit beeinflussen.
+
+**Q: Muss die Extraktion perfekt sein?**
+
+A: Nein. Auch partielle Graphen sind nützlich, solange Referenzen normalisiert sind und Confidence transparent gemacht wird.
+
+## Verwandte Begriffe
+
+- [Knowledge Graph](/de/glossary/knowledge-graph/) - breitere Modellierung von Entitäten und Beziehungen
+- [Semantische Erweiterung](/de/glossary/semantic-expansion/) - Dependencies können sichere Expansion steuern
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - Zitationsstruktur als Autoritätssignal
+- [Source Conflict Resolution](/de/glossary/source-conflict-resolution/) - Konflikte via Overrides/Änderungen erkennen
+- [Multijurisdiktionale Indexierung](/de/glossary/multi-jurisdictional-indexing/) - Dependencies variieren je Jurisdiktion
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

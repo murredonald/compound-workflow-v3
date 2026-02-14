@@ -1,0 +1,123 @@
+---
+term: "Greedy Decoding"
+termSlug: "greedy-decoding"
+short: "A simple text generation strategy that always selects the highest-probability token at each step."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["beam-search", "top-k", "top-p", "inference", "llm"]
+synonyms: ["Greedy search", "Argmax decoding", "Maximum likelihood decoding"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Greedy decoding is the simplest text generation strategy where the model always selects the token with the highest probability at each generation step. It makes locally optimal choices without considering how current decisions affect future token possibilities, resulting in fast but potentially suboptimal sequences.
+
+## Why it matters
+
+Greedy decoding offers key advantages in specific scenarios:
+
+- **Speed** — fastest decoding method, single forward pass per token
+- **Deterministic** — same input always produces same output
+- **Simplicity** — no hyperparameters to tune
+- **Baseline** — standard comparison point for other methods
+- **Structured tasks** — works well for factual, constrained outputs
+
+However, greedy decoding often produces repetitive or generic text.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     GREEDY DECODING                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  At each step: Pick argmax(probability)                    │
+│                                                            │
+│  Step 1: "The" → probabilities:                           │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  cat: 0.35  ◄── SELECTED (highest)         │           │
+│  │  dog: 0.25                                  │           │
+│  │  man: 0.15                                  │           │
+│  │  car: 0.10                                  │           │
+│  │  ...                                        │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Step 2: "The cat" → probabilities:                       │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  sat: 0.40  ◄── SELECTED (highest)         │           │
+│  │  ran: 0.20                                  │           │
+│  │  is:  0.18                                  │           │
+│  │  was: 0.12                                  │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Result: "The cat sat..."                                 │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  PROBLEM: LOCAL VS GLOBAL OPTIMA              │        │
+│  │                                                │        │
+│  │  Greedy: "The cat sat" (p=0.35 × 0.40 = 0.14)│        │
+│  │  Better: "The dog ran" (p=0.25 × 0.55 = 0.14)│        │
+│  │                                                │        │
+│  │  Second path might lead to better sequence!   │        │
+│  │  Greedy can't see this—commits to "cat"      │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  GREEDY VS ALTERNATIVES:                                   │
+│  ────────────────────────                                  │
+│  Greedy:     Pick top-1 always     → deterministic        │
+│  Top-k:      Sample from top-k     → diverse              │
+│  Top-p:      Sample from nucleus   → adaptive             │
+│  Beam:       Track multiple paths  → better sequences     │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**When to use greedy decoding:**
+| Scenario | Recommendation |
+|----------|----------------|
+| Code generation | Often good (structured output) |
+| Translation | Usually beam search preferred |
+| Creative writing | Use sampling instead |
+| Factual Q&A | Can work well |
+| Classification | Appropriate |
+| General chat | Use sampling |
+
+## Common questions
+
+**Q: Why does greedy decoding produce repetitive text?**
+
+A: Once the model generates a common phrase, that phrase often has high probability of continuing. The model can get stuck in loops like "I think that I think that I think..." because each repetition is locally optimal.
+
+**Q: When should I use greedy decoding?**
+
+A: Use it for structured tasks with clear correct answers: code completion, classification, simple extraction. Avoid it for creative or open-ended generation where diversity matters.
+
+**Q: Is greedy decoding equivalent to temperature = 0?**
+
+A: Effectively yes. Temperature approaching 0 makes the probability distribution increasingly peaked at the highest-probability token, converging to greedy selection.
+
+**Q: How does greedy compare to beam search?**
+
+A: Greedy is beam search with beam width 1. Beam search explores multiple paths and often finds higher-probability complete sequences, at the cost of more computation.
+
+## Related terms
+
+- [Beam Search](/en/glossary/beam-search/) — explores multiple sequences
+- [Top-k Sampling](/en/glossary/top-k/) — adds randomness
+- [Top-p Sampling](/en/glossary/top-p/) — adaptive sampling
+- [Temperature](/en/glossary/temperature/) — controls distribution shape
+- [Inference](/en/glossary/inference/) — generation process
+
+---
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3,500+ citations]

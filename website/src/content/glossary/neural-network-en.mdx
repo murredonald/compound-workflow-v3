@@ -1,0 +1,125 @@
+---
+term: "Neural Network"
+termSlug: "neural-network"
+short: "A machine learning model composed of interconnected layers of artificial neurons that learn patterns from data."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["deep-learning", "backpropagation", "transformer-architecture", "llm"]
+synonyms: ["Artificial neural network", "ANN", "Neural net", "Connectionist model"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+A neural network is a computational model loosely inspired by the human brain, consisting of layers of interconnected artificial neurons (nodes). Each neuron receives inputs, applies weights and a bias, passes the result through an activation function, and outputs to the next layer. Through training with backpropagation, neural networks learn to recognize patterns, make [predictions](/en/glossary/inference/), and generate outputs from data.
+
+## Why it matters
+
+Neural networks are the foundation of modern AI:
+
+- **Universal approximators** — can learn any continuous function given enough neurons
+- **Feature learning** — automatically discover relevant patterns in data
+- **Scalability** — performance improves with more data and compute
+- **Versatility** — vision, language, speech, games, science, and more
+- **State-of-the-art** — power all leading AI systems including LLMs
+
+From image recognition to language generation, neural networks dominate AI.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     NEURAL NETWORK                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STRUCTURE OF A FEEDFORWARD NETWORK:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  Input Layer    Hidden Layers    Output Layer              │
+│      │                │               │                    │
+│      ○ ─────┬────► ○ ────┬────► ○ ────┬────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┼────► ○ ────┼────► ○ ────┼────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┴────► ○ ────┴────► ○ ────┴────► (output)      │
+│                                                            │
+│     x₁,x₂,x₃      h₁,h₂,h₃      h₄,h₅,h₆       ŷ          │
+│                                                            │
+│  SINGLE NEURON:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Inputs       Weights    Sum + Bias   Activation│       │
+│  │                                                 │        │
+│  │    x₁ ──────► w₁ ──┐                           │        │
+│  │                    │                           │        │
+│  │    x₂ ──────► w₂ ──┼──► Σ + b ──► f(·) ──► y  │        │
+│  │                    │                           │        │
+│  │    x₃ ──────► w₃ ──┘                           │        │
+│  │                                                 │        │
+│  │  y = f(w₁x₁ + w₂x₂ + w₃x₃ + b)                │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  COMMON ACTIVATION FUNCTIONS:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ReLU:    f(x) = max(0, x)         ___/                   │
+│  Sigmoid: f(x) = 1/(1+e⁻ˣ)        _/⁻⁻                    │
+│  Tanh:    f(x) = (eˣ-e⁻ˣ)/(eˣ+e⁻ˣ)  _/‾                  │
+│  Softmax: Probability distribution  (for classification)  │
+│                                                            │
+│  NETWORK TYPES:                                            │
+│  ──────────────                                            │
+│  Feedforward (MLP):  Data flows one direction             │
+│  Convolutional (CNN): Spatial patterns (images)           │
+│  Recurrent (RNN):     Sequential data (text, time)        │
+│  Transformer:         Attention-based (LLMs)              │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Network architecture comparison:**
+| Type | Strength | Use Cases |
+|------|----------|-----------|
+| MLP | Simple [tabular data](/en/glossary/structured-data/) | Classification, regression |
+| CNN | Spatial hierarchies | Images, video, audio |
+| RNN/LSTM | Sequential patterns | Time series, early NLP |
+| Transformer | Long-range dependencies | LLMs, modern NLP, vision |
+
+## Common questions
+
+**Q: How deep should a neural network be?**
+
+A: It depends on task complexity. Simple tasks need few layers; complex patterns (like language) need many. Modern LLMs have 32-100+ layers. Start simple and add depth if underfitting.
+
+**Q: What's the difference between neurons and parameters?**
+
+A: Neurons are the computational units; parameters are the weights and biases connecting them. A network with 1000 neurons might have millions of parameters (each neuron connects to many others).
+
+**Q: Why do neural networks need activation functions?**
+
+A: Without nonlinear activations, multiple layers would collapse to a single linear transformation (no matter how many layers). Activation functions enable networks to learn complex, nonlinear patterns.
+
+**Q: How do neural networks relate to "deep learning"?**
+
+A: Deep learning specifically refers to neural networks with many layers (deep architectures). A 2-layer network is a neural network but not "deep." Modern transformer LLMs are very deep neural networks.
+
+## Related terms
+
+- [Deep Learning](/en/glossary/deep-learning/) — neural networks with many layers
+- [Transformer Architecture](/en/glossary/transformer-architecture/) — modern neural architecture
+- [Backpropagation](/en/glossary/backpropagation/) — training algorithm
+- [LLM](/en/glossary/llm/) — language-focused deep neural networks
+
+---
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20,000+ citations]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25,000+ citations]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Foundational paper]

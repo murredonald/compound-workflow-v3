@@ -1,0 +1,60 @@
+---
+term: "Boolesche Suche"
+termSlug: "boolean-search"
+short: "Boolesche Suche kombiniert Begriffe mit Operatoren wie AND, OR und NOT, um Ergebnisse präzise ein- oder auszuschließen."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["full-text-search", "query-understanding", "relevance-tuning"]
+synonyms: ["Boolesche Query", "Boolean retrieval", "AND/OR/NOT-Suche"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Boolesche Suche ist eine Abfrageform, die exakte Bedingungen mit logischen Operatoren (AND, OR, NOT) ausdrückt, oft ergänzt durch Klammern und Anführungszeichen. Sie wird in Volltextsystemen genutzt, um Präzision zu erhöhen und Rauschen zu reduzieren.
+
+## Warum es wichtig ist
+
+- **Präzision**: schließt häufige False Positives aus.
+- **Nachvollziehbarkeit**: die Query zeigt klar, warum ein Treffer passt.
+- **Power-User**: in Recht und Research oft erwartet.
+- **Deterministisch**: hilfreich für reproduzierbare Ergebnisse.
+
+## Wie es funktioniert
+
+```
+(TermA AND TermB) OR ("exakte Phrase") AND NOT TermC
+```
+
+Operatorregeln unterscheiden sich je Engine (Parsing, Stopwörter, Groß-/Kleinschreibung), daher ist Query-Verständnis wichtig.
+
+## Praktisches Beispiel
+
+`("Kapitalertragsteuer" OR "Dividendensteuer") AND Belgien AND NOT "USA Abkommen"` grenzt Ergebnisse sauber ein.
+
+## Häufige Fragen
+
+**Q: Ersetzt boolesche Logik Ranking?**
+
+A: Nein. Boolean filtert Kandidaten; Ranking sortiert sie.
+
+**Q: Warum verhalten sich Operatoren manchmal anders als erwartet?**
+
+A: Viele Engines haben implizite Operatoren oder Parsingregeln. Sauberes Query-Verständnis reduziert Überraschungen.
+
+## Verwandte Begriffe
+
+- [Volltextsuche](/de/glossary/full-text-search/) - Keyword-Suche mit Operatoren
+- [Query-Verständnis](/de/glossary/query-understanding/) - Operator-Queries parsen
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Ranking verbessern
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

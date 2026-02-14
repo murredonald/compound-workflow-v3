@@ -1,0 +1,69 @@
+---
+term: "Gewichtung der Quellenzuverlässigkeit"
+termSlug: "source-reliability-weighting"
+short: "Die Gewichtung der Quellenzuverlässigkeit gibt vertrauenswürdigen Quellen mehr Einfluss, damit Retrieval und Antworten offizielle, hochwertige Quellen priorisieren."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["authority-ranking-model", "source-conflict-resolution", "relevance-tuning", "search-analytics", "compliance-aware-retrieval"]
+synonyms: ["Trust weighting", "Source quality weighting", "Reliability scoring"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Quellenzuverlässigkeits-Gewichtung ist eine Technik, bei der ein Such- oder RAG-System Quellen je nach Vertrauenswürdigkeit unterschiedlich gewichtet. Zuverlässigkeit umfasst u.a. [Provenienz](/de/glossary/source-provenance/), redaktionelle Kontrolle, Update-Disziplin sowie die Frage, ob eine Quelle offiziell oder eher interpretativ ist.
+
+## Warum es wichtig ist
+
+- **Sicherere Outputs**: reduziert den Einfluss von Low-Quality-Content.
+- **Besseres Ranking**: hilft, unter vielen Treffern die besten auszuwählen.
+- **[Erklärbarkeit](/de/glossary/algorithmic-transparency/)**: macht transparent, warum offizielle Quellen bevorzugt werden.
+- **[Robustheit](/de/glossary/model-robustness/)**: dämpft Rauschen und SEO-getriebene Inhalte.
+
+## Wie es funktioniert
+
+Zuverlässigkeit wird typischerweise als Score/Metadata in Ranking und/oder Synthese genutzt:
+
+```
+Retrieve -> Relevanz scoren -> Zuverlässigkeit gewichten -> ranken -> mit Zitationen generieren
+```
+
+Beispielhafte Stufen (Legal/Tax):
+
+1. Offizielles Recht und offizielle Veröffentlichungen
+2. Primäre Rechtsprechung (mit Metadaten zur Gerichtsebene)
+3. Professionelle Kommentare und kuratierte interne Memos
+4. Unverifiziertes Web
+
+## Praktisches Beispiel
+
+Bei einer Reporting-Pflicht findet das System eine offizielle Guidance-Seite und mehrere Blogposts. Die Gewichtung boostet die offizielle Seite und nutzt sie als Primärzitat; Blogs bleiben sekundär als Erklärungskontext.
+
+## Häufige Fragen
+
+**Q: Wie unterscheidet sich das vom Autoritäts-Ranking-Modell?**
+
+A: Zuverlässigkeitsgewichtung ist breiter (Trust/Provenienz). Autoritätsranking ist juristisch spezifisch (Hierarchien und kontrollierende Quellen). In der Praxis werden beide oft kombiniert.
+
+**Q: Kann man das "gamen"?**
+
+A: Weniger als Keyword-Relevanz, aber ja, wenn Quellen nicht kuratiert sind. Gute Systeme kontrollieren erlaubte Domains, tracken Provenienz und reviewen High-Impact-Quellen.
+
+## Verwandte Begriffe
+
+- [Autoritäts-Ranking-Modell](/de/glossary/authority-ranking-model/) - kontrollierende Quellen priorisieren
+- [Source Conflict Resolution](/de/glossary/source-conflict-resolution/) - widersprüchliche Quellen behandeln
+- [Relevanz-Tuning](/de/glossary/relevance-tuning/) - Ranking und Evaluation verbessern
+- [Search Analytics](/de/glossary/search-analytics/) - Qualität und Drift überwachen
+- [Compliance-bewusstes Retrieval](/de/glossary/compliance-aware-retrieval/) - Quellen via Policy und Regeln einschränken
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

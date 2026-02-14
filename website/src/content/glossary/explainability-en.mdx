@@ -1,0 +1,221 @@
+---
+term: "Explainability"
+termSlug: "explainability"
+short: "The ability to understand, interpret, and explain how AI/ML models make predictions—essential for trust, debugging, regulatory compliance, and responsible AI deployment."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["interpretability", "transparency", "black-box", "xai", "feature-importance", "ai-act"]
+synonyms: ["Interpretability", "XAI", "Explainable AI", "Model transparency"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Explainability (or Explainable AI/XAI) refers to techniques that make AI model decisions understandable to humans. It answers "why did the model make this [prediction](/en/glossary/inference/)?" rather than just "what did the model predict?" [Explainability](/en/glossary/algorithmic-transparency/) exists on a spectrum: from inherently interpretable models (linear regression, decision trees) to post-hoc explanations for black-box models (SHAP, LIME, attention visualization). As AI systems make increasingly consequential decisions (healthcare, finance, legal), explainability becomes crucial for trust, [accountability](/en/glossary/model-accountability/), debugging, and regulatory compliance ([AI Act](/en/glossary/eu-ai-act/), GDPR Article 22).
+
+## Why it matters
+
+Explainability addresses critical AI deployment needs:
+
+- **Trust** — users trust systems they understand
+- **Debugging** — identify why models fail on specific cases
+- **Regulatory compliance** — AI Act requires explanations for high-risk AI
+- **Bias detection** — reveal if models use protected attributes
+- **Domain validation** — experts verify model reasoning is sound
+- **Legal defensibility** — explain automated decisions when challenged
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     EXPLAINABILITY                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE EXPLAINABILITY SPECTRUM:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │    INTERPRETABLE            →           BLACK-BOX    │ │
+│  │    (built-in)                        (needs XAI)    │ │
+│  │                                                      │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │ │
+│  │  │   LINEAR    │  │   RANDOM    │  │   DEEP      │ │ │
+│  │  │ REGRESSION  │  │   FOREST    │  │  NEURAL     │ │ │
+│  │  │             │  │             │  │  NETWORK    │ │ │
+│  │  │ coefficient │  │ feature     │  │             │ │ │
+│  │  │ = direct    │  │ importance  │  │ 🤷 ???     │ │ │
+│  │  │ explanation │  │ available   │  │ Need SHAP,  │ │ │
+│  │  │             │  │             │  │ LIME, etc.  │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘ │ │
+│  │                                                      │ │
+│  │  ◄─── More interpretable    Less interpretable ───► │ │
+│  │  ◄─── Less powerful         More powerful ───►      │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  TYPES OF EXPLANATIONS:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. GLOBAL EXPLANATIONS                             │ │
+│  │     "How does the model generally work?"            │ │
+│  │                                                      │ │
+│  │     ┌─────────────────────────────────────────┐    │ │
+│  │     │  Feature Importance (overall)           │    │ │
+│  │     │                                         │    │ │
+│  │     │  Age:       ████████████████  (45%)    │    │ │
+│  │     │  Income:    ███████████       (28%)    │    │ │
+│  │     │  Location:  █████             (15%)    │    │ │
+│  │     │  History:   ████              (12%)    │    │ │
+│  │     │                                         │    │ │
+│  │     │  "Age and income are most influential" │    │ │
+│  │     └─────────────────────────────────────────┘    │ │
+│  │                                                      │ │
+│  │  2. LOCAL EXPLANATIONS                              │ │
+│  │     "Why did the model make THIS prediction?"       │ │
+│  │                                                      │ │
+│  │     ┌─────────────────────────────────────────┐    │ │
+│  │     │  Prediction: DENIED                     │    │ │
+│  │     │                                         │    │ │
+│  │     │  Contributing factors for THIS case:   │    │ │
+│  │     │                                         │    │ │
+│  │     │  Age < 25:        ─────█████  (-0.34)  │    │ │
+│  │     │  Income low:      ─────████   (-0.28)  │    │ │
+│  │     │  Good history:    ████─────   (+0.21)  │    │ │
+│  │     │  Urban:           ██───────   (+0.08)  │    │ │
+│  │     │                                         │    │ │
+│  │     │  "Denied mainly due to young age and   │    │ │
+│  │     │   low income despite good history"     │    │ │
+│  │     └─────────────────────────────────────────┘    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  POPULAR XAI TECHNIQUES:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  SHAP (SHapley Additive exPlanations)               │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Game-theoretic approach                  │   │ │
+│  │  │  • Assigns contribution value to each feature│  │ │
+│  │  │  • Consistent: same input = same explanation│   │ │
+│  │  │  • Works on any model (model-agnostic)      │   │ │
+│  │  │                                              │   │ │
+│  │  │  SHAP values sum to prediction:             │   │ │
+│  │  │  base_value + SHAP(f1) + SHAP(f2) +...= pred│   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  LIME (Local Interpretable Model-agnostic Exp)      │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Creates local linear approximation       │   │ │
+│  │  │  • Perturbs input, observes changes         │   │ │
+│  │  │  • Fits simple model around prediction      │   │ │
+│  │  │  • Good for image/text explanations         │   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────────┐      ┌──────────────┐    │   │ │
+│  │  │  │ Complex model│      │Local linear  │    │   │ │
+│  │  │  │   decision   │  →   │approximation │    │   │ │
+│  │  │  │   boundary   │      │(interpretable)│   │   │ │
+│  │  │  └──────────────┘      └──────────────┘    │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  ATTENTION VISUALIZATION (for transformers)         │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Input: "The movie was absolutely terrible" │   │ │
+│  │  │                                              │   │ │
+│  │  │  Attention weights:                         │   │ │
+│  │  │  The     movie    was  absolutely  terrible │   │ │
+│  │  │   ░        ░       ░       ▓▓       ████   │   │ │
+│  │  │                                              │   │ │
+│  │  │  Model focused on "terrible" and "absolutely"│  │ │
+│  │  │  for negative sentiment prediction          │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  COUNTERFACTUAL EXPLANATIONS                        │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  "What would need to change for a           │   │ │
+│  │  │   different outcome?"                       │   │ │
+│  │  │                                              │   │ │
+│  │  │  Current: Loan DENIED                       │   │ │
+│  │  │                                              │   │ │
+│  │  │  Counterfactual: "If income were €5000      │   │ │
+│  │  │  higher, loan would be APPROVED"            │   │ │
+│  │  │                                              │   │ │
+│  │  │  Actionable insight for the user            │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  REGULATORY REQUIREMENTS:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  EU AI ACT (2024)                                   │ │
+│  │  ├─ High-risk AI must be understandable            │ │
+│  │  ├─ Users must be able to interpret outputs        │ │
+│  │  └─ Documentation of model behavior required       │ │
+│  │                                                      │ │
+│  │  GDPR Article 22                                    │ │
+│  │  ├─ Right to explanation for automated decisions   │ │
+│  │  └─ "Meaningful information about logic involved"  │ │
+│  │                                                      │ │
+│  │  US (sector-specific)                               │ │
+│  │  ├─ ECOA: Credit decisions must be explainable    │ │
+│  │  └─ Fair lending: adverse action notices required  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: What's the difference between explainability and interpretability?**
+
+A: Often used interchangeably. Technically: interpretability = how understandable a model is inherently; explainability = methods to explain any model's behavior. A decision tree is interpretable; a neural network can be made explainable via SHAP.
+
+**Q: Do explanations slow down inference?**
+
+A: Post-hoc explanations (SHAP, LIME) add computation—sometimes significant. You can compute explanations offline for analysis, or use approximate methods (KernelSHAP) for real-time. Inherently interpretable models have no overhead.
+
+**Q: Are attention weights reliable explanations?**
+
+A: Controversial. Attention shows where the model "looked," but doesn't prove causation. Research shows attention can be manipulated without changing predictions. Use attention as one signal among many, not definitive explanation.
+
+**Q: How do I explain LLM outputs?**
+
+A: Active research area. Approaches include: prompting for chain-of-thought reasoning, attention visualization, probing internal representations, analyzing token probabilities. No single method is comprehensive yet.
+
+## Related terms
+
+- AI Act — EU regulation requiring explainability
+- Black-box model — models needing XAI techniques
+- Feature importance — one form of explanation
+
+---
+
+## References
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [SHAP methodology]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining the Predictions of Any Classifier](https://arxiv.org/abs/1602.04938)", KDD. [LIME methodology]
+
+> Rudin (2019), "[Stop Explaining Black Box Machine Learning Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence. [Case for inherent interpretability]
+
+> European Commission (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Official Journal. [Regulatory requirements for explainability]

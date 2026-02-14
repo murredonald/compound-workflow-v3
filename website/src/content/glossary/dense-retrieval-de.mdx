@@ -1,0 +1,208 @@
+---
+term: "Dense Retrieval"
+termSlug: "dense-retrieval"
+short: "Informationsabruf mit gelernten dichten Vektordarstellungen, ermöglicht semantisches Matching über Schlüsselwort-Überlappung hinaus."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["semantic-search", "embedding", "sparse-retrieval", "rag"]
+synonyms: ["Dense Passage Retrieval", "Neuronale Retrieval", "Vektor-Retrieval"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Dense Retrieval ist ein Informationsabruf-Ansatz, der Anfragen und Dokumente als dichte numerische Vektoren ([Embeddings](/de/glossary/embeddings/)) in einem kontinuierlichen [Vektorraum](/de/glossary/embedding-space/) darstellt und dann relevante Dokumente durch Berechnung der Ähnlichkeit zwischen diesen Vektoren findet. Anders als sparse Retrieval-Methoden wie [BM25](/de/glossary/bm25/), die exakte Begriffe matchen, erfasst Dense Retrieval semantische Bedeutung—es findet Dokumente über "Automobilwartung", wenn Sie nach "Autoreparatur" suchen. Die Vektoren werden von neuronalen Netzwerken gelernt, die auf Relevanzdaten trainiert wurden.
+
+## Warum es wichtig ist
+
+Dense Retrieval ermöglicht semantischen Informationszugang:
+
+- **Semantisches Matching** — finde relevante Inhalte ohne exakte Schlüsselwort-Überlappung
+- **Cross-Sprachen-Retrieval** — [Anfrage](/de/glossary/prompt/) in einer Sprache, finde Dokumente in einer anderen
+- **RAG-Systeme** — treibt die [Retrieval-Komponente](/de/glossary/retrieval-layer/) der Retrieval-augmented Generation an
+- **Enterprise-Suche** — Antworten in Unternehmenswissensbasen finden
+- **Konversationelle Suche** — natürlichsprachliche Fragen handhaben
+
+Dense Retrieval ist das Rückgrat moderner Such- und Fragebeantwortungssysteme.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    DENSE RETRIEVAL                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SPARSE vs DENSE RETRIEVAL:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Anfrage: "Was verursacht Klimawandel?"                   │
+│                                                            │
+│  SPARSE (BM25):                                            │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Darstellung: Term-Frequenz-Vektor              │       │
+│  │ [klima:1, wandel:1, verursacht:1, 0, 0, ...]   │       │
+│  │                                                 │       │
+│  │ Meist Nullen (sparse) - nur matchende Begriffe │       │
+│  │ Kann 30.000+ Dimensionen haben (Vokabular)     │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│  DENSE:                                                    │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Darstellung: Gelernter semantischer Vektor     │       │
+│  │ [0.23, -0.45, 0.89, 0.12, -0.67, 0.34, ...]   │       │
+│  │                                                 │       │
+│  │ Keine Nullen (dense) - jede Dim. hat Bedeutung │       │
+│  │ Typisch 768-4096 Dimensionen                   │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│                                                            │
+│  DENSE RETRIEVAL ARCHITEKTUR:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                    BI-ENCODER                        │  │
+│  │                                                      │  │
+│  │      Anfrage              Dokument                  │  │
+│  │        │                    │                       │  │
+│  │        ▼                    ▼                       │  │
+│  │  ┌──────────┐        ┌──────────┐                  │  │
+│  │  │ Anfrage- │        │ Dokument-│                  │  │
+│  │  │ Encoder  │        │ Encoder  │                  │  │
+│  │  │  (BERT)  │        │  (BERT)  │                  │  │
+│  │  └────┬─────┘        └────┬─────┘                  │  │
+│  │       │                   │                         │  │
+│  │       ▼                   ▼                         │  │
+│  │   q = [0.2, ...]      d = [0.3, ...]              │  │
+│  │                                                      │  │
+│  │   score = dot(q, d) oder cosine(q, d)              │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  WARUM BI-ENCODER? EFFIZIENZ!                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  Dokument-Embeddings: EINMAL berechnet, im Index gespeich.│
+│                                                            │
+│  Bei Anfrage-Zeit:                                         │
+│  1. Anfrage encodieren (1 Forward-Pass)                   │
+│  2. Ähnliche Vektoren im Index nachschlagen               │
+│                                                            │
+│  Mit 1M Dokumenten:                                        │
+│  Cross-Encoder: 1M Forward-Passes (Minuten)               │
+│  Bi-Encoder: 1 Forward-Pass + ANN-Suche (Millisekunden)   │
+│                                                            │
+│                                                            │
+│  TRAINING VON DENSE RETRIEVERN:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  KONTRASTIVES LERNEN:                               │  │
+│  │                                                      │  │
+│  │  Anfrage: "Auswirkungen Klimawandel"                │  │
+│  │                                                      │  │
+│  │  Positiv (relevant):                                │  │
+│  │  "Einfluss der Erderwärmung auf Ökosysteme"        │  │
+│  │                                                      │  │
+│  │  Negative (irrelevant):                             │  │
+│  │  • "Wettervorhersage für morgen"                    │  │
+│  │  • "Politisches Klima in Europa" (hard negative)   │  │
+│  │  • "Zufälliges Dokument über Kochen"                │  │
+│  │                                                      │  │
+│  │  Loss: Anfrage näher zu Positiv schieben,           │  │
+│  │        von Negativen wegschieben                    │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  RETRIEVAL PIPELINE:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. OFFLINE: Dokumente indexieren                   │  │
+│  │                                                      │  │
+│  │  Dokumente ──► Encoder ──► Vektoren ──► ANN Index  │  │
+│  │  [D1..Dn]                  [V1..Vn]    (FAISS/HNSW)│  │
+│  │                                                      │  │
+│  │  2. ONLINE: Suchen                                  │  │
+│  │                                                      │  │
+│  │  Anfrage ──► Encoder ──► Vektor ──► ANN ──► Top-K  │  │
+│  │                                          Ergebnisse │  │
+│  │                                                      │  │
+│  │  3. OPTIONAL: Mit Cross-Encoder re-ranken           │  │
+│  │                                                      │  │
+│  │  Top-K ──► Cross-Encoder ──► Finales Ranking       │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  POPULÄRE MODELLE:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  • DPR (Dense Passage Retrieval) - Facebooks Original     │
+│  • Contriever - Unüberwachtes Pre-Training                │
+│  • E5 - Microsofts State-of-the-Art                       │
+│  • BGE - Beijing Academy of AI                            │
+│  • OpenAI text-embedding-3-small/large                    │
+│  • Cohere embed-v3                                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Dense vs Sparse Retrieval Vergleich:**
+| Aspekt | Sparse (BM25) | Dense Retrieval |
+|--------|--------------|-----------------|
+| Matching | Lexikalisch | Semantisch |
+| Synonyme | Manuelle Expansion | Automatisch |
+| Zero-shot | Funktioniert gut | Benötigt Training |
+| Latenz | Schneller | Etwas langsamer |
+
+## Häufige Fragen
+
+**F: Wann sollte ich Dense Retrieval vs BM25 verwenden?**
+
+A: Verwenden Sie hybrid (beides zusammen) für beste Ergebnisse. BM25 glänzt bei exakten Matches (Produkt-SKUs, Namen). Dense Retrieval glänzt, wenn Anfrage und Dokument unterschiedliches Vokabular für dasselbe Konzept verwenden.
+
+**F: Wie wähle ich ein Dense Retrieval-Modell?**
+
+A: Prüfen Sie die MTEB (Massive Text Embedding Benchmark) Rangliste für aktuelle Rankings. Für Produktion balancieren Sie Qualität vs Latenz—OpenAI [Embeddings](/de/glossary/vector-embeddings/) sind hochwertig aber haben API-Kosten, offene Modelle wie E5 oder BGE laufen lokal.
+
+**F: Was ist der Unterschied zwischen [Bi-Encoder](/de/glossary/bi-encoder/) und [Cross-Encoder](/de/glossary/cross-encoder/)?**
+
+A: Bi-Encoder encodieren Anfragen und Dokumente unabhängig—schnell aber approximativ. Cross-Encoder encodieren Anfrage-Dokument-Paare zusammen—genauer aber O(n) Komplexität. Best Practice: Bi-Encoder für initiales Retrieval (Top 100), dann mit Cross-Encoder re-ranken (Top 10).
+
+**F: Wie verbessern Hard Negatives Dense Retrieval?**
+
+A: Hard Negatives sind Dokumente, die relevant erscheinen aber nicht sind. Training mit Hard Negatives zwingt das Modell, subtile Unterscheidungen zu lernen.
+
+## Verwandte Begriffe
+
+- [Semantic search](/de/glossary/semantic-search/) — Anwendung von Dense Retrieval
+- Embedding — verwendete Vektoren
+- [Sparse retrieval](/de/glossary/sparse-retrieval/) — term-basierte Alternative
+- [RAG](/de/glossary/rag/) — Systeme, die Dense Retrieval nutzen
+
+---
+
+## Referenzen
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [Original DPR Paper]
+
+> Xiong et al. (2020), "[Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval](https://arxiv.org/abs/2007.00808)", ICLR. [ANCE - Hard Negative Mining]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [E5 Embeddings]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval Benchmarks]
+
+## References
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [Original DPR paper]
+
+> Xiong et al. (2020), "[Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval](https://arxiv.org/abs/2007.00808)", ICLR. [ANCE - hard negative mining]
+
+> Wang et al. (2022), "[Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/abs/2212.03533)", arXiv. [E5 embeddings]
+
+> Thakur et al. (2021), "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)", NeurIPS. [Retrieval benchmarks]

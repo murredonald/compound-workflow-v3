@@ -1,0 +1,61 @@
+---
+term: "ComprÃ©hension de requÃªte"
+termSlug: "query-understanding"
+short: "La comprÃ©hension de requÃªte dÃ©crit comment un systÃ¨me interprÃ¨te le sens dâ€™une recherche (entitÃ©s, intention, ambiguÃ¯tÃ©) avant le retrieval et le classement."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["query-intent", "semantic-expansion", "full-text-search", "boolean-search"]
+synonyms: ["InterprÃ©tation de requÃªte", "Analyse de requÃªte", "Reconnaissance d'entitÃ©s"]
+locale: "fr"
+draft: false
+---
+
+## DÃ©finition
+
+La comprÃ©hension de requÃªte regroupe les mÃ©thodes utilisÃ©es pour interprÃ©ter ce que signifie une requÃªte. Elle couvre lâ€™analyse, la dÃ©tection de langue, la normalisation (orthographe), la reconnaissance dâ€™entitÃ©s et la dÃ©sambiguÃ¯sation, afin de faire correspondre le sens, pas seulement des mots.
+
+## Pourquoi c'est important
+
+- **Moins dâ€™ambiguÃ¯tÃ©**: "CIR 92" et "CIR 1992" doivent renvoyer au mÃªme concept.
+- **Meilleur matching**: la recherche orientÃ©e entitÃ©s fonctionne mieux avec des requÃªtes courtes.
+- **Expansion plus sÃ»re**: Ã©vite des expansions qui changent lâ€™intention.
+- **Meilleure UX**: suggestions, filtres et regroupements deviennent possibles.
+
+## Comment Ã§a fonctionne
+
+```
+RequÃªte -> normalise -> extrait entitÃ©s -> dÃ©sambiguÃ¯se -> construit requÃªte de recherche
+```
+
+Le rÃ©sultat est souvent une reprÃ©sentation structurÃ©e (tokens, entitÃ©s, intention, filtres) utilisÃ©e par la chaÃ®ne de classement.
+
+## Exemple pratique
+
+Un utilisateur tape "deadline TVA Belgique T4". Une bonne comprÃ©hension identifie le pays (Belgique), le sujet (TVA) et la pÃ©riode (T4) pour privilÃ©gier les sources fiables pertinentes.
+
+## Questions frÃ©quentes
+
+**Q: Est-ce rÃ©servÃ© Ã  la [recherche vectorielle](/fr/glossary/ann/)?**
+
+R: Non. Les systÃ¨mes plein texte profitent aussi de la normalisation, des synonymes et des entitÃ©s.
+
+**Q: Comment mesurer lâ€™impact?**
+
+R: Avec lâ€™[analytique de recherche](/fr/glossary/search-analytics/): taux sans rÃ©sultat, reformulations, satisfaction, et jugements de pertinence hors ligne.
+
+## Termes associÃ©s
+
+- [Intention de requÃªte](/fr/glossary/query-intent/) - le but de lâ€™utilisateur
+- [Expansion sÃ©mantique](/fr/glossary/semantic-expansion/) - Ã©largir sans dÃ©former
+- [Recherche plein texte](/fr/glossary/full-text-search/) - couche mots-clÃ©s
+- [Recherche boolÃ©enne](/fr/glossary/boolean-search/) - requÃªtes avec opÃ©rateurs
+
+---
+
+## RÃ©fÃ©rences
+
+> Manning, Raghavan & SchÃ¼tze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

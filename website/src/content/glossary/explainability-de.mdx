@@ -1,0 +1,179 @@
+---
+term: "Erklärbarkeit"
+termSlug: "explainability"
+short: "Die Fähigkeit zu verstehen, zu interpretieren und zu erklären, wie KI/ML-Modelle Vorhersagen treffen—essentiell für Vertrauen, Debugging, regulatorische Compliance und verantwortungsvolle KI-Bereitstellung."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["interpretability", "transparency", "black-box", "xai", "feature-importance", "ai-act"]
+synonyms: ["Interpretierbarkeit", "XAI", "Erklärbare KI", "Modelltransparenz"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Erklärbarkeit (oder Explainable AI/XAI) bezeichnet Techniken, die KI-Modellentscheidungen für Menschen verständlich machen. Sie beantwortet "warum hat das Modell diese [Vorhersage](/de/glossary/inference/) gemacht?" statt nur "was hat das Modell vorhergesagt?" [Erklärbarkeit](/de/glossary/algorithmic-transparency/) existiert auf einem Spektrum: von inhärent interpretierbaren Modellen (lineare Regression, Entscheidungsbäume) bis zu Post-hoc-Erklärungen für Black-Box-Modelle (SHAP, LIME, Attention-Visualisierung). Da KI-Systeme zunehmend folgenreiche Entscheidungen treffen (Gesundheit, Finanzen, Recht), wird Erklärbarkeit entscheidend für Vertrauen, Verantwortlichkeit, Debugging und regulatorische Compliance ([AI Act](/de/glossary/eu-ai-act/), DSGVO Artikel 22).
+
+## Warum es wichtig ist
+
+Erklärbarkeit adressiert kritische KI-Bereitstellungsanforderungen:
+
+- **Vertrauen** — Nutzer vertrauen Systemen, die sie verstehen
+- **Debugging** — identifizieren warum Modelle in spezifischen Fällen versagen
+- **Regulatorische Compliance** — AI Act erfordert Erklärungen für Hochrisiko-KI
+- **Bias-Erkennung** — aufdecken ob Modelle geschützte Attribute verwenden
+- **Domänenvalidierung** — Experten verifizieren dass Modelllogik stimmig ist
+- **Rechtliche Verteidigungsfähigkeit** — automatisierte Entscheidungen erklären
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     ERKLÄRBARKEIT                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DAS ERKLÄRBARKEITS-SPEKTRUM:                              │
+│  ────────────────────────────                              │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │    INTERPRETIERBAR         →           BLACK-BOX    │ │
+│  │    (eingebaut)                       (braucht XAI)  │ │
+│  │                                                      │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │ │
+│  │  │   LINEARE   │  │   RANDOM    │  │   TIEFES    │ │ │
+│  │  │  REGRESSION │  │   FOREST    │  │  NEURONALES │ │ │
+│  │  │             │  │             │  │   NETZWERK  │ │ │
+│  │  │ Koeffizient │  │ Feature     │  │             │ │ │
+│  │  │ = direkte   │  │ Importance  │  │ 🤷 ???     │ │ │
+│  │  │ Erklärung   │  │ verfügbar   │  │ Braucht SHAP│ │ │
+│  │  │             │  │             │  │ LIME, etc.  │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘ │ │
+│  │                                                      │ │
+│  │  ◄─── Mehr interpretierbar   Weniger interpret. ──► │ │
+│  │  ◄─── Weniger leistungsfähig  Leistungsfähiger ──►  │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  ARTEN VON ERKLÄRUNGEN:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. GLOBALE ERKLÄRUNGEN                             │ │
+│  │     "Wie funktioniert das Modell generell?"         │ │
+│  │                                                      │ │
+│  │     Feature Importance (gesamt)                     │ │
+│  │     Alter:     ████████████████  (45%)             │ │
+│  │     Einkommen: ███████████       (28%)             │ │
+│  │     Standort:  █████             (15%)             │ │
+│  │     Historie:  ████              (12%)             │ │
+│  │                                                      │ │
+│  │  2. LOKALE ERKLÄRUNGEN                              │ │
+│  │     "Warum hat das Modell DIESE Vorhersage gemacht?"│ │
+│  │                                                      │ │
+│  │     Vorhersage: ABGELEHNT                           │ │
+│  │                                                      │ │
+│  │     Beitragende Faktoren für DIESEN Fall:          │ │
+│  │     Alter < 25:      ─────█████  (-0.34)           │ │
+│  │     Einkommen niedrig:─────████   (-0.28)          │ │
+│  │     Gute Historie:   ████─────   (+0.21)           │ │
+│  │                                                      │ │
+│  │     "Abgelehnt hauptsächlich wegen jungem Alter    │ │
+│  │      und niedrigem Einkommen trotz guter Historie" │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  POPULÄRE XAI-TECHNIKEN:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  SHAP (SHapley Additive exPlanations)               │ │
+│  │  • Spieltheoretischer Ansatz                       │ │
+│  │  • Ordnet Beitragswert jedem Feature zu            │ │
+│  │  • Konsistent: gleiche Eingabe = gleiche Erklärung │ │
+│  │  • Funktioniert mit jedem Modell (model-agnostic)  │ │
+│  │                                                      │ │
+│  │  LIME (Local Interpretable Model-agnostic Exp)      │ │
+│  │  • Erstellt lokale lineare Approximation           │ │
+│  │  • Stört Eingabe, beobachtet Änderungen            │ │
+│  │  • Passt einfaches Modell um Vorhersage            │ │
+│  │  • Gut für Bild/Text-Erklärungen                   │ │
+│  │                                                      │ │
+│  │  ATTENTION-VISUALISIERUNG (für Transformer)         │ │
+│  │  Eingabe: "Der Film war absolut schrecklich"       │ │
+│  │  Attention: Der Film war absolut schrecklich       │ │
+│  │             ░   ░   ░    ▓▓      ████              │ │
+│  │  Modell fokussierte auf "schrecklich" und "absolut"│ │
+│  │                                                      │ │
+│  │  KONTRAFAKTISCHE ERKLÄRUNGEN                        │ │
+│  │  "Was müsste sich ändern für anderes Ergebnis?"    │ │
+│  │  Aktuell: Kredit ABGELEHNT                         │ │
+│  │  Kontrafaktisch: "Wenn Einkommen €5000 höher wäre, │ │
+│  │  würde Kredit GENEHMIGT werden"                    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  REGULATORISCHE ANFORDERUNGEN:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  EU AI ACT (2024)                                   │ │
+│  │  ├─ Hochrisiko-KI muss verständlich sein           │ │
+│  │  ├─ Nutzer müssen Ausgaben interpretieren können   │ │
+│  │  └─ Dokumentation des Modellverhaltens erforderlich│ │
+│  │                                                      │ │
+│  │  DSGVO Artikel 22                                   │ │
+│  │  ├─ Recht auf Erklärung automatisierter Entscheid. │ │
+│  │  └─ "Aussagekräftige Info über involvierte Logik" │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Was ist der Unterschied zwischen Erklärbarkeit und Interpretierbarkeit?**
+
+A: Oft austauschbar verwendet. Technisch: Interpretierbarkeit = wie verständlich ein Modell inhärent ist; Erklärbarkeit = Methoden um jedes Modellverhalten zu erklären.
+
+**F: Verlangsamen Erklärungen die Inferenz?**
+
+A: Post-hoc-Erklärungen (SHAP, LIME) fügen Berechnung hinzu. Sie können Erklärungen offline für Analyse berechnen oder Näherungsmethoden für Echtzeit verwenden.
+
+**F: Sind Attention-Gewichte zuverlässige Erklärungen?**
+
+A: Umstritten. Attention zeigt wohin das Modell "geschaut" hat, beweist aber keine Kausalität.
+
+## Verwandte Begriffe
+
+- AI Act — EU-Regulierung die Erklärbarkeit erfordert
+- Black-Box-Modell — Modelle die XAI-Techniken benötigen
+
+---
+
+## Referenzen
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [SHAP-Methodologie]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining Predictions](https://arxiv.org/abs/1602.04938)", KDD. [LIME-Methodologie]
+
+> Rudin (2019), "[Stop Explaining Black Box ML Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence.
+
+> Europäische Kommission (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Amtsblatt.
+
+## References
+
+> Lundberg & Lee (2017), "[A Unified Approach to Interpreting Model Predictions](https://arxiv.org/abs/1705.07874)", NeurIPS. [SHAP methodology]
+
+> Ribeiro et al. (2016), "[Why Should I Trust You? Explaining the Predictions of Any Classifier](https://arxiv.org/abs/1602.04938)", KDD. [LIME methodology]
+
+> Rudin (2019), "[Stop Explaining Black Box Machine Learning Models for High Stakes Decisions](https://arxiv.org/abs/1811.10154)", Nature Machine Intelligence. [Case for inherent interpretability]
+
+> European Commission (2024), "[AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)", Official Journal. [Regulatory requirements for explainability]

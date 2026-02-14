@@ -1,0 +1,182 @@
+---
+term: "Model Compression"
+termSlug: "model-compression"
+short: "Techniques to reduce AI model size and computational requirements while preserving performance, enabling efficient deployment."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["quantization", "pruning", "distillation", "llm"]
+synonyms: ["Model optimization", "Model efficiency", "Neural network compression"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Model compression is a family of techniques designed to reduce the size, memory footprint, and computational requirements of [machine learning](/en/glossary/machine-learning/) models while maintaining acceptable performance levels. This includes quantization (reducing numerical precision), pruning (removing unnecessary parameters), knowledge distillation (training smaller models to mimic larger ones), and architectural optimizations. The goal is to make AI deployment practical on resource-constrained devices or at scale in production.
+
+## Why it matters
+
+Model compression is essential for real-world AI:
+
+- **Cost reduction** — serve AI at 10-100x lower infrastructure costs
+- **Latency improvement** — faster responses for better user experience
+- **Edge deployment** — run models on phones, browsers, IoT devices
+- **Environmental impact** — reduce energy consumption and carbon footprint
+- **Democratization** — make advanced AI accessible without massive budgets
+
+Without compression, state-of-the-art models would remain locked in expensive data centers.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               MODEL COMPRESSION TECHNIQUES                  │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE COMPRESSION LANDSCAPE:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │  QUANTIZATION   │  │    PRUNING      │                 │
+│  │                 │  │                 │                 │
+│  │ FP32 → FP16     │  │ Remove unused   │                 │
+│  │ FP32 → INT8     │  │ weights & neurons│                │
+│  │ FP32 → INT4     │  │                 │                 │
+│  │                 │  │ Structured vs   │                 │
+│  │ 2-8x smaller    │  │ Unstructured    │                 │
+│  │ 2-4x faster     │  │                 │                 │
+│  └─────────────────┘  └─────────────────┘                 │
+│                                                            │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │  DISTILLATION   │  │ ARCHITECTURE    │                 │
+│  │                 │  │ OPTIMIZATION    │                 │
+│  │ Large → Small   │  │                 │                 │
+│  │ Teacher→Student │  │ MobileNets      │                 │
+│  │                 │  │ EfficientNets   │                 │
+│  │ Transfer        │  │ Depthwise conv  │                 │
+│  │ knowledge       │  │ Attention optim │                 │
+│  └─────────────────┘  └─────────────────┘                 │
+│                                                            │
+│                                                            │
+│  COMPRESSION PIPELINE:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │  Original Model (GPT-3 175B, FP32)                 │   │
+│  │  Size: 700GB    Inference: $$$$$                   │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │ DISTILLATION │  → Teacher-Student training      │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Smaller Model (7B parameters)                     │   │
+│  │  Size: 28GB     Inference: $$                      │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │  PRUNING     │  → Remove 30-50% weights         │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Pruned Model                                       │   │
+│  │  Size: 14GB     Inference: $                       │   │
+│  │                                                     │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  ┌──────────────┐                                  │   │
+│  │  │ QUANTIZATION │  → FP32 → INT4                   │   │
+│  │  └──────────────┘                                  │   │
+│  │         │                                           │   │
+│  │         ▼                                           │   │
+│  │  Final Compressed Model                            │   │
+│  │  Size: 3.5GB    Inference: ¢                       │   │
+│  │                                                     │   │
+│  │  TOTAL COMPRESSION: 200x size, 50x cost!           │   │
+│  │                                                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│                                                            │
+│  COMPRESSION TRADE-OFFS:                                   │
+│  ───────────────────────                                   │
+│                                                            │
+│  Performance                                               │
+│       ▲                                                    │
+│  100% │████████████░░░░░░░░░ Original                     │
+│   97% │██████████░░░░░░░░░░░ Distilled                    │
+│   95% │████████░░░░░░░░░░░░░ + Pruned                     │
+│   92% │██████░░░░░░░░░░░░░░░ + Quantized (INT8)           │
+│   85% │████░░░░░░░░░░░░░░░░░ + Quantized (INT4)           │
+│       └────────────────────────────────▶                  │
+│                                         Compression Ratio  │
+│             1x    5x   10x   25x   100x  200x              │
+│                                                            │
+│  Sweet spot: 90-95% performance at 10-50x compression     │
+│                                                            │
+│                                                            │
+│  REAL-WORLD EXAMPLES:                                      │
+│  ────────────────────                                      │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Model        │ Original  │ Compressed │ Ratio     │   │
+│  ├────────────────────────────────────────────────────┤   │
+│  │ BERT         │ 440MB     │ 66MB       │ 6.7x      │   │
+│  │ ResNet-50    │ 98MB      │ 6.1MB      │ 16x       │   │
+│  │ GPT-2        │ 548MB     │ 137MB      │ 4x        │   │
+│  │ LLaMA-7B     │ 28GB      │ 3.5GB      │ 8x        │   │
+│  │ LLaMA-70B    │ 280GB     │ 35GB       │ 8x        │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Compression techniques compared:**
+| Technique | Size Reduction | Speed Gain | Quality Loss | Effort |
+|-----------|---------------|------------|--------------|--------|
+| FP16 quantization | 2x | 2x | ~0% | Trivial |
+| INT8 quantization | 4x | 3x | 1-3% | Low |
+| INT4 quantization | 8x | 4x | 5-15% | Medium |
+| Pruning (30%) | 1.4x | 1.3x | 1-2% | Medium |
+| Distillation | 10-25x | 10x | 5-15% | High |
+| Combined | 50-200x | 20-50x | 5-20% | High |
+
+## Common questions
+
+**Q: Which compression technique should I use first?**
+
+A: Start with quantization—it's the easiest and often provides the best efficiency gains with minimal quality loss. FP16 is essentially free. INT8 works for most applications. Only go to INT4 if you need aggressive compression. Add pruning and distillation if you need further size reduction.
+
+**Q: Can I compress any model?**
+
+A: Yes, but results vary. Larger models often compress better because they have more redundancy. Some architectures are more compression-friendly than others. [Transformers](/en/glossary/transformer-architecture/) compress well. Always measure quality on your specific use case before and after compression.
+
+**Q: Will compressed models give the same outputs?**
+
+A: No. Compression introduces small differences. For most applications, these differences are imperceptible. However, for applications requiring exact reproducibility or extreme precision, use minimal compression. Always test on your specific tasks.
+
+**Q: How much quality loss is acceptable?**
+
+A: It depends entirely on your use case. For chatbots, 5-10% quality loss may be unnoticeable. For medical diagnosis, even 1% might be too much. Always benchmark on your actual tasks, not just general benchmarks. User studies often reveal that perceived quality loss is smaller than benchmark numbers suggest.
+
+## Related terms
+
+- [Quantization](/en/glossary/quantization/) — reducing numerical precision
+- [Pruning](/en/glossary/pruning/) — removing unnecessary parameters
+- [Distillation](/en/glossary/distillation/) — training smaller models from larger ones
+- [LLM](/en/glossary/llm/) — models commonly compressed
+
+---
+
+## References
+
+> Han et al. (2015), "[Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding](https://arxiv.org/abs/1510.00149)", ICLR. [Foundational compression paper]
+
+> Dettmers et al. (2022), "[LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339)", NeurIPS. [Large-scale LLM quantization]
+
+> Frantar & Alistarh (2023), "[GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323)", ICLR. [Practical LLM quantization]
+
+> Zhu et al. (2023), "[A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)", arXiv. [Comprehensive compression survey]

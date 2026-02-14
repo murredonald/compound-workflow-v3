@@ -1,0 +1,107 @@
+---
+term: "Reranking"
+termSlug: "reranking"
+short: "A second-stage retrieval technique that reorders initial search results to improve relevance using more sophisticated models."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["rag", "semantic-search", "hybrid-search", "embeddings"]
+synonyms: ["Cross-encoder reranking", "Result reordering", "Two-stage retrieval"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Reranking is a retrieval technique that applies a more powerful model to reorder an initial set of search results, improving the ranking of truly relevant documents. It typically follows a first-stage retrieval (like [vector search](/en/glossary/ann/)) and uses cross-encoder models that consider [query](/en/glossary/prompt/)-document pairs together for more accurate [relevance scoring](/en/glossary/relevance-scoring/).
+
+## Why it matters
+
+Reranking bridges the gap between fast retrieval and accurate relevance:
+
+- **Quality improvement** — pushes the most relevant results to the top
+- **Precision boost** — cross-encoders understand context better than [bi-encoders](/en/glossary/bi-encoder/)
+- **RAG enhancement** — ensures the best documents enter the LLM context
+- **Cost-effective** — applies expensive models only to top candidates, not entire [corpus](/en/glossary/corpus/)
+- **Latency balance** — adds ~50-100ms for significantly better results
+
+Reranking can increase retrieval accuracy by 10-30% with minimal latency impact.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   TWO-STAGE RETRIEVAL                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STAGE 1: FAST RETRIEVAL (Bi-Encoder)                      │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │  Query ─────────────┐                              │    │
+│  │                     ├───► Compare Embeddings       │    │
+│  │  Doc Embeddings ────┘    (Approximate, Fast)       │    │
+│  │                                                    │    │
+│  │  Return: Top 100-500 candidates                    │    │
+│  └────────────────────────────────────────────────────┘    │
+│                          │                                 │
+│                          ▼                                 │
+│  STAGE 2: RERANKING (Cross-Encoder)                        │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │                                                    │    │
+│  │  For each candidate:                               │    │
+│  │  ┌─────────────────────────────────────────────┐   │    │
+│  │  │  [Query] [SEP] [Document] → Model → Score   │   │    │
+│  │  └─────────────────────────────────────────────┘   │    │
+│  │                                                    │    │
+│  │  Considers full interaction (Accurate, Slower)    │    │
+│  │                                                    │    │
+│  │  Return: Reordered top 5-20                       │    │
+│  └────────────────────────────────────────────────────┘    │
+│                          │                                 │
+│                          ▼                                 │
+│                 FINAL RANKED RESULTS                       │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Key differences:**
+| Aspect | Bi-Encoder (Stage 1) | Cross-Encoder (Stage 2) |
+|--------|---------------------|------------------------|
+| Speed | Fast (~1ms per 1M docs) | Slow (~10ms per doc) |
+| Accuracy | Good | Excellent |
+| Interaction | None (separate encoding) | Full (joint encoding) |
+| Scale | Entire corpus | Top candidates only |
+
+## Common questions
+
+**Q: Why not just use cross-encoders for everything?**
+
+A: Cross-encoders are too slow for large-scale retrieval. They must process each query-document pair together, making them O(n) where n is corpus size. Two-stage retrieval provides the best of both worlds.
+
+**Q: What models are used for reranking?**
+
+A: Popular rerankers include Cohere Rerank, BGE Reranker, and cross-[encoder models](/en/glossary/embedding-model/) fine-tuned on MS MARCO. These are specifically trained to score query-document relevance.
+
+**Q: How many documents should be reranked?**
+
+A: Typically 50-200 candidates from the first stage are reranked. Too few and you might miss relevant documents; too many adds unnecessary latency.
+
+**Q: Does reranking replace vector search?**
+
+A: No, it complements it. Vector search provides fast candidate retrieval; reranking improves the ordering. Both stages are needed for optimal performance.
+
+## Related terms
+
+- [RAG](/en/glossary/rag/) — pipeline that benefits from reranking
+- [Hybrid Search](/en/glossary/hybrid-search/) — first-stage approach that combines methods
+- [Semantic Search](/en/glossary/semantic-search/) — embedding-based retrieval
+- [Cross-Encoder](/en/glossary/cross-encoder/) — model type used for reranking
+
+---
+
+## References
+
+> Nogueira & Cho (2019), "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)", arXiv. [1,500+ citations]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [3,500+ citations]
+
+> Humeau et al. (2020), "[Poly-encoders: Architectures and Pre-training Strategies for Fast and Accurate Multi-sentence Scoring](https://arxiv.org/abs/1905.01969)", ICLR. [700+ citations]
+
+> Glass et al. (2022), "[Re2G: Retrieve, Rerank, Generate](https://arxiv.org/abs/2207.06300)", NAACL. [100+ citations]

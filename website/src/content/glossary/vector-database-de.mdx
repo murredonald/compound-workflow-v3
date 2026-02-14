@@ -1,0 +1,101 @@
+---
+term: "Vektor-Datenbank"
+termSlug: "vector-database"
+short: "Eine spezialisierte Datenbank, optimiert für die Speicherung und Suche von hochdimensionalen Vektor-Embeddings mit Ähnlichkeitsmetriken."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["embeddings", "rag", "semantic-similarity", "approximate-nearest-neighbor"]
+synonyms: ["Vector Store", "Vector DB", "Embedding-Datenbank", "Ähnlichkeitssuche-Datenbank"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Eine Vektor-Datenbank ist ein spezialisierter Datenspeicher, der entwickelt wurde, um hochdimensionale Vektor-Embeddings effizient zu indizieren, zu speichern und abzufragen. Im Gegensatz zu traditionellen Datenbanken, die exakte Werte abgleichen, finden Vektor-Datenbanken Elemente, die einem Abfragevektor ähnlich sind, unter Verwendung von Distanzmetriken wie [Kosinus-Ähnlichkeit](/de/glossary/cosine-similarity/) oder Euklidischer Distanz. Sie ermöglichen [semantische Suche](/de/glossary/semantic-search/) im großen Maßstab durch Approximate-Nearest-Neighbor-Algorithmen (ANN).
+
+## Warum es wichtig ist
+
+Vektor-Datenbanken sind essentielle Infrastruktur für moderne KI-Anwendungen:
+
+- **Semantische Suche** — konzeptuell ähnliche Inhalte finden, unabhängig von exakten Schlüsselwörtern
+- **RAG-Systeme** — relevanten Kontext für Sprachmodell-Antworten abrufen
+- **Empfehlungssysteme** — ähnliche Produkte, Inhalte oder Benutzer finden
+- **Anomalieerkennung** — Ausreißer im Embedding-Raum identifizieren
+- **Skalierbarkeit** — Milliarden von Vektoren in Millisekunden durchsuchen
+
+Jedes System, das „Ähnliches" statt „Exaktes" finden muss, verlässt sich auf Vektor-Datenbanken.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    VEKTOR-DATENBANK                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  INDEXIERUNG:                                              │
+│  Dokumente → Embed → [0.1, 0.4, ...] → Index (HNSW/IVF)   │
+│                                                            │
+│  ┌─────────────────────────────────────────┐               │
+│  │  Vektor-Index (Graphen/Cluster)         │               │
+│  │    ●──●──●                              │               │
+│  │   /│\   \                               │               │
+│  │  ● ● ●   ●──●                           │               │
+│  └─────────────────────────────────────────┘               │
+│                                                            │
+│  ABFRAGE:                                                  │
+│  Query → Embed → [0.2, 0.3, ...] → ANN-Suche → Top K      │
+│                                            │               │
+│                                            ▼               │
+│                                    Ähnliche Dokumente      │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Embedding** — Dokumente werden über Embedding-Modell in Vektoren umgewandelt
+2. **Indexierung** — Vektoren werden in effiziente Suchstrukturen organisiert (HNSW, IVF, etc.)
+3. **Query-Embedding** — Suchanfrage wird in denselben Embedding-Raum umgewandelt
+4. **ANN-Suche** — Index wird durchsucht, um annähernde nächste Nachbarn zu finden
+5. **Ergebnisse** — Top K ähnlichste Vektoren mit Metadaten zurückgegeben
+
+## Häufige Fragen
+
+**F: Wie unterscheidet sich eine Vektor-Datenbank von einer traditionellen Datenbank?**
+
+A: Traditionelle Datenbanken verwenden exaktes Matching (WHERE name = 'Hans'). Vektor-Datenbanken verwenden Ähnlichkeitssuche—das Finden von Vektoren, die Ihrer Abfrage im hochdimensionalen Raum am nächsten sind. Sie ergänzen traditionelle Datenbanken, statt sie zu ersetzen.
+
+**F: Welche Indexierungsalgorithmen werden verwendet?**
+
+A: Gängige Algorithmen sind HNSW ([Hierarchical Navigable Small World](/de/glossary/hnsw/)), IVF (Inverted File Index) und PQ ([Product Quantization](/de/glossary/vector-quantization/)). HNSW ist am populärsten wegen seines Geschwindigkeits-/Genauigkeits-Kompromisses.
+
+**F: Welche Vektor-Datenbanken sind populär?**
+
+A: Speziell entwickelte Optionen sind Pinecone, Weaviate, Milvus, Qdrant und Chroma. Traditionelle Datenbanken wie PostgreSQL (pgvector) und Elasticsearch unterstützen ebenfalls Vektorsuche.
+
+**F: Wie handhabt man [Metadaten-Filterung](/de/glossary/metadata-filtering/)?**
+
+A: Die meisten Vektor-Datenbanken unterstützen hybride Suche, die Vektor-Ähnlichkeit mit Metadaten-Filtern kombiniert (z.B. „ähnlich zu Abfrage UND Kategorie = ‚rechtlich'"). Dies ist kritisch für Produktions-RAG-Systeme.
+
+## Verwandte Begriffe
+
+- [Embeddings](/de/glossary/embeddings/) — die in Vektor-Datenbanken gespeicherten Vektoren
+- [RAG](/de/glossary/rag/) — Retrieval-Architektur, angetrieben von Vektorsuche
+- [Semantische Ähnlichkeit](/de/glossary/semantic-similarity/) — das für Ranking verwendete Maß
+- Approximate Nearest Neighbor — Kern-Suchalgorithmus
+
+---
+
+## Referenzen
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2.600+ Zitationen]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1.800+ Zitationen]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ Zitationen]
+
+## References
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [2,600+ citations]
+
+> Malkov & Yashunin (2020), "[Efficient and robust approximate nearest neighbor search using HNSW graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [1,800+ citations]
+
+> Pan et al. (2024), "[Vector Database Management Systems: Fundamental Concepts, Use-Cases, and Current Challenges](https://arxiv.org/abs/2309.11322)", arXiv. [100+ citations]

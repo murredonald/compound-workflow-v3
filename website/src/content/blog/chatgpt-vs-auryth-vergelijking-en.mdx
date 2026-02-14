@@ -1,0 +1,138 @@
+---
+title: "I asked ChatGPT and Auryth the same Belgian tax questions — here's what happened"
+description: "Three tax questions, two AI tools, one clear lesson: for professional research, verifiability beats confidence."
+publishDate: 2026-02-13
+author: "Auryth Team"
+category: "in-practice"
+category_name: "In Practice"
+tags: ["ChatGPT", "Belgian tax", "AI comparison", "tax AI", "legal AI"]
+locale: "en"
+draft: false
+---
+
+You've done it. Your colleague has done it. At some point in the last two years, every tax professional in Belgium has typed a fiscal question into ChatGPT.
+
+The answer probably sounded reasonable. Maybe even impressive. But here's the question nobody asks afterward: **how would you verify it?**
+
+We ran a simple experiment. Three Belgian tax questions of increasing complexity — the kind a fiscal professional handles weekly. We asked ChatGPT (GPT-4o) and Auryth TX, our purpose-built Belgian tax research platform. Same questions, same day, no [prompt](/en/glossary/prompt/) engineering tricks.
+
+The results reveal something more interesting than "right vs. wrong."
+
+## Question 1: "What is the current Belgian corporate tax rate?"
+
+**ChatGPT** answered correctly: 25%, with the reduced rate of 20% for SMEs on the first €100,000 of taxable profit. Clear. Accurate.
+
+**Auryth** gave the same numbers — but cited Art. 215 WIB 92 directly, linked to the specific provision, and flagged the conditions of Art. 215, paragraph 3: the remuneration requirement and the participation threshold.
+
+Both tools nailed the number. But only one showed *why* it was right and *what conditions apply*. When your client asks "do we qualify for the reduced rate?" — the confident number is a starting point. The sourced answer is a foundation for advice.
+
+> The gap between a correct number and a verifiable answer is where professional liability lives.
+
+## Question 2: "What is the TOB rate on an accumulating ETF?"
+
+This is where it gets interesting.
+
+**ChatGPT** answered: 1.32%. Stated confidently. No caveats.
+
+That answer is incomplete. TOB rates for ETFs are 0.12%, 0.35%, or 1.32% depending on the fund's characteristics. An accumulating ETF registered in Belgium pays 1.32%, but the same accumulating ETF registered elsewhere in the EEA pays just 0.12% — an elevenfold difference. Whether a fund counts as "registered in Belgium" depends on whether any of its compartments are registered with the FSMA. Distributing ETFs pay 0.12%. Non-EEA instruments: 0.35%. A professional advising on an ETF purchase needs to know the specific fund's registration and distribution status — not just a single rate.
+
+**Auryth** identified all three applicable TOB rates, explained the classification criteria — registration location, accumulating vs. distributing, EEA status — and flagged which rate applied to the specific fund in the question.
+
+This is **classification blindness** — a failure mode of general-purpose AI. ChatGPT picks the most common answer and presents it as the only one. Belgian tax law is full of classification dependencies: rates that shift based on product structure, registration, domicile, and holding period. An AI that collapses these distinctions into a single confident number isn't just incomplete — it's dangerous for professional advice.
+
+![Stanford research: 58-88% hallucination rate for general AI vs 17-33% for specialized legal AI tools](/blog/chatgpt-vs-auryth-vergelijking/hallucination-rate-gap-dark.png "Source: Dahl et al. (2024); Magesh et al. (2025), Stanford HAI")
+
+## Question 3: "What are all the tax implications of a TAK 23 insurance product for a Belgian resident?"
+
+Now we're in professional territory.
+
+**ChatGPT** identified income tax (mentioning Art. 19bis WIB for the Reynders tax on capital gains) and insurance premium tax. Two domains. Presented with the same unwavering confidence as Question 1.
+
+It missed three:
+
+- **Gift and inheritance tax** — critical for estate planning, governed by the Vlaamse Codex Fiscaliteit (VCF) in Flanders, Code des droits de succession in Wallonia and Brussels
+- **TOB exemption** — switching funds within a TAK 23 wrapper incurs no stock exchange tax, unlike direct ETF transactions. ChatGPT didn't flag this key structural advantage
+- **Securities account tax** (effectentaks) — the annual 0.15% tax on securities accounts above €1 million, which can apply to TAK 23 products through the look-through principle
+
+A TAK 23 product touches at least five tax domains. ChatGPT covered two. The three it missed are exactly where clients lose money and advisors face liability claims.
+
+**Auryth** structured its response as a cross-domain analysis: a domain radar identifying all five areas, per-domain conclusions with authority-ranked sources, confidence scores (high for income tax, moderate for regional variations given evolving case law), and a "gaps identified" section noting what wasn't found.
+
+| Dimension | ChatGPT | Specialized Tax AI |
+|-----------|---------|-------------------|
+| **[Source citations](/en/glossary/citation/)** | None or fabricated | Linked to specific legal provisions |
+| **Temporal awareness** | Current rates only | Point-in-time retrieval with version history |
+| **Cross-domain coverage** | Partial (2 of 5 domains) | Structured multi-domain analysis |
+| **Confidence signals** | Equal confidence for everything | Per-claim [confidence scoring](/en/glossary/confidence-scoring/) |
+| **Belgian specificity** | Generic, sometimes mixes jurisdictions | Built on Belgian legal [corpus](/en/glossary/corpus/) |
+| **Verifiability** | Trust the AI | Trust the sources it shows you |
+
+![ChatGPT versus specialized tax AI compared across six professional dimensions](/blog/chatgpt-vs-auryth-vergelijking/chatgpt-vs-specialized-tax-ai-comparison-dark.png)
+
+## The verification gap
+
+The pattern across all three questions isn't about accuracy. It's about **verifiability**.
+
+ChatGPT may get the simple answer right. But it never tells you:
+
+- *Where* the answer comes from (no source citation)
+- *When* the answer applies (no temporal context)
+- *What's missing* from the answer (no coverage assessment)
+- *How confident* you should be (no uncertainty signal)
+
+We call this **the Verification Gap**: the distance between an AI's stated confidence and your ability to independently check its claims. The wider the gap, the greater the professional risk.
+
+For a quick Google search, the Verification Gap doesn't matter. For professional tax advice — where wrong answers carry financial and legal consequences — it's everything.
+
+> A tool that's 90% accurate and honest about it is safer than one that's 95% accurate and never tells you when it's wrong.
+
+## But let's be honest — specialized AI isn't perfect either
+
+Stanford researchers found that even purpose-built legal AI tools like Westlaw AI and LexisNexis+ AI hallucinate 17–33% of the time. RAG — [retrieval-augmented generation](/en/glossary/rag/), the architecture behind most specialized legal AI — reduces [hallucinations](/en/glossary/hallucination/) dramatically compared to the 58–88% rate observed in general-purpose [LLMs](/en/glossary/llm/). But it doesn't eliminate them.
+
+The difference isn't perfection. It's **transparency**. When a specialized tool is uncertain, it tells you. When it cites a source, you can check it. When it misses something, a well-designed system flags the gap rather than presenting a partial answer as complete.
+
+Belgian tax law contains genuine ambiguities: rulings that contradict circulars, regional variations that diverge, provisions with multiple valid interpretations. No AI should pretend otherwise.
+
+## The three-layer test
+
+Before relying on any AI-generated tax answer — ours included — apply three checks:
+
+| Layer | Question | What failure looks like |
+|-------|----------|----------------------|
+| **Source** | Can you trace the answer to a specific legal provision? | "The rate is 25%" with no article reference |
+| **Precision** | Does the answer account for all relevant conditions? | One rate given when three apply based on fund characteristics |
+| **Completeness** | Has the tool checked all relevant tax domains? | Two domains covered when five apply |
+
+If any layer fails, you're not doing research — you're gambling with your client's money and your professional reputation.
+
+---
+
+## Related articles
+
+- [What Is RAG — And Why It Matters for Tax Professionals](/en/blog/wat-is-rag-en/)
+- [AI Hallucinations: Why ChatGPT Fabricates Sources](/en/blog/ai-hallucinaties-fiscaal-en/)
+- [What Is Confidence Scoring — And Why Is It More Honest Than a Confident Answer?](/en/blog/confidence-scoring-uitgelegd-en/)
+
+---
+
+## How Auryth TX applies this
+
+Auryth TX is built specifically for Belgian tax professionals who need verifiable answers, not confident guesses. Every response includes:
+
+- **Authority-ranked source citations** linked to specific provisions from WIB 92, VCF, WBTW, and the broader Belgian legal corpus — ranked by legal hierarchy
+- **Temporal versioning** — ask about any date and get the version of the law that applied then, not just today's version
+- **Cross-domain detection** — automatic identification of all tax domains a question touches, with structured per-domain analysis
+- **Confidence scoring** — explicit indication of how well-supported each claim is, including what the system searched for but did not find
+
+The goal isn't to replace your judgment. It's to give you the complete picture — with sources — so your judgment has the best possible foundation.
+
+[Try it yourself — ask Auryth and ChatGPT the same question and compare.](/en/pricing/)
+
+---
+
+*Sources:*
+*1. Dahl, M. et al. (2024). "[Large Legal Fictions: Profiling Legal Hallucinations in Large Language Models](https://academic.oup.com/jla/article/16/1/64/7699227)." Journal of Legal Analysis, 16(1), 64–93.*
+*2. Magesh, V. et al. (2025). "[Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools](https://arxiv.org/abs/2405.20362)." Journal of Empirical Legal Studies.*
+*3. Lewis, P. et al. (2020). "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)." NeurIPS.*
+*4. EY Nederland (2023). "[Is ChatGPT uw nieuwe belastingadviseur?](https://www.ey.com/nl_nl/insights/tax/is-chatgpt-uw-nieuwe-belastingadviseur)"*

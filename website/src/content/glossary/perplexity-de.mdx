@@ -1,0 +1,130 @@
+---
+term: "Perplexität"
+termSlug: "perplexity"
+short: "Eine Metrik, die misst, wie gut ein Sprachmodell Text vorhersagt, wobei niedrigere Werte bessere Vorhersagefähigkeit anzeigen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["loss-function", "llm", "inference", "tokenization"]
+synonyms: ["PPL", "Modell-Perplexität", "Sprachmodell-Perplexität"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Perplexität ist ein Maß dafür, wie gut ein Wahrscheinlichkeitsmodell eine Stichprobe vorhersagt. Für Sprachmodelle repräsentiert sie die Unsicherheit des Modells bei der [Vorhersage](/de/glossary/inference/) des nächsten Tokens—niedrigere Perplexität bedeutet, dass das Modell weniger "perplex" oder sicherer ist. Mathematisch ist Perplexität die exponentierte durchschnittliche negative Log-Likelihood pro Token.
+
+## Warum es wichtig ist
+
+Perplexität ist eine fundamentale Evaluationsmetrik:
+
+- **Modellvergleich** — verschiedene Modelle auf demselben Datensatz vergleichen
+- **Trainingsüberwachung** — Verbesserung während des Trainings verfolgen
+- **Domänenbewertung** — messen, wie gut das Modell zu spezifischem Text passt
+- **Quantisierungsauswirkung** — Qualitätsverlust durch Kompression bewerten
+- **Interpretierbare Skala** — kann als effektive Vokabulargröße verstanden werden
+
+Perplexität hilft zu beantworten: "Wie überrascht ist das Modell von diesem Text?"
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       PERPLEXITÄT                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Formel: PPL = exp(-1/N × Σ log P(token_i | kontext))      │
+│                                                            │
+│  Beispiel: "Die Katze saß"                                │
+│  ─────────────────────────                                 │
+│                                                            │
+│  Token        P(token|kontext)    log P                    │
+│  ─────────────────────────────────────────                 │
+│  "Die"        0.10                -2.30                    │
+│  "Katze"      0.25                -1.39                    │
+│  "saß"        0.40                -0.92                    │
+│                                                            │
+│  Durchschnitt log P = (-2.30 + -1.39 + -0.92) / 3 = -1.54  │
+│  Perplexität = exp(1.54) = 4.66                            │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  INTERPRETATION:                               │        │
+│  │                                                │        │
+│  │  PPL ≈ "effektive Wahlmöglichkeiten pro Pos."│        │
+│  │                                                │        │
+│  │  PPL = 1:   Modell 100% sicher               │        │
+│  │  PPL = 10:  ~10 gleich wahrscheinl. Optionen │        │
+│  │  PPL = 50k: Zufällig (Vokabgröße)=kein Lern. │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  PERPLEXITÄTS-SKALA:                                       │
+│  ───────────────────                                       │
+│  │◄────────────────────────────────────────────►│          │
+│  1        10        50       100      1000    50000        │
+│  Perfekt   Super    Gut     Okay      Schlecht Zufällig    │
+│                                                            │
+│  TYPISCHE WERTE:                                           │
+│  ───────────────                                           │
+│  GPT-4 auf normalem Text:  ~10-20                          │
+│  Kleines Modell:           ~50-100                         │
+│  Domänen-Mismatch:         ~100-500                        │
+│  Untrainiertes Modell:     ~Vokabulargröße                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Perplexitäts-Benchmarks:**
+| Bereich | Qualität | Interpretation |
+|---------|----------|----------------|
+| 1-10 | Ausgezeichnet | Hoch vorhersagbarer Text |
+| 10-30 | Sehr gut | Typisch für starke LLMs |
+| 30-50 | Gut | Vernünftiges Modell |
+| 50-100 | Mäßig | Kann Verbesserung brauchen |
+| 100+ | Schlecht | Signifikante Probleme oder Domänen-Mismatch |
+
+## Häufige Fragen
+
+**F: Was ist ein "guter" Perplexitätswert?**
+
+A: Es hängt vom Datensatz und der Modellgröße ab. State-of-the-Art-Modelle erreichen Perplexität ~15-25 auf Standard-Benchmarks wie WikiText. Innerhalb eines Projekts fokussieren Sie auf relative Verbesserungen statt absoluter Zahlen.
+
+**F: Kann Perplexität Modelle mit verschiedenen Tokenizern vergleichen?**
+
+A: Nicht direkt—verschiedene Tokenizer produzieren unterschiedliche Token-Zahlen für denselben Text. Vergleichen Sie Modelle mit demselben Tokenizer, oder normalisieren Sie nach Zeichen/Wortanzahl statt Token-Anzahl.
+
+**F: Warum kann Perplexität niedrig sein, aber Generierungsqualität schlecht?**
+
+A: Perplexität misst durchschnittliche Vorhersagegenauigkeit, nicht Output-Qualität. Ein Modell kann niedrige Perplexität haben, indem es häufige Wörter gut vorhersagt, während es bei kohärenter Langform-Generierung versagt. Verwenden Sie Perplexität neben anderen Metriken.
+
+**F: Wie verhält sich Perplexität zu Cross-Entropie-Verlust?**
+
+A: Perplexität = exp(Cross-Entropie). Sie messen dasselbe auf verschiedenen Skalen. Cross-Entropie wird typischerweise während des Trainings verwendet (einfachere Gradientenberechnung); Perplexität ist besser interpretierbar für Berichte.
+
+## Verwandte Begriffe
+
+- [Verlustfunktion](/de/glossary/loss-function/) — Trainingsziel
+- [LLM](/de/glossary/llm/) — Sprachmodelle, die evaluiert werden
+- [Tokenisierung](/de/glossary/tokenization/) — beeinflusst Perplexitätsberechnung
+- [Fine-tuning](/de/glossary/fine-tuning/) — verbessert Domänen-Perplexität
+
+---
+
+## Referenzen
+
+> Jelinek et al. (1977), "[Perplexity—a measure of the difficulty of speech recognition tasks](https://ieeexplore.ieee.org/document/1170781)", JASA. [Grundlegendes Paper]
+
+> Merity et al. (2017), "[Regularizing and Optimizing LSTM Language Models](https://arxiv.org/abs/1708.02182)", ICLR. [1.500+ Zitationen]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15.000+ Zitationen]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10.000+ Zitationen]
+
+## References
+
+> Jelinek et al. (1977), "[Perplexity—a measure of the difficulty of speech recognition tasks](https://ieeexplore.ieee.org/document/1170781)", JASA. [Foundational paper]
+
+> Merity et al. (2017), "[Regularizing and Optimizing LSTM Language Models](https://arxiv.org/abs/1708.02182)", ICLR. [1,500+ citations]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15,000+ citations]
+
+> Radford et al. (2019), "[Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)", OpenAI. [10,000+ citations]

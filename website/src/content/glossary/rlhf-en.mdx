@@ -1,0 +1,136 @@
+---
+term: "RLHF"
+termSlug: "rlhf"
+short: "Reinforcement Learning from Human Feedback—a technique to fine-tune language models using human preferences as reward signals."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["reinforcement-learning", "fine-tuning", "llm", "instruction-tuning"]
+synonyms: ["Reinforcement Learning from Human Feedback", "RLAIF", "Preference learning", "Human preference optimization"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+RLHF (Reinforcement Learning from Human Feedback) is a training technique that aligns language models with human preferences by using reinforcement learning. Instead of optimizing for [prediction](/en/glossary/inference/) accuracy alone, RLHF trains models to generate outputs that humans rate as helpful, harmless, and honest. A reward model learns to predict human preferences, then RL optimizes the language model to maximize those predicted preferences.
+
+## Why it matters
+
+RLHF is key to modern [AI alignment](/en/glossary/alignment/):
+
+- **Beyond prediction** — optimizes for what humans actually want, not just accuracy
+- **Reduces harmful outputs** — models learn to avoid toxic, biased, or dangerous content
+- **Improves helpfulness** — responses become more useful and relevant
+- **Powers ChatGPT** — the technique that made conversational AI practical
+- **Safety foundation** — critical step toward aligned, [trustworthy AI](/en/glossary/responsible-ai/) systems
+
+RLHF transformed language models from text predictors into helpful assistants.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                         RLHF                               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  THE THREE STAGES OF RLHF:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  STAGE 1: SUPERVISED FINE-TUNING (SFT)                     │
+│  ──────────────────────────────────────                    │
+│                                                            │
+│  Base LLM + Human-written examples ──► SFT Model          │
+│                                                            │
+│  "How do I cook pasta?"                                    │
+│  → [Human writes ideal response]                          │
+│  → Model learns to generate similar quality                │
+│                                                            │
+│  STAGE 2: TRAIN REWARD MODEL                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │     Prompt: "What is machine learning?"         │      │
+│  │                                                  │      │
+│  │  Response A:        Response B:                 │      │
+│  │  "Machine learning  "ML is basically           │      │
+│  │   is a subset of    just computers             │      │
+│  │   AI that enables   doing stuff                │      │
+│  │   systems to..."    automatically lol"         │      │
+│  │                                                  │      │
+│  │         Human picks: A is better ✓             │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│         Reward Model learns: Score(A) > Score(B)          │
+│                                                            │
+│  STAGE 3: REINFORCEMENT LEARNING (PPO)                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  SFT Model ──► Generate Response ──► Reward Model│     │
+│  │       ↑                                    │     │      │
+│  │       │                                    │     │      │
+│  │       └───── Update weights ◄── Score ◄───┘     │      │
+│  │                                                  │      │
+│  │    (Using PPO algorithm to optimize)            │      │
+│  │    (KL penalty prevents too much drift)         │      │
+│  └─────────────────────────────────────────────────┘      │
+│                        │                                   │
+│                        ▼                                   │
+│               RLHF-aligned Model                           │
+│      (Helpful, Harmless, Honest responses)                │
+│                                                            │
+│  KEY COMPONENTS:                                           │
+│  ───────────────                                           │
+│  Reward Model:  Predicts human preference scores          │
+│  PPO:          Policy optimization algorithm              │
+│  KL Penalty:   Prevents catastrophic forgetting           │
+│  Preference Data: Comparison pairs with human choices     │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**RLHF progress:**
+| Stage | Training Signal | Result |
+|-------|----------------|--------|
+| [Pretraining](/en/glossary/pretraining/) | Next token prediction | Raw language ability |
+| SFT | Human demonstrations | Follows [instructions](/en/glossary/prompt/) |
+| RLHF | Human preferences | Helpful, safe, aligned |
+
+## Common questions
+
+**Q: Why is RLHF needed if we have fine-tuning?**
+
+A: Fine-tuning teaches models to imitate examples, but doesn't optimize for nuanced preferences. RLHF can learn subtle distinctions like "polite but not sycophantic" or "detailed but not overwhelming" that are hard to capture in demonstration data alone. It optimizes for human judgment holistically.
+
+**Q: What is a reward model?**
+
+A: The reward model is a [neural network](/en/glossary/neural-network/) trained to predict human preferences. Given two responses to the same prompt, it learns to assign higher scores to the response humans prefer. This turns subjective human judgment into a differentiable reward signal for RL.
+
+**Q: What is DPO and how does it relate to RLHF?**
+
+A: Direct Preference Optimization (DPO) is a simpler alternative that achieves RLHF-like results without explicitly training a reward model or using RL. It directly optimizes language model weights on preference pairs. Many recent models use DPO because it's simpler and more stable than PPO-based RLHF.
+
+**Q: What are RLHF's limitations?**
+
+A: Key challenges include: (1) Reward hacking—models find unintended ways to get high scores, (2) Preference quality—human raters may be inconsistent or biased, (3) Scalability—collecting preference data is expensive, (4) Misalignment—reward model may not capture true preferences.
+
+## Related terms
+
+- [Reinforcement Learning](/en/glossary/reinforcement-learning/) — the underlying paradigm
+- [Fine-tuning](/en/glossary/fine-tuning/) — adapting pretrained models
+- [LLM](/en/glossary/llm/) — models trained with RLHF
+- [Instruction Tuning](/en/glossary/instruction-tuning/) — often precedes RLHF
+
+---
+
+## References
+
+> Ouyang et al. (2022), "[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)", NeurIPS. [InstructGPT paper - introduced RLHF for LLMs]
+
+> Christiano et al. (2017), "[Deep reinforcement learning from human preferences](https://arxiv.org/abs/1706.03741)", NeurIPS. [Foundational RLHF paper]
+
+> Stiennon et al. (2020), "[Learning to summarize with human feedback](https://arxiv.org/abs/2009.01325)", NeurIPS. [Early RLHF for summarization]
+
+> Rafailov et al. (2023), "[Direct Preference Optimization](https://arxiv.org/abs/2305.18290)", NeurIPS. [DPO - simpler alternative to RLHF]

@@ -1,0 +1,69 @@
+---
+term: "Suivi de fraîcheur des sources"
+termSlug: "source-freshness-tracking"
+short: "Le suivi de fraîcheur des sources enregistre l’actualité de chaque source (version, mise à jour, dates d’effet) afin que le retrieval reste aligné sur un droit changeant."
+category: "search"
+category_name: "Recherche & Retrieval"
+related: ["regulatory-drift-detection", "search-analytics", "indexing-strategy", "content-discoverability", "authority-ranking-model"]
+synonyms: ["Freshness monitoring", "Source currency tracking", "Document freshness scoring"]
+locale: "fr"
+draft: false
+---
+
+## Définition
+
+Le suivi de fraîcheur des sources consiste à stocker et exploiter des métadonnées d’actualité pour chaque document : date de publication, dernière mise à jour, dates d’effet (entrée en vigueur), et identifiants de version. Cela aide le retrieval à privilégier les sources les plus récentes et applicables, et à signaler le contenu potentiellement obsolète.
+
+## Pourquoi c'est important
+
+- **Le droit évolue** : amendements, consolidations, nouvelles guidances.
+- **Moins de [citations](/fr/glossary/citation/) obsolètes** : réduit les réponses basées sur des versions dépassées.
+- **Meilleur ranking** : utile pour départager des documents similaires.
+- **Monitoring opérationnel** : permet des alertes sur des sources non rafraîchies.
+
+## Comment ça fonctionne
+
+Souvent sous forme de métadonnées + règles de scoring :
+
+```
+Ingestion -> extraire dates/versions -> stocker champs -> classer avec fraîcheur -> alerter sur obsolescence
+```
+
+Champs fréquents :
+
+- `published_at`, `updated_at`
+- `effective_from`, `effective_to` (ou date d’abrogation)
+- `version_id` / identifiants de consolidation
+- `last_checked_at` (vérification crawler)
+
+## Exemple pratique
+
+Si un texte consolidé a été mis à jour le mois dernier, le système le remonte au-dessus d’un extrait PDF plus ancien. Si une source n’a pas été vérifiée depuis longtemps, elle est signalée pour revue ou sous-pondérée.
+
+## Questions fréquentes
+
+**Q: La fraîcheur améliore-t-elle toujours le ranking ?**
+
+R: Non. La fraîcheur compte seulement si la source la plus récente est applicable. Autorité et applicabilité restent prioritaires.
+
+**Q: Comment éviter le boost "nouveau mais hors sujet" ?**
+
+R: Utiliser la fraîcheur comme signal secondaire et exiger pertinence + filtres d’applicabilité.
+
+## Termes associés
+
+- [Détection de dérive réglementaire](/fr/glossary/regulatory-drift-detection/) - détecter les changements nécessitant une mise à jour
+- [Search Analytics](/fr/glossary/search-analytics/) - suivre obsolescence et échecs
+- [Indexing Strategy](/fr/glossary/indexing-strategy/) - concevoir ingestion et cadence de refresh
+- [Content Discoverability](/fr/glossary/content-discoverability/) - rendre versions et dates trouvables
+- [Modèle de classement par autorité](/fr/glossary/authority-ranking-model/) - combiner autorité et fraîcheur
+
+---
+
+## Références
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

@@ -1,0 +1,107 @@
+---
+term: "Prompt"
+termSlug: "prompt"
+short: "Die Texteingabe oder Anweisung, die einem Sprachmodell gegeben wird, um die Antwortgenerierung zu steuern."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["llm", "system-prompt", "prompt-engineering", "context-window"]
+synonyms: ["Eingabe-Prompt", "Anfrage", "Instruktion"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein Prompt ist die Texteingabe, die einem Sprachmodell bereitgestellt wird und es anweist, was zu tun oder worauf zu antworten ist. Er kann von einer einfachen Frage bis zu komplexen mehrteiligen Anweisungen reichen, die Kontext, Beispiele und Formatierungsanforderungen enthalten. Die Kunst des Erstellens effektiver Prompts—Prompt Engineering—ist entscheidend für qualitativ hochwertige Ausgaben von Sprachmodellen.
+
+## Warum es wichtig ist
+
+Prompts sind die primäre Schnittstelle zwischen Benutzern und Sprachmodellen:
+
+- **Ausgabequalität** — gut gestaltete Prompts verbessern Antwortgenauigkeit und Relevanz dramatisch
+- **Aufgabendefinition** — Prompts sagen dem Modell, welche Aufgabe auszuführen ist (zusammenfassen, übersetzen, analysieren)
+- **Verhaltenskontrolle** — Prompts können Ton, Format, Länge und Einschränkungen festlegen
+- **Zero-Shot-Lernen** — gute Prompts ermöglichen Modellen, Aufgaben ohne [Fine-Tuning](/de/glossary/fine-tuning/) auszuführen
+
+Dasselbe Modell kann sehr unterschiedliche Ausgaben produzieren, je nachdem wie es geprompt wird.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     PROMPT-STRUKTUR                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ SYSTEM-PROMPT (legt Verhalten/Persona fest)         │   │
+│  │ "Du bist ein hilfreicher Steuerberater..."          │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ KONTEXT (abgerufene Dokumente, Gesprächsverlauf)    │   │
+│  │ "Basierend auf den folgenden Steuervorschriften..." │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ BENUTZER-PROMPT (die eigentliche Frage/Aufgabe)     │   │
+│  │ "Erkläre die Abzugsregeln für Heimbüros"            │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          │                                 │
+│                          ▼                                 │
+│                    MODELL-ANTWORT                          │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wichtige Prompt-Komponenten:**
+1. **System-Prompt** — dauerhafte Anweisungen, die Modellverhalten definieren
+2. **Kontext** — Hintergrundinformationen oder abgerufene Dokumente
+3. **Beispiele** — Demonstrationen gewünschter Eingabe/Ausgabe-Paare (Few-Shot)
+4. **Benutzeranfrage** — die spezifische Frage oder Aufgabe
+5. **Ausgabeformat** — Spezifikation der Antwortstrukturierung
+
+## Häufige Fragen
+
+**F: Was ist Prompt Engineering?**
+
+A: Prompt Engineering ist die Praxis des Entwerfens und Optimierens von Prompts, um bessere Ergebnisse von Sprachmodellen zu erhalten. Es umfasst Techniken wie Chain-of-Thought, Few-Shot-Beispiele und strukturierte Formatierung.
+
+**F: Was ist der Unterschied zwischen Zero-Shot und [Few-Shot Prompting](/de/glossary/few-shot/)?**
+
+A: Zero-Shot gibt keine Beispiele—nur Anweisungen. Few-Shot enthält Beispiele des gewünschten Eingabe/Ausgabe-Musters. Few-Shot verbessert typischerweise die Genauigkeit für komplexe Aufgaben.
+
+**F: Wie lang sollte ein Prompt sein?**
+
+A: So lang wie für Klarheit nötig, aber innerhalb der Kontextgrenzen. Mehr Kontext ist nicht immer besser—fokussierte, gut strukturierte Prompts übertreffen oft ausschweifende.
+
+**F: Können Prompts „gejailbreakt" werden?**
+
+A: Böswillige Benutzer erstellen manchmal Prompts, um Sicherheitsrichtlinien zu umgehen. Deshalb benötigen Produktionssysteme robuste Prompt-Injection-Abwehr und Inhaltsfilterung.
+
+## Verwandte Begriffe
+
+- [LLM](/de/glossary/llm/) — Modelle, die auf Prompts antworten
+- [System-Prompt](/de/glossary/system-prompt/) — dauerhafter Konfigurations-Prompt
+- [Kontextfenster](/de/glossary/context-window/) — begrenzt Gesamt-Promptgröße
+- [Chain-of-Thought](/de/glossary/chain-of-thought/) — Prompting-Technik für Reasoning
+
+---
+
+## Referenzen
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25.000+ Zitationen]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5.000+ Zitationen]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3.000+ Zitationen]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ Zitationen]
+
+## References
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [25,000+ citations]
+
+> Wei et al. (2022), "[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)", NeurIPS. [5,000+ citations]
+
+> Liu et al. (2023), "[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP](https://arxiv.org/abs/2107.13586)", ACM Computing Surveys. [3,000+ citations]
+
+> Reynolds & McDonell (2021), "[Prompt Programming for Large Language Models](https://arxiv.org/abs/2102.07350)", arXiv. [500+ citations]

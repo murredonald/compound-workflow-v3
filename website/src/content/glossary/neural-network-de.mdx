@@ -1,0 +1,135 @@
+---
+term: "Neuronales Netz"
+termSlug: "neural-network"
+short: "Ein Machine-Learning-Modell aus miteinander verbundenen Schichten künstlicher Neuronen, die Muster aus Daten lernen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["deep-learning", "backpropagation", "transformer-architecture", "llm"]
+synonyms: ["Künstliches neuronales Netz", "KNN", "Neurales Netzwerk", "Konnektionistisches Modell"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein neuronales Netz ist ein Rechenmodell, das lose vom menschlichen Gehirn inspiriert ist und aus Schichten miteinander verbundener künstlicher Neuronen (Knoten) besteht. Jedes Neuron empfängt Eingaben, wendet Gewichte und einen Bias an, führt das Ergebnis durch eine Aktivierungsfunktion und gibt an die nächste Schicht aus. Durch Training mit Backpropagation lernen neuronale Netze, Muster zu erkennen, Vorhersagen zu machen und Ausgaben aus Daten zu generieren.
+
+## Warum es wichtig ist
+
+Neuronale Netze sind das Fundament moderner KI:
+
+- **Universelle Approximatoren** — können jede stetige Funktion mit genug Neuronen lernen
+- **Feature Learning** — entdecken automatisch relevante Muster in Daten
+- **Skalierbarkeit** — Leistung verbessert sich mit mehr Daten und Rechenleistung
+- **Vielseitigkeit** — Vision, Sprache, Spracherkennung, Spiele, Wissenschaft und mehr
+- **State-of-the-Art** — treiben alle führenden KI-Systeme einschließlich LLMs an
+
+Von Bilderkennung bis Sprachgenerierung dominieren neuronale Netze die KI.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    NEURONALES NETZ                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  STRUKTUR EINES FEEDFORWARD-NETZWERKS:                     │
+│  ─────────────────────────────────────                     │
+│                                                            │
+│  Eingabeschicht  Versteckte Schichten  Ausgabeschicht      │
+│      │                │                    │               │
+│      ○ ─────┬────► ○ ────┬────► ○ ────┬────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┼────► ○ ────┼────► ○ ────┼────► ○             │
+│      │      │      │     │      │     │      │             │
+│      ○ ─────┴────► ○ ────┴────► ○ ────┴────► (Ausgabe)     │
+│                                                            │
+│     x₁,x₂,x₃      h₁,h₂,h₃      h₄,h₅,h₆       ŷ          │
+│                                                            │
+│  EINZELNES NEURON:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Eingaben      Gewichte  Summe+Bias  Aktivierung│       │
+│  │                                                 │        │
+│  │    x₁ ──────► w₁ ──┐                           │        │
+│  │                    │                           │        │
+│  │    x₂ ──────► w₂ ──┼──► Σ + b ──► f(·) ──► y  │        │
+│  │                    │                           │        │
+│  │    x₃ ──────► w₃ ──┘                           │        │
+│  │                                                 │        │
+│  │  y = f(w₁x₁ + w₂x₂ + w₃x₃ + b)                │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  HÄUFIGE AKTIVIERUNGSFUNKTIONEN:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ReLU:    f(x) = max(0, x)         ___/                   │
+│  Sigmoid: f(x) = 1/(1+e⁻ˣ)        _/⁻⁻                    │
+│  Tanh:    f(x) = (eˣ-e⁻ˣ)/(eˣ+e⁻ˣ)  _/‾                  │
+│  Softmax: Wahrscheinlichkeitsverteilung (für Klassifik.)   │
+│                                                            │
+│  NETZWERKTYPEN:                                            │
+│  ──────────────                                            │
+│  Feedforward (MLP):    Daten fließen in eine Richtung     │
+│  Konvolutionell (CNN): Räumliche Muster (Bilder)          │
+│  Rekurrent (RNN):      Sequentielle Daten (Text, Zeit)    │
+│  Transformer:          Attention-basiert (LLMs)           │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Netzwerkarchitektur-Vergleich:**
+| Typ | Stärke | Anwendungen |
+|-----|--------|-------------|
+| MLP | Einfache tabellarische Daten | Klassifikation, Regression |
+| CNN | Räumliche Hierarchien | Bilder, Video, Audio |
+| RNN/LSTM | Sequentielle Muster | Zeitreihen, frühe NLP |
+| Transformer | Weitreichende Abhängigkeiten | LLMs, modernes NLP, Vision |
+
+## Häufige Fragen
+
+**F: Wie tief sollte ein neuronales Netz sein?**
+
+A: Es hängt von der Aufgabenkomplexität ab. Einfache Aufgaben brauchen wenige Schichten; komplexe Muster (wie Sprache) brauchen viele. Moderne LLMs haben 32-100+ Schichten. Beginnen Sie einfach und fügen Sie Tiefe hinzu bei Underfitting.
+
+**F: Was ist der Unterschied zwischen Neuronen und Parametern?**
+
+A: Neuronen sind die Recheneinheiten; Parameter sind die Gewichte und Biases, die sie verbinden. Ein Netzwerk mit 1000 Neuronen kann Millionen von Parametern haben (jedes Neuron verbindet sich mit vielen anderen).
+
+**F: Warum brauchen neuronale Netze Aktivierungsfunktionen?**
+
+A: Ohne nichtlineare Aktivierungen würden mehrere Schichten zu einer einzigen linearen Transformation kollabieren (egal wie viele Schichten). Aktivierungsfunktionen ermöglichen es Netzwerken, komplexe, nichtlineare Muster zu lernen.
+
+**F: Wie beziehen sich neuronale Netze auf "Deep Learning"?**
+
+A: Deep Learning bezieht sich spezifisch auf neuronale Netze mit vielen Schichten (tiefe Architekturen). Ein 2-Schichten-Netzwerk ist ein neuronales Netz, aber nicht "tief." Moderne Transformer-LLMs sind sehr tiefe neuronale Netze.
+
+## Verwandte Begriffe
+
+- [Deep Learning](/de/glossary/deep-learning/) — neuronale Netze mit vielen Schichten
+- [Transformer-Architektur](/de/glossary/transformer-architecture/) — moderne neuronale Architektur
+- [Backpropagation](/de/glossary/backpropagation/) — Trainingsalgorithmus
+- [LLM](/de/glossary/llm/) — sprachfokussierte tiefe neuronale Netze
+
+---
+
+## Referenzen
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40.000+ Zitationen]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20.000+ Zitationen]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25.000+ Zitationen]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Grundlegendes Paper]
+
+## References
+
+> LeCun et al. (2015), "[Deep Learning](https://www.nature.com/articles/nature14539)", Nature. [40,000+ citations]
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. [20,000+ citations]
+
+> Hornik et al. (1989), "[Multilayer feedforward networks are universal approximators](https://www.sciencedirect.com/science/article/pii/0893608089900208)", Neural Networks. [25,000+ citations]
+
+> Rosenblatt (1958), "[The Perceptron: A Probabilistic Model for Information Storage](https://psycnet.apa.org/record/1959-09865-001)", Psychological Review. [Foundational paper]

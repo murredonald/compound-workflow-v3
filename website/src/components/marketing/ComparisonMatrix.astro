@@ -14,7 +14,7 @@ const { solo = "Solo", team = "Team", firm = "Firm", enterprise = "Enterprise" }
 
 // PRICE-04: 8+ key feature rows with query counts (PRICE-05)
 const rows = [
-  { feature: locale === "nl" ? "Gebruikers" : locale === "fr" ? "Utilisateurs" : locale === "de" ? "Benutzer" : "Seats", solo: "1", team: "5", firm: "15", enterprise: locale === "nl" ? "Onbeperkt" : locale === "fr" ? "Illimité" : locale === "de" ? "Unbegrenzt" : "Unlimited" },
+  { feature: locale === "nl" ? "Gebruikers" : locale === "fr" ? "Utilisateurs" : locale === "de" ? "Benutzer" : "Seats", solo: "1", team: "4", firm: "15", enterprise: locale === "nl" ? "Onbeperkt" : locale === "fr" ? "Illimité" : locale === "de" ? "Unbegrenzt" : "Unlimited" },
   { feature: locale === "nl" ? "Jurisdicties" : locale === "fr" ? "Juridictions" : locale === "de" ? "Jurisdiktionen" : "Jurisdictions", solo: "1", team: "1", firm: "2", enterprise: locale === "nl" ? "Alle" : locale === "fr" ? "Toutes" : locale === "de" ? "Alle" : "All" },
   { feature: locale === "nl" ? "Zoekopdrachten/maand" : locale === "fr" ? "Requêtes/mois" : locale === "de" ? "Abfragen/Monat" : "Queries/month", solo: "~150–300", team: "~750–3,000", firm: "~2,000–8,000", enterprise: locale === "nl" ? "Onbeperkt" : locale === "fr" ? "Illimité" : locale === "de" ? "Unbegrenzt" : "Unlimited" },
   { feature: locale === "nl" ? "Broncitaties" : locale === "fr" ? "Citations de sources" : locale === "de" ? "Quellenangaben" : "Source citations", solo: "✓", team: "✓", firm: "✓", enterprise: "✓" },
@@ -55,7 +55,7 @@ const tierKeys = ["solo", "team", "firm", "enterprise"] as const;
         <tr class="border-b border-border/50">
           <td class="py-3 pr-4 text-body-sm text-foreground">{row.feature}</td>
           {tierKeys.map((key, i) => (
-            <td class={`py-3 px-4 text-center text-body-sm ${row[key] === "✓" ? "text-primary-text font-medium" : row[key] === "—" ? "text-muted-foreground/50" : "text-muted-foreground"} ${i === 1 ? "bg-primary/5" : ""}`}>
+            <td class={`py-3 px-4 text-center text-body-sm ${row[key] === "✓" ? "text-primary-text font-medium" : row[key] === "—" ? "text-muted-foreground" : "text-muted-foreground"} ${i === 1 ? "bg-primary/5" : ""}`}>
               {row[key]}
             </td>
           ))}
@@ -69,14 +69,14 @@ const tierKeys = ["solo", "team", "firm", "enterprise"] as const;
 <div class="md:hidden space-y-4">
   {tierNames.map((name, tierIdx) => (
     <details class="rounded-lg border border-border bg-card">
-      <summary class={`cursor-pointer px-4 py-3 text-body-sm font-semibold ${tierIdx === 1 ? "text-primary-text" : "text-foreground"}`}>
+      <summary class={`cursor-pointer rounded-lg px-4 py-3 text-body-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${tierIdx === 1 ? "text-primary-text" : "text-foreground"}`}>
         {name}
       </summary>
       <div class="px-4 pb-4 space-y-2">
         {rows.map((row) => (
           <div class="flex justify-between text-body-sm">
             <span class="text-muted-foreground">{row.feature}</span>
-            <span class={row[tierKeys[tierIdx]] === "✓" ? "text-primary-text font-medium" : row[tierKeys[tierIdx]] === "—" ? "text-muted-foreground/50" : "text-foreground"}>
+            <span class={row[tierKeys[tierIdx]] === "✓" ? "text-primary-text font-medium" : row[tierKeys[tierIdx]] === "—" ? "text-muted-foreground" : "text-foreground"}>
               {row[tierKeys[tierIdx]]}
             </span>
           </div>

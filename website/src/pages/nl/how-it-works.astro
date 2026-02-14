@@ -1,0 +1,352 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import ScreenshotPlaceholder from "@/components/ui/ScreenshotPlaceholder.astro";
+import { t } from "@/i18n/utils";
+
+const locale = "nl";
+---
+
+<BaseLayout
+  title={`${t("nav.how_it_works", locale)} — ${t("site.title", locale)}`}
+  description="Hoe Auryth TX Belgisch fiscaal recht ophaalt, rangschikt en valideert — van vraag tot geciteerd antwoord."
+  locale={locale}
+  path="/how-it-works/"
+>
+  <main id="main-content">
+    {/* Hero */}
+    <Section>
+      <div class="max-w-3xl">
+        <p class="text-body-sm font-medium text-primary uppercase tracking-wider mb-4">Hoe het werkt</p>
+        <h1 class="text-display font-bold tracking-tight mb-6">
+          Van vraag tot geciteerd antwoord.
+        </h1>
+        <p class="text-body-lg text-muted-foreground">
+          Geen chatbot met een juridische plug-in. Een doelgericht ophaalsysteem dat Belgisch fiscaal recht doorzoekt, bronnen rangschikt op autoriteit, en u precies toont wat elk antwoord onderbouwt.
+        </p>
+      </div>
+    </Section>
+
+    {/* Retrieval Pipeline */}
+    <Section muted id="retrieval-pipeline">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">De ophaalpijplijn</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Elke vraag doorloopt vijf stappen voordat u een enkel woord ziet. Elke stap vermindert ruis en verhoogt precisie.
+        </p>
+        <div class="mt-10 space-y-0">
+          {/* Stap 1 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">1</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Uw vraag</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">U stelt uw vraag in gewone taal — Nederlands, Frans of Engels. Het systeem parseert uw intentie, identificeert het fiscale domein en bepaalt de relevante tijdsperiode.</p>
+            </div>
+          </div>
+          {/* Stap 2 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">2</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Hybride zoekopdracht</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Twee zoekstrategieën lopen parallel: <strong class="text-foreground">BM25</strong> (exacte juridische term matching) en <strong class="text-foreground">vector embeddings</strong> (semantische betekenis). Resultaten worden samengevoegd via Reciprocal Rank Fusion — zodat u relevante bronnen vindt, zelfs wanneer u andere woorden gebruikt dan de wetgeving.</p>
+            </div>
+          </div>
+          {/* Stap 3 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">3</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Autoriteitsrangschikking</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Resultaten worden geherrangschikt op juridisch gewicht. Een arrest van het Hof van Cassatie weegt zwaarder dan een administratieve circulaire. De Grondwet weegt het zwaarst. Dit weerspiegelt hoe een fiscaal professional daadwerkelijk redeneert.</p>
+            </div>
+          </div>
+          {/* Stap 4 */}
+          <div class="relative flex gap-4 pb-8">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">4</span>
+              <div class="mt-2 h-full w-px bg-border"></div>
+            </div>
+            <div class="pb-2">
+              <p class="text-body font-semibold text-foreground">Cross-encoder herrangschikking</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">Een gespecialiseerd model leest elke bron naast uw vraag en scoort de werkelijke relevantie — en vangt vals-positieven die alleen keyword matching zou missen.</p>
+            </div>
+          </div>
+          {/* Stap 5 */}
+          <div class="relative flex gap-4">
+            <div class="flex flex-col items-center">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-body-sm font-bold">5</span>
+            </div>
+            <div>
+              <p class="text-body font-semibold text-foreground">Gestructureerd antwoord</p>
+              <p class="mt-1 text-body-sm text-muted-foreground">De AI genereert een onderzoekskaart met citaten, betrouwbaarheidsscore, temporeel bereik en jurisdictie — geen muur van chattekst. Elke bewering is gekoppeld aan een verifieerbare bron.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Screenshot placeholder */}
+        <div class="mt-10">
+          <ScreenshotPlaceholder label="Screenshot: Research card" suggestion="Full research card: query at top, structured answer with inline citation markers [1][2][3], confidence badge (87%), temporal scope tag (valid until 2026-12-31), jurisdiction chip, and collapsed source accordion." />
+        </div>
+      </div>
+    </Section>
+
+    {/* Autoriteitshiërarchie */}
+    <Section id="authority-hierarchy">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Bronauthoriteit rangschikking</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Belgisch recht kent een rangorde. Het systeem past autoriteitsweging toe bij het rangschikken van bronnen — zodat bronnen met meer gewicht eerst verschijnen. Zo werkt het in de praktijk:
+        </p>
+        
+        {/* Voorbeeldvergelijkingen */}
+        <div class="mt-8 space-y-4">
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground mb-3">Voorbeeld: Wetgeving vs. administratief</p>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-body-sm font-semibold text-primary">Federale wet (WIB)</span>
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-body-sm font-medium text-muted-foreground">Administratieve circulaire</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Een bepaling in het Wetboek Inkomstenbelastingen heeft voorrang op een administratieve interpretatie van die bepaling.</p>
+          </div>
+          
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground mb-3">Voorbeeld: Rechtbankhiërarchie</p>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-body-sm font-semibold text-primary">Hof van Cassatie</span>
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-body-sm font-medium text-muted-foreground">Hof van Beroep</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Een arrest van het hoogste rechtscollege weegt zwaarder dan een regionaal beroepsarrest over dezelfde kwestie.</p>
+          </div>
+          
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground mb-3">Voorbeeld: Bindend vs. informatief</p>
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-body-sm font-semibold text-primary">Koninklijk Besluit</span>
+              <span class="text-muted-foreground">&gt;</span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-body-sm font-medium text-muted-foreground">Rechtsleer</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Bindende regelgevende instrumenten hebben voorrang op academisch commentaar, dat informatief maar niet gezaghebbend is.</p>
+          </div>
+        </div>
+
+        {/* Broncategorieën */}
+        <div class="mt-8 rounded-lg border border-border bg-muted/30 p-5">
+          <p class="text-body font-semibold text-foreground mb-3">Broncategorieën die we rangschikken</p>
+          <p class="text-body-sm text-muted-foreground mb-4">Het systeem weegt bronnen over deze categorieën — van grondwettelijke bepalingen tot academisch commentaar:</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Grondwet</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">EU-recht</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Verdragen</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Federale wetten</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Gewestdecreten</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Koninklijke Besluiten</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Hof van Cassatie</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Grondwettelijk Hof</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Hoven van Beroep</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Rulings</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Circulaires</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Parlementaire werken</span>
+            <span class="inline-flex items-center rounded-full bg-background border border-border px-3 py-1 text-body-sm text-foreground">Doctrine</span>
+          </div>
+        </div>
+
+        <p class="mt-6 text-body-sm text-muted-foreground">
+          Wanneer bronnen conflicteren, weet het systeem welke meer gewicht heeft — automatisch. Geen giswerk, geen platte citatenlijsten.
+        </p>
+      </div>
+    </Section>
+
+    {/* Temporeel versiebeheer */}
+    <Section muted id="temporal-versioning">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Temporeel versiebeheer</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Fiscaal recht verandert constant. Het systeem houdt bij wanneer elke bepaling van kracht was — zodat u het juiste antwoord krijgt voor het juiste jaar.
+        </p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground">U vraagt:</p>
+            <p class="mt-2 text-body font-semibold text-foreground">"Wat was het vennootschapsbelastingtarief in 2019?"</p>
+            <div class="mt-4 flex items-center gap-2">
+              <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-body-sm font-medium text-primary">Aanslagjaar 2020</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Beantwoord met de wet zoals die toen gold: 29,58% standaardtarief (29% basis + 2% crisisopslag).</p>
+          </div>
+          <div class="rounded-lg border border-border bg-background p-5">
+            <p class="text-body-sm font-medium text-muted-foreground">U vraagt:</p>
+            <p class="mt-2 text-body font-semibold text-foreground">"Wat is het vennootschapsbelastingtarief vandaag?"</p>
+            <div class="mt-4 flex items-center gap-2">
+              <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-body-sm font-medium text-primary">Aanslagjaar 2026</span>
+            </div>
+            <p class="mt-3 text-body-sm text-muted-foreground">Beantwoord met de huidige wet: 25% standaardtarief. Het systeem haalt de juiste versie automatisch op.</p>
+          </div>
+        </div>
+        <div class="mt-6 rounded-lg border border-border bg-background p-5">
+          <p class="text-body font-semibold text-foreground">Hoe het werkt onder de motorkap</p>
+          <p class="mt-2 text-body-sm text-muted-foreground">
+            Elk document bevat expliciete metadata: <strong class="text-foreground">effective_from</strong>, <strong class="text-foreground">effective_to</strong> en <strong class="text-foreground">assessment_year</strong>. De ophaalpijplijn filtert op temporeel bereik vóór rangschikking — zodat u nooit verouderde bepalingen vermengd ziet met huidig recht.
+          </p>
+        </div>
+      </div>
+    </Section>
+
+    {/* Kwaliteitspoorten */}
+    <Section id="quality-gates">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">4-laags kwaliteitspoort</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Elk document doorloopt vier validatiefasen voordat het doorzoekbaar wordt. Geen shortcuts, geen bulk-imports.
+        </p>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">1</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Structuurvalidatie</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Documenten worden gesplitst op natuurlijke juridische grenzen — artikelen, secties, paragrafen — niet op willekeurige tekenlimieten.</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">2</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Kwaliteitscontroles</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Encoding-, volledigheids- en opmaakcontroles zorgen ervoor dat er geen corrupte of afgebroken inhoud in het corpus terechtkomt.</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">3</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Metadata-verrijking</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Autoriteitsniveau, temporele velden, jurisdictie, taal en onderwerptags worden aan elk documentfragment gekoppeld.</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-body-sm font-bold">4</span>
+              <div>
+                <h3 class="text-body font-semibold text-foreground">Deduplicatie</h3>
+                <p class="mt-1 text-body-sm text-muted-foreground">Dubbele en bijna-dubbele inhoud wordt gedetecteerd en geconsolideerd — zodat u elke bepaling één keer ziet, niet vijf keer uit verschillende bronnen.</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+        <p class="mt-6 text-body-sm text-muted-foreground">
+          Nieuwe documenten worden in quarantaine geplaatst voor beheerdersbeoordeling voordat ze doorzoekbaar worden. Het corpus groeit zorgvuldig, niet roekeloos.
+        </p>
+      </div>
+    </Section>
+
+    {/* RAG vs Fine-tuning */}
+    <Section muted id="rag-vs-finetuning">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-h2 font-bold text-foreground">Waarom ophalen beter is dan fine-tuning</h2>
+        <p class="mt-4 text-body text-muted-foreground">
+          Sommige juridische AI-tools bakken kennis in hun modellen via fine-tuning. Wij kozen een ander pad — en daarom is dat belangrijk voor Belgische fiscaliteit.
+        </p>
+        <div class="mt-8 space-y-4">
+          <div class="grid grid-cols-[1fr_1fr] gap-px rounded-lg border border-border overflow-hidden">
+            <div class="bg-muted/50 p-4">
+              <p class="text-body-sm font-semibold text-muted-foreground">Fine-tuned modellen</p>
+            </div>
+            <div class="bg-background p-4">
+              <p class="text-body-sm font-semibold text-primary">Auryth TX (RAG)</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Kennis bevroren op trainingsmoment — al maanden of jaren achter</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Real-time updates</strong> — nieuwe wetgeving komt direct in het corpus, geen hertraining</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Kan niet betrouwbaar verwijzen naar welk document een bewering ondersteunt</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Volledige citatietraceerbaarheid</strong> — elke bewering gekoppeld aan een specifiek artikel en paragraaf</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Absorbeert alle wetversies in één set gewichten — temporele verwarring</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Temporele precisie</strong> — expliciete metadata volgt welke versie wanneer geldt</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Duur en traag om te hertrainen wanneer de wet verandert</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Kostenefficiënt</strong> — documenten toevoegen is snel. Overschakelen naar betere basismodellen is direct.</p>
+            </div>
+
+            <div class="bg-muted/50 p-4 border-t border-border">
+              <p class="text-body-sm text-muted-foreground">Vastgeklonken aan één modelversie — fine-tuning draagt niet over naar nieuwere modellen</p>
+            </div>
+            <div class="bg-background p-4 border-t border-border">
+              <p class="text-body-sm text-foreground"><strong>Model-onafhankelijk</strong> — wanneer een beter AI-model verschijnt, schakelen we over. Ons corpus en onze pijplijn blijven behouden.</p>
+            </div>
+          </div>
+        </div>
+        <p class="mt-6 text-body-sm text-muted-foreground">
+          Fine-tuning kan werken voor stabiele rechtsgebieden. Maar Belgisch fiscaal recht is een bewegend doel — tarieven veranderen, vrijstellingen verschijnen en verdwijnen, gewestelijke regels divergeren. Ophalen houdt u actueel.
+        </p>
+        <p class="mt-4">
+          <a href={`/${locale}/blog/rag-vs-finetuning-nl/`} class="text-body-sm font-medium text-primary hover:underline">Verdieping: RAG vs fine-tuning voor juridische AI &rarr;</a>
+        </p>
+      </div>
+    </Section>
+
+    {/* Nauwkeurigheidslink */}
+    <Section>
+      <div class="mx-auto max-w-3xl">
+        <div class="rounded-lg border border-border bg-background p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div class="flex-1">
+            <h2 class="text-body-lg font-bold text-foreground">Wij publiceren onze nauwkeurigheidsdata</h2>
+            <p class="mt-2 text-body-sm text-muted-foreground">
+              De meeste AI-tools beweren nauwkeurig te zijn. Wij tonen het — met echte cijfers, regelmatig bijgewerkt en open voor toetsing.
+            </p>
+          </div>
+          <a
+            href={`/${locale}/accuracy/`}
+            class="inline-flex h-10 items-center justify-center rounded-lg border border-input bg-background px-5 text-body-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 whitespace-nowrap"
+          >
+            Bekijk nauwkeurigheidsdashboard
+          </a>
+        </div>
+      </div>
+    </Section>
+
+    {/* CTA */}
+    <Section muted>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-h2 font-bold text-foreground">{t("waitlist.title", locale)}</h2>
+        <p class="mt-4 text-body text-muted-foreground">{t("waitlist.subtitle", locale)}</p>
+        <div class="mt-8">
+          <a
+            href={`/${locale}/waitlist/`}
+            class="inline-flex h-12 min-h-[44px] items-center justify-center gap-2 rounded-lg bg-primary px-8 text-body font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            {t("hero.cta", locale)}
+          </a>
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>

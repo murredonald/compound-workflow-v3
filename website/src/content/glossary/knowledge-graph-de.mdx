@@ -1,0 +1,192 @@
+---
+term: "Wissensgraph"
+termSlug: "knowledge-graph"
+short: "Ein strukturiertes Netzwerk von Entitäten und ihren Beziehungen, das Maschinen ermöglicht, reale Konzepte zu verstehen und darüber zu schlussfolgern."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["ner", "semantic-search", "embedding", "rag"]
+synonyms: ["Semantischer Graph", "Ontologie", "Wissensbasis"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein Wissensgraph ist eine strukturierte Darstellung von Informationen als Netzwerk von miteinander verbundenen Entitäten (Knoten) und ihren Beziehungen (Kanten). Jede Entität repräsentiert ein reales Konzept—eine Person, einen Ort, eine Organisation oder eine Idee—und Beziehungen erfassen, wie Entitäten zueinander in Beziehung stehen ("arbeitet für", "befindet sich in", "erfunden von"). Wissensgraphen ermöglichen es Maschinen, Kontext zu verstehen, Schlussfolgerungen zu ziehen und komplexe Anfragen durch Durchlaufen dieser Verbindungen zu beantworten.
+
+## Warum es wichtig ist
+
+Wissensgraphen treiben intelligente Systeme an:
+
+- **Verbesserte Suche** — Googles Knowledge Graph revolutionierte die Websuche
+- **Empfehlungen** — verstehe Benutzerpräferenzen durch Verbindungen
+- **Fragebeantwortung** — ermögliche komplexe Multi-Hop-Schlussfolgerungen
+- **Datenintegration** — vereinige Informationen aus verschiedenen Quellen
+- **RAG-Verbesserung** — biete strukturierten Kontext für [LLMs](/de/glossary/llm/)
+
+Große Technologieunternehmen pflegen massive Wissensgraphen: Google (500B+ Fakten), Facebook, Amazon, Microsoft und LinkedIn.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    WISSENSGRAPH                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  GRUNDSTRUKTUR:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  Entitäten (Knoten) + Beziehungen (Kanten) = Wissen       │
+│                                                            │
+│                  ┌──────────────┐                         │
+│                  │   Einstein   │                         │
+│                  │   (Person)   │                         │
+│                  └──────┬───────┘                         │
+│                         │                                  │
+│       ┌─────────────────┼─────────────────┐               │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  entwickelte       geboren_in        arbeitete_bei        │
+│       │                 │                 │               │
+│       ▼                 ▼                 ▼               │
+│  ┌─────────┐       ┌─────────┐     ┌───────────────┐     │
+│  │Relativit.│      │  Ulm,   │     │   Princeton   │     │
+│  │ Theorie │       │Deutschl.│     │  Universität  │     │
+│  └─────────┘       └─────────┘     └───────────────┘     │
+│   (Theorie)          (Stadt)         (Organisation)       │
+│                                                            │
+│                                                            │
+│  TRIPEL-DARSTELLUNG:                                       │
+│  ───────────────────                                       │
+│                                                            │
+│  Subjekt ──Beziehung──▶ Objekt                            │
+│                                                            │
+│  (Einstein, entwickelte, Relativitätstheorie)             │
+│  (Einstein, geboren_in, Ulm)                              │
+│  (Einstein, arbeitete_bei, Princeton)                     │
+│  (Ulm, befindet_sich_in, Deutschland)                     │
+│  (Deutschland, Mitglied_von, Europäische Union)           │
+│                                                            │
+│                                                            │
+│  MULTI-HOP SCHLUSSFOLGERUNG:                               │
+│  ───────────────────────────                               │
+│                                                            │
+│  Frage: "Welches Land entwickelte die Relativität?"       │
+│                                                            │
+│  Pfad-Durchlauf:                                          │
+│                                                            │
+│  Relativität ◄──entwickelt── Einstein                     │
+│                               │                            │
+│                          geboren_in                        │
+│                               ▼                            │
+│                             Ulm ──befindet_in──▶ Deutschl.│
+│                                                            │
+│  Antwort: Deutschland (Einstein, der die Relativität      │
+│           entwickelte, wurde in Ulm, Deutschland geboren) │
+│                                                            │
+│                                                            │
+│  SCHEMA/ONTOLOGIE:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  Definiert gültige Entitätstypen und Beziehungen:         │
+│                                                            │
+│  Entitätstypen:       Beziehungen:                         │
+│  ┌─────────────┐      ┌────────────────────────┐          │
+│  │ Person      │      │ geboren_in: Person→Ort │          │
+│  │ Ort         │      │ arbeitet: Person→Org   │          │
+│  │ Organisation│      │ befindet: Ort→Ort     │          │
+│  │ Ereignis    │      │ gründete: Person→Org   │          │
+│  │ Konzept     │      │ erfand: Person→Ding    │          │
+│  └─────────────┘      └────────────────────────┘          │
+│                                                            │
+│                                                            │
+│  WISSENSGRAPH + LLMs (GraphRAG):                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────┐      │
+│  │                                                  │      │
+│  │  Query: "Wie ist Einstein mit Deutschland verb.?"│      │
+│  │                                                  │      │
+│  │        ┌────────────┐      ┌────────────────┐  │      │
+│  │        │  Wissens-  │      │    LLM         │  │      │
+│  │  Query │   graph    │─────►│   (Antwort-    │  │      │
+│  │  ─────►│   Suche    │      │   Generierung) │  │      │
+│  │        └────────────┘      └────────────────┘  │      │
+│  │              │                     │           │      │
+│  │              ▼                     ▼           │      │
+│  │        Strukturierte         Natürliche       │      │
+│  │        Fakten:               Sprache Antwort: │      │
+│  │        (Einstein,geboren_in  "Einstein wurde  │      │
+│  │         Ulm,Deutschland)     in Ulm geboren..." │      │
+│  │                                                │      │
+│  └─────────────────────────────────────────────────┘      │
+│                                                            │
+│                                                            │
+│  WICHTIGE WISSENSGRAPHEN:                                  │
+│  ────────────────────────                                  │
+│                                                            │
+│  • Google Knowledge Graph: 500B+ Fakten, treibt Search    │
+│  • Wikidata: 100M+ Items, offene Community               │
+│  • DBpedia: Strukturierte Wikipedia-Extraktion            │
+│  • YAGO: Akademischer KG mit hoher Genauigkeit            │
+│  • Microsoft Academic Graph: Wissenschaftliche Literatur  │
+│  • Amazon Product Graph: E-Commerce Beziehungen          │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wissensgraph-Anwendungen:**
+| Domäne | Anwendung | Beispiel |
+|--------|-----------|----------|
+| Suche | Verbesserte Ergebnisse | Googles Info-Panels |
+| E-Commerce | Empfehlungen | "Kunden kauften auch" |
+| Gesundheit | Arzneimittelinteraktionen | Medizinische Entscheidungshilfe |
+| Finanzen | Betrugserkennung | Transaktionsnetzwerke |
+| Recht | Rechtsprechungsverbindungen | Präzedenzfall-Suche |
+
+## Häufige Fragen
+
+**F: Was unterscheidet einen Wissensgraph von einer Datenbank?**
+
+A: Traditionelle Datenbanken speichern Daten in starren Tabellen mit vordefinierten Schemas. Wissensgraphen speichern Daten als flexible Netzwerke von Beziehungen, was Abfragen über Verbindungen ermöglicht, die bei der Datenerstellung nicht vorgesehen waren. Sie sind für das Durchlaufen von Beziehungen (Graph-Abfragen) optimiert statt für das Aggregieren von Zeilen (SQL-Abfragen).
+
+**F: Wie werden Wissensgraphen aufgebaut?**
+
+A: Durch mehrere Ansätze: manuelle Kuratierung durch Experten, automatisierte Extraktion aus Text mittels NER und Relationsextraktion, Import aus strukturierten Quellen wie Wikipedia/Wikidata und Crowdsourcing. Moderne Ansätze kombinieren diese Methoden—LLMs extrahieren Entitäten und Beziehungen aus unstrukturiertem Text, dann validieren Menschen die Ergebnisse.
+
+**F: Können LLMs Wissensgraphen ersetzen?**
+
+A: Nein, sie sind komplementär. LLMs speichern Wissen implizit in Parametern, halluzinieren aber und haben Wissensgrenzen. Wissensgraphen speichern Wissen explizit und überprüfbar, aber ohne natürliches Sprachverständnis. Die besten Systeme kombinieren beides: Wissensgraphen liefern fundierte Fakten, LLMs liefern natürliche Interaktion—das ist der GraphRAG-Ansatz.
+
+**F: Wie fragt man einen Wissensgraph ab?**
+
+A: Mit Graph-Abfragesprachen wie SPARQL (für RDF-Graphen), Cypher (für Neo4j) oder Gremlin. Moderne Systeme unterstützen auch natürlichsprachliche Abfragen, die automatisch in Graph-Abfragen übersetzt werden.
+
+## Verwandte Begriffe
+
+- [NER](/de/glossary/ner/) — Extraktion von Entitäten für Wissensgraphen
+- [Semantic search](/de/glossary/semantic-search/) — Suche verbessert durch Wissensgraphen
+- Embedding — Vektordarstellungen von Entitäten
+- [RAG](/de/glossary/rag/) — Verwendung von Wissensgraphen für fundierte Generierung
+
+---
+
+## Referenzen
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Umfassende akademische Übersicht]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Googles ursprüngliche Ankündigung]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [LLM + KG Integrations-Übersicht]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Technischer Deep Dive]
+
+## References
+
+> Hogan et al. (2021), "[Knowledge Graphs](https://arxiv.org/abs/2003.02320)", ACM Computing Surveys. [Comprehensive academic survey]
+
+> Singhal (2012), "[Introducing the Knowledge Graph](https://blog.google/products/search/introducing-knowledge-graph-things-not/)", Google Blog. [Google's original announcement]
+
+> Pan et al. (2023), "[Unifying Large Language Models and Knowledge Graphs: A Roadmap](https://arxiv.org/abs/2306.08302)", arXiv. [LLM + KG integration survey]
+
+> Ji et al. (2022), "[A Survey on Knowledge Graphs: Representation, Acquisition, and Applications](https://ieeexplore.ieee.org/document/9416312)", IEEE TNNLS. [Technical deep dive]

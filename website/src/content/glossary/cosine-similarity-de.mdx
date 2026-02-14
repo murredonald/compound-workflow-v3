@@ -1,0 +1,119 @@
+---
+term: "Kosinus-Ähnlichkeit"
+termSlug: "cosine-similarity"
+short: "Ein mathematisches Maß für die Ähnlichkeit zwischen zwei Vektoren basierend auf dem Kosinus des Winkels zwischen ihnen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["embeddings", "semantic-similarity", "vector-database", "semantic-search"]
+synonyms: ["Kosinus-Distanz", "Winkelähnlichkeit", "Vektorähnlichkeit"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Die Kosinus-Ähnlichkeit misst, wie ähnlich zwei Vektoren sind, indem sie den Kosinus des Winkels zwischen ihnen berechnet. Werte reichen von -1 (entgegengesetzt) bis 1 (identisch), wobei 0 orthogonal (keine Ähnlichkeit) anzeigt. Sie ist die häufigste Metrik für den Vergleich von Text-[Embeddings](/de/glossary/vector-embeddings/), da sie sich auf Richtung (Bedeutung) statt Magnitude (Länge) konzentriert.
+
+## Warum es wichtig ist
+
+Kosinus-Ähnlichkeit ist grundlegend für moderne KI-Suche und -Retrieval:
+
+- **Richtung über Magnitude** — erfasst semantische Orientierung, nicht Vektorlänge
+- **Normalisierter Vergleich** — funktioniert mit Embeddings unterschiedlicher Magnitudes
+- **Effizienz** — schnell zu berechnen, besonders mit optimierten Bibliotheken
+- **[Interpretierbarkeit](/de/glossary/explainability/)** — leicht verständlich: 1 = gleich, 0 = unrelated, -1 = entgegengesetzt
+- **Standardmetrik** — Default in den meisten Vektordatenbanken und Embedding-APIs
+
+Sie ermöglicht bedeutungsvolle Vergleiche von Text, Bildern und anderen eingebetteten Darstellungen.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   KOSINUS-ÄHNLICHKEIT                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│         FORMEL: cos(θ) = (A · B) / (||A|| × ||B||)         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                                                     │   │
+│  │              B                                      │   │
+│  │             /                                       │   │
+│  │            /  θ = Winkel                            │   │
+│  │           /                                         │   │
+│  │          /                                          │   │
+│  │         ──────────────► A                           │   │
+│  │                                                     │   │
+│  │  cos(0°) = 1.0    → Identische Richtung             │   │
+│  │  cos(45°) ≈ 0.71  → Ähnliche Richtung               │   │
+│  │  cos(90°) = 0.0   → Orthogonal (unrelated)          │   │
+│  │  cos(180°) = -1.0 → Entgegengesetzte Richtung       │   │
+│  │                                                     │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                            │
+│  BEISPIELRECHNUNG:                                         │
+│  Vektor A = [0.8, 0.6]                                     │
+│  Vektor B = [0.6, 0.8]                                     │
+│                                                            │
+│  A · B = (0.8 × 0.6) + (0.6 × 0.8) = 0.96                  │
+│  ||A|| = √(0.8² + 0.6²) = 1.0                              │
+│  ||B|| = √(0.6² + 0.8²) = 1.0                              │
+│                                                            │
+│  cos(θ) = 0.96 / (1.0 × 1.0) = 0.96 → Sehr ähnlich        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Vergleich mit anderen Metriken:**
+| Metrik | Formel | Wann verwenden |
+|--------|--------|----------------|
+| Kosinus | 1 - cos(θ) | Normalisierte Embeddings, Textähnlichkeit |
+| Euklidisch | √Σ(a-b)² | Absolute Distanzen wichtig |
+| Skalarprodukt | Σ(a×b) | Wenn Vektoren bereits normalisiert |
+
+## Häufige Fragen
+
+**F: Warum Kosinus statt Euklidischer Distanz?**
+
+A: Kosinus ignoriert Vektormagnitude und fokussiert nur auf Richtung. Zwei Dokumente über "Steuerrecht" sollten ähnlich sein, auch wenn eines länger ist mit größerer Embedding-Magnitude. Kosinus erfasst das; Euklidisch behandelt sie als unterschiedlicher.
+
+**F: Was bedeutet eine Kosinus-Ähnlichkeit von 0.8?**
+
+A: Die Vektoren zeigen in fast dieselbe Richtung—sie sind semantisch ähnlich. Für Text-Embeddings zeigt 0.8+ typisch starke Relevanz an. Schwellenwerte variieren jedoch nach Modell; kalibrieren Sie mit Ihren Daten.
+
+**F: Kann Kosinus-Ähnlichkeit negativ sein?**
+
+A: Ja, wenn Vektoren in entgegengesetzte Richtungen zeigen. Mit den meisten Text-Embeddings sind Negative selten, da Modelle typisch Vektoren im positiven Raum produzieren. Ein Wert nahe 0 ist häufiger für unrelated Content.
+
+**F: Ist Kosinus-Ähnlichkeit gleich Kosinus-Distanz?**
+
+A: Sie sind Inverse. Kosinus-Distanz = 1 - Kosinus-Ähnlichkeit. Datenbanken verwenden oft "Distanz" (niedriger = ähnlicher) während APIs "Ähnlichkeit" berichten (höher = ähnlicher). Prüfen Sie die Konvention Ihres Tools.
+
+## Verwandte Begriffe
+
+- [Embeddings](/de/glossary/embeddings/) — Vektoren, die Kosinus-Ähnlichkeit vergleicht
+- [Semantische Ähnlichkeit](/de/glossary/semantic-similarity/) — Konzept gemessen durch Kosinus-Ähnlichkeit
+- [Vektordatenbank](/de/glossary/vector-database/) — nutzt Kosinus für [Nearest-Neighbor-Suche](/de/glossary/nearest-neighbor-search/)
+- [Semantische Suche](/de/glossary/semantic-search/) — Retrieval betrieben durch Kosinus-Vergleiche
+
+---
+
+## Referenzen
+
+> Singhal (2001), "[Modern Information Retrieval: A Brief Overview](http://singhal.info/ieee2001.pdf)", IEEE Data Engineering Bulletin. [3.000+ Zitationen]
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [20.000+ Zitationen]
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [35.000+ Zitationen]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE Transactions on Big Data. [1.500+ Zitationen]
+
+## References
+
+> Singhal (2001), "[Modern Information Retrieval: A Brief Overview](http://singhal.info/ieee2001.pdf)", IEEE Data Engineering Bulletin. [3,000+ citations]
+
+> Manning et al. (2008), "[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/)", Cambridge University Press. [20,000+ citations]
+
+> Mikolov et al. (2013), "[Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/abs/1301.3781)", arXiv. [35,000+ citations]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE Transactions on Big Data. [1,500+ citations]

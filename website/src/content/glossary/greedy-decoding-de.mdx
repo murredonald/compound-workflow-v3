@@ -1,0 +1,133 @@
+---
+term: "Gieriges Dekodieren"
+termSlug: "greedy-decoding"
+short: "Eine einfache Textgenerierungsstrategie, die bei jedem Schritt immer das Token mit der höchsten Wahrscheinlichkeit auswählt."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["beam-search", "top-k", "top-p", "inference", "llm"]
+synonyms: ["Greedy Search", "Argmax-Dekodierung", "Maximum-Likelihood-Dekodierung"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Gieriges Dekodieren ist die einfachste Textgenerierungsstrategie, bei der das Modell bei jedem Generierungsschritt immer das Token mit der höchsten Wahrscheinlichkeit auswählt. Es trifft lokal optimale Entscheidungen ohne zu berücksichtigen, wie aktuelle Entscheidungen zukünftige Token-Möglichkeiten beeinflussen, was zu schnellen aber potenziell suboptimalen Sequenzen führt.
+
+## Warum es wichtig ist
+
+Gieriges Dekodieren bietet wichtige Vorteile in spezifischen Szenarien:
+
+- **Geschwindigkeit** — schnellste Dekodierungsmethode, einzelner Forward-Pass pro Token
+- **Deterministisch** — gleiche Eingabe produziert immer gleiche Ausgabe
+- **Einfachheit** — keine Hyperparameter zu tunen
+- **Basislinie** — Standard-Vergleichspunkt für andere Methoden
+- **Strukturierte Aufgaben** — funktioniert gut für faktische, eingeschränkte Outputs
+
+Jedoch produziert gieriges Dekodieren oft repetitiven oder generischen Text.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   GIERIGES DEKODIEREN                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Bei jedem Schritt: Wähle argmax(Wahrscheinlichkeit)       │
+│                                                            │
+│  Schritt 1: "Die" → Wahrscheinlichkeiten:                 │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  Katze: 0.35  ◄── AUSGEWÄHLT (höchste)     │           │
+│  │  Hund:  0.25                                │           │
+│  │  Mann:  0.15                                │           │
+│  │  Auto:  0.10                                │           │
+│  │  ...                                        │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Schritt 2: "Die Katze" → Wahrscheinlichkeiten:           │
+│  ┌─────────────────────────────────────────────┐           │
+│  │  saß:  0.40  ◄── AUSGEWÄHLT (höchste)      │           │
+│  │  lief: 0.20                                 │           │
+│  │  ist:  0.18                                 │           │
+│  │  war:  0.12                                 │           │
+│  └─────────────────────────────────────────────┘           │
+│                                                            │
+│  Ergebnis: "Die Katze saß..."                             │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  PROBLEM: LOKALE VS GLOBALE OPTIMA            │        │
+│  │                                                │        │
+│  │  Gierig: "Die Katze saß" (p=0.35×0.40=0.14)  │        │
+│  │  Besser: "Der Hund lief" (p=0.25×0.55=0.14)  │        │
+│  │                                                │        │
+│  │  Zweiter Pfad kann zu besserer Sequenz führen!│        │
+│  │  Gierig sieht das nicht—bindet an "Katze"    │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  GIERIG VS ALTERNATIVEN:                                   │
+│  ────────────────────────                                  │
+│  Gierig:     Wähle immer top-1    → deterministisch       │
+│  Top-k:      Sample aus top-k     → divers                │
+│  Top-p:      Sample aus Nucleus   → adaptiv               │
+│  Strahl:     Verfolge mehrere Pfade → bessere Sequenzen   │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Wann gieriges Dekodieren verwenden:**
+| Szenario | Empfehlung |
+|----------|------------|
+| Code-Generierung | Oft gut (strukturierter Output) |
+| Übersetzung | Meist Beam Search bevorzugt |
+| Kreatives Schreiben | Sampling verwenden |
+| Faktisches Q&A | Kann gut funktionieren |
+| Klassifikation | Angemessen |
+| Allgemeiner Chat | Sampling verwenden |
+
+## Häufige Fragen
+
+**F: Warum produziert gieriges Dekodieren repetitiven Text?**
+
+A: Sobald das Modell eine häufige Phrase generiert, hat diese Phrase oft hohe Wahrscheinlichkeit fortzufahren. Das Modell kann in Schleifen stecken bleiben wie "Ich denke, dass ich denke, dass ich denke...", weil jede Wiederholung lokal optimal ist.
+
+**F: Wann sollte ich gieriges Dekodieren verwenden?**
+
+A: Verwenden Sie es für strukturierte Aufgaben mit klaren korrekten Antworten: Code-Vervollständigung, Klassifikation, einfache Extraktion. Vermeiden Sie es für kreative oder offene Generierung, wo Diversität wichtig ist.
+
+**F: Ist gieriges Dekodieren äquivalent zu Temperatur = 0?**
+
+A: Effektiv ja. Temperatur, die gegen 0 geht, macht die Wahrscheinlichkeitsverteilung zunehmend auf das höchste Token gespitzt, konvergierend zu gieriger Auswahl.
+
+**F: Wie vergleicht sich gierig mit Beam Search?**
+
+A: Gierig ist Beam Search mit Strahlbreite 1. Beam Search erkundet mehrere Pfade und findet oft vollständige Sequenzen höherer Wahrscheinlichkeit, auf Kosten von mehr Berechnung.
+
+## Verwandte Begriffe
+
+- [Beam Search](/de/glossary/beam-search/) — erkundet mehrere Sequenzen
+- [Top-k Sampling](/de/glossary/top-k/) — fügt Zufälligkeit hinzu
+- [Top-p Sampling](/de/glossary/top-p/) — adaptives Sampling
+- [Temperatur](/de/glossary/temperature/) — kontrolliert Verteilungsform
+- [Inferenz](/de/glossary/inference/) — Generierungsprozess
+
+---
+
+## Referenzen
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ Zitationen]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ Zitationen]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ Zitationen]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3.500+ Zitationen]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Meister et al. (2020), "[If Beam Search is the Answer, What was the Question?](https://arxiv.org/abs/2010.02650)", EMNLP. [200+ citations]
+
+> Welleck et al. (2020), "[Neural Text Generation With Unlikelihood Training](https://arxiv.org/abs/1908.04319)", ICLR. [500+ citations]
+
+> See et al. (2017), "[Get To The Point: Summarization with Pointer-Generator Networks](https://arxiv.org/abs/1704.04368)", ACL. [3,500+ citations]

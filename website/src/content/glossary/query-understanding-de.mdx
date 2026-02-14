@@ -1,0 +1,61 @@
+---
+term: "Query-Verständnis"
+termSlug: "query-understanding"
+short: "Query-Verständnis beschreibt, wie ein Suchsystem die Bedeutung einer Anfrage (Entitäten, Intent, Mehrdeutigkeit) vor Retrieval und Ranking interpretiert."
+category: "search"
+category_name: "Suche & Retrieval"
+related: ["query-intent", "semantic-expansion", "full-text-search", "boolean-search"]
+synonyms: ["Query-Interpretation", "Query-Parsing", "Entitätserkennung"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Query-Verständnis umfasst die Verfahren, mit denen ein [Suchsystem](/de/glossary/information-retrieval-system/) interpretiert, was eine Anfrage bedeutet. Dazu gehören Parsing, Spracherkennung, Rechtschreib-/Format-Normalisierung, [Entitätserkennung](/de/glossary/entity-extraction/) und Disambiguierung, damit die Suche Bedeutung statt nur Keywords trifft.
+
+## Warum es wichtig ist
+
+- **Weniger Mehrdeutigkeit**: "CIR 92" und "CIR 1992" sollten dasselbe meinen.
+- **Besseres Matching**: entitätsbasierte Suche funktioniert besonders bei kurzen Queries.
+- **Sichere Erweiterung**: verhindert Expansion, die den Intent verändert.
+- **Bessere UX**: Vorschläge, Filter und Gruppierung werden möglich.
+
+## Wie es funktioniert
+
+```
+Query -> normalisieren -> Entitäten extrahieren -> Disambiguieren -> Suchquery bauen
+```
+
+Das Ergebnis ist oft eine strukturierte Darstellung (Tokens, Entitäten, Intent, Filter) für die Ranking-Pipeline.
+
+## Praktisches Beispiel
+
+Ein Nutzer tippt "MwSt Frist Belgien Q4". Gutes Query-Verständnis erkennt Land (Belgien), Thema (MwSt) und Zeitraum (Q4) und priorisiert passende, verlässliche Quellen.
+
+## Häufige Fragen
+
+**Q: Nur für semantische/vector Suche relevant?**
+
+A: Nein. Auch Volltextsysteme profitieren von Normalisierung, Synonymen und Entitäten.
+
+**Q: Wie misst man Verbesserungen?**
+
+A: Über [Suchanalyse](/de/glossary/search-analytics/): Nulltreffer-Rate, Reformulierungen, Klickzufriedenheit und Offline-Relevanzurteile.
+
+## Verwandte Begriffe
+
+- [Suchintention](/de/glossary/query-intent/) - das Ziel hinter der Query
+- [Semantische Erweiterung](/de/glossary/semantic-expansion/) - Recall erhöhen
+- [Volltextsuche](/de/glossary/full-text-search/) - Keyword-Ebene
+- [Boolesche Suche](/de/glossary/boolean-search/) - Operator-Queries
+
+---
+
+## Referenzen
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

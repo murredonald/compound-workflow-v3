@@ -1,0 +1,107 @@
+---
+title: "Wat is reranking — en waarom het het verschil maakt tussen documenten vinden en antwoorden vinden"
+description: "Eerste-fase retrieval vindt 100 matches. Reranking identificeert de 5 die uw vraag echt beantwoorden. Waarom dat onderscheid cruciaal is voor juridische AI."
+publishDate: 2026-03-01
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "AI uitgelegd"
+tags: ["reranking", "cross-encoder", "juridische AI", "retrieval", "zoekkwaliteit"]
+locale: "nl"
+draft: false
+---
+
+Uw AI-tool vond 100 documenten die overeenkomen met uw [query](/nl/glossary/prompt/). Het toonde u er 5. Hoe besliste het welke 5?
+
+Deze vraag is belangrijker dan de meeste professionals beseffen. Het verschil tussen het document dat de juiste zoektermen bevat en het document dat uw vraag daadwerkelijk beantwoordt, is het verschil tussen retrieval en reranking — en daar besparen de meeste juridische AI-tools op.
+
+Benchmarks van Elastic's semantische reranker-studie tonen de kloof duidelijk: op de BEIR-benchmarksuite verbetert reranking van [BM25](/nl/glossary/bm25/)-resultaten de relevantie met gemiddeld 39%. Op Natural Questions specifiek bereikt de verbetering 90%. De technologie die tussen "ik vond overeenkomende documenten" en "hier zijn de relevante" zit, is geen luxe — het is de kwaliteitslaag die AI-output betrouwbaar maakt.
+
+## Het juiste-woorden-verkeerd-antwoord-probleem
+
+Stel: een Belgische fiscalist zoekt naar de huidige regels voor erfbelasting in het Vlaams Gewest. Eerste-fase retrieval — of het nu keyword-gebaseerd (BM25) of semantisch is — werpt een breed net uit. Het retourneert elk document dat Vlaamse erfbelasting bespreekt: de huidige VCF-bepalingen, een hervormingsvoorstel uit 2018, een achterhaalde circulaire uit 2015, academisch commentaar uit 2020, en een arrest dat intussen is vernietigd.
+
+Al deze documenten bevatten de juiste woorden. Slechts sommige bevatten het juiste antwoord.
+
+Dit is het **juiste-woorden-verkeerd-antwoord-probleem**. Een document over de hervorming van de Vlaamse erfbelastingtarieven uit 2018 en een document over de huidige tarieven uit 2024 matchen dezelfde query. Maar slechts één beantwoordt de vraag "wat zijn de huidige tarieven?" Eerste-fase retrieval kan het verschil niet zien omdat het queries en documenten afzonderlijk evalueert.
+
+## Hoe reranking werkt: query en document samen lezen
+
+Het kernidee achter reranking is architecturaal. Eerste-fase retrievers — zowel keyword (BM25) als semantisch ([bi-encoders](/nl/glossary/bi-encoder/)) — encoderen queries en documenten onafhankelijk. De query wordt een vector. Elk document wordt een vector. Gelijkenis wordt berekend door vectoren te vergelijken, zonder dat het systeem ooit de query en het document naast elkaar "leest."
+
+Een **[cross-encoder](/nl/glossary/cross-encoder/) reranker** doet het tegenovergestelde. Het neemt de query en een kandidaatdocument, voegt ze samen en stuurt beide door een transformermodel dat tegelijkertijd naar elk token in beide teksten kan kijken. Dit betekent dat de reranker niet alleen begrijpt "dit document vermeldt erfbelasting" maar "dit document beantwoordt deze specifieke vraag over huidige Vlaamse erfbelastingtarieven."
+
+![Twee-fase retrieval: hoe reranking 100 kandidaten filtert tot de meest relevante resultaten](/blog/wat-is-reranking/reranking-pipeline-dark.png)
+
+De afweging is snelheid versus precisie. Bi-encoders verwerken miljoenen documenten in milliseconden omdat documentvectoren vooraf berekend zijn. Cross-encoders hebben een verse forward pass nodig voor elk query-documentpaar — onpraktisch voor het doorzoeken van hele corpora, maar ideaal voor het herevalueren van een shortlist van 50–100 kandidaten. De twee-fase pipeline combineert beide: snel een breed net werpen, dan de vangst zorgvuldig evalueren.
+
+> Een zoekmachine die documenten vindt met de juiste woorden is een database. Een zoekmachine die documenten vindt die de juiste vraag beantwoorden is een onderzoekstool.
+
+## Wat de benchmarks tonen
+
+Het empirische bewijs is consistent over studies heen:
+
+| Fase | nDCG@10 (BEIR-gemiddelde) | Wat het betekent |
+|---|---|---|
+| Alleen BM25 | 0,426 | Keyword matches — relevante termen, onprecieze ranking |
+| Alleen bi-encoder | ~0,45 | Semantische matches — betere concepten, nog steeds onprecies |
+| BM25 + reranker | 0,565 | +39% — documenten die de vraag echt beantwoorden stijgen naar de top |
+
+Op specifieke taken zijn de winsten groter: +90% op Natural Questions, +85% op MS MARCO. In [RAG](/nl/glossary/rag/)-systemen verbetert [cross-encoder reranking](/nl/glossary/reranking/) de antwoordnauwkeurigheid met gemiddeld 33% over acht benchmarks, met complexe multi-hop queries die verbeteringen van 47–52% zien (Nogueira & Cho, 2019; Thakur et al., 2021).
+
+Het patroon is duidelijk: hoe complexer de query, hoe meer reranking helpt. Eenvoudige feitelijke opzoekingen profiteren matig. Cross-domein vragen profiteren dramatisch.
+
+## Waarom juridisch zoeken meer vereist dan generieke reranking
+
+Generieke rerankers behandelen alle documenten als gelijk. Een blogpost en een arrest van het Hof van Cassatie krijgen dezelfde behandeling. Voor algemeen webzoeken werkt dit. Voor juridisch onderzoek is het een kritieke lacune.
+
+Juridische-domein reranking moet drie signalen incorporeren die generieke modellen negeren:
+
+**Autoriteitshiërarchie.** Een arrest van het Hof van Cassatie moet hoger ranken dan een vonnis van de rechtbank van eerste aanleg over hetzelfde rechtspunt. Een wettelijke bepaling moet hoger ranken dan commentaar over die bepaling.
+
+**Temporele geldigheid.** Een ruling uit 2024 over Vlaamse erfbelastingtarieven vervangt een ruling uit 2019 over dezelfde vraag. Generieke rerankers zien beide als even relevante keyword matches.
+
+**Jurisdictionele relevantie.** Voor een vraag over Vlaamse erfbelasting zijn Vlaamse VCF-bepalingen bindend gezag. Federale WIB-bepalingen en Waalse W.Succ.-bepalingen zijn context. Generieke rerankers kunnen dit onderscheid niet maken.
+
+## De eerlijke beperking: begrensd recall
+
+Reranking heeft één structurele beperking die het begrijpen waard is. Het kan alleen documenten herordenen die de eerste fase al heeft opgehaald. Als een relevant document niet in de initiële kandidatenset terechtkwam, zal geen enkele reranking het boven water halen.
+
+Daarom is hybride zoeken (keyword + semantisch) zo belangrijk als eerste fase. Hoe breder het initiële net, hoe meer materiaal de reranker heeft om mee te werken. Reranking vervangt goede retrieval niet — het versterkt het.
+
+## Veelgestelde vragen
+
+**Wat is het verschil tussen een bi-encoder en een cross-encoder?**
+
+Een bi-encoder encodeert query en document apart in vectoren van vaste grootte en vergelijkt ze via cosine-gelijkenis. Snel maar onprecies. Een cross-encoder leest query en document samen door een gedeelde [transformer](/nl/glossary/transformer-architecture/), met aandacht voor elk token in beide. Trager maar veel nauwkeuriger — het begrijpt de relatie tussen de specifieke query en het specifieke document.
+
+**Voegt reranking merkbare vertraging toe?**
+
+Voor een shortlist van 50–100 kandidaten voegt cross-encoder reranking circa 100–150 milliseconden toe. Gecombineerd met eerste-fase retrieval (onder 50ms) blijft de totale responstijd ruim onder één seconde.
+
+**Kan reranking [hallucinaties](/nl/glossary/hallucination/) in juridische AI elimineren?**
+
+Niet direct, maar het vermindert ze aanzienlijk. Hallucinaties ontstaan vaak wanneer het taalmodel marginaal relevante documenten ontvangt en hiaten moet opvullen met gegenereerde content. Wanneer reranking ervoor zorgt dat de meest relevante, gezaghebbende documenten de [generatielaag](/nl/glossary/generative-layer/) bereiken, heeft het model minder reden om te fabriceren.
+
+---
+
+## Gerelateerde artikelen
+
+- [Hoe hybride zoektechnologie werkt — en waarom uw juridische AI-tool maar de helft gebruikt → /nl/blog/hybride-zoektechnologie-nl/](/nl/blog/hybride-zoektechnologie-nl/)
+- [Wat is authority ranking — en waarom uw juridische AI-tool het waarschijnlijk negeert → /nl/blog/authority-ranking-juridische-ai-nl/](/nl/blog/authority-ranking-juridische-ai-nl/)
+- [Wat is RAG — en waarom het de enige architectuur is die juridische AI verdedigbaar maakt → /nl/blog/wat-is-rag-nl/](/nl/blog/wat-is-rag-nl/)
+
+---
+
+## Hoe Auryth TX dit toepast
+
+Auryth TX gebruikt een twee-fase retrievalpipeline met domeinspecifieke reranking. De eerste fase combineert BM25 keyword matching met dense [vector retrieval](/nl/glossary/dense-retrieval/) om recall te maximaliseren. De rerankingfase evalueert elke kandidaat tegen de werkelijke query, waarbij autoriteitshiërarchie wordt meegenomen — wettelijke bepalingen ranken boven commentaar, hogere rechtbanken boven lagere — en temporele geldigheid, zodat achterhaalde bronnen automatisch worden gedeprioriteerd.
+
+Dit betekent dat de resultaten die een professional ziet niet alleen relevant zijn op keyword match. Ze zijn relevant op betekenis, gerankt op autoriteit, en actueel volgens het geldende recht.
+
+---
+
+*Bronnen:*
+*1. Nogueira, R. & Cho, K. (2019). "[Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085)." arXiv preprint.*
+*2. Thakur, N. et al. (2021). "[BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663)." NeurIPS 2021.*
+*3. Khattab, O. & Zaharia, M. (2020). "[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT](https://arxiv.org/abs/2004.12832)." SIGIR '20.*
+*4. Pipitone, N. & Houir Alami, G. (2024). "[LegalBench-RAG: A Benchmark for Retrieval-Augmented Generation in the Legal Domain](https://arxiv.org/abs/2408.10343)." arXiv preprint.*

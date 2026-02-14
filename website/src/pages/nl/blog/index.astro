@@ -2,13 +2,28 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layout/Section.astro";
 import Card from "@/components/ui/Card.astro";
+import Pagination from "@/components/ui/Pagination.astro";
 import { getCollection } from "astro:content";
 import { t } from "@/i18n/utils";
 
 const locale = "nl";
+const POSTS_PER_PAGE = 9;
+const currentPage = 1;
 
-const posts = (await getCollection("blog", ({ data }) => data.locale === locale && !data.draft))
+const allPosts = (await getCollection("blog", ({ data }) => data.locale === locale && !data.draft))
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+const posts = allPosts.slice(0, POSTS_PER_PAGE);
+
+// Get unique categories with their display names
+const categoryMap = new Map<string, string>();
+allPosts.forEach((post) => {
+  if (!categoryMap.has(post.data.category)) {
+    categoryMap.set(post.data.category, post.data.category_name);
+  }
+});
+const categories = Array.from(categoryMap.entries());
 ---
 
 <BaseLayout
@@ -18,14 +33,34 @@ const posts = (await getCollection("blog", ({ data }) => data.locale === locale 
   path="/blog/"
 >
   <main id="main-content">
-    <Section class="py-24 md:py-32">
-      <div class="mx-auto max-w-3xl text-center">
+    <Section class="pt-12 md:pt-16 pb-16 md:pb-24">
+      <div class="mx-auto max-w-3xl text-center mb-8">
         <h1 class="text-display text-foreground">Blog</h1>
-        <p class="mt-4 text-body-lg text-muted-foreground">Inzichten over Belgisch fiscaal recht en AI-onderzoek</p>
+        <p class="mt-4 text-body-lg text-muted-foreground">Inzichten over Belgisch fiscaal recht en AI-gestuurd onderzoek</p>
+        <a href={`/${locale}/glossary/`} class="mt-3 inline-flex items-center gap-1 text-body-sm text-primary-text hover:underline">
+          {t("glossary.explore", locale)} <span aria-hidden="true">&rarr;</span>
+        </a>
       </div>
-    </Section>
 
-    <Section>
+      {/* Category filter */}
+      <nav aria-label="Blog categorieën" class="mb-10 flex flex-wrap justify-center gap-2">
+        <a
+          href={`/${locale}/blog/`}
+          class="rounded-full border border-primary bg-primary px-4 py-1.5 text-body-sm font-medium text-primary-foreground"
+          aria-current="page"
+        >
+          Alles
+        </a>
+        {categories.map(([slug, name]) => (
+          <a
+            href={`/${locale}/blog/category/${slug}/`}
+            class="rounded-full border border-border px-4 py-1.5 text-body-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary-text"
+          >
+            {name}
+          </a>
+        ))}
+      </nav>
+
       {posts.length > 0 ? (
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
@@ -40,7 +75,13 @@ const posts = (await getCollection("blog", ({ data }) => data.locale === locale 
                 <p class="mt-2 text-body-sm text-muted-foreground">{post.data.description}</p>
                 <div class="mt-3 flex flex-wrap gap-2">
                   {post.data.tags.map((tag: string) => (
-                    <span class="text-caption text-primary-text">{tag}</span>
+                    <a 
+                      href={`/${locale}/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}/`}
+                      class="text-caption text-primary-text hover:underline"
+                      onclick="event.stopPropagation()"
+                    >
+                      {tag}
+                    </a>
                   ))}
                 </div>
               </a>
@@ -50,6 +91,14 @@ const posts = (await getCollection("blog", ({ data }) => data.locale === locale 
       ) : (
         <p class="text-center text-body text-muted-foreground">Nog geen berichten. Kom snel terug!</p>
       )}
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={`/${locale}/blog/`}
+        prevText="Vorige"
+        nextText="Volgende"
+      />
     </Section>
   </main>
 </BaseLayout>

@@ -1,0 +1,69 @@
+---
+term: "Weging van bronbetrouwbaarheid"
+termSlug: "source-reliability-weighting"
+short: "Weging van bronbetrouwbaarheid geeft meer invloed aan betrouwbare bronnen zodat retrieval en antwoorden officiële, kwaliteitsvolle bronnen prioriteren."
+category: "search"
+category_name: "Zoeken & Retrieval"
+related: ["authority-ranking-model", "source-conflict-resolution", "relevance-tuning", "search-analytics", "compliance-aware-retrieval"]
+synonyms: ["Trust weighting", "Source quality weighting", "Reliability scoring"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Weging van bronbetrouwbaarheid is een techniek waarbij een zoek- of RAG-systeem verschillende gewichten toekent aan bronnen op basis van betrouwbaarheid. Betrouwbaarheid gaat over provenance, editorial control, update-discipline en de mate waarin een bron officieel is of eerder interpretatief.
+
+## Waarom het belangrijk is
+
+- **Veiligere output**: verlaagt de kans dat zwakke content de conclusie bepaalt.
+- **Betere ranking**: bij veel matches helpt betrouwbaarheid om de beste te kiezen.
+- **[Uitlegbaarheid](/nl/glossary/algorithmic-transparency/)**: maakt duidelijk waarom officiële bronnen voorrang krijgen.
+- **[Robuustheid](/nl/glossary/model-robustness/)**: dempt ruis en SEO-gedreven content in brede corpora.
+
+## Hoe het werkt
+
+Betrouwbaarheid wordt meestal gemodelleerd als metadata of als score in ranking en/of synthese:
+
+```
+Retrieve -> score relevantie -> pas betrouwbaarheidweging toe -> rank -> genereer met citaties
+```
+
+Typische tiers in tax/legal:
+
+1. Officiële wetgeving en officiële publicaties
+2. Primaire rechtspraak (met metadata zoals niveau/instantie)
+3. Professionele commentaarbronnen en gecureerde interne nota’s
+4. Ongeverifieerde webcontent
+
+## Praktisch voorbeeld
+
+Voor een vraag over een meldingsplicht haalt het systeem zowel een officiële guidance-pagina als meerdere blogposts op. Betrouwbaarheidsweging boost de officiële pagina en gebruikt die als hoofdbron, terwijl blogs secundair blijven voor uitleg.
+
+## Veelgestelde vragen
+
+**Q: Hoe verschilt dit van een autoriteitsrankingmodel?**
+
+A: Betrouwbaarheidsweging is breder: het gaat over trust en provenance. Autoriteitsranking is juridisch specifieker: het encodeert [bronhiërarchie](/nl/glossary/source-hierarchy/) en wat controlerend is. In de praktijk gebruik je vaak beide.
+
+**Q: Kan dit gemanipuleerd worden?**
+
+A: Minder dan keyword-relevantie, maar het kan als je bronlijst niet gecureerd is. Goede systemen sturen op toegelaten domeinen, provenance en reviewen high-impact bronnen.
+
+## Gerelateerde termen
+
+- [Autoriteitsrankingmodel](/nl/glossary/authority-ranking-model/) - controlerende bronnen prioriteren
+- [Source Conflict Resolution](/nl/glossary/source-conflict-resolution/) - tegenstrijdige bronnen veilig behandelen
+- [Relevantie-afstemming](/nl/glossary/relevance-tuning/) - ranking en evaluatie verbeteren
+- [Search Analytics](/nl/glossary/search-analytics/) - kwaliteit en drift monitoren
+- [Compliance-bewuste retrieval](/nl/glossary/compliance-aware-retrieval/) - bronnen beperken via policy en regels
+
+---
+
+## Referenties
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.

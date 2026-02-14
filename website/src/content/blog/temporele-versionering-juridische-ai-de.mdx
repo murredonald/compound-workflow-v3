@@ -1,0 +1,153 @@
+---
+title: "Was ist temporale Versionierung – und warum Ihr Legal-AI-Tool Ihnen wahrscheinlich das Recht von gestern serviert"
+description: "Das belgische Steuerrecht ändert sich mindestens zweimal pro Jahr. Wenn Ihr KI-Tool 2019 nicht von 2026 unterscheiden kann, ist seine Antwort nicht falsch – sie gilt nur für das falsche Jahr. Hier erfahren Sie, was temporale Versionierung ist und warum sie wichtig ist."
+publishDate: 2026-02-19
+author: "Auryth Team"
+category: "trust-transparency"
+category_name: "Vertrauen & Transparenz"
+tags: ["temporal versioning", "point-in-time retrieval", "Belgian tax", "legal AI", "data freshness"]
+locale: "de"
+draft: false
+---
+
+Der belgische Körperschaftsteuersatz beträgt 25 %. Er beträgt auch 29,58 %. Und 33,99 %. Alle drei Angaben sind korrekt – je nachdem, wann Sie fragen.
+
+Vor 2018: 33,99 %. Ab 2018: 29,58 % (29 % Grundsatz plus Krisenzuschlag). Ab 2020: 25 %. Drei unterschiedliche Sätze in sieben Jahren, jeder für verschiedene Veranlagungsjahre gültig, jeder die richtige Antwort für den richtigen Zeitpunkt.
+
+Fragen Sie ein generisches KI-Tool „Wie hoch ist der belgische Körperschaftsteuersatz?", erhalten Sie eine Zahl. Man wird Ihnen nicht sagen, für welchen Zeitraum sie gilt. Man wird Ihnen nicht sagen, dass sie vor drei Jahren anders war. Man wird Ihnen nicht sagen, dass die Steuererklärung eines Mandanten für 2019 einen völlig anderen Satz verwendet als eine Einreichung für 2024.
+
+Dies ist das Problem der temporalen Versionierung – und es betrifft jede Frage im belgischen Steuerrecht.
+
+![Zeitstrahl zeigt, wie sich belgische Steuerbestimmungen durch Programmgesetze im Laufe der Zeit ändern](/blog/temporele-versionering-juridische-ai/version-timeline-de-dark.png)
+
+## Was temporale Versionierung bedeutet
+
+**Temporale Versionierung** ist die Fähigkeit, mehrere Versionen derselben Rechtsvorschrift im Zeitverlauf zu verfolgen und die korrekte Version für ein bestimmtes Datum oder einen bestimmten Zeitraum abzurufen.
+
+Jedes Gesetz hat einen Lebenszyklus. Es wird an einem Datum erlassen, tritt an einem anderen in Kraft, wird an einem dritten geändert und kann an einem vierten aufgehoben werden. Eine Vorschrift, die heute existiert, existierte vielleicht letztes Jahr noch nicht. Ein Satz, der dieses Jahr gilt, gilt vielleicht nächstes Jahr nicht mehr.
+
+In einem temporal versionierten System trägt jede Vorschrift Metadaten:
+
+- **effective_from** – wann die Vorschrift in Kraft tritt
+- **effective_to** – wann sie nicht mehr gilt (oder „current", falls noch in Kraft)
+- **assessment_year** – bei Steuervorschriften, welche(s) Veranlagungsjahr(e) sie abdeckt
+- **amendment_chain** – welche frühere Version sie ersetzt hat und was sie ersetzt hat
+
+Ohne diese Metadaten ist eine Rechtsdatenbank eine Momentaufnahme. Mit ihnen wird sie zu einer Zeitleiste.
+
+> Die Frage lautet niemals nur „Was sagt das Gesetz?" Sie lautet immer „Was sagte das Gesetz *wann*?"
+
+## Warum das belgische Steuerrecht dies besonders schwierig macht
+
+Das belgische Steuerrecht ändert sich ständig. Die Bundesregierung verabschiedet **Programmgesetze** (niederländisch: programmawetten) mindestens zweimal pro Jahr – typischerweise im Juni und Dezember im Rahmen des Haushaltszyklus. Zusätzliche Gesetze, königliche Erlasse und Rundschreiben werden das ganze Jahr über veröffentlicht.
+
+Allein 2023-2024 gab es im belgischen Steuerrecht:
+
+- **Abschaffung** der Risikokapitalabzugsregelung (Omnibusgesetz Dezember 2022, wirksam für Steuerzeiträume, die ab dem 31. Dezember 2023 enden)
+- **Einführung** der Pillar-Two-Mindestbesteuerung von 15 % (Income Inclusion Rule ab 31. Dezember 2023; Undertaxed Profits Rule ab 31. Dezember 2024)
+- **Einführung** einer 10-%-Kapitalertragssteuer (wirksam ab 1. Januar 2026, mit Schutz für Gewinne vor 2026 zu Basiswerten vom 31. Dezember 2025)
+- **Reform** der regionalen Erbschaftssteuer in Flandern (2026) und Wallonien (2028) – dasselbe Land, unterschiedliche Inkrafttretenstermine
+
+Jede dieser Änderungen schafft eine neue Version einer oder mehrerer Rechtsvorschriften. Jede Version hat unterschiedliche Anwendbarkeitsregeln. Jede Version ist die korrekte Antwort – für ihren Zeitraum.
+
+### Die Veranlagungsjahr-Falle
+
+Das belgische Steuerrecht fügt eine zusätzliche Komplexitätsebene hinzu: die Unterscheidung zwischen **Einkommensjahr** (niederländisch: inkomstenjaar) und **Veranlagungsjahr** (niederländisch: aanslagjaar). Das Veranlagungsjahr ist immer das Jahr nach dem Einkommensjahr – Veranlagungsjahr 2026 deckt also Einkommen ab, das 2025 erzielt wurde.
+
+Steuerrechtsänderungen werden oft als „anwendbar ab Veranlagungsjahr X" formuliert. Für ein Unternehmen mit einem am 31. März endenden Geschäftsjahr deckt das Veranlagungsjahr 2026 Einkommen vom 1. April 2024 bis 31. März 2025 ab. Für ein Unternehmen mit kalenderjahrbasiertem Geschäftsjahr deckt es den 1. Januar bis 31. Dezember 2025 ab.
+
+Dasselbe Veranlagungsjahr. Unterschiedliche Kalenderzeiträume. Unterschiedliches anwendbares Recht.
+
+Ein System, das nur Kalenderdaten verfolgt, wird dies falsch verstehen. Ein System, das die Beziehung zwischen Einkommensjahr, Veranlagungsjahr und Geschäftsjahresende versteht, wird es richtig machen.
+
+## Was ohne temporales Bewusstsein passiert
+
+Ohne temporale Versionierung sind drei Fehlermodi üblich:
+
+**1. Aktuelles Recht für historische Fragen.** Ein Mandant fragt nach einer Transaktion von 2019. Das System gibt den Körperschaftsteuersatz von 2026 (25 %) statt des Satzes von 2019 (29,58 %) zurück. Der Unterschied: 4,58 Prozentpunkte auf die gesamte Bemessungsgrundlage.
+
+**2. Aufgehobene Vorschriften als aktuell.** Die Risikokapitalabzugsregelung war fast zwei Jahrzehnte lang ein Eckpfeiler der belgischen Körperschaftsteuerplanung. Sie wurde mit Wirkung ab 2023 abgeschafft – aber der Vortragssaldo aus Vorjahren bleibt abzugsfähig. Ein System ohne Versionsverfolgung könnte entweder die Abschaffung übersehen oder die Vortragsausnahme verpassen.
+
+**3. Fehlende Übergangsregelungen.** Die neue Kapitalertragssteuer schützt Gewinne vor 2026, indem sie den Wert vom 31. Dezember 2025 als Anschaffungsbaseline verwendet. Dies ist eine Übergangsregelung, die nur für Verträge gilt, die vor Inkrafttreten des Gesetzes bestanden. Ohne temporales Bewusstsein kann das System nicht zwischen einem 2024 eröffneten Vertrag und einem 2027 eröffneten unterscheiden.
+
+Jeder Fehlermodus erzeugt Antworten, die korrekt aussehen – sie zitieren echte Gesetzgebung, verwenden die richtigen Artikelnummern, wenden die richtige Logik an – aber für den falschen Zeitpunkt.
+
+## Das Problem der Datenbankverzögerung
+
+Selbst wenn ein System beabsichtigt, aktuell zu sein, gibt es eine strukturelle Verzögerung zwischen Gesetzgebung und Verfügbarkeit:
+
+- Das **Belgische Staatsblatt / Moniteur Belge** (niederländisch: Belgisch Staatsblad) erscheint täglich (seit 2003 nur elektronisch)
+- Der **Gesetzesindex** wird D+1 aktualisiert – einen Tag nach Veröffentlichung
+- **Konsolidierte Volltexte** in Datenbanken können bei älteren Vorschriften **3 bis 5 Monate** zurückliegen
+
+Das bedeutet, dass eine heute veröffentlichte Vorschrift morgen als rohe Änderung erscheinen kann, sich aber möglicherweise erst nach Monaten in konsolidierten Texten widerspiegelt. Während dieses Zeitfensters gibt eine [Volltextsuche](/de/glossary/full-text-search/) in der konsolidierten Version das alte Recht zurück, während die Änderung nur im Amtsblatt existiert.
+
+Ein temporal bewusstes System verfolgt beides: die Änderung wie veröffentlicht und die frühere Version, die sie modifiziert – mit klarer Angabe, welche wann gilt.
+
+## Wie bestehende Systeme damit umgehen
+
+**EUR-Lex** (für EU-Gesetzgebung) bietet konsolidierte Fassungen, die den Rechtsakt zu einem bestimmten Zeitpunkt zeigen. Nutzer können alle Versionen ansehen und Änderungen vergleichen. Aber diese konsolidierten Texte haben keine Rechtskraft – sie dienen nur der Dokumentation.
+
+**Jura** (Wolters Kluwer Belgium) enthält konsolidierte Gesetzgebung seit 2000 und bietet mittlerweile einen Vergleich von Gesetzesversionen nebeneinander mit hervorgehobenen Unterschieden.
+
+**Generische KI-Tools** – ChatGPT, [Perplexity](/de/glossary/perplexity/), Claude – haben nichts davon. Ihre Trainingsdaten haben einen Wissensstichtag. Sie können nicht zwischen aktuellen und früheren Versionen einer Vorschrift unterscheiden. Sie können Ihnen nicht sagen, was das Gesetz an einem bestimmten Datum sagte. Sie wissen nicht, dass das Gesetz, das sie zitieren, sechs Monate nach Zusammenstellung ihrer Trainingsdaten geändert wurde.
+
+Dies ist keine Einschränkung, die mit einem größeren Modell oder besserem Training behoben werden kann. Es ist eine architektonische Lücke – das Fehlen temporaler Metadaten in der Datenschicht des Systems.
+
+## Der Wendepunkt 2026
+
+Die Einführung der ersten allgemeinen belgischen Kapitalertragssteuer am 1. Januar 2026 schafft die bedeutendste temporale Grenze in der jüngeren belgischen Steuergeschichte.
+
+Vor 2026: keine Steuer auf Kapitalgewinne aus Finanzinstrumenten (für Privatpersonen). Nach 2026: 10 % auf realisierte Gewinne über einem jährlichen Freibetrag von 10.000 €. Der Anschaffungswert für Verträge vor 2026 wird auf den Marktwert vom 31. Dezember 2025 festgesetzt.
+
+Jeder TAK-23-Vertrag, jedes Anlageportfolio, jede ETF-Position hat jetzt eine temporale Aufspaltung: den Gewinn vor dem Stichtag (nicht besteuert) und den Gewinn danach (mit 10 % besteuert). Jedes System, das nicht „vor dem 1. Januar 2026" von „nach dem 1. Januar 2026" unterscheiden kann, wird den steuerpflichtigen Gewinn falsch berechnen.
+
+Fügen Sie dazu die regionalen Erbschaftsteuerreformen hinzu – Flandern ab 2026, Wallonien ab 2028, Brüssel unverändert – und eine einzige Nachlassplanungsfrage erfordert jetzt temporale Präzision über mehrere Jurisdiktionen mit unterschiedlichen Reformzeitplänen hinweg.
+
+## Was temporale Versionierung architektonisch erfordert
+
+Der Aufbau temporaler Versionierung ist kein Feature-Toggle. Er erfordert strukturelle Entscheidungen auf jeder Ebene:
+
+**Erfassung**: Jedes Dokument muss auf Inkrafttretenstermine, Änderungsverweise und Aufhebungsklauseln geparst werden. Dies geht über Volltextindizierung hinaus – es erfordert das Verständnis der Gesetzesstruktur des Dokuments.
+
+**Speicherung**: Jede Vorschrift existiert als Versionskette, nicht als einzelner Datensatz. Version N verweist auf Version N-1 (was sie ersetzt hat) und Version N+1 (was sie ersetzt hat, falls zutreffend). Jede Version trägt ihre Gültigkeitsdatumsbereich.
+
+**Abruf**: Wenn ein Nutzer eine Frage stellt, muss das System den relevanten Zeitraum bestimmen – entweder explizit angegeben oder aus dem Kontext abgeleitet – und nur die Vorschriften abrufen, die während dieses Zeitraums in Kraft waren.
+
+**Darstellung**: Die Ausgabe muss angeben, welche Version des Gesetzes sie zitiert, wann diese Version in Kraft trat und ob eine neuere Version existiert.
+
+Dies ist architektonisch aufwendig. Deshalb bieten die meisten Legal-AI-Tools es nicht an. Volltextsuche in einem Ist-Zustand-[Korpus](/de/glossary/corpus/) ist weitaus einfacher und billiger als die Pflege eines temporal indizierten Versionsgraphen.
+
+Aber für das belgische Steuerrecht – wo sich der Körperschaftsteuersatz dreimal in sieben Jahren änderte, wo eine neue Kapitalertragssteuer eine harte temporale Grenze schafft, wo regionale Reformen in verschiedenen Jahren in Kraft treten – ist temporale Präzision nicht optional. Sie ist der Unterschied zwischen einer korrekten Antwort und einer korrekten Antwort für das falsche Jahr.
+
+---
+
+## Verwandte Artikel
+
+- [Was ist Authority Ranking – und warum Ihr Legal-AI-Tool es wahrscheinlich ignoriert →](/blog/authority-ranking-juridische-ai-de)
+- [Was ist Confidence Scoring – und warum es ehrlicher ist als eine selbstsichere Antwort →](/blog/confidence-scoring-uitgelegd-de)
+- [Fallstudie: TAK 23 – warum ein Produkt fünf Steuerantworten braucht →](/blog/case-study-tak-23-cross-domain-de)
+
+---
+
+## Wie Auryth TX dies anwendet
+
+Jede Vorschrift in unserem System trägt ein Inkrafttretensdatum. Als sich der Körperschaftsteuersatz von 29,58 % auf 25 % änderte, haben wir den alten Datensatz nicht ersetzt – wir haben eine neue Version hinzugefügt, die mit der vorherigen verknüpft ist, mit dem Datum des Inkrafttretens der Änderung.
+
+Wenn Sie Auryth TX eine Frage stellen, identifiziert das System den relevanten Zeitraum und ruft nur die Vorschriften ab, die während dieses Zeitraums in Kraft waren. Wenn Sie nach einer Transaktion von 2019 fragen, erhalten Sie das Recht von 2019. Wenn Sie nach einer Transaktion von 2026 fragen, erhalten Sie das Recht von 2026. Wenn Sie nach der Kapitalertragssteuer fragen, unterscheidet das System automatisch zwischen Gewinnen vor 2026 und nach 2026.
+
+Wo eine Vorschrift geändert wurde, zeigt die strukturierte Ausgabe die Versionskette – was das Gesetz vorher sagte, was es jetzt sagt und wann die Änderung in Kraft trat. Dies ist nicht kosmetisch. Es ist der Unterschied zwischen Beratung, die technisch korrekt ist, und Beratung, die für die tatsächliche Situation des Mandanten korrekt ist.
+
+*Jede Vorschrift trägt ein Datum. Wir verwechseln niemals 2019 mit 2026.*
+
+---
+
+*Quellen:*
+*1. PwC Tax Summaries. "Belgium — Corporate — Taxes on corporate income." taxsummaries.pwc.com.*
+*2. Deloitte Belgium. "Belgium tax reforms — The latest federal and regional tax measures." deloitte.com/be.*
+*3. PwC Belgium (2026). "Belgium's comprehensive capital gains tax changes: key updates and implications starting January 2026."*
+*4. Bird & Bird (2023). "Belgium: New corporate tax measures in force as of 1 January 2023."*
+*5. European Forum of Official Gazettes. "Belgium — Official Journal." op.europa.eu.*
+*6. CMS Law-Now (2024). "Belgium's regions pass new registration and inheritance tax rates."*
+
+---

@@ -1,0 +1,135 @@
+---
+term: "Verliesfunctie"
+termSlug: "loss-function"
+short: "Een wiskundige functie die meet hoe ver de voorspellingen van een model afwijken van de gewenste outputs tijdens training."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["gradient-descent", "backpropagation", "perplexity", "fine-tuning"]
+synonyms: ["Kostenfunctie", "Doelfunctie", "Foutfunctie", "Trainingsverlies"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Een verliesfunctie (of kostenfunctie) is een wiskundige maat voor het verschil tussen de voorspellingen van een model en de daadwerkelijke doelwaarden. Tijdens training worden de parameters van het model aangepast om dit verlies te minimaliseren, wat het model effectief leert betere voorspellingen te doen. Voor taalmodellen is cross-entropy loss het meest gebruikelijk—het meet hoe goed de voorspelde kansverdeling overeenkomt met het echte volgende token.
+
+## Waarom het belangrijk is
+
+Verliesfuncties staan centraal in [machine learning](/nl/glossary/machine-learning/):
+
+- **Trainingssignaal** — stuurt parameterupdates tijdens optimalisatie
+- **Modelvergelijking** — vergelijk verschillende architecturen of hyperparameters
+- **Voortgangsmonitoring** — controleer of training verbetert
+- **Convergentiedetectie** — identificeer wanneer training gestopt moet worden
+- **Kwaliteitsproxy** — lager verlies geeft over het algemeen betere prestaties aan
+
+De keuze van verliesfunctie vormt wat het model leert te optimaliseren.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      VERLIESFUNCTIE                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  CROSS-ENTROPY VERLIES (voor taalmodellen):                │
+│  ──────────────────────────────────────────                │
+│                                                            │
+│  Echt label: "kat" (one-hot: [0, 1, 0, 0])                │
+│  Voorspeld:          [0.1, 0.7, 0.15, 0.05]               │
+│                                                            │
+│  Verlies = -Σ true_i × log(pred_i)                        │
+│          = -0×log(0.1) - 1×log(0.7) - 0×log(0.15) - ...   │
+│          = -log(0.7)                                       │
+│          = 0.36                                            │
+│                                                            │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  VERLIESLANDSCHAP VISUALISATIE:               │        │
+│  │                                                │        │
+│  │     Verlies                                    │        │
+│  │       │     *                                  │        │
+│  │       │    * *        *                        │        │
+│  │       │   *   *      * *                       │        │
+│  │       │  *     *    *   *                      │        │
+│  │       │ *       *  *     *                     │        │
+│  │       │*         **       *                    │        │
+│  │       │           ▲        **                  │        │
+│  │       └───────────┼──────────────► Params     │        │
+│  │                   │                            │        │
+│  │                   Lokaal minimum (doel)        │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  VEELGEBRUIKTE VERLIESFUNCTIES:                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Cross-Entropie    Classificatie, LLMs                     │
+│  ─────────────────────────────────────                     │
+│  L = -Σ y_i × log(ŷ_i)                                    │
+│                                                            │
+│  Mean Squared Error (MSE)    Regressie                     │
+│  ─────────────────────────────────────                     │
+│  L = 1/n × Σ(y - ŷ)²                                      │
+│                                                            │
+│  Binary Cross-Entropy    Binaire classificatie             │
+│  ─────────────────────────────────────                     │
+│  L = -[y×log(ŷ) + (1-y)×log(1-ŷ)]                        │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Verliesfuncties per taak:**
+| Taak | Verliesfunctie | Opmerkingen |
+|------|----------------|-------------|
+| Taalmodellering | Cross-entropie | Voorspelt volgende tokendistributie |
+| Classificatie | Cross-entropie | Multi-class voorspellingen |
+| Regressie | MSE / MAE | Continue outputs |
+| Contrastief leren | InfoNCE | Embedding gelijkenis |
+| [Reinforcement learning](/nl/glossary/reinforcement-learning/) | Policy gradient | Beloningsoptimalisatie |
+
+## Veelgestelde vragen
+
+**V: Waarom daalt het verlies maar verbetert modelkwaliteit niet?**
+
+A: Dit duidt vaak op overfitting—het model memoriseert trainingsdata in plaats van generaliseerbare patronen te leren. Monitor validatieverlies naast trainingsverlies; als trainingsverlies daalt maar validatieverlies stijgt, is er sprake van overfitting.
+
+**V: Wat is een goede verlieswaarde?**
+
+A: Het hangt volledig af van de taak en dataset. Focus op of verlies daalt tijdens training en hoe het correleert met evaluatiemetrieken. Voor taalmodellen duidt verlies rond 2-3 nats vaak op goed leren.
+
+**V: Wat is het verschil tussen verlies en nauwkeurigheid?**
+
+A: Verlies is een continue differentieerbare functie gebruikt voor optimalisatie; nauwkeurigheid is een discrete metriek voor evaluatie. Een model kan verbeterend verlies hebben maar stagnerende nauwkeurigheid—training gebruikt verliesgradiënten om gewichten aan te passen.
+
+**V: Waarom cross-entropie gebruiken in plaats van nauwkeurigheid voor training?**
+
+A: Cross-entropie biedt vloeiende gradiënten voor optimalisatie. Nauwkeurigheid is niet-differentieerbaar (0 of 1 per sample) dus kan gradient descent niet sturen. Cross-entropie bestraft zelfverzekerde foute voorspellingen zwaarder.
+
+## Gerelateerde termen
+
+- [Gradient Descent](/nl/glossary/gradient-descent/) — optimalisatie met verlies
+- [Backpropagation](/nl/glossary/backpropagation/) — berekent verliesgradiënten
+- [Perplexiteit](/nl/glossary/perplexity/) — exp(verlies) voor taalmodellen
+- [Fine-tuning](/nl/glossary/fine-tuning/) — minimaliseert verlies op nieuwe data
+
+---
+
+## Referenties
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Hoofdstuk 6. [20.000+ [citaties](/nl/glossary/citation/)]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8.000+ citaties]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50.000+ citaties]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15.000+ citaties]
+
+## References
+
+> Goodfellow et al. (2016), "[Deep Learning](https://www.deeplearningbook.org/)", MIT Press. Chapter 6. [20,000+ citations]
+
+> Murphy (2012), "[Machine Learning: A Probabilistic Perspective](https://probml.github.io/pml-book/)", MIT Press. [8,000+ citations]
+
+> Bishop (2006), "[Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)", Springer. [50,000+ citations]
+
+> Brown et al. (2020), "[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)", NeurIPS. [15,000+ citations]

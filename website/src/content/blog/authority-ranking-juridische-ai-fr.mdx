@@ -1,0 +1,153 @@
+---
+title: "Qu'est-ce que le classement par autorité — et pourquoi votre outil IA juridique l'ignore probablement"
+description: "Une circulaire ministérielle et un arrêt de la Cour de cassation semblent identiques pour la plupart des systèmes de recherche IA. Ce n'est pas un défaut mineur — c'est une lacune fondamentale qui rend chaque réponse non fiable."
+publishDate: 2026-02-16
+author: "Auryth Team"
+category: "ai-explained"
+category_name: "IA expliquée"
+tags: ["classement par autorité", "hiérarchie juridique", "RAG", "fiscalité belge", "architecture de recherche"]
+locale: "fr"
+draft: false
+---
+
+Posez une question à un outil IA générique sur une disposition fiscale belge et il vous retournera des documents. Peut-être les bons. Le problème est de savoir quel document il place en premier — et pourquoi.
+
+Les systèmes de recherche IA standard classent les résultats par [similarité sémantique](/fr/glossary/semantic-similarity/) : à quel point le texte récupéré correspond au sens de votre [requête](/fr/glossary/prompt/). Le document qui utilise le langage le plus similaire gagne. Cela fonctionne bien pour les avis sur les restaurants. Pour la recherche juridique, c'est un échec structurel.
+
+Une circulaire ministérielle pourrait utiliser un langage presque identique à la loi qu'elle interprète — mais n'avoir aucune force juridique contraignante. Un arrêt de la Cour de cassation pourrait utiliser une terminologie complètement différente mais constituer l'interprétation définitive. La [recherche sémantique](/fr/glossary/semantic-search/) ne peut pas faire la différence.
+
+Ce n'est pas un inconvénient mineur de classement. C'est la différence entre citer le droit contraignant et citer une interprétation administrative qu'un tribunal peut écarter.
+
+## La hiérarchie des normes belge
+
+Tout fiscaliste belge apprend la hiérarchie des normes dès sa première année. C'est le fondement du raisonnement juridique :
+
+| Niveau | Type de source | Exemple | Force contraignante |
+|--------|---------------|---------|---------------------|
+| 1 | Constitution | Grondwet, Art. 159, 170, 172 | Suprême — toutes les autres normes doivent s'y conformer |
+| 2 | Droit international/UE | Règlements UE, directives, traités | Prévalent sur le droit national |
+| 3 | Lois spéciales | Bijzondere wetten (majorité spéciale) | Supérieures à la législation ordinaire |
+| 4 | Législation fédérale/régionale | CIR 92, Code TVA, CFF, codes fiscaux régionaux | Contraignantes pour tous |
+| 5 | Arrêtés royaux | AR — mise en œuvre exécutive | Contraignants, mais doivent se conformer aux lois |
+| 6 | Arrêtés ministériels | AM — mise en œuvre départementale | Portée plus limitée que les arrêtés royaux |
+| 7 | Circulaires administratives | Omzendbrieven/Circulaires | Non contraignantes pour les tribunaux ou les contribuables |
+| 8 | Jurisprudence | Cass., Cour constitutionnelle, cours d'appel | L'autorité interprétative varie selon le niveau de juridiction |
+| 9 | Doctrine | Commentaires académiques, traités juridiques | Aucune force contraignante |
+
+Cette hiérarchie n'est pas une curiosité académique. L'article 159 de la Constitution belge habilite explicitement les tribunaux à écarter tout acte administratif — y compris les circulaires — qui contredit des normes de rang supérieur. Lorsqu'une circulaire entre en conflit avec la loi qu'elle prétend interpréter, la loi l'emporte. Toujours.
+
+## Ce que votre outil IA fait réellement
+
+Les systèmes RAG ([retrieval-augmented generation](/fr/glossary/rag/)) standard fonctionnent en deux étapes : récupérer les documents pertinents, puis générer une réponse à partir de ceux-ci. L'[étape de récupération](/fr/glossary/retrieval-layer/) utilise la similarité des embeddings — convertir votre question et le corpus de documents en vecteurs et trouver la correspondance la plus proche.
+
+La formule de classement est approximativement : **pertinence = similarité sémantique avec la requête**.
+
+Remarquez ce qui manque. Il n'y a aucun concept de :
+- Quel document l'emporte sur un autre dans la hiérarchie juridique
+- Si une circulaire contredit la loi qu'elle interprète
+- Si un arrêt de la Cour de cassation a établi une interprétation différente
+- Si la source est du droit contraignant, une orientation interprétative ou une opinion académique
+
+La recherche confirme que cette lacune est fondamentale, pas cosmétique. Une étude publiée dans Artificial Intelligence and Law note que « les systèmes de recherche d'information doivent être conscients de l'autorité de la juridiction, car une affaire provenant d'une autorité contraignante est généralement plus précieuse qu'une affaire provenant d'une autorité non contraignante ». Le domaine juridique « définit une organisation hiérarchique en ce qui concerne le type de documents et leur autorité » — mais les systèmes de récupération standard traitent tous les documents comme du texte de poids égal.
+
+Le résultat : votre outil IA pourrait classer une circulaire de 2019 au-dessus de la loi de 2020 qui a modifié la disposition que la circulaire interprétait. Il n'a aucun moyen de savoir que la circulaire est maintenant partiellement obsolète. Il a trouvé le texte le plus similaire et l'a placé en premier.
+
+## Quand le classement à plat échoue : un exemple belge
+
+Considérez une question sur le délai de prescription pour les réclamations de précompte mobilier belge.
+
+En décembre 2023, la Cour de cassation s'est prononcée sur la question de savoir si les contribuables doivent épuiser les recours administratifs avant d'engager une procédure judiciaire — contredisant la jurisprudence antérieure de 2018. En réponse, l'administration fiscale a publié la Circulaire 2025/C/56, maintenant sa position antérieure malgré l'arrêt de la Cour de cassation.
+
+Un système IA à classement plat pourrait récupérer :
+1. La circulaire de 2025 (la plus récente, la plus sémantiquement similaire à la requête)
+2. La jurisprudence de 2018 (soutient la position de l'administration)
+3. L'arrêt de la Cour de cassation de 2023 (enterré sous la circulaire)
+
+L'utilisateur obtient la position de l'administration comme réponse principale. Mais l'interprétation de la Cour de cassation — qui fait autorité hiérarchiquement — se classe troisième. La circulaire, qui ne lie personne en dehors de l'administration, se classe première.
+
+Ce n'est pas hypothétique. C'est ainsi que fonctionne réellement la recherche sémantique. Et c'est pourquoi se fier à l'IA générique pour des questions où circulaires et lois divergent est professionnellement dangereux.
+
+## Comment le classement tenant compte de l'autorité change la réponse
+
+Un système classé par autorité ne se contente pas de trouver des documents pertinents. Il les pondère selon leur position dans la hiérarchie juridique avant de présenter les résultats.
+
+La formule de classement devient : **pertinence = (similarité sémantique × poids d'autorité × actualité temporelle)**.
+
+En pratique, cela signifie :
+
+| Type de source | Poids d'autorité | Effet |
+|----------------|------------------|-------|
+| Dispositions constitutionnelles | Le plus élevé | Apparaît toujours au-dessus des normes subordonnées |
+| Législation fédérale/régionale | Élevé | L'emporte sur les actes exécutifs et administratifs |
+| Arrêtés royaux | Moyen-élevé | L'emporte sur les circulaires, se conforme aux lois |
+| Arrêts de la Cour de cassation | Élevé (interprétatif) | Interprétation définitive — l'emporte sur les orientations admin. |
+| Circulaires administratives | Faible | Contexte utile, jamais traité comme contraignant |
+| Doctrine | Le plus faible | Contexte uniquement |
+
+![La hiérarchie juridique belge et comment elle se traduit dans la recherche pondérée par autorité](/blog/authority-ranking-juridische-ai/legal-hierarchy-fr-dark.png)
+
+Pour la question sur le précompte mobilier, un système classé par autorité présenterait :
+1. Les dispositions légales pertinentes (contraignantes)
+2. L'arrêt de la Cour de cassation de 2023 (interprétation faisant autorité)
+3. La circulaire de 2025 (position administrative — signalée comme contexte non contraignant)
+
+Mêmes documents. Présentation complètement différente. Et un profil de risque professionnel complètement différent pour l'utilisateur.
+
+## L'amélioration du cross-encoder
+
+Le classement par autorité fonctionne mieux lorsqu'il est combiné avec le [reclassement](/fr/glossary/reranking/) par [cross-encoder](/fr/glossary/cross-encoder/) — une architecture de récupération en deux étapes.
+
+**Étape 1 : Récupération large.** Un modèle d'embedding récupère les 50-100 documents les plus pertinents sémantiquement. Rapide, large, mais aveugle à l'autorité.
+
+**Étape 2 : Reclassement par cross-encoder.** Un modèle spécialisé réévalue chaque paire requête-document avec une attention complète aux deux textes. C'est là que les métadonnées d'autorité sont injectées : le reclasseur augmente ou pénalise en fonction du type de source, du niveau de juridiction, du statut temporel et de la portée juridictionnelle.
+
+La recherche de [Pinecone](/fr/glossary/pinecone/) montre que le reclassement par cross-encoder est « beaucoup plus précis que les modèles d'embedding » pour la qualité de récupération. La recherche de Databricks démontre que le reclassement peut améliorer la [précision de récupération](/fr/glossary/retrieval-precision/) de 15 points de pourcentage en moyenne sur des benchmarks enterprise.
+
+Mais l'idée clé n'est pas seulement un meilleur reclassement — c'est sur quoi vous reclassez. Les reclasseurs standard optimisent pour la pertinence thématique. Les reclasseurs juridiques doivent optimiser pour la **pertinence faisant autorité** : est-ce la source de rang le plus élevé qui traite cette question ?
+
+## Pourquoi cela compte davantage en Belgique
+
+La structure juridique belge rend le classement par autorité particulièrement critique :
+
+**Trois régimes fiscaux régionaux.** Les droits de succession flamands, bruxellois et wallons, les droits d'enregistrement et les impôts fonciers suivent des règles différentes. Un système à classement plat pourrait faire apparaître les règles flamandes pour une question bruxelloise parce que le texte est plus similaire à la requête.
+
+**Pas de hiérarchie entre droit fédéral et régional.** Contrairement à d'autres États fédéraux, le droit belge ne classe pas le droit fédéral au-dessus de la législation régionale. Chacun opère dans des domaines de compétence définis. L'IA a besoin de métadonnées juridictionnelles — pas seulement du niveau d'autorité — pour savoir quel corps de droit s'applique.
+
+**Les circulaires ont un poids pratique démesuré.** Dans la pratique fiscale belge, les circulaires du SPF Finances sont largement utilisées malgré l'absence de force contraignante. Fisconetplus — la [base de connaissances](/fr/glossary/knowledge-base/) de l'administration fiscale avec environ 180 000 documents — contient une proportion importante de circulaires et de commentaires administratifs. Un système IA sans classement par autorité les traite de la même manière que la législation contraignante.
+
+**L'administration est parfois en désaccord avec les tribunaux.** Comme le montre l'exemple du précompte mobilier, l'administration fiscale belge maintient parfois des positions dans des circulaires qui contredisent les arrêts de la Cour de cassation. Sans classement par autorité, l'IA présente la position de l'administration sans signaler qu'une source hiérarchiquement supérieure a statué différemment.
+
+---
+
+## Articles connexes
+
+- [Qu'est-ce que le RAG — et pourquoi c'est la seule architecture qui rend l'IA juridique défendable](/fr/blog/wat-is-rag-fr/)
+- [5 questions fiscales belges où l'IA générique échoue à coup sûr](/fr/blog/5-vragen-generieke-ai-faalt-fr/)
+- [Pourquoi la transparence compte plus que la précision dans l'IA juridique](/fr/blog/transparantie-vs-nauwkeurigheid-fr/)
+- [Qu'est-ce que le score de confiance — et pourquoi c'est plus honnête qu'une réponse confiante](/fr/blog/confidence-scoring-uitgelegd-fr/)
+
+---
+
+## Comment Auryth TX implémente le classement par autorité
+
+Chaque document du corpus Auryth TX contient des métadonnées structurées incluant le type de source, le niveau d'autorité, la juridiction et la validité temporelle.
+
+Lors de la récupération, notre étape de reclassement par cross-encoder applique une pondération d'autorité : une loi l'emporte sur une circulaire, un arrêt de la Cour de cassation l'emporte sur une décision de cour d'appel, et le droit contraignant apparaît toujours au-dessus des orientations interprétatives.
+
+Lorsqu'une circulaire et une loi divergent, les deux sont présentées — mais clairement étiquetées avec leurs niveaux d'autorité respectifs. Vous voyez la hiérarchie, pas seulement la similarité.
+
+Il ne s'agit pas de filtrer les sources de moindre autorité. Les circulaires sont utiles — elles reflètent comment l'administration applique la loi dans la pratique. Mais elles ne devraient jamais être la source principale lorsque le droit contraignant dit quelque chose de différent.
+
+Le classement par autorité est la manière dont un système de recherche gagne la confiance professionnelle : non pas en trouvant le texte le plus similaire, mais en trouvant le texte faisant le plus autorité.
+
+[Voyez le classement par autorité en action — rejoignez la liste d'attente →](/fr/waitlist/)
+
+---
+
+*Sources :*
+*1. Constitution belge, Art. 159 : les tribunaux ne peuvent appliquer que les actes administratifs conformes à la loi.*
+*2. Portail européen e-Justice, « Législation nationale — Belgique » : hiérarchie formelle des normes.*
+*3. van Opijnen, M. & Santos, C. (2017). « [On the concept of relevance in legal information retrieval](https://doi.org/10.1007/s10506-017-9195-8). » Artificial Intelligence and Law, 25, 65-87.*
+*4. Pinecone, « [Rerankers and Two-Stage Retrieval](https://www.pinecone.io/learn/series/rag/rerankers/) » : architecture de reclassement par cross-encoder.*
+*5. EY Belgium, « [Recent case law creates uncertainty regarding statute of limitations for Belgian WHT reclaims](https://www.ey.com/en_be/technical/financial-services/financial-services-alerts/recent-case-law-creates-uncertainty-regarding-statute-of-limitations-for-belgian-wht-reclaims) » (2025) : divergence circulaire vs. Cour de cassation.*
+*6. Fisconetplus, SPF Finances : ~180 000 documents, sert 21 000+ fonctionnaires plus des professionnels externes.*

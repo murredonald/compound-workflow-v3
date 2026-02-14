@@ -1,0 +1,66 @@
+---
+term: "Source Reliability Weighting"
+termSlug: "source-reliability-weighting"
+short: "Source reliability weighting assigns higher influence to more trustworthy sources so retrieval and answers prioritize official, higher-quality material."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["authority-ranking-model", "source-conflict-resolution", "relevance-tuning", "search-analytics", "compliance-aware-retrieval"]
+synonyms: ["Trust weighting", "Source quality weighting", "Reliability scoring"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Source reliability weighting is a technique where a search or RAG system applies different weights to sources based on how trustworthy they are. Reliability can reflect editorial control, [provenance](/en/glossary/source-provenance/), update discipline, and whether a source is official or merely interpretative.
+
+## Why it matters
+
+- **Safer outputs**: reduces the chance that low-quality content drives conclusions.
+- **Better ranking**: when many documents match, reliability helps choose the best ones.
+- **[Explainability](/en/glossary/algorithmic-transparency/)**: users understand why official sources are preferred.
+- **[Robustness](/en/glossary/model-robustness/)**: mitigates noisy or SEO-optimized content in broad corpora.
+
+## How it works
+
+Reliability is usually encoded as metadata or a score used in ranking and/or answer synthesis:
+
+```
+Retrieve -> score relevance -> apply reliability weights -> rank -> generate with citations
+```
+
+Typical reliability tiers in legal/tax settings:
+
+1. Official law and official administrative publications
+2. Primary jurisprudence and court publications (with court level metadata)
+3. Licensed professional commentary and curated internal memos
+4. Unverified web content
+
+## Practical example
+
+For a query about a reporting obligation, the system retrieves both an official guidance page and multiple blog posts. Reliability weighting boosts the official page and uses it as the primary citation, while blogs remain as secondary explanatory context.
+
+## Common questions
+
+**Q: How is this different from an authority ranking model?**
+
+A: Reliability weighting is broader: it measures trustworthiness and provenance. Authority ranking is legal-domain specific: it encodes legal hierarchy and what is controlling for a given question. Many systems use both.
+
+**Q: Can this be gamed?**
+
+A: Less than keyword relevance, but yes if your source list is not curated. Good systems control which domains are allowed, track provenance, and review high-impact sources.
+
+## Related terms
+
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - prioritize controlling legal sources
+- [Source Conflict Resolution](/en/glossary/source-conflict-resolution/) - handle contradictory sources safely
+- [Relevance Tuning](/en/glossary/relevance-tuning/) - optimize ranking and evaluation
+- [Search Analytics](/en/glossary/search-analytics/) - monitor outcome quality and drift
+- [Compliance-Aware Retrieval](/en/glossary/compliance-aware-retrieval/) - constrain sources via policy and regulation
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

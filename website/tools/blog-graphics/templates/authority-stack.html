@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: hsl(220 10% 11%);
+    --fg: hsl(220 8% 96%);
+    --card: hsl(220 9% 16%);
+    --card-fg: hsl(220 8% 96%);
+    --primary: hsl(36 32% 38%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(36 36% 66%);
+    --muted: hsl(220 9% 16%);
+    --muted-fg: hsl(220 7% 66%);
+    --border: hsl(220 8% 22%);
+    --accent: hsl(220 9% 16%);
+    --success: hsl(142 64% 55%);
+    --warning: hsl(38 92% 50%);
+    --destructive: hsl(2 62% 56%);
+  }
+
+  .light {
+    --bg: hsl(220 14% 97%);
+    --fg: hsl(220 10% 18%);
+    --card: hsl(220 13% 99%);
+    --card-fg: hsl(220 10% 18%);
+    --primary: hsl(36 32% 43%);
+    --primary-fg: hsl(220 14% 97%);
+    --primary-text: hsl(34 39% 33%);
+    --muted: hsl(220 10% 94%);
+    --muted-fg: hsl(220 8% 43%);
+    --border: hsl(220 9% 88%);
+    --accent: hsl(220 11% 92%);
+    --success: hsl(142 64% 38%);
+    --warning: hsl(38 64% 48%);
+    --destructive: hsl(2 62% 52%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    width: 1200px;
+    padding: 48px;
+  }
+
+  .graphic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 44px 52px 56px;
+    position: relative;
+  }
+
+  .graphic::after {
+    content: 'Auryth AI';
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* ── Authority Stack (pyramid / hierarchy) ── */
+  .auth-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .auth-layer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+  }
+
+  .auth-layer:nth-child(1) {
+    width: 50%;
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .auth-layer:nth-child(2) {
+    width: 62%;
+    background: hsla(36 32% 38% / 0.15);
+  }
+
+  .auth-layer:nth-child(3) {
+    width: 74%;
+    background: hsla(36 32% 38% / 0.08);
+  }
+
+  .auth-layer:nth-child(4) {
+    width: 86%;
+    background: var(--muted);
+  }
+
+  .auth-layer:nth-child(5) {
+    width: 100%;
+    background: var(--muted);
+  }
+
+  .auth-rank {
+    font-size: 28px;
+    font-weight: 800;
+    flex-shrink: 0;
+    min-width: 36px;
+  }
+
+  .auth-layer:nth-child(1) .auth-rank { color: var(--primary-fg); }
+  .auth-layer:nth-child(2) .auth-rank { color: var(--primary-text); }
+  .auth-layer:nth-child(3) .auth-rank { color: var(--primary-text); opacity: 0.7; }
+  .auth-layer:nth-child(4) .auth-rank { color: var(--muted-fg); }
+  .auth-layer:nth-child(5) .auth-rank { color: var(--muted-fg); }
+
+  .auth-content {
+    text-align: left;
+  }
+
+  .auth-label {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .auth-layer:nth-child(1) .auth-label { color: var(--primary-fg); }
+  .auth-layer:nth-child(n+2) .auth-label { color: var(--fg); }
+
+  .auth-desc {
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .auth-layer:nth-child(1) .auth-desc { color: hsla(220 14% 97% / 0.7); }
+  .auth-layer:nth-child(n+2) .auth-desc { color: var(--muted-fg); }
+
+  .auth-weight {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .auth-layer:nth-child(1) .auth-weight {
+    background: hsla(220 14% 97% / 0.2);
+    color: var(--primary-fg);
+  }
+
+  .auth-layer:nth-child(2) .auth-weight {
+    background: hsla(36 32% 38% / 0.2);
+    color: var(--primary-text);
+  }
+
+  .auth-layer:nth-child(3) .auth-weight,
+  .auth-layer:nth-child(4) .auth-weight,
+  .auth-layer:nth-child(5) .auth-weight {
+    background: hsla(220 9% 16% / 0.3);
+    color: var(--muted-fg);
+  }
+</style>
+</head>
+<body>
+<div class="graphic">
+  <div class="title">Belgian legal source hierarchy</div>
+  <div class="auth-stack">
+    <div class="auth-layer">
+      <div class="auth-rank">1</div>
+      <div class="auth-content">
+        <div class="auth-label">Constitution & EU Treaties</div>
+        <div class="auth-desc">Supreme law — overrides all other sources</div>
+      </div>
+      <div class="auth-weight">Highest</div>
+    </div>
+    <div class="auth-layer">
+      <div class="auth-rank">2</div>
+      <div class="auth-content">
+        <div class="auth-label">Federal & Regional Legislation</div>
+        <div class="auth-desc">WIB 92, WBTW, VCF, Wetboek Successierechten</div>
+      </div>
+      <div class="auth-weight">High</div>
+    </div>
+    <div class="auth-layer">
+      <div class="auth-rank">3</div>
+      <div class="auth-content">
+        <div class="auth-label">Royal & Ministerial Decrees</div>
+        <div class="auth-desc">KB/WIB 92 — implementing regulations</div>
+      </div>
+      <div class="auth-weight">Medium</div>
+    </div>
+    <div class="auth-layer">
+      <div class="auth-rank">4</div>
+      <div class="auth-content">
+        <div class="auth-label">Administrative Circulars & Rulings</div>
+        <div class="auth-desc">FOD Financiën circulaires, voorafgaande beslissingen (DVB)</div>
+      </div>
+      <div class="auth-weight">Lower</div>
+    </div>
+    <div class="auth-layer">
+      <div class="auth-rank">5</div>
+      <div class="auth-content">
+        <div class="auth-label">Case Law & Doctrine</div>
+        <div class="auth-desc">Court decisions, academic commentary, parliamentary preparations</div>
+      </div>
+      <div class="auth-weight">Lowest</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

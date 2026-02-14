@@ -1,0 +1,185 @@
+---
+term: "Semantische Suche"
+termSlug: "semantic-search"
+short: "Suchtechnologie die Bedeutung und Absicht versteht statt nur Schlüsselwörter zu matchen, für relevantere und intelligentere Ergebnisse."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["embedding", "dense-retrieval", "rag", "knowledge-graph"]
+synonyms: ["Neuronale Suche", "KI-Suche", "Vektorsuche"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Semantische Suche ist ein Suchansatz, der die Bedeutung und Absicht hinter Anfragen versteht, anstatt einfach Schlüsselwörter zu matchen. Mit Techniken wie [Embeddings](/de/glossary/embeddings/) und neuronalen Netzwerken erfasst semantische Suche konzeptuelle Beziehungen zwischen Begriffen. Wenn Sie nach "wie repariere ich einen tropfenden Wasserhahn" suchen, versteht semantische Suche, dass Sie Sanitäranleitungen wollen, auch wenn Dokumente diese genauen Wörter nicht enthalten—es findet Ergebnisse über "Tropfen stoppen" oder "Wasserverschwendung beheben."
+
+## Warum es wichtig ist
+
+Semantische Suche transformiert, wie wir Informationen finden:
+
+- **Absichtsverständnis** — "günstige Flüge nach Paris" findet Budget-Reiseoptionen
+- **Synonymbehandlung** — "Auto" matcht "Automobil", "Fahrzeug", "Wagen"
+- **Kontextbewusstsein** — "Apple" in Tech-Kontext versus Obst-Kontext
+- **Natürlichsprachliche Anfragen** — suchen Sie konversationell, nicht mit Schlüsselwortsyntax
+- **Mehrsprachige Suche** — finden Sie relevante Dokumente unabhängig von der Sprache
+
+Semantische Suche treibt moderne Suchmaschinen, E-Commerce, Enterprise-Suche und RAG-Systeme an.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   SEMANTISCHE SUCHE                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  SCHLÜSSELWORT- vs SEMANTISCHE SUCHE:                      │
+│  ────────────────────────────────────                      │
+│                                                            │
+│  Anfrage: "Wie mache ich meinen Laptop schneller?"        │
+│                                                            │
+│  SCHLÜSSELWORTSUCHE:                                       │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Sucht Dokumente mit:                            │       │
+│  │ "mache" UND "Laptop" UND "schneller"           │       │
+│  │                                                 │       │
+│  │ ❌ Verpasst: "Notebook beschleunigen"          │       │
+│  │ ❌ Verpasst: "PC-Leistung verbessern"          │       │
+│  │ ❌ Verpasst: "Computergeschwindigkeit boost"   │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│  SEMANTISCHE SUCHE:                                        │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Versteht die BEDEUTUNG:                         │       │
+│  │ "Computerleistung verbessern"                   │       │
+│  │                                                 │       │
+│  │ ✓ Findet: "Notebook beschleunigen"             │       │
+│  │ ✓ Findet: "PC-Leistung verbessern"             │       │
+│  │ ✓ Findet: "Computergeschwindigkeit boost"      │       │
+│  │ ✓ Findet: "Windows-Start optimieren"           │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│                                                            │
+│  WIE SEMANTISCHE SUCHE FUNKTIONIERT:                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  Schritt 1: Alles in Vektoren kodieren                    │
+│                                                            │
+│      ┌─────────────┐         ┌─────────────────────┐      │
+│      │   Anfrage   │         │    Dokumente        │      │
+│      │  "Laptop    │         │  "Notebook          │      │
+│      │   schneller"│         │   beschleunigen"    │      │
+│      └──────┬──────┘         └──────────┬──────────┘      │
+│             │                           │                  │
+│             ▼                           ▼                  │
+│      ┌─────────────┐         ┌─────────────────────┐      │
+│      │  Embedding  │         │     Embedding       │      │
+│      │   Modell    │         │      Modell         │      │
+│      │  (BERT etc) │         │   (gleiches Modell) │      │
+│      └──────┬──────┘         └──────────┬──────────┘      │
+│             │                           │                  │
+│             ▼                           ▼                  │
+│      [0.2, 0.8, ...]         [0.21, 0.79, ...]            │
+│       Anfrage-Vektor          Dokument-Vektoren           │
+│                                                            │
+│                                                            │
+│  Schritt 2: Ähnliche Vektoren finden                      │
+│                                                            │
+│                    Vektorraum                              │
+│           ┌────────────────────────────┐                  │
+│           │         ●                  │                  │
+│           │      Anfrage    ● Doc A    │                  │
+│           │                    (nah)   │                  │
+│           │              ● Doc B       │                  │
+│           │                 (nah)      │                  │
+│           │                            │                  │
+│           │  ● Doc C                   │                  │
+│           │    (weit)                  │                  │
+│           │                            │                  │
+│           └────────────────────────────┘                  │
+│                                                            │
+│  Ähnliche Bedeutung = Nah im Vektorraum                   │
+│                                                            │
+│                                                            │
+│  HYBRIDE SUCHE (Best Practice):                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Kombiniere Schlüsselwort + Semantisch für beste Results: │
+│                                                            │
+│  ┌──────────────┐    ┌──────────────┐                     │
+│  │ Schlüsselwort│    │  Semantisch  │                     │
+│  │  (BM25)      │    │  (Vektoren)  │                     │
+│  └──────┬───────┘    └──────┬───────┘                     │
+│         │                   │                              │
+│         └───────┬───────────┘                              │
+│                 ▼                                          │
+│         ┌──────────────┐                                  │
+│         │   Fusion/    │                                  │
+│         │  Re-Ranking  │                                  │
+│         └──────┬───────┘                                  │
+│                │                                           │
+│                ▼                                           │
+│          Endergebnisse                                     │
+│                                                            │
+│  Warum hybrid? Schlüsselwörter fangen exakte Treffer     │
+│  (Produktcodes, Namen), Semantisch fängt Bedeutung       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Semantische vs Schlüsselwortsuche:**
+| Aspekt | Schlüsselwortsuche | Semantische Suche |
+|--------|-------------------|------------------|
+| Matching | Exakte Begriffe | Bedeutung/Konzepte |
+| Synonyme | Erfordert Expansion | Automatisch |
+| Tippfehler | Scheitert meist | Fängt oft ab |
+| Anfrageverständnis | Wörtlich | Kontextuell |
+| Setup-Komplexität | Einfach | Erfordert [Embeddings](/de/glossary/vector-embeddings/) |
+| Latenz | Sehr schnell | Etwas langsamer |
+
+## Häufige Fragen
+
+**F: Welche Embedding-Modelle sollte ich für semantische Suche verwenden?**
+
+A: Für Englisch, starten Sie mit OpenAI text-embedding-3-small oder sentence-[transformers](/de/glossary/transformer-architecture/)/all-MiniLM-L6-v2 (Open Source). Für mehrsprachig, verwenden Sie multilingual-e5-large oder mBERT-Varianten. Für domänenspezifische Suche erwägen Sie [Fine-Tuning](/de/glossary/fine-tuning/).
+
+**F: Wie sehr verbessert semantische Suche die Ergebnisse?**
+
+A: Hängt stark vom Anwendungsfall ab. Für Anfragen mit klaren Schlüsselwort-Matches ("iPhone 15 specs"), ist die Verbesserung marginal. Für natürlichsprachliche Anfragen ("Welches Telefon hat die beste Kamera unter 500€"), kann die Verbesserung 30-50% in der Relevanz betragen.
+
+**F: Sollte ich semantische oder Schlüsselwortsuche verwenden?**
+
+A: Verwenden Sie [hybride Suche](/de/glossary/hybrid-search/)—kombinieren Sie beide. Schlüsselwortsuche ([BM25](/de/glossary/bm25/)) glänzt bei exakten Treffern: Produktcodes, Namen, technische Begriffe. Semantische Suche glänzt bei konzeptuellem Verständnis.
+
+**F: Wie gehe ich mit dem Kaltstart-Problem um?**
+
+A: Semantische Suche erfordert das Generieren von Embeddings für alle Dokumente, bevor Anfragen funktionieren. Für große Datensätze kann dies Stunden/Tage dauern. Lösungen: Embeddings in Nebenzeiten vorberechnen, inkrementelle Indexierung nutzen.
+
+## Verwandte Begriffe
+
+- Embedding — Vektoren, die semantische Suche antreiben
+- [Dense retrieval](/de/glossary/dense-retrieval/) — die zugrundeliegende Technik
+- [RAG](/de/glossary/rag/) — Verwendung semantischer Suche für [LLM](/de/glossary/llm/)-Kontext
+- [Knowledge graph](/de/glossary/knowledge-graph/) — strukturiertes Wissen für Suche
+
+---
+
+## Referenzen
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Grundlegende Satz-Embeddings]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR für semantische Suche]
+
+> Neelakantan et al. (2022), "[Text and Code Embeddings by Contrastive Pre-Training](https://arxiv.org/abs/2201.10005)", arXiv. [OpenAI Embedding-Modelle]
+
+> Muennighoff et al. (2022), "[SGPT: GPT Sentence Embeddings for Semantic Search](https://arxiv.org/abs/2202.08904)", arXiv. [GPT-basierte semantische Suche]
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Foundational sentence embeddings]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR for semantic search]
+
+> Neelakantan et al. (2022), "[Text and Code Embeddings by Contrastive Pre-Training](https://arxiv.org/abs/2201.10005)", arXiv. [OpenAI embedding models]
+
+> Muennighoff et al. (2022), "[SGPT: GPT Sentence Embeddings for Semantic Search](https://arxiv.org/abs/2202.08904)", arXiv. [GPT-based semantic search]

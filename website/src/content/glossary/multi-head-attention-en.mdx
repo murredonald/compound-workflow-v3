@@ -1,0 +1,95 @@
+---
+term: "Multi-Head Attention"
+termSlug: "multi-head-attention"
+short: "A technique that runs multiple attention operations in parallel, allowing models to capture different types of relationships simultaneously."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["attention-mechanism", "self-attention", "transformer-architecture", "llm"]
+synonyms: ["MHA", "Multi-headed attention", "Parallel attention heads"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Multi-Head Attention is a mechanism that performs multiple attention operations in parallel, each with different learned projections. Instead of computing a single attention function, the model runs several "heads" simultaneously, each capturing different aspects of relationships in the data. The outputs are then concatenated and projected to produce the final result.
+
+## Why it matters
+
+Multi-Head Attention addresses limitations of single-head attention:
+
+- **Diverse representations** — different heads can learn different relationship types (syntactic, semantic, positional)
+- **Richer expressiveness** — capturing multiple patterns simultaneously improves model capacity
+- **Stable training** — multiple heads provide redundancy and gradient flow stability
+- **[Interpretability](/en/glossary/explainability/)** — individual heads often specialize in identifiable linguistic patterns
+
+This is why Transformers use multi-head attention rather than single attention—it's fundamentally more powerful.
+
+## How it works
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MULTI-HEAD ATTENTION                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Input ──┬──→ Head 1 (W_Q1, W_K1, W_V1) ──→ Attention 1    │
+│          │                                                  │
+│          ├──→ Head 2 (W_Q2, W_K2, W_V2) ──→ Attention 2    │
+│          │                                                  │
+│          ├──→ Head 3 (W_Q3, W_K3, W_V3) ──→ Attention 3    │
+│          │                                    │             │
+│          └──→  ...h heads...                  ▼             │
+│                                         [Concatenate]       │
+│                                               │             │
+│                                    Linear Projection (W_O)  │
+│                                               │             │
+│                                               ▼             │
+│                                            Output           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+1. **Project inputs** — Q, K, V are linearly projected h times with different learned weights
+2. **Parallel attention** — each head computes attention independently
+3. **Concatenate** — head outputs are concatenated along the feature dimension
+4. **Final projection** — concatenated output is linearly projected back to model dimension
+
+Formula: `MultiHead(Q,K,V) = Concat(head_1,...,head_h) × W_O`
+
+Where each `head_i = Attention(Q×W_Qi, K×W_Ki, V×W_Vi)`
+
+## Common questions
+
+**Q: How many heads are typically used?**
+
+A: Common configurations use 8, 12, or 16 heads. GPT-3 uses 96 heads with 12,288 hidden dimension. The head count is usually chosen so each head's dimension (d_model / num_heads) is a reasonable size like 64 or 128.
+
+**Q: Do different heads learn different things?**
+
+A: Yes, research shows heads often specialize. Some attend to adjacent words, others to syntactic dependencies, specific positions, or rare tokens. Not all heads are equally important—some can be pruned with minimal performance loss.
+
+**Q: Why not just use wider single-head attention?**
+
+A: Wider single-head attention has the same parameter count but less representational diversity. Multi-head attention's parallel subspaces capture richer, more varied patterns.
+
+**Q: What is Group [Query](/en/glossary/prompt/) Attention (GQA)?**
+
+A: GQA is an efficient variant where multiple query heads share Key-Value heads, reducing memory and computation while maintaining quality. Used in models like Llama 2.
+
+## Related terms
+
+- [Attention Mechanism](/en/glossary/attention-mechanism/) — the foundational technique
+- [Self-Attention](/en/glossary/self-attention/) — each head performs self-attention
+- [Transformer Architecture](/en/glossary/transformer-architecture/) — uses multi-head attention throughout
+- [LLM](/en/glossary/llm/) — modern language models rely on multi-head attention
+
+---
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Michel et al. (2019), "[Are Sixteen Heads Really Better than One?](https://arxiv.org/abs/1905.10650)", NeurIPS. [1,200+ citations]
+
+> Voita et al. (2019), "[Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting](https://arxiv.org/abs/1905.09418)", ACL. [800+ citations]
+
+> Ainslie et al. (2023), "[GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)", arXiv. [400+ citations]

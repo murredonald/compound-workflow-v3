@@ -1,0 +1,121 @@
+---
+term: "Temperatur"
+termSlug: "temperature"
+short: "Ein Parameter, der die Zufälligkeit von Sprachmodell-Ausgaben steuert und Kreativität versus Konsistenz beeinflusst."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["top-p", "top-k", "inference", "llm"]
+synonyms: ["Sampling-Temperatur", "Modelltemperatur", "Generierungstemperatur"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Temperatur ist ein Parameter, der die Zufälligkeit der Ausgabe eines Sprachmodells während der Textgenerierung steuert. Niedrigere Temperaturen (z.B. 0.1) machen Ausgaben deterministischer und fokussierter, während höhere Temperaturen (z.B. 1.0+) Diversität und Kreativität erhöhen, aber die Kohärenz verringern können. Sie funktioniert durch Skalierung der Wahrscheinlichkeitsverteilung vor dem Sampling des nächsten Tokens.
+
+## Warum es wichtig ist
+
+Temperatur ist eine kritische Steuerung für KI-Anwendungsverhalten:
+
+- **Präzision vs. Kreativität** — niedrig für faktische Aufgaben, hoch fürs Brainstorming
+- **Konsistenz** — niedrige Temperaturen produzieren reproduzierbare Ausgaben
+- **Benutzererfahrung** — Temperatureinstellung beeinflusst wahrgenommene Intelligenz
+- **Aufgabenoptimierung** — verschiedene Aufgaben brauchen verschiedene Einstellungen
+- **Sicherheit** — niedrigere Temperaturen reduzieren unerwartete oder unangemessene Ausgaben
+
+Die richtige Temperatur kann Modellleistung für spezifische Anwendungsfälle transformieren.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                   TEMPERATUR-EFFEKT                        │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Originale Logits: [2.0, 1.0, 0.5, 0.2]                   │
+│  (Vor Softmax)                                             │
+│                                                            │
+│  TEMPERATUR = 0.5 (Fokussierter)                           │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Skaliert: [4.0, 2.0, 1.0, 0.4]                │        │
+│  │  Wahrsch.: [78%, 15%, 5%, 2%]                  │        │
+│  │  ████████████████████░░░░                      │        │
+│  │  Token A dominiert                             │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  TEMPERATUR = 1.0 (Ausgewogen)                             │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Skaliert: [2.0, 1.0, 0.5, 0.2]                │        │
+│  │  Wahrsch.: [47%, 27%, 17%, 9%]                 │        │
+│  │  ████████████░░░░░░░░                          │        │
+│  │  Mehr Diversität                               │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  TEMPERATUR = 2.0 (Kreativ/zufällig)                       │
+│  ┌────────────────────────────────────────────────┐        │
+│  │  Skaliert: [1.0, 0.5, 0.25, 0.1]               │        │
+│  │  Wahrsch.: [34%, 28%, 22%, 16%]                │        │
+│  │  ████████░░░░░░░░░░░░                          │        │
+│  │  Nahezu gleichmäßige Verteilung                │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                            │
+│  Formel: P(token) = softmax(logits / temperatur)           │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Empfohlene Einstellungen nach Aufgabe:**
+| Aufgabe | Temperatur | Begründung |
+|---------|------------|------------|
+| Codegenerierung | 0.0-0.3 | Präzision erforderlich |
+| Faktisches Q&A | 0.1-0.5 | Genauigkeit > Kreativität |
+| Konversation | 0.7-0.9 | Natürliche Variation |
+| Kreatives Schreiben | 0.9-1.2 | Neuheit fördern |
+
+## Häufige Fragen
+
+**F: Was bedeutet Temperatur 0?**
+
+A: Temperatur 0 (oder nahe null) lässt das Modell immer das Token mit höchster Wahrscheinlichkeit wählen—deterministisches, gieriges Decoding. Nützlich wenn Sie konsistente, reproduzierbare Ausgaben benötigen.
+
+**F: Kann Temperatur größer als 1 sein?**
+
+A: Ja. Werte über 1 verflachen die Wahrscheinlichkeitsverteilung, wodurch seltene Tokens wahrscheinlicher werden. Das erhöht Kreativität, riskiert aber Inkohärenz. Bleiben Sie generell unter 1.5 für brauchbare Ausgabe.
+
+**F: Wie interagiert Temperatur mit top-p?**
+
+A: Sie ergänzen sich. Temperatur passt die Verteilungsform an; top-p/top-k samplen dann daraus. Beide zusammen geben feinkörnige Kontrolle. Viele APIs wenden erst Temperatur an, dann top-p Filterung.
+
+**F: Was ist eine gute Standard-Temperatur?**
+
+A: 0.7 ist ein üblicher Default—ausgewogen zwischen Konsistenz und Variation. Passen Sie basierend auf Ihren spezifischen Aufgabenanforderungen an und testen Sie mit echten Beispielen.
+
+## Verwandte Begriffe
+
+- [Top-p Sampling](/de/glossary/top-p/) — Nucleus-Sampling-Parameter
+- [Top-k Sampling](/de/glossary/top-k/) — begrenzt Token-Kandidaten
+- [Inferenz](/de/glossary/inference/) — Generierungsprozess wo Temperatur angewendet wird
+- [LLM](/de/glossary/llm/) — Modelle gesteuert durch Temperatur
+
+---
+
+## Referenzen
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2.500+ Zitationen]
+
+> Ackley et al. (1985), "[A Learning Algorithm for Boltzmann Machines](https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf)", Cognitive Science. [5.000+ Zitationen]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1.000+ Zitationen]
+
+> Ficler & Goldberg (2017), "[Controlling Linguistic Style Aspects in Neural Language Generation](https://arxiv.org/abs/1707.02633)", arXiv. [400+ Zitationen]
+
+## References
+
+> Holtzman et al. (2020), "[The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751)", ICLR. [2,500+ citations]
+
+> Ackley et al. (1985), "[A Learning Algorithm for Boltzmann Machines](https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf)", Cognitive Science. [5,000+ citations]
+
+> Fan et al. (2018), "[Hierarchical Neural Story Generation](https://arxiv.org/abs/1805.04833)", ACL. [1,000+ citations]
+
+> Ficler & Goldberg (2017), "[Controlling Linguistic Style Aspects in Neural Language Generation](https://arxiv.org/abs/1707.02633)", arXiv. [400+ citations]

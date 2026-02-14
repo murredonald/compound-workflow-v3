@@ -1,0 +1,179 @@
+---
+term: "BM25"
+termSlug: "bm25"
+short: "Best Matching 25 - het state-of-the-art probabilistische ranking-algoritme voor tekstzoeken gebaseerd op TF-IDF-principes."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["tf-idf", "sparse-retrieval", "inverted-index", "dense-retrieval"]
+synonyms: ["Okapi BM25", "Best Match 25"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+BM25 (Best Matching 25) is een probabilistische rankingfunctie die documenten scoort op basis van query-termfrequenties. Het breidt TF-IDF uit met twee belangrijke verbeteringen: termfrequentie-saturatie (een term die 10 keer voorkomt is niet 10x belangrijker dan één keer) en documentlengte-normalisatie (langere documenten krijgen geen oneerlijk voordeel). Ontwikkeld aan City University London in de jaren 1990, blijft BM25 het standaardalgoritme in Elasticsearch, Lucene en de meeste productiezoeksystemen omdat het eenvoudig, snel en opmerkelijk effectief is.
+
+## Waarom het belangrijk is
+
+BM25 is het werkpaard van productiezoeken:
+
+- **Universele baseline** — standaard in Elasticsearch, Solr, OpenSearch, Lucene
+- **Beproefd** — 30+ jaar optimalisatie over miljarden queries
+- **Geen training** — werkt direct op elk domein zonder [ML](/nl/glossary/machine-learning/)
+- **Interpreteerbaar** — begrijp precies waarom documenten ranken waar ze staan
+- **Efficiënt** — sub-milliseconde zoeken over miljarden documenten
+- **Hybride basis** — BM25 combineren met neurale retrieval verslaat vaak beide alleen
+
+Het begrijpen van BM25 is essentieel voor iedereen die zoeksystemen bouwt.
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                         BM25                                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DE BM25 FORMULE:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  Voor query Q en document D:                               │
+│                                                            │
+│              ∑    IDF(t) × f(t,D) × (k₁ + 1)              │
+│  score = ──────────────────────────────────────            │
+│            t∈Q   f(t,D) + k₁ × (1 - b + b × |D|/avgdl)    │
+│                                                            │
+│  Waar:                                                     │
+│  • f(t,D) = frequentie van term t in document D           │
+│  • |D|    = documentlengte                                 │
+│  • avgdl  = gemiddelde documentlengte in collectie         │
+│  • k₁     = termfrequentie saturatie (typisch 1.2-2.0)    │
+│  • b      = lengte normalisatie (typisch 0.75)            │
+│                                                            │
+│                                                            │
+│  IDF (INVERSE DOCUMENT FREQUENCY):                         │
+│  ─────────────────────────────────                         │
+│                                                            │
+│              N - n(t) + 0.5                                │
+│  IDF(t) = log ──────────────                               │
+│              n(t) + 0.5                                     │
+│                                                            │
+│  IDF verhoogt zeldzame termen, verlaagt gewone:           │
+│                                                            │
+│  "de"       komt in 95% docs voor → IDF ≈ 0.05 (genegeerd)│
+│  "klimaat"  komt in 5% docs voor  → IDF ≈ 2.94 (nuttig)   │
+│  "xylofoon" komt in 0.01% voor    → IDF ≈ 9.21 (zeer hoog)│
+│                                                            │
+│                                                            │
+│  KERNINSTINZICHT: TERMFREQUENTIE SATURATIE                 │
+│  ─────────────────────────────────────────                 │
+│                                                            │
+│  TF-IDF probleem: Meer voorkomens = proportioneel meer    │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Score                                              │   │
+│  │   │                                                │   │
+│  │   │                             TF-IDF (lineair)  │   │
+│  │ 4 │                          ●──●──●──●──●        │   │
+│  │   │                       ●                        │   │
+│  │ 3 │                    ●                           │   │
+│  │   │                 ●──────────────────────        │   │
+│  │ 2 │              ●        BM25 (verzadigt)        │   │
+│  │   │           ●                                    │   │
+│  │ 1 │        ●                                       │   │
+│  │   │     ●                                          │   │
+│  │   │──●────────────────────────────────────────    │   │
+│  │   0  1  2  3  4  5  6  7  8  9  10                │   │
+│  │                Term Frequentie                     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  BM25: Na ~3-5 voorkomens voegt meer herhaling weinig toe │
+│        (voorkomt keyword stuffing, robuustere ranking)     │
+│                                                            │
+│                                                            │
+│  KERNISTINZICHT: LENGTE NORMALISATIE                       │
+│  ───────────────────────────────────                       │
+│                                                            │
+│  Probleem: Langere documenten bevatten meer termen by     │
+│  toeval                                                    │
+│                                                            │
+│  Zonder normalisatie:                                      │
+│  • 100-woord doc met "klimaat" 2x → score: 2             │
+│  • 1000-woord doc met "klimaat" 3x → score: 3 WINT       │
+│    (maar 1000-woord doc gaat over veel dingen!)           │
+│                                                            │
+│  BM25 lengte normalisatie (parameter b):                   │
+│                                                            │
+│  b = 0: Geen lengte normalisatie (ruwe TF)               │
+│  b = 1: Volledige lengte normalisatie                     │
+│  b = 0.75: Standaard (balans)                             │
+│                                                            │
+│                                                            │
+│  BM25 PARAMETERS:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  ┌────────────────────────────────────────────────────┐   │
+│  │ Parameter │ Standaard │ Effect                     │   │
+│  ├───────────┼───────────┼───────────────────────────┤   │
+│  │ k₁        │ 1.2-2.0   │ TF saturatiesnelheid       │   │
+│  │           │           │ Hoger = meer TF invloed    │   │
+│  ├───────────┼───────────┼───────────────────────────┤   │
+│  │ b         │ 0.75      │ Lengte normalisatie        │   │
+│  │           │           │ 0 = geen, 1 = volledig     │   │
+│  └────────────────────────────────────────────────────┘   │
+│                                                            │
+│  Tuning richtlijnen:                                       │
+│  • Korte documenten (tweets) → b = 0-0.5                  │
+│  • Variabele-lengte docs → b = 0.75 (standaard)          │
+│  • Zeer lange docs → b = 1.0                              │
+│  • k₁ heeft zelden tuning nodig vanaf standaard 1.2      │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Wanneer moet ik BM25 parameters tunen?**
+
+A: Meestal nooit. De standaarden (k₁=1.2, b=0.75) werken goed in de meeste domeinen. Tune alleen als je specifieke problemen hebt: verlaag b voor zeer korte documenten (tweets, titels) waar lengte weinig varieert, of verhoog b voor zeer lange documenten met variabele lengte.
+
+**V: Hoe verhoudt BM25 zich tot neurale retrieval?**
+
+A: BM25 blinkt uit bij exacte matching en werkt zero-shot op elk domein. Neurale retrieval vangt semantische overeenkomst. In de praktijk verslaat het combineren van beide (hybride zoeken) vaak beide alleen—BM25 vindt exacte matches terwijl neuraal semantische matches vindt.
+
+**V: Wat zijn de beperkingen van BM25?**
+
+A: BM25 kan geen synoniemen matchen (auto ≠ wagen), begrijpt geen betekenis (alleen termstatistieken), en vereist dat [query](/nl/glossary/prompt/) en document vocabulaire delen. Voor semantische matching, voeg query-expansie, synoniemenwoordenboeken toe, of combineer met dense retrieval.
+
+**V: Waarom BM25 in plaats van oudere varianten (BM11, BM15)?**
+
+A: BM25 combineert de beste eigenschappen van eerdere modellen—BM11's IDF-formulering en BM15's lengte-normalisatie—in één robuuste formule. De "25" verwijst naar de 25e iteratie ontwikkeld door de TREC-gemeenschap.
+
+## Gerelateerde termen
+
+- [TF-IDF](/nl/glossary/tf-idf/) — fundamenteel weegschema dat BM25 verbetert
+- [Sparse retrieval](/nl/glossary/sparse-retrieval/) — retrieval-familie waartoe BM25 behoort
+- [Inverted index](/nl/glossary/inverted-index/) — datastructuur die BM25-zoeken mogelijk maakt
+- [Dense retrieval](/nl/glossary/dense-retrieval/) — neuraal alternatief voor BM25
+
+---
+
+## Referenties
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [Uitgebreide BM25 theorie]
+
+> Robertson et al. (1995), "[Okapi at TREC-3](https://trec.nist.gov/pubs/trec3/papers/city.ps.gz)", TREC. [Originele BM25 paper]
+
+> Trotman et al. (2014), "[Improvements to BM25 and Language Models Examined](https://dl.acm.org/doi/10.1145/2682862.2682863)", ADCS. [BM25 parameter analyse]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [BM25 vs neuraal vergelijking]
+
+## References
+
+> Robertson & Zaragoza (2009), "[The Probabilistic Relevance Framework: BM25 and Beyond](https://www.nowpublishers.com/article/Details/INR-019)", Foundations and Trends in Information Retrieval. [Comprehensive BM25 theory]
+
+> Robertson et al. (1995), "[Okapi at TREC-3](https://trec.nist.gov/pubs/trec3/papers/city.ps.gz)", TREC. [Original BM25 paper]
+
+> Trotman et al. (2014), "[Improvements to BM25 and Language Models Examined](https://dl.acm.org/doi/10.1145/2682862.2682863)", ADCS. [BM25 parameter analysis]
+
+> Lin et al. (2021), "[Pretrained Transformers for Text Ranking: BERT and Beyond](https://arxiv.org/abs/2010.06467)", Synthesis Lectures on HLT. [BM25 vs neural comparison]

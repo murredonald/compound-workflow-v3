@@ -1,0 +1,184 @@
+---
+term: "Approximate Nearest Neighbor"
+termSlug: "ann"
+short: "Algorithmen, die approximativ ähnliche Vektoren schnell finden, indem sie perfekte Genauigkeit gegen massive Geschwindigkeitsverbesserungen eintauschen."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["hnsw", "faiss", "embedding", "dense-retrieval"]
+synonyms: ["ANN", "Approximate NN", "Vektorsuche"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Approximate Nearest Neighbor (ANN) bezeichnet Algorithmen, die Vektoren finden, die einem Abfragevektor ähnlich sind, ohne erschöpfend mit jedem Vektor in einer Datenbank zu vergleichen. Während exakte [Nearest-Neighbor-Suche](/de/glossary/nearest-neighbor-search/) O(n) Vergleiche erfordert, erreichen ANN-Algorithmen sub-lineare Zeitkomplexität, indem sie einen kleinen Genauigkeits-Kompromiss akzeptieren—sie könnten gelegentlich den 2. oder 5. nächsten Vektor zurückgeben, aber laufen 100-1000x schneller. Dies macht sie essentiell für [semantische Suche](/de/glossary/semantic-search/), Empfehlungssysteme und RAG-Pipelines, die über Millionen von Dokumenten operieren.
+
+## Warum es wichtig ist
+
+ANN ermöglicht praktische Vektorsuche im Maßstab:
+
+- **Geschwindigkeit** — Millionen Vektoren in Millisekunden vs Sekunden durchsuchen
+- **[RAG](/de/glossary/rag/)-Systeme** — relevanten Kontext aus massiven Wissensbasen abrufen
+- **Semantische Suche** — ähnliche Dokumente jenseits von Keyword-Matching finden
+- **Empfehlungen** — ähnliche Items/Nutzer aus Embedding-Repräsentationen finden
+- **Bild/Audio-Suche** — inhaltsbasierter Abruf mit Feature-Vektoren
+- **Kosteneffizienz** — mehr Anfragen pro Maschine bedienen
+
+Ohne ANN wären vektorbasierte KI-Anwendungen im Maßstab wirtschaftlich nicht machbar.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│            APPROXIMATE NEAREST NEIGHBOR (ANN)               │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  DAS FUNDAMENTALE PROBLEM:                                 │
+│  ─────────────────────────                                 │
+│                                                            │
+│  Sie haben: 1 Million 768-Dimensions-Vektoren             │
+│  Anfrage:   Finde 10 ähnlichste Vektoren                  │
+│                                                            │
+│  EXAKTE SUCHE (k-NN):                                      │
+│  • Berechne Distanz zu allen 1M Vektoren                  │
+│  • Sortieren und Top 10 zurückgeben                       │
+│  • Zeit: O(n × d) = 768 Millionen Operationen             │
+│  • Latenz: ~500ms-2s pro Anfrage                          │
+│                                                            │
+│  APPROXIMATIVE SUCHE (ANN):                                │
+│  • Verwende Indexstruktur für ~1000 Vektoren              │
+│  • Gibt Top 10 zurück (verpasst manchmal echte #1)       │
+│  • Zeit: O(log n × d) oder besser                         │
+│  • Latenz: ~1-10ms pro Anfrage                            │
+│                                                            │
+│                                                            │
+│  HAUPT ANN ALGORITHMUS-FAMILIEN:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                                                      │  │
+│  │  1. BAUM-BASIERT (Annoy, KD-tree)                   │  │
+│  │     • Raum in Regionen partitionieren              │  │
+│  │     • Nur nahe Regionen durchsuchen                │  │
+│  │     • Gut für niedrige Dimensionen (<20)           │  │
+│  │                                                      │  │
+│  │  2. GRAPH-BASIERT (HNSW, NSG)                       │  │
+│  │     • Navigationsgraph aufbauen                    │  │
+│  │     • Graph zum Anfragepunkt durchlaufen           │  │
+│  │     • Beste Genauigkeit/Geschwindigkeit hohe Dim.  │  │
+│  │     • State-of-the-Art für meiste Anwendungsfälle │  │
+│  │                                                      │  │
+│  │  3. HASH-BASIERT (LSH)                              │  │
+│  │     • Ähnliche Vektoren in gleichen Bucket hashen │  │
+│  │     • Nur Vektoren im gleichen Bucket prüfen      │  │
+│  │     • Schnell aber niedrigerer Recall              │  │
+│  │                                                      │  │
+│  │  4. QUANTISIERUNG (PQ, OPQ)                         │  │
+│  │     • Vektoren durch Quantisierung komprimieren   │  │
+│  │     • Distanzen im komprimierten Raum annähern    │  │
+│  │     • Tauscht Genauigkeit gegen Speicher          │  │
+│  │                                                      │  │
+│  │  5. HYBRID (IVF+PQ, IVFHNSW)                        │  │
+│  │     • Ansätze kombinieren für beste Tradeoffs     │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  WIE GRAPH-BASIERTE ANN FUNKTIONIERT (HNSW):               │
+│  ───────────────────────────────────────────               │
+│                                                            │
+│  Aufbauphase - navigierbaren Graph erstellen:             │
+│                                                            │
+│     ●────────────●────────────●   Schicht 2 (sparse)      │
+│     │            │            │   Langstreckenverbindungen│
+│     │            │            │                            │
+│     ●──●──●──────●──●──●──────●   Schicht 1                │
+│     │  │  │      │  │  │      │   Mittlere Verbindungen   │
+│     │  │  │      │  │  │      │                            │
+│     ●●●●●●●●●●●●●●●●●●●●●●●●●●●   Schicht 0 (dense)        │
+│                                   Alle Vektoren            │
+│                                                            │
+│  Suchphase - greedy Navigation:                           │
+│                                                            │
+│  1. Am Einstiegspunkt starten (obere Schicht)            │
+│  2. Zum Nachbarn bewegen, der Anfrage am nächsten        │
+│  3. Wenn kein näherer Nachbar, Schicht absteigen         │
+│  4. Wiederholen bis Schicht 0                             │
+│  5. Lokale Nachbarschaft in Schicht 0 erkunden           │
+│                                                            │
+│                                                            │
+│  WICHTIGE METRIKEN:                                        │
+│  ─────────────────                                         │
+│                                                            │
+│  Recall@k: Welchen Anteil der echten Top-k gefunden?     │
+│                                                            │
+│    Echte Top-10:    [A, B, C, D, E, F, G, H, I, J]        │
+│    ANN zurückgegeb: [A, B, D, E, F, G, H, I, J, K]        │
+│                                                            │
+│    Recall@10 = 9/10 = 90% (C verpasst, K zurückgegeben)  │
+│                                                            │
+│                                                            │
+│  POPULÄRE ANN IMPLEMENTIERUNGEN:                           │
+│  ───────────────────────────────                           │
+│                                                            │
+│  • FAISS (Facebook) - umfassendste, CPU/GPU               │
+│  • HNSW (hnswlib) - beste Graph-basierte Implementierung  │
+│  • Annoy (Spotify) - schnell Baum-basiert, read-only      │
+│  • ScaNN (Google) - optimiert für x86                     │
+│                                                            │
+│  Vektor-Datenbanken:                                       │
+│  • Pinecone - managed Service                             │
+│  • Weaviate - Open Source, hybride Suche                  │
+│  • Milvus - Open Source, skalierbar                       │
+│  • Qdrant - Open Source, Rust                             │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Häufige Fragen
+
+**F: Wie viel Genauigkeit verliere ich mit ANN vs exakter Suche?**
+
+A: Mit gut abgestimmtem HNSW erreichen Sie typischerweise 95-99% Recall—Sie finden 95-99 der echten Top-100 nächsten Nachbarn. Für RAG und semantische Suche ist dies normalerweise akzeptabel, da Sie sowieso mehrere Kandidaten abrufen.
+
+**F: Wann sollte ich HNSW vs IVF-PQ verwenden?**
+
+A: HNSW bietet besten Genauigkeit/Geschwindigkeit-Tradeoff bis ~10 Millionen Vektoren, die in den Speicher passen. Für Milliarden Vektoren oder bei Speicherbeschränkungen verwenden Sie IVF-PQ, das Vektoren stark komprimiert.
+
+**F: Wie wähle ich ANN-Parameter?**
+
+A: Beginnen Sie mit Standardwerten, benchmarken Sie auf Ihren Daten und Abfragemustern. Wichtige Parameter: für HNSW `ef_construction` und `ef_search` tunen. Plotten Sie Recall vs Latenz-Kurven um Ihren Sweet Spot zu finden.
+
+**F: Brauche ich eine Vektordatenbank oder kann ich eine Library verwenden?**
+
+A: Libraries (FAISS, hnswlib) sind schneller und flexibler, aber Sie müssen Persistenz, Updates und Skalierung selbst verwalten. Vektordatenbanken (Pinecone, Weaviate) bieten verwaltete Indexierung und horizontale Skalierung.
+
+## Verwandte Begriffe
+
+- [HNSW](/de/glossary/hnsw/) — hierarchische navigierbare Small-World-Graphen
+- [FAISS](/de/glossary/faiss/) — Facebook AI Similarity Search Library
+- Embedding — von ANN gesuchte Vektoren
+- [Dense retrieval](/de/glossary/dense-retrieval/) — verwendet ANN für semantische Suche
+
+---
+
+## Referenzen
+
+> Malkov & Yashunin (2018), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [HNSW-Paper]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [FAISS-Paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://www.sciencedirect.com/science/article/pii/S0306437919303758)", Information Systems. [Umfassender Benchmark]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Aktualisierte FAISS-Übersicht]
+
+## References
+
+> Malkov & Yashunin (2018), "[Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs](https://arxiv.org/abs/1603.09320)", IEEE TPAMI. [HNSW paper]
+
+> Johnson et al. (2019), "[Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734)", IEEE TBD. [FAISS paper]
+
+> Aumuller et al. (2020), "[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://www.sciencedirect.com/science/article/pii/S0306437919303758)", Information Systems. [Comprehensive benchmark]
+
+> Douze et al. (2024), "[The FAISS library](https://arxiv.org/abs/2401.08281)", arXiv. [Updated FAISS overview]

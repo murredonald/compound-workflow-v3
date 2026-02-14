@@ -1,0 +1,213 @@
+---
+term: "Semantic Search"
+termSlug: "semantic-search"
+short: "Search technology that understands meaning and intent rather than just matching keywords, enabling more relevant and intelligent results."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["embedding", "dense-retrieval", "rag", "knowledge-graph"]
+synonyms: ["Neural search", "AI search", "Vector search"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Semantic search is a search approach that understands the meaning and intent behind queries rather than simply matching keywords. Using techniques like [embeddings](/en/glossary/embeddings/) and [neural networks](/en/glossary/neural-network/), semantic search captures conceptual relationships between terms. When you search for "how to fix a leaky faucet," semantic search understands you want plumbing repair guidance even if documents don't contain those exact words—finding results about "repairing dripping taps" or "stopping water waste from fixtures."
+
+## Why it matters
+
+Semantic search transforms how we find information:
+
+- **Intent understanding** — "cheap flights to Paris" finds budget travel options, not documents containing those literal words
+- **Synonym handling** — "car" matches "automobile," "vehicle," "auto"
+- **Context awareness** — "Apple" in tech context versus fruit context
+- **Natural language queries** — search conversationally, not with keyword syntax
+- **Multilingual search** — find relevant documents regardless of language
+
+Semantic search powers modern search engines, e-commerce, enterprise search, and RAG systems.
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     SEMANTIC SEARCH                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  KEYWORD SEARCH vs SEMANTIC SEARCH:                        │
+│  ──────────────────────────────────                        │
+│                                                            │
+│  Query: "How do I make my laptop faster?"                 │
+│                                                            │
+│  KEYWORD SEARCH:                                           │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Looks for documents containing:                 │       │
+│  │ "make" AND "laptop" AND "faster"               │       │
+│  │                                                 │       │
+│  │ ❌ Misses: "Speed up your notebook"            │       │
+│  │ ❌ Misses: "Improve PC performance"            │       │
+│  │ ❌ Misses: "Boost computer speed"              │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│  SEMANTIC SEARCH:                                          │
+│  ┌────────────────────────────────────────────────┐       │
+│  │ Understands the MEANING:                        │       │
+│  │ "Improve computer performance"                  │       │
+│  │                                                 │       │
+│  │ ✓ Finds: "Speed up your notebook"              │       │
+│  │ ✓ Finds: "Improve PC performance"              │       │
+│  │ ✓ Finds: "Boost computer speed"                │       │
+│  │ ✓ Finds: "Optimize Windows startup"            │       │
+│  └────────────────────────────────────────────────┘       │
+│                                                            │
+│                                                            │
+│  HOW SEMANTIC SEARCH WORKS:                                │
+│  ──────────────────────────                                │
+│                                                            │
+│  Step 1: Encode everything into vectors                   │
+│                                                            │
+│      ┌─────────────┐         ┌─────────────────────┐      │
+│      │   Query     │         │    Documents        │      │
+│      │  "laptop    │         │  "Speed up your     │      │
+│      │   faster"   │         │   notebook"         │      │
+│      └──────┬──────┘         └──────────┬──────────┘      │
+│             │                           │                  │
+│             ▼                           ▼                  │
+│      ┌─────────────┐         ┌─────────────────────┐      │
+│      │  Embedding  │         │     Embedding       │      │
+│      │   Model     │         │      Model          │      │
+│      │  (BERT etc) │         │    (same model)     │      │
+│      └──────┬──────┘         └──────────┬──────────┘      │
+│             │                           │                  │
+│             ▼                           ▼                  │
+│      [0.2, 0.8, ...]         [0.21, 0.79, ...]            │
+│       Query Vector            Document Vectors             │
+│                                                            │
+│                                                            │
+│  Step 2: Find similar vectors                              │
+│                                                            │
+│                    Vector Space                            │
+│           ┌────────────────────────────┐                  │
+│           │         ●                  │                  │
+│           │       Query     ● Doc A     │                  │
+│           │                      (near) │                  │
+│           │              ● Doc B        │                  │
+│           │                  (near)     │                  │
+│           │                             │                  │
+│           │  ● Doc C                    │                  │
+│           │    (far)                    │                  │
+│           │                             │                  │
+│           └────────────────────────────┘                  │
+│                                                            │
+│  Similar meaning = Nearby in vector space                 │
+│                                                            │
+│                                                            │
+│  Step 3: Rank by similarity score                          │
+│                                                            │
+│  Results:                                                  │
+│  1. Doc A: "Speed up notebook"      [score: 0.94]         │
+│  2. Doc B: "Optimize PC speed"      [score: 0.89]         │
+│  3. Doc C: "Buy a new computer"     [score: 0.45]         │
+│                                                            │
+│                                                            │
+│  SEMANTIC SEARCH ARCHITECTURE:                             │
+│  ─────────────────────────────                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                    INDEXING PHASE                    │  │
+│  │                  (done once, offline)                │  │
+│  │                                                      │  │
+│  │  Documents    ──►  Embedding  ──►  Vector     ──►   │  │
+│  │  [D1,D2,D3]       Model          Vectors          DB │  │
+│  │                                  [V1,V2,V3]     Index │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │                    QUERY PHASE                       │  │
+│  │                   (real-time)                        │  │
+│  │                                                      │  │
+│  │  User Query ──► Embedding ──► Vector ──► Similarity │  │
+│  │                 Model        Search     Search      │  │
+│  │                                            │         │  │
+│  │                                            ▼         │  │
+│  │                              Top K Results           │  │
+│  │                              [D2, D1, D5]            │  │
+│  │                                                      │  │
+│  └─────────────────────────────────────────────────────┘  │
+│                                                            │
+│                                                            │
+│  HYBRID SEARCH (Best Practice):                            │
+│  ──────────────────────────────                            │
+│                                                            │
+│  Combine keyword + semantic for best results:             │
+│                                                            │
+│  Query: "tesla model 3 range"                             │
+│                                                            │
+│  ┌──────────────┐    ┌──────────────┐                     │
+│  │   Keyword    │    │   Semantic   │                     │
+│  │   Search     │    │   Search     │                     │
+│  │  (BM25)      │    │  (Vectors)   │                     │
+│  └──────┬───────┘    └──────┬───────┘                     │
+│         │                   │                              │
+│         └───────┬───────────┘                              │
+│                 ▼                                          │
+│         ┌──────────────┐                                  │
+│         │   Fusion/    │                                  │
+│         │   Re-ranking │                                  │
+│         └──────┬───────┘                                  │
+│                │                                           │
+│                ▼                                           │
+│         Final Results                                      │
+│                                                            │
+│  Why hybrid? Keywords catch exact matches (product SKUs,  │
+│  names), semantics catch meaning                          │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Semantic search vs [keyword search](/en/glossary/full-text-search/):**
+| Aspect | Keyword Search | Semantic Search |
+|--------|---------------|-----------------|
+| Matching | Exact terms | Meaning/concepts |
+| Synonyms | Requires expansion | Automatic |
+| Misspellings | Usually fails | Often handles |
+| [Query understanding](/en/glossary/query-understanding/) | Literal | Contextual |
+| Setup complexity | Simple | Requires embeddings |
+| Latency | Very fast | Slightly slower |
+
+## Common questions
+
+**Q: What [embedding models](/en/glossary/embedding-model/) should I use for semantic search?**
+
+A: For English, start with OpenAI text-embedding-3-small or sentence-[transformers](/en/glossary/transformer-architecture/)/all-MiniLM-L6-v2 (open source). For multilingual, use multilingual-e5-large or mBERT variants. For domain-specific search (legal, medical), consider [fine-tuning](/en/glossary/fine-tuning/) or domain-specific models. Balance quality vs speed—larger models are better but slower.
+
+**Q: How much does semantic search improve results?**
+
+A: Heavily depends on use case. For queries with clear keyword matches ("iPhone 15 specs"), improvement is marginal. For natural language queries ("What phone has the best camera under $500"), improvement can be 30-50% in relevance. Semantic search shines with varied vocabularies and conceptual queries.
+
+**Q: Should I use semantic search or [keyword search](/en/glossary/lexical-search/)?**
+
+A: Use hybrid search—combine both. Keyword search ([BM25](/en/glossary/bm25/)) excels at exact matches: product codes, names, technical terms. Semantic search excels at conceptual understanding. Modern systems use reciprocal rank fusion to combine results from both approaches, getting the best of each.
+
+**Q: How do I handle the cold start problem?**
+
+A: Semantic search requires generating embeddings for all documents before queries work. For large datasets, this can take hours/days. Solutions: pre-compute embeddings during off-peak hours, use incremental indexing for new documents, start with a simpler keyword system and add semantic search gradually.
+
+## Related terms
+
+- Embedding — vectors that power semantic search
+- [Dense retrieval](/en/glossary/dense-retrieval/) — the underlying technique
+- [RAG](/en/glossary/rag/) — using semantic search for [LLM](/en/glossary/llm/) context
+- [Knowledge graph](/en/glossary/knowledge-graph/) — structured knowledge for search
+
+---
+
+## References
+
+> Reimers & Gurevych (2019), "[Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)", EMNLP. [Foundational sentence embeddings]
+
+> Karpukhin et al. (2020), "[Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906)", EMNLP. [DPR for semantic search]
+
+> Neelakantan et al. (2022), "[Text and Code Embeddings by Contrastive Pre-Training](https://arxiv.org/abs/2201.10005)", arXiv. [OpenAI embedding models]
+
+> Muennighoff et al. (2022), "[SGPT: GPT Sentence Embeddings for Semantic Search](https://arxiv.org/abs/2202.08904)", arXiv. [GPT-based semantic search]

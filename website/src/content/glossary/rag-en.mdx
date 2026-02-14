@@ -1,0 +1,67 @@
+---
+term: "Retrieval-Augmented Generation"
+termSlug: "rag"
+short: "RAG is an AI technique that combines information retrieval with text generation to produce accurate, source-grounded responses."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["llm", "embeddings"]
+synonyms: ["RAG", "retrieval augmented generation"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Retrieval-Augmented Generation (RAG) is a technique that enhances large language models by retrieving relevant documents from a [knowledge base](/en/glossary/knowledge-base/) before generating responses. This grounds the AI's output in factual, up-to-date information rather than relying solely on training data.
+
+## Why it matters
+
+RAG is particularly valuable for knowledge-intensive domains where accuracy and currency are critical. Traditional LLMs may generate plausible but outdated or incorrect information. RAG addresses this by:
+
+- **Grounding responses in sources** — every answer references specific documents from the knowledge base
+- **Maintaining currency** — knowledge bases can be updated without expensive model retraining
+- **Reducing hallucination** — the model generates from retrieved facts, not memorized patterns
+- **Enabling auditability** — citations allow users to verify AI-generated responses
+
+## How it works
+
+```
+Question → Embed → Search KB → Retrieve docs → Generate → Response
+    │                          │
+    └──── vector similarity ────┘
+```
+
+1. User submits a question
+2. System converts question to embeddings and searches knowledge base
+3. Most relevant documents are retrieved
+4. LLM generates response using retrieved context
+5. Response includes [source citations](/en/glossary/citation/) for verification
+
+## Common questions
+
+**Q: How is RAG different from fine-tuning?**
+
+A: Fine-tuning permanently modifies model weights with new data. RAG retrieves information at query time, making it easier to update and audit. RAG is preferred when source material changes frequently.
+
+**Q: Can RAG hallucinate?**
+
+A: RAG significantly reduces hallucinations by grounding responses in retrieved documents, but quality depends on the knowledge base completeness and retrieval accuracy.
+
+**Q: Why not just use a search engine?**
+
+A: Search engines return documents; RAG synthesizes information across multiple sources into a coherent answer with proper context.
+
+## Related terms
+
+- [LLM](/en/glossary/llm/) — the generation component that produces natural language responses
+- [Embeddings](/en/glossary/embeddings/) — vector representations enabling [semantic search](/en/glossary/semantic-search/)
+
+---
+
+## References
+
+> Lewis et al. (2020), "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)", NeurIPS. [11,200+ citations]
+
+> Gao et al. (2023), "[Retrieval-Augmented Generation for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)", arXiv. [2,800+ citations]
+
+> Izacard & Grave (2021), "[Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://arxiv.org/abs/2007.01282)", EACL. [1,400+ citations]

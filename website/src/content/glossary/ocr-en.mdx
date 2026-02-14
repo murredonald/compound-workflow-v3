@@ -1,0 +1,244 @@
+---
+term: "OCR"
+termSlug: "ocr"
+short: "Optical Character Recognition—technology that converts images of text (scanned documents, photos, PDFs) into machine-readable text, enabling search, editing, and AI processing of printed or handwritten content."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["document-processing", "computer-vision", "data-extraction", "pdf-parsing"]
+synonyms: ["Optical Character Recognition", "Text recognition", "Document digitization"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Optical Character Recognition (OCR) is the technology that converts images containing text into machine-readable text data. This includes scanned documents, photographs of text, PDF files, and handwritten notes. Modern OCR systems use deep learning (CNNs, [transformers](/en/glossary/transformer-architecture/)) to recognize characters, words, and document structure with high accuracy across multiple languages and fonts. OCR is foundational for document digitization, enabling search, editing, translation, and AI processing of previously inaccessible text content. Advanced OCR includes layout analysis, table extraction, and handwriting recognition.
+
+## Why it matters
+
+OCR enables critical document workflows:
+
+- **Searchability** — find information in scanned archives
+- **Automation** — extract data from invoices, forms, receipts
+- **Accessibility** — make documents screen-reader compatible
+- **Compliance** — digitize records for regulatory requirements
+- **RAG pipelines** — enable [LLMs](/en/glossary/llm/) to process document content
+- **Cost reduction** — eliminate manual data entry
+
+## How it works
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                          OCR                                │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  WHAT OCR DOES:                                            │
+│  ──────────────                                            │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │      INPUT                              OUTPUT       │ │
+│  │                                                      │ │
+│  │  ┌─────────────────┐         ┌─────────────────┐   │ │
+│  │  │                 │         │                 │   │ │
+│  │  │  ▓▓▓▓▓▓▓▓▓▓▓▓  │         │ "Invoice #1234" │   │ │
+│  │  │  ▓ Invoice    ▓  │   OCR  │                 │   │ │
+│  │  │  ▓ #1234      ▓  │  ───►  │ "Date: 2024-01" │   │ │
+│  │  │  ▓▓▓▓▓▓▓▓▓▓▓▓  │         │                 │   │ │
+│  │  │  Date: 2024-01  │         │ "Total: $500"   │   │ │
+│  │  │  Total: $500    │         │                 │   │ │
+│  │  │                 │         │  (editable,     │   │ │
+│  │  │  (image pixels) │         │   searchable)   │   │ │
+│  │  └─────────────────┘         └─────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OCR PIPELINE:                                             │
+│  ─────────────                                             │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. IMAGE PREPROCESSING                             │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Original        Preprocessed               │   │ │
+│  │  │  ┌─────────┐     ┌─────────┐               │   │ │
+│  │  │  │ ░░▓▓░░░ │     │         │               │   │ │
+│  │  │  │ ░▓██▓░░ │ ──► │  Text   │               │   │ │
+│  │  │  │ ░░░░░░░ │     │  Here   │               │   │ │
+│  │  │  └─────────┘     └─────────┘               │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Deskewing (straighten rotated images)   │   │ │
+│  │  │  • Binarization (convert to black/white)   │   │ │
+│  │  │  • Noise removal (clean up artifacts)      │   │ │
+│  │  │  • Contrast enhancement                    │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  2. LAYOUT ANALYSIS                                 │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌───────────────────────────────────┐     │   │ │
+│  │  │  │  ┌─────────────────────────────┐ │     │   │ │
+│  │  │  │  │      HEADER REGION          │ │     │   │ │
+│  │  │  │  └─────────────────────────────┘ │     │   │ │
+│  │  │  │                                   │     │   │ │
+│  │  │  │  ┌────────────┐ ┌────────────┐  │     │   │ │
+│  │  │  │  │  COLUMN 1  │ │  COLUMN 2  │  │     │   │ │
+│  │  │  │  │            │ │            │  │     │   │ │
+│  │  │  │  └────────────┘ └────────────┘  │     │   │ │
+│  │  │  │                                   │     │   │ │
+│  │  │  │  ┌─────────────────────────────┐ │     │   │ │
+│  │  │  │  │      TABLE REGION           │ │     │   │ │
+│  │  │  │  └─────────────────────────────┘ │     │   │ │
+│  │  │  └───────────────────────────────────┘     │   │ │
+│  │  │                                              │   │ │
+│  │  │  Identifies: text blocks, columns, tables,  │   │ │
+│  │  │  figures, reading order                     │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  3. TEXT LINE DETECTION                             │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  ┌──────────────────────────────────────┐  │   │ │
+│  │  │  │ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ │  │   │ │
+│  │  │  │ Line 1: "This is the first line"     │  │   │ │
+│  │  │  └──────────────────────────────────────┘  │   │ │
+│  │  │  ┌──────────────────────────────────────┐  │   │ │
+│  │  │  │ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ │  │   │ │
+│  │  │  │ Line 2: "This is the second line"    │  │   │ │
+│  │  │  └──────────────────────────────────────┘  │   │ │
+│  │  │                                              │   │ │
+│  │  │  Segment text into individual lines         │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  4. CHARACTER RECOGNITION                           │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Image of "Hello"                           │   │ │
+│  │  │  ┌─────────────────────────────────────┐   │   │ │
+│  │  │  │  H   e   l   l   o                  │   │   │ │
+│  │  │  │  │   │   │   │   │                  │   │   │ │
+│  │  │  │  ▼   ▼   ▼   ▼   ▼                  │   │   │ │
+│  │  │  │ CNN/Transformer processes each      │   │   │ │
+│  │  │  │ character region                    │   │   │ │
+│  │  │  │                                      │   │   │ │
+│  │  │  │ Output: ['H','e','l','l','o']       │   │   │ │
+│  │  │  │ Confidence: [0.99, 0.97, 0.98, ...] │   │   │ │
+│  │  │  └─────────────────────────────────────┘   │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                         │                           │ │
+│  │                         ▼                           │ │
+│  │  5. POST-PROCESSING                                 │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  • Dictionary/language model correction     │   │ │
+│  │  │    "Hel1o" → "Hello" (1 looks like l)      │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Context-aware spelling correction        │   │ │
+│  │  │    "recieve" → "receive"                   │   │ │
+│  │  │                                              │   │ │
+│  │  │  • Format preservation                      │   │ │
+│  │  │    Maintain paragraphs, tables, lists      │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OCR TECHNOLOGIES:                                         │
+│  ─────────────────                                         │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  Tesseract (Open Source)                            │ │
+│  │  ├─ Google-maintained, LSTM-based                  │ │
+│  │  ├─ 100+ languages                                 │ │
+│  │  └─ Best for: printed text, batch processing       │ │
+│  │                                                      │ │
+│  │  Google Cloud Vision / Document AI                  │ │
+│  │  ├─ High accuracy, form extraction                │ │
+│  │  ├─ Table and handwriting support                 │ │
+│  │  └─ Best for: complex documents, forms            │ │
+│  │                                                      │ │
+│  │  AWS Textract                                       │ │
+│  │  ├─ Forms, tables, key-value extraction           │ │
+│  │  └─ Best for: AWS ecosystem, invoices             │ │
+│  │                                                      │ │
+│  │  Azure AI Document Intelligence                     │ │
+│  │  ├─ Pre-built models (receipts, IDs, invoices)   │ │
+│  │  └─ Best for: Microsoft ecosystem                  │ │
+│  │                                                      │ │
+│  │  PaddleOCR (Open Source)                            │ │
+│  │  ├─ Excellent CJK language support                │ │
+│  │  └─ Best for: Asian languages, edge deployment    │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  OCR FOR RAG PIPELINES:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  PDF/Scan ──► OCR ──► Text ──► Chunking ──► Embed  │ │
+│  │                                      │              │ │
+│  │                                      ▼              │ │
+│  │                              Vector Database        │ │
+│  │                                      │              │ │
+│  │                                      ▼              │ │
+│  │  User Query ──────────────────► RAG Retrieval      │ │
+│  │                                      │              │ │
+│  │                                      ▼              │ │
+│  │                               LLM Response          │ │
+│  │                                                      │ │
+│  │  Without OCR, scanned documents are invisible      │ │
+│  │  to semantic search and LLMs                       │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Common questions
+
+**Q: How accurate is modern OCR?**
+
+A: For clean, typed documents: 99%+ character accuracy. For handwriting, degraded scans, or unusual fonts: 85-95%. Post-processing and domain-specific training improve results.
+
+**Q: What's the difference between OCR and document AI?**
+
+A: OCR extracts raw text. Document AI adds understanding—[entity extraction](/en/glossary/entity-extraction/), table parsing, form field mapping. Document AI systems include OCR as one component.
+
+**Q: Can OCR handle handwriting?**
+
+A: Modern [deep learning](/en/glossary/deep-learning/) OCR handles printed handwriting reasonably well (80-90%). Cursive or doctor-style handwriting remains challenging. Specialized models exist for historical manuscripts.
+
+**Q: How do I OCR PDFs that already have text?**
+
+A: Don't—extract the embedded text directly. OCR is only needed for scanned/image PDFs. Use libraries like PyMuPDF or pdfplumber for text extraction, fall back to OCR for image-only pages.
+
+## Related terms
+
+- Document processing — broader document workflow
+- [RAG](/en/glossary/rag/) — uses OCR output for retrieval
+- Computer vision — underlying technology
+
+---
+
+## References
+
+> Smith (2007), "[An Overview of the Tesseract OCR Engine](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/33418.pdf)", ICDAR. [Foundational Tesseract architecture]
+
+> Li et al. (2022), "[PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001)", arXiv. [PaddleOCR advances]
+
+> Google Cloud (2024), "[Document AI](https://cloud.google.com/document-ai)", Google. [Enterprise document processing]
+
+> AWS (2024), "[Amazon Textract](https://aws.amazon.com/textract/)", Amazon. [Form and table extraction service]

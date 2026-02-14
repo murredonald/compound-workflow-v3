@@ -1,0 +1,66 @@
+---
+term: "Legal Dependency Mapping"
+termSlug: "legal-dependency-mapping"
+short: "Legal dependency mapping builds a graph of citations and relationships between legal sources so retrieval and analysis can follow what depends on what."
+category: "search"
+category_name: "Search & Retrieval"
+related: ["knowledge-graph", "semantic-expansion", "authority-ranking-model", "source-conflict-resolution", "multi-jurisdictional-indexing"]
+synonyms: ["Legal citation graph", "Dependency graph for law", "Legal reference mapping"]
+locale: "en"
+draft: false
+---
+
+## Definition
+
+Legal dependency mapping is the process of extracting and modeling relationships between legal sources: citations, cross-[references](/en/glossary/citation/), amendments, implementing measures, and hierarchical links. The result is often a graph that helps systems understand how texts connect and which sources control or override others.
+
+## Why it matters
+
+- **Better retrieval**: a [query](/en/glossary/prompt/) about one article often requires linked definitions or implementing rules.
+- **Impact analysis**: when a source changes, dependencies show what might be affected.
+- **[Explainability](/en/glossary/algorithmic-transparency/)**: lets users see why a source is relevant (it is cited by / cites / implements).
+- **Conflict handling**: helps detect contradictory or superseded sources.
+
+## How it works
+
+Dependency mapping typically combines citation extraction with normalization:
+
+```
+Parse documents -> extract references -> normalize identifiers -> build graph -> use in retrieval and UI
+```
+
+Common relationship types:
+
+- "cites" / "is cited by"
+- "amends" / "is amended by"
+- "implements" / "is implemented by"
+- "defines" / "is defined in"
+
+## Practical example
+
+A user queries a tax article. The system also retrieves the definition article it depends on, the implementing decree, and the latest amendment. The answer includes citations and a short "dependency path" to justify why those sources were included.
+
+## Common questions
+
+**Q: Is this the same as a knowledge graph?**
+
+A: It can be part of a knowledge graph, but dependency mapping is narrower: it focuses on document-to-document relationships and legal references that affect applicability.
+
+**Q: Do you need perfect extraction?**
+
+A: No. Even partial graphs add value, as long as references are normalized and the system is clear about confidence.
+
+## Related terms
+
+- [Knowledge Graph](/en/glossary/knowledge-graph/) - broader entity and relationship modeling
+- [Semantic Expansion](/en/glossary/semantic-expansion/) - dependencies can guide safe expansion
+- [Authority Ranking Model](/en/glossary/authority-ranking-model/) - authority signals often use citation structure
+- [Source Conflict Resolution](/en/glossary/source-conflict-resolution/) - conflicts can be detected via overrides/amendments
+- [Multi-Jurisdictional Indexing](/en/glossary/multi-jurisdictional-indexing/) - dependency rules differ by jurisdiction
+
+---
+
+## References
+
+> Manning, Raghavan & Schütze (2008), *Introduction to Information Retrieval*.
+

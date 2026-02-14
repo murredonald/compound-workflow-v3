@@ -1,0 +1,196 @@
+---
+term: "Guardrails"
+termSlug: "guardrails"
+short: "Veiligheidsmechanismen en beperkingen die AI-systemen ervan weerhouden schadelijke, ongepaste of off-topic outputs te genereren—runtime bescherming die verder gaat dan alignment tijdens training."
+category: "ai-ml"
+category_name: "AI & Machine Learning"
+related: ["alignment", "prompt-injection", "responsible-ai", "content-filtering"]
+synonyms: ["AI veiligheidsrails", "Model guardrails", "Output filters"]
+locale: "nl"
+draft: false
+---
+
+## Definitie
+
+Guardrails zijn beschermende mechanismen die rond AI-systemen worden geïmplementeerd om schadelijke, ongepaste of ongewenste outputs te voorkomen. In tegenstelling tot alignment (dat modellen traint om zich goed te gedragen), werken guardrails tijdens runtime als externe beperkingen—ze filteren inputs, valideren outputs en handhaven grenzen ongeacht wat het onderliggende model zou kunnen genereren. Ze omvatten inputvalidatie, outputfiltering, contentmoderatie, onderwerprestrictie, formaathandhaving en fallback-afhandeling.
+
+## Waarom het belangrijk is
+
+Guardrails zijn essentieel voor productie AI-systemen:
+
+- **Veiligheid** — voorkomt schadelijke contentgeneratie zelfs wanneer modellen falen
+- **Compliance** — handhaaft regelgevingseisen (AVG, [AI Act](/nl/glossary/eu-ai-act/), contentwetten)
+- **Merkbescherming** — voorkomt gênante of off-brand outputs
+- **Betrouwbaarheid** — verzekert consistent gedrag over edge cases
+- **Controleerbaarheid** — biedt expliciete, inspecteerbare regels voor gedrag
+- **Gelaagde verdediging** — vangt wat alignment mist
+
+## Hoe het werkt
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      GUARDRAILS                             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  VERDEDIGING IN DIEPTE:                                    │
+│  ──────────────────────                                    │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │               Gebruikersinput                        │ │
+│  │                     │                                │ │
+│  │                     ▼                                │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │         INPUT GUARDRAILS                      │  │ │
+│  │  │                                               │  │ │
+│  │  │  • Prompt injection detectie                 │  │ │
+│  │  │  • PII detectie & redactie                   │  │ │
+│  │  │  • Contentbeleid pre-screening               │  │ │
+│  │  │  • Onderwerpgrenzen handhaving               │  │ │
+│  │  │  • Rate limiting & misbruikdetectie          │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ gevalideerde input          │ │
+│  │                       ▼                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │              LLM MODEL                        │  │ │
+│  │  │                                               │  │ │
+│  │  │   (gealigneerd via RLHF, maar niet perfect)  │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ ruwe output                 │ │
+│  │                       ▼                             │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │        OUTPUT GUARDRAILS                      │  │ │
+│  │  │                                               │  │ │
+│  │  │  • Toxiciteit & schade classificatie         │  │ │
+│  │  │  • Feitelijkheidsverificatie                 │  │ │
+│  │  │  • Formaatvalidatie                          │  │ │
+│  │  │  • Citatiecontrole                           │  │ │
+│  │  │  • PII her-controle                          │  │ │
+│  │  │  • Merkrichtlijn compliance                  │  │ │
+│  │  │                                               │  │ │
+│  │  └────────────────────┬─────────────────────────┘  │ │
+│  │                       │ veilige output              │ │
+│  │                       ▼                             │ │
+│  │               Naar Gebruiker                        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GUARDRAIL TYPES:                                          │
+│  ────────────────                                          │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  1. CONTENTVEILIGHEID                               │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Input: "Hoe maak ik een bom?"              │   │ │
+│  │  │                                              │   │ │
+│  │  │  Content Classifier:                         │   │ │
+│  │  │  Geweld:  ████████████░ HOOG                │   │ │
+│  │  │  Illegaal: ████████████░ HOOG               │   │ │
+│  │  │  Beslissing: BLOKKEREN                      │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  2. ONDERWERPGRENZEN                                │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Klantenservice Bot Configuratie:            │   │ │
+│  │  │                                              │   │ │
+│  │  │  toegestane_onderwerpen:                    │   │ │
+│  │  │    - product_info                           │   │ │
+│  │  │    - bestelling_status                      │   │ │
+│  │  │    - retourneren                            │   │ │
+│  │  │                                              │   │ │
+│  │  │  geblokkeerde_onderwerpen:                  │   │ │
+│  │  │    - politiek                               │   │ │
+│  │  │    - concurrenten                           │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  3. FORMAATHANDHAVING                               │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Verwacht: JSON met specifiek schema        │   │ │
+│  │  │  Model output: "Hier is de JSON: {...}"     │   │ │
+│  │  │  Guardrail: Extract → Valideer → Retry     │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  │  4. FEITELIJKHEIDSCONTROLES                         │ │
+│  │  ┌─────────────────────────────────────────────┐   │ │
+│  │  │                                              │   │ │
+│  │  │  Model: "De CEO van Apple is Jan Janssen"   │   │ │
+│  │  │  Actie: BLOKKEREN (fout gedetecteerd)       │   │ │
+│  │  │                                              │   │ │
+│  │  └─────────────────────────────────────────────┘   │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+│                                                            │
+│  GUARDRAIL FRAMEWORKS:                                     │
+│  ─────────────────────                                     │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                                                      │ │
+│  │  NeMo Guardrails (NVIDIA):                          │ │
+│  │  • Programmeerbare veiligheidsrails                 │ │
+│  │                                                      │ │
+│  │  Guardrails AI:                                     │ │
+│  │  • Validators voor gestructureerde output           │ │
+│  │                                                      │ │
+│  │  LlamaGuard (Meta):                                 │ │
+│  │  • Veiligheidsclassificatiemodel                    │ │
+│  │                                                      │ │
+│  │  AWS Bedrock Guardrails:                            │ │
+│  │  • Beheerde contentfiltering                        │ │
+│  │                                                      │ │
+│  └─────────────────────────────────────────────────────┘ │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Veelgestelde vragen
+
+**V: Waarom niet gewoon vertrouwen op model alignment in plaats van guardrails?**
+
+A: Alignment is probabilistisch—modellen kunnen nog steeds schadelijke outputs produceren in edge cases. Guardrails bieden deterministische, controleerbare veiligheidsgaranties. Gebruik beide voor verdediging in diepte.
+
+**V: Maken guardrails modellen niet minder bruikbaar?**
+
+A: Slecht ontworpen guardrails kunnen te restrictief zijn. Goede guardrails zijn precies—blokkeren echt schadelijke content terwijl legitieme use cases toegestaan worden.
+
+**V: Hoe gaan guardrails om met adversarial aanvallen?**
+
+A: Guardrails omvatten [prompt](/nl/glossary/prompt/) injection detectie, maar tegenstanders vinden constant bypasses. Guardrails moeten continu worden gemonitord en bijgewerkt. Ze zijn één laag, geen complete oplossing.
+
+## Gerelateerde termen
+
+- [Alignment](/nl/glossary/alignment/) — modellen trainen om veilig te gedragen
+- [Prompt injection](/nl/glossary/prompt-injection/) — aanvallen waar guardrails tegen verdedigen
+- [Responsible AI](/nl/glossary/responsible-ai/) — ethische AI-ontwikkeling
+
+---
+
+## Referenties
+
+> Rebedea et al. (2023), "[NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications](https://arxiv.org/abs/2310.10501)", arXiv. [NVIDIA guardrails framework]
+
+> Inan et al. (2023), "[Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)", arXiv. [Meta veiligheidsclassificator]
+
+> Greshake et al. (2023), "[Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications](https://arxiv.org/abs/2302.12173)", arXiv. [Waarom guardrails belangrijk zijn]
+
+> AWS (2024), "[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)", AWS Documentation. [Beheerde guardrails service]
+
+## References
+
+> Rebedea et al. (2023), "[NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications](https://arxiv.org/abs/2310.10501)", arXiv. [NVIDIA guardrails framework]
+
+> Inan et al. (2023), "[Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)", arXiv. [Meta safety classifier]
+
+> Greshake et al. (2023), "[Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications](https://arxiv.org/abs/2302.12173)", arXiv. [Why guardrails matter]
+
+> AWS (2024), "[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)", AWS Documentation. [Managed guardrails service]

@@ -1,0 +1,104 @@
+---
+term: "Kontextfenster"
+termSlug: "context-window"
+short: "Die maximale Textmenge (gemessen in Tokens), die ein Sprachmodell in einer einzelnen Interaktion verarbeiten kann."
+category: "ai-ml"
+category_name: "KI & Machine Learning"
+related: ["llm", "tokenization", "rag", "transformer-architecture"]
+synonyms: ["Context Window", "Kontextlänge", "Kontextgröße", "Sequenzlänge"]
+locale: "de"
+draft: false
+---
+
+## Definition
+
+Ein Kontextfenster ist die maximale Anzahl von Tokens, die ein großes Sprachmodell während der [Inferenz](/de/glossary/inference/) gleichzeitig berücksichtigen kann—einschließlich sowohl des [Eingabe-Prompts](/de/glossary/prompt/) als auch der generierten Ausgabe. Es repräsentiert das „Arbeitsgedächtnis" des Modells: alles außerhalb dieses Fensters ist für das Modell während dieser Interaktion unsichtbar. Kontextfenster sind von 2.048 Tokens in frühen Modellen auf 128.000+ Tokens in modernen Systemen gewachsen.
+
+## Warum es wichtig ist
+
+Die Größe des Kontextfensters beeinflusst direkt, was KI-Systeme erreichen können:
+
+- **Dokumentanalyse** — größere Fenster ermöglichen die Verarbeitung ganzer Dokumente ohne Aufteilung
+- **RAG-Relevanz** — mehr Kontext ermöglicht das Abrufen und Einbeziehen von mehr Quellmaterial
+- **Konversationsgedächtnis** — längere Kontexte erhalten kohärente Multi-Turn-Dialoge
+- **Komplexes Reasoning** — mehr Platz für [Chain-of-Thought](/de/glossary/chain-of-thought/) und Beispiele
+
+Allerdings erhöhen größere Kontexte die Rechenkosten quadratisch mit [Self-Attention](/de/glossary/self-attention/), was Innovation bei effizienten Architekturen antreibt.
+
+## Wie es funktioniert
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    KONTEXTFENSTER                          │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ◄──────────────── 128K Tokens ──────────────────────────► │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ System  │  Abgerufener │  Benutzer │  Generierte    │  │
+│  │ Prompt  │  Kontext     │  Anfrage  │  Antwort       │  │
+│  │ (500)   │  (50.000)    │  (500)    │  (4.000)       │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  Alle Tokens konkurrieren um Attention ←→                  │
+│  Tokens außerhalb des Fensters: unsichtbar                 │
+│                                                            │
+│  Modell-Kontextfenster:                                    │
+│  GPT-3.5:     4K / 16K                                    │
+│  GPT-4:       8K / 32K / 128K                             │
+│  Claude:      100K / 200K                                 │
+│  Gemini:      32K / 1M+                                   │
+└────────────────────────────────────────────────────────────┘
+```
+
+1. **Token-Zählung** — alle Eingaben ([System-Prompt](/de/glossary/system-prompt/), Benutzereingabe, abgerufene Docs) verbrauchen Tokens
+2. **Zuweisung** — verbleibende Tokens für Modellausgabe verfügbar
+3. **Attention** — jedes Token kann auf alle anderen im Fenster attendieren
+4. **Trunkierung** — Inhalt, der das Fenster überschreitet, wird abgeschnitten (typischerweise vom Anfang)
+
+## Häufige Fragen
+
+**F: Was passiert, wenn die Eingabe das Kontextfenster überschreitet?**
+
+A: Die meisten Systeme trunkieren—entfernen den ältesten Inhalt zum Einpassen. Gut gestaltete Anwendungen verhindern dies durch Chunking, Zusammenfassung oder RAG-Strategien, die nur relevante Passagen auswählen.
+
+**F: Beeinflusst die Nutzung des vollen Kontextfensters die Qualität?**
+
+A: Forschung zeigt „Lost in the Middle"-Effekte—Modelle attendieren besser auf Inhalt am Anfang und Ende langer Kontexte. Strategische Platzierung wichtiger Informationen ist wichtig.
+
+**F: Wie werden Tokens gezählt?**
+
+A: Hängt vom Tokenizer ab. Ungefähr: 1 Token ≈ 4 Zeichen oder ≈ 0,75 Wörter auf Englisch. Nicht-englischer Text und Code können anders tokenisieren.
+
+**F: Ist ein größeres Kontextfenster immer besser?**
+
+A: Nicht unbedingt. Größere Fenster kosten mehr, verarbeiten langsamer und können die Attention verdünnen. RAG-Systeme übertreffen oft rohes Kontextfüllen, indem sie nur relevanten Inhalt abrufen.
+
+## Verwandte Begriffe
+
+- [LLM](/de/glossary/llm/) — die Modelle, die Kontextfenster haben
+- [Tokenisierung](/de/glossary/tokenization/) — wie Text in Tokens umgewandelt wird
+- [RAG](/de/glossary/rag/) — Technik zur Verwaltung begrenzten Kontexts
+- [Transformer-Architektur](/de/glossary/transformer-architecture/) — warum Kontextfenster existieren
+
+---
+
+## Referenzen
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130.000+ Zitationen]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ Zitationen]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Anthropic Dokumentation.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3.500+ Zitationen]
+
+## References
+
+> Vaswani et al. (2017), "[Attention Is All You Need](https://arxiv.org/abs/1706.03762)", NeurIPS. [130,000+ citations]
+
+> Liu et al. (2023), "[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)", arXiv. [600+ citations]
+
+> Anthropic (2024), "[Claude's Context Window](https://docs.anthropic.com/claude/docs/context-window)", Anthropic Documentation.
+
+> Beltagy et al. (2020), "[Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)", arXiv. [3,500+ citations]

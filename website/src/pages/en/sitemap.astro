@@ -1,0 +1,130 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layout/Section.astro";
+import { getCollection } from "astro:content";
+import { t } from "@/i18n/utils";
+
+const locale = "en";
+
+const blogPosts = (await getCollection("blog", ({ data }) => data.locale === locale && !data.draft))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const glossaryTerms = (await getCollection("glossary", ({ data }) => data.locale === locale && !data.draft))
+  .sort((a, b) => a.data.term.localeCompare(b.data.term));
+
+const guides = (await getCollection("guides", ({ data }) => data.locale === locale))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const topics = (await getCollection("topics", ({ data }) => data.locale === locale))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const staticPages = [
+  { href: `/${locale}/`, label: t("nav.home", locale) },
+  { href: `/${locale}/features/`, label: t("nav.features", locale) },
+  { href: `/${locale}/how-it-works/`, label: t("nav.how_it_works", locale) },
+  { href: `/${locale}/pricing/`, label: t("nav.pricing", locale) },
+  { href: `/${locale}/accuracy/`, label: t("nav.accuracy", locale) },
+  { href: `/${locale}/about/`, label: t("nav.about", locale) },
+  { href: `/${locale}/contact/`, label: t("footer.contact", locale) },
+  { href: `/${locale}/waitlist/`, label: t("nav.waitlist", locale) },
+  { href: `/${locale}/privacy/`, label: t("footer.privacy", locale) },
+  { href: `/${locale}/terms/`, label: t("footer.terms", locale) },
+];
+---
+
+<BaseLayout
+  title={`${t("sitemap.title", locale)} — ${t("site.title", locale)}`}
+  description={t("sitemap.description", locale)}
+  locale={locale}
+  path="/sitemap/"
+>
+  <main id="main-content">
+    <Section class="pt-12 md:pt-16 pb-16 md:pb-24">
+      <div class="mx-auto max-w-4xl">
+        <h1 class="text-display text-foreground">{t("sitemap.title", locale)}</h1>
+        <p class="mt-4 text-body-lg text-muted-foreground">{t("sitemap.description", locale)}</p>
+
+        <div class="mt-12 space-y-10">
+          {/* Static pages */}
+          <section>
+            <h2 class="text-h2 text-foreground border-b border-border pb-2">{t("sitemap.pages", locale)}</h2>
+            <ul class="mt-4 space-y-2">
+              {staticPages.map((page) => (
+                <li>
+                  <a href={page.href} class="text-body text-primary-text hover:underline">{page.label}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Blog posts */}
+          {blogPosts.length > 0 && (
+            <section>
+              <h2 class="text-h2 text-foreground border-b border-border pb-2">
+                <a href={`/${locale}/blog/`} class="hover:text-primary-text transition-colors">{t("sitemap.blog", locale)}</a>
+              </h2>
+              <ul class="mt-4 space-y-2">
+                {blogPosts.map((post) => (
+                  <li>
+                    <a href={`/${locale}/blog/${post.id.replace(/\.mdx?$/, "")}/`} class="text-body text-primary-text hover:underline">{post.data.title}</a>
+                    <span class="ml-2 text-caption text-muted-foreground">
+                      {post.data.publishDate.toLocaleDateString(locale, { year: "numeric", month: "short" })}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Glossary terms */}
+          {glossaryTerms.length > 0 && (
+            <section>
+              <h2 class="text-h2 text-foreground border-b border-border pb-2">
+                <a href={`/${locale}/glossary/`} class="hover:text-primary-text transition-colors">{t("sitemap.glossary", locale)}</a>
+              </h2>
+              <ul class="mt-4 columns-2 gap-x-8 space-y-2 sm:columns-3">
+                {glossaryTerms.map((term) => (
+                  <li>
+                    <a href={`/${locale}/glossary/${term.data.termSlug}/`} class="text-body text-primary-text hover:underline">{term.data.term}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Guides */}
+          {guides.length > 0 && (
+            <section>
+              <h2 class="text-h2 text-foreground border-b border-border pb-2">
+                <a href={`/${locale}/guides/`} class="hover:text-primary-text transition-colors">{t("sitemap.guides", locale)}</a>
+              </h2>
+              <ul class="mt-4 space-y-2">
+                {guides.map((guide) => (
+                  <li>
+                    <a href={`/${locale}/guides/${guide.id.replace(/\.mdx?$|\.md$/, "")}/`} class="text-body text-primary-text hover:underline">{guide.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Topics */}
+          {topics.length > 0 && (
+            <section>
+              <h2 class="text-h2 text-foreground border-b border-border pb-2">
+                <a href={`/${locale}/topics/`} class="hover:text-primary-text transition-colors">{t("sitemap.topics", locale)}</a>
+              </h2>
+              <ul class="mt-4 space-y-2">
+                {topics.map((topic) => (
+                  <li>
+                    <a href={`/${locale}/topics/${topic.id.replace(/\.mdx?$|\.md$/, "")}/`} class="text-body text-primary-text hover:underline">{topic.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>
